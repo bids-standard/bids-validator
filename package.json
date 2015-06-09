@@ -1,0 +1,19 @@
+{
+  "name": "BIDS-Validator",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Squishymedia/BIDS-Validator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Squishymedia/BIDS-Validator/issues"
+  },
+  "homepage": "https://github.com/Squishymedia/BIDS-Validator",
+  "dependencies": {
+    "async": "^1.2.1"
+  }
+}
