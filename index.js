@@ -61,7 +61,7 @@ function TSV (file, callback) {
     fileUtils.read(file, function (contents) {
         let rows = contents.split('\n');
         async.each(rows, function (row) {
-            columnsInRow = row.split('\t');
+            let columnsInRow = row.split('\t');
         });
         callback();
     });
