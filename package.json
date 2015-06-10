@@ -14,6 +14,7 @@
   },
   "homepage": "https://github.com/Squishymedia/BIDS-Validator",
   "dependencies": {
-    "async": "^1.2.1"
+    "async": "^1.2.1",
+    "jshint": "^2.8.0"
   }
 }

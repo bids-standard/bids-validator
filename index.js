@@ -1,18 +1,18 @@
 // dependencies -------------------------------------------------------------------
 
-import {JSHINT}  from 'jshint';
-import async     from 'async';
-import fileUtils from './files';
+var JSHINT    = require('jshint').JSHINT;
+var async     = require('async');
+var fileUtils = require('./files');
 
 // public API ---------------------------------------------------------------------
 
-let validate = {
-    BIDS,
-    JSON,
-    TSV
+var validate = {
+    BIDS: BIDS,
+    JSON: JSON,
+    TSV: TSV
 };
 
-export default validate;
+exports = validate;
 
 // implementations ----------------------------------------------------------------
 

@@ -1,11 +1,11 @@
 // public API ---------------------------------------------------------------------
 
-let fileUtils = {
-	read,
-	generateTree
+var fileUtils = {
+	read: read,
+	generateTree: generateTree
 };
 
-export default fileUtils;
+exports = fileUtils;
 
 // implementations ----------------------------------------------------------------
 
@@ -18,7 +18,7 @@ export default fileUtils;
  * file as the only argument.
  */
 function read (file, callback) {
-	let reader = new FileReader();
+	var reader = new FileReader();
 	reader.onloadend = function (e) {
 		if (e.target.readyState == FileReader.DONE) {
 			callback(e.target.result);
@@ -36,22 +36,22 @@ function read (file, callback) {
  * directory.
  */
 function generateTree (files) {
-	let pathList = {};
-	let dirTree = {};
+	var pathList = {};
+	var dirTree = {};
 
     // generate list of paths
-	for (let i = 0; i < files.length; i++) {
-		let file = files[i];
+	for (var i = 0; i < files.length; i++) {
+		var file = files[i];
         pathList[file.webkitRelativePath] = file;
     }
 
     // build path from list
-    for (let key in pathList) {
-    	let path = key;
-    	let pathParts = path.split('/');
-    	let subObj = dirTree;
-    	for (let j = 0; j < pathParts.length; j++) {
-    		let part = pathParts[j];
+    for (var key in pathList) {
+    	var path = key;
+    	var pathParts = path.split('/');
+    	var subObj = dirTree;
+    	for (var j = 0; j < pathParts.length; j++) {
+    		var part = pathParts[j];
     		if (!subObj[part]) {
     			subObj[part] = j < pathParts.length - 1 ? {} : pathList[key];
     		}
@@ -61,8 +61,8 @@ function generateTree (files) {
 
 	// convert dirTree to array structure
     function objToArr (obj) {
-    	let arr = [];
-    	for (let key in obj) {
+    	var arr = [];
+    	for (var key in obj) {
     		if (obj[key].webkitRelativePath && obj[key].webkitRelativePath.length > 0) {
     			arr.push(obj[key]);
     		} else {
