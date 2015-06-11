@@ -4,6 +4,13 @@ var JSHINT    = require('jshint').JSHINT;
 var async     = require('async');
 var fileUtils = require('./files');
 
+// public API ---------------------------------------------------------------------
+
+var validate = {
+    BIDS: BIDS,
+    JSON: JSON,
+    TSV: TSV
+};
 
 // implementations ----------------------------------------------------------------
 
@@ -58,12 +65,4 @@ function TSV (file, callback) {
     });
 }
 
-// public API ---------------------------------------------------------------------
-
-var validate = {
-    BIDS: BIDS,
-    JSON: JSON,
-    TSV: TSV
-};
-
-exports = validate;
+module.exports = validate;
