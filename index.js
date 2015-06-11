@@ -12,8 +12,6 @@ var validate = {
     TSV: TSV
 };
 
-exports = validate;
-
 // implementations ----------------------------------------------------------------
 
 function BIDS (fileList, callback) {
@@ -66,3 +64,6 @@ function TSV (file, callback) {
         callback();
     });
 }
+
+
+exports = validate;
