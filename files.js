@@ -5,8 +5,6 @@ var fileUtils = {
 	generateTree: generateTree
 };
 
-exports = fileUtils;
-
 // implementations ----------------------------------------------------------------
 
 /**
@@ -77,3 +75,5 @@ function generateTree (files) {
     // return tree
     return dirTree;
 }
+
+module.exports = fileUtils;
