@@ -17,7 +17,7 @@ exports = validate;
 // implementations ----------------------------------------------------------------
 
 function BIDS (fileList, callback) {
-    let errors = [];
+    var errors = [];
     async.forEachOf(fileList, function (file, key, cb) {
 
         // validate tsv
@@ -48,7 +48,7 @@ function BIDS (fileList, callback) {
 function JSON (file, callback) {
     fileUtils.read(file, function (contents) {
         if (!JSHINT(contents)) {
-            let out = JSHINT.data(),
+            var out = JSHINT.data(),
             errors = out.errors;
             callback(errors);
         } else {
@@ -59,9 +59,9 @@ function JSON (file, callback) {
 
 function TSV (file, callback) {
     fileUtils.read(file, function (contents) {
-        let rows = contents.split('\n');
+        var rows = contents.split('\n');
         async.each(rows, function (row) {
-            let columnsInRow = row.split('\t');
+            var columnsInRow = row.split('\t');
         });
         callback();
     });
