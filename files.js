@@ -4,7 +4,7 @@
  * If the current enviroment is server side
  * nodejs/iojs import fs.
  */
-if (typeof window !== 'undefined') {
+if (typeof window === 'undefined') {
     var fs = require('fs');
 }
 
