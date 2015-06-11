@@ -1,3 +1,13 @@
+// dependencies -------------------------------------------------------------------
+
+/**
+ * If the current enviroment is server side
+ * nodejs/iojs import fs.
+ */
+if (typeof window !== 'undefined') {
+    var fs = require('fs');
+}
+
 // public API ---------------------------------------------------------------------
 
 var fileUtils = {
@@ -14,15 +24,29 @@ var fileUtils = {
  * Takes a file object and a callback and calls
  * the callback with the binary contents of the
  * file as the only argument.
+ *
+ * In the browser the file should be a file object.
+ * In node the file should be a path to a file.
+ *
  */
 function read (file, callback) {
-	var reader = new FileReader();
-	reader.onloadend = function (e) {
-		if (e.target.readyState == FileReader.DONE) {
-			callback(e.target.result);
-		}
-	};
-	reader.readAsBinaryString(file);
+    if (fs) {
+        fs.readFile(file, function (err, data) {
+            if (err) {
+                callback(err);
+            } else {
+                callback(data);
+            }
+        });
+    } else {
+    	var reader = new FileReader();
+    	reader.onloadend = function (e) {
+    		if (e.target.readyState == FileReader.DONE) {
+    			callback(e.target.result);
+    		}
+    	};
+    	reader.readAsBinaryString(file);
+    }
 }
 
 /**
