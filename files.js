@@ -12,6 +12,7 @@ if (typeof window === 'undefined') {
 
 var fileUtils = {
 	read: read,
+    readDir: readDir,
 	generateTree: generateTree
 };
 
@@ -31,7 +32,7 @@ var fileUtils = {
  */
 function read (file, callback) {
     if (fs) {
-        fs.readFile(file, function (err, data) {
+        fs.readFile(file.path, 'utf8', function (err, data) {
             if (err) {
                 callback(err);
             } else {
@@ -48,6 +49,41 @@ function read (file, callback) {
     	reader.readAsBinaryString(file);
     }
 }
+
+/**
+ * Read Directory
+ *
+ * Takes a path to a directory and returns an
+ * array containing all of the files to a callback.
+ * Used to input and organize files in node, in a
+ * similar structure to how chrome reads a
+ * directory.
+ */
+function readDir (path, callback) {
+    if (fs) {
+        files = getFiles(path);
+        filesObj = {};
+        for (var i = 0; i < files.length; i++) {
+            filesObj[i] = {name: files[i].substr(files[i].lastIndexOf('/') + 1), path: files[i]};
+        }
+        callback(filesObj);
+    }
+}
+
+function getFiles (dir, files_){
+    files_ = files_ || [];
+    var files = fs.readdirSync(dir);
+    for (var i in files){
+        var name = dir + '/' + files[i];
+        if (fs.statSync(name).isDirectory()){
+            getFiles(name, files_);
+        } else {
+            files_.push(name);
+        }
+    }
+    return files_;
+}
+
 
 /**
  * Generate Tree

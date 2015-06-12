@@ -8,6 +8,7 @@ var fileUtils = require('./files');
 
 var validate = {
     BIDS: BIDS,
+    BIDSPath: BIDSPath,
     JSON: JSON,
     TSV: TSV
 };
@@ -43,6 +44,14 @@ function BIDS (fileList, callback) {
     });
 }
 
+function BIDSPath (path, callback) {
+    fileUtils.readDir(path, function (files) {
+        BIDS(files, function (errors) {
+            callback(errors);
+        });
+    });
+}
+
 function JSON (file, callback) {
     fileUtils.read(file, function (contents) {
         if (!JSHINT(contents)) {
@@ -57,10 +66,10 @@ function JSON (file, callback) {
 
 function TSV (file, callback) {
     fileUtils.read(file, function (contents) {
-        var rows = contents.split('\n');
-        async.each(rows, function (row) {
-            var columnsInRow = row.split('\t');
-        });
+        // var rows = contents.split('\n');
+        // async.each(rows, function (row) {
+        //     var columnsInRow = row.split('\t');
+        // });
         callback();
     });
 }
