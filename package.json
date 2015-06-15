@@ -8,8 +8,8 @@
     "url": "https://github.com/Squishymedia/BIDS-Validator.git"
   },
   "scripts": {
-      "test": "./node_modules/.bin/mocha tests/"
-    },
+    "test": "./node_modules/.bin/mocha tests/"
+  },
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Squishymedia/BIDS-Validator",
   "dependencies": {
     "async": "^1.2.1",
+    "colors": "^1.1.0",
     "jshint": "^2.8.0"
   },
   "devDependencies": {
