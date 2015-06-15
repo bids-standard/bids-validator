@@ -11,7 +11,7 @@ if (typeof window === 'undefined') {
 // public API ---------------------------------------------------------------------
 
 var fileUtils = {
-	read: read,
+	readFile: readFile,
     readDir: readDir,
 	generateTree: generateTree
 };
@@ -30,7 +30,7 @@ var fileUtils = {
  * In node the file should be a path to a file.
  *
  */
-function read (file, callback) {
+function readFile (file, callback) {
     if (fs) {
         fs.readFile(file.path, 'utf8', function (err, data) {
             if (err) {
