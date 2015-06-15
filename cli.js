@@ -6,10 +6,7 @@ module.exports = function () {
 	var dir  = args[2];
 
 	if (dir) {
-	    validate.BIDSPath(dir, function (issues) {
-	        // for (var i = 0; i < issues.length; i++) {
-	        //     console.log(issues[i]);
-	        // }
+	    validate.BIDS(dir, function (issues) {
 	        console.log();
 	        for (var i = 0; i < issues.length; i++) {
 	        	console.log('\t' + colors.red(issues[i].file.name));
