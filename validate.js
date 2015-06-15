@@ -21,9 +21,11 @@ function BIDS (fileList, callback) {
 
         // validate tsv
         if (file.name && file.name.indexOf('.tsv') > -1) {
-            validate.TSV(file, function () {
-                cb();
-            });
+        	utils.readFile(file, function () {
+        		validate.TSV(file, function () {
+	                cb();
+	            });
+        	});
             return;
         }
 
@@ -64,14 +66,12 @@ function JSON (contents, callback) {
     }
 }
 
-function TSV (file, callback) {
-    utils.readFile(file, function (contents) {
-        // var rows = contents.split('\n');
+function TSV (contents, callback) {
+    var rows = contents.split('\n');
         // async.each(rows, function (row) {
         //     var columnsInRow = row.split('\t');
         // });
         callback();
-    });
 }
 
 // exports -----------------------------------------------------------
