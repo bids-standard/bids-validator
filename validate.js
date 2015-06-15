@@ -21,8 +21,8 @@ function BIDS (fileList, callback) {
 
         // validate tsv
         if (file.name && file.name.indexOf('.tsv') > -1) {
-        	utils.readFile(file, function () {
-        		validate.TSV(file, function () {
+        	utils.readFile(file, function (contents) {
+        		validate.TSV(contents, function () {
 	                cb();
 	            });
         	});
