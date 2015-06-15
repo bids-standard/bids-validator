@@ -29,11 +29,13 @@ function BIDS (fileList, callback) {
 
         // validate json
         if (file.name && file.name.indexOf('.json') > -1) {
-            validate.JSON(file, function (err) {
-                if (err) {
-                    errors.push({file: file, errors: err})
-                }
-                cb();
+            fileUtils.read(file, function (contents) {
+                validate.JSON(contents, function (err) {
+                    if (err) {
+                        errors.push({file: file, errors: err})
+                    }
+                    cb();
+                });
             });
         } else {
             cb();
@@ -52,16 +54,14 @@ function BIDSPath (path, callback) {
     });
 }
 
-function JSON (file, callback) {
-    fileUtils.read(file, function (contents) {
-        if (!JSHINT(contents)) {
-            var out = JSHINT.data(),
-            errors = out.errors;
-            callback(errors);
-        } else {
-            callback(null);
-        }
-    });
+function JSON (contents, callback) {
+    if (!JSHINT(contents)) {
+        var out = JSHINT.data(),
+        errors = out.errors;
+        callback(errors);
+    } else {
+        callback(null);
+    }
 }
 
 function TSV (file, callback) {
