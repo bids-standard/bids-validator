@@ -4,7 +4,7 @@
 
 ### In the Browser
 
-The BIDS Validator currently works in the browser with (browserify)[http://browserify.org/]. You can add it to a browserify project by cloning the validator and requiring it with browserify synstax ```var validate = require('BIDS-Validator');```. It can then be used like so ```validate.BIDS(filelist, function (errors) {console.log(errors);});
+The BIDS Validator currently works in the browser with [browserify](http://browserify.org/). You can add it to a browserify project by cloning the validator and requiring it with browserify synstax ```var validate = require('BIDS-Validator');```. It can then be used like so ```validate.BIDS(filelist, function (errors) {console.log(errors);});
 
 ### On the Server
 
