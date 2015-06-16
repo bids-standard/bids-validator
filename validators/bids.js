@@ -51,7 +51,7 @@ function start (fileList, callback) {
         if (file.name && file.name.indexOf('.json') > -1) {
             utils.readFile(file, function (contents) {
                 JSON(contents, function (errs) {
-                    if (err) {
+                    if (errs) {
                         errors.push({file: file, errors: errs})
                     }
                     cb();
