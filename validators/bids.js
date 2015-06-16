@@ -37,7 +37,10 @@ function start (fileList, callback) {
         // validate tsv
         if (file.name && file.name.indexOf('.tsv') > -1) {
          utils.readFile(file, function (contents) {
-             TSV(contents, function () {
+             TSV(contents, function (errs) {
+                    if (err) {
+                        errors.push({file: file, errors: errs})
+                    }
                     cb();
                 });
          });
@@ -47,9 +50,9 @@ function start (fileList, callback) {
         // validate json
         if (file.name && file.name.indexOf('.json') > -1) {
             utils.readFile(file, function (contents) {
-                JSON(contents, function (err) {
+                JSON(contents, function (errs) {
                     if (err) {
-                        errors.push({file: file, errors: err})
+                        errors.push({file: file, errors: errs})
                     }
                     cb();
                 });

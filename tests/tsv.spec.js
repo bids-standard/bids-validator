@@ -13,7 +13,7 @@ describe('TSV', function(){
 	it('should not allow different length rows', function () {
 		var tsv = 'header-one\theader-two\theader-three\n' +
 				  'value-one\tvalue-two\n' +
-				  'value-one\tvalue-two\tvalue-three\n';
+				  'value-one\tvalue-two\tvalue-three';
 		validate.TSV(tsv, function (errors) {
 			assert(errors && errors.length > 0);
 		});
@@ -21,7 +21,7 @@ describe('TSV', function(){
 
 	it('should not allow headers to begin with numbers', function () {
 		var tsv = 'header-one\theader-two\t4eader-three\n' +
-				  'value-one\tvalue-two\tvalue-three\n';
+				  'value-one\tvalue-two\tvalue-three';
 		validate.TSV(tsv, function (errors) {
 			assert(errors && errors.length > 0);
 		});
