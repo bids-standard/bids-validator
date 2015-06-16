@@ -38,7 +38,7 @@ function start (fileList, callback) {
         if (file.name && file.name.indexOf('.tsv') > -1) {
          utils.readFile(file, function (contents) {
              TSV(contents, function (errs) {
-                    if (err) {
+                    if (errs) {
                         errors.push({file: file, errors: errs})
                     }
                     cb();
