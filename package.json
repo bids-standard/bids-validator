@@ -10,8 +10,8 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha tests/"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Zachary Michael - Squishymedia",
+  "license": "GPLv2",
   "bugs": {
     "url": "https://github.com/Squishymedia/BIDS-Validator/issues"
   },
