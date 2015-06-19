@@ -22,7 +22,7 @@ var utils  = require('../utils');
 
 var TSV    = require('./tsv');
 var JSON   = require('./json');
-var NIFTI   = require('./nii');
+var NIFTI  = require('./nii');
 
 /**
  * BIDS
@@ -54,14 +54,30 @@ function start (fileList, callback) {
     var errors = [];
     async.forEachOf(fileList, function (file, key, cb) {
 
-        // validate NifTi file has .gz ext
-        if (file.name && !(file.name.indexOf('.nii.gz') > -1) && file.name.indexOf('.nii') > -1) {
-                NIFTI(file, function (errs) {
-                    if (errs) {
-                        errors.push({file: file, errors: errs})
-                    }
-                    cb();
-                });
+        // validate NifTi
+        if (file.name && file.name.indexOf('.nii') > -1) {
+
+            // check if NifTi is gzipped
+            if (file.name.indexOf('.gz') === -1) {
+                var newError = {
+                    evidence: file.name,
+                    line: null,
+                    character: null,
+                    reason: 'NifTi files must have .gz extention'
+                }
+                errors.push({file: file, errors: [newError]});
+            }
+
+            // Psuedo-Code for validating NifTi header
+            // utils.readFileHeader(file, function (header) {
+            //     NIFTI(header, function (errs) {
+            //         if (errs) {
+            //             errors.push({file: file, errors: errs});
+            //         }
+            //     });
+            // });
+
+            cb();
             return;
         }
 
