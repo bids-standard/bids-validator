@@ -22,7 +22,7 @@ var validate = require('../index');
 
 describe('BIDS', function(){
 
-    it('should verify that NifTi files end in a gzip extension', function () {
+    it('should verify that NifTi files are compressed using gzip.', function () {
         var fileList = {
             '0': {
                 name: 'gzipNifTi.nii.gz',

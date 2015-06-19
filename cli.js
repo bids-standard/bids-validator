@@ -35,6 +35,7 @@ module.exports = function () {
 	        		console.log('\t' + error.reason);
 	        		console.log('\t@ line: ' + error.line + ' character: ' + error.character);
 	        		console.log('\t' + error.evidence);
+	        		console.log('\t' + error.severity);
 	        		console.log();
 	        	}
 	        }
