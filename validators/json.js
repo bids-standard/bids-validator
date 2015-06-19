@@ -36,6 +36,14 @@ module.exports = function (contents, callback) {
     if (!JSHINT(contents)) {
         var out = JSHINT.data(),
         errors = out.errors;
+        for(var i = 0; errors.length > i; ++i){
+        	if(errors[i] !== null){
+	        	console.log('break')
+	        	errors[i].severity = 'error';
+	        	console.log(errors)
+	        	console.log('break')
+	        }
+	    }
         callback(errors);
     } else {
     	// TODO figure out how to filter sidecar only files
@@ -47,7 +55,8 @@ module.exports = function (contents, callback) {
                 evidence: contents,
                 line: null,
                 character: null,
-                reason: 'JSON sidecar files must have key and value for repetition_time'
+                reason: 'JSON sidecar files must have key and value for repetition_time',
+                severity: 'error'
             }
             errors.push(newError);
             callback(errors);

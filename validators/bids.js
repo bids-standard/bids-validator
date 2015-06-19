@@ -63,7 +63,8 @@ function start (fileList, callback) {
                     evidence: file.name,
                     line: null,
                     character: null,
-                    reason: 'NifTi files must have .gz extention'
+                    reason: 'NifTi files should be compressed using gzip.',
+                    severity: 'warning'
                 }
                 errors.push({file: file, errors: [newError]});
             }
