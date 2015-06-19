@@ -37,7 +37,6 @@ describe('JSON', function(){
 		validate.JSON(jsonObjInval, function (errors) {
 			assert(errors && errors.length === 1);
 		});
-
 		var jsonObjSpell = '{"repitition_time": 0.5, "echo_time": 0.005, "flip_angle": 90}';
 		validate.JSON(jsonObjSpell, function (errors) {
 			assert(errors && errors.length === 1);
