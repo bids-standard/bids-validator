@@ -27,12 +27,33 @@ var JSHINT = require('jshint').JSHINT;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function JSON (contents, callback) {
+
+
+
+
+module.exports = function (contents, callback) {
+
     if (!JSHINT(contents)) {
         var out = JSHINT.data(),
         errors = out.errors;
         callback(errors);
     } else {
-        callback(null);
+    	// TODO figure out how to filter sidecar only files
+    	var jsObj = JSON.parse(contents);
+    	jsObj = jsObj.hasOwnProperty('repetition_time');
+		if(jsObj === false){
+			errors = []
+			var newError = {
+                evidence: contents,
+                line: null,
+                character: null,
+                reason: 'JSON sidecar files must have key and value for repetition_time'
+            }
+            errors.push(newError);
+            callback(errors);
+		}else{
+	        callback(null);
+	    }
+
     }
 };
