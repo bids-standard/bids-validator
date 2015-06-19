@@ -17,39 +17,25 @@
  *  along with BIDS-Validator.  If not, see <http://www.gnu.org/licenses/>
  **/
 
-// dependencies ------------------------------------------------------
-
 var async  = require('async');
-var utils  = require('../utils');
 
-var TSV    = require('./tsv');
-var JSON   = require('./json');
-var NIFTI   = require('./nii');
-var BIDS   = require('./bids');
-
-// public api --------------------------------------------------------
-
-var validate = {
-	BIDS: BIDS,
-	BIDSPath: BIDSPath,
-	JSON: JSON,
-	TSV: TSV,
-	NIFTI: NIFTI
+/**
+ * NIFTI
+ *
+ * Takes a NifTi file name and a callback
+ * as arguments. And callsback with any errors
+ * it finds while validating against the BIDS
+ * specification.
+ */
+module.exports = function NIFTI (file, callback) {
+    var errors = [];
+    // check if file has .gz ext
+    var newError = {
+            evidence: file.name,
+            line: null,
+            character: null,
+            reason: 'NifTi files must have .gz extention'
+    }
+    errors.push(newError);
+    callback(errors);
 };
-
-// implementations ---------------------------------------------------
-
-
-function BIDSPath (path, callback) {
-    utils.readDir(path, function (files) {
-        BIDS(files, function (errors) {
-            callback(errors);
-        });
-    });
-}
-
-
-
-// exports -----------------------------------------------------------
-
-module.exports = validate;

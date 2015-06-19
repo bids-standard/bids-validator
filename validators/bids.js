@@ -22,6 +22,7 @@ var utils  = require('../utils');
 
 var TSV    = require('./tsv');
 var JSON   = require('./json');
+var NIFTI   = require('./nii');
 
 /**
  * BIDS
@@ -52,6 +53,17 @@ module.exports = function (fileList, callback) {
 function start (fileList, callback) {
     var errors = [];
     async.forEachOf(fileList, function (file, key, cb) {
+
+        // validate NifTi file has .gz ext
+        if (file.name && !(file.name.indexOf('.nii.gz') > -1) && file.name.indexOf('.nii') > -1) {
+                NIFTI(file, function (errs) {
+                    if (errs) {
+                        errors.push({file: file, errors: errs})
+                    }
+                    cb();
+                });
+            return;
+        }
 
         // validate tsv
         if (file.name && file.name.indexOf('.tsv') > -1) {
