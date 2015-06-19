@@ -37,11 +37,8 @@ module.exports = function (contents, callback) {
         var out = JSHINT.data(),
         errors = out.errors;
         for(var i = 0; errors.length > i; ++i){
-        	if(errors[i] !== null){
-	        	console.log('break')
+        	if(errors[i]){
 	        	errors[i].severity = 'error';
-	        	console.log(errors)
-	        	console.log('break')
 	        }
 	    }
         callback(errors);
