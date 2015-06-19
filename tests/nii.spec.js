@@ -22,11 +22,4 @@ var validate = require('../index');
 
 describe('NIFTI', function(){
 
-	it('should be compressed using gzip.', function () {
-		var fileName = 'filename.nii';
-		validate.NIFTI(fileName, function (errors) {
-			assert(errors && errors.length > 0);
-		});
-	});
-
 });

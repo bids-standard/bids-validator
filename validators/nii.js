@@ -22,20 +22,13 @@ var async  = require('async');
 /**
  * NIFTI
  *
- * Takes a NifTi file name and a callback
+ * Takes a NifTi file header and a callback
  * as arguments. And callsback with any errors
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function NIFTI (file, callback) {
+module.exports = function NIFTI (header, callback) {
     var errors = [];
-    // check if file has .gz ext
-    var newError = {
-            evidence: file.name,
-            line: null,
-            character: null,
-            reason: 'NifTi files must have .gz extention'
-    }
-    errors.push(newError);
+
     callback(errors);
 };
