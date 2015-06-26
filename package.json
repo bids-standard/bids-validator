@@ -13,7 +13,7 @@
   "author": "Squishymedia",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Squishymedia/vids-validator/issues"
+    "url": "https://github.com/Squishymedia/bids-validator/issues"
   },
   "homepage": "https://github.com/Squishymedia/bids-validator",
   "dependencies": {
