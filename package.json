@@ -1,21 +1,21 @@
 {
-  "name": "BIDS-Validator",
+  "name": "bids-validator",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Squishymedia/BIDS-Validator.git"
+    "url": "https://github.com/Squishymedia/bids-validator.git"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha tests/"
   },
-  "author": "Zachary Michael - Squishymedia",
+  "author": "Squishymedia",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Squishymedia/BIDS-Validator/issues"
+    "url": "https://github.com/Squishymedia/vids-validator/issues"
   },
-  "homepage": "https://github.com/Squishymedia/BIDS-Validator",
+  "homepage": "https://github.com/Squishymedia/bids-validator",
   "dependencies": {
     "async": "^1.2.1",
     "colors": "^1.1.0",
