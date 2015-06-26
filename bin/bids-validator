@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 process.title = 'bids-validator';
 var args = process.argv;
 
