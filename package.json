@@ -10,6 +10,9 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha tests/"
   },
+  "bin": {
+    "bids-validator": "./bin/bids-validator"
+  },
   "author": "Squishymedia",
   "license": "MIT",
   "bugs": {

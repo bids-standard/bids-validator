@@ -1,8 +1,7 @@
 var validate = require('./index.js');
 var colors = require('colors/safe');
 
-module.exports = function () {
-	var args = process.argv;
+module.exports = function (args) {
 	var dir  = args[2];
 
 	if (dir) {

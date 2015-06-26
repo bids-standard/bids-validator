@@ -1,4 +1,5 @@
 process.title = 'bids-validator';
+var args = process.argv;
 
 // import and init command line interface
-require('./cli')();
+require('./cli')(args);
