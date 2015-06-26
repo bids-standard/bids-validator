@@ -1,0 +1,4 @@
+process.title = 'bids-validator';
+
+// import and init command line interface
+require('./cli')();
