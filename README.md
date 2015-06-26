@@ -12,7 +12,7 @@ The BIDS validator works like most npm packages. You can install it by running `
 
 ### Through Command Line
 
-If you install the bids validator globally by using ```npm install -g bids-validator``` you will be able to use it as a command line tool. Once installed you should be able to run ```bids-validator /path/to/your/bids/directory``` and see any validation issues logs to the terminal.
+If you install the bids validator globally by using ```npm install -g bids-validator``` you will be able to use it as a command line tool. Once installed you should be able to run ```bids-validator /path/to/your/bids/directory``` and see any validation issues logged to the terminal.
 
 ## Development
 
