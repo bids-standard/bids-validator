@@ -4,15 +4,15 @@
 
 ### In the Browser
 
-The BIDS Validator currently works in the browser with [browserify](http://browserify.org/). You can add it to a browserify project by cloning the validator and requiring it with browserify synstax ```var validate = require('BIDS-Validator');```. It can then be used like so ```validate.BIDS(filelist, function (errors) {console.log(errors);});```
+The BIDS Validator currently works in the browser with [browserify](http://browserify.org/). You can add it to a browserify project by cloning the validator and requiring it with browserify syntax ```var validate = require('bids-validator');```. It can then be used like so ```validate.BIDS(filelist, function (errors) {console.log(errors);});```
 
 ### On the Server
 
-The BIDS validator works like most npm packages. It is not yet in the npm registry but will be soon. When it is you can install it by running ```npm install BIDS-Validator```. 
+The BIDS validator works like most npm packages. You can install it by running ```npm install bids-validator```. 
 
 ### Through Command Line
 
-Currently if you have the node js install and have the BIDS-Validator you can validate you BIDS package through command line by running ```node path/to/BIDS-Validator/index.js path/to/Bids/data/folder```. If there are any errors it should return them to the console.
+Currently if you have the node js installed and have the bids-validator you can validate you BIDS package through command line by running ```node path/to/bids-validator/index.js path/to/BIDS/data/folder```. If there are any errors it should return them to the console.
 
 ## Development
 
