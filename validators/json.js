@@ -45,7 +45,7 @@ module.exports = function (contents, callback) {
     } else {
     	// TODO figure out how to filter sidecar only files
     	var jsObj = JSON.parse(contents);
-    	jsObj = jsObj.hasOwnProperty('repetition_time');
+    	jsObj = jsObj.hasOwnProperty('RepetitionTime');
 		if(jsObj === false){
 			errors = []
 			var newError = {
