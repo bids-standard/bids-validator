@@ -10,33 +10,42 @@ var JSHINT = require('jshint').JSHINT;
  */
 module.exports = function (contents, callback) {
 
-    if (!JSHINT(contents)) {
-        var out = JSHINT.data(),
-        errors = out.errors;
-        for(var i = 0; errors.length > i; ++i){
-        	if(errors[i]){
-	        	errors[i].severity = 'error';
-	        }
-	    }
-        callback(errors);
-    } else {
-    	// TODO figure out how to filter sidecar only files
-    	var jsObj = JSON.parse(contents);
-    	jsObj = jsObj.hasOwnProperty('RepetitionTime');
-		if(jsObj === false){
-			errors = []
-			var newError = {
-                evidence: contents,
-                line: null,
-                character: null,
-                reason: 'JSON sidecar files must have key and value for repetition_time',
-                severity: 'error'
-            }
-            errors.push(newError);
-            callback(errors);
-		}else{
-	        callback(null);
-	    }
+    var errors = null;
+    var jsObj  = null;
 
+    try {
+        jsObj = JSON.parse(contents);
     }
+    catch (err) {
+        if (!JSHINT(contents)) {
+            var out = JSHINT.data();
+            errors  = out.errors;
+            for(var i = 0; errors.length > i; ++i){
+                if(errors[i]){
+                    errors[i].severity = 'error';
+                }
+            }
+        }
+    }
+    finally {
+
+        // TODO figure out how to filter sidecar only files
+        if (jsObj) {
+            jsObj = jsObj.hasOwnProperty('RepetitionTime');
+            if(jsObj === false){
+             errors = []
+             var newError = {
+                    evidence: null,
+                    line: null,
+                    character: null,
+                    reason: 'JSON sidecar files must have key and value for repetition_time',
+                    severity: 'error'
+                }
+                errors.push(newError);
+            }
+        }
+
+        callback(errors);
+    }
+
 };
