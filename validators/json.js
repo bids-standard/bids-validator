@@ -10,13 +10,31 @@ var JSHINT = require('jshint').JSHINT;
  */
 module.exports = function (contents, callback) {
 
-    var errors = null;
+// primary flow --------------------------------------------------------------------
+
+    var errors = [];
     var jsObj  = null;
 
     try {
         jsObj = JSON.parse(contents);
     }
     catch (err) {
+        jshint(contents);
+    }
+    finally {
+
+        // TODO figure out how to filter sidecar only files
+        if (jsObj) {
+            repetitionTime(jsObj);
+        }
+
+        errors = errors.length > 0 ? errors : null;
+        callback(errors);
+    }
+
+// individual checks ---------------------------------------------------------------
+
+    function jshint (contents) {
         if (!JSHINT(contents)) {
             var out = JSHINT.data();
             errors  = out.errors;
@@ -27,25 +45,19 @@ module.exports = function (contents, callback) {
             }
         }
     }
-    finally {
 
-        // TODO figure out how to filter sidecar only files
-        if (jsObj) {
-            jsObj = jsObj.hasOwnProperty('RepetitionTime');
-            if(jsObj === false){
-             errors = []
-             var newError = {
-                    evidence: null,
-                    line: null,
-                    character: null,
-                    reason: 'JSON sidecar files must have key and value for repetition_time',
-                    severity: 'error'
-                }
-                errors.push(newError);
+    function repetitionTime (sidecar) {
+        if (!sidecar.hasOwnProperty('RepetitionTime')) {
+            errors = []
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                reason: 'JSON sidecar files must have key and value for repetition_time',
+                severity: 'error'
             }
+            errors.push(newError);
         }
-
-        callback(errors);
     }
 
 };
