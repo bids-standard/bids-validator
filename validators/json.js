@@ -34,6 +34,13 @@ module.exports = function (contents, callback) {
 
 // individual checks ---------------------------------------------------------------
 
+    /**
+     * JSHint
+     *
+     * Checks known invalid JSON file
+     * content in order to produce a
+     * verbose error message.
+     */
     function jshint (contents) {
         if (!JSHINT(contents)) {
             var out = JSHINT.data();
@@ -46,6 +53,14 @@ module.exports = function (contents, callback) {
         }
     }
 
+    /**
+     * Repetition Time
+     *
+     * Checks if a sidecar/metadata file
+     * contains a RepetitionTime property.
+     */
+     // TODO - determine which files are sidecars
+     // TODO - check which level RepetitionTime should appear at
     function repetitionTime (sidecar) {
         if (!sidecar.hasOwnProperty('RepetitionTime')) {
             errors = []
