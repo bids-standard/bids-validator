@@ -33,6 +33,7 @@ module.exports = function (fileList, callback) {
  */
 function start (fileList, callback) {
     var errors = [];
+    var warnings = [];
     async.forEachOf(fileList, function (file, key, cb) {
 
         // validate NifTi
@@ -47,7 +48,8 @@ function start (fileList, callback) {
                     reason: 'NifTi files should be compressed using gzip.',
                     severity: 'warning'
                 }
-                errors.push({file: file, errors: [newError]});
+                
+                warnings.push({file: file, errors: [newError]});
             }
 
             // Psuedo-Code for validating NifTi header
@@ -91,6 +93,6 @@ function start (fileList, callback) {
         }
     
     }, function () {
-        callback(errors);
+        callback(errors, warnings);
     });
 }
