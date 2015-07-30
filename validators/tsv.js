@@ -9,8 +9,10 @@ var async  = require('async');
  * specification.
  */
 module.exports = function TSV (contents, callback) {
+
     var rows = contents.split('\n');
     var errors = [];
+    var warnings = [];
     var headers = rows[0].split('\t');
 
     // check if headers begin with numbers
@@ -25,7 +27,9 @@ module.exports = function TSV (contents, callback) {
                 reason: 'Headers may not begin with a number',
                 severity: 'error'
             }
+
             errors.push(newError);
+
         }
     }
 
@@ -61,9 +65,22 @@ module.exports = function TSV (contents, callback) {
                 errors.push(newError);
 	        }
 
+            // check if missing value is properly labeled as 'n/a'
+            if (column === "NA" || column === "na" || column === "nan") {
+                var newError = {
+                    evidence: row,
+                    line: rows.indexOf(row) + 1,
+                    character: row.indexOf('NA' || 'na' || 'nan'),
+                    reason: 'A proper way of labeling missing values is "n/a".',
+                    severity: 'warning'
+                }
+
+                warnings.push(newError);
+            }
+
 	        cb1();
         }, function () {cb();});
     }, function () {
-        callback(errors);
+        callback(errors, warnings);
     });
 };

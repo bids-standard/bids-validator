@@ -68,9 +68,12 @@ function start (fileList, callback) {
         // validate tsv
         if (file.name && file.name.indexOf('.tsv') > -1) {
          utils.readFile(file, function (contents) {
-             TSV(contents, function (errs) {
-                    if (errs) {
+             TSV(contents, function (errs, warns) {
+                    if (errs && errs.length > 0) {
                         errors.push({file: file, errors: errs})
+                    }
+                    if (warns && warns.length > 0) {
+                        warnings.push({file: file, errors: warns});
                     }
                     cb();
                 });
