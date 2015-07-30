@@ -45,11 +45,10 @@ function start (fileList, callback) {
                     evidence: file.name,
                     line: null,
                     character: null,
-                    reason: 'NifTi files should be compressed using gzip.',
-                    severity: 'warning'
-                }
+                    reason: 'NifTi files should be compressed using gzip.'              
+            }
                 
-                warnings.push({file: file, errors: [newError]});
+                error.push({file: file, errors: [newError]});
             }
 
             // Psuedo-Code for validating NifTi header
@@ -68,9 +67,12 @@ function start (fileList, callback) {
         // validate tsv
         if (file.name && file.name.indexOf('.tsv') > -1) {
          utils.readFile(file, function (contents) {
-             TSV(contents, function (errs) {
-                    if (errs) {
+             TSV(contents, function (errs, warns) {
+                    if (errs && errs.length > 0) {
                         errors.push({file: file, errors: errs})
+                    }
+                    if (warns && warns.length > 0) {
+                        warnings.push({file: file, errors: warns});
                     }
                     cb();
                 });
