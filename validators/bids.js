@@ -45,11 +45,10 @@ function start (fileList, callback) {
                     evidence: file.name,
                     line: null,
                     character: null,
-                    reason: 'NifTi files should be compressed using gzip.',
-                    severity: 'warning'
-                }
+                    reason: 'NifTi files should be compressed using gzip.'              
+            }
                 
-                warnings.push({file: file, errors: [newError]});
+                error.push({file: file, errors: [newError]});
             }
 
             // Psuedo-Code for validating NifTi header

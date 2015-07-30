@@ -24,8 +24,7 @@ module.exports = function TSV (contents, callback) {
                 evidence: header,
                 line: 1,
                 character: rows[0].indexOf(firstChar),
-                reason: 'Headers may not begin with a number',
-                severity: 'error'
+                reason: 'Headers may not begin with a number'
             }
 
             errors.push(newError);
@@ -43,8 +42,7 @@ module.exports = function TSV (contents, callback) {
                 evidence: row,
                 line: rows.indexOf(row) + 1,
                 character: null,
-                reason: 'All rows must have the same number of columns as there are headers.',
-                severity: 'error'
+                reason: 'All rows must have the same number of columns as there are headers.'
             }
             errors.push(newError);
         }
@@ -59,8 +57,7 @@ module.exports = function TSV (contents, callback) {
                     evidence: row,
                     line: rows.indexOf(row) + 1,
                     character: row.indexOf('  '),
-                    reason: 'Values may not contain adjacent spaces.',
-                    severity: 'error'
+                    reason: 'Values may not contain adjacent spaces.'
                 }
                 errors.push(newError);
 	        }
@@ -71,8 +68,7 @@ module.exports = function TSV (contents, callback) {
                     evidence: row,
                     line: rows.indexOf(row) + 1,
                     character: row.indexOf('NA' || 'na' || 'nan'),
-                    reason: 'A proper way of labeling missing values is "n/a".',
-                    severity: 'warning'
+                    reason: 'A proper way of labeling missing values is "n/a".'
                 }
 
                 warnings.push(newError);
