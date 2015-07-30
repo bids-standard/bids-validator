@@ -68,7 +68,7 @@ module.exports = function (contents, callback) {
                 evidence: null,
                 line: null,
                 character: null,
-                reason: 'JSON sidecar files must have key and value for repetition_time',
+                reason: 'JSON sidecar files must have key and value for RepetitionTime',
                 severity: 'error'
             }
             errors.push(newError);
