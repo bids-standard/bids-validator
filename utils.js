@@ -63,8 +63,14 @@ function readDir (path, callback) {
     if (fs) {
         files = getFiles(path);
         filesObj = {};
+        var str = path.substr(path.lastIndexOf('/') + 1) + '$';
+        var subpath = path.replace(new RegExp(str), '');
         for (var i = 0; i < files.length; i++) {
-            filesObj[i] = {name: files[i].substr(files[i].lastIndexOf('/') + 1), path: files[i]};
+            filesObj[i] = {
+                name: files[i].substr(files[i].lastIndexOf('/') + 1),
+                path: files[i],
+                relativePath: files[i].replace(subpath, '')
+            };
         }
         callback(filesObj);
     }
