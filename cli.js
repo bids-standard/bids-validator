@@ -7,8 +7,13 @@ module.exports = function (args) {
 	if (dir) {
 	    validate.BIDS(dir, function (errors, warnings) {
 	        console.log();
-	        logIssues(errors, 'red');
-	        logIssues(warnings, 'yellow');
+	    	if (errors === 'Invalid') {
+	    		console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
+	    	} else {
+		        logIssues(errors, 'red');
+		        logIssues(warnings, 'yellow');
+	        }
+	        console.log();
 	    });
 	}
 };
