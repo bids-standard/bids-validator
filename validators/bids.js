@@ -27,18 +27,66 @@ module.exports = function (fileList, callback) {
 /**
  * Start
  *
+ */
+function start (fileList, callback) {
+    quickTest(fileList, function (couldBeBIDS) {
+        if (couldBeBIDS) {
+            fullTest(fileList, callback);
+        } else {
+            callback('Invalid');
+        }
+    });
+}
+
+/**
+ * Quick Test
+ *
+ * A quick test to see if it could be a BIDS
+ * dataset based on structure/naming. If it
+ * could be it will trigger the full validation
+ * otherwise it will throw a callback with a
+ * generic error.
+ */
+function quickTest (fileList, callback) {
+    var couldBeBIDS = false;
+    for (var key in fileList) {
+        var file = fileList[key];
+        var path = typeof window != 'undefined' ? file.webkitRelativePath : file.relativePath;
+        if (path) {
+            path = path.split('/');
+            path = path.reverse();
+
+            if (
+                path[0].indexOf('.nii.gz') > -1 &&
+                (path[1].indexOf('anatomy') > -1 ||
+                 path[1].indexOf('functional') > -1 ||
+                 path[1].indexOf('diffusion') > -1) &&
+                (path[2].indexOf('ses') > -1 ||
+                 path[2].indexOf('sub') > -1)
+            ) {
+                couldBeBIDS = true;
+                break;
+            }
+        }
+    }
+    callback(couldBeBIDS);
+}
+
+/**
+ * Full Test
+ *
  * Takes on an array of files and starts
  * the validation process for a BIDS
  * package.
  */
-function start (fileList, callback) {
+function fullTest (fileList, callback) {
     var errors = [];
     var warnings = [];
+
     async.forEachOf(fileList, function (file, key, cb) {
 
         // validate NifTi
         if (file.name && file.name.indexOf('.nii') > -1) {
-
             // check if NifTi is gzipped
             if (file.name.indexOf('.gz') === -1) {
                 var newError = {
@@ -51,24 +99,14 @@ function start (fileList, callback) {
                 
                 errors.push({file: file, errors: [newError]});
             }
-
-            // Psuedo-Code for validating NifTi header
-            // utils.readFileHeader(file, function (header) {
-            //     NIFTI(header, function (errs) {
-            //         if (errs) {
-            //             errors.push({file: file, errors: errs});
-            //         }
-            //     });
-            // });
-
             cb();
             return;
         }
 
         // validate tsv
         if (file.name && file.name.indexOf('.tsv') > -1) {
-         utils.readFile(file, function (contents) {
-             TSV(contents, function (errs, warns) {
+            utils.readFile(file, function (contents) {
+                TSV(contents, function (errs, warns) {
                     if (errs && errs.length > 0) {
                         errors.push({file: file, errors: errs})
                     }
@@ -77,7 +115,7 @@ function start (fileList, callback) {
                     }
                     cb();
                 });
-         });
+            });
             return;
         }
 
