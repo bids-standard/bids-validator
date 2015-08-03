@@ -16,13 +16,27 @@ var NIFTI  = require('./nii');
  */
 module.exports = function (fileList, callback) {
     if (typeof fileList === 'object') {
-        quickTest(fileList, callback);
+        start(fileList, callback);
     } else if (typeof fileList === 'string') {
         utils.readDir(fileList, function (files) {
-            quickTest(files, callback);
+            start(files, callback);
         });
     }
 };
+
+/**
+ * Start
+ *
+ */
+function start (fileList, callback) {
+    quickTest(fileList, function (couldBeBIDS) {
+        if (couldBeBIDS) {
+            fullTest(fileList, callback);
+        } else {
+            callback('Invalid');
+        }
+    });
+}
 
 /**
  * Quick Test
@@ -55,21 +69,17 @@ function quickTest (fileList, callback) {
             }
         }
     }
-    if (couldBeBIDS) {
-        start(fileList, callback);
-    } else {
-        callback('Invalid');
-    }
+    callback(couldBeBIDS);
 }
 
 /**
- * Start
+ * Full Test
  *
  * Takes on an array of files and starts
  * the validation process for a BIDS
  * package.
  */
-function start (fileList, callback) {
+function fullTest (fileList, callback) {
     var errors = [];
     var warnings = [];
 
