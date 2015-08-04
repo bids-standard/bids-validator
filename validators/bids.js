@@ -54,6 +54,7 @@ function quickTest (fileList, callback) {
         var path = typeof window != 'undefined' ? file.webkitRelativePath : file.relativePath;
         if (path) {
             path = path.split('/');
+            if (path.length > 5) {couldBeBIDS = false; break;}
             path = path.reverse();
 
             if (
@@ -61,8 +62,10 @@ function quickTest (fileList, callback) {
                 (path[1].indexOf('anatomy') > -1 ||
                  path[1].indexOf('functional') > -1 ||
                  path[1].indexOf('diffusion') > -1) &&
-                (path[2].indexOf('ses') > -1 ||
-                 path[2].indexOf('sub') > -1)
+                (
+                    (path[2] && path[2].indexOf('ses') > -1) ||
+                    (path[2] && path[2].indexOf('sub') > -1)
+                )
             ) {
                 couldBeBIDS = true;
                 break;
