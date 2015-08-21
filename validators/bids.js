@@ -83,13 +83,18 @@ function quickTest (fileList, callback) {
  * package.
  */
 function fullTest (fileList, callback) {
-    var errors = [];
-    var warnings = [];
+    var errors     = [];
+    var warnings   = [];
+    var NifTiFIles = [];
+    var JSONFiles  = [];
 
+    // validate individual files
     async.forEachOf(fileList, function (file, key, cb) {
+        var path = typeof window != 'undefined' ? file.webkitRelativePath : file.relativePath;
 
         // validate NifTi
         if (file.name && file.name.indexOf('.nii') > -1) {
+            NifTiFIles.push(path);
             // check if NifTi is gzipped
             if (file.name.indexOf('.gz') === -1) {
                 var newError = {
@@ -124,6 +129,7 @@ function fullTest (fileList, callback) {
 
         // validate json
         if (file.name && file.name.indexOf('.json') > -1) {
+            JSONFiles.push(path);
             utils.readFile(file, function (contents) {
                 JSON(contents, function (errs) {
                     if (errs) {
@@ -137,6 +143,43 @@ function fullTest (fileList, callback) {
         }
     
     }, function () {
+        checkSidecars(NifTiFIles, JSONFiles);
         callback(errors, warnings);
     });
+}
+
+/**
+ * Check Sidecars
+ *
+ * Takes an array of all NifTi files and an array
+ * of all JSON files and returns errors for scans
+ * without a corresponding sidecar metadata file.
+ */
+function checkSidecars (scans, JSONFiles) {
+
+    var sidecars = [];
+
+    // remove files from the lists that are perfect
+    // matches or scan that do not require sidecars
+    for (var i = scans.length -1; i > -1; i--) {
+        var scan = scans[i];
+
+        // remove perfect matches
+        var scan = scan.replace('.nii.gz', '');
+        var sidecarIndex = JSONFiles.indexOf(scan + '.json');
+        if (sidecarIndex > -1) {
+            scans.splice(i, 1);
+            var sidecar = JSONFiles.splice(sidecarIndex, 1);
+            sidecars.push(sidecar[0]);
+        }
+
+        // remove sbref scans
+        if (scan.indexOf('sbref') > -1) {
+            scans.splice(i, 1);
+        }
+    }
+
+    console.log(scans);
+    console.log(JSONFiles);
+    console.log(sidecars);
 }
