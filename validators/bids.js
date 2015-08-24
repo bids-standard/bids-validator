@@ -157,9 +157,9 @@ var BIDS = {
 
             // validate json
             if (file.name && file.name.indexOf('.json') > -1) {
-                console.log(file);
+                var isSidecar = self.isSidecar(file);
                 utils.readFile(file, function (contents) {
-                    JSON(contents, function (errs) {
+                    JSON(contents, isSidecar, function (errs) {
                         if (errs) {
                             self.errors.push({file: file, errors: errs})
                         }
@@ -173,8 +173,28 @@ var BIDS = {
         }, function () {
             callback(self.errors, self.warnings);
         });
-    }
+    },
 
+    /**
+     * Is Sidecar
+     *
+     * Takes a file object and returns a boolean value
+     * of whether or not it is a sidecar.
+     */
+    isSidecar: function (file) {
+        return this.sidecars.indexOf(utils.relativePath(file)) > -1;
+    },
+
+    /**
+     * Reset
+     *
+     * Resets the in object data back to original values.
+     */
+    reset: function () {
+        this.errors = [];
+        this.warnings = [];
+        this.sidecars = [];
+    }
 };
 
 /**
@@ -187,6 +207,7 @@ var BIDS = {
  * arguments to the callback.
  */
 module.exports = function (dir, callback) {
+    BIDS.reset();
     utils.readDir(dir, function (files) {
         BIDS.start(files, callback);
     });
