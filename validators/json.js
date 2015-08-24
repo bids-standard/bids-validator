@@ -8,7 +8,7 @@ var JSHINT = require('jshint').JSHINT;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function (contents, callback) {
+module.exports = function (contents, isSidecar, callback) {
 
 // primary flow --------------------------------------------------------------------
 
@@ -23,8 +23,7 @@ module.exports = function (contents, callback) {
     }
     finally {
 
-        // TODO figure out how to filter sidecar only files
-        if (jsObj) {
+        if (isSidecar) {
             repetitionTime(jsObj);
         }
 
