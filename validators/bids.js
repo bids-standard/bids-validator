@@ -116,8 +116,6 @@ var BIDS = {
      */
     fullTest: function (fileList, callback) {
         var self = this;
-        var NifTiFIles = [];
-        var JSONFiles  = [];
 
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
@@ -125,7 +123,6 @@ var BIDS = {
 
             // validate NifTi
             if (file.name && file.name.indexOf('.nii') > -1) {
-                NifTiFIles.push(path);
                 // check if NifTi is gzipped
                 if (file.name.indexOf('.gz') === -1) {
                     var newError = {
@@ -160,7 +157,6 @@ var BIDS = {
 
             // validate json
             if (file.name && file.name.indexOf('.json') > -1) {
-                JSONFiles.push(path);
                 utils.readFile(file, function (contents) {
                     JSON(contents, function (errs) {
                         if (errs) {
