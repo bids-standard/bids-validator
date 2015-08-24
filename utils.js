@@ -13,7 +13,8 @@ if (typeof window === 'undefined') {
 var fileUtils = {
 	readFile: readFile,
     readDir: readDir,
-	generateTree: generateTree
+	generateTree: generateTree,
+    relativePath: relativePath
 };
 
 // implementations ----------------------------------------------------------------
@@ -53,18 +54,19 @@ function readFile (file, callback) {
 /**
  * Read Directory
  *
- * Takes a path to a directory and returns an
- * array containing all of the files to a callback.
+ * In node it takes a path to a directory and returns
+ * an array containing all of the files to a callback.
  * Used to input and organize files in node, in a
- * similar structure to how chrome reads a
- * directory.
+ * similar structure to how chrome reads a directory.
+ * In the browser it simply passes the file dir
+ * object to the callback.
  */
-function readDir (path, callback) {
+function readDir (dir, callback) {
     if (fs) {
-        files = getFiles(path);
+        files = getFiles(dir);
         filesObj = {};
-        var str = path.substr(path.lastIndexOf('/') + 1) + '$';
-        var subpath = path.replace(new RegExp(str), '');
+        var str = dir.substr(dir.lastIndexOf('/') + 1) + '$';
+        var subpath = dir.replace(new RegExp(str), '');
         for (var i = 0; i < files.length; i++) {
             filesObj[i] = {
                 name: files[i].substr(files[i].lastIndexOf('/') + 1),
@@ -73,6 +75,8 @@ function readDir (path, callback) {
             };
         }
         callback(filesObj);
+    } else {
+        callback(dir);
     }
 }
 
@@ -140,6 +144,16 @@ function generateTree (files) {
 
     // return tree
     return dirTree;
+}
+
+/**
+ * Relative Path
+ *
+ * Takes a file and returns the correct relative path property
+ * base on the environment.
+ */
+function relativePath (file) {
+    return typeof window != 'undefined' ? file.webkitRelativePath : file.relativePath;
 }
 
 module.exports = fileUtils;
