@@ -5,7 +5,7 @@ var TSV    = require('./tsv');
 var JSON   = require('./json');
 var NIFTI  = require('./nii');
 
-var myObj = {
+var BIDS = {
 
     errors:   [],
     warnings: [],
@@ -19,7 +19,9 @@ var myObj = {
         var self = this;
         self.quickTest(fileList, function (couldBeBIDS) {
             if (couldBeBIDS) {
-                self.fullTest(fileList, callback);
+                self.determineSidecars(fileList, function () {
+                    self.fullTest(fileList, callback);
+                });
             } else {
                 callback('Invalid');
             }
@@ -61,6 +63,48 @@ var myObj = {
             }
         }
         callback(couldBeBIDS);
+    },
+
+    /**
+     * Determine sidecars
+     *
+     * Compares JSON files and scans to determine which
+     * JSON files are metadata sidecars and which scans
+     * are missing a sidecar.
+     */
+    determineSidecars: function (fileList, callback) {
+        var self      = this;
+        var scans     = [];
+        var JSONFiles = [];
+
+        // collect nifti and json files
+        for (var key in fileList) {
+            var file = fileList[key];
+            var path = typeof window != 'undefined' ? file.webkitRelativePath : file.relativePath;
+            if (file.name && file.name.indexOf('.nii.gz') > -1) {scans.push(path);}
+            if (file.name && file.name.indexOf('.json') > -1)   {JSONFiles.push(path);}
+        }
+
+        // compare scans against json files
+        for (var i = scans.length -1; i > -1; i--) {
+            var scan = scans[i];
+
+            // remove perfect matches
+            var scan = scan.replace('.nii.gz', '');
+            var sidecarIndex = JSONFiles.indexOf(scan + '.json');
+            if (sidecarIndex > -1) {
+                scans.splice(i, 1);
+                var sidecar = JSONFiles.splice(sidecarIndex, 1);
+                self.sidecars.push(sidecar[0]);
+            }
+
+            // remove sbref scans
+            if (scan.indexOf('sbref') > -1) {
+                scans.splice(i, 1);
+            }
+        }
+
+        callback();
     },
 
     /**
@@ -130,46 +174,10 @@ var myObj = {
             }
         
         }, function () {
-            self.checkSidecars(NifTiFIles, JSONFiles);
             callback(self.errors, self.warnings);
         });
-    },
-
-    /**
-     * Check Sidecars
-     *
-     * Takes an array of all NifTi files and an array
-     * of all JSON files and returns errors for scans
-     * without a corresponding sidecar metadata file.
-     */
-    checkSidecars: function (scans, JSONFiles, callback) {
-
-        var sidecars = [];
-
-        // remove files from the lists that are perfect
-        // matches or scan that do not require sidecars
-        for (var i = scans.length -1; i > -1; i--) {
-            var scan = scans[i];
-
-            // remove perfect matches
-            var scan = scan.replace('.nii.gz', '');
-            var sidecarIndex = JSONFiles.indexOf(scan + '.json');
-            if (sidecarIndex > -1) {
-                scans.splice(i, 1);
-                var sidecar = JSONFiles.splice(sidecarIndex, 1);
-                sidecars.push(sidecar[0]);
-            }
-
-            // remove sbref scans
-            if (scan.indexOf('sbref') > -1) {
-                scans.splice(i, 1);
-            }
-        }
-
-        console.log(scans);
-        console.log(JSONFiles);
-        console.log(sidecars);
     }
+
 };
 
 /**
@@ -183,10 +191,10 @@ var myObj = {
  */
 module.exports = function (fileList, callback) {
     if (typeof fileList === 'object') {
-        myObj.start(fileList, callback);
+        BIDS.start(fileList, callback);
     } else if (typeof fileList === 'string') {
         utils.readDir(fileList, function (files) {
-            myObj.start(files, callback);
+            BIDS.start(files, callback);
         });
     }
 };
