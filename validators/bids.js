@@ -98,8 +98,8 @@ var BIDS = {
                 self.sidecars.push(sidecar[0]);
             }
 
-            // remove sbref scans
-            if (scan.indexOf('sbref') > -1) {
+            // remove sbref scans & metadata
+            if (scan.indexOf('sbref') > -1 || scan == 'dataset_description.json') {
                 scans.splice(i, 1);
             }
         }
