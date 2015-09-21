@@ -6,7 +6,7 @@ var utils  = require('../utils');
 var TSV    = require('./tsv');
 var JSON   = require('./json');
 var NIFTI  = require('./nii');
-var BIDS   = require('./bids');
+var BIDS   = require('./bids').start;
 
 // public api --------------------------------------------------------
 
