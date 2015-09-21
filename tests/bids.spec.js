@@ -1,5 +1,5 @@
-var assert   = require('assert');
-var validate = require('../index');
+var assert = require('assert');
+var BIDS   = require('../validators/bids');
 
 describe('BIDS', function(){
 
@@ -15,7 +15,7 @@ describe('BIDS', function(){
             }
         };
 
-        validate.BIDS(fileList, function (errors) {
+        BIDS.fullTest(fileList, function (errors) {
             assert(errors && errors.length === 1);
         });
     });

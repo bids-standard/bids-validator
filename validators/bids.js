@@ -15,16 +15,19 @@ var BIDS = {
      * Start
      *
      */
-    start: function (fileList, callback) {
-        var self = this;
-        self.quickTest(fileList, function (couldBeBIDS) {
-            if (couldBeBIDS) {
-                self.determineSidecars(fileList, function () {
-                    self.fullTest(fileList, callback);
-                });
-            } else {
-                callback('Invalid');
-            }
+    start: function (dir, callback) {
+        BIDS.reset();
+        var self = BIDS;
+        utils.readDir(dir, function (files) {
+            self.quickTest(files, function (couldBeBIDS) {
+                if (couldBeBIDS) {
+                    self.determineSidecars(files, function () {
+                        self.fullTest(files, callback);
+                    });
+                } else {
+                    callback('Invalid');
+                }
+            });
         });
     },
 
@@ -197,6 +200,8 @@ var BIDS = {
     }
 };
 
+module.exports = BIDS;
+
 /**
  * BIDS
  *
@@ -206,9 +211,9 @@ var BIDS = {
  * returns the errors and warnings as 
  * arguments to the callback.
  */
-module.exports = function (dir, callback) {
-    BIDS.reset();
-    utils.readDir(dir, function (files) {
-        BIDS.start(files, callback);
-    });
-};
+// module.exports = function (dir, callback) {
+//     BIDS.reset();
+//     utils.readDir(dir, function (files) {
+//         BIDS.start(files, callback);
+//     });
+// };
