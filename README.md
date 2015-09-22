@@ -1,3 +1,5 @@
+![](https://circleci.com/gh/Squishymedia/bids-validator.svg?style=shield&circle-token=:circle-token)
+
 # BIDS-Validator
 
 ## Use
