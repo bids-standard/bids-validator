@@ -1,20 +1,21 @@
 var validate = require('./index.js');
 var colors = require('colors/safe');
+var fs = require('fs')
 
-module.exports = function (args) {
-	var dir  = args[2];
-
-	if (dir) {
+module.exports = function (dir) {
+	if (fs.existsSync(dir)) {
 	    validate.BIDS(dir, function (errors, warnings) {
 	        console.log();
 	    	if (errors === 'Invalid') {
-	    		console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
+	    		console.log("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/".red);
 	    	} else {
 		        logIssues(errors, 'red');
 		        logIssues(warnings, 'yellow');
 	        }
 	        console.log();
 	    });
+	} else {
+		console.log(colors.red(dir + " does not exits"))
 	}
 };
 

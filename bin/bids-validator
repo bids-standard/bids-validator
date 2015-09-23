@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 
 process.title = 'bids-validator';
-var args = process.argv;
+
+var argv = require('yargs')
+    .usage('Usage: $0 <dataset_directory>')
+    .demand(1, 1)
+    .epilogue("This tool checks if a dataset in a given directory is \
+compatible with the Brain Imaging Data Structure specification. To learn \
+more about Brain Imaging Data Structure visit http://bids.neuroimaging.io")
+    .argv;
 
 // import and init command line interface
-require('../cli')(args);
+require('../cli')(argv._[0]);
