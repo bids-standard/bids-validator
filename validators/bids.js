@@ -143,7 +143,8 @@ var BIDS = {
             // validate tsv
             if (file.name && file.name.endsWith('.tsv')) {
                 utils.readFile(file, function (contents) {
-                    TSV(contents, function (errs, warns) {
+                    isEvents = file.name.endsWith('_events.tsv')
+                    TSV(contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
                             self.errors.push({file: file, errors: errs})
                         }
@@ -159,8 +160,9 @@ var BIDS = {
             // validate json
             if (file.name && file.name.endsWith('.json')) {
                 var isSidecar = self.isSidecar(file);
+                var isBOLDSidecar = (isSidecar && file.name.endsWith('_bold.json'))
                 utils.readFile(file, function (contents) {
-                    JSON(contents, isSidecar, function (errs) {
+                    JSON(contents, isBOLDSidecar, function (errs) {
                         if (errs) {
                             self.errors.push({file: file, errors: errs})
                         }

@@ -54,7 +54,6 @@ var suite = describe('BIDS example datasets ', function() {
         datasetDirectories.forEach(function testDataset(path){
             suite.addTest(new Test(path, function (isdone){
                 validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1/" + path, function (errors, warnings) {
-                    console.log("booo");
                     assert.deepEqual(errors, []);
                     assert.deepEqual(warnings, []);
                     isdone();

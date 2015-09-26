@@ -8,7 +8,7 @@ var async  = require('async');
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function TSV (contents, callback) {
+module.exports = function TSV (contents, isEvents, callback) {
 
     var rows = contents.split('\n');
     var errors = [];
@@ -16,24 +16,37 @@ module.exports = function TSV (contents, callback) {
     var headers = rows[0].split('\t');
 
     // check if headers begin with numbers
-    for (var i = 0; i < headers.length; i++) {
-        var header = headers[i];
-        var firstChar = header[0];
-        if (!isNaN(parseInt(firstChar))) {
+    if (isEvents) {
+        if (headers[0] !== "onset"){
             var newError = {
-                evidence: header,
+                evidence: headers,
                 line: 1,
-                character: rows[0].indexOf(firstChar),
-                reason: 'Headers may not begin with a number'
+                character: rows[0].indexOf(headers[0]),
+                reason: "First column of the events file must be named 'onset'"
             }
 
             errors.push(newError);
+        }
+        if (headers[1] !== "duration"){
+            var newError = {
+                evidence: headers,
+                line: 1,
+                character: rows[0].indexOf(headers[1]),
+                reason: "Second column of the events file must be named 'duration'"
+            }
 
+            errors.push(newError);
         }
     }
 
     // iterate through rows
     async.each(rows, function (row, cb) {
+
+        //skip empty rows
+        if (!row || /^\s*$/.test(row)){
+            cb();
+            return
+        }
         var columnsInRow = row.split('\t');
 
         // check for different length rows
