@@ -23,12 +23,12 @@
     "async": "^1.2.1",
     "colors": "^1.1.0",
     "jshint": "^2.8.0",
-    "yargs": "^3.25.0",
+    "yargs": "^3.25.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5",
     "sync-request":"",
     "adm-zip":"",
     "chai":""
-  },
-  "devDependencies": {
-    "mocha": "^2.2.5"
   }
 }
