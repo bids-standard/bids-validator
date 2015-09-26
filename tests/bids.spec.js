@@ -35,10 +35,10 @@ describe('BIDS', function(){
     });
 
 });
-var suite = describe('BIDS examples - ', function() {
+var suite = describe('BIDS example datasets ', function() {
     this.timeout(100000);
 
-    before(function() {
+    before(function(done) {
         if (!fs.existsSync("tests/data")) {
             console.log('downloading test data')
             response = request("GET", "http://github.com/INCF/BIDS-examples/archive/1.0.0-rc1.zip")
@@ -52,16 +52,20 @@ var suite = describe('BIDS examples - ', function() {
         datasetDirectories = getDirectories("tests/data/BIDS-examples-1.0.0-rc1/")
 
         datasetDirectories.forEach(function testDataset(path){
-            suite.addTest(new Test(path, function (){
+            suite.addTest(new Test(path, function (isdone){
                 validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1/" + path, function (errors, warnings) {
-                    assert.equal(errors, []);
-                    assert.equal(warnings, []);
+                    console.log("booo");
+                    assert.deepEqual(errors, []);
+                    assert.deepEqual(warnings, []);
+                    isdone();
                 });
             }));
         });
+        done();
     });
 
-    return it('should be ok', function() {
-        return 0;
+    // we need to have at least one non-dynamic test
+    return it('dummy test', function() {
+        require('assert').ok(true);
     });
 });
