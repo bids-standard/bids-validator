@@ -23,7 +23,9 @@
     "async": "^1.2.1",
     "colors": "^1.1.0",
     "jshint": "^2.8.0",
-    "yargs": "^3.25.0"
+    "yargs": "^3.25.0",
+    "sync-request":"",
+    "adm-zip":""
   },
   "devDependencies": {
     "mocha": "^2.2.5"
