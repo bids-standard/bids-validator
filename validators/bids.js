@@ -115,6 +115,22 @@ var BIDS = {
     },
 
     /**
+     * Check if the file has appropriate name for a top level file
+     */
+    isTopLevel: function(path) {
+        fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv"];
+        if (fixedTopLevelNames.indexOf(path) != -1) {
+            return true;
+        } else {
+            //TODO: check for top level sidecars
+            return false;
+        }
+
+
+
+    },
+
+    /**
      * Full Test
      *
      * Takes on an array of files and starts
@@ -127,6 +143,19 @@ var BIDS = {
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
+            console.log(path)
+            if (!self.isTopLevel(path)) {
+                var newWarning = {
+                    evidence: file.name,
+                    line: null,
+                    character: null,
+                    reason: "This file is not part of the BIDS spec, make sure it isn't included in the dataset by accident",
+                    severity: 'warning'
+                }
+                self.warnings.push({path: path, errors: [newWarning]});
+                cb();
+                return;
+            }
 
             // validate NifTi
             if (file.name && file.name.endsWith('.nii')) {
@@ -137,7 +166,7 @@ var BIDS = {
                     reason: 'NifTi files should be compressed using gzip.',
                     severity: 'error'
                 }
-                self.errors.push({file: file, errors: [newError]});
+                self.errors.push({path: path, errors: [newError]});
             }
 
             // validate tsv
@@ -146,10 +175,10 @@ var BIDS = {
                     isEvents = file.name.endsWith('_events.tsv')
                     TSV(contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
-                            self.errors.push({file: file, errors: errs})
+                            self.errors.push({path: path, errors: errs})
                         }
                         if (warns && warns.length > 0) {
-                            self.warnings.push({file: file, errors: warns});
+                            self.warnings.push({path: path, errors: warns});
                         }
                         cb();
                     });
@@ -164,7 +193,7 @@ var BIDS = {
                 utils.readFile(file, function (contents) {
                     JSON(contents, isBOLDSidecar, function (errs) {
                         if (errs) {
-                            self.errors.push({file: file, errors: errs})
+                            self.errors.push({path: path, errors: errs})
                         }
                         cb();
                     });
