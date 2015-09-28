@@ -1,6 +1,6 @@
 {
   "name": "bids-validator",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "description": "",
   "main": "index.js",
   "repository": {
@@ -27,8 +27,8 @@
   },
   "devDependencies": {
     "mocha": "^2.2.5",
-    "sync-request":"",
-    "adm-zip":"",
-    "chai":""
+    "sync-request": "",
+    "adm-zip": "",
+    "chai": ""
   }
 }
