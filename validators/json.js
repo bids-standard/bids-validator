@@ -1,5 +1,6 @@
 var JSHINT = require('jshint').JSHINT;
 
+
 /**
  * JSON
  *
@@ -8,7 +9,7 @@ var JSHINT = require('jshint').JSHINT;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function (contents, isSidecar, callback) {
+module.exports = function (contents, isBOLDSidecar, callback) {
 
 // primary flow --------------------------------------------------------------------
 
@@ -23,7 +24,7 @@ module.exports = function (contents, isSidecar, callback) {
     }
     finally {
 
-        if (isSidecar) {
+        if (isBOLDSidecar) {
             repetitionTime(jsObj);
         }
 

@@ -5,6 +5,10 @@ var TSV    = require('./tsv');
 var JSON   = require('./json');
 var NIFTI  = require('./nii');
 
+String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
+
 var BIDS = {
 
     errors:   [],
@@ -51,13 +55,13 @@ var BIDS = {
                 path = path.reverse();
 
                 if (
-                    path[0].indexOf('.nii.gz') > -1 &&
-                    (path[1].indexOf('anatomy') > -1 ||
-                     path[1].indexOf('functional') > -1 ||
-                     path[1].indexOf('diffusion') > -1) &&
+                    path[0].endsWith('.nii.gz') &&
+                    (path[1] == 'anat' ||
+                    path[1] == 'func' ||
+                    path[1] == 'dwi') &&
                     (
-                        (path[2] && path[2].indexOf('ses') > -1) ||
-                        (path[2] && path[2].indexOf('sub') > -1)
+                        (path[2] && path[2].indexOf('ses-') == 0) ||
+                        (path[2] && path[2].indexOf('sub-') == 0)
                     )
                 ) {
                     couldBeBIDS = true;
@@ -84,8 +88,8 @@ var BIDS = {
         for (var key in fileList) {
             var file = fileList[key];
             var path = utils.relativePath(file);
-            if (file.name && file.name.indexOf('.nii.gz') > -1) {scans.push(path);}
-            if (file.name && file.name.indexOf('.json') > -1)   {JSONFiles.push(path);}
+            if (file.name && file.name.endsWith('.nii.gz')) {scans.push(path);}
+            if (file.name && file.name.endsWith('.json'))   {JSONFiles.push(path);}
         }
 
         // compare scans against json files
@@ -125,27 +129,22 @@ var BIDS = {
             var path = utils.relativePath(file);
 
             // validate NifTi
-            if (file.name && file.name.indexOf('.nii') > -1) {
-                // check if NifTi is gzipped
-                if (file.name.indexOf('.gz') === -1) {
-                    var newError = {
-                        evidence: file.name,
-                        line: null,
-                        character: null,
-                        reason: 'NifTi files should be compressed using gzip.',
-                        severity: 'error'
-                    }
-                    
-                    self.errors.push({file: file, errors: [newError]});
+            if (file.name && file.name.endsWith('.nii')) {
+                var newError = {
+                    evidence: file.name,
+                    line: null,
+                    character: null,
+                    reason: 'NifTi files should be compressed using gzip.',
+                    severity: 'error'
                 }
-                cb();
-                return;
+                self.errors.push({file: file, errors: [newError]});
             }
 
             // validate tsv
-            if (file.name && file.name.indexOf('.tsv') > -1) {
+            if (file.name && file.name.endsWith('.tsv')) {
                 utils.readFile(file, function (contents) {
-                    TSV(contents, function (errs, warns) {
+                    isEvents = file.name.endsWith('_events.tsv')
+                    TSV(contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
                             self.errors.push({file: file, errors: errs})
                         }
@@ -159,10 +158,11 @@ var BIDS = {
             }
 
             // validate json
-            if (file.name && file.name.indexOf('.json') > -1) {
+            if (file.name && file.name.endsWith('.json')) {
                 var isSidecar = self.isSidecar(file);
+                var isBOLDSidecar = (isSidecar && file.name.endsWith('_bold.json'))
                 utils.readFile(file, function (contents) {
-                    JSON(contents, isSidecar, function (errs) {
+                    JSON(contents, isBOLDSidecar, function (errs) {
                         if (errs) {
                             self.errors.push({file: file, errors: errs})
                         }

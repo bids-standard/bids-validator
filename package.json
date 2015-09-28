@@ -26,6 +26,9 @@
     "yargs": "^3.25.0"
   },
   "devDependencies": {
-    "mocha": "^2.2.5"
+    "mocha": "^2.2.5",
+    "sync-request":"",
+    "adm-zip":"",
+    "chai":""
   }
 }
