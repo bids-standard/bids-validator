@@ -134,6 +134,24 @@ var BIDS = {
     },
 
     /**
+     * Check if the file has appropriate name for a session level
+     */
+    isSessionLevel: function(path) {
+        var scansRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?_scans.tsv$');
+        var match = scansRe.exec(path);
+
+        // we need to do this because JS does not support conditional groups
+        if (match){
+            if ((match[2] && match[3]) || !match[2]) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
      * Check if the file has a name appropriate for an anatomical scan
      */
     isAnat: function(path) {
@@ -189,7 +207,7 @@ var BIDS = {
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
-            if (!(self.isTopLevel(path) || self.isAnat(path) || self.isFunc(path))) {
+            if (!(self.isTopLevel(path) || self.isSessionLevel(path) || self.isAnat(path) || self.isFunc(path))) {
                 var newWarning = {
                     evidence: file.name,
                     line: null,

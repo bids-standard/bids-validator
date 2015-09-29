@@ -187,3 +187,34 @@ var suiteTop = describe('BIDS.isTopLevel', function(){
         require('assert').ok(true);
     });
 });
+
+var suiteSession = describe('BIDS.isSessionLevel', function(){
+    before(function(done) {
+        var goodFilenames = ["/sub-12/sub-12_scans.tsv",
+            "/sub-12/ses-pre/sub-12_ses-pre_scans.tsv",
+        ];
+
+        goodFilenames.forEach(function (path) {
+            suiteSession.addTest(new Test("isSessionLevel('" + path + "') === true", function (isdone){
+                assert.equal(BIDS.isSessionLevel(path), true);
+                isdone();
+            }));
+        });
+
+        var badFilenames = ["/sub-12/sub-12.tsv",
+            "/sub-12/ses-pre/sub-12_ses-pre_scan.tsv"];
+
+        badFilenames.forEach(function (path) {
+            suiteSession.addTest(new Test("isSessionLevel('" + path + "') === false", function (isdone){
+                assert.equal(BIDS.isSessionLevel(path), false);
+                isdone();
+            }));
+        });
+        done();
+    });
+
+    // we need to have at least one non-dynamic test
+    return it('dummy test', function() {
+        require('assert').ok(true);
+    });
+});
