@@ -7,11 +7,12 @@ module.exports = function (dir) {
 	    validate.BIDS(dir, function (errors, warnings) {
 	    	if (errors === 'Invalid') {
 	    		console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
-	    	} else {
+	    	} else if (errors.length > 1 || warnings.length > 1) {
 		        logIssues(errors, 'red');
 		        logIssues(warnings, 'yellow');
-	        }
-	        console.log(colors.green("This dataset appears to be BIDS compatible."));
+	        } else {
+				console.log(colors.green("This dataset appears to be BIDS compatible."));
+			}
 	    });
 	} else {
 		console.log(colors.red(dir + " does not exits"))
