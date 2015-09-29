@@ -154,6 +154,26 @@ var BIDS = {
     },
 
     /**
+     * Check if the file has a name appropriate for a functional scan
+     */
+    isFunc: function(path) {
+        var funcRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?func' +
+            '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
+            + '(?:_bold.nii.gz|_bold.json|_events.tsv)$');
+        var match = funcRe.exec(path);
+
+        // we need to do this because JS does not support conditional groups
+        if (match){
+            if ((match[2] && match[3]) || !match[2]) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
      * Full Test
      *
      * Takes on an array of files and starts
@@ -166,8 +186,7 @@ var BIDS = {
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
-            console.log(path)
-            if (!(self.isTopLevel(path) | self.isAnat(path))) {
+            if (!(self.isTopLevel(path) || self.isAnat(path) || self.isFunc(path))) {
                 var newWarning = {
                     evidence: file.name,
                     line: null,

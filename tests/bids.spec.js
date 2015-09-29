@@ -108,3 +108,44 @@ var suiteAnat = describe('BIDS.isAnat', function(){
         require('assert').ok(true);
     });
 });
+
+
+var suiteFunc = describe('BIDS.isFunc', function(){
+    before(function(done) {
+        var goodFilenames = ["/sub-15/func/sub-15_task-0back_bold.nii.gz",
+            "/sub-15/ses-12/func/sub-15_ses-12_task-0back_bold.nii.gz",
+            "/sub-16/func/sub-16_task-0back_bold.json",
+            "/sub-16/func/sub-16_task-0back_run-01_bold.nii.gz",
+            "/sub-16/func/sub-16_task-0back_acq-highres_bold.nii.gz",
+            "/sub-16/func/sub-16_task-0back_rec-mc_bold.nii.gz",
+        ];
+
+        goodFilenames.forEach(function (path) {
+            suiteFunc.addTest(new Test("isFunc('" + path + "') === true", function (isdone){
+                assert.equal(BIDS.isFunc(path), true);
+                isdone();
+            }));
+        });
+
+        var badFilenames = ["/sub-1/func/sub-15_inplaneT2.nii.gz",
+            "/sub-15/ses-12/func/sub-15_inplaneT2.nii.gz",
+            "/sub-16/func/sub-16_T1.nii.gz",
+            "blaaa.nii.gz",
+            "/sub-16/func/sub-16_run-second_T1w.nii.gz",
+            "/sub-16/func/sub-16_task-0-back_rec-mc_bold.nii.gz",
+            "/sub-16/func/sub-16_run-01_rec-mc_T1w.nii.gz",];
+
+        badFilenames.forEach(function (path) {
+            suiteFunc.addTest(new Test("isFunc('" + path + "') === false", function (isdone){
+                assert.equal(BIDS.isFunc(path), false);
+                isdone();
+            }));
+        });
+        done();
+    });
+
+    // we need to have at least one non-dynamic test
+    return it('dummy test', function() {
+        require('assert').ok(true);
+    });
+});
