@@ -7,7 +7,7 @@ module.exports = function (dir) {
 	    validate.BIDS(dir, function (errors, warnings) {
 	        console.log();
 	    	if (errors === 'Invalid') {
-	    		console.log("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/".red);
+	    		console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
 	    	} else {
 		        logIssues(errors, 'red');
 		        logIssues(warnings, 'yellow');
