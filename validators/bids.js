@@ -267,7 +267,8 @@ var BIDS = {
                     evidence: file.name,
                     line: null,
                     character: null,
-                    reason: "This file is not part of the BIDS spec, make sure it isn't included in the dataset by accident",
+                    reason: "This file is not part of the BIDS specification, make sure it isn't included in the " +
+                    "dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder.",
                     severity: 'warning'
                 }
                 self.warnings.push({path: path, errors: [newWarning]});
