@@ -149,3 +149,41 @@ var suiteFunc = describe('BIDS.isFunc', function(){
         require('assert').ok(true);
     });
 });
+
+
+var suiteTop = describe('BIDS.isTopLevel', function(){
+    before(function(done) {
+        var goodFilenames = ["/README",
+            "/CHANGES",
+            "/dataset_description.json",
+            "/ses-pre_task-rest_bold.json",
+            "/dwi.bval",
+            "/dwi.bvec"
+        ];
+
+        goodFilenames.forEach(function (path) {
+            suiteTop.addTest(new Test("isTopLevel('" + path + "') === true", function (isdone){
+                assert.equal(BIDS.isTopLevel(path), true);
+                isdone();
+            }));
+        });
+
+        var badFilenames = ["/readme.txt",
+            "/changelog",
+            "/dataset_description.yml",
+            "/ses.json"];
+
+        badFilenames.forEach(function (path) {
+            suiteTop.addTest(new Test("isTopLevel('" + path + "') === false", function (isdone){
+                assert.equal(BIDS.isTopLevel(path), false);
+                isdone();
+            }));
+        });
+        done();
+    });
+
+    // we need to have at least one non-dynamic test
+    return it('dummy test', function() {
+        require('assert').ok(true);
+    });
+});

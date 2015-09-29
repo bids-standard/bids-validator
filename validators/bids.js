@@ -120,10 +120,13 @@ var BIDS = {
     isTopLevel: function(path) {
         fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv"];
 
-        var funcTopRe = RegExp('^\\/task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
+        var funcTopRe = RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
             + '(_bold.json|_events.tsv)$');
-        var match = funcTopRe.exec(path);
-        if (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path)) {
+
+        var dwiTopRe = RegExp('^\\/(?:ses-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
+            + 'dwi.(?:json|bval|bvec)$');
+
+        if (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path)) {
             return true;
         } else {
             return false;
