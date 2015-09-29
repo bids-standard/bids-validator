@@ -209,7 +209,7 @@ var BIDS = {
     /**
      * Check if the file has a name appropriate for a fieldmap scan
      */
-    isFielMap: function(path) {
+    isFieldMap: function(path) {
         var suffixes = ["phasediff", "phase1", "phase2", "magnitude1", "magnitude2", "fieldmap", "epi"];
         var anatRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
@@ -263,7 +263,7 @@ var BIDS = {
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
             if (!(self.isTopLevel(path) || self.isSessionLevel(path) || self.isSubjectLevel(path) || self.isAnat(path)
-                || self.isDWI(path) || self.isFunc(path) || self.isFielMap(path))) {
+                || self.isDWI(path) || self.isFunc(path) || self.isFieldMap(path))) {
                 var newWarning = {
                     evidence: file.name,
                     line: null,
