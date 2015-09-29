@@ -21,11 +21,11 @@ describe('BIDS', function(){
         var fileList = {
             '0': {
                 name: 'sub-15_inplaneT2.nii.gz',
-                path: '/sub-15/anat/sub-15_inplaneT2.nii.gz'
+                relativePath: '/sub-15/anat/sub-15_inplaneT2.nii.gz'
             },
             '1': {
                 name: 'sub-15_inplaneT2.nii',
-                path: '/sub-15/anat/sub-15_inplaneT2.nii'
+                relativePath: '/sub-15/anat/sub-15_inplaneT2.nii'
             }
         };
 
@@ -64,8 +64,12 @@ var suite = describe('BIDS example datasets ', function() {
     });
 
     // we need to have at least one non-dynamic test
-    return it('dummy test', function() {
-        require('assert').ok(true);
+    return it('validates path without trailing backslash', function(isdone) {
+        validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u2/ds001", function (errors, warnings) {
+            assert.deepEqual(errors, []);
+            assert.deepEqual(warnings, []);
+            isdone();
+        });
     });
 });
 

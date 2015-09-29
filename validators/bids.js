@@ -258,9 +258,12 @@ var BIDS = {
     fullTest: function (fileList, callback) {
         var self = this;
 
+
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
+            console.log(file)
             var path = utils.relativePath(file);
+            console.log(path)
             if (!(self.isTopLevel(path) || self.isSessionLevel(path) || self.isSubjectLevel(path) || self.isAnat(path)
                 || self.isDWI(path) || self.isFunc(path) || self.isFielMap(path))) {
                 var newWarning = {
