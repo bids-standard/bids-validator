@@ -5,14 +5,14 @@ var fs = require('fs')
 module.exports = function (dir) {
 	if (fs.existsSync(dir)) {
 	    validate.BIDS(dir, function (errors, warnings) {
-	        console.log();
 	    	if (errors === 'Invalid') {
-	    		console.log("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/".red);
-	    	} else {
+	    		console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
+	    	} else if (errors.length > 1 || warnings.length > 1) {
 		        logIssues(errors, 'red');
 		        logIssues(warnings, 'yellow');
-	        }
-	        console.log();
+	        } else {
+				console.log(colors.green("This dataset appears to be BIDS compatible."));
+			}
 	    });
 	} else {
 		console.log(colors.red(dir + " does not exits"))
@@ -21,14 +21,20 @@ module.exports = function (dir) {
 
 function logIssues (issues, color) {
 	for (var i = 0; i < issues.length; i++) {
-    	console.log('\t' + colors[color](issues[i].file.name));
+    	console.log('\t' + colors[color](issues[i].path));
     	for (var j = 0; j < issues[i].errors.length; j++) {
     		var error = issues[i].errors[j];
     		if (!error) {continue;}
     		console.log('\t' + error.reason);
-    		console.log('\t@ line: ' + error.line + ' character: ' + error.character);
-    		console.log('\t' + error.evidence);
-    		console.log('\t' + error.severity);
+			if (error.line) {
+				var msg = '\t@ line: ' + error.line
+				if (error.character) {
+					msg += ' character: ' + error.character
+				}
+				console.log(msg)
+			}
+    		console.log('\tEvidence: ' + error.evidence);
+    		console.log('\tSeverity: ' + error.severity);
     		console.log();
     	}
     }

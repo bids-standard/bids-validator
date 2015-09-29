@@ -153,7 +153,14 @@ function generateTree (files) {
  * base on the environment.
  */
 function relativePath (file) {
-    return typeof window != 'undefined' ? file.webkitRelativePath : file.relativePath;
+    var relPath = (typeof window != 'undefined' ? file.webkitRelativePath : file.relativePath);
+
+    // This hack uniforms relative paths for command line calls to 'BIDS-examples/ds001/' and 'BIDS-examples/ds001'
+    if (relPath[0] !== '/') {
+        var pathParts = relPath.split('/');
+        relPath = '/' + pathParts.slice(1).join('/')
+    }
+    return relPath
 }
 
 module.exports = fileUtils;
