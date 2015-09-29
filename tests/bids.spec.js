@@ -41,7 +41,7 @@ var suite = describe('BIDS example datasets ', function() {
     before(function(done) {
         if (!fs.existsSync("tests/data")) {
             console.log('downloading test data')
-            response = request("GET", "http://github.com/INCF/BIDS-examples/archive/1.0.0-rc1u1.zip")
+            response = request("GET", "http://github.com/INCF/BIDS-examples/archive/1.0.0-rc1u2.zip")
             fs.mkdirSync("tests/data")
             fs.writeFileSync("tests/data/examples.zip", response.body)
             var zip = new AdmZip("tests/data/examples.zip");
@@ -49,11 +49,11 @@ var suite = describe('BIDS example datasets ', function() {
             zip.extractAllTo("tests/data/", true);
         }
 
-        datasetDirectories = getDirectories("tests/data/BIDS-examples-1.0.0-rc1u1/")
+        datasetDirectories = getDirectories("tests/data/BIDS-examples-1.0.0-rc1u2/")
 
         datasetDirectories.forEach(function testDataset(path){
             suite.addTest(new Test(path, function (isdone){
-                validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u1/" + path + "/", function (errors, warnings) {
+                validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u2/" + path + "/", function (errors, warnings) {
                     assert.deepEqual(errors, []);
                     assert.deepEqual(warnings, []);
                     isdone();
