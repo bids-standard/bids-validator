@@ -68,3 +68,36 @@ var suite = describe('BIDS example datasets ', function() {
         require('assert').ok(true);
     });
 });
+
+var suiteAnat = describe('BIDS.isAnat', function(){
+    before(function(done) {
+        var goodFilenames = ["/sub-15/anat/sub-15_inplaneT2.nii.gz",
+            "/sub-15/ses-12/anat/sub-15_ses-12_inplaneT2.nii.gz",
+            "/sub-16/anat/sub-16_T1w.nii.gz"];
+
+        goodFilenames.forEach(function (path) {
+            suiteAnat.addTest(new Test(path, function (isdone){
+                assert.equal(BIDS.isAnat(path), true);
+                isdone();
+            }));
+        });
+
+        var badFilenames = ["/sub-1/anat/sub-15_inplaneT2.nii.gz",
+            "/sub-15/ses-12/anat/sub-15_inplaneT2.nii.gz",
+            "/sub-16/anat/sub-16_T1.nii.gz",
+            "blaaa.nii.gz"];
+
+        badFilenames.forEach(function (path) {
+            suiteAnat.addTest(new Test(path, function (isdone){
+                assert.equal(BIDS.isAnat(path), false);
+                isdone();
+            }));
+        });
+        done();
+    });
+
+    // we need to have at least one non-dynamic test
+    return it('dummy test', function() {
+        require('assert').ok(true);
+    });
+});

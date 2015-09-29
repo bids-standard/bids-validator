@@ -131,6 +131,24 @@ var BIDS = {
     },
 
     /**
+     * Check if the file has a name appropriate for an anatomical scan
+     */
+    isAnat: function(path) {
+        var suffixes = ["T1w", "T2w", "T1map", "T2map", "FLAIR", "PD", "PDT2", "inplaneT1", "inplaneT2","angio", "defacemask", "SWImagandphase"];
+        var anatRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?anat\\/\\1(_\\2)?_(?:' + suffixes.join("|") + ').nii.gz$');
+        var match = anatRe.exec(path);
+
+        // we need to do this because JS does not support conditional groups
+        if (match){
+            console.log(match)
+            if ((match[2] && match[3]) || !match[2]) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
      * Full Test
      *
      * Takes on an array of files and starts
@@ -144,7 +162,7 @@ var BIDS = {
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
             console.log(path)
-            if (!self.isTopLevel(path)) {
+            if (!(self.isTopLevel(path) | self.isAnat(path))) {
                 var newWarning = {
                     evidence: file.name,
                     line: null,
