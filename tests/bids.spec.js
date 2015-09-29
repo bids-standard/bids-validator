@@ -20,17 +20,17 @@ describe('BIDS', function(){
     it('should verify that NifTi files are compressed using gzip.', function () {
         var fileList = {
             '0': {
-                name: 'gzipNifTi.nii.gz',
-                path: '/Users/myuser/Desktop/ds114/gzipNifTi.nii.gz'
+                name: 'sub-15_inplaneT2.nii.gz',
+                path: '/sub-15/anat/sub-15_inplaneT2.nii.gz'
             },
             '1': {
-                name: 'NifTi.nii',
-                path: '/Users/myuser/Desktop/ds114/NifTi.nii'
+                name: 'sub-15_inplaneT2.nii',
+                path: '/sub-15/anat/sub-15_inplaneT2.nii'
             }
         };
 
         BIDS.fullTest(fileList, function (errors) {
-            assert(errors && errors.length === 1);
+            assert.equal(errors.length, 1);
         });
     });
 
@@ -53,7 +53,7 @@ var suite = describe('BIDS example datasets ', function() {
 
         datasetDirectories.forEach(function testDataset(path){
             suite.addTest(new Test(path, function (isdone){
-                validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u1/" + path, function (errors, warnings) {
+                validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u1/" + path + "/", function (errors, warnings) {
                     assert.deepEqual(errors, []);
                     assert.deepEqual(warnings, []);
                     isdone();

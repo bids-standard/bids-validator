@@ -119,15 +119,15 @@ var BIDS = {
      */
     isTopLevel: function(path) {
         fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv"];
-        if (fixedTopLevelNames.indexOf(path) != -1) {
+
+        var funcTopRe = RegExp('^\\/task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
+            + '(_bold.json|_events.tsv)$');
+        var match = funcTopRe.exec(path);
+        if (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path)) {
             return true;
         } else {
-            //TODO: check for top level sidecars
             return false;
         }
-
-
-
     },
 
     /**
@@ -195,8 +195,6 @@ var BIDS = {
                     severity: 'warning'
                 }
                 self.warnings.push({path: path, errors: [newWarning]});
-                cb();
-                return;
             }
 
             // validate NifTi
