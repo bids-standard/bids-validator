@@ -73,10 +73,15 @@ var suiteAnat = describe('BIDS.isAnat', function(){
     before(function(done) {
         var goodFilenames = ["/sub-15/anat/sub-15_inplaneT2.nii.gz",
             "/sub-15/ses-12/anat/sub-15_ses-12_inplaneT2.nii.gz",
-            "/sub-16/anat/sub-16_T1w.nii.gz"];
+            "/sub-16/anat/sub-16_T1w.nii.gz",
+            "/sub-16/anat/sub-16_T1w.json",
+            "/sub-16/anat/sub-16_run-01_T1w.nii.gz",
+            "/sub-16/anat/sub-16_acq-highres_T1w.nii.gz",
+            "/sub-16/anat/sub-16_rec-mc_T1w.nii.gz",
+        ];
 
         goodFilenames.forEach(function (path) {
-            suiteAnat.addTest(new Test(path, function (isdone){
+            suiteAnat.addTest(new Test("isAnat('" + path + "') === true", function (isdone){
                 assert.equal(BIDS.isAnat(path), true);
                 isdone();
             }));
@@ -85,10 +90,12 @@ var suiteAnat = describe('BIDS.isAnat', function(){
         var badFilenames = ["/sub-1/anat/sub-15_inplaneT2.nii.gz",
             "/sub-15/ses-12/anat/sub-15_inplaneT2.nii.gz",
             "/sub-16/anat/sub-16_T1.nii.gz",
-            "blaaa.nii.gz"];
+            "blaaa.nii.gz",
+            "/sub-16/anat/sub-16_run-second_T1w.nii.gz",
+            "/sub-16/anat/sub-16_run-01_rec-mc_T1w.nii.gz",];
 
         badFilenames.forEach(function (path) {
-            suiteAnat.addTest(new Test(path, function (isdone){
+            suiteAnat.addTest(new Test("isAnat('" + path + "') === false", function (isdone){
                 assert.equal(BIDS.isAnat(path), false);
                 isdone();
             }));
