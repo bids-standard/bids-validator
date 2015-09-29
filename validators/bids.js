@@ -121,10 +121,11 @@ var BIDS = {
         fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv"];
 
         var funcTopRe = RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(_bold.json|_events.tsv)$');
+            + '(_bold.json|_events.tsv|_physio.json|_stim.json)$');
 
         var dwiTopRe = RegExp('^\\/(?:ses-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
             + 'dwi.(?:json|bval|bvec)$');
+
 
         if (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path)) {
             return true;
@@ -152,6 +153,15 @@ var BIDS = {
     },
 
     /**
+     * Check if the file has appropriate name for a subject level
+     */
+    isSubjectLevel: function(path) {
+        var scansRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/\\1_sessions.tsv$');
+        return scansRe.test(path);
+    },
+
+    /**
      * Check if the file has a name appropriate for an anatomical scan
      */
     isAnat: function(path) {
@@ -175,6 +185,50 @@ var BIDS = {
     },
 
     /**
+     * Check if the file has a name appropriate for a diffusion scan
+     */
+    isDWI: function(path) {
+        var suffixes = ["dwi"];
+        var anatRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?dwi' +
+            '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
+            + suffixes.join("|")
+            + ').(nii.gz|json|bvec|bval)$');
+        var match = anatRe.exec(path);
+
+        // we need to do this because JS does not support conditional groups
+        if (match){
+            if ((match[2] && match[3]) || !match[2]) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Check if the file has a name appropriate for a fieldmap scan
+     */
+    isFielMap: function(path) {
+        var suffixes = ["phasediff", "phase1", "phase2", "magnitude1", "magnitude2", "fieldmap", "epi"];
+        var anatRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?fmap' +
+            '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
+            + suffixes.join("|")
+            + ').(nii.gz|json)$');
+        var match = anatRe.exec(path);
+
+        // we need to do this because JS does not support conditional groups
+        if (match){
+            if ((match[2] && match[3]) || !match[2]) {
+                return true;
+            }
+        }
+
+    },
+
+    /**
      * Check if the file has a name appropriate for a functional scan
      */
     isFunc: function(path) {
@@ -182,7 +236,7 @@ var BIDS = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?func' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(?:_bold.nii.gz|_bold.json|_events.tsv)$');
+            + '(?:_bold.nii.gz|_bold.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
         var match = funcRe.exec(path);
 
         // we need to do this because JS does not support conditional groups
@@ -207,7 +261,8 @@ var BIDS = {
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
-            if (!(self.isTopLevel(path) || self.isSessionLevel(path) || self.isAnat(path) || self.isFunc(path))) {
+            if (!(self.isTopLevel(path) || self.isSessionLevel(path) || self.isSubjectLevel(path) || self.isAnat(path)
+                || self.isDWI(path) || self.isFunc(path) || self.isFielMap(path))) {
                 var newWarning = {
                     evidence: file.name,
                     line: null,

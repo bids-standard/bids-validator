@@ -218,3 +218,38 @@ var suiteSession = describe('BIDS.isSessionLevel', function(){
         require('assert').ok(true);
     });
 });
+
+var suiteDWI = describe('BIDS.isDWI', function(){
+    before(function(done) {
+        var goodFilenames = ["/sub-12/dwi/sub-12_dwi.nii.gz",
+            "/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.nii.gz",
+            "/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bvec",
+            "/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bval",
+        ];
+
+        goodFilenames.forEach(function (path) {
+            suiteDWI.addTest(new Test("isDWI('" + path + "') === true", function (isdone){
+                assert.equal(BIDS.isDWI(path), true);
+                isdone();
+            }));
+        });
+
+        var badFilenames = ["/sub-12/sub-12.tsv",
+            "/sub-12/ses-pre/sub-12_ses-pre_scan.tsv",
+            "/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bvecs",
+            "/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bvals"];
+
+        badFilenames.forEach(function (path) {
+            suiteDWI.addTest(new Test("isDWI('" + path + "') === false", function (isdone){
+                assert.equal(BIDS.isDWI(path), false);
+                isdone();
+            }));
+        });
+        done();
+    });
+
+    // we need to have at least one non-dynamic test
+    return it('dummy test', function() {
+        require('assert').ok(true);
+    });
+});
