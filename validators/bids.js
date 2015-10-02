@@ -135,7 +135,7 @@ var BIDS = {
     },
 
     isCodeOrDerivatives: function(path) {
-        var codeOrDerivatives = RegExp('^\\/(?code|derivatives)^\\/.*$');
+        var codeOrDerivatives = RegExp('^\\/(?:code|derivatives)\\/(?:.*)$');
         return codeOrDerivatives.test(path);
     },
 
