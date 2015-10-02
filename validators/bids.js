@@ -134,6 +134,11 @@ var BIDS = {
         }
     },
 
+    isCodeOrDerivatives: function(path) {
+        var codeOrDerivatives = RegExp('^\\/(?code|derivatives)^\\/.*$');
+        return codeOrDerivatives.test(path);
+    },
+
     /**
      * Check if the file has appropriate name for a session level
      */
@@ -262,7 +267,7 @@ var BIDS = {
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
-            if (!(self.isTopLevel(path) || self.isSessionLevel(path) || self.isSubjectLevel(path) || self.isAnat(path)
+            if (!(self.isTopLevel(path) || self.isCodeOrDerivatives(path) || self.isSessionLevel(path) || self.isSubjectLevel(path) || self.isAnat(path)
                 || self.isDWI(path) || self.isFunc(path) || self.isFieldMap(path))) {
                 var newWarning = {
                     evidence: file.name,
