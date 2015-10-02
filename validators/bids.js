@@ -253,6 +253,24 @@ var BIDS = {
         return false;
     },
 
+    isCont: function(path) {
+        var contRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?func' +
+            '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?' +
+            '(?:_recording-[a-zA-Z0-9]+)?'
+            + '(?:_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
+        var match = contRe.exec(path);
+
+        // we need to do this because JS does not support conditional groups
+        if (match){
+            if ((match[2] && match[3]) || !match[2]) {
+                return true;
+            }
+        }
+        return false;
+    },
+
     /**
      * Full Test
      *
@@ -268,7 +286,7 @@ var BIDS = {
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
             if (!(self.isTopLevel(path) || self.isCodeOrDerivatives(path) || self.isSessionLevel(path) || self.isSubjectLevel(path) || self.isAnat(path)
-                || self.isDWI(path) || self.isFunc(path) || self.isFieldMap(path))) {
+                || self.isDWI(path) || self.isFunc(path) || self.isCont(path) || self.isFieldMap(path))) {
                 var newWarning = {
                     evidence: file.name,
                     line: null,
