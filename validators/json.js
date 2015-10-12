@@ -22,15 +22,13 @@ module.exports = function (contents, isBOLDSidecar, callback) {
     catch (err) {
         jshint(contents);
     }
-    finally {
 
+    if (jsObj) {
         if (isBOLDSidecar) {
             repetitionTime(jsObj);
         }
-
-        errors = errors.length > 0 ? errors : null;
-        callback(errors);
     }
+    callback(errors);
 
 // individual checks ---------------------------------------------------------------
 

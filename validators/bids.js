@@ -294,7 +294,7 @@ var BIDS = {
                     reason: "This file is not part of the BIDS specification, make sure it isn't included in the " +
                     "dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder.",
                     severity: 'warning'
-                }
+                };
                 self.warnings.push({path: path, errors: [newWarning]});
             }
 
@@ -306,14 +306,15 @@ var BIDS = {
                     character: null,
                     reason: 'NifTi files should be compressed using gzip.',
                     severity: 'error'
-                }
+                };
                 self.errors.push({path: path, errors: [newError]});
+                return cb();
             }
 
             // validate tsv
-            if (file.name && file.name.endsWith('.tsv')) {
+            else if (file.name && file.name.endsWith('.tsv')) {
                 utils.readFile(file, function (contents) {
-                    isEvents = file.name.endsWith('_events.tsv')
+                    isEvents = file.name.endsWith('_events.tsv');
                     TSV(contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
                             self.errors.push({path: path, errors: errs})
@@ -321,26 +322,25 @@ var BIDS = {
                         if (warns && warns.length > 0) {
                             self.warnings.push({path: path, errors: warns});
                         }
-                        cb();
+                        return cb();
                     });
                 });
-                return;
             }
 
             // validate json
-            if (file.name && file.name.endsWith('.json')) {
+            else if (file.name && file.name.endsWith('.json')) {
                 var isSidecar = self.isSidecar(file);
-                var isBOLDSidecar = (isSidecar && file.name.endsWith('_bold.json'))
+                var isBOLDSidecar = (isSidecar && file.name.endsWith('_bold.json'));
                 utils.readFile(file, function (contents) {
                     JSON(contents, isBOLDSidecar, function (errs) {
-                        if (errs) {
+                        if (errs  && errs.length > 0) {
                             self.errors.push({path: path, errors: errs})
                         }
-                        cb();
+                        return cb();
                     });
                 });
             } else {
-                cb();
+                return cb();
             }
         
         }, function () {
