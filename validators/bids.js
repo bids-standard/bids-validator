@@ -304,7 +304,7 @@ var BIDS = {
                     "dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder.",
                     severity: 'warning'
                 };
-                self.warnings.push({path: path, errors: [newWarning]});
+                self.warnings.push({file: file, path: path, errors: [newWarning]});
             }
 
             // validate NifTi
@@ -316,7 +316,7 @@ var BIDS = {
                     reason: 'NifTi files should be compressed using gzip.',
                     severity: 'error'
                 };
-                self.errors.push({path: path, errors: [newError]});
+                self.errors.push({file: file, path: path, errors: [newError]});
                 return cb();
             }
 
@@ -326,10 +326,10 @@ var BIDS = {
                     var isEvents = file.name.endsWith('_events.tsv');
                     TSV(contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
-                            self.errors.push({path: path, errors: errs})
+                            self.errors.push({file: file, path: path, errors: errs})
                         }
                         if (warns && warns.length > 0) {
-                            self.warnings.push({path: path, errors: warns});
+                            self.warnings.push({file: file, path: path, errors: warns});
                         }
                         return cb();
                     });
@@ -343,7 +343,7 @@ var BIDS = {
                 utils.readFile(file, function (contents) {
                     JSON(contents, isBOLDSidecar, function (errs) {
                         if (errs  && errs.length > 0) {
-                            self.errors.push({path: path, errors: errs})
+                            self.errors.push({file: file, path: path, errors: errs})
                         }
                         return cb();
                     });
