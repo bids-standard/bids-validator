@@ -1,6 +1,3 @@
-var JSHINT = require('jshint').JSHINT;
-
-
 /**
  * JSON
  *
@@ -20,38 +17,27 @@ module.exports = function (contents, isBOLDSidecar, callback) {
         jsObj = JSON.parse(contents);
     }
     catch (err) {
-        jshint(contents);
+        console.log("error")
+        var newError = {
+            evidence: null,
+            line: err.lineNumber,
+            character: null,
+            severity: 'error',
+            reason: err.message
+        }
+        errors.push(newError);
     }
-    finally {
-
+    if (jsObj) {
         if (isBOLDSidecar) {
             repetitionTime(jsObj);
         }
-
-        errors = errors.length > 0 ? errors : null;
-        callback(errors);
     }
+
+    callback(errors);
+
 
 // individual checks ---------------------------------------------------------------
 
-    /**
-     * JSHint
-     *
-     * Checks known invalid JSON file
-     * content in order to produce a
-     * verbose error message.
-     */
-    function jshint (contents) {
-        if (!JSHINT(contents)) {
-            var out = JSHINT.data();
-            errors  = out.errors;
-            for(var i = 0; errors.length > i; ++i){
-                if(errors[i]){
-                    errors[i].severity = 'error';
-                }
-            }
-        }
-    }
 
     /**
      * Repetition Time
@@ -63,7 +49,6 @@ module.exports = function (contents, isBOLDSidecar, callback) {
      // TODO - check which level RepetitionTime should appear at
     function repetitionTime (sidecar) {
         if (!sidecar.hasOwnProperty('RepetitionTime')) {
-            errors = []
             var newError = {
                 evidence: null,
                 line: null,
