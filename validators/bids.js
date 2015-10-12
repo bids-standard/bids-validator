@@ -18,6 +18,11 @@ var BIDS = {
     /**
      * Start
      *
+     * Takes either a filelist array or
+     * a path to a BIDS directory and
+     * starts the validation process and
+     * returns the errors and warnings as
+     * arguments to the callback.
      */
     start: function (dir, callback) {
         BIDS.reset();
@@ -342,7 +347,7 @@ var BIDS = {
             } else {
                 return cb();
             }
-        
+
         }, function () {
             callback(self.errors, self.warnings);
         });
@@ -371,19 +376,3 @@ var BIDS = {
 };
 
 module.exports = BIDS;
-
-/**
- * BIDS
- *
- * Takes either a filelist array or
- * a path to a BIDS directory and
- * starts the validation process and
- * returns the errors and warnings as 
- * arguments to the callback.
- */
-// module.exports = function (dir, callback) {
-//     BIDS.reset();
-//     utils.readDir(dir, function (files) {
-//         BIDS.start(files, callback);
-//     });
-// };
