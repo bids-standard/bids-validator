@@ -296,7 +296,6 @@ var BIDS = {
                     severity: 'warning'
                 };
                 self.warnings.push({path: path, errors: [newWarning]});
-                return cb();
             }
 
             // validate NifTi
@@ -335,7 +334,6 @@ var BIDS = {
                 utils.readFile(file, function (contents) {
                     JSON(contents, isBOLDSidecar, function (errs) {
                         if (errs  && errs.length > 0) {
-                            console.log("adding errors")
                             self.errors.push({path: path, errors: errs})
                         }
                         return cb();
@@ -346,7 +344,6 @@ var BIDS = {
             }
         
         }, function () {
-            console.log(self.errors.length)
             callback(self.errors, self.warnings);
         });
     },
