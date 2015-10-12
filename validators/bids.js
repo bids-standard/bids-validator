@@ -18,6 +18,11 @@ var BIDS = {
     /**
      * Start
      *
+     * Takes either a filelist array or
+     * a path to a BIDS directory and
+     * starts the validation process and
+     * returns the errors and warnings as
+     * arguments to the callback.
      */
     start: function (dir, callback) {
         BIDS.reset();
@@ -47,25 +52,27 @@ var BIDS = {
     quickTest: function (fileList, callback) {
         var couldBeBIDS = false;
         for (var key in fileList) {
-            var file = fileList[key];
-            var path = utils.relativePath(file);
-            if (path) {
-                path = path.split('/');
-                if (path.length > 5) {couldBeBIDS = false; break;}
-                path = path.reverse();
+            if (fileList.hasOwnProperty(key)) {
+                var file = fileList[key];
+                var path = utils.relativePath(file);
+                if (path) {
+                    path = path.split('/');
+                    if (path.length > 5) {couldBeBIDS = false; break;}
+                    path = path.reverse();
 
-                if (
-                    path[0].endsWith('.nii.gz') &&
-                    (path[1] == 'anat' ||
-                    path[1] == 'func' ||
-                    path[1] == 'dwi') &&
-                    (
-                        (path[2] && path[2].indexOf('ses-') == 0) ||
-                        (path[2] && path[2].indexOf('sub-') == 0)
-                    )
-                ) {
-                    couldBeBIDS = true;
-                    break;
+                    if (
+                        path[0].endsWith('.nii.gz') &&
+                        (path[1] == 'anat' ||
+                        path[1] == 'func' ||
+                        path[1] == 'dwi') &&
+                        (
+                            (path[2] && path[2].indexOf('ses-') == 0) ||
+                            (path[2] && path[2].indexOf('sub-') == 0)
+                        )
+                    ) {
+                        couldBeBIDS = true;
+                        break;
+                    }
                 }
             }
         }
@@ -86,10 +93,12 @@ var BIDS = {
 
         // collect nifti and json files
         for (var key in fileList) {
-            var file = fileList[key];
-            var path = utils.relativePath(file);
-            if (file.name && file.name.endsWith('.nii.gz')) {scans.push(path);}
-            if (file.name && file.name.endsWith('.json'))   {JSONFiles.push(path);}
+            if (fileList.hasOwnProperty(key)) {
+                var file = fileList[key];
+                var path = utils.relativePath(file);
+                if (file.name && file.name.endsWith('.nii.gz')) {scans.push(path);}
+                if (file.name && file.name.endsWith('.json'))   {JSONFiles.push(path);}
+            }
         }
 
         // compare scans against json files
@@ -118,7 +127,7 @@ var BIDS = {
      * Check if the file has appropriate name for a top level file
      */
     isTopLevel: function(path) {
-        fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv"];
+        var fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv"];
 
         var funcTopRe = RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
             + '(_bold.json|_events.tsv|_physio.json|_stim.json)$');
@@ -295,7 +304,7 @@ var BIDS = {
                     "dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder.",
                     severity: 'warning'
                 };
-                self.warnings.push({path: path, errors: [newWarning]});
+                self.warnings.push({file: file, path: path, errors: [newWarning]});
             }
 
             // validate NifTi
@@ -307,20 +316,20 @@ var BIDS = {
                     reason: 'NifTi files should be compressed using gzip.',
                     severity: 'error'
                 };
-                self.errors.push({path: path, errors: [newError]});
+                self.errors.push({file: file, path: path, errors: [newError]});
                 return cb();
             }
 
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {
                 utils.readFile(file, function (contents) {
-                    isEvents = file.name.endsWith('_events.tsv');
+                    var isEvents = file.name.endsWith('_events.tsv');
                     TSV(contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
-                            self.errors.push({path: path, errors: errs})
+                            self.errors.push({file: file, path: path, errors: errs})
                         }
                         if (warns && warns.length > 0) {
-                            self.warnings.push({path: path, errors: warns});
+                            self.warnings.push({file: file, path: path, errors: warns});
                         }
                         return cb();
                     });
@@ -334,7 +343,7 @@ var BIDS = {
                 utils.readFile(file, function (contents) {
                     JSON(contents, isBOLDSidecar, function (errs) {
                         if (errs  && errs.length > 0) {
-                            self.errors.push({path: path, errors: errs})
+                            self.errors.push({file: file, path: path, errors: errs})
                         }
                         return cb();
                     });
@@ -342,7 +351,7 @@ var BIDS = {
             } else {
                 return cb();
             }
-        
+
         }, function () {
             callback(self.errors, self.warnings);
         });
@@ -371,19 +380,3 @@ var BIDS = {
 };
 
 module.exports = BIDS;
-
-/**
- * BIDS
- *
- * Takes either a filelist array or
- * a path to a BIDS directory and
- * starts the validation process and
- * returns the errors and warnings as 
- * arguments to the callback.
- */
-// module.exports = function (dir, callback) {
-//     BIDS.reset();
-//     utils.readDir(dir, function (files) {
-//         BIDS.start(files, callback);
-//     });
-// };
