@@ -52,25 +52,27 @@ var BIDS = {
     quickTest: function (fileList, callback) {
         var couldBeBIDS = false;
         for (var key in fileList) {
-            var file = fileList[key];
-            var path = utils.relativePath(file);
-            if (path) {
-                path = path.split('/');
-                if (path.length > 5) {couldBeBIDS = false; break;}
-                path = path.reverse();
+            if (fileList.hasOwnProperty(key)) {
+                var file = fileList[key];
+                var path = utils.relativePath(file);
+                if (path) {
+                    path = path.split('/');
+                    if (path.length > 5) {couldBeBIDS = false; break;}
+                    path = path.reverse();
 
-                if (
-                    path[0].endsWith('.nii.gz') &&
-                    (path[1] == 'anat' ||
-                    path[1] == 'func' ||
-                    path[1] == 'dwi') &&
-                    (
-                        (path[2] && path[2].indexOf('ses-') == 0) ||
-                        (path[2] && path[2].indexOf('sub-') == 0)
-                    )
-                ) {
-                    couldBeBIDS = true;
-                    break;
+                    if (
+                        path[0].endsWith('.nii.gz') &&
+                        (path[1] == 'anat' ||
+                        path[1] == 'func' ||
+                        path[1] == 'dwi') &&
+                        (
+                            (path[2] && path[2].indexOf('ses-') == 0) ||
+                            (path[2] && path[2].indexOf('sub-') == 0)
+                        )
+                    ) {
+                        couldBeBIDS = true;
+                        break;
+                    }
                 }
             }
         }
@@ -91,10 +93,12 @@ var BIDS = {
 
         // collect nifti and json files
         for (var key in fileList) {
-            var file = fileList[key];
-            var path = utils.relativePath(file);
-            if (file.name && file.name.endsWith('.nii.gz')) {scans.push(path);}
-            if (file.name && file.name.endsWith('.json'))   {JSONFiles.push(path);}
+            if (fileList.hasOwnProperty(key)) {
+                var file = fileList[key];
+                var path = utils.relativePath(file);
+                if (file.name && file.name.endsWith('.nii.gz')) {scans.push(path);}
+                if (file.name && file.name.endsWith('.json'))   {JSONFiles.push(path);}
+            }
         }
 
         // compare scans against json files
