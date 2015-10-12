@@ -323,7 +323,7 @@ var BIDS = {
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {
                 utils.readFile(file, function (contents) {
-                    isEvents = file.name.endsWith('_events.tsv');
+                    var isEvents = file.name.endsWith('_events.tsv');
                     TSV(contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
                             self.errors.push({path: path, errors: errs})
