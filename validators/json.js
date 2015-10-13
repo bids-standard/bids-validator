@@ -14,6 +14,7 @@ module.exports = function (contents, isBOLDSidecar, callback) {
 // primary flow --------------------------------------------------------------------
 
     var errors = [];
+    var warnings = [];
     var jsObj  = null;
 
     try {
@@ -28,7 +29,7 @@ module.exports = function (contents, isBOLDSidecar, callback) {
             repetitionTime(jsObj);
         }
     }
-    callback(errors);
+    callback(errors, warnings);
 
 // individual checks ---------------------------------------------------------------
 
@@ -61,14 +62,65 @@ module.exports = function (contents, isBOLDSidecar, callback) {
      // TODO - check which level RepetitionTime should appear at
     function repetitionTime (sidecar) {
         if (!sidecar.hasOwnProperty('RepetitionTime')) {
-            errors = []
+
             var newError = {
                 evidence: null,
                 line: null,
                 character: null,
+                severity: "error",
                 reason: 'JSON sidecar files must have key and value for RepetitionTime'
             }
             errors.push(newError);
+        }
+        if (!sidecar.hasOwnProperty('SliceTiming')) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: 'JSON sidecar files should have key and value for SliceTiming'
+            }
+            warnings.push(newError);
+        }
+        if (!sidecar.hasOwnProperty('PhaseEncodingDirection')) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: 'JSON sidecar files should have key and value for PhaseEncodingDirection'
+            }
+            warnings.push(newError);
+        }
+        if (!sidecar.hasOwnProperty('EchoTime')) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: 'JSON sidecar files should have key and value for EchoTime'
+            }
+            warnings.push(newError);
+        }
+        if (!sidecar.hasOwnProperty('SliceEncodingDirection')) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: 'JSON sidecar files should have key and value for SliceEncodingDirection'
+            }
+            warnings.push(newError);
+        }
+        if (!sidecar.hasOwnProperty('EffectiveEchoSpacing')) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: 'JSON sidecar files should have key and value for EffectiveEchoSpacing'
+            }
+            warnings.push(newError);
         }
     }
 

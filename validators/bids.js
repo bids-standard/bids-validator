@@ -341,9 +341,12 @@ var BIDS = {
                 var isSidecar = self.isSidecar(file);
                 var isBOLDSidecar = (isSidecar && file.name.endsWith('_bold.json'));
                 utils.readFile(file, function (contents) {
-                    JSON(contents, isBOLDSidecar, function (errs) {
+                    JSON(contents, isBOLDSidecar, function (errs, warns) {
                         if (errs  && errs.length > 0) {
                             self.errors.push({file: file, path: path, errors: errs})
+                        }
+                        if (warns && warns.length > 0) {
+                            self.warnings.push({file: file, path: path, errors: warns});
                         }
                         return cb();
                     });
