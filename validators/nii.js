@@ -72,18 +72,9 @@ module.exports = function NIFTI (funcBOLDpath, jsonContentsDict, callback) {
                 line: null,
                 character: null,
                 severity: "error",
-                reason: "You have to define 'RepetitionTime' for this file." + locMSg
+                reason: "You have to define 'RepetitionTime' for this file. " + locMSg
             }
             errors.push(newError);
-        } else if (mergedDictionary["RepetitionTime"] > 100) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "warning",
-                reason: "'RepetitionTime' field does not seem to be expressed in seconds."
-            }
-            warnings.push(newError);
         }
         if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
             var newError = {
@@ -91,7 +82,7 @@ module.exports = function NIFTI (funcBOLDpath, jsonContentsDict, callback) {
                 line: null,
                 character: null,
                 severity: "warning",
-                reason: "You should should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible." + locMSg
+                reason: "You should should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " + locMSg
             }
             warnings.push(newError);
         }
@@ -101,7 +92,7 @@ module.exports = function NIFTI (funcBOLDpath, jsonContentsDict, callback) {
                 line: null,
                 character: null,
                 severity: "warning",
-                reason: "You should should define 'SliceEncodingDirection' for this file. If you don't provide this information slice time correction will not be possible." + locMSg
+                reason: "You should should define 'SliceEncodingDirection' for this file. If you don't provide this information slice time correction will not be possible. " + locMSg
             }
             warnings.push(newError);
         }
@@ -111,16 +102,7 @@ module.exports = function NIFTI (funcBOLDpath, jsonContentsDict, callback) {
                 line: null,
                 character: null,
                 severity: "warning",
-                reason: "You should should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible." + locMSg
-            }
-            warnings.push(newError);
-        } else if (mergedDictionary["EchoTime"] > 1) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "warning",
-                reason: "'EchoTime' field does not seem to be expressed in seconds."
+                reason: "You should should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible. " + locMSg
             }
             warnings.push(newError);
         }
@@ -130,7 +112,7 @@ module.exports = function NIFTI (funcBOLDpath, jsonContentsDict, callback) {
                 line: null,
                 character: null,
                 severity: "warning",
-                reason: "You should should define 'PhaseEncodingDirection' for this file. If you don't provide this information field map correction will not be possible." + locMSg
+                reason: "You should should define 'PhaseEncodingDirection' for this file. If you don't provide this information field map correction will not be possible. " + locMSg
             }
             warnings.push(newError);
         }
@@ -140,7 +122,7 @@ module.exports = function NIFTI (funcBOLDpath, jsonContentsDict, callback) {
                 line: null,
                 character: null,
                 severity: "warning",
-                reason: "You should should define 'EffectiveEchoSpacing' for this file. If you don't provide this information field map correction will not be possible." + locMSg
+                reason: "You should should define 'EffectiveEchoSpacing' for this file. If you don't provide this information field map correction will not be possible. " + locMSg
             }
             warnings.push(newError);
         }
