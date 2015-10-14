@@ -9,7 +9,7 @@ var JSHINT = require('jshint').JSHINT;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function (contents, isBOLDSidecar, callback) {
+module.exports = function (contents, callback) {
 
 // primary flow --------------------------------------------------------------------
 
@@ -25,9 +25,7 @@ module.exports = function (contents, isBOLDSidecar, callback) {
     }
 
     if (jsObj) {
-        if (isBOLDSidecar) {
-            repetitionTime(jsObj);
-        }
+        checkUnits(jsObj);
     }
     callback(errors, warnings);
 
@@ -52,91 +50,25 @@ module.exports = function (contents, isBOLDSidecar, callback) {
         }
     }
 
-    /**
-     * Repetition Time
-     *
-     * Checks if a sidecar/metadata file
-     * contains a RepetitionTime property.
-     */
-     // TODO - determine which files are sidecars
-     // TODO - check which level RepetitionTime should appear at
-    function repetitionTime (sidecar) {
-        if (!sidecar.hasOwnProperty('RepetitionTime')) {
+    function checkUnits (sidecar) {
+        if (sidecar.hasOwnProperty('RepetitionTime') && sidecar["RepetitionTime"] > 100) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: "'RepetitionTime' is greater than 100 are you sure it's expressed in seconds?"
+            }
+            warnings.push(newError);
+        }
 
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "error",
-                reason: "JSON sidecar files must include 'RepetitionTime' field"
-            }
-            errors.push(newError);
-        } else if (sidecar["RepetitionTime"] > 100) {
+        if (sidecar.hasOwnProperty('EchoTime') && sidecar["EchoTime"] > 1) {
             var newError = {
                 evidence: null,
                 line: null,
                 character: null,
                 severity: "warning",
-                reason: "'RepetitionTime' field does not seem to be expressed in seconds."
-            }
-            warnings.push(newError);
-        }
-        if (!sidecar.hasOwnProperty('SliceTiming')) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "warning",
-                reason: "JSON sidecar files should include 'SliceTiming' field. If you don't provide this information slice time correction will not be possible."
-            }
-            warnings.push(newError);
-        }
-        if (!sidecar.hasOwnProperty('SliceEncodingDirection')) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "warning",
-                reason: "JSON sidecar files should include 'SliceEncodingDirection' field. If you don't provide this information slice time correction will not be possible."
-            }
-            warnings.push(newError);
-        }
-        if (!sidecar.hasOwnProperty('EchoTime')) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "warning",
-                reason: "JSON sidecar files should include 'EchoTime' field. If you don't provide this information field map correction will not be possible."
-            }
-            warnings.push(newError);
-        } else if (sidecar["EchoTime"] > 1) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "warning",
-                reason: "'EchoTime' field does not seem to be expressed in seconds."
-            }
-            warnings.push(newError);
-        }
-        if (!sidecar.hasOwnProperty('PhaseEncodingDirection')) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "warning",
-                reason: "JSON sidecar files should include 'PhaseEncodingDirection' field. If you don't provide this information field map correction will not be possible."
-            }
-            warnings.push(newError);
-        }
-        if (!sidecar.hasOwnProperty('EffectiveEchoSpacing')) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "warning",
-                reason: "JSON sidecar files should include 'EffectiveEchoSpacing' field. If you don't provide this information field map correction will not be possible."
+                reason: "'EchoTime' is greater than 1 are you sure it's expressed in seconds?"
             }
             warnings.push(newError);
         }

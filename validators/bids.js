@@ -250,7 +250,7 @@ var BIDS = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?func' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(?:_bold.nii.gz|_bold.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
+            + '(?:_bold.nii.gz|_bold.json|_sbref.nii.gz|_sbref.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
         var match = funcRe.exec(path);
 
         // we need to do this because JS does not support conditional groups
@@ -267,7 +267,7 @@ var BIDS = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?func' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(?:_bold.nii.gz)$');
+            + '(?:_bold.nii.gz|_sbref.nii.gz)$');
         var match = funcRe.exec(path);
 
         // we need to do this because JS does not support conditional groups
@@ -297,9 +297,6 @@ var BIDS = {
         return false;
     },
 
-    checkMetadata: function(funcBOLD, fileList) {
-        funcBOLD
-    },
 
     /**
      * Full Test
@@ -311,7 +308,6 @@ var BIDS = {
     fullTest: function (fileList, callback) {
         var self = this;
 
-        var funcBOLDs = [];
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
@@ -326,23 +322,21 @@ var BIDS = {
                     severity: 'warning'
                 };
                 self.warnings.push({file: file, path: path, errors: [newWarning]});
-            }
-            else if (file.name.endsWith('_bold.nii.gz')) {
-                funcBOLDs.push(path);
-            }
-
-            // validate NifTi
-            if (file.name && file.name.endsWith('.nii')) {
-                var newError = {
-                    evidence: file.name,
-                    line: null,
-                    character: null,
-                    reason: 'NifTi files should be compressed using gzip.',
-                    severity: 'error'
-                };
-                self.errors.push({file: file, path: path, errors: [newError]});
                 return cb();
             }
+
+            else if (file.name.endsWith('_bold.nii.gz') || file.name.endsWith('_sbref.nii.gz')) {
+                NIFTI(path, fileList, function (errs, warns) {
+                    if (errs && errs.length > 0) {
+                        self.errors.push({file: file, path: path, errors: errs})
+                    }
+                    if (warns && warns.length > 0) {
+                        self.warnings.push({file: file, path: path, errors: warns});
+                    }
+                    return cb();
+                });
+            }
+
 
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {
@@ -363,9 +357,8 @@ var BIDS = {
             // validate json
             else if (file.name && file.name.endsWith('.json')) {
                 var isSidecar = self.isSidecar(file);
-                var isBOLDSidecar = (isSidecar && file.name.endsWith('_bold.json'));
                 utils.readFile(file, function (contents) {
-                    JSON(contents, isBOLDSidecar, function (errs, warns) {
+                    JSON(contents, function (errs, warns) {
                         if (errs  && errs.length > 0) {
                             self.errors.push({file: file, path: path, errors: errs})
                         }
@@ -380,9 +373,6 @@ var BIDS = {
             }
 
         }, function () {
-            funcBOLDs.forEach(function (funcBOLD){
-                CheckMetadata(funcBOLD, fileList);
-            });
             callback(self.errors, self.warnings);
         });
     },

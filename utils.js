@@ -14,7 +14,8 @@ var fileUtils = {
 	readFile: readFile,
     readDir: readDir,
 	generateTree: generateTree,
-    relativePath: relativePath
+    relativePath: relativePath,
+    pickFile: pickFile
 };
 
 // implementations ----------------------------------------------------------------
@@ -161,6 +162,16 @@ function relativePath (file) {
         relPath = '/' + pathParts.slice(1).join('/')
     }
     return relPath
+}
+
+function pickFile (fileList, targetPath) {
+    for (var i in fileList) {
+        var path = relativePath(fileList[i]);
+        if (path == targetPath){
+            return fileList[i];
+        }
+    }
+    return null;
 }
 
 module.exports = fileUtils;
