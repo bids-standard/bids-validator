@@ -68,9 +68,18 @@ module.exports = function (contents, isBOLDSidecar, callback) {
                 line: null,
                 character: null,
                 severity: "error",
-                reason: 'JSON sidecar files must have key and value for RepetitionTime'
+                reason: "JSON sidecar files must include 'RepetitionTime' field"
             }
             errors.push(newError);
+        } else if (sidecar["RepetitionTime"] > 100) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: "'RepetitionTime' field does not seem to be expressed in seconds."
+            }
+            warnings.push(newError);
         }
         if (!sidecar.hasOwnProperty('SliceTiming')) {
             var newError = {
@@ -78,27 +87,7 @@ module.exports = function (contents, isBOLDSidecar, callback) {
                 line: null,
                 character: null,
                 severity: "warning",
-                reason: 'JSON sidecar files should have key and value for SliceTiming'
-            }
-            warnings.push(newError);
-        }
-        if (!sidecar.hasOwnProperty('PhaseEncodingDirection')) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "warning",
-                reason: 'JSON sidecar files should have key and value for PhaseEncodingDirection'
-            }
-            warnings.push(newError);
-        }
-        if (!sidecar.hasOwnProperty('EchoTime')) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
-                severity: "warning",
-                reason: 'JSON sidecar files should have key and value for EchoTime'
+                reason: "JSON sidecar files should include 'SliceTiming' field. If you don't provide this information slice time correction will not be possible."
             }
             warnings.push(newError);
         }
@@ -108,7 +97,36 @@ module.exports = function (contents, isBOLDSidecar, callback) {
                 line: null,
                 character: null,
                 severity: "warning",
-                reason: 'JSON sidecar files should have key and value for SliceEncodingDirection'
+                reason: "JSON sidecar files should include 'SliceEncodingDirection' field. If you don't provide this information slice time correction will not be possible."
+            }
+            warnings.push(newError);
+        }
+        if (!sidecar.hasOwnProperty('EchoTime')) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: "JSON sidecar files should include 'EchoTime' field. If you don't provide this information field map correction will not be possible."
+            }
+            warnings.push(newError);
+        } else if (sidecar["EchoTime"] > 1) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: "'EchoTime' field does not seem to be expressed in seconds."
+            }
+            warnings.push(newError);
+        }
+        if (!sidecar.hasOwnProperty('PhaseEncodingDirection')) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: "JSON sidecar files should include 'PhaseEncodingDirection' field. If you don't provide this information field map correction will not be possible."
             }
             warnings.push(newError);
         }
@@ -118,7 +136,7 @@ module.exports = function (contents, isBOLDSidecar, callback) {
                 line: null,
                 character: null,
                 severity: "warning",
-                reason: 'JSON sidecar files should have key and value for EffectiveEchoSpacing'
+                reason: "JSON sidecar files should include 'EffectiveEchoSpacing' field. If you don't provide this information field map correction will not be possible."
             }
             warnings.push(newError);
         }

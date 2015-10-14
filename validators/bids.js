@@ -262,6 +262,23 @@ var BIDS = {
         return false;
     },
 
+    isFuncBold: function(path) {
+        var funcRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?func' +
+            '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
+            + '(?:_bold.nii.gz)$');
+        var match = funcRe.exec(path);
+
+        // we need to do this because JS does not support conditional groups
+        if (match){
+            if ((match[2] && match[3]) || !match[2]) {
+                return true;
+            }
+        }
+        return false;
+    },
+
     isCont: function(path) {
         var contRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
@@ -280,6 +297,10 @@ var BIDS = {
         return false;
     },
 
+    checkMetadata: function(funcBOLD, fileList) {
+        funcBOLD
+    },
+
     /**
      * Full Test
      *
@@ -290,7 +311,7 @@ var BIDS = {
     fullTest: function (fileList, callback) {
         var self = this;
 
-
+        var funcBOLDs = [];
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
@@ -305,6 +326,9 @@ var BIDS = {
                     severity: 'warning'
                 };
                 self.warnings.push({file: file, path: path, errors: [newWarning]});
+            }
+            else if (file.name.endsWith('_bold.nii.gz')) {
+                funcBOLDs.push(path);
             }
 
             // validate NifTi
@@ -356,6 +380,9 @@ var BIDS = {
             }
 
         }, function () {
+            funcBOLDs.forEach(function (funcBOLD){
+                CheckMetadata(funcBOLD, fileList);
+            });
             callback(self.errors, self.warnings);
         });
     },
