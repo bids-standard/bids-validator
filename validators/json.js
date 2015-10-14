@@ -27,7 +27,7 @@ module.exports = function (contents, callback) {
     if (jsObj) {
         checkUnits(jsObj);
     }
-    callback(errors, warnings);
+    callback(errors, warnings, jsObj);
 
 // individual checks ---------------------------------------------------------------
 

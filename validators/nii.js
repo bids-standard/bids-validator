@@ -9,7 +9,7 @@ var utils  = require('../utils');
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function NIFTI (funcBOLDpath, fileList, callback) {
+module.exports = function NIFTI (funcBOLDpath, jsonContentsDict, callback) {
     var errors = [];
     var warnings = [];
     var sidecarJSON = funcBOLDpath.replace(".nii.gz", ".json");
@@ -56,25 +56,13 @@ module.exports = function NIFTI (funcBOLDpath, fileList, callback) {
 
     var mergedDictionary = {};
     async.forEachOf(potentialJSONs, function (file, key, cb) {
-        var fileObj = utils.pickFile(fileList, file);
-        if (fileObj) {
-            utils.readFile(fileObj, function (contents) {
-                try {
-                    var jsObj = JSON.parse(contents);
-                }
-                catch (err) {
-                    var jsObj = null;
-                }
-                if (jsObj) {
-                    for (var attrname in jsObj) {
-                        mergedDictionary[attrname] = jsObj[attrname];
-                    }
-                }
-                return cb();
-            });
-        } else {
-            return cb();
+        var jsObj = jsonContentsDict[file];
+        if (jsObj) {
+            for (var attrname in jsObj) {
+                mergedDictionary[attrname] = jsObj[attrname];
+            }
         }
+        return cb();
     }, function(){
         var locMSg = "It can be included one of the following locations: " + potentialJSONs.join(", ")
         if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {

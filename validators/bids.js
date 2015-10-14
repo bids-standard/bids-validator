@@ -308,6 +308,9 @@ var BIDS = {
     fullTest: function (fileList, callback) {
         var self = this;
 
+        var jsonContentsDict = {};
+        var boldNiftis = [];
+
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.relativePath(file);
@@ -326,15 +329,8 @@ var BIDS = {
             }
 
             else if (file.name.endsWith('_bold.nii.gz') || file.name.endsWith('_sbref.nii.gz')) {
-                NIFTI(path, fileList, function (errs, warns) {
-                    if (errs && errs.length > 0) {
-                        self.errors.push({file: file, path: path, errors: errs})
-                    }
-                    if (warns && warns.length > 0) {
-                        self.warnings.push({file: file, path: path, errors: warns});
-                    }
-                    return cb();
-                });
+                boldNiftis.push(file);
+                cb();
             }
 
 
@@ -358,7 +354,8 @@ var BIDS = {
             else if (file.name && file.name.endsWith('.json')) {
                 var isSidecar = self.isSidecar(file);
                 utils.readFile(file, function (contents) {
-                    JSON(contents, function (errs, warns) {
+                    JSON(contents, function (errs, warns, jsObj) {
+                        jsonContentsDict[path] = jsObj;
                         if (errs  && errs.length > 0) {
                             self.errors.push({file: file, path: path, errors: errs})
                         }
@@ -373,7 +370,20 @@ var BIDS = {
             }
 
         }, function () {
-            callback(self.errors, self.warnings);
+            async.forEachOf(boldNiftis, function (file, key, cb) {
+                var path = utils.relativePath(file);
+                NIFTI(path, jsonContentsDict, function (errs, warns) {
+                    if (errs && errs.length > 0) {
+                        self.errors.push({file: file, path: path, errors: errs})
+                    }
+                    if (warns && warns.length > 0) {
+                        self.warnings.push({file: file, path: path, errors: warns});
+                    }
+                    return cb();
+                });
+            }, function(){
+                callback(self.errors, self.warnings);
+            });
         });
     },
 
