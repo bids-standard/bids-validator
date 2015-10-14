@@ -62,7 +62,7 @@ module.exports = function NIFTI (path, jsonContentsDict, callback) {
         return cb();
     }, function(){
         var locMSg = "It can be included one of the following locations: " + potentialJSONs.join(", ");
-        if (path.endsWith("_bold.nii.gz") || path.endsWith("_sbref.nii.gz")) {
+        if (path.endsWith("_bold.nii.gz") || path.endsWith("_sbref.nii.gz") || path.endsWith("_dwi.nii.gz")) {
             if (!mergedDictionary.hasOwnProperty('EchoTime')) {
                 var newError = {
                     evidence: null,
