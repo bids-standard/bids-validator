@@ -94,6 +94,18 @@ module.exports = function NIFTI (path, jsonContentsDict, callback) {
                 warnings.push(newError);
             }
         }
+        if (path.endsWith("_dwi.nii.gz")) {
+            if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
+                var newError = {
+                    evidence: null,
+                    line: null,
+                    character: null,
+                    severity: "warning",
+                    reason: "You should should define 'TotalReadoutTime' for this file. If you don't provide this information field map correction using TOPUP might not be possible. " + locMSg
+                }
+                warnings.push(newError);
+            }
+        }
         // we don't need slice timing or repetitin time for SBref
         if (path.endsWith("_bold.nii.gz")) {
             if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
