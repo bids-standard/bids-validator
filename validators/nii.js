@@ -1,5 +1,4 @@
 var async  = require('async');
-var utils  = require('../utils');
 
 /**
  * NIFTI
@@ -20,8 +19,6 @@ module.exports = function NIFTI (funcBOLDpath, jsonContentsDict, callback) {
     var topLevelComponentList = [];
     var ses = null;
     var sub = null;
-
-
 
     filenameComponents.forEach(function (filenameComponent) {
         if (filenameComponent.substring(0, 3) != "run") {

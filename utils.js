@@ -164,14 +164,4 @@ function relativePath (file) {
     return relPath
 }
 
-function pickFile (fileList, targetPath) {
-    for (var i in fileList) {
-        var path = relativePath(fileList[i]);
-        if (path == targetPath){
-            return fileList[i];
-        }
-    }
-    return null;
-}
-
 module.exports = fileUtils;
