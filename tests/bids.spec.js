@@ -18,21 +18,23 @@ var suite = describe('BIDS example datasets ', function() {
     this.timeout(100000);
 
     before(function(done) {
-        if (!fs.existsSync("tests/data")) {
-            console.log('downloading test data')
-            response = request("GET", "http://github.com/INCF/BIDS-examples/archive/1.0.0-rc1u2.zip")
-            fs.mkdirSync("tests/data")
-            fs.writeFileSync("tests/data/examples.zip", response.body)
+        if (!fs.existsSync("tests/data/BIDS-examples-1.0.0-rc1u5/")) {
+            console.log('downloading test data');
+            response = request("GET", "http://github.com/INCF/BIDS-examples/archive/1.0.0-rc1u5.zip");
+            if (!fs.existsSync("tests/data")) {
+                fs.mkdirSync("tests/data");
+            }
+            fs.writeFileSync("tests/data/examples.zip", response.body);
             var zip = new AdmZip("tests/data/examples.zip");
-            console.log('unzipping test data')
+            console.log('unzipping test data');
             zip.extractAllTo("tests/data/", true);
         }
 
-        datasetDirectories = getDirectories("tests/data/BIDS-examples-1.0.0-rc1u2/")
+        datasetDirectories = getDirectories("tests/data/BIDS-examples-1.0.0-rc1u5/");
 
         datasetDirectories.forEach(function testDataset(path){
             suite.addTest(new Test(path, function (isdone){
-                validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u2/" + path + "/", function (errors, warnings) {
+                validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u5/" + path + "/", function (errors, warnings) {
                     assert.deepEqual(errors, []);
                     //assert.deepEqual(warnings, []);
                     isdone();
@@ -44,7 +46,7 @@ var suite = describe('BIDS example datasets ', function() {
 
     // we need to have at least one non-dynamic test
     return it('validates path without trailing backslash', function(isdone) {
-        validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u2/ds001", function (errors, warnings) {
+        validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u5/ds001", function (errors, warnings) {
             assert.deepEqual(errors, []);
             //assert.deepEqual(warnings, []);
             isdone();

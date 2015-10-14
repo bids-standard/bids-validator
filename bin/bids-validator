@@ -3,12 +3,14 @@
 process.title = 'bids-validator';
 
 var argv = require('yargs')
-    .usage('Usage: $0 <dataset_directory>')
+    .usage('Usage: $0 <dataset_directory> [options]')
     .demand(1, 1)
+    .boolean('ignoreWarnings')
+    .describe('ignoreWarnings', 'disregard non-critical issues')
     .epilogue("This tool checks if a dataset in a given directory is \
 compatible with the Brain Imaging Data Structure specification. To learn \
 more about Brain Imaging Data Structure visit http://bids.neuroimaging.io")
     .argv;
 
 // import and init command line interface
-require('../cli')(argv._[0]);
+require('../cli')(argv._[0], argv.ignoreWarnings);
