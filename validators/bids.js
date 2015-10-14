@@ -309,7 +309,7 @@ var BIDS = {
         var self = this;
 
         var jsonContentsDict = {};
-        var boldNiftis = [];
+        var niftis = [];
 
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
@@ -328,8 +328,8 @@ var BIDS = {
                 return cb();
             }
 
-            else if (file.name.endsWith('_bold.nii.gz') || file.name.endsWith('_sbref.nii.gz')) {
-                boldNiftis.push(file);
+            else if (file.name.endsWith('.nii.gz')) {
+                niftis.push(file);
                 cb();
             }
 
@@ -370,7 +370,7 @@ var BIDS = {
             }
 
         }, function () {
-            async.forEachOf(boldNiftis, function (file, key, cb) {
+            async.forEachOf(niftis, function (file, key, cb) {
                 var path = utils.relativePath(file);
                 NIFTI(path, jsonContentsDict, function (errs, warns) {
                     if (errs && errs.length > 0) {

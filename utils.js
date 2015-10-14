@@ -14,8 +14,7 @@ var fileUtils = {
 	readFile: readFile,
     readDir: readDir,
 	generateTree: generateTree,
-    relativePath: relativePath,
-    pickFile: pickFile
+    relativePath: relativePath
 };
 
 // implementations ----------------------------------------------------------------
