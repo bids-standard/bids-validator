@@ -9,11 +9,12 @@ var JSHINT = require('jshint').JSHINT;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function (contents, isBOLDSidecar, callback) {
+module.exports = function (contents, callback) {
 
 // primary flow --------------------------------------------------------------------
 
     var errors = [];
+    var warnings = [];
     var jsObj  = null;
 
     try {
@@ -24,11 +25,9 @@ module.exports = function (contents, isBOLDSidecar, callback) {
     }
 
     if (jsObj) {
-        if (isBOLDSidecar) {
-            repetitionTime(jsObj);
-        }
+        checkUnits(jsObj);
     }
-    callback(errors);
+    callback(errors, warnings, jsObj);
 
 // individual checks ---------------------------------------------------------------
 
@@ -51,24 +50,47 @@ module.exports = function (contents, isBOLDSidecar, callback) {
         }
     }
 
-    /**
-     * Repetition Time
-     *
-     * Checks if a sidecar/metadata file
-     * contains a RepetitionTime property.
-     */
-     // TODO - determine which files are sidecars
-     // TODO - check which level RepetitionTime should appear at
-    function repetitionTime (sidecar) {
-        if (!sidecar.hasOwnProperty('RepetitionTime')) {
-            errors = []
+    function checkUnits (sidecar) {
+        if (sidecar.hasOwnProperty('RepetitionTime') && sidecar["RepetitionTime"] > 100) {
             var newError = {
                 evidence: null,
                 line: null,
                 character: null,
-                reason: 'JSON sidecar files must have key and value for RepetitionTime'
+                severity: "warning",
+                reason: "'RepetitionTime' is greater than 100 are you sure it's expressed in seconds?"
             }
-            errors.push(newError);
+            warnings.push(newError);
+        }
+
+        if (sidecar.hasOwnProperty('EchoTime') && sidecar["EchoTime"] > 1) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: "'EchoTime' is greater than 1 are you sure it's expressed in seconds?"
+            }
+            warnings.push(newError);
+        }
+        if (sidecar.hasOwnProperty('EchoTimeDifference') && sidecar["EchoTimeDifference"] > 1) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: "'EchoTimeDifference' is greater than 1 are you sure it's expressed in seconds?"
+            }
+            warnings.push(newError);
+        }
+        if (sidecar.hasOwnProperty('TotalReadoutTime') && sidecar["TotalReadoutTime"] > 10) {
+            var newError = {
+                evidence: null,
+                line: null,
+                character: null,
+                severity: "warning",
+                reason: "'TotalReadoutTime' is greater than 10 are you sure it's expressed in seconds?"
+            }
+            warnings.push(newError);
         }
     }
 
