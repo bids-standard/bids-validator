@@ -55,9 +55,11 @@ var BIDS = {
 
                     if (
                         path[0].endsWith('.nii.gz') &&
-                        (path[1] == 'anat' ||
-                        path[1] == 'func' ||
-                        path[1] == 'dwi') &&
+                        (
+                            path[1] == 'anat' ||
+                            path[1] == 'func' ||
+                            path[1] == 'dwi'
+                        ) &&
                         (
                             (path[2] && path[2].indexOf('ses-') == 0) ||
                             (path[2] && path[2].indexOf('sub-') == 0)
