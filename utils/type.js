@@ -1,3 +1,10 @@
+/**
+ * Type
+ *
+ * A library of functions that take a file path and return a boolean
+ * representing whether the given file path is valid within the
+ * BIDS specification requirements.
+ */
 module.exports = {
 
     /**
