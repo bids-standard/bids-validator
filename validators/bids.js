@@ -27,7 +27,7 @@ var BIDS = {
     start: function (dir, callback) {
         BIDS.reset();
         var self = BIDS;
-        utils.readDir(dir, function (files) {
+        utils.files.readDir(dir, function (files) {
             self.quickTest(files, function (couldBeBIDS) {
                 if (couldBeBIDS) {
                     self.determineSidecars(files, function () {
@@ -54,7 +54,7 @@ var BIDS = {
         for (var key in fileList) {
             if (fileList.hasOwnProperty(key)) {
                 var file = fileList[key];
-                var path = utils.relativePath(file);
+                var path = utils.files.relativePath(file);
                 if (path) {
                     path = path.split('/');
                     if (path.length > 5) {couldBeBIDS = false; break;}
@@ -95,7 +95,7 @@ var BIDS = {
         for (var key in fileList) {
             if (fileList.hasOwnProperty(key)) {
                 var file = fileList[key];
-                var path = utils.relativePath(file);
+                var path = utils.files.relativePath(file);
                 if (file.name && file.name.endsWith('.nii.gz')) {scans.push(path);}
                 if (file.name && file.name.endsWith('.json'))   {JSONFiles.push(path);}
             }
@@ -313,7 +313,7 @@ var BIDS = {
 
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
-            var path = utils.relativePath(file);
+            var path = utils.files.relativePath(file);
             if (!(self.isTopLevel(path) || self.isCodeOrDerivatives(path) || self.isSessionLevel(path) || self.isSubjectLevel(path) || self.isAnat(path)
                 || self.isDWI(path) || self.isFunc(path) || self.isCont(path) || self.isFieldMap(path))) {
                 var newWarning = {
@@ -336,7 +336,7 @@ var BIDS = {
 
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {
-                utils.readFile(file, function (contents) {
+                utils.files.readFile(file, function (contents) {
                     var isEvents = file.name.endsWith('_events.tsv');
                     TSV(contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
@@ -353,7 +353,7 @@ var BIDS = {
             // validate json
             else if (file.name && file.name.endsWith('.json')) {
                 var isSidecar = self.isSidecar(file);
-                utils.readFile(file, function (contents) {
+                utils.files.readFile(file, function (contents) {
                     JSON(contents, function (errs, warns, jsObj) {
                         jsonContentsDict[path] = jsObj;
                         if (errs  && errs.length > 0) {
@@ -371,7 +371,7 @@ var BIDS = {
 
         }, function () {
             async.forEachOf(niftis, function (file, key, cb) {
-                var path = utils.relativePath(file);
+                var path = utils.files.relativePath(file);
                 NIFTI(path, jsonContentsDict, function (errs, warns) {
                     if (errs && errs.length > 0) {
                         self.errors.push({file: file, path: path, errors: errs})
@@ -394,7 +394,7 @@ var BIDS = {
      * of whether or not it is a sidecar.
      */
     isSidecar: function (file) {
-        return this.sidecars.indexOf(utils.relativePath(file)) > -1;
+        return this.sidecars.indexOf(utils.files.relativePath(file)) > -1;
     },
 
     /**
