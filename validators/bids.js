@@ -5,10 +5,6 @@ var TSV    = require('./tsv');
 var JSON   = require('./json');
 var NIFTI  = require('./nii');
 
-String.prototype.endsWith = function(suffix) {
-    return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
-
 var BIDS = {
 
     errors:   [],

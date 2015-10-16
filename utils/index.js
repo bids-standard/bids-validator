@@ -1,3 +1,4 @@
+require('./prototype');
 var type  = require('./type');
 var files = require('./files');
 
