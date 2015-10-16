@@ -1,4 +1,5 @@
-var async  = require('async');
+var async = require('async');
+var Issue = require('../utils').Issue;
 
 /**
  * TSV
@@ -18,24 +19,20 @@ module.exports = function TSV (contents, isEvents, callback) {
     // check if headers begin with numbers
     if (isEvents) {
         if (headers[0] !== "onset"){
-            var newError = {
+            errors.push(new Issue({
                 evidence: headers,
                 line: 1,
                 character: rows[0].indexOf(headers[0]),
                 reason: "First column of the events file must be named 'onset'"
-            }
-
-            errors.push(newError);
+            }));
         }
         if (headers[1] !== "duration"){
-            var newError = {
+            errors.push(new Issue({
                 evidence: headers,
                 line: 1,
                 character: rows[0].indexOf(headers[1]),
                 reason: "Second column of the events file must be named 'duration'"
-            }
-
-            errors.push(newError);
+            }));
         }
     }
 
@@ -51,40 +48,35 @@ module.exports = function TSV (contents, isEvents, callback) {
 
         // check for different length rows
         if (columnsInRow.length !== headers.length) {
-            var newError = {
+            errors.push(new Issue({
                 evidence: row,
                 line: rows.indexOf(row) + 1,
-                character: null,
                 reason: 'All rows must have the same number of columns as there are headers.'
-            }
-            errors.push(newError);
+            }));
         }
 
-        // iterated through colums
+        // iterate through columns
         async.each(columnsInRow, function (column, cb1) {
-	        
+
             // check for two or more contiguous spaces
             var patt = new RegExp("[ ]{2,}");
 	        if (patt.test(column)) {
-                var newError = {
+                errors.push(new Issue({
                     evidence: row,
                     line: rows.indexOf(row) + 1,
                     character: row.indexOf('  '),
                     reason: 'Values may not contain adjacent spaces.'
-                }
-                errors.push(newError);
+                }));
 	        }
 
             // check if missing value is properly labeled as 'n/a'
             if (column === "NA" || column === "na" || column === "nan") {
-                var newError = {
+                warnings.push(new Issue({
                     evidence: row,
                     line: rows.indexOf(row) + 1,
                     character: row.indexOf('NA' || 'na' || 'nan'),
                     reason: 'A proper way of labeling missing values is "n/a".'
-                }
-
-                warnings.push(newError);
+                }));
             }
 
 	        cb1();

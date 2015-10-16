@@ -1,4 +1,5 @@
 var JSHINT = require('jshint').JSHINT;
+var Issue = require('../utils').Issue;
 
 
 /**
@@ -52,45 +53,29 @@ module.exports = function (contents, callback) {
 
     function checkUnits (sidecar) {
         if (sidecar.hasOwnProperty('RepetitionTime') && sidecar["RepetitionTime"] > 100) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
+            warnings.push(new Issue({
                 severity: "warning",
                 reason: "'RepetitionTime' is greater than 100 are you sure it's expressed in seconds?"
-            }
-            warnings.push(newError);
+            }));
         }
 
         if (sidecar.hasOwnProperty('EchoTime') && sidecar["EchoTime"] > 1) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
+            warnings.push(new Issue({
                 severity: "warning",
                 reason: "'EchoTime' is greater than 1 are you sure it's expressed in seconds?"
-            }
-            warnings.push(newError);
+            }));
         }
         if (sidecar.hasOwnProperty('EchoTimeDifference') && sidecar["EchoTimeDifference"] > 1) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
+            warnings.push(new Issue({
                 severity: "warning",
                 reason: "'EchoTimeDifference' is greater than 1 are you sure it's expressed in seconds?"
-            }
-            warnings.push(newError);
+            }));
         }
         if (sidecar.hasOwnProperty('TotalReadoutTime') && sidecar["TotalReadoutTime"] > 10) {
-            var newError = {
-                evidence: null,
-                line: null,
-                character: null,
+            warnings.push(new Issue({
                 severity: "warning",
                 reason: "'TotalReadoutTime' is greater than 10 are you sure it's expressed in seconds?"
-            }
-            warnings.push(newError);
+            }));
         }
     }
 

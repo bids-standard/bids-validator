@@ -103,14 +103,12 @@ var BIDS = {
                     utils.type.isFieldMap(path)
                 )
             ) {
-                var newWarning = {
+                var newWarning = new utils.Issue({
                     evidence: file.name,
-                    line: null,
-                    character: null,
                     reason: "This file is not part of the BIDS specification, make sure it isn't included in the " +
                     "dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder.",
                     severity: 'warning'
-                };
+                });
                 self.warnings.push({file: file, path: path, errors: [newWarning]});
                 return cb();
             }
