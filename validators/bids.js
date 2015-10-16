@@ -13,7 +13,6 @@ var BIDS = {
 
     errors:   [],
     warnings: [],
-    sidecars: [],
 
     /**
      * Start
@@ -30,9 +29,7 @@ var BIDS = {
         utils.files.readDir(dir, function (files) {
             self.quickTest(files, function (couldBeBIDS) {
                 if (couldBeBIDS) {
-                    self.determineSidecars(files, function () {
-                        self.fullTest(files, callback);
-                    });
+                    self.fullTest(files, callback);
                 } else {
                     callback('Invalid');
                 }
@@ -77,50 +74,6 @@ var BIDS = {
             }
         }
         callback(couldBeBIDS);
-    },
-
-    /**
-     * Determine sidecars
-     *
-     * Compares JSON files and scans to determine which
-     * JSON files are metadata sidecars and which scans
-     * are missing a sidecar.
-     */
-    determineSidecars: function (fileList, callback) {
-        var self      = this;
-        var scans     = [];
-        var JSONFiles = [];
-
-        // collect nifti and json files
-        for (var key in fileList) {
-            if (fileList.hasOwnProperty(key)) {
-                var file = fileList[key];
-                var path = utils.files.relativePath(file);
-                if (file.name && file.name.endsWith('.nii.gz')) {scans.push(path);}
-                if (file.name && file.name.endsWith('.json'))   {JSONFiles.push(path);}
-            }
-        }
-
-        // compare scans against json files
-        for (var i = scans.length -1; i > -1; i--) {
-            var scan = scans[i];
-
-            // remove perfect matches
-            var scan = scan.replace('.nii.gz', '');
-            var sidecarIndex = JSONFiles.indexOf(scan + '.json');
-            if (sidecarIndex > -1) {
-                scans.splice(i, 1);
-                var sidecar = JSONFiles.splice(sidecarIndex, 1);
-                self.sidecars.push(sidecar[0]);
-            }
-
-            // remove sbref scans & metadata
-            if (scan.indexOf('sbref') > -1 || scan == 'dataset_description.json') {
-                scans.splice(i, 1);
-            }
-        }
-
-        callback();
     },
 
     /**
@@ -188,7 +141,6 @@ var BIDS = {
 
             // validate json
             else if (file.name && file.name.endsWith('.json')) {
-                var isSidecar = self.isSidecar(file);
                 utils.files.readFile(file, function (contents) {
                     JSON(contents, function (errs, warns, jsObj) {
                         jsonContentsDict[path] = jsObj;
@@ -224,16 +176,6 @@ var BIDS = {
     },
 
     /**
-     * Is Sidecar
-     *
-     * Takes a file object and returns a boolean value
-     * of whether or not it is a sidecar.
-     */
-    isSidecar: function (file) {
-        return this.sidecars.indexOf(utils.files.relativePath(file)) > -1;
-    },
-
-    /**
      * Reset
      *
      * Resets the in object data back to original values.
@@ -241,7 +183,6 @@ var BIDS = {
     reset: function () {
         this.errors = [];
         this.warnings = [];
-        this.sidecars = [];
     }
 };
 
