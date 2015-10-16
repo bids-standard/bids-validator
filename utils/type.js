@@ -32,15 +32,7 @@ module.exports = {
         var scansRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?_scans.tsv$');
-        var match = scansRe.exec(path);
-
-        // we need to do this because JS does not support conditional groups
-        if (match){
-            if ((match[2] && match[3]) || !match[2]) {
-                return true;
-            }
-        }
-        return false;
+        return conditionalMatch(scansRe, path);
     },
 
     /**
@@ -64,15 +56,7 @@ module.exports = {
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
             + suffixes.join("|")
             + ').(nii.gz|json)$');
-        var match = anatRe.exec(path);
-
-        // we need to do this because JS does not support conditional groups
-        if (match){
-            if ((match[2] && match[3]) || !match[2]) {
-                return true;
-            }
-        }
-        return false;
+        return conditionalMatch(anatRe, path);
     },
 
     /**
@@ -86,15 +70,7 @@ module.exports = {
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
             + suffixes.join("|")
             + ').(nii.gz|json|bvec|bval)$');
-        var match = anatRe.exec(path);
-
-        // we need to do this because JS does not support conditional groups
-        if (match){
-            if ((match[2] && match[3]) || !match[2]) {
-                return true;
-            }
-        }
-        return false;
+        return conditionalMatch(anatRe, path);
     },
 
     /**
@@ -108,15 +84,7 @@ module.exports = {
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
             + suffixes.join("|")
             + ').(nii.gz|json)$');
-        var match = anatRe.exec(path);
-
-        // we need to do this because JS does not support conditional groups
-        if (match){
-            if ((match[2] && match[3]) || !match[2]) {
-                return true;
-            }
-        }
-
+        return conditionalMatch(anatRe, path);
     },
 
     /**
@@ -128,15 +96,7 @@ module.exports = {
             '\\/)?func' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
             + '(?:_bold.nii.gz|_bold.json|_sbref.nii.gz|_sbref.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
-        var match = funcRe.exec(path);
-
-        // we need to do this because JS does not support conditional groups
-        if (match){
-            if ((match[2] && match[3]) || !match[2]) {
-                return true;
-            }
-        }
-        return false;
+        return conditionalMatch(funcRe, path);
     },
 
     isFuncBold: function(path) {
@@ -145,15 +105,7 @@ module.exports = {
             '\\/)?func' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
             + '(?:_bold.nii.gz|_sbref.nii.gz)$');
-        var match = funcRe.exec(path);
-
-        // we need to do this because JS does not support conditional groups
-        if (match){
-            if ((match[2] && match[3]) || !match[2]) {
-                return true;
-            }
-        }
-        return false;
+        return conditionalMatch(funcRe, path);
     },
 
     isCont: function(path) {
@@ -163,7 +115,13 @@ module.exports = {
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?' +
             '(?:_recording-[a-zA-Z0-9]+)?'
             + '(?:_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
-        var match = contRe.exec(path);
+        return conditionalMatch(contRe, path);
+    }
+
+};
+
+function conditionalMatch (expression, path) {
+    var match = expression.exec(path);
 
         // we need to do this because JS does not support conditional groups
         if (match){
@@ -172,6 +130,4 @@ module.exports = {
             }
         }
         return false;
-    }
-
-};
+}
