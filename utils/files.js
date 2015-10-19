@@ -115,7 +115,7 @@ function readNiftiHeader (file, callback) {
             var buffer = new Buffer(270);
             fs.read(fd, buffer, 0, 269, 0, function (err, num){
                 var unzipped = zlib.gunzipSync(buffer);
-                callback(nifti.parse(unzipped));
+                callback(nifti.parseHeader(unzipped));
             });
         });
     } else {
