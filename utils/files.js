@@ -8,11 +8,15 @@ if (typeof window === 'undefined') {
     var fs = require('fs');
 }
 
+var zlib = require('zlib');
+var nifti = require('nifti-js');
+
 // public API ---------------------------------------------------------------------
 
 var fileUtils = {
 	readFile: readFile,
     readDir: readDir,
+    readNiftiHeader: readNiftiHeader,
 	generateTree: generateTree,
     relativePath: relativePath
 };
@@ -94,6 +98,30 @@ function getFiles (dir, files_){
     return files_;
 }
 
+
+/**
+ * Read Nifti Header
+ *
+ * Takes a files and returns a json parsed nifti
+ * header without reading any extra bytes.
+ */
+function readNiftiHeader (file, callback) {
+    if (fs) {
+        fs.open(file.path, 'r', function(status, fd) {
+            if (status) {
+                console.log(status.message);
+                return;
+            }
+            var buffer = new Buffer(270);
+            fs.read(fd, buffer, 0, 269, 0, function (err, num){
+                var unzipped = zlib.gunzipSync(buffer);
+                callback(nifti.parse(unzipped));
+            });
+        });
+    } else {
+        console.log('read nifti header in browser for ' + file.path);
+    }
+}
 
 /**
  * Generate Tree
