@@ -156,7 +156,7 @@ var BIDS = {
         }, function () {
             async.forEachOf(niftis, function (file, key, cb) {
                 var path = utils.files.relativePath(file);
-                NIFTI(path, jsonContentsDict, function (errs, warns) {
+                NIFTI(file, jsonContentsDict, function (errs, warns) {
                     if (errs && errs.length > 0) {
                         self.errors.push({file: file, path: path, errors: errs})
                     }
