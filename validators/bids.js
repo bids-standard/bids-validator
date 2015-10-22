@@ -92,14 +92,14 @@ var BIDS = {
             var path = utils.files.relativePath(file);
             if (
                 !(
-                    utils.type.isTopLevel(path) ||
+                    utils.type.isTopLevel(path)          ||
                     utils.type.isCodeOrDerivatives(path) ||
-                    utils.type.isSessionLevel(path) ||
-                    utils.type.isSubjectLevel(path) ||
-                    utils.type.isAnat(path) ||
-                    utils.type.isDWI(path) ||
-                    utils.type.isFunc(path) ||
-                    utils.type.isCont(path) ||
+                    utils.type.isSessionLevel(path)      ||
+                    utils.type.isSubjectLevel(path)      ||
+                    utils.type.isAnat(path)              ||
+                    utils.type.isDWI(path)               ||
+                    utils.type.isFunc(path)              ||
+                    utils.type.isCont(path)              ||
                     utils.type.isFieldMap(path)
                 )
             ) {
