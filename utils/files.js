@@ -6,9 +6,11 @@
  */
 if (typeof window === 'undefined') {
     var fs = require('fs');
+    var zlib = require('zlib');
+} else {
+    var pako = require('pako');
 }
 
-var zlib = require('zlib');
 var nifti = require('nifti-js');
 
 // public API ---------------------------------------------------------------------
@@ -114,12 +116,26 @@ function readNiftiHeader (file, callback) {
             }
             var buffer = new Buffer(348);
             fs.read(fd, buffer, 0, 347, 0, function (err, num){
-                var unzipped = zlib.gunzipSync(buffer);
-                callback(nifti.parseHeader(unzipped));
+                zlib.gunzip(buffer, function(err, unzipped) {
+                    if (err) {
+                        callback({error: "Unable to read " + file.path});
+                        return;
+                    }
+                    callback(nifti.parseHeader(unzipped));
+                });
             });
         });
     } else {
-        console.log('read nifti header in browser for ' + file.path);
+        let blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+        fileReader = new FileReader();
+
+        fileReader.onloadend = function (e) {
+            var buf = new Uint8Array(fileReader.result);
+            var unzipped = pako.inflate(buf);
+            callback(nifti.parseHeader(unzipped));
+        };
+
+        fileReader.readAsArrayBuffer(blobSlice.call(file, 0, 3480));
     }
 }
 

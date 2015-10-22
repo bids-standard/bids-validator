@@ -24,6 +24,7 @@
     "colors": "^1.1.0",
     "jshint": "^2.8.0",
     "nifti-js": "git+https://github.com/Squishymedia/nifti-header",
+    "pako": "^0.2.8",
     "yargs": "^3.25.0"
   },
   "devDependencies": {
