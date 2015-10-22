@@ -126,7 +126,7 @@ function readNiftiHeader (file, callback) {
             });
         });
     } else {
-        let blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+        var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
         fileReader = new FileReader();
 
         fileReader.onloadend = function (e) {
