@@ -109,11 +109,11 @@ function readNiftiHeader (file, callback) {
     if (fs) {
         fs.open(file.path, 'r', function(status, fd) {
             if (status) {
-                console.log(status.message);
+                callback({error: "Unable to read " + file.path});
                 return;
             }
-            var buffer = new Buffer(270);
-            fs.read(fd, buffer, 0, 269, 0, function (err, num){
+            var buffer = new Buffer(348);
+            fs.read(fd, buffer, 0, 347, 0, function (err, num){
                 var unzipped = zlib.gunzipSync(buffer);
                 callback(nifti.parseHeader(unzipped));
             });
