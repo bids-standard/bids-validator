@@ -4,7 +4,7 @@ var Issue = require('../utils').Issue;
 /**
  * NIFTI
  *
- * Takes a NifTi file header and a callback
+ * Takes a NifTi file path and a callback
  * as arguments. And callsback with any errors
  * it finds while validating against the BIDS
  * specification.
@@ -12,45 +12,7 @@ var Issue = require('../utils').Issue;
 module.exports = function NIFTI (path, jsonContentsDict, callback) {
     var errors = [];
     var warnings = [];
-    var sidecarJSON = path.replace(".nii.gz", ".json");
-    var pathComponents = sidecarJSON.split('/');
-    var filenameComponents = pathComponents[pathComponents.length - 1].split("_");
-    var sessionLevelComponentList = [];
-    var subjectLevelComponentList = [];
-    var topLevelComponentList = [];
-    var ses = null;
-    var sub = null;
-
-    filenameComponents.forEach(function (filenameComponent) {
-        if (filenameComponent.substring(0, 3) != "run") {
-            sessionLevelComponentList.push(filenameComponent);
-            if (filenameComponent.substring(0, 3) == "ses") {
-                ses = filenameComponent;
-
-            } else {
-                subjectLevelComponentList.push(filenameComponent);
-                if (filenameComponent.substring(0, 3) == "sub") {
-                    sub = filenameComponent;
-                } else {
-                    topLevelComponentList.push(filenameComponent);
-                }
-            }
-        }
-    });
-
-    var potentialJSONs = [sidecarJSON];
-
-    if (ses) {
-        var sessionLevelJSON = "/" + sub + "/" + ses + "/" + sessionLevelComponentList.join("_");
-        potentialJSONs.push(sessionLevelJSON)
-    };
-
-    var subjectLevelJSON = "/" + sub + "/" + subjectLevelComponentList.join("_");
-    potentialJSONs.push(subjectLevelJSON);
-
-    var topLevelJSON = "/" + topLevelComponentList.join("_");
-    potentialJSONs.push(topLevelJSON);
-
+    var potentialJSONs = determinePotentialSidecars(path);
 
     var mergedDictionary = {};
     async.forEachOf(potentialJSONs, function (file, key, cb) {
@@ -91,7 +53,7 @@ module.exports = function NIFTI (path, jsonContentsDict, callback) {
                 }));
             }
         }
-        // we don't need slice timing or repetitin time for SBref
+        // we don't need slice timing or repetition time for SBref
         if (path.endsWith("_bold.nii.gz")) {
             if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
                 errors.push(new Issue({
@@ -146,3 +108,54 @@ module.exports = function NIFTI (path, jsonContentsDict, callback) {
 
 
 };
+
+
+/**
+ * Determine Potential Sidecars
+ *
+ * Takes a NIFTI scan path and returns a list
+ * of all potential JSON sidecar paths.
+ */
+function determinePotentialSidecars(scanPath) {
+    var sidecarJSON = scanPath.replace(".nii.gz", ".json");
+    var pathComponents = sidecarJSON.split('/');
+    var filenameComponents = pathComponents[pathComponents.length - 1].split("_");
+
+    var sessionLevelComponentList = [],
+        subjectLevelComponentList = [],
+        topLevelComponentList = [],
+        ses = null,
+        sub = null;
+
+    filenameComponents.forEach(function (filenameComponent) {
+        if (filenameComponent.substring(0, 3) != "run") {
+            sessionLevelComponentList.push(filenameComponent);
+            if (filenameComponent.substring(0, 3) == "ses") {
+                ses = filenameComponent;
+
+            } else {
+                subjectLevelComponentList.push(filenameComponent);
+                if (filenameComponent.substring(0, 3) == "sub") {
+                    sub = filenameComponent;
+                } else {
+                    topLevelComponentList.push(filenameComponent);
+                }
+            }
+        }
+    });
+
+    var potentialJSONs = [sidecarJSON];
+
+    if (ses) {
+        var sessionLevelJSON = "/" + sub + "/" + ses + "/" + sessionLevelComponentList.join("_");
+        potentialJSONs.push(sessionLevelJSON)
+    };
+
+    var subjectLevelJSON = "/" + sub + "/" + subjectLevelComponentList.join("_");
+    potentialJSONs.push(subjectLevelJSON);
+
+    var topLevelJSON = "/" + topLevelComponentList.join("_");
+    potentialJSONs.push(topLevelJSON);
+
+    return potentialJSONs;
+}
