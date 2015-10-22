@@ -19,11 +19,19 @@ module.exports = function NIFTI (file, jsonContentsDict, callback) {
     var locationMessage = "It can be included one of the following locations: " + potentialSidecars.join(", ");
 
     utils.files.readNiftiHeader(file, function (header) {
-        // Define repetition time from header and coerce to seconds.
-        var repetitionTime = header.pixdim[4];
-        var repetitionUnit = header.xyzt_units[3];
-        if (repetitionUnit === 'ms') {repetitionTime = repetitionTime / 1000;    repetitionUnit = 's'}
-        if (repetitionUnit === 'us') {repetitionTime = repetitionTime / 1000000; repetitionUnit = 's'}
+
+        // check if header could be read
+        if (header.hasOwnProperty('error')) {
+            errors.push(new Issue({
+                reason: "We were unable to read the contents of this file."
+            }));
+        } else {
+            // Define repetition time from header and coerce to seconds.
+            var repetitionTime = header.pixdim[4];
+            var repetitionUnit = header.xyzt_units[3];
+            if (repetitionUnit === 'ms') {repetitionTime = repetitionTime / 1000;    repetitionUnit = 's'}
+            if (repetitionUnit === 'us') {repetitionTime = repetitionTime / 1000000; repetitionUnit = 's'}
+        }
 
         if (path.endsWith("_bold.nii.gz") || path.endsWith("_sbref.nii.gz") || path.endsWith("_dwi.nii.gz")) {
             if (!mergedDictionary.hasOwnProperty('EchoTime')) {
@@ -61,16 +69,18 @@ module.exports = function NIFTI (file, jsonContentsDict, callback) {
                 }));
             }
 
-            if (repetitionUnit !== 's') {
-                warnings.push(new Issue({
-                    severity: "warning",
-                    reason: "Repetition time was not defined in either seconds, milliseconds or microseconds in the scan's header. " + locationMessage
-                }));
-            } else if (repetitionTime !== mergedDictionary.RepetitionTime) {
-                warnings.push(new Issue({
-                    severity: "Warning",
-                    reason: "Repetition time did not match between the scan's header and the associated JSON metadata file. " + locationMessage
-                }));
+            if (repetitionTime) {
+                if (repetitionUnit !== 's') {
+                    warnings.push(new Issue({
+                        severity: "warning",
+                        reason: "Repetition time was not defined in either seconds, milliseconds or microseconds in the scan's header. " + locationMessage
+                    }));
+                } else if (repetitionTime !== mergedDictionary.RepetitionTime) {
+                    warnings.push(new Issue({
+                        severity: "Warning",
+                        reason: "Repetition time did not match between the scan's header and the associated JSON metadata file. " + locationMessage
+                    }));
+                }
             }
 
             if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
