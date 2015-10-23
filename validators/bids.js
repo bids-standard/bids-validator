@@ -155,15 +155,17 @@ var BIDS = {
 
         }, function () {
             async.forEachOf(niftis, function (file, key, cb) {
-                var path = utils.files.relativePath(file);
-                NIFTI(file, jsonContentsDict, function (errs, warns) {
-                    if (errs && errs.length > 0) {
-                        self.errors.push({file: file, path: path, errors: errs})
-                    }
-                    if (warns && warns.length > 0) {
-                        self.warnings.push({file: file, path: path, errors: warns});
-                    }
-                    return cb();
+                utils.files.readNiftiHeader(file, function (header) {
+                    var path = utils.files.relativePath(file);
+                    NIFTI(header, path, jsonContentsDict, function (errs, warns) {
+                        if (errs && errs.length > 0) {
+                            self.errors.push({file: file, path: path, errors: errs})
+                        }
+                        if (warns && warns.length > 0) {
+                            self.warnings.push({file: file, path: path, errors: warns});
+                        }
+                        return cb();
+                    });
                 });
             }, function(){
                 callback(self.errors, self.warnings);
