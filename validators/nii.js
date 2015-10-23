@@ -71,13 +71,11 @@ module.exports = function NIFTI (file, jsonContentsDict, callback) {
 
             if (repetitionTime) {
                 if (repetitionUnit !== 's') {
-                    warnings.push(new Issue({
-                        severity: "warning",
-                        reason: "Repetition time was not defined in either seconds, milliseconds or microseconds in the scan's header. " + locationMessage
+                    errors.push(new Issue({
+                        reason: "Repetition time was not defined in seconds, milliseconds or microseconds in the scan's header."
                     }));
                 } else if (repetitionTime !== mergedDictionary.RepetitionTime) {
-                    warnings.push(new Issue({
-                        severity: "Warning",
+                    errors.push(new Issue({
                         reason: "Repetition time did not match between the scan's header and the associated JSON metadata file. " + locationMessage
                     }));
                 }
