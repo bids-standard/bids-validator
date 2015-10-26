@@ -10,12 +10,23 @@ var Issue = utils.Issue;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function NIFTI (header, path, jsonContentsDict, callback) {
+module.exports = function NIFTI (header, path, jsonContentsDict, events, callback) {
     var errors = [];
     var warnings = [];
-    var potentialSidecars = determinePotentialSidecars(path);
-    var mergedDictionary = generateMergedSidecarDict(potentialSidecars, jsonContentsDict);
-    var locationMessage = "It can be included one of the following locations: " + potentialSidecars.join(", ");
+    var potentialSidecars = potentialLocations(path.replace(".nii.gz", ".json"));
+    var potentialEvents   = potentialLocations(path.replace("bold.nii.gz", "events.tsv"));
+    var mergedDictionary  = generateMergedSidecarDict(potentialSidecars, jsonContentsDict);
+    var locationMessage   = "It can be included one of the following locations: " + potentialSidecars.join(", ");
+
+    var missingEvents = false;
+    for (var event of potentialEvents) {
+        if (path.toLowerCase().indexOf('rest') || events.indexOf(event) == -1) {
+            missingEvents = true;
+        }
+    }
+    if (missingEvents) {
+        // console.log(path);
+    }
 
     // check if header could be read
     if (header && header.hasOwnProperty('error')) {
@@ -127,14 +138,16 @@ module.exports = function NIFTI (header, path, jsonContentsDict, callback) {
 
 
 /**
- * Determine Potential Sidecars
+ * Potential Locations
  *
- * Takes a NIFTI scan path and returns a list
- * of all potential JSON sidecar paths.
+ * Takes the path to the lowest possible level of
+ * a file that can be hierarchily positioned and
+ * return a list of all possible locations for that
+ * file.
  */
-function determinePotentialSidecars(scanPath) {
-    var sidecarJSON = scanPath.replace(".nii.gz", ".json");
-    var pathComponents = sidecarJSON.split('/');
+function potentialLocations(path) {
+    var potentialPaths = [path];
+    var pathComponents = path.split('/');
     var filenameComponents = pathComponents[pathComponents.length - 1].split("_");
 
     var sessionLevelComponentList = [],
@@ -160,20 +173,18 @@ function determinePotentialSidecars(scanPath) {
         }
     });
 
-    var potentialJSONs = [sidecarJSON];
-
     if (ses) {
-        var sessionLevelJSON = "/" + sub + "/" + ses + "/" + sessionLevelComponentList.join("_");
-        potentialJSONs.push(sessionLevelJSON)
+        var sessionLevelPath= "/" + sub + "/" + ses + "/" + sessionLevelComponentList.join("_");
+        potentialPaths.push(sessionLevelPath)
     };
 
-    var subjectLevelJSON = "/" + sub + "/" + subjectLevelComponentList.join("_");
-    potentialJSONs.push(subjectLevelJSON);
+    var subjectLevelPath = "/" + sub + "/" + subjectLevelComponentList.join("_");
+    potentialPaths.push(subjectLevelPath);
 
-    var topLevelJSON = "/" + topLevelComponentList.join("_");
-    potentialJSONs.push(topLevelJSON);
+    var topLevelPath = "/" + topLevelComponentList.join("_");
+    potentialPaths.push(topLevelPath);
 
-    return potentialJSONs;
+    return potentialPaths;
 }
 
 /**
