@@ -19,7 +19,8 @@ module.exports = function NIFTI (header, path, jsonContentsDict, events, callbac
     var locationMessage   = "It can be included one of the following locations: " + potentialSidecars.join(", ");
 
     var missingEvents = false;
-    for (var event of potentialEvents) {
+    for (var i = 0; i < potentialEvents.length; i++) {
+        var event = potentialEvents[i];
         if (path.toLowerCase().indexOf('rest') || events.indexOf(event) == -1) {
             missingEvents = true;
         }
