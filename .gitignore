@@ -1,3 +1,4 @@
 node_modules/
 .DS_Store
-tests/data
+tests/data/BIDS-examples-1.0.0-rc1u5
+npm-debug.log

@@ -6,13 +6,19 @@
  */
 if (typeof window === 'undefined') {
     var fs = require('fs');
+    var zlib = require('zlib');
+} else {
+    var pako = require('pako');
 }
+
+var nifti = require('nifti-js');
 
 // public API ---------------------------------------------------------------------
 
 var fileUtils = {
 	readFile: readFile,
     readDir: readDir,
+    readNiftiHeader: readNiftiHeader,
 	generateTree: generateTree,
     relativePath: relativePath
 };
@@ -94,6 +100,44 @@ function getFiles (dir, files_){
     return files_;
 }
 
+
+/**
+ * Read Nifti Header
+ *
+ * Takes a files and returns a json parsed nifti
+ * header without reading any extra bytes.
+ */
+function readNiftiHeader (file, callback) {
+    if (fs) {
+        fs.open(file.path, 'r', function(status, fd) {
+            if (status) {
+                callback({error: "Unable to read " + file.path});
+                return;
+            }
+            var buffer = new Buffer(348);
+            fs.read(fd, buffer, 0, 347, 0, function (err, num){
+                zlib.gunzip(buffer, function(err, unzipped) {
+                    if (err) {
+                        callback({error: "Unable to read " + file.path});
+                        return;
+                    }
+                    callback(nifti.parseNIfTIHeader(unzipped));
+                });
+            });
+        });
+    } else {
+        var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+        fileReader = new FileReader();
+
+        fileReader.onloadend = function (e) {
+            var buf = new Uint8Array(fileReader.result);
+            var unzipped = pako.inflate(buf);
+            callback(nifti.parseNIfTIHeader(unzipped));
+        };
+
+        fileReader.readAsArrayBuffer(blobSlice.call(file, 0, 3480));
+    }
+}
 
 /**
  * Generate Tree

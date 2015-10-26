@@ -7,6 +7,7 @@ var NIFTI  = require('./nii');
 
 var BIDS = {
 
+    options:  {},
     errors:   [],
     warnings: [],
 
@@ -14,14 +15,16 @@ var BIDS = {
      * Start
      *
      * Takes either a filelist array or
-     * a path to a BIDS directory and
-     * starts the validation process and
+     * a path to a BIDS directory and an
+     * options object and starts
+     * the validation process and
      * returns the errors and warnings as
      * arguments to the callback.
      */
-    start: function (dir, callback) {
-        BIDS.reset();
+    start: function (dir, options, callback) {
         var self = BIDS;
+        self.options = options ? self.parseOptions(options) : {};
+        BIDS.reset();
         utils.files.readDir(dir, function (files) {
             self.quickTest(files, function (couldBeBIDS) {
                 if (couldBeBIDS) {
@@ -92,14 +95,14 @@ var BIDS = {
             var path = utils.files.relativePath(file);
             if (
                 !(
-                    utils.type.isTopLevel(path) ||
+                    utils.type.isTopLevel(path)          ||
                     utils.type.isCodeOrDerivatives(path) ||
-                    utils.type.isSessionLevel(path) ||
-                    utils.type.isSubjectLevel(path) ||
-                    utils.type.isAnat(path) ||
-                    utils.type.isDWI(path) ||
-                    utils.type.isFunc(path) ||
-                    utils.type.isCont(path) ||
+                    utils.type.isSessionLevel(path)      ||
+                    utils.type.isSubjectLevel(path)      ||
+                    utils.type.isAnat(path)              ||
+                    utils.type.isDWI(path)               ||
+                    utils.type.isFunc(path)              ||
+                    utils.type.isCont(path)              ||
                     utils.type.isFieldMap(path)
                 )
             ) {
@@ -156,16 +159,33 @@ var BIDS = {
         }, function () {
             async.forEachOf(niftis, function (file, key, cb) {
                 var path = utils.files.relativePath(file);
-                NIFTI(path, jsonContentsDict, function (errs, warns) {
-                    if (errs && errs.length > 0) {
-                        self.errors.push({file: file, path: path, errors: errs})
-                    }
-                    if (warns && warns.length > 0) {
-                        self.warnings.push({file: file, path: path, errors: warns});
-                    }
-                    return cb();
-                });
+                if (self.options.ignoreNiftiHeaders) {
+                    NIFTI(null, path, jsonContentsDict, function (errs, warns) {
+                        if (errs && errs.length > 0) {
+                            self.errors.push({file: file, path: path, errors: errs})
+                        }
+                        if (warns && warns.length > 0) {
+                            self.warnings.push({file: file, path: path, errors: warns});
+                        }
+                        return cb();
+                    });
+                } else {
+                    utils.files.readNiftiHeader(file, function (header) {
+                        NIFTI(header, path, jsonContentsDict, function (errs, warns) {
+                            if (errs && errs.length > 0) {
+                                self.errors.push({file: file, path: path, errors: errs})
+                            }
+                            if (warns && warns.length > 0) {
+                                self.warnings.push({file: file, path: path, errors: warns});
+                            }
+                            return cb();
+                        });
+                    });
+                }
             }, function(){
+                if (self.options.ignoreWarnings) {
+                    self.warnings = [];
+                }
                 callback(self.errors, self.warnings);
             });
         });
@@ -179,6 +199,16 @@ var BIDS = {
     reset: function () {
         this.errors = [];
         this.warnings = [];
+    },
+
+    /**
+     * Parse Options
+     */
+    parseOptions: function (options) {
+        return {
+            ignoreWarnings:     options.ignoreWarnings     ? true : false,
+            ignoreNiftiHeaders: options.ignoreNiftiHeaders ? true : false
+        };
     }
 };
 

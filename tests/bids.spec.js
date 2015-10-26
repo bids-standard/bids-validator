@@ -33,7 +33,8 @@ var suite = describe('BIDS example datasets ', function() {
 
         datasetDirectories.forEach(function testDataset(path){
             suite.addTest(new Test(path, function (isdone){
-                validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u5/" + path + "/", function (errors, warnings) {
+		    	var options = {ignoreNiftiHeaders: true};
+                validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u5/" + path + "/", options, function (errors, warnings) {
                     assert.deepEqual(errors, []);
                     //assert.deepEqual(warnings, []);
                     isdone();
@@ -44,8 +45,19 @@ var suite = describe('BIDS example datasets ', function() {
     });
 
     // we need to have at least one non-dynamic test
-    return it('validates path without trailing backslash', function(isdone) {
-        validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u5/ds001", function (errors, warnings) {
+    it('validates path without trailing backslash', function(isdone) {
+        var options = {ignoreNiftiHeaders: true};
+        validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u5/ds001", options, function (errors, warnings) {
+            assert.deepEqual(errors, []);
+            //assert.deepEqual(warnings, []);
+            isdone();
+        });
+    });
+
+    // we need to have at least one non-dynamic test
+    it('validates dataset with valid nifti headers', function(isdone) {
+    	var options = {ignoreNiftiHeaders: false};
+        validate.BIDS("tests/data/valid_headers", options, function (errors, warnings) {
             assert.deepEqual(errors, []);
             //assert.deepEqual(warnings, []);
             isdone();
