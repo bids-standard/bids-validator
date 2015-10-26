@@ -121,7 +121,7 @@ function readNiftiHeader (file, callback) {
                         callback({error: "Unable to read " + file.path});
                         return;
                     }
-                    callback(nifti.parseHeader(unzipped));
+                    callback(nifti.parseNIfTIHeader(unzipped));
                 });
             });
         });
@@ -132,7 +132,7 @@ function readNiftiHeader (file, callback) {
         fileReader.onloadend = function (e) {
             var buf = new Uint8Array(fileReader.result);
             var unzipped = pako.inflate(buf);
-            callback(nifti.parseHeader(unzipped));
+            callback(nifti.parseNIfTIHeader(unzipped));
         };
 
         fileReader.readAsArrayBuffer(blobSlice.call(file, 0, 3480));
