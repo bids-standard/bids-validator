@@ -18,11 +18,11 @@ module.exports = function NIFTI (header, path, jsonContentsDict, callback) {
     var locationMessage = "It can be included one of the following locations: " + potentialSidecars.join(", ");
 
     // check if header could be read
-    if (header.hasOwnProperty('error')) {
+    if (header && header.hasOwnProperty('error')) {
         errors.push(new Issue({
             reason: "We were unable to read the contents of this file."
         }));
-    } else {
+    } else if (header) {
         // Define repetition time from header and coerce to seconds.
         var repetitionTime = header.pixdim[4];
         var repetitionUnit = header.xyzt_units[3];
