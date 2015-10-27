@@ -87,8 +87,9 @@ var BIDS = {
     fullTest: function (fileList, callback) {
         var self = this;
 
-        var jsonContentsDict = {};
-        var niftis = [];
+        var jsonContentsDict = {},
+            events           = [],
+            niftis           = [];
 
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
@@ -126,6 +127,7 @@ var BIDS = {
             else if (file.name && file.name.endsWith('.tsv')) {
                 utils.files.readFile(file, function (contents) {
                     var isEvents = file.name.endsWith('_events.tsv');
+                    if (isEvents) {events.push(path);}
                     TSV(contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
                             self.errors.push({file: file, path: path, errors: errs})
@@ -160,7 +162,7 @@ var BIDS = {
             async.forEachOf(niftis, function (file, key, cb) {
                 var path = utils.files.relativePath(file);
                 if (self.options.ignoreNiftiHeaders) {
-                    NIFTI(null, path, jsonContentsDict, function (errs, warns) {
+                    NIFTI(null, path, jsonContentsDict, events, function (errs, warns) {
                         if (errs && errs.length > 0) {
                             self.errors.push({file: file, path: path, errors: errs})
                         }
@@ -171,7 +173,7 @@ var BIDS = {
                     });
                 } else {
                     utils.files.readNiftiHeader(file, function (header) {
-                        NIFTI(header, path, jsonContentsDict, function (errs, warns) {
+                        NIFTI(header, path, jsonContentsDict, events, function (errs, warns) {
                             if (errs && errs.length > 0) {
                                 self.errors.push({file: file, path: path, errors: errs})
                             }
