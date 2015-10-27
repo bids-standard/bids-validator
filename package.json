@@ -23,7 +23,7 @@
     "async": "^1.2.1",
     "colors": "^1.1.0",
     "jshint": "^2.8.0",
-    "nifti-js": "git+https://github.com/scijs/nifti-js",
+    "nifti-js": "^1.0.0",
     "pako": "^0.2.8",
     "yargs": "^3.25.0"
   },
