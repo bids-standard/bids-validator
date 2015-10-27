@@ -32,8 +32,8 @@ describe('NIFTI', function(){
 	});
 
 	it('should ignore missing events files for rest scans', function() {
-		jsonContentsDict['/sub-15/func/sub-15_task-mixedeventrelatedprobe-rest_run-01_bold.json'] = jsonContentsDict['/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.json'];
-		var path = '/sub-15/func/sub-15_task-mixedeventrelatedprobe-rest_run-01_bold.nii.gz';
+		jsonContentsDict['/sub-15/func/sub-15_task-mixedeventrelatedproberest_run-01_bold.json'] = jsonContentsDict['/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.json'];
+		var path = '/sub-15/func/sub-15_task-mixedeventrelatedproberest_run-01_bold.nii.gz';
 		validate.NIFTI(header, path, jsonContentsDict, events, function (errors, warnings) {
 			assert.deepEqual(warnings, []);
 		});
