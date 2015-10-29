@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Squishymedia/bids-validator.git"
+    "url": "https://github.com/INCF/bids-validator.git"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha tests/"
@@ -16,9 +16,9 @@
   "author": "Squishymedia",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Squishymedia/bids-validator/issues"
+    "url": "https://github.com/INCF/bids-validator/issues"
   },
-  "homepage": "https://github.com/Squishymedia/bids-validator",
+  "homepage": "https://github.com/INCF/bids-validator",
   "dependencies": {
     "async": "^1.2.1",
     "colors": "^1.1.0",
