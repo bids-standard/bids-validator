@@ -1,4 +1,4 @@
-![](https://circleci.com/gh/Squishymedia/bids-validator.svg?style=shield&circle-token=:circle-token)
+![](https://circleci.com/gh/INCF/bids-validator.svg?style=shield&circle-token=:circle-token)
 
 # BIDS-Validator
 
