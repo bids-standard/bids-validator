@@ -135,8 +135,8 @@ module.exports = function NIFTI (header, path, jsonContentsDict, events, callbac
 };
 
 function missingEvents(path, potentialEvents, events) {
-    var missingEvent = false,
-        isRest       = false;
+    var hasEvent = false,
+        isRest   = false;
 
     // check if is a rest file
     var pathParts = path.split('/');
@@ -148,14 +148,15 @@ function missingEvents(path, potentialEvents, events) {
         }
     }
 
-    // check for missing event
+    // check for event file
     for (var i = 0; i < potentialEvents.length; i++) {
         var event = potentialEvents[i];
-        if (!isRest && path.endsWith('_bold.nii.gz') && events.indexOf(event) === -1) {
-            missingEvent = true;
+        if (events.indexOf(event) > -1) {
+            hasEvent = true;
         }
     }
-    return missingEvent;
+
+    return !isRest && path.endsWith('_bold.nii.gz') && !hasEvent;
 }
 
 
