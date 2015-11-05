@@ -8,6 +8,26 @@
 module.exports = {
 
     /**
+     * Is BIDS
+     *
+     * Check if a given path is valid within the
+     * bids spec.
+     */
+    isBIDS: function(path) {
+        return (
+            this.isTopLevel(path)          ||
+            this.isCodeOrDerivatives(path) ||
+            this.isSessionLevel(path)      ||
+            this.isSubjectLevel(path)      ||
+            this.isAnat(path)              ||
+            this.isDWI(path)               ||
+            this.isFunc(path)              ||
+            this.isCont(path)              ||
+            this.isFieldMap(path)
+        );
+    },
+
+    /**
      * Check if the file has appropriate name for a top level file
      */
     isTopLevel: function(path) {

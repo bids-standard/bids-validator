@@ -93,30 +93,21 @@ var BIDS = {
 
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
-            var path = utils.files.relativePath(file);
-            if (
-                !(
-                    utils.type.isTopLevel(path)          ||
-                    utils.type.isCodeOrDerivatives(path) ||
-                    utils.type.isSessionLevel(path)      ||
-                    utils.type.isSubjectLevel(path)      ||
-                    utils.type.isAnat(path)              ||
-                    utils.type.isDWI(path)               ||
-                    utils.type.isFunc(path)              ||
-                    utils.type.isCont(path)              ||
-                    utils.type.isFieldMap(path)
-                )
-            ) {
+            file.relativePath = utils.files.relativePath(file);
+
+            // validate path naming
+            if (!utils.type.isBIDS(file.relativePath)) {
                 var newWarning = new utils.Issue({
                     evidence: file.name,
                     reason: "This file is not part of the BIDS specification, make sure it isn't included in the " +
                     "dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder.",
                     severity: 'warning'
                 });
-                self.warnings.push({file: file, path: path, errors: [newWarning]});
+                self.warnings.push({file: file, path: file.relativePath, errors: [newWarning]});
                 return cb();
             }
 
+            // capture niftis for later validation
             else if (file.name.endsWith('.nii.gz')) {
                 niftis.push(file);
                 cb();
@@ -127,13 +118,13 @@ var BIDS = {
             else if (file.name && file.name.endsWith('.tsv')) {
                 utils.files.readFile(file, function (contents) {
                     var isEvents = file.name.endsWith('_events.tsv');
-                    if (isEvents) {events.push(path);}
+                    if (isEvents) {events.push(file.relativePath);}
                     TSV(contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
-                            self.errors.push({file: file, path: path, errors: errs})
+                            self.errors.push({file: file, path: file.relativePath, errors: errs})
                         }
                         if (warns && warns.length > 0) {
-                            self.warnings.push({file: file, path: path, errors: warns});
+                            self.warnings.push({file: file, path: file.relativePath, errors: warns});
                         }
                         return cb();
                     });
@@ -144,12 +135,12 @@ var BIDS = {
             else if (file.name && file.name.endsWith('.json')) {
                 utils.files.readFile(file, function (contents) {
                     JSON(contents, function (errs, warns, jsObj) {
-                        jsonContentsDict[path] = jsObj;
+                        jsonContentsDict[file.relativePath] = jsObj;
                         if (errs  && errs.length > 0) {
-                            self.errors.push({file: file, path: path, errors: errs})
+                            self.errors.push({file: file, path: file.relativePath, errors: errs})
                         }
                         if (warns && warns.length > 0) {
-                            self.warnings.push({file: file, path: path, errors: warns});
+                            self.warnings.push({file: file, path: file.relativePath, errors: warns});
                         }
                         return cb();
                     });
@@ -160,25 +151,25 @@ var BIDS = {
 
         }, function () {
             async.forEachOf(niftis, function (file, key, cb) {
-                var path = utils.files.relativePath(file);
+                // var path = utils.files.relativePath(file);
                 if (self.options.ignoreNiftiHeaders) {
-                    NIFTI(null, path, jsonContentsDict, events, function (errs, warns) {
+                    NIFTI(null, file.relativePath, jsonContentsDict, events, function (errs, warns) {
                         if (errs && errs.length > 0) {
-                            self.errors.push({file: file, path: path, errors: errs})
+                            self.errors.push({file: file, path: file.relativePath, errors: errs})
                         }
                         if (warns && warns.length > 0) {
-                            self.warnings.push({file: file, path: path, errors: warns});
+                            self.warnings.push({file: file, path: file.relativePath, errors: warns});
                         }
                         return cb();
                     });
                 } else {
                     utils.files.readNiftiHeader(file, function (header) {
-                        NIFTI(header, path, jsonContentsDict, events, function (errs, warns) {
+                        NIFTI(header, file.relativePath, jsonContentsDict, events, function (errs, warns) {
                             if (errs && errs.length > 0) {
-                                self.errors.push({file: file, path: path, errors: errs})
+                                self.errors.push({file: file, path: file.relativePath, errors: errs})
                             }
                             if (warns && warns.length > 0) {
-                                self.warnings.push({file: file, path: path, errors: warns});
+                                self.warnings.push({file: file, path: file.relativePath, errors: warns});
                             }
                             return cb();
                         });
