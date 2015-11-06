@@ -5,15 +5,19 @@ var fs = require('fs')
 module.exports = function (dir, options) {
 	if (fs.existsSync(dir)) {
 	    validate.BIDS(dir, options, function (errors, warnings) {
-	    	if (errors === 'Invalid') {
-	    		console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
-	    	} else if (errors.length >= 1 || warnings.length >= 1) {
-		        logIssues(errors, 'red');
-				logIssues(warnings, 'yellow');
-			}
-			else {
-				console.log(colors.green("This dataset appears to be BIDS compatible."));
-			}
+	    	console.log(errors);
+	    	console.log(warnings);
+	    	console.log(errors.length);
+	    	console.log(warnings.length);
+	  //   	if (errors === 'Invalid') {
+	  //   		console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
+	  //   	} else if (errors.length >= 1 || warnings.length >= 1) {
+		 //        logIssues(errors, 'red');
+			// 	logIssues(warnings, 'yellow');
+			// }
+			// else {
+			// 	console.log(colors.green("This dataset appears to be BIDS compatible."));
+			// }
 	    });
 	} else {
 		console.log(colors.red(dir + " does not exits"))

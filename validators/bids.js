@@ -97,13 +97,13 @@ var BIDS = {
 
             // validate path naming
             if (!utils.type.isBIDS(file.relativePath)) {
-                var newWarning = new utils.Issue({
+                self.warnings.push(new utils.Issue({
+                    file: file,
                     evidence: file.name,
                     reason: "This file is not part of the BIDS specification, make sure it isn't included in the " +
                     "dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder.",
                     severity: 'warning'
-                });
-                self.warnings.push({file: file, path: file.relativePath, errors: [newWarning]});
+                }));
                 return cb();
             }
 
@@ -119,12 +119,12 @@ var BIDS = {
                 utils.files.readFile(file, function (contents) {
                     var isEvents = file.name.endsWith('_events.tsv');
                     if (isEvents) {events.push(file.relativePath);}
-                    TSV(contents, isEvents, function (errs, warns) {
+                    TSV(file, contents, isEvents, function (errs, warns) {
                         if (errs && errs.length > 0) {
-                            self.errors.push({file: file, path: file.relativePath, errors: errs})
+                            self.errors = self.errors.concat(errs);
                         }
                         if (warns && warns.length > 0) {
-                            self.warnings.push({file: file, path: file.relativePath, errors: warns});
+                            self.warnings = self.warnings.concat(warns);
                         }
                         return cb();
                     });
@@ -134,13 +134,13 @@ var BIDS = {
             // validate json
             else if (file.name && file.name.endsWith('.json')) {
                 utils.files.readFile(file, function (contents) {
-                    JSON(contents, function (errs, warns, jsObj) {
+                    JSON(file, contents, function (errs, warns, jsObj) {
                         jsonContentsDict[file.relativePath] = jsObj;
                         if (errs  && errs.length > 0) {
-                            self.errors.push({file: file, path: file.relativePath, errors: errs})
+                            self.errors = self.errors.concat(errs);
                         }
                         if (warns && warns.length > 0) {
-                            self.warnings.push({file: file, path: file.relativePath, errors: warns});
+                            self.warnings = self.warnings.concat(warns);
                         }
                         return cb();
                     });
@@ -151,25 +151,24 @@ var BIDS = {
 
         }, function () {
             async.forEachOf(niftis, function (file, key, cb) {
-                // var path = utils.files.relativePath(file);
                 if (self.options.ignoreNiftiHeaders) {
-                    NIFTI(null, file.relativePath, jsonContentsDict, events, function (errs, warns) {
+                    NIFTI(null, file, jsonContentsDict, events, function (errs, warns) {
                         if (errs && errs.length > 0) {
-                            self.errors.push({file: file, path: file.relativePath, errors: errs})
+                            self.errors = self.errors.concat(errs);
                         }
                         if (warns && warns.length > 0) {
-                            self.warnings.push({file: file, path: file.relativePath, errors: warns});
+                            self.warnings = self.warnings.concat(warns);
                         }
                         return cb();
                     });
                 } else {
                     utils.files.readNiftiHeader(file, function (header) {
-                        NIFTI(header, file.relativePath, jsonContentsDict, events, function (errs, warns) {
+                        NIFTI(header, file, jsonContentsDict, events, function (errs, warns) {
                             if (errs && errs.length > 0) {
-                                self.errors.push({file: file, path: file.relativePath, errors: errs})
+                                self.errors = self.errors.concat(errs);
                             }
                             if (warns && warns.length > 0) {
-                                self.warnings.push({file: file, path: file.relativePath, errors: warns});
+                                self.warnings = self.warnings.concat(warns);
                             }
                             return cb();
                         });

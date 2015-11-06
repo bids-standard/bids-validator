@@ -10,7 +10,7 @@ var Issue = require('../utils').Issue;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function (contents, callback) {
+module.exports = function (file, contents, callback) {
 
 // primary flow --------------------------------------------------------------------
 
@@ -54,6 +54,7 @@ module.exports = function (contents, callback) {
     function checkUnits (sidecar) {
         if (sidecar.hasOwnProperty('RepetitionTime') && sidecar["RepetitionTime"] > 100) {
             warnings.push(new Issue({
+                file: file,
                 severity: "warning",
                 reason: "'RepetitionTime' is greater than 100 are you sure it's expressed in seconds?"
             }));
@@ -61,18 +62,21 @@ module.exports = function (contents, callback) {
 
         if (sidecar.hasOwnProperty('EchoTime') && sidecar["EchoTime"] > 1) {
             warnings.push(new Issue({
+                file: file,
                 severity: "warning",
                 reason: "'EchoTime' is greater than 1 are you sure it's expressed in seconds?"
             }));
         }
         if (sidecar.hasOwnProperty('EchoTimeDifference') && sidecar["EchoTimeDifference"] > 1) {
             warnings.push(new Issue({
+                file: file,
                 severity: "warning",
                 reason: "'EchoTimeDifference' is greater than 1 are you sure it's expressed in seconds?"
             }));
         }
         if (sidecar.hasOwnProperty('TotalReadoutTime') && sidecar["TotalReadoutTime"] > 10) {
             warnings.push(new Issue({
+                file: file,
                 severity: "warning",
                 reason: "'TotalReadoutTime' is greater than 10 are you sure it's expressed in seconds?"
             }));

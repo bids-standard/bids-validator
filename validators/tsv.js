@@ -9,7 +9,7 @@ var Issue = require('../utils').Issue;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function TSV (contents, isEvents, callback) {
+module.exports = function TSV (file, contents, isEvents, callback) {
 
     var rows = contents.split('\n');
     var errors = [];
@@ -20,6 +20,7 @@ module.exports = function TSV (contents, isEvents, callback) {
     if (isEvents) {
         if (headers[0] !== "onset"){
             errors.push(new Issue({
+                file: file,
                 evidence: headers,
                 line: 1,
                 character: rows[0].indexOf(headers[0]),
@@ -28,6 +29,7 @@ module.exports = function TSV (contents, isEvents, callback) {
         }
         if (headers[1] !== "duration"){
             errors.push(new Issue({
+                file: file,
                 evidence: headers,
                 line: 1,
                 character: rows[0].indexOf(headers[1]),
@@ -49,6 +51,7 @@ module.exports = function TSV (contents, isEvents, callback) {
         // check for different length rows
         if (columnsInRow.length !== headers.length) {
             errors.push(new Issue({
+                file: file,
                 evidence: row,
                 line: rows.indexOf(row) + 1,
                 reason: 'All rows must have the same number of columns as there are headers.'
@@ -62,6 +65,7 @@ module.exports = function TSV (contents, isEvents, callback) {
             var patt = new RegExp("[ ]{2,}");
 	        if (patt.test(column)) {
                 errors.push(new Issue({
+                    file: file,
                     evidence: row,
                     line: rows.indexOf(row) + 1,
                     character: row.indexOf('  '),
@@ -72,6 +76,7 @@ module.exports = function TSV (contents, isEvents, callback) {
             // check if missing value is properly labeled as 'n/a'
             if (column === "NA" || column === "na" || column === "nan") {
                 warnings.push(new Issue({
+                    file: file,
                     evidence: row,
                     line: rows.indexOf(row) + 1,
                     character: row.indexOf('NA' || 'na' || 'nan'),

@@ -3,9 +3,14 @@ var validate = require('../index');
 
 describe('TSV', function(){
 
+	var file = {
+		name: 'sub-08_ses-test_task-linebisection_events.tsv',
+		relativePath: '/sub-08/ses-test/func/sub-08_ses-test_task-linebisection_events.tsv'
+	};
+
 	it('should not allow contiguous spaces', function () {
 		var tsv = 'value-one\tvalue-two  value-three';
-		validate.TSV(tsv, false, function (errors) {
+		validate.TSV(file, tsv, false, function (errors) {
 			assert(errors && errors.length > 0);
 		});
 	});
@@ -14,7 +19,7 @@ describe('TSV', function(){
 		var tsv = 'header-one\theader-two\theader-three\n' +
 				  'value-one\tvalue-two\n' +
 				  'value-one\tvalue-two\tvalue-three';
-		validate.TSV(tsv, false, function (errors) {
+		validate.TSV(file, tsv, false, function (errors) {
 			assert(errors && errors.length > 0);
 		});
 	});
@@ -22,7 +27,7 @@ describe('TSV', function(){
 	it('require events files to have "onset" and "duration" columns', function () {
 		var tsv = 'header-one\theader-two\t4eader-three\n' +
 				  'value-one\tvalue-two\tvalue-three';
-		validate.TSV(tsv, true, function (errors) {
+		validate.TSV(file, tsv, true, function (errors) {
 			assert(errors && errors.length > 0);
 		});
 	});
