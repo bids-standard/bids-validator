@@ -2,7 +2,7 @@ var async  = require('async');
 var utils  = require('../utils');
 
 var TSV    = require('./tsv');
-var JSON   = require('./json');
+var json   = require('./json');
 var NIFTI  = require('./nii');
 
 var BIDS = {
@@ -126,7 +126,7 @@ var BIDS = {
             // validate json
             else if (file.name && file.name.endsWith('.json')) {
                 utils.files.readFile(file, function (contents) {
-                    JSON(file, contents, function (issues, jsObj) {
+                    json(file, contents, function (issues, jsObj) {
                         self.issues = self.issues.concat(issues);
                         jsonContentsDict[file.relativePath] = jsObj;
                         return cb();
@@ -163,8 +163,22 @@ var BIDS = {
      */
     formatIssues: function () {
         var errors = [], warnings = [];
+
+        // organize by issue code
+        var categorized = {};
         for (var i = 0; i < this.issues.length; i++) {
             var issue = this.issues[i];
+            if (!categorized[issue.code]) {
+                categorized[issue.code] = utils.issues[issue.code];
+                categorized[issue.code].files = [];
+            }
+            categorized[issue.code].files.push(issue);
+        }
+
+        // organize by severity
+        for (var key in categorized) {
+            var issue = categorized[key];
+            issue.code = key;
             if (issue.severity === 'error') {
                 errors.push(issue);
             } else if (issue.severity === 'warning' && !this.options.ignoreWarnings) {
@@ -172,6 +186,7 @@ var BIDS = {
             }
 
         }
+
         return {errors: errors, warnings: warnings};
     },
 
