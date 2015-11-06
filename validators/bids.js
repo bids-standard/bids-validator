@@ -152,19 +152,27 @@ var BIDS = {
                     });
                 }
             }, function(){
-                var errors = [], warnings = [];
-                for (var i = 0; i < self.issues.length; i++) {
-                    var issue = self.issues[i];
-                    if (issue.severity === 'error') {
-                        errors.push(issue);
-                    } else if (issue.severity === 'warning' && !self.options.ignoreWarnings) {
-                        warnings.push(issue);
-                    }
-
-                }
-                callback(errors, warnings);
+                var issues = self.formatIssues(self.issues);
+                callback(issues.errors, issues.warnings);
             });
         });
+    },
+
+    /**
+     * Format Issues
+     */
+    formatIssues: function () {
+        var errors = [], warnings = [];
+        for (var i = 0; i < this.issues.length; i++) {
+            var issue = this.issues[i];
+            if (issue.severity === 'error') {
+                errors.push(issue);
+            } else if (issue.severity === 'warning' && !this.options.ignoreWarnings) {
+                warnings.push(issue);
+            }
+
+        }
+        return {errors: errors, warnings: warnings};
     },
 
     /**
@@ -173,8 +181,7 @@ var BIDS = {
      * Resets the in object data back to original values.
      */
     reset: function () {
-        this.errors = [];
-        this.warnings = [];
+        this.issues = [];
     },
 
     /**

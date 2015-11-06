@@ -22,6 +22,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
     if (missingEvents(path, potentialEvents, events)) {
         issues.push(new Issue({
             code: 25,
+            file: file,
             reason: 'Task scans should have a correspondings events.tsv file. ' + eventsMessage
         }));
     }
@@ -29,7 +30,8 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
     // check if header could be read
     if (header && header.hasOwnProperty('error')) {
         issues.push(new Issue({
-            code: 26
+            code: 26,
+            file: file
         }));
     } else if (header) {
         // Define repetition time from header and coerce to seconds.
