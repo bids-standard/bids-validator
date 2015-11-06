@@ -8,6 +8,7 @@ module.exports = function (dir, options) {
 	    	if (errors === 'Invalid') {
 	    		console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
 	    	} else if (errors.length >= 1 || warnings.length >= 1) {
+	    		console.log();
 		        logIssues(errors, 'red', options);
 				logIssues(warnings, 'yellow', options);
 			}
@@ -39,8 +40,7 @@ function logIssues (issues, color, options) {
 			if (file.evidence) {
 				console.log('\t\t\tEvidence: ' + file.evidence);
 			}
-    		// console.log('\tSeverity: ' + file.severity);
-    		// console.log();
     	}
+		console.log();
     }
 }
