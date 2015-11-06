@@ -24,7 +24,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
                 evidence: headers,
                 line: 1,
                 character: rows[0].indexOf(headers[0]),
-                reason: "First column of the events file must be named 'onset'"
+                code: 20
             }));
         }
         if (headers[1] !== "duration"){
@@ -33,7 +33,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
                 evidence: headers,
                 line: 1,
                 character: rows[0].indexOf(headers[1]),
-                reason: "Second column of the events file must be named 'duration'"
+                code: 21
             }));
         }
     }
@@ -54,7 +54,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
                 file: file,
                 evidence: row,
                 line: rows.indexOf(row) + 1,
-                reason: 'All rows must have the same number of columns as there are headers.'
+                code: 22
             }));
         }
 
@@ -69,7 +69,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
                     evidence: row,
                     line: rows.indexOf(row) + 1,
                     character: row.indexOf('  '),
-                    reason: 'Values may not contain adjacent spaces.'
+                    code: 23
                 }));
 	        }
 
@@ -80,7 +80,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
                     evidence: row,
                     line: rows.indexOf(row) + 1,
                     character: row.indexOf('NA' || 'na' || 'nan'),
-                    reason: 'A proper way of labeling missing values is "n/a".'
+                    code: 23
                 }));
             }
 

@@ -55,30 +55,26 @@ module.exports = function (file, contents, callback) {
         if (sidecar.hasOwnProperty('RepetitionTime') && sidecar["RepetitionTime"] > 100) {
             warnings.push(new Issue({
                 file: file,
-                severity: "warning",
-                reason: "'RepetitionTime' is greater than 100 are you sure it's expressed in seconds?"
+                code: 2
             }));
         }
 
         if (sidecar.hasOwnProperty('EchoTime') && sidecar["EchoTime"] > 1) {
             warnings.push(new Issue({
                 file: file,
-                severity: "warning",
-                reason: "'EchoTime' is greater than 1 are you sure it's expressed in seconds?"
+                code: 3
             }));
         }
         if (sidecar.hasOwnProperty('EchoTimeDifference') && sidecar["EchoTimeDifference"] > 1) {
             warnings.push(new Issue({
                 file: file,
-                severity: "warning",
-                reason: "'EchoTimeDifference' is greater than 1 are you sure it's expressed in seconds?"
+                code: 4
             }));
         }
         if (sidecar.hasOwnProperty('TotalReadoutTime') && sidecar["TotalReadoutTime"] > 10) {
             warnings.push(new Issue({
                 file: file,
-                severity: "warning",
-                reason: "'TotalReadoutTime' is greater than 10 are you sure it's expressed in seconds?"
+                code: 5
             }));
         }
     }

@@ -100,9 +100,7 @@ var BIDS = {
                 self.warnings.push(new utils.Issue({
                     file: file,
                     evidence: file.name,
-                    reason: "This file is not part of the BIDS specification, make sure it isn't included in the " +
-                    "dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder.",
-                    severity: 'warning'
+                    code: 1
                 }));
                 return cb();
             }

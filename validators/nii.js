@@ -22,7 +22,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
 
     if (missingEvents(path, potentialEvents, events)) {
         warnings.push(new Issue({
-            severity: 'warning',
+            code: 25,
             reason: 'Task scans should have a correspondings events.tsv file. ' + eventsMessage
         }));
     }
@@ -30,7 +30,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
     // check if header could be read
     if (header && header.hasOwnProperty('error')) {
         errors.push(new Issue({
-            reason: "We were unable to read the contents of this file."
+            code: 26
         }));
     } else if (header) {
         // Define repetition time from header and coerce to seconds.
@@ -44,21 +44,21 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
         if (!mergedDictionary.hasOwnProperty('EchoTime')) {
             warnings.push(new Issue({
                 file: file,
-                severity: "warning",
+                code: 6,
                 reason: "You should should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
             warnings.push(new Issue({
                 file: file,
-                severity: "warning",
+                code: 7,
                 reason: "You should should define 'PhaseEncodingDirection' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('EffectiveEchoSpacing')) {
             warnings.push(new Issue({
                 file: file,
-                severity: "warning",
+                code: 8,
                 reason: "You should should define 'EffectiveEchoSpacing' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
             }));
         }
@@ -67,7 +67,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
         if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
             warnings.push(new Issue({
                 file: file,
-                severity: "warning",
+                code: 9,
                 reason: "You should should define 'TotalReadoutTime' for this file. If you don't provide this information field map correction using TOPUP might not be possible. " + sidecarMessage
             }));
         }
@@ -77,6 +77,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
         if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
             errors.push(new Issue({
                 file: file,
+                code: 10,
                 reason: "You have to define 'RepetitionTime' for this file. " + sidecarMessage
             }));
         }
@@ -85,11 +86,12 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
             if (repetitionUnit !== 's') {
                 errors.push(new Issue({
                     file: file,
-                    reason: "Repetition time was not defined in seconds, milliseconds or microseconds in the scan's header."
+                    code: 11
                 }));
             } else if (repetitionTime !== mergedDictionary.RepetitionTime) {
                 errors.push(new Issue({
                     file: file,
+                    code: 12,
                     reason: "Repetition time did not match between the scan's header and the associated JSON metadata file. " + sidecarMessage
                 }));
             }
@@ -98,14 +100,14 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
         if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
             warnings.push(new Issue({
                 file: file,
-                severity: "warning",
+                code: 13,
                 reason: "You should should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('SliceEncodingDirection')) {
             warnings.push(new Issue({
                 file: file,
-                severity: "warning",
+                code: 14,
                 reason: "You should should define 'SliceEncodingDirection' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
             }));
         }
@@ -114,6 +116,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
         if (!mergedDictionary.hasOwnProperty('EchoTimeDifference')) {
             errors.push(new Issue({
                 file: file,
+                code: 15,
                 reason: "You have to define 'EchoTimeDifference' for this file. " + sidecarMessage
             }));
         }
@@ -121,6 +124,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
         if (!mergedDictionary.hasOwnProperty('EchoTime')) {
             errors.push(new Issue({
                 file: file,
+                code:16,
                 reason: "You have to define 'EchoTime' for this file. " + sidecarMessage
             }));
         }
@@ -128,6 +132,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
         if (!mergedDictionary.hasOwnProperty('Units')) {
             errors.push(new Issue({
                 file: file,
+                code: 17,
                 reason: "You have to define 'Units' for this file. " + sidecarMessage
             }));
         }
@@ -135,12 +140,14 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
         if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
             errors.push(new Issue({
                 file: file,
+                code: 18,
                 reason: "You have to define 'PhaseEncodingDirection' for this file. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
             errors.push(new Issue({
                 file: file,
+                code: 19,
                 reason: "You have to define 'TotalReadoutTime' for this file. " + sidecarMessage
             }));
         }
