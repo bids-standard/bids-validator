@@ -8,8 +8,7 @@ var NIFTI  = require('./nii');
 var BIDS = {
 
     options:  {},
-    errors:   [],
-    warnings: [],
+    issues: [],
 
     /**
      * Start
@@ -97,7 +96,7 @@ var BIDS = {
 
             // validate path naming
             if (!utils.type.isBIDS(file.relativePath)) {
-                self.warnings.push(new utils.Issue({
+                self.issues.push(new utils.Issue({
                     file: file,
                     evidence: file.name,
                     code: 1
@@ -117,13 +116,8 @@ var BIDS = {
                 utils.files.readFile(file, function (contents) {
                     var isEvents = file.name.endsWith('_events.tsv');
                     if (isEvents) {events.push(file.relativePath);}
-                    TSV(file, contents, isEvents, function (errs, warns) {
-                        if (errs && errs.length > 0) {
-                            self.errors = self.errors.concat(errs);
-                        }
-                        if (warns && warns.length > 0) {
-                            self.warnings = self.warnings.concat(warns);
-                        }
+                    TSV(file, contents, isEvents, function (issues) {
+                        self.issues = self.issues.concat(issues);
                         return cb();
                     });
                 });
@@ -132,14 +126,9 @@ var BIDS = {
             // validate json
             else if (file.name && file.name.endsWith('.json')) {
                 utils.files.readFile(file, function (contents) {
-                    JSON(file, contents, function (errs, warns, jsObj) {
+                    JSON(file, contents, function (issues, jsObj) {
+                        self.issues = self.issues.concat(issues);
                         jsonContentsDict[file.relativePath] = jsObj;
-                        if (errs  && errs.length > 0) {
-                            self.errors = self.errors.concat(errs);
-                        }
-                        if (warns && warns.length > 0) {
-                            self.warnings = self.warnings.concat(warns);
-                        }
                         return cb();
                     });
                 });
@@ -150,33 +139,30 @@ var BIDS = {
         }, function () {
             async.forEachOf(niftis, function (file, key, cb) {
                 if (self.options.ignoreNiftiHeaders) {
-                    NIFTI(null, file, jsonContentsDict, events, function (errs, warns) {
-                        if (errs && errs.length > 0) {
-                            self.errors = self.errors.concat(errs);
-                        }
-                        if (warns && warns.length > 0) {
-                            self.warnings = self.warnings.concat(warns);
-                        }
+                    NIFTI(null, file, jsonContentsDict, events, function (issues) {
+                        self.issues = self.issues.concat(issues);
                         return cb();
                     });
                 } else {
                     utils.files.readNiftiHeader(file, function (header) {
-                        NIFTI(header, file, jsonContentsDict, events, function (errs, warns) {
-                            if (errs && errs.length > 0) {
-                                self.errors = self.errors.concat(errs);
-                            }
-                            if (warns && warns.length > 0) {
-                                self.warnings = self.warnings.concat(warns);
-                            }
+                        NIFTI(header, file, jsonContentsDict, events, function (issues) {
+                            self.issues = self.issues.concat(issues);
                             return cb();
                         });
                     });
                 }
             }, function(){
-                if (self.options.ignoreWarnings) {
-                    self.warnings = [];
+                var errors = [], warnings = [];
+                for (var i = 0; i < self.issues.length; i++) {
+                    var issue = self.issues[i];
+                    if (issue.severity === 'error') {
+                        errors.push(issue);
+                    } else if (issue.severity === 'warning' && !self.options.ignoreWarnings) {
+                        warnings.push(issue);
+                    }
+
                 }
-                callback(self.errors, self.warnings);
+                callback(errors, warnings);
             });
         });
     },

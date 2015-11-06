@@ -121,4 +121,8 @@ var issues = {
 		severity: 'error',
 		reason:   "We were unable to read the contents of this file."
 	},
+	27: {
+		serverity: 'error',
+		reason: "Not a valid JSON file."
+	}
 }

@@ -5,21 +5,20 @@ var Issue = require('../utils').Issue;
  * TSV
  *
  * Takes a TSV file as a string and a callback
- * as arguments. And callsback with any errors
+ * as arguments. And callsback with any issues
  * it finds while validating against the BIDS
  * specification.
  */
 module.exports = function TSV (file, contents, isEvents, callback) {
 
     var rows = contents.split('\n');
-    var errors = [];
-    var warnings = [];
+    var issues = [];
     var headers = rows[0].split('\t');
 
     // check if headers begin with numbers
     if (isEvents) {
         if (headers[0] !== "onset"){
-            errors.push(new Issue({
+            issues.push(new Issue({
                 file: file,
                 evidence: headers,
                 line: 1,
@@ -28,7 +27,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
             }));
         }
         if (headers[1] !== "duration"){
-            errors.push(new Issue({
+            issues.push(new Issue({
                 file: file,
                 evidence: headers,
                 line: 1,
@@ -50,7 +49,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
 
         // check for different length rows
         if (columnsInRow.length !== headers.length) {
-            errors.push(new Issue({
+            issues.push(new Issue({
                 file: file,
                 evidence: row,
                 line: rows.indexOf(row) + 1,
@@ -64,7 +63,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
             // check for two or more contiguous spaces
             var patt = new RegExp("[ ]{2,}");
 	        if (patt.test(column)) {
-                errors.push(new Issue({
+                issues.push(new Issue({
                     file: file,
                     evidence: row,
                     line: rows.indexOf(row) + 1,
@@ -75,7 +74,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
 
             // check if missing value is properly labeled as 'n/a'
             if (column === "NA" || column === "na" || column === "nan") {
-                warnings.push(new Issue({
+                issues.push(new Issue({
                     file: file,
                     evidence: row,
                     line: rows.indexOf(row) + 1,
@@ -87,6 +86,6 @@ module.exports = function TSV (file, contents, isEvents, callback) {
 	        cb1();
         }, function () {cb();});
     }, function () {
-        callback(errors, warnings);
+        callback(issues);
     });
 };
