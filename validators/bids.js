@@ -2,14 +2,13 @@ var async  = require('async');
 var utils  = require('../utils');
 
 var TSV    = require('./tsv');
-var JSON   = require('./json');
+var json   = require('./json');
 var NIFTI  = require('./nii');
 
 var BIDS = {
 
     options:  {},
-    errors:   [],
-    warnings: [],
+    issues: [],
 
     /**
      * Start
@@ -93,30 +92,19 @@ var BIDS = {
 
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
-            var path = utils.files.relativePath(file);
-            if (
-                !(
-                    utils.type.isTopLevel(path)          ||
-                    utils.type.isCodeOrDerivatives(path) ||
-                    utils.type.isSessionLevel(path)      ||
-                    utils.type.isSubjectLevel(path)      ||
-                    utils.type.isAnat(path)              ||
-                    utils.type.isDWI(path)               ||
-                    utils.type.isFunc(path)              ||
-                    utils.type.isCont(path)              ||
-                    utils.type.isFieldMap(path)
-                )
-            ) {
-                var newWarning = new utils.Issue({
+            file.relativePath = utils.files.relativePath(file);
+
+            // validate path naming
+            if (!utils.type.isBIDS(file.relativePath)) {
+                self.issues.push(new utils.Issue({
+                    file: file,
                     evidence: file.name,
-                    reason: "This file is not part of the BIDS specification, make sure it isn't included in the " +
-                    "dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder.",
-                    severity: 'warning'
-                });
-                self.warnings.push({file: file, path: path, errors: [newWarning]});
+                    code: 1
+                }));
                 return cb();
             }
 
+            // capture niftis for later validation
             else if (file.name.endsWith('.nii.gz')) {
                 niftis.push(file);
                 cb();
@@ -127,14 +115,9 @@ var BIDS = {
             else if (file.name && file.name.endsWith('.tsv')) {
                 utils.files.readFile(file, function (contents) {
                     var isEvents = file.name.endsWith('_events.tsv');
-                    if (isEvents) {events.push(path);}
-                    TSV(contents, isEvents, function (errs, warns) {
-                        if (errs && errs.length > 0) {
-                            self.errors.push({file: file, path: path, errors: errs})
-                        }
-                        if (warns && warns.length > 0) {
-                            self.warnings.push({file: file, path: path, errors: warns});
-                        }
+                    if (isEvents) {events.push(file.relativePath);}
+                    TSV(file, contents, isEvents, function (issues) {
+                        self.issues = self.issues.concat(issues);
                         return cb();
                     });
                 });
@@ -143,14 +126,9 @@ var BIDS = {
             // validate json
             else if (file.name && file.name.endsWith('.json')) {
                 utils.files.readFile(file, function (contents) {
-                    JSON(contents, function (errs, warns, jsObj) {
-                        jsonContentsDict[path] = jsObj;
-                        if (errs  && errs.length > 0) {
-                            self.errors.push({file: file, path: path, errors: errs})
-                        }
-                        if (warns && warns.length > 0) {
-                            self.warnings.push({file: file, path: path, errors: warns});
-                        }
+                    json(file, contents, function (issues, jsObj) {
+                        self.issues = self.issues.concat(issues);
+                        jsonContentsDict[file.relativePath] = jsObj;
                         return cb();
                     });
                 });
@@ -160,37 +138,56 @@ var BIDS = {
 
         }, function () {
             async.forEachOf(niftis, function (file, key, cb) {
-                var path = utils.files.relativePath(file);
                 if (self.options.ignoreNiftiHeaders) {
-                    NIFTI(null, path, jsonContentsDict, events, function (errs, warns) {
-                        if (errs && errs.length > 0) {
-                            self.errors.push({file: file, path: path, errors: errs})
-                        }
-                        if (warns && warns.length > 0) {
-                            self.warnings.push({file: file, path: path, errors: warns});
-                        }
+                    NIFTI(null, file, jsonContentsDict, events, function (issues) {
+                        self.issues = self.issues.concat(issues);
                         return cb();
                     });
                 } else {
                     utils.files.readNiftiHeader(file, function (header) {
-                        NIFTI(header, path, jsonContentsDict, events, function (errs, warns) {
-                            if (errs && errs.length > 0) {
-                                self.errors.push({file: file, path: path, errors: errs})
-                            }
-                            if (warns && warns.length > 0) {
-                                self.warnings.push({file: file, path: path, errors: warns});
-                            }
+                        NIFTI(header, file, jsonContentsDict, events, function (issues) {
+                            self.issues = self.issues.concat(issues);
                             return cb();
                         });
                     });
                 }
             }, function(){
-                if (self.options.ignoreWarnings) {
-                    self.warnings = [];
-                }
-                callback(self.errors, self.warnings);
+                var issues = self.formatIssues(self.issues);
+                callback(issues.errors, issues.warnings);
             });
         });
+    },
+
+    /**
+     * Format Issues
+     */
+    formatIssues: function () {
+        var errors = [], warnings = [];
+
+        // organize by issue code
+        var categorized = {};
+        for (var i = 0; i < this.issues.length; i++) {
+            var issue = this.issues[i];
+            if (!categorized[issue.code]) {
+                categorized[issue.code] = utils.issues[issue.code];
+                categorized[issue.code].files = [];
+            }
+            categorized[issue.code].files.push(issue);
+        }
+
+        // organize by severity
+        for (var key in categorized) {
+            var issue = categorized[key];
+            issue.code = key;
+            if (issue.severity === 'error') {
+                errors.push(issue);
+            } else if (issue.severity === 'warning' && !this.options.ignoreWarnings) {
+                warnings.push(issue);
+            }
+
+        }
+
+        return {errors: errors, warnings: warnings};
     },
 
     /**
@@ -199,8 +196,7 @@ var BIDS = {
      * Resets the in object data back to original values.
      */
     reset: function () {
-        this.errors = [];
-        this.warnings = [];
+        this.issues = [];
     },
 
     /**

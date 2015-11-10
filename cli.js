@@ -8,8 +8,9 @@ module.exports = function (dir, options) {
 	    	if (errors === 'Invalid') {
 	    		console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
 	    	} else if (errors.length >= 1 || warnings.length >= 1) {
-		        logIssues(errors, 'red');
-				logIssues(warnings, 'yellow');
+	    		console.log();
+		        logIssues(errors, 'red', options);
+				logIssues(warnings, 'yellow', options);
 			}
 			else {
 				console.log(colors.green("This dataset appears to be BIDS compatible."));
@@ -20,25 +21,26 @@ module.exports = function (dir, options) {
 	}
 };
 
-function logIssues (issues, color) {
+function logIssues (issues, color, options) {
 	for (var i = 0; i < issues.length; i++) {
-    	console.log('\t' + colors[color](issues[i].path));
-    	for (var j = 0; j < issues[i].errors.length; j++) {
-    		var error = issues[i].errors[j];
-    		if (!error) {continue;}
-    		console.log('\t' + error.reason);
-			if (error.line) {
-				var msg = '\t@ line: ' + error.line
-				if (error.character) {
-					msg += ' character: ' + error.character
+		var issue = issues[i];
+    	console.log('\t' + colors[color]((i + 1) + ': ' + issue.reason + ' (code: ' + issue.code + ')'));
+    	for (var j = 0; j < issue.files.length; j++) {
+    		var file = issues[i].files[j];
+    		if (!file) {continue;}
+    		console.log('\t\t' + file.path);
+    		if (options.verbose) {console.log('\t\t\t' + file.reason);}
+			if (file.line) {
+				var msg = '\t\t\t@ line: ' + file.line
+				if (file.character) {
+					msg += ' character: ' + file.character
 				}
 				console.log(msg)
 			}
-			if (error.evidence) {
-				console.log('\tEvidence: ' + error.evidence);
+			if (file.evidence) {
+				console.log('\t\t\tEvidence: ' + file.evidence);
 			}
-    		console.log('\tSeverity: ' + error.severity);
-    		console.log();
     	}
+		console.log();
     }
 }

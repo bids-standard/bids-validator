@@ -9,10 +9,12 @@ var argv = require('yargs')
     .describe('ignoreWarnings', 'disregard non-critical issues')
     .boolean('ignoreNiftiHeaders')
     .describe('ignoreNiftiHeaders', 'disregard NIfTI header content during validation')
+    .boolean('verbose')
+    .describe('verbose', 'Log more extensive infomation about issues.')
     .epilogue("This tool checks if a dataset in a given directory is \
 compatible with the Brain Imaging Data Structure specification. To learn \
 more about Brain Imaging Data Structure visit http://bids.neuroimaging.io")
     .argv;
 
 // import and init command line interface
-require('../cli')(argv._[0], {ignoreWarnings: argv.ignoreWarnings, ignoreNiftiHeaders: argv.ignoreNiftiHeaders});
+require('../cli')(argv._[0], argv);

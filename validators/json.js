@@ -10,12 +10,11 @@ var Issue = require('../utils').Issue;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function (contents, callback) {
+module.exports = function (file, contents, callback) {
 
 // primary flow --------------------------------------------------------------------
 
-    var errors = [];
-    var warnings = [];
+    var issues = [];
     var jsObj  = null;
 
     try {
@@ -28,7 +27,7 @@ module.exports = function (contents, callback) {
     if (jsObj) {
         checkUnits(jsObj);
     }
-    callback(errors, warnings, jsObj);
+    callback(issues, jsObj);
 
 // individual checks ---------------------------------------------------------------
 
@@ -42,10 +41,17 @@ module.exports = function (contents, callback) {
     function jshint (contents) {
         if (!JSHINT(contents)) {
             var out = JSHINT.data();
-            errors  = out.errors;
-            for(var i = 0; errors.length > i; ++i){
-                if(errors[i]){
-                    errors[i].severity = 'error';
+            for(var i = 0; out.errors.length > i; ++i){
+                var error = out.errors[i];
+                if(error){
+                    issues.push(new Issue({
+                        code:      27,
+                        file:      file,
+                        line:      error.line      ? error.line      : null,
+                        character: error.character ? error.character : null,
+                        reason:    error.reason    ? error.reason    : null,
+                        evidence:  error.evidence  ? error.evidence  : null
+                    }));
                 }
             }
         }
@@ -53,28 +59,28 @@ module.exports = function (contents, callback) {
 
     function checkUnits (sidecar) {
         if (sidecar.hasOwnProperty('RepetitionTime') && sidecar["RepetitionTime"] > 100) {
-            warnings.push(new Issue({
-                severity: "warning",
-                reason: "'RepetitionTime' is greater than 100 are you sure it's expressed in seconds?"
+            issues.push(new Issue({
+                file: file,
+                code: 2
             }));
         }
 
         if (sidecar.hasOwnProperty('EchoTime') && sidecar["EchoTime"] > 1) {
-            warnings.push(new Issue({
-                severity: "warning",
-                reason: "'EchoTime' is greater than 1 are you sure it's expressed in seconds?"
+            issues.push(new Issue({
+                file: file,
+                code: 3
             }));
         }
         if (sidecar.hasOwnProperty('EchoTimeDifference') && sidecar["EchoTimeDifference"] > 1) {
-            warnings.push(new Issue({
-                severity: "warning",
-                reason: "'EchoTimeDifference' is greater than 1 are you sure it's expressed in seconds?"
+            issues.push(new Issue({
+                file: file,
+                code: 4
             }));
         }
         if (sidecar.hasOwnProperty('TotalReadoutTime') && sidecar["TotalReadoutTime"] > 10) {
-            warnings.push(new Issue({
-                severity: "warning",
-                reason: "'TotalReadoutTime' is greater than 10 are you sure it's expressed in seconds?"
+            issues.push(new Issue({
+                file: file,
+                code: 5
             }));
         }
     }

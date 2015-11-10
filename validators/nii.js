@@ -6,13 +6,13 @@ var Issue = utils.Issue;
  * NIFTI
  *
  * Takes a NifTi header, a file path and a callback
- * as arguments. And callsback with any errors
+ * as arguments. And callsback with any issues
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function NIFTI (header, path, jsonContentsDict, events, callback) {
-    var errors = [];
-    var warnings = [];
+module.exports = function NIFTI (header, file, jsonContentsDict, events, callback) {
+    var path = file.relativePath;
+    var issues = [];
     var potentialSidecars = potentialLocations(path.replace(".nii.gz", ".json"));
     var potentialEvents   = potentialLocations(path.replace("bold.nii.gz", "events.tsv"));
     var mergedDictionary  = generateMergedSidecarDict(potentialSidecars, jsonContentsDict);
@@ -20,16 +20,18 @@ module.exports = function NIFTI (header, path, jsonContentsDict, events, callbac
     var eventsMessage     = "It can be included one of the following locations: " + potentialEvents.join(", ");
 
     if (missingEvents(path, potentialEvents, events)) {
-        warnings.push(new Issue({
-            severity: 'warning',
+        issues.push(new Issue({
+            code: 25,
+            file: file,
             reason: 'Task scans should have a correspondings events.tsv file. ' + eventsMessage
         }));
     }
 
     // check if header could be read
     if (header && header.hasOwnProperty('error')) {
-        errors.push(new Issue({
-            reason: "We were unable to read the contents of this file."
+        issues.push(new Issue({
+            code: 26,
+            file: file
         }));
     } else if (header) {
         // Define repetition time from header and coerce to seconds.
@@ -41,28 +43,32 @@ module.exports = function NIFTI (header, path, jsonContentsDict, events, callbac
 
     if (path.endsWith("_bold.nii.gz") || path.endsWith("_sbref.nii.gz") || path.endsWith("_dwi.nii.gz")) {
         if (!mergedDictionary.hasOwnProperty('EchoTime')) {
-            warnings.push(new Issue({
-                severity: "warning",
+            issues.push(new Issue({
+                file: file,
+                code: 6,
                 reason: "You should should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
-            warnings.push(new Issue({
-                severity: "warning",
+            issues.push(new Issue({
+                file: file,
+                code: 7,
                 reason: "You should should define 'PhaseEncodingDirection' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('EffectiveEchoSpacing')) {
-            warnings.push(new Issue({
-                severity: "warning",
+            issues.push(new Issue({
+                file: file,
+                code: 8,
                 reason: "You should should define 'EffectiveEchoSpacing' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
             }));
         }
     }
     if (path.endsWith("_dwi.nii.gz")) {
         if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
-            warnings.push(new Issue({
-                severity: "warning",
+            issues.push(new Issue({
+                file: file,
+                code: 9,
                 reason: "You should should define 'TotalReadoutTime' for this file. If you don't provide this information field map correction using TOPUP might not be possible. " + sidecarMessage
             }));
         }
@@ -70,68 +76,85 @@ module.exports = function NIFTI (header, path, jsonContentsDict, events, callbac
     // we don't need slice timing or repetition time for SBref
     if (path.endsWith("_bold.nii.gz")) {
         if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
-            errors.push(new Issue({
+            issues.push(new Issue({
+                file: file,
+                code: 10,
                 reason: "You have to define 'RepetitionTime' for this file. " + sidecarMessage
             }));
         }
 
         if (repetitionTime) {
             if (repetitionUnit !== 's') {
-                errors.push(new Issue({
-                    reason: "Repetition time was not defined in seconds, milliseconds or microseconds in the scan's header."
+                issues.push(new Issue({
+                    file: file,
+                    code: 11
                 }));
             } else if (repetitionTime !== mergedDictionary.RepetitionTime) {
-                errors.push(new Issue({
+                issues.push(new Issue({
+                    file: file,
+                    code: 12,
                     reason: "Repetition time did not match between the scan's header and the associated JSON metadata file. " + sidecarMessage
                 }));
             }
         }
 
         if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
-            warnings.push(new Issue({
-                severity: "warning",
+            issues.push(new Issue({
+                file: file,
+                code: 13,
                 reason: "You should should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('SliceEncodingDirection')) {
-            warnings.push(new Issue({
-                severity: "warning",
+            issues.push(new Issue({
+                file: file,
+                code: 14,
                 reason: "You should should define 'SliceEncodingDirection' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
             }));
         }
     }
     else if (path.endsWith("_phasediff.nii.gz")){
         if (!mergedDictionary.hasOwnProperty('EchoTimeDifference')) {
-            errors.push(new Issue({
+            issues.push(new Issue({
+                file: file,
+                code: 15,
                 reason: "You have to define 'EchoTimeDifference' for this file. " + sidecarMessage
             }));
         }
     } else if (path.endsWith("_phase1.nii.gz") || path.endsWith("_phase2.nii.gz")){
         if (!mergedDictionary.hasOwnProperty('EchoTime')) {
-            errors.push(new Issue({
+            issues.push(new Issue({
+                file: file,
+                code:16,
                 reason: "You have to define 'EchoTime' for this file. " + sidecarMessage
             }));
         }
     } else if (path.endsWith("_fieldmap.nii.gz")){
         if (!mergedDictionary.hasOwnProperty('Units')) {
-            errors.push(new Issue({
+            issues.push(new Issue({
+                file: file,
+                code: 17,
                 reason: "You have to define 'Units' for this file. " + sidecarMessage
             }));
         }
     } else if (path.endsWith("_epi.nii.gz")){
         if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
-            errors.push(new Issue({
+            issues.push(new Issue({
+                file: file,
+                code: 18,
                 reason: "You have to define 'PhaseEncodingDirection' for this file. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
-            errors.push(new Issue({
+            issues.push(new Issue({
+                file: file,
+                code: 19,
                 reason: "You have to define 'TotalReadoutTime' for this file. " + sidecarMessage
             }));
         }
     }
 
-    callback(errors, warnings);
+    callback(issues);
 };
 
 function missingEvents(path, potentialEvents, events) {
