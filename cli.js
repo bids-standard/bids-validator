@@ -28,7 +28,7 @@ function logIssues (issues, color, options) {
     	for (var j = 0; j < issue.files.length; j++) {
     		var file = issues[i].files[j];
     		if (!file) {continue;}
-    		console.log('\t\t' + file.path);
+    		console.log('\t\t' + file.file.relativePath);
     		if (options.verbose) {console.log('\t\t\t' + file.reason);}
 			if (file.line) {
 				var msg = '\t\t\t@ line: ' + file.line
