@@ -90,7 +90,7 @@ module.exports = {
      * Check if the file has a name appropriate for a diffusion scan
      */
     isDWI: function(path) {
-        var suffixes = ["dwi"];
+        var suffixes = ["dwi", "sbref"];
         var anatRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?dwi' +
@@ -108,7 +108,7 @@ module.exports = {
         var anatRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?fmap' +
-            '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
+            '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[0-9]+)?(?:_run-[0-9]+)?_(?:'
             + suffixes.join("|")
             + ').(nii.gz|json)$');
         return conditionalMatch(anatRe, path);

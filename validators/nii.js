@@ -93,7 +93,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
                 issues.push(new Issue({
                     file: file,
                     code: 12,
-                    reason: "Repetition time did not match between the scan's header and the associated JSON metadata file. " + sidecarMessage
+                    reason: "Repetition time defined in JSON (" + mergedDictionary.RepetitionTime +" sec.) did not match the one defined in the NIFTI header (" + repetitionTime + " sec.)" + sidecarMessage
                 }));
             }
         }
