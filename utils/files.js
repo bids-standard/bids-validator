@@ -114,8 +114,8 @@ function readNiftiHeader (file, callback) {
                 callback({error: "Unable to read " + file.path});
                 return;
             }
-            var buffer = new Buffer(348);
-            fs.read(fd, buffer, 0, 347, 0, function (err, num){
+            var buffer = new Buffer(500);
+            fs.read(fd, buffer, 0, 499, 0, function (err, num){
                 zlib.gunzip(buffer, function(err, unzipped) {
                     if (err) {
                         callback({error: "Unable to read " + file.path});
