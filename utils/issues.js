@@ -52,7 +52,7 @@ module.exports = {
 	},
 	12: {
 		severity: 'error',
-		reason:   "Repetition time did not match between the scan's header and the associated JSON metadata file."
+		reason:   "Repetition time did not match between the scan's header and the associated JSON metadata file"
 	},
 	13: {
 		severity: 'warning',
