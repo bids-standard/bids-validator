@@ -9,6 +9,7 @@ deployment:
       - git config --global user.email circleci@circleci
       - git config --global user.name CircleCI
       - rm -rf node_modules/
+      - rm -rf tests/
       - git checkout gh-pages
       - npm install
       - gulp build
