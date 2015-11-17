@@ -17,9 +17,9 @@ var suite = describe('BIDS example datasets ', function() {
     this.timeout(100000);
 
     before(function(done) {
-        if (!fs.existsSync("tests/data/BIDS-examples-1.0.0-rc1u5/")) {
+        if (!fs.existsSync("tests/data/BIDS-examples-1.0.0-rc1u6/")) {
             console.log('downloading test data');
-            response = request("GET", "http://github.com/INCF/BIDS-examples/archive/1.0.0-rc1u5.zip");
+            response = request("GET", "http://github.com/INCF/BIDS-examples/archive/1.0.0-rc1u6.zip");
             if (!fs.existsSync("tests/data")) {
                 fs.mkdirSync("tests/data");
             }
@@ -29,12 +29,12 @@ var suite = describe('BIDS example datasets ', function() {
             zip.extractAllTo("tests/data/", true);
         }
 
-        datasetDirectories = getDirectories("tests/data/BIDS-examples-1.0.0-rc1u5/");
+        datasetDirectories = getDirectories("tests/data/BIDS-examples-1.0.0-rc1u6/");
 
         datasetDirectories.forEach(function testDataset(path){
             suite.addTest(new Test(path, function (isdone){
 		    	var options = {ignoreNiftiHeaders: true};
-                validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u5/" + path + "/", options, function (errors, warnings) {
+                validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u6/" + path + "/", options, function (errors, warnings) {
                     assert.deepEqual(errors, []);
                     //assert.deepEqual(warnings, []);
                     isdone();
