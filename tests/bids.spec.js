@@ -47,7 +47,7 @@ var suite = describe('BIDS example datasets ', function() {
     // we need to have at least one non-dynamic test
     it('validates path without trailing backslash', function(isdone) {
         var options = {ignoreNiftiHeaders: true};
-        validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u5/ds001", options, function (errors, warnings) {
+        validate.BIDS("tests/data/BIDS-examples-1.0.0-rc1u6/ds001", options, function (errors, warnings) {
             assert.deepEqual(errors, []);
             //assert.deepEqual(warnings, []);
             isdone();
