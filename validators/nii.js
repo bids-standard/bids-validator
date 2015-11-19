@@ -96,7 +96,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
                     issues.push(new Issue({
                         file: file,
                         code: 12,
-                        reason: "Repetition time defined in JSON (" + jsonTR + " sec.) did not match the one defined in the NIFTI header (" + niftiTR + " sec.)" + sidecarMessage
+                        reason: "Repetition time defined in the JSON (" + jsonTR + " sec.) did not match the one defined in the NIFTI header (" + niftiTR + " sec.)"
                     }));
                 }
             }
