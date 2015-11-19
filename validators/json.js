@@ -71,7 +71,13 @@ module.exports = function (file, contents, callback) {
                 code: 3
             }));
         }
-        if (sidecar.hasOwnProperty('EchoTimeDifference') && sidecar["EchoTimeDifference"] > 1) {
+        if (sidecar.hasOwnProperty('EchoTime1') && sidecar["EchoTime1"] > 1) {
+            issues.push(new Issue({
+                file: file,
+                code: 4
+            }));
+        }
+        if (sidecar.hasOwnProperty('EchoTime2') && sidecar["EchoTime2"] > 1) {
             issues.push(new Issue({
                 file: file,
                 code: 4
