@@ -83,7 +83,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
             }));
         }
 
-        if (repetitionTime) {
+        if (repetitionTime && mergedDictionary.RepetitionTime) {
             if (repetitionUnit !== 's') {
                 issues.push(new Issue({
                     file: file,
