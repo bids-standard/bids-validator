@@ -126,6 +126,13 @@ function readNiftiHeader (file, callback) {
             });
         });
     } else {
+
+        // file size is smaller than nifti header size
+        if (file.size < 348) {
+            callback({error: "Unable to read " + file.path});
+            return;
+        }
+
         var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
         fileReader = new FileReader();
 
@@ -135,7 +142,7 @@ function readNiftiHeader (file, callback) {
             callback(nifti.parseNIfTIHeader(unzipped));
         };
 
-        fileReader.readAsArrayBuffer(blobSlice.call(file, 0, 3480));
+        fileReader.readAsArrayBuffer(blobSlice.call(file, 0, 500));
     }
 }
 
