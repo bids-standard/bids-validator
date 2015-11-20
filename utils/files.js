@@ -135,7 +135,7 @@ function readNiftiHeader (file, callback) {
             callback(nifti.parseNIfTIHeader(unzipped));
         };
 
-        fileReader.readAsArrayBuffer(blobSlice.call(file, 0, 3480));
+        fileReader.readAsArrayBuffer(blobSlice.call(file, 0, 500));
     }
 }
 
