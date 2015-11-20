@@ -14,5 +14,5 @@ deployment:
       - npm install
       - gulp build
       - git status
-      - git commit dist/ -m "Circle CI - validator demo update"
+      - git commit dist/ --allow-empty -m "Circle CI - validator demo update"
       - git push origin gh-pages
