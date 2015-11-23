@@ -1,5 +1,8 @@
 // dependencies -------------------------------------------------------------------
 
+var nifti = require('nifti-js');
+var Issue = require('./issue');
+
 /**
  * If the current enviroment is server side
  * nodejs/iojs import fs.
@@ -10,8 +13,6 @@ if (typeof window === 'undefined') {
 } else {
     var pako = require('pako');
 }
-
-var nifti = require('nifti-js');
 
 // public API ---------------------------------------------------------------------
 
@@ -108,17 +109,22 @@ function getFiles (dir, files_){
  * header without reading any extra bytes.
  */
 function readNiftiHeader (file, callback) {
+
+    var bytesRead = 500;
+
     if (fs) {
         fs.open(file.path, 'r', function(status, fd) {
             if (status) {
                 callback({error: "Unable to read " + file.path});
                 return;
             }
-            var buffer = new Buffer(500);
-            fs.read(fd, buffer, 0, 499, 0, function (err, num){
+            var buffer = new Buffer(bytesRead);
+            // read
+            fs.read(fd, buffer, 0, bytesRead - 1, 0, function (err, num){
+                // unzip
                 zlib.gunzip(buffer, function(err, unzipped) {
                     if (err) {
-                        callback({error: "Unable to read " + file.path});
+                        callback(handleGunzipError(buffer, file));
                         return;
                     }
                     callback(nifti.parseNIfTIHeader(unzipped));
@@ -137,22 +143,34 @@ function readNiftiHeader (file, callback) {
         fileReader = new FileReader();
 
         fileReader.onloadend = function (e) {
-            var buf = new Uint8Array(fileReader.result);
+            var buffer = new Uint8Array(fileReader.result);
             var unzipped;
 
             try {
-                unzipped = pako.inflate(buf);
+                unzipped = pako.inflate(buffer);
             }
             catch (err) {
-                callback({error: "Unable to read " + file.webkitRelativePath});
+                callback(handleGunzipError(buffer, file));
                 return;
             }
 
             callback(nifti.parseNIfTIHeader(unzipped));
         };
 
-        fileReader.readAsArrayBuffer(blobSlice.call(file, 0, 500));
+        fileReader.readAsArrayBuffer(blobSlice.call(file, 0, bytesRead));
     }
+}
+
+function handleGunzipError (buffer, file) {
+    try {
+        nifti.parseNIfTIHeader(buffer);
+    }
+    catch (err) {
+        // file is unreadable
+        return {error: new Issue({code: 26, file: file})};
+    }
+    // file was not originally gizpped
+    return {error: new Issue({code: 28, file: file})};
 }
 
 /**

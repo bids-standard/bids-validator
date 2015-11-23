@@ -111,7 +111,11 @@ module.exports = {
 		reason:   "We were unable to read the contents of this file."
 	},
 	27: {
-		serverity: 'error',
+		severity: 'error',
 		reason: "Not a valid JSON file."
+	},
+	28: {
+		severity: 'error',
+		reason: "This file ends in the .gz extension but is not actually gzipped."
 	}
 };

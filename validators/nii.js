@@ -29,10 +29,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
 
     // check if header could be read
     if (header && header.hasOwnProperty('error')) {
-        issues.push(new Issue({
-            code: 26,
-            file: file
-        }));
+        issues.push(header.error);
     } else if (header) {
         // Define repetition time from header and coerce to seconds.
         var repetitionTime = header.pixdim[4];
