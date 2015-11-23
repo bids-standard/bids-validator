@@ -129,7 +129,7 @@ function readNiftiHeader (file, callback) {
 
         // file size is smaller than nifti header size
         if (file.size < 348) {
-            callback({error: "Unable to read " + file.path});
+            callback({error: "Unable to read " + file.webkitRelativePath});
             return;
         }
 
@@ -138,7 +138,16 @@ function readNiftiHeader (file, callback) {
 
         fileReader.onloadend = function (e) {
             var buf = new Uint8Array(fileReader.result);
-            var unzipped = pako.inflate(buf);
+            var unzipped;
+
+            try {
+                unzipped = pako.inflate(buf);
+            }
+            catch (err) {
+                callback({error: "Unable to read " + file.webkitRelativePath});
+                return;
+            }
+
             callback(nifti.parseNIfTIHeader(unzipped));
         };
 
