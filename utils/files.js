@@ -113,24 +113,17 @@ function readNiftiHeader (file, callback) {
     var bytesRead = 500;
 
     if (fs) {
-        fs.open(file.path, 'r', function(status, fd) {
-            if (status) {
-                callback({error: "Unable to read " + file.path});
-                return;
-            }
-            var buffer = new Buffer(bytesRead);
-            // read
-            fs.read(fd, buffer, 0, bytesRead - 1, 0, function (err, num){
-                // unzip
-                zlib.gunzip(buffer, function(err, unzipped) {
-                    if (err) {
-                        callback(handleGunzipError(buffer, file));
-                        return;
-                    }
-                    callback(nifti.parseNIfTIHeader(unzipped));
-                });
-            });
-        });
+        var readStream = fs.createReadStream(file.path, {start: 0, end: 500});
+        var gunzip = zlib.createGunzip().on('error', function (err) {});
+        var data = [];
+        var unzipped;
+        readStream.pipe(gunzip)
+        .on('data', function(chunk) {
+            unzipped = nifti.parseNIfTIHeader(chunk);
+            readStream.close();
+            gunzip.close();
+        })
+        .on('close', function () {callback(unzipped);});
     } else {
 
         // file size is smaller than nifti header size
