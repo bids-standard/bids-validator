@@ -13,8 +13,8 @@ var Issue = utils.Issue;
 module.exports = function NIFTI (header, file, jsonContentsDict, events, callback) {
     var path = file.relativePath;
     var issues = [];
-    var potentialSidecars = potentialLocations(path.replace(".nii.gz", ".json"));
-    var potentialEvents   = potentialLocations(path.replace("bold.nii.gz", "events.tsv"));
+    var potentialSidecars = potentialLocations(path.replace(".gz", "").replace(".nii", ".json"));
+    var potentialEvents   = potentialLocations(path.replace(".gz", "").replace("bold.nii", "events.tsv"));
     var mergedDictionary  = generateMergedSidecarDict(potentialSidecars, jsonContentsDict);
     var sidecarMessage    = "It can be included one of the following locations: " + potentialSidecars.join(", ");
     var eventsMessage     = "It can be included one of the following locations: " + potentialEvents.join(", ");
@@ -41,7 +41,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
         if (repetitionUnit === 'us') {repetitionTime = repetitionTime / 1000000; repetitionUnit = 's';}
     }
 
-    if (path.endsWith("_bold.nii.gz") || path.endsWith("_sbref.nii.gz") || path.endsWith("_dwi.nii.gz")) {
+    if (path.includes("_bold.nii") || path.includes("_sbref.nii") || path.includes("_dwi.nii")) {
         if (!mergedDictionary.hasOwnProperty('EchoTime')) {
             issues.push(new Issue({
                 file: file,
@@ -64,7 +64,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
             }));
         }
     }
-    if (path.endsWith("_dwi.nii.gz")) {
+    if (path.includes("_dwi.nii")) {
         if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
             issues.push(new Issue({
                 file: file,
@@ -74,7 +74,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
         }
     }
     // we don't need slice timing or repetition time for SBref
-    if (path.endsWith("_bold.nii.gz")) {
+    if (path.includes("_bold.nii")) {
         if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
             issues.push(new Issue({
                 file: file,
@@ -117,7 +117,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
             }));
         }
     }
-    else if (path.endsWith("_phasediff.nii.gz")){
+    else if (path.includes("_phasediff.nii")){
         if (!mergedDictionary.hasOwnProperty('EchoTime1')) {
             issues.push(new Issue({
                 file: file,
@@ -132,7 +132,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
                 reason: "You have to define 'EchoTime2' for this file. " + sidecarMessage
             }));
         }
-    } else if (path.endsWith("_phase1.nii.gz") || path.endsWith("_phase2.nii.gz")){
+    } else if (path.includes("_phase1.nii") || path.includes("_phase2.nii")){
         if (!mergedDictionary.hasOwnProperty('EchoTime')) {
             issues.push(new Issue({
                 file: file,
@@ -140,7 +140,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
                 reason: "You have to define 'EchoTime' for this file. " + sidecarMessage
             }));
         }
-    } else if (path.endsWith("_fieldmap.nii.gz")){
+    } else if (path.includes("_fieldmap.nii")){
         if (!mergedDictionary.hasOwnProperty('Units')) {
             issues.push(new Issue({
                 file: file,
@@ -148,7 +148,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
                 reason: "You have to define 'Units' for this file. " + sidecarMessage
             }));
         }
-    } else if (path.endsWith("_epi.nii.gz")){
+    } else if (path.includes("_epi.nii")){
         if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
             issues.push(new Issue({
                 file: file,
@@ -190,7 +190,7 @@ function missingEvents(path, potentialEvents, events) {
         }
     }
 
-    return !isRest && path.endsWith('_bold.nii.gz') && !hasEvent;
+    return !isRest && path.includes('_bold.nii') && !hasEvent;
 }
 
 

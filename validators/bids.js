@@ -56,7 +56,7 @@ var BIDS = {
                     path = path.reverse();
 
                     if (
-                        path[0].endsWith('.nii.gz') &&
+                        path[0].includes('.nii') &&
                         (
                             path[1] == 'anat' ||
                             path[1] == 'func' ||
@@ -105,7 +105,7 @@ var BIDS = {
             }
 
             // capture niftis for later validation
-            else if (file.name.endsWith('.nii.gz')) {
+            else if (file.name.includes('.nii')) {
                 niftis.push(file);
                 cb();
             }

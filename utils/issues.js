@@ -94,10 +94,6 @@ module.exports = {
 		severity: 'error',
 		reason:   'All rows must have the same number of columns as there are headers.'
 	},
-	23: {
-		severity: 'error',
-		reason:   'Values may not contain adjacent spaces.'
-	},
 	24: {
 		severity: 'warning',
 		reason:   'A proper way of labeling missing values is "n/a".'

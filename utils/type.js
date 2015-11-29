@@ -22,6 +22,7 @@ module.exports = {
             this.isAnat(path)              ||
             this.isDWI(path)               ||
             this.isFunc(path)              ||
+            this.isBehavioral(path)               ||
             this.isCont(path)              ||
             this.isFieldMap(path)
         );
@@ -82,7 +83,7 @@ module.exports = {
             '\\/)?anat' +
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
             + suffixes.join("|")
-            + ').(nii.gz|json)$');
+            + ').(nii.gz|nii|json)$');
         return conditionalMatch(anatRe, path);
     },
 
@@ -96,7 +97,7 @@ module.exports = {
             '\\/)?dwi' +
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
             + suffixes.join("|")
-            + ').(nii.gz|json|bvec|bval)$');
+            + ').(nii.gz|nii|json|bvec|bval)$');
         return conditionalMatch(anatRe, path);
     },
 
@@ -110,7 +111,7 @@ module.exports = {
             '\\/)?fmap' +
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[0-9]+)?(?:_run-[0-9]+)?_(?:'
             + suffixes.join("|")
-            + ').(nii.gz|json)$');
+            + ').(nii.gz|nii|json)$');
         return conditionalMatch(anatRe, path);
     },
 
@@ -122,8 +123,17 @@ module.exports = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?func' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(?:_bold.nii.gz|_bold.json|_sbref.nii.gz|_sbref.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
+            + '(?:_bold.nii.gz|_bold.nii|_bold.json|_sbref.nii.gz|_sbref.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
         return conditionalMatch(funcRe, path);
+    },
+
+    isBehavioral: function(path) {
+        var funcBeh = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?beh' +
+            '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
+            + '(?:_beh.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
+        return conditionalMatch(funcBeh, path);
     },
 
     isFuncBold: function(path) {
@@ -131,14 +141,14 @@ module.exports = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?func' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(?:_bold.nii.gz|_sbref.nii.gz)$');
+            + '(?:_bold.nii.gz|_bold.nii|_sbref.nii.gz|_sbref.nii)$');
         return conditionalMatch(funcRe, path);
     },
 
     isCont: function(path) {
         var contRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
-            '\\/)?func' +
+            '\\/)?(?:func|beh)' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?' +
             '(?:_recording-[a-zA-Z0-9]+)?'
             + '(?:_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
