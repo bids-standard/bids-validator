@@ -60,18 +60,6 @@ module.exports = function TSV (file, contents, isEvents, callback) {
         // iterate through columns
         async.each(columnsInRow, function (column, cb1) {
 
-            // check for two or more contiguous spaces
-            var patt = new RegExp("[ ]{2,}");
-	        if (patt.test(column)) {
-                issues.push(new Issue({
-                    file: file,
-                    evidence: row,
-                    line: rows.indexOf(row) + 1,
-                    character: row.indexOf('  '),
-                    code: 23
-                }));
-	        }
-
             // check if missing value is properly labeled as 'n/a'
             if (column === "NA" || column === "na" || column === "nan") {
                 issues.push(new Issue({

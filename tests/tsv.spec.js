@@ -8,12 +8,6 @@ describe('TSV', function(){
 		relativePath: '/sub-08/ses-test/func/sub-08_ses-test_task-linebisection_events.tsv'
 	};
 
-	it('should not allow contiguous spaces', function () {
-		var tsv = 'value-one\tvalue-two  value-three';
-		validate.TSV(file, tsv, false, function (errors) {
-			assert(errors && errors.length > 0);
-		});
-	});
 
 	it('should not allow different length rows', function () {
 		var tsv = 'header-one\theader-two\theader-three\n' +
