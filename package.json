@@ -1,6 +1,10 @@
 {
   "name": "bids-validator",
+<<<<<<< HEAD
   "version": "0.13",
+=======
+  "version": "0.12.3",
+>>>>>>> 31a41bfbde32777927466353700a9eab40635746
   "description": "",
   "main": "index.js",
   "repository": {
