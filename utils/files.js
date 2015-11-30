@@ -113,17 +113,22 @@ function readNiftiHeader (file, callback) {
     var bytesRead = 500;
 
     if (fs) {
-        var readStream = fs.createReadStream(file.path, {start: 0, end: 500});
-        var gunzip = zlib.createGunzip().on('error', function (err) {});
-        var data = [];
-        var unzipped;
-        readStream.pipe(gunzip)
-        .on('data', function(chunk) {
-            unzipped = nifti.parseNIfTIHeader(chunk);
-            readStream.close();
-            gunzip.close();
-        })
-        .on('close', function () {callback(unzipped);});
+        var fileBuffer;
+
+        var decompressStream = zlib.createGunzip()
+            .on('data', function (chunk) {
+                callback(nifti.parseNIfTIHeader(chunk));
+                decompressStream.pause();
+            }).on('error', function(err) {
+                callback(handleGunzipError(fileBuffer, file));
+            });
+
+        fs.createReadStream(file.path, {start: 0, end: bytesRead, chunkSize: bytesRead + 1})
+            .on('data', function (chunk) {
+                fileBuffer = chunk;
+                decompressStream.write(chunk);
+            });
+
     } else {
 
         // file size is smaller than nifti header size
@@ -154,6 +159,13 @@ function readNiftiHeader (file, callback) {
     }
 }
 
+/**
+ * Handle Gunzip Error (private)
+ *
+ * Used when unzipping fails. Tests if file was
+ * actually gzipped to begin with by trying to parse
+ * the original header.
+ */
 function handleGunzipError (buffer, file) {
     try {
         nifti.parseNIfTIHeader(buffer);
@@ -162,7 +174,7 @@ function handleGunzipError (buffer, file) {
         // file is unreadable
         return {error: new Issue({code: 26, file: file})};
     }
-    // file was not originally gizpped
+    // file was not originally gzipped
     return {error: new Issue({code: 28, file: file})};
 }
 
