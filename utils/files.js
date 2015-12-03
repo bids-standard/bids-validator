@@ -109,7 +109,6 @@ function getFiles (dir, files_){
  * header without reading any extra bytes.
  */
 function readNiftiHeader (file, callback) {
-
     var bytesRead = 500;
 
     if (fs) {
@@ -126,7 +125,11 @@ function readNiftiHeader (file, callback) {
         fs.createReadStream(file.path, {start: 0, end: bytesRead, chunkSize: bytesRead + 1})
             .on('data', function (chunk) {
                 fileBuffer = chunk;
-                decompressStream.write(chunk);
+                if (file.name.endsWith('.nii')) {
+                    callback(nifti.parseNIfTIHeader(chunk));
+                } else {
+                    decompressStream.write(chunk);
+                }
             });
 
     } else {
@@ -144,12 +147,16 @@ function readNiftiHeader (file, callback) {
             var buffer = new Uint8Array(fileReader.result);
             var unzipped;
 
-            try {
-                unzipped = pako.inflate(buffer);
-            }
-            catch (err) {
-                callback(handleGunzipError(buffer, file));
-                return;
+            if (file.name.endsWith('.nii')) {
+                unzipped = buffer;
+            } else {
+                try {
+                    unzipped = pako.inflate(buffer);
+                }
+                catch (err) {
+                    callback(handleGunzipError(buffer, file));
+                    return;
+                }
             }
 
             callback(nifti.parseNIfTIHeader(unzipped));
