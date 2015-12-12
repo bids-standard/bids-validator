@@ -87,6 +87,7 @@ var BIDS = {
         var self = this;
 
         var jsonContentsDict = {},
+            bContentsDict    = {},
             events           = [],
             niftis           = [];
 
@@ -101,7 +102,7 @@ var BIDS = {
                     evidence: file.name,
                     code: 1
                 }));
-                return cb();
+                cb();
             }
 
             // capture niftis for later validation
@@ -118,8 +119,16 @@ var BIDS = {
                     if (isEvents) {events.push(file.relativePath);}
                     TSV(file, contents, isEvents, function (issues) {
                         self.issues = self.issues.concat(issues);
-                        return cb();
+                        cb();
                     });
+                });
+            }
+
+            // capture bvec and bval contents
+            else if (file.name && (file.name.endsWith('.bvec') || file.name.endsWith('.bval'))) {
+                utils.files.readFile(file, function (contents) {
+                    bContentsDict[file.relativePath] = contents;
+                    cb();
                 });
             }
 
@@ -129,23 +138,23 @@ var BIDS = {
                     json(file, contents, function (issues, jsObj) {
                         self.issues = self.issues.concat(issues);
                         jsonContentsDict[file.relativePath] = jsObj;
-                        return cb();
+                        cb();
                     });
                 });
             } else {
-                return cb();
+                cb();
             }
 
         }, function () {
             async.forEachOf(niftis, function (file, key, cb) {
                 if (self.options.ignoreNiftiHeaders) {
-                    NIFTI(null, file, jsonContentsDict, events, function (issues) {
+                    NIFTI(null, file, jsonContentsDict, bContentsDict, events, function (issues) {
                         self.issues = self.issues.concat(issues);
                         return cb();
                     });
                 } else {
                     utils.files.readNiftiHeader(file, function (header) {
-                        NIFTI(header, file, jsonContentsDict, events, function (issues) {
+                        NIFTI(header, file, jsonContentsDict, bContentsDict, events, function (issues) {
                             self.issues = self.issues.concat(issues);
                             return cb();
                         });

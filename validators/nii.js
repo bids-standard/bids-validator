@@ -10,7 +10,7 @@ var Issue = utils.Issue;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function NIFTI (header, file, jsonContentsDict, events, callback) {
+module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, events, callback) {
     var path = file.relativePath;
     var issues = [];
     var potentialSidecars = potentialLocations(path.replace(".gz", "").replace(".nii", ".json"));
@@ -18,6 +18,26 @@ module.exports = function NIFTI (header, file, jsonContentsDict, events, callbac
     var mergedDictionary  = generateMergedSidecarDict(potentialSidecars, jsonContentsDict);
     var sidecarMessage    = "It can be included one of the following locations: " + potentialSidecars.join(", ");
     var eventsMessage     = "It can be included one of the following locations: " + potentialEvents.join(", ");
+
+    if (path.includes('_dwi.nii')) {
+        var potentialBvecs = potentialLocations(path.replace(".gz", "").replace(".nii", ".bvec"));
+        var potentialBvals = potentialLocations(path.replace(".gz", "").replace(".nii", ".bval"));
+        var bvec = getBFileContent(potentialBvecs, bContentsDict);
+        var bval = getBFileContent(potentialBvals, bContentsDict);
+
+        var volumes = [
+            bvec.split('\n')[0].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 1 length
+            bvec.split('\n')[1].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 2 length
+            bvec.split('\n')[2].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 3 length
+            bval.replace(/^\s+|\s+$/g, '').split(' ').length,                // bval row length
+            header.dim[4]                                                    // header 4th dimension
+        ];
+
+        if (volumes.every(function(v) { return v === volumes[0]; })) {
+            console.log('volumes dont match');
+        }
+
+    }
 
     if (missingEvents(path, potentialEvents, events)) {
         issues.push(new Issue({
@@ -262,4 +282,20 @@ function generateMergedSidecarDict(potentialSidecars, jsonContents) {
         }
     }
     return mergedDictionary;
+}
+
+/**
+ * Get B-File Contents
+ *
+ * Takes an array of potential bval or bvec files
+ * and a master b-file contents dictionary and returns
+ * the contents of the desired file.
+ */
+function getBFileContent(potentialBFiles, bContentsDict) {
+    for (var i = 0; i < potentialBFiles.length; i++) {
+        var potentialBFile = potentialBFiles[i];
+        if (bContentsDict.hasOwnProperty(potentialBFile)) {
+            return bContentsDict[potentialBFile];
+        }
+    }
 }
