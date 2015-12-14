@@ -4,6 +4,7 @@ var utils  = require('../utils');
 var TSV    = require('./tsv');
 var json   = require('./json');
 var NIFTI  = require('./nii');
+var bval   = require('./bval');
 
 var BIDS = {
 
@@ -136,7 +137,9 @@ var BIDS = {
             else if (file.name && file.name.endsWith('.bval')) {
                 utils.files.readFile(file, function (contents) {
                     bContentsDict[file.relativePath] = contents;
-                    cb();
+                    bval(file, contents, function (issues) {
+                        cb();
+                    });
                 });
             }
 

@@ -117,5 +117,9 @@ module.exports = {
 	29: {
 		severity: 'error',
 		reason: "The number of volumes in this scan does not match the number of volumes in the corresponding .bvec and .bval files."
+	},
+	30: {
+		severity: 'error',
+		reason: ".bval files should contain exactly one row of volumes."
 	}
 };
