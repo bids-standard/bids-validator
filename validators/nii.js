@@ -19,7 +19,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
     var sidecarMessage    = "It can be included one of the following locations: " + potentialSidecars.join(", ");
     var eventsMessage     = "It can be included one of the following locations: " + potentialEvents.join(", ");
 
-    if (path.includes('_dwi.nii')) {
+    if (path.includes('_dwi.nii') && header) {
         var potentialBvecs = potentialLocations(path.replace(".gz", "").replace(".nii", ".bvec"));
         var potentialBvals = potentialLocations(path.replace(".gz", "").replace(".nii", ".bval"));
         var bvec = getBFileContent(potentialBvecs, bContentsDict);
@@ -30,11 +30,14 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             bvec.split('\n')[1].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 2 length
             bvec.split('\n')[2].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 3 length
             bval.replace(/^\s+|\s+$/g, '').split(' ').length,                // bval row length
+            volumes.push(header.dim[4])                                      // header 4th dimension
         ];
-        if (header) {volumes.push(header.dim[4]);}                           // header 4th dimension
 
         if (volumes.every(function(v) { return v === volumes[0]; })) {
-            console.log('volumes dont match');
+            issues.push(new Issue({
+                code: 29,
+                file: file
+            }));
         }
 
     }
