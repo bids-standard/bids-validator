@@ -8,7 +8,7 @@ var Issue = require('../utils').Issue;
  * with any issues it finds while validating
  * against the BIDS specification.
  */
-module.exports = function TSV (file, contents, callback) {
+module.exports = function bval (file, contents, callback) {
 
     var issues = [];
 
