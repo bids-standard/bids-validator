@@ -24,13 +24,13 @@ describe('NIFTI', function(){
 	];
 
 	it('should catch NIfTI file reading errors', function(){
-		validate.NIFTI(header, file, jsonContentsDict, events, function (issues) {
+		validate.NIFTI(header, file, jsonContentsDict, {}, events, function (issues) {
 			assert(issues && issues.length > 0);
 		});
 	});
 
 	it('should warn user about misisng events file', function() {
-		validate.NIFTI(header, file, jsonContentsDict, events, function (issues) {
+		validate.NIFTI(header, file, jsonContentsDict, {}, events, function (issues) {
 			assert(issues.length = 1);
 		});
 	});
@@ -38,7 +38,7 @@ describe('NIFTI', function(){
 	it('should ignore missing events files for rest scans', function() {
 		jsonContentsDict['/sub-15/func/sub-15_task-mixedeventrelatedproberest_run-01_bold.json'] = jsonContentsDict['/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.json'];
 		file.relativePath = '/sub-15/func/sub-15_task-mixedeventrelatedproberest_run-01_bold.nii.gz';
-		validate.NIFTI(null, file, jsonContentsDict, events, function (issues) {
+		validate.NIFTI(null, file, jsonContentsDict, {}, events, function (issues) {
 			assert.deepEqual(issues, []);
 		});
 	});
