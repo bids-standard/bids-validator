@@ -113,5 +113,9 @@ module.exports = {
 	28: {
 		severity: 'error',
 		reason: "This file ends in the .gz extension but is not actually gzipped."
+	},
+	29: {
+		severity: 'error',
+		reason: "The number of volumes in this scan does not match the number of volumes in the corresponding .bvec and .bval files."
 	}
 };
