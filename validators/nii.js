@@ -30,8 +30,8 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             bvec.split('\n')[1].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 2 length
             bvec.split('\n')[2].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 3 length
             bval.replace(/^\s+|\s+$/g, '').split(' ').length,                // bval row length
-            header.dim[4]                                                    // header 4th dimension
         ];
+        if (header) {volumes.push(header.dim[4]);}                           // header 4th dimension
 
         if (volumes.every(function(v) { return v === volumes[0]; })) {
             console.log('volumes dont match');
