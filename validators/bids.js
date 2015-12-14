@@ -124,8 +124,16 @@ var BIDS = {
                 });
             }
 
-            // capture bvec and bval contents
-            else if (file.name && (file.name.endsWith('.bvec') || file.name.endsWith('.bval'))) {
+            // validate bvec
+            else if (file.name && file.name.endsWith('.bvec')) {
+                utils.files.readFile(file, function (contents) {
+                    bContentsDict[file.relativePath] = contents;
+                    cb();
+                });
+            }
+
+            // validate bval
+            else if (file.name && file.name.endsWith('.bval')) {
                 utils.files.readFile(file, function (contents) {
                     bContentsDict[file.relativePath] = contents;
                     cb();
