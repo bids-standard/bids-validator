@@ -30,10 +30,10 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             bvec.split('\n')[1].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 2 length
             bvec.split('\n')[2].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 3 length
             bval.replace(/^\s+|\s+$/g, '').split(' ').length,                // bval row length
-            volumes.push(header.dim[4])                                      // header 4th dimension
+            header.dim[4]                                                    // header 4th dimension
         ];
 
-        if (volumes.every(function(v) { return v === volumes[0]; })) {
+        if (!volumes.every(function(v) { return v === volumes[0]; })) {
             issues.push(new Issue({
                 code: 29,
                 file: file
