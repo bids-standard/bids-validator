@@ -8,6 +8,7 @@ var JSON   = require('./json');
 var NIFTI  = require('./nii');
 var BIDS   = require('./bids').start;
 var bval   = require('./bval');
+var bvec   = require('./bvec');
 
 // public api --------------------------------------------------------
 
@@ -16,7 +17,8 @@ var validate = {
 	JSON: JSON,
 	TSV: TSV,
 	NIFTI: NIFTI,
-	bval: bval
+	bval: bval,
+	bvec: bvec
 };
 
 // exports -----------------------------------------------------------

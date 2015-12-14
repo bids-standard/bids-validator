@@ -121,5 +121,9 @@ module.exports = {
 	30: {
 		severity: 'error',
 		reason: ".bval files should contain exactly one row of volumes."
+	},
+	31: {
+		severity: 'error',
+		reason: ".bvec files should contain exactly three rows of volumes."
 	}
 };
