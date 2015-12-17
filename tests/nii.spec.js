@@ -65,5 +65,15 @@ describe('NIFTI', function(){
   		});
 	});
 
+	it('should catch missing .bval an .bvec files', function() {
+		var file = {
+			name: 'sub-09_ses-test_dwi.nii.gz',
+			path: '/Users/zack/Desktop/BIDS examples/ds114/sub-09/ses-test/dwi/sub-09_ses-test_dwi.nii.gz',
+			relativePath: '/sub-09/ses-test/dwi/sub-09_ses-test_dwi.nii.gz'
+		};
+		validate.NIFTI(null, file, jsonContentsDict, {}, [], function (issues) {
+  			assert(issues.length == 2 && issues[0].code == 32 && issues[1].code == 33);
+  		});
+	});
 
 });

@@ -19,27 +19,45 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
     var sidecarMessage    = "It can be included one of the following locations: " + potentialSidecars.join(", ");
     var eventsMessage     = "It can be included one of the following locations: " + potentialEvents.join(", ");
 
-    if (path.includes('_dwi.nii') && header) {
+    if (path.includes('_dwi.nii')) {
         var potentialBvecs = potentialLocations(path.replace(".gz", "").replace(".nii", ".bvec"));
         var potentialBvals = potentialLocations(path.replace(".gz", "").replace(".nii", ".bval"));
         var bvec = getBFileContent(potentialBvecs, bContentsDict);
         var bval = getBFileContent(potentialBvals, bContentsDict);
+        var bvecMessage = "It can be included in one of the following locations: " + potentialBvecs.join(", ");
+        var bvalMessage = "It can be included in one of the following locations: " + potentialBvals.join(", ");
 
-        var volumes = [
-            bvec.split('\n')[0].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 1 length
-            bvec.split('\n')[1].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 2 length
-            bvec.split('\n')[2].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 3 length
-            bval.replace(/^\s+|\s+$/g, '').split(' ').length,                // bval row length
-            header.dim[4]                                                    // header 4th dimension
-        ];
-
-        if (!volumes.every(function(v) { return v === volumes[0]; })) {
+        if (!bvec) {
             issues.push(new Issue({
-                code: 29,
-                file: file
+                code: 32,
+                file: file,
+                reason: '_dwi scans should have a corresponding .bvec file. ' + bvecMessage
+            }));
+        }
+        if (!bval) {
+            issues.push(new Issue({
+                code: 33,
+                file: file,
+                reason: '_dwi scans should have a corresponding .bval file. ' + bvalMessage
             }));
         }
 
+        if (bval && bvec && header) {
+            var volumes = [
+                bvec.split('\n')[0].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 1 length
+                bvec.split('\n')[1].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 2 length
+                bvec.split('\n')[2].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 3 length
+                bval.replace(/^\s+|\s+$/g, '').split(' ').length,                // bval row length
+                header.dim[4]                                                    // header 4th dimension
+            ];
+
+            if (!volumes.every(function(v) { return v === volumes[0]; })) {
+                issues.push(new Issue({
+                    code: 29,
+                    file: file
+                }));
+            }
+        }
     }
 
     if (missingEvents(path, potentialEvents, events)) {

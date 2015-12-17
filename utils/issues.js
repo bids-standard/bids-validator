@@ -125,5 +125,14 @@ module.exports = {
 	31: {
 		severity: 'error',
 		reason: ".bvec files should contain exactly three rows of volumes."
-	}
+	},
+	32: {
+		severity: 'error',
+		reason: "_dwi scans should have a corresponding .bvec file."
+	},
+	33: {
+		severity: 'error',
+		reason: "_dwi scans should have a corresponding .bval file."
+	},
+
 };
