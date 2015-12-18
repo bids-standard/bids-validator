@@ -128,11 +128,11 @@ module.exports = {
 	},
 	32: {
 		severity: 'error',
-		reason: "_dwi scans should have a corresponding .bvec file."
+		reason: "DWI scans should have a corresponding .bvec file."
 	},
 	33: {
 		severity: 'error',
-		reason: "_dwi scans should have a corresponding .bval file."
+		reason: "DWI scans should have a corresponding .bval file."
 	},
 
 };
