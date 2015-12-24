@@ -98,7 +98,7 @@ module.exports = function (file, contents, callback) {
         if (sidecar.hasOwnProperty('SliceEncodingDirection') && ["i", "i-", "j", "j-", "k", "k-"].indexOf(sidecar["SliceEncodingDirection"]) == -1) {
             issues.push(new Issue({
                 file: file,
-                code: 34
+                code: 35
             }));
         }
     }
