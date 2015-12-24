@@ -5,7 +5,7 @@ var fs = require('fs');
 var AdmZip = require('adm-zip');
 var path = require('path');
 var Test = require("mocha/lib/test");
-var test_version = "1.0.0-rc3u1"
+var test_version = "1.0.0-rc3u2"
 
 function getDirectories(srcpath) {
     return fs.readdirSync(srcpath).filter(function(file) {
