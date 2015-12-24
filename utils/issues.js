@@ -134,5 +134,13 @@ module.exports = {
 		severity: 'error',
 		reason: "DWI scans should have a corresponding .bval file."
 	},
+	34: {
+		severity: 'error',
+		reason: "'PhaseEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
+	},
+	35: {
+		severity: 'error',
+		reason: "'SliceEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
+	},
 
 };
