@@ -67,7 +67,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
                     evidence: row,
                     line: rows.indexOf(row) + 1,
                     character: row.indexOf('NA' || 'na' || 'nan'),
-                    code: 23
+                    code: 24
                 }));
             }
 
