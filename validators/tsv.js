@@ -58,19 +58,20 @@ module.exports = function TSV (file, contents, isEvents, callback) {
         }
 
         // iterate through columns
+        column_num = 1
         async.each(columnsInRow, function (column, cb1) {
 
             // check if missing value is properly labeled as 'n/a'
-            if (column === "NA" || column === "na" || column === "nan") {
+            if (column === "" || column === "NA" || column === "na" || column === "nan") {
                 issues.push(new Issue({
                     file: file,
                     evidence: row,
                     line: rows.indexOf(row) + 1,
-                    character: row.indexOf('NA' || 'na' || 'nan'),
-                    code: 23
+                    character: "at column # "+column_num,
+                    code: 24
                 }));
             }
-
+            column_num++
 	        cb1();
         }, function () {cb();});
     }, function () {
