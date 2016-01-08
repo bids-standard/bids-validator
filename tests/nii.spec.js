@@ -24,14 +24,8 @@ describe('NIFTI', function(){
 		'/sub-15/run-01_events.tsv'
 	];
 
-	it('should catch NIfTI file reading errors', function(){
-		validate.NIFTI(header, file, jsonContentsDict, {}, events, function (issues) {
-			assert(issues && issues.length > 0);
-		});
-	});
-
 	it('should warn user about misisng events file', function() {
-		validate.NIFTI(header, file, jsonContentsDict, {}, events, function (issues) {
+		validate.NIFTI(null, file, jsonContentsDict, {}, events, function (issues) {
 			assert(issues.length = 1);
 		});
 	});
