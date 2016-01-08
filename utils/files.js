@@ -112,24 +112,30 @@ function readNiftiHeader (file, callback) {
     var bytesRead = 500;
 
     if (fs) {
+        console.log(1, file);
         var fileBuffer;
 
         var decompressStream = zlib.createGunzip()
             .on('data', function (chunk) {
+                console.log(2, chunk);
                 callback(nifti.parseNIfTIHeader(chunk));
                 decompressStream.pause();
             }).on('error', function(err) {
+                console.log(3, err);
                 callback(handleGunzipError(fileBuffer, file));
             });
 
         fs.createReadStream(file.path, {start: 0, end: bytesRead, chunkSize: bytesRead + 1})
             .on('data', function (chunk) {
+                console.log(4, chunk);
                 fileBuffer = chunk;
                 if (file.name.endsWith('.nii')) {
                     callback(nifti.parseNIfTIHeader(chunk));
                 } else {
                     decompressStream.write(chunk);
                 }
+            }).on('error', function (err) {
+                console.log(5, err);
             });
 
     } else {
