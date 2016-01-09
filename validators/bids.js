@@ -165,14 +165,20 @@ var BIDS = {
                 if (self.options.ignoreNiftiHeaders) {
                     NIFTI(null, file, jsonContentsDict, bContentsDict, events, function (issues) {
                         self.issues = self.issues.concat(issues);
-                        return cb();
+                        cb();
                     });
                 } else {
                     utils.files.readNiftiHeader(file, function (header) {
-                        NIFTI(header, file, jsonContentsDict, bContentsDict, events, function (issues) {
-                            self.issues = self.issues.concat(issues);
-                            return cb();
-                        });
+                        // check if header could be read
+                        if (header && header.hasOwnProperty('error')) {
+                            self.issues.push(header.error);
+                            cb();
+                        } else {
+                            NIFTI(header, file, jsonContentsDict, bContentsDict, events, function (issues) {
+                                self.issues = self.issues.concat(issues);
+                                cb();
+                            });
+                        }
                     });
                 }
             }, function(){

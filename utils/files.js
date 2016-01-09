@@ -112,31 +112,38 @@ function readNiftiHeader (file, callback) {
     var bytesRead = 500;
 
     if (fs) {
-        var fileBuffer;
+        fs.stat(file.path, function (err, stats) {
+            file.stats = stats;
+            if (stats.size < 348) {
+                callback({error: new Issue({code: 36, file: file})});
+                return;
+            }
 
-        var decompressStream = zlib.createGunzip()
-            .on('data', function (chunk) {
-                callback(nifti.parseNIfTIHeader(chunk));
-                decompressStream.pause();
-            }).on('error', function(err) {
-                callback(handleGunzipError(fileBuffer, file));
+            var buffer = new Buffer(bytesRead);
+
+            var decompressStream = zlib.createGunzip()
+                .on('data', function (chunk) {
+                    callback(parseNIfTIHeader(chunk, file));
+                    decompressStream.pause();
+                }).on('error', function(err) {
+                    callback(handleGunzipError(buffer, file));
+                });
+
+            fs.open(file.path, 'r', function(status, fd) {
+                fs.read(fd, buffer, 0, bytesRead, 0, function(err, num) {
+                    if (file.name.endsWith('.nii')) {
+                        callback(parseNIfTIHeader(buffer, file));
+                    } else {
+                        decompressStream.write(buffer);
+                    }
+                });
             });
-
-        fs.createReadStream(file.path, {start: 0, end: bytesRead, chunkSize: bytesRead + 1})
-            .on('data', function (chunk) {
-                fileBuffer = chunk;
-                if (file.name.endsWith('.nii')) {
-                    callback(nifti.parseNIfTIHeader(chunk));
-                } else {
-                    decompressStream.write(chunk);
-                }
-            });
-
+        });
     } else {
 
         // file size is smaller than nifti header size
         if (file.size < 348) {
-            callback({error: "Unable to read " + file.webkitRelativePath});
+            callback({error: new Issue({code: 36, file: file})});
             return;
         }
 
@@ -159,7 +166,7 @@ function readNiftiHeader (file, callback) {
                 }
             }
 
-            callback(nifti.parseNIfTIHeader(unzipped));
+            callback(parseNIfTIHeader(unzipped, file));
         };
 
         fileReader.readAsArrayBuffer(blobSlice.call(file, 0, bytesRead));
@@ -183,6 +190,25 @@ function handleGunzipError (buffer, file) {
     }
     // file was not originally gzipped
     return {error: new Issue({code: 28, file: file})};
+}
+
+/**
+ * Parse NIfTI Header (private)
+ *
+ * Attempts to parse a header buffer with
+ * nifti-js and handles errors.
+ */
+function parseNIfTIHeader (buffer, file) {
+    var header;
+    try {
+        header = nifti.parseNIfTIHeader(buffer);
+    }
+    catch (err) {
+        // file is unreadable
+        return {error: new Issue({code: 26, file: file})};
+    }
+    // file was not originally gzipped
+    return header;
 }
 
 /**

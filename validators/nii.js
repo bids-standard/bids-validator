@@ -68,10 +68,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
         }));
     }
 
-    // check if header could be read
-    if (header && header.hasOwnProperty('error')) {
-        issues.push(header.error);
-    } else if (header) {
+    if (header) {
         // Define repetition time from header and coerce to seconds.
         var repetitionTime = header.pixdim[4];
         var repetitionUnit = header.xyzt_units[3];
