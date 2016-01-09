@@ -32,7 +32,8 @@ module.exports = {
      * Check if the file has appropriate name for a top level file
      */
     isTopLevel: function(path) {
-        var fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv"];
+        var fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv",
+            "/phasediff.json", "/phase1.json", "/phase2.json" ,"/fieldmap.json"];
 
         var funcTopRe = RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
             + '(_bold.json|_events.tsv|_physio.json|_stim.json)$');
@@ -40,8 +41,10 @@ module.exports = {
         var dwiTopRe = RegExp('^\\/(?:ses-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
             + 'dwi.(?:json|bval|bvec)$');
 
+        var multiDirFieldmapRe = RegExp('^\\/(?:dir-[0-9]+)_epi.json$');
 
-        if (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path)) {
+
+        if (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) || multiDirFieldmapRe.test(path)) {
             return true;
         } else {
             return false;
