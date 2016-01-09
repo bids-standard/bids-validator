@@ -104,7 +104,7 @@ module.exports = {
 	},
 	26: {
 		severity: 'error',
-		reason:   "We were unable to parse header data from this NIfTI. Please ensure it is not corrupted or mislabeled."
+		reason:   "We were unable to parse header data from this NIfTI file. Please ensure it is not corrupted or mislabeled."
 	},
 	27: {
 		severity: 'error',
@@ -144,7 +144,7 @@ module.exports = {
 	},
 	36: {
 		severity: 'error',
-		reason: "This file is too small to contain the minimum NIfTI header."
+		reason: "This file is too small to contain the minimal NIfTI header."
 	}
 
 };
