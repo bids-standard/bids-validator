@@ -62,7 +62,17 @@ module.exports = function TSV (file, contents, isEvents, callback) {
         async.each(columnsInRow, function (column, cb1) {
 
             // check if missing value is properly labeled as 'n/a'
-            if (column === "" || column === "NA" || column === "na" || column === "nan") {
+            if (column === "") {
+                // empty cell should raise an error
+                issues.push(new Issue({
+                    file: file,
+                    evidence: row,
+                    line: rows.indexOf(row) + 1,
+                    character: "at column # "+column_num,
+                    code: 23
+                }));
+            } else if (column === "NA" || column === "na" || column === "nan") {
+                // these cases should raise warning
                 issues.push(new Issue({
                     file: file,
                     evidence: row,
