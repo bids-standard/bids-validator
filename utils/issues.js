@@ -149,6 +149,10 @@ module.exports = {
 	36: {
 		severity: 'error',
 		reason: "This file is too small to contain the minimal NIfTI header."
+	},
+	37: {
+		severity: 'error',
+		reason: "'IntendedFor' field needs to point to an existing file."
 	}
 
 };

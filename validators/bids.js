@@ -163,7 +163,7 @@ var BIDS = {
         }, function () {
             async.forEachOf(niftis, function (file, key, cb) {
                 if (self.options.ignoreNiftiHeaders) {
-                    NIFTI(null, file, jsonContentsDict, bContentsDict, events, function (issues) {
+                    NIFTI(null, file, jsonContentsDict, bContentsDict, fileList, events, function (issues) {
                         self.issues = self.issues.concat(issues);
                         cb();
                     });
@@ -174,7 +174,7 @@ var BIDS = {
                             self.issues.push(header.error);
                             cb();
                         } else {
-                            NIFTI(header, file, jsonContentsDict, bContentsDict, events, function (issues) {
+                            NIFTI(header, file, jsonContentsDict, bContentsDict, fileList, events, function (issues) {
                                 self.issues = self.issues.concat(issues);
                                 cb();
                             });
