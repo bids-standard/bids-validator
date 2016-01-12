@@ -10,7 +10,7 @@ var Issue = utils.Issue;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, events, callback) {
+module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, fileList, events, callback) {
     var path = file.relativePath;
     var issues = [];
     var potentialSidecars = potentialLocations(path.replace(".gz", "").replace(".nii", ".json"));
@@ -197,6 +197,30 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                 code: 19,
                 reason: "You have to define 'TotalReadoutTime' for this file. " + sidecarMessage
             }));
+        }
+    }
+
+    if (path.includes("_phasediff.nii") || path.includes("_phase1.nii") ||
+        path.includes("_phase2.nii") || path.includes("_fieldmap.nii") || path.includes("_epi.nii")){
+        if (mergedDictionary.hasOwnProperty('IntendedFor')) {
+            var intendedForFile = "/" + path.split("/")[1] + "/" + mergedDictionary['IntendedFor'];
+            var onTheList = false;
+            async.forEachOf(fileList, function (file, key, cb) {
+                if (file.path.endsWith(intendedForFile)){
+                    onTheList = true;
+                }
+                cb();
+            }, function(){
+                if (!onTheList) {
+                    issues.push(new Issue({
+                        file: file,
+                        code: 37,
+                        reason: "'IntendedFor' property of this fieldmap ('" + mergedDictionary['IntendedFor'] + "') does " +
+                        "not point to an existing file. Please mind that this value should not include subject level directory " +
+                        "('/" + path.split("/")[1] + "/')."
+                    }));
+                }
+            });
         }
     }
 
