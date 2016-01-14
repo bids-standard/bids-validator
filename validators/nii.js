@@ -81,21 +81,21 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             issues.push(new Issue({
                 file: file,
                 code: 6,
-                reason: "You should should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
+                reason: "You should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
             issues.push(new Issue({
                 file: file,
                 code: 7,
-                reason: "You should should define 'PhaseEncodingDirection' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
+                reason: "You should define 'PhaseEncodingDirection' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('EffectiveEchoSpacing')) {
             issues.push(new Issue({
                 file: file,
                 code: 8,
-                reason: "You should should define 'EffectiveEchoSpacing' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
+                reason: "You should define 'EffectiveEchoSpacing' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
             }));
         }
     }
@@ -104,7 +104,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             issues.push(new Issue({
                 file: file,
                 code: 9,
-                reason: "You should should define 'TotalReadoutTime' for this file. If you don't provide this information field map correction using TOPUP might not be possible. " + sidecarMessage
+                reason: "You should define 'TotalReadoutTime' for this file. If you don't provide this information field map correction using TOPUP might not be possible. " + sidecarMessage
             }));
         }
     }
@@ -141,14 +141,14 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             issues.push(new Issue({
                 file: file,
                 code: 13,
-                reason: "You should should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
+                reason: "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
             }));
         }
         if (!mergedDictionary.hasOwnProperty('SliceEncodingDirection')) {
             issues.push(new Issue({
                 file: file,
                 code: 14,
-                reason: "You should should define 'SliceEncodingDirection' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
+                reason: "You should define 'SliceEncodingDirection' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
             }));
         }
     }
