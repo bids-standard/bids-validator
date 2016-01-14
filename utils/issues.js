@@ -28,19 +28,19 @@ module.exports = {
 	},
 	6: {
         severity: 'warning',
-		reason:   "You should should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible."
+		reason:   "You should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible."
 	},
 	7: {
 		severity: 'warning',
-		reason:   "You should should define 'PhaseEncodingDirection' for this file. If you don't provide this information field map correction will not be possible."
+		reason:   "You should define 'PhaseEncodingDirection' for this file. If you don't provide this information field map correction will not be possible."
 	},
 	8: {
 		severity: 'warning',
-		reason:   "You should should define 'EffectiveEchoSpacing' for this file. If you don't provide this information field map correction will not be possible."
+		reason:   "You should define 'EffectiveEchoSpacing' for this file. If you don't provide this information field map correction will not be possible."
 	},
 	9: {
 		severity: 'warning',
-		reason:   "You should should define 'TotalReadoutTime' for this file. If you don't provide this information field map correction using TOPUP might not be possible."
+		reason:   "You should define 'TotalReadoutTime' for this file. If you don't provide this information field map correction using TOPUP might not be possible."
 	},
 	10: {
 		severity: 'error',
@@ -56,11 +56,11 @@ module.exports = {
 	},
 	13: {
 		severity: 'warning',
-		reason:   "You should should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible."
+		reason:   "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible."
 	},
 	14: {
 		severity: 'warning',
-		reason:   "You should should define 'SliceEncodingDirection' for this file. If you don't provide this information slice time correction will not be possible."
+		reason:   "You should define 'SliceEncodingDirection' for this file. If you don't provide this information slice time correction will not be possible."
 	},
 	15: {
 		severity: 'error',
