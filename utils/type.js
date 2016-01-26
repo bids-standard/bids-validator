@@ -22,7 +22,7 @@ module.exports = {
             this.isAnat(path)              ||
             this.isDWI(path)               ||
             this.isFunc(path)              ||
-            this.isBehavioral(path)               ||
+            this.isBehavioral(path)        ||
             this.isCont(path)              ||
             this.isFieldMap(path)
         );
@@ -32,24 +32,23 @@ module.exports = {
      * Check if the file has appropriate name for a top level file
      */
     isTopLevel: function(path) {
-        var fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv"];
+        var fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv",
+            "/phasediff.json", "/phase1.json", "/phase2.json" ,"/fieldmap.json"];
 
-        var funcTopRe = RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
+        var funcTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
             + '(_bold.json|_events.tsv|_physio.json|_stim.json)$');
 
-        var dwiTopRe = RegExp('^\\/(?:ses-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
+        var dwiTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
             + 'dwi.(?:json|bval|bvec)$');
 
+        var multiDirFieldmapRe = new RegExp('^\\/(?:dir-[0-9]+)_epi.json$');
 
-        if (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path)) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) || multiDirFieldmapRe.test(path))
     },
 
     isCodeOrDerivatives: function(path) {
-        var codeOrDerivatives = RegExp('^\\/(?:code|derivatives)\\/(?:.*)$');
+        var codeOrDerivatives = new RegExp('^\\/(?:code|derivatives)\\/(?:.*)$');
         return codeOrDerivatives.test(path);
     },
 
@@ -57,7 +56,7 @@ module.exports = {
      * Check if the file has appropriate name for a session level
      */
     isSessionLevel: function(path) {
-        var scansRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+        var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?_scans.tsv$');
         return conditionalMatch(scansRe, path);
@@ -67,7 +66,7 @@ module.exports = {
      * Check if the file has appropriate name for a subject level
      */
     isSubjectLevel: function(path) {
-        var scansRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+        var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/\\1_sessions.tsv$');
         return scansRe.test(path);
     },
@@ -78,7 +77,7 @@ module.exports = {
     isAnat: function(path) {
         var suffixes = ["T1w", "T2w", "T1map", "T2map", "FLAIR", "PD", "PDT2", "inplaneT1", "inplaneT2","angio",
             "defacemask", "SWImagandphase"];
-        var anatRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+        var anatRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?anat' +
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
@@ -92,7 +91,7 @@ module.exports = {
      */
     isDWI: function(path) {
         var suffixes = ["dwi", "sbref"];
-        var anatRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+        var anatRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?dwi' +
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
@@ -106,7 +105,7 @@ module.exports = {
      */
     isFieldMap: function(path) {
         var suffixes = ["phasediff", "phase1", "phase2", "magnitude1", "magnitude2", "fieldmap", "epi"];
-        var anatRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+        var anatRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?fmap' +
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[0-9]+)?(?:_run-[0-9]+)?_(?:'
@@ -119,7 +118,7 @@ module.exports = {
      * Check if the file has a name appropriate for a functional scan
      */
     isFunc: function(path) {
-        var funcRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+        var funcRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?func' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
@@ -128,7 +127,7 @@ module.exports = {
     },
 
     isBehavioral: function(path) {
-        var funcBeh = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+        var funcBeh = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?beh' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
@@ -137,7 +136,7 @@ module.exports = {
     },
 
     isFuncBold: function(path) {
-        var funcRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+        var funcRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?func' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
@@ -146,7 +145,7 @@ module.exports = {
     },
 
     isCont: function(path) {
-        var contRe = RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+        var contRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?(?:func|beh)' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?' +
