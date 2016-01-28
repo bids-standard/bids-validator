@@ -33,6 +33,6 @@
     "chai": "",
     "mocha": "^2.2.5",
     "publish": "^0.5.0",
-    "sync-request": ""
+    "spawn-sync": "2.2.0"
   }
 }
