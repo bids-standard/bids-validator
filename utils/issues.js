@@ -153,6 +153,14 @@ module.exports = {
 	37: {
 		severity: 'error',
 		reason: "'IntendedFor' field needs to point to an existing file."
-	}
+	},
+    38: {
+        severity: 'error',
+        reason: "Directory structure has depth greater than 5."
+    },
+    39: {
+        severity: 'warning',
+        reason: "Subject session may be missing file"
+    } 
 
 };

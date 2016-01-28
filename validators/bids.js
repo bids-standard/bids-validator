@@ -6,6 +6,7 @@ var json   = require('./json');
 var NIFTI  = require('./nii');
 var bval   = require('./bval');
 var bvec   = require('./bvec');
+var session = require('./session');
 
 var BIDS = {
 
@@ -48,6 +49,7 @@ var BIDS = {
      */
     quickTest: function (fileList, callback) {
         var couldBeBIDS = false;
+        var self = this;
         for (var key in fileList) {
             if (fileList.hasOwnProperty(key)) {
                 var file = fileList[key];
@@ -55,7 +57,10 @@ var BIDS = {
                 if (path) {
                     path = path.split('/');
                     if (path[1] === 'derivatives') {continue;}
-                    if (path.length > 5) {couldBeBIDS = false; break;}
+                    if (path.length > 5) {
+                        couldBeBIDS = false; 
+                        break;
+                    }
                     path = path.reverse();
 
                     if (
@@ -94,6 +99,7 @@ var BIDS = {
             events           = [],
             niftis           = [];
 
+        self.issues = self.issues.concat(session(fileList));
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
             file.relativePath = utils.files.relativePath(file);
