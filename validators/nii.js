@@ -144,13 +144,6 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                 reason: "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
             }));
         }
-        if (!mergedDictionary.hasOwnProperty('SliceEncodingDirection')) {
-            issues.push(new Issue({
-                file: file,
-                code: 14,
-                reason: "You should define 'SliceEncodingDirection' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
-            }));
-        }
     }
     else if (path.includes("_phasediff.nii")){
         if (!mergedDictionary.hasOwnProperty('EchoTime1')) {
