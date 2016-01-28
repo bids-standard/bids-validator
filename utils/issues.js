@@ -142,10 +142,6 @@ module.exports = {
 		severity: 'error',
 		reason: "'PhaseEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
 	},
-	35: {
-		severity: 'error',
-		reason: "'SliceEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
-	},
 	36: {
 		severity: 'error',
 		reason: "This file is too small to contain the minimal NIfTI header."
