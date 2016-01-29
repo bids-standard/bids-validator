@@ -43,7 +43,7 @@ function logIssues (issues, color, options) {
 
 			if (options.gentleSummary && (j+1) >= options.gentleSummaryMax) {
 				var remaining = issue.files.length - (j+1);
-				console.log('\t\t'+colors[color]('... and '+remaining+' more files having this issue (--GentleSummary in effect).'));
+				console.log('\t\t'+colors[color]('... and '+remaining+' more files having this issue (--gentleSummary in effect).'));
 				break;
 			}
 
