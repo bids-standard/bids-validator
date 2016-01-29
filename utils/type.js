@@ -24,7 +24,8 @@ module.exports = {
             this.isFunc(path)              ||
             this.isBehavioral(path)        ||
             this.isCont(path)              ||
-            this.isFieldMap(path)
+            this.isFieldMap(path)          ||
+            this.isVersionControl(path)
         );
     },
 
@@ -51,6 +52,12 @@ module.exports = {
         var codeOrDerivatives = new RegExp('^\\/(?:code|derivatives)\\/(?:.*)$');
         return codeOrDerivatives.test(path);
     },
+
+    isVersionControl: function(path) {
+        var codeOrDerivatives = new RegExp('^\\/(?:[.]git)\\/(?:.*)$');
+        return codeOrDerivatives.test(path);
+    },
+
 
     /**
      * Check if the file has appropriate name for a session level
