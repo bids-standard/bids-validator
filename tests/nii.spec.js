@@ -41,7 +41,7 @@ describe('NIFTI', function(){
 	it('should catch mismatched numbers of volumes in dwi scan and .bval/.bvec files', function() {
 		var file = {
 			name: 'sub-09_ses-test_dwi.nii.gz',
-			path: '/Users/zack/Desktop/BIDS examples/ds114/sub-09/ses-test/dwi/sub-09_ses-test_dwi.nii.gz',
+			path: '/ds114/sub-09/ses-test/dwi/sub-09_ses-test_dwi.nii.gz',
 			relativePath: '/sub-09/ses-test/dwi/sub-09_ses-test_dwi.nii.gz'
 		};
 		var header = {
@@ -62,7 +62,7 @@ describe('NIFTI', function(){
 	it('should catch missing .bval an .bvec files', function() {
 		var file = {
 			name: 'sub-09_ses-test_dwi.nii.gz',
-			path: '/Users/zack/Desktop/BIDS examples/ds114/sub-09/ses-test/dwi/sub-09_ses-test_dwi.nii.gz',
+			path: '/ds114/sub-09/ses-test/dwi/sub-09_ses-test_dwi.nii.gz',
 			relativePath: '/sub-09/ses-test/dwi/sub-09_ses-test_dwi.nii.gz'
 		};
 		validate.NIFTI(null, file, jsonContentsDict, {}, [], [], function (issues) {
