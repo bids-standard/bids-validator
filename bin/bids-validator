@@ -9,8 +9,6 @@ var argv = require('yargs')
     .describe('ignoreWarnings', 'disregard non-critical issues')
     .boolean('ignoreNiftiHeaders')
     .describe('ignoreNiftiHeaders', 'disregard NIfTI header content during validation')
-    .boolean('gentleSummary')
-    .describe('gentleSummary', 'Only output the first 10 files for each issue detected.')
     .boolean('verbose')
     .describe('verbose', 'Log more extensive infomation about issues.')
     .epilogue("This tool checks if a dataset in a given directory is \

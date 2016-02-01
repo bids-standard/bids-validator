@@ -3,7 +3,7 @@ var colors = require('colors/safe');
 var fs = require('fs')
 
 module.exports = function (dir, options) {
-	if (options.gentleSummary) { options.gentleSummaryMax = 10; }
+	options.filesPerIssueMax = 10;
 	if (fs.existsSync(dir)) {
 	    validate.BIDS(dir, options, function (errors, warnings) {
 	    	if (errors === 'Invalid') {
@@ -41,9 +41,9 @@ function logIssues (issues, color, options) {
 				console.log('\t\t\tEvidence: ' + file.evidence);
 			}
 
-			if (options.gentleSummary && (j+1) >= options.gentleSummaryMax) {
+			if (!options.verbose && (j+1) >= options.filesPerIssueMax) {
 				var remaining = issue.files.length - (j+1);
-				console.log('\t\t'+colors[color]('... and '+remaining+' more files having this issue (--gentleSummary in effect).'));
+				console.log('\t\t'+colors[color]('... and '+remaining+' more files having this issue (Use --verbose to see them all).'));
 				break;
 			}
 
