@@ -16,7 +16,7 @@ module.exports = function (dir, options) {
 			}
 	    });
 	} else {
-		console.log(colors.red(dir + " does not exits"))
+		console.log(colors.red(dir + " does not exist"));
 	}
 };
 
