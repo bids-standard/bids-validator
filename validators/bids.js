@@ -57,10 +57,6 @@ var BIDS = {
                 if (path) {
                     path = path.split('/');
                     if (path[1] === 'derivatives') {continue;}
-                    if (path.length > 5) {
-                        couldBeBIDS = false; 
-                        break;
-                    }
                     path = path.reverse();
 
                     if (
