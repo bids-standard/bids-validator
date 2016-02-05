@@ -58,10 +58,6 @@ module.exports = {
 		severity: 'warning',
 		reason:   "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible."
 	},
-	14: {
-		severity: 'warning',
-		reason:   "You should define 'SliceEncodingDirection' for this file. If you don't provide this information slice time correction will not be possible."
-	},
 	15: {
 		severity: 'error',
 		reason:   "You have to define 'EchoTime1' and/or 'EchoTime2' for this file."
@@ -145,6 +141,10 @@ module.exports = {
 	36: {
 		severity: 'error',
 		reason: "This file is too small to contain the minimal NIfTI header."
+	},
+	35: {
+		severity: 'error',
+		reason: "'SliceEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
 	},
 	37: {
 		severity: 'error',
