@@ -13,6 +13,7 @@ function getDirectories(srcpath) {
     });
 }
 
+missing_session_files = ['ds006', 'ds007', 'ds008', 'ds051', 'ds052', 'ds105', 'ds108', 'ds109', 'ds113b']
 
 var suite = describe('BIDS example datasets ', function() {
     this.timeout(100000);
