@@ -30,7 +30,7 @@ var session = function missingSessionFiles(fileList) {
         // remove the subject from the file name to allow filenames to be more
         // easily compared
         filename = path.substring(path.match(subject).index + subject.length);
-        filename = filename.replace(subject, '');
+        filename = filename.replace(subject, '<sub>');
         subjects[subject].push(filename);
     }
       
@@ -46,9 +46,11 @@ var session = function missingSessionFiles(fileList) {
     for (var subject in subjects) {
         for (var set_file in all_files) {
             if (subjects[subject].indexOf(all_files[set_file]) === -1) {
+                filename = all_files[set_file].replace('<sub>', subject);
+                file.relativePath = '/' + subject + filename;
                 issues.push(new utils.Issue({
-                    file: all_files[set_file],
-                    evidence: "Subject: " + subject + "; Missing file: " + all_files[set_file],
+                    file: file,
+                    evidence: "Subject: " + subject + "; Missing file: " + filename,
                     code: 39
                 }));
             } 
