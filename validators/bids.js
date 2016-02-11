@@ -184,7 +184,7 @@ var BIDS = {
                 }
 
             }, function(){
-                self.issues.push(...session(fileList));
+                self.issues = self.issues.concat(session(fileList));
                 var issues = self.formatIssues(self.issues);
                 callback(issues.errors, issues.warnings);
             });
