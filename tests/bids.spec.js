@@ -38,7 +38,17 @@ var suite = describe('BIDS example datasets ', function() {
 		    	var options = {ignoreNiftiHeaders: true};
                 validate.BIDS("tests/data/BIDS-examples-" + test_version + "/" + path + "/", options, function (errors, warnings) {
                     assert.deepEqual(errors, []);
-                    //assert.deepEqual(warnings, []);
+                    if (missing_session_files.indexOf(path) === -1) {
+                        //pass
+                    } else {
+                        session_flag = false;
+                        for (var warning in warnings) {
+                            if (warnings[warning]['code'] === '39') {
+                                session_flag = true;
+                            }
+                        }
+                        assert.deepEqual(session_flag, true);
+                    }
                     isdone();
                 });
             }));
