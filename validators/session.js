@@ -51,7 +51,7 @@ var session = function missingSessionFiles(fileList) {
                 issues.push(new utils.Issue({
                     file: file,
                     evidence: "Subject: " + subject + "; Missing file: " + filename,
-                    code: 39
+                    code: 38
                 }));
             } 
         }
