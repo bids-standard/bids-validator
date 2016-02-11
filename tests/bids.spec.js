@@ -38,15 +38,16 @@ var suite = describe('BIDS example datasets ', function() {
 		    	var options = {ignoreNiftiHeaders: true};
                 validate.BIDS("tests/data/BIDS-examples-" + test_version + "/" + path + "/", options, function (errors, warnings) {
                     assert.deepEqual(errors, []);
-                    if (missing_session_files.indexOf(path) === -1) {
-                        //pass
-                    } else {
-                        session_flag = false;
-                        for (var warning in warnings) {
-                            if (warnings[warning]['code'] === '39') {
-                                session_flag = true;
-                            }
+                    session_flag = false;
+                    for (var warning in warnings) {
+                        if (warnings[warning]['code'] === '38') {
+                            session_flag = true;
+                            break;
                         }
+                    }
+                    if (missing_session_files.indexOf(path) === -1) {
+                        assert.deepEqual(session_flag, false);
+                    } else {
                         assert.deepEqual(session_flag, true);
                     }
                     isdone();
