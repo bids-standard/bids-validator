@@ -152,7 +152,7 @@ module.exports = {
 	},
     38: {
         severity: 'warning',
-        reason: "Subject session may be missing file"
+        reason: "Subject session may be missing a file."
     } 
 
 };
