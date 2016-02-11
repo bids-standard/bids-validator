@@ -95,7 +95,7 @@ var BIDS = {
             events           = [],
             niftis           = [];
 
-        self.issues = self.issues.concat(session(fileList));
+        self.issues.push(...session(fileList));
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
             file.relativePath = utils.files.relativePath(file);
@@ -183,6 +183,7 @@ var BIDS = {
                         }
                     });
                 }
+
             }, function(){
                 var issues = self.formatIssues(self.issues);
                 callback(issues.errors, issues.warnings);
