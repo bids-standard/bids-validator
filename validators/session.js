@@ -14,7 +14,7 @@ var session = function missingSessionFiles(fileList) {
         var file = fileList[key];
         var filename;
         
-        if (!file || !file.webkitRelativePath) {
+        if (!file || (typeof window != 'undefined' && !file.webkitRelativePath)) {
             continue;
         }
          
