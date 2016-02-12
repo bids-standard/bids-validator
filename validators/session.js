@@ -19,6 +19,9 @@ var session = function missingSessionFiles(fileList) {
         }
          
         var path = utils.files.relativePath(file);
+        if (!utils.type.isBIDS(path)) {
+            continue;
+        }
         var subject;
         //match the subject identifier up to the '/' in the full path to a file.
         var match = path.match(/sub-(.*?)(?=\/)/);
