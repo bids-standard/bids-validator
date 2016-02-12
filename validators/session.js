@@ -14,11 +14,10 @@ var session = function missingSessionFiles(fileList) {
         var file = fileList[key];
         var filename;
         
-        if (!file) {
-            console.log(file);
+        if (!file || !file.webkitRelativePath) {
             continue;
         }
-        
+         
         var path = utils.files.relativePath(file);
         var subject;
         //match the subject identifier up to the '/' in the full path to a file.
