@@ -13,6 +13,11 @@ var session = function missingSessionFiles(fileList) {
     for (var key in fileList) {
         var file = fileList[key];
         var filename;
+        
+        if (~file) {
+            break;
+        }
+        
         var path = utils.files.relativePath(file);
         var subject;
         //match the subject identifier up to the '/' in the full path to a file.
