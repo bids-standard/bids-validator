@@ -152,7 +152,8 @@ module.exports = {
 	},
     38: {
         severity: 'warning',
-        reason: "Subject session may be missing a file."
+        reason: "Not all sessions contain the same corresponding files. Each session should contain the same number of files with the same naming scheme."
+
     } 
 
 };
