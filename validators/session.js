@@ -14,8 +14,9 @@ var session = function missingSessionFiles(fileList) {
         var file = fileList[key];
         var filename;
         
-        if (~file) {
-            break;
+        if (!file) {
+            console.log(file);
+            continue;
         }
         
         var path = utils.files.relativePath(file);
