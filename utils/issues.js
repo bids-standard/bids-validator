@@ -149,6 +149,11 @@ module.exports = {
 	37: {
 		severity: 'error',
 		reason: "'IntendedFor' field needs to point to an existing file."
-	}
+	},
+    38: {
+        severity: 'warning',
+        reason: "Not all sessions contain the same corresponding files. Each session should contain the same number of files with the same naming scheme."
+
+    } 
 
 };

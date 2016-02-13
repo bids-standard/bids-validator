@@ -5,7 +5,7 @@ var fs = require('fs');
 var AdmZip = require('adm-zip');
 var path = require('path');
 var Test = require("mocha/lib/test");
-var test_version = "1.0.0-rc3u4"
+var test_version = "1.0.0-rc3u5"
 
 function getDirectories(srcpath) {
     return fs.readdirSync(srcpath).filter(function(file) {
@@ -13,6 +13,7 @@ function getDirectories(srcpath) {
     });
 }
 
+missing_session_files = ['7t_trt', 'ds006', 'ds007', 'ds008', 'ds051', 'ds052', 'ds105', 'ds108', 'ds109', 'ds113b']
 
 var suite = describe('BIDS example datasets ', function() {
     this.timeout(100000);
@@ -37,7 +38,18 @@ var suite = describe('BIDS example datasets ', function() {
 		    	var options = {ignoreNiftiHeaders: true};
                 validate.BIDS("tests/data/BIDS-examples-" + test_version + "/" + path + "/", options, function (errors, warnings) {
                     assert.deepEqual(errors, []);
-                    //assert.deepEqual(warnings, []);
+                    session_flag = false;
+                    for (var warning in warnings) {
+                        if (warnings[warning]['code'] === '38') {
+                            session_flag = true;
+                            break;
+                        }
+                    }
+                    if (missing_session_files.indexOf(path) === -1) {
+                        assert.deepEqual(session_flag, false);
+                    } else {
+                        assert.deepEqual(session_flag, true);
+                    }
                     isdone();
                 });
             }));
