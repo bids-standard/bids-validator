@@ -6,6 +6,7 @@ var json   = require('./json');
 var NIFTI  = require('./nii');
 var bval   = require('./bval');
 var bvec   = require('./bvec');
+var session = require('./session');
 
 var BIDS = {
 
@@ -48,6 +49,7 @@ var BIDS = {
      */
     quickTest: function (fileList, callback) {
         var couldBeBIDS = false;
+        var self = this;
         for (var key in fileList) {
             if (fileList.hasOwnProperty(key)) {
                 var file = fileList[key];
@@ -180,7 +182,9 @@ var BIDS = {
                         }
                     });
                 }
+
             }, function(){
+                self.issues = self.issues.concat(session(fileList));
                 var issues = self.formatIssues(self.issues);
                 callback(issues.errors, issues.warnings);
             });
