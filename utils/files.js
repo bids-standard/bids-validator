@@ -40,12 +40,14 @@ var fileUtils = {
  */
 function readFile (file, callback) {
     if (fs) {
-        fs.readFile(file.path, 'utf8', function (err, data) {
-            if (err) {
-                callback(err);
-            } else {
-                callback(data);
+        testFile(file, function (issue, stats) {
+            if (issue) {
+                callback(issue, null);
+                return;
             }
+            fs.readFile(file.path, 'utf8', function (err, data) {
+                callback(null, data);
+            });
         });
     } else {
     	var reader = new FileReader();
@@ -92,7 +94,7 @@ function getFiles (dir, files_){
     var files = fs.readdirSync(dir);
     for (var i in files){
         var name = dir + '/' + files[i];
-        if (fs.statSync(name).isDirectory()){
+        if (fs.lstatSync(name).isDirectory()){
             getFiles(name, files_);
         } else {
             files_.push(name);
@@ -112,8 +114,12 @@ function readNiftiHeader (file, callback) {
     var bytesRead = 500;
 
     if (fs) {
-        fs.stat(file.path, function (err, stats) {
+        testFile(file, function (issue, stats) {
             file.stats = stats;
+            if (issue) {
+                callback({error: issue});
+                return;
+            }
             if (stats.size < 348) {
                 callback({error: new Issue({code: 36, file: file})});
                 return;
@@ -277,6 +283,30 @@ function relativePath (file) {
         relPath = '/' + pathParts.slice(1).join('/')
     }
     return relPath
+}
+
+/**
+ * Test File
+ *
+ * Takes a file and callback and tests if it's viable for
+ * reading. Callsback with an error and stats if it isn't
+ * or null and stats if it is.
+ */
+function testFile (file, callback) {
+    fs.lstat(file.path, function (statErr, stats) {
+        fs.access(file.path, function (accessErr) {
+            if (!accessErr) {
+                callback(null, stats);
+                return;
+            } else {
+                if (stats.isSymbolicLink()) {
+                    callback(new Issue({code: 40, file: file}), stats);
+                } else {
+                    callback(new Issue({code: 39, file: file}), stats);
+                }
+            }
+        });
+    });
 }
 
 module.exports = fileUtils;
