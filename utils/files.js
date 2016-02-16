@@ -53,7 +53,11 @@ function readFile (file, callback) {
     	var reader = new FileReader();
     	reader.onloadend = function (e) {
     		if (e.target.readyState == FileReader.DONE) {
-    			callback(e.target.result);
+                if (!e.target.result) {
+                    callback(new Issue({code: 39, file: file}), null);
+                    return;
+                }
+    			callback(null, e.target.result);
     		}
     	};
     	reader.readAsBinaryString(file);
@@ -146,6 +150,11 @@ function readNiftiHeader (file, callback) {
             });
         });
     } else {
+
+        if (file.size == 0) {
+            callback({error: new Issue({code: 39, file: file})});
+            return;
+        }
 
         // file size is smaller than nifti header size
         if (file.size < 348) {
