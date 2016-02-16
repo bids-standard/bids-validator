@@ -58,7 +58,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
         }
 
         // iterate through columns
-        column_num = 1
+        var column_num = 1
         async.each(columnsInRow, function (column, cb1) {
 
             // check if missing value is properly labeled as 'n/a'
