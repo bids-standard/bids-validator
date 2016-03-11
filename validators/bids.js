@@ -7,7 +7,7 @@ var NIFTI  = require('./nii');
 var bval   = require('./bval');
 var bvec   = require('./bvec');
 var session = require('./session');
-var dimRes = require('./dimRes');
+var headerFields = require('./headerFields');
 
 var BIDS = {
 
@@ -178,6 +178,7 @@ var BIDS = {
                             cb();
                         } else {
                             headers.push([file, header]);
+                            console.log(header);
                             NIFTI(header, file, jsonContentsDict, bContentsDict, fileList, events, function (issues) {
                                 self.issues = self.issues.concat(issues);
                                 cb();
@@ -187,7 +188,7 @@ var BIDS = {
                 }
 
             }, function(){
-                self.issues = self.issues.concat(dimRes(headers));
+                self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 var issues = self.formatIssues(self.issues);
                 callback(issues.errors, issues.warnings);
