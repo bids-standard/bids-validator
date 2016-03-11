@@ -5,8 +5,10 @@ var utils  = require('../utils');
  *
  * Checks dimensions and resolution for x, y, z, and time across subjects to 
  * ensure they are consistent. 
- * xyzt_units
- * pixdim
+ * 
+ * The fields we are interested in are all arrays and we are only looking at
+ * the first for values in those arrays. To handle single values or longer 
+ * arrays more arguments will need to be added to headerField.
  */
 
 var headerFields = function headerFields(headers) {
@@ -18,6 +20,15 @@ var headerFields = function headerFields(headers) {
     
     return issues;
 }
+
+/**
+ * Key to headerField working is the fact that we take and array of values 
+ * from the nifti header and convert it to a string. This string is used to 
+ * comapre the header field value against other header field values and is used
+ * as an attribute in the object nifti_types. Nifti types refers to the 
+ * different types of nifti files we are comparing across subjects. Only the 
+ * dimensionality of similar anatomy/funtional/dwi headers are being compared.
+ */
 
 var headerField = function headerField(headers, field) {
     var nifti_types = {};
