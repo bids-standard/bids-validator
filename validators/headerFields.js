@@ -86,7 +86,6 @@ var headerField = function headerField(headers, field) {
             if (max_field_value !== field_value_key) {
                 for (var nifti_file_index in field_value.files) {
                     var nifti_file = field_value.files[nifti_file_index];
-                    console.log();
                     issues.push(new utils.Issue({
                         file: nifti_file,
                         evidence: "For the field " + field + 
