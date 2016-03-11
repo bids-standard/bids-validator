@@ -13,7 +13,7 @@ var headerFields = function headerFields(headers) {
     var header_keys = ['dim', 'pixdim', 'xyzt_units']
     var issues = [];
     for (header_key_index in header_keys) {
-        issues = issues.concat(headerField(headers, field));
+        issues = issues.concat(headerField(headers, header_keys[header_key_index]));
     }
     
     return issues;
@@ -25,7 +25,7 @@ var headerField = function headerField(headers, field) {
     for (var header_index in headers) {
         var file = headers[header_index][0];
         var header = headers[header_index][1];
-        var field_value = header.field.slice(0,4).toString();
+        var field_value = header[field].slice(0,4).toString();
         var filename;
         
         if (!file || (typeof window != 'undefined' && !file.webkitRelativePath)) {
@@ -72,12 +72,19 @@ var headerField = function headerField(headers, field) {
             }
         }
         for (var field_value_key in nifti_type) {
-            if (max_field_value !== dimension_key) {
-                issues.push(new utils.Issue({
-                    file: field_value.files,
-                    evidence: "Mode dimentionality: " + max_field_value + " This file has: " + dimension_key,
-                    code: 39
-                }));
+            if (max_field_value !== field_value_key) {
+                for (var nifti_file_index in field_value.files) {
+                    var nifti_file = field_value.files[nifti_file_index];
+                    console.log();
+                    issues.push(new utils.Issue({
+                        file: nifti_file,
+                        evidence: "For the field " + field + 
+                                  " The most common values is: " + 
+                                  max_field_value + " This file has the value: " + 
+                                  field_value_key,
+                        code: 39
+                    }));
+                }
             }
         }
     }
