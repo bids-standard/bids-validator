@@ -154,6 +154,10 @@ module.exports = {
         severity: 'warning',
         reason: "Not all sessions contain the same corresponding files. Each session should contain the same number of files with the same naming scheme."
 
-    } 
+    }, 
+    39: {
+        severity: 'warning',
+        reason: "Some nifti files have non-normative dimensionality."
+    }
 
 };
