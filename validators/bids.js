@@ -178,7 +178,6 @@ var BIDS = {
                             cb();
                         } else {
                             headers.push([file, header]);
-                            console.log(header);
                             NIFTI(header, file, jsonContentsDict, bContentsDict, fileList, events, function (issues) {
                                 self.issues = self.issues.concat(issues);
                                 cb();
