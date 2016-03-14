@@ -83,7 +83,7 @@ var headerField = function headerField(headers, field) {
             }
         }
         for (var field_value_key in nifti_type) {
-            if (max_field_value !== field_value_key) {
+            if (max_field_value !== field_value_key && headerFieldCompare(max_field_value, field_value_key)) {
                 for (var nifti_file_index in field_value.files) {
                     var nifti_file = field_value.files[nifti_file_index];
                     issues.push(new utils.Issue({
@@ -100,5 +100,21 @@ var headerField = function headerField(headers, field) {
     }
     return issues; 
 };
+
+/**
+ * if elements of the two arrays differ by less than one we won't raise a 
+ * warning about them. There are a large number of floating point rounding
+ * errors that cause resolutions to be slightly different.
+ */
+function headerFieldCompare(header1, header2) {
+    header1 = header1.split(',').map(Number);
+    header2 = header2.split(',').map(Number);
+    for (var i in header1) {
+        if (Math.abs(header1[i] - header2[i]) >= 1) {
+            return true;
+        }
+    }
+    return false;
+}
 
 module.exports = headerFields;
