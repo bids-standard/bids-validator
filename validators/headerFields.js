@@ -12,12 +12,10 @@ var utils  = require('../utils');
  */
 
 var headerFields = function headerFields(headers) {
-    var header_keys = ['dim', 'pixdim', 'xyzt_units']
     var issues = [];
-    for (header_key_index in header_keys) {
-        issues = issues.concat(headerField(headers, header_keys[header_key_index]));
-    }
-    
+    issues = issues.concat(headerField(headers, 'dim'));
+    issues = issues.concat(headerField(headers, 'pixdim'));
+    issues = issues.concat(headerField(headers, 'xyzt_units'));
     return issues;
 }
 
@@ -36,7 +34,12 @@ var headerField = function headerField(headers, field) {
     for (var header_index in headers) {
         var file = headers[header_index][0];
         var header = headers[header_index][1];
-        var field_value = header[field].slice(0,4).toString();
+        
+        if (field === 'dim') {
+            var field_value = header[field].slice(1, header[field][0]+1).toString();
+        } else {
+            var field_value = header[field].slice(0,4).toString();
+        }
         var filename;
         
         if (!file || (typeof window != 'undefined' && !file.webkitRelativePath)) {
@@ -110,7 +113,7 @@ function headerFieldCompare(header1, header2) {
     header1 = header1.split(',').map(Number);
     header2 = header2.split(',').map(Number);
     for (var i in header1) {
-        if (Math.abs(header1[i] - header2[i]) >= 1) {
+        if (Math.abs(header1[i] - header2[i]) > .00001) {
             return true;
         }
     }
@@ -118,3 +121,4 @@ function headerFieldCompare(header1, header2) {
 }
 
 module.exports = headerFields;
+
