@@ -75,7 +75,6 @@ var headerField = function headerField(headers, field) {
             }
         }
     }
-    
     for (var nifti_key in nifti_types) {
         nifti_type = nifti_types[nifti_key];
         var max_field_value = Object.keys(nifti_type)[0];
@@ -86,6 +85,7 @@ var headerField = function headerField(headers, field) {
             }
         }
         for (var field_value_key in nifti_type) {
+            var field_value = nifti_type[field_value_key];
             if (max_field_value !== field_value_key && headerFieldCompare(max_field_value, field_value_key)) {
                 for (var nifti_file_index in field_value.files) {
                     var nifti_file = field_value.files[nifti_file_index];
@@ -110,10 +110,10 @@ var headerField = function headerField(headers, field) {
  * errors that cause resolutions to be slightly different.
  */
 function headerFieldCompare(header1, header2) {
-    header1 = header1.split(',').map(Number);
-    header2 = header2.split(',').map(Number);
+    hdr1 = header1.split(',').map(Number);
+    hdr2 = header2.split(',').map(Number);
     for (var i in header1) {
-        if (Math.abs(header1[i] - header2[i]) > .00001) {
+        if (Math.abs(hdr1[i] - hdr2[i]) > .00001) {
             return true;
         }
     }
