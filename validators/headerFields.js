@@ -50,6 +50,9 @@ var headerField = function headerField(headers, field) {
                 field_value.push('' + pix_dim[i] + units[i]); 
             }
             field_value = field_value.toString();
+        } else {
+            console.log("Checks against header field: " + field + " are currently unsupported.")
+            return;
         }
         
         if (!file || (typeof window != 'undefined' && !file.webkitRelativePath)) {
@@ -121,7 +124,7 @@ var headerField = function headerField(headers, field) {
                                   max_field_value.replace(/,/g, ' x ') + ", This file has the value: " + 
                                   field_value_key.replace(/,/g, ' x ')
                     }
-                    issues.push(new utils.Issue({
+                        issues.push(new utils.Issue({
                         file: nifti_file,
                         evidence: evidence,
                         code: 39
