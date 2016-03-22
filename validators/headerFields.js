@@ -44,7 +44,7 @@ var headerField = function headerField(headers, field) {
             field_value = header[field].slice(1, header[field][0]+1).toString();
         } else if (field === 'pixdim') {
             field_value = [];
-            var pix_dim = header[field].slice(0,4);
+            var pix_dim = header[field].slice(1,5);
             var units = header['xyzt_units'].slice(0,4);
             for (var i = 0; i < 4; i++) {
                 field_value.push('' + pix_dim[i] + units[i]); 
@@ -114,14 +114,12 @@ var headerField = function headerField(headers, field) {
                     var nifti_file = field_value.files[nifti_file_index];
                     var evidence;
                     if (field === 'dim') {
-                        evidence = "For the field " + field + 
-                                  " The most common values is: " + 
-                                  max_field_value + "(voxels), This file has the value: " + 
+                        evidence = " The most common set of dimensions is: " + 
+                                  max_field_value + "(voxels), This file has the dimensions: " + 
                                   field_value_key + "(voxels)"
                     } else if (field === 'pixdim') {
-                        evidence = "For the field " + field + 
-                                  " The most common values is: " + 
-                                  max_field_value.replace(/,/g, ' x ') + ", This file has the value: " + 
+                        evidence = " The most common resolution is: " + 
+                                  max_field_value.replace(/,/g, ' x ') + ", This file has the resolution: " + 
                                   field_value_key.replace(/,/g, ' x ')
                     }
                         issues.push(new utils.Issue({
