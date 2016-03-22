@@ -33,26 +33,28 @@ var headerField = function headerField(headers, field) {
     var issues = [];
     for (var header_index in headers) {
         var file = headers[header_index][0];
+        var filename;
         var header = headers[header_index][1];
+        var match;
+        var path = utils.files.relativePath(file);
+        var run;
+        var subject;
         
         if (field === 'dim') {
             var field_value = header[field].slice(1, header[field][0]+1).toString();
         } else {
             var field_value = header[field].slice(0,4).toString();
         }
-        var filename;
         
         if (!file || (typeof window != 'undefined' && !file.webkitRelativePath)) {
             continue;
         }
          
-        var path = utils.files.relativePath(file);
         if (!utils.type.isBIDS(path)) {
             continue;
         }
-        var subject;
         //match the subject identifier up to the '/' in the full path to a file.
-        var match = path.match(/sub-(.*?)(?=\/)/);
+        match = path.match(/sub-(.*?)(?=\/)/);
         if (match === null) {
             continue;
         } else {
@@ -63,6 +65,18 @@ var headerField = function headerField(headers, field) {
         // easily compared
         filename = path.substring(path.match(subject).index + subject.length);
         filename = filename.replace(subject, '<sub>');
+
+        // generalize the run number so we can compare counts across all runs
+        match = filename.match(/run-\d+/);
+        if (match === null) {
+            continue;
+        } else {
+            run = match[0];
+        }
+
+        filename = filename.substring(filename.match(run).index + run.length);
+        filename = filename.replace(run, '<run>');
+        
         if (!nifti_types.hasOwnProperty(filename)) {
             nifti_types[filename] = {}
             nifti_types[filename][field_value] = {'count': 1, 'files': [file]};
