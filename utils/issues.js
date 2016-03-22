@@ -157,7 +157,7 @@ module.exports = {
     }, 
     39: {
         severity: 'warning',
-        reason: "Some nifti files have non-normative header field values."
+        reason: "Not all subjects/sessions/runs have the same scanning parameter"
     }
 
 };
