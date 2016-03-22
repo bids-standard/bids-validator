@@ -157,7 +157,7 @@ module.exports = {
     }, 
     39: {
         severity: 'warning',
-        reason: "Not all subjects/sessions/runs have the same scanning parameter"
+        reason: "Not all subjects/sessions/runs have the same scanning parameters"
     }
 
 };
