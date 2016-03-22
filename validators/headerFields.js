@@ -15,7 +15,6 @@ var headerFields = function headerFields(headers) {
     var issues = [];
     issues = issues.concat(headerField(headers, 'dim'));
     issues = issues.concat(headerField(headers, 'pixdim'));
-    issues = issues.concat(headerField(headers, 'xyzt_units'));
     return issues;
 }
 
@@ -32,6 +31,7 @@ var headerField = function headerField(headers, field) {
     var nifti_types = {};
     var issues = [];
     for (var header_index in headers) {
+        var field_value;
         var file = headers[header_index][0];
         var filename;
         var header = headers[header_index][1];
@@ -41,9 +41,15 @@ var headerField = function headerField(headers, field) {
         var subject;
         
         if (field === 'dim') {
-            var field_value = header[field].slice(1, header[field][0]+1).toString();
-        } else {
-            var field_value = header[field].slice(0,4).toString();
+            field_value = header[field].slice(1, header[field][0]+1).toString();
+        } else if (field === 'pixdim') {
+            field_value = [];
+            var pix_dim = header[field].slice(0,4);
+            var units = header['xyzt_units'].slice(0,4);
+            for (var i = 0; i < 4; i++) {
+                field_value.push('' + pix_dim[i] + units[i]); 
+            }
+            field_value = field_value.toString();
         }
         
         if (!file || (typeof window != 'undefined' && !file.webkitRelativePath)) {
@@ -103,12 +109,21 @@ var headerField = function headerField(headers, field) {
             if (max_field_value !== field_value_key && headerFieldCompare(max_field_value, field_value_key)) {
                 for (var nifti_file_index in field_value.files) {
                     var nifti_file = field_value.files[nifti_file_index];
+                    var evidence;
+                    if (field === 'dim') {
+                        evidence = "For the field " + field + 
+                                  " The most common values is: " + 
+                                  max_field_value + "(voxels), This file has the value: " + 
+                                  field_value_key + "(voxels)"
+                    } else if (field === 'pixdim') {
+                        evidence = "For the field " + field + 
+                                  " The most common values is: " + 
+                                  max_field_value.replace(/,/g, ' x ') + ", This file has the value: " + 
+                                  field_value_key.replace(/,/g, ' x ')
+                    }
                     issues.push(new utils.Issue({
                         file: nifti_file,
-                        evidence: "For the field " + field + 
-                                  " The most common values is: " + 
-                                  max_field_value + " This file has the value: " + 
-                                  field_value_key,
+                        evidence: evidence,
                         code: 39
                     }));
                 }
@@ -121,13 +136,22 @@ var headerField = function headerField(headers, field) {
 /**
  * if elements of the two arrays differ by less than one we won't raise a 
  * warning about them. There are a large number of floating point rounding
- * errors that cause resolutions to be slightly different.
+ * errors that cause resolutions to be slightly different. Returns true if 
+ * the two headers are signifigantly different
  */
 function headerFieldCompare(header1, header2) {
-    hdr1 = header1.split(',').map(Number);
-    hdr2 = header2.split(',').map(Number);
-    for (var i in header1) {
-        if (Math.abs(hdr1[i] - hdr2[i]) > .00001) {
+    hdr1 = header1.split(',');
+    hdr2 = header2.split(',');
+    for (var i = 0; i < hdr1.length; i++) {
+        var hdr1_val = Number(hdr1[i].match(/-?\d*\.?\d*/));
+        var hdr2_val  = Number(hdr2[i].match(/-?\d*\.?\d*/));
+        // Matching alphas with * will return '' on headers without units
+        var hdr1_unit = hdr1[i].match(/[A-Za-z]*$/)[0];
+        var hdr2_unit = hdr2[i].match(/[A-Za-z]*$/)[0];
+        if (Math.abs(hdr1_val - hdr2_val) > .00001) {
+            return true;
+        }
+        if (hdr1_unit !== hdr2_unit) {
             return true;
         }
     }
