@@ -71,7 +71,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
     if (header) {
         // Define repetition time from header and coerce to seconds.
         var repetitionTime = header.pixdim[4];
-        var repetitionUnit = header.xyzt_units[3];
+        var repetitionUnit = header.xyzt_units && header.xyzt_units[3] ? header.xyzt_units[3] : null;
         if (repetitionUnit === 'ms') {repetitionTime = repetitionTime / 1000;    repetitionUnit = 's';}
         if (repetitionUnit === 'us') {repetitionTime = repetitionTime / 1000000; repetitionUnit = 's';}
     }
