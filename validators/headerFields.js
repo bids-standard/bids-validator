@@ -33,26 +33,28 @@ var headerField = function headerField(headers, field) {
     var issues = [];
     for (var header_index in headers) {
         var file = headers[header_index][0];
+        var filename;
         var header = headers[header_index][1];
+        var match;
+        var path = utils.files.relativePath(file);
+        var run;
+        var subject;
         
         if (field === 'dim') {
             var field_value = header[field].slice(1, header[field][0]+1).toString();
         } else {
             var field_value = header[field].slice(0,4).toString();
         }
-        var filename;
         
         if (!file || (typeof window != 'undefined' && !file.webkitRelativePath)) {
             continue;
         }
          
-        var path = utils.files.relativePath(file);
         if (!utils.type.isBIDS(path)) {
             continue;
         }
-        var subject;
         //match the subject identifier up to the '/' in the full path to a file.
-        var match = path.match(/sub-(.*?)(?=\/)/);
+        match = path.match(/sub-(.*?)(?=\/)/);
         if (match === null) {
             continue;
         } else {
@@ -63,6 +65,18 @@ var headerField = function headerField(headers, field) {
         // easily compared
         filename = path.substring(path.match(subject).index + subject.length);
         filename = filename.replace(subject, '<sub>');
+
+        // generalize the run number so we can compare counts across all runs
+        match = filename.match(/run-\d+/);
+        if (match === null) {
+            continue;
+        } else {
+            run = match[0];
+        }
+
+        filename = filename.substring(filename.match(run).index + run.length);
+        filename = filename.replace(run, '<run>');
+        
         if (!nifti_types.hasOwnProperty(filename)) {
             nifti_types[filename] = {}
             nifti_types[filename][field_value] = {'count': 1, 'files': [file]};
@@ -75,7 +89,6 @@ var headerField = function headerField(headers, field) {
             }
         }
     }
-    
     for (var nifti_key in nifti_types) {
         nifti_type = nifti_types[nifti_key];
         var max_field_value = Object.keys(nifti_type)[0];
@@ -86,6 +99,7 @@ var headerField = function headerField(headers, field) {
             }
         }
         for (var field_value_key in nifti_type) {
+            var field_value = nifti_type[field_value_key];
             if (max_field_value !== field_value_key && headerFieldCompare(max_field_value, field_value_key)) {
                 for (var nifti_file_index in field_value.files) {
                     var nifti_file = field_value.files[nifti_file_index];
@@ -110,10 +124,10 @@ var headerField = function headerField(headers, field) {
  * errors that cause resolutions to be slightly different.
  */
 function headerFieldCompare(header1, header2) {
-    header1 = header1.split(',').map(Number);
-    header2 = header2.split(',').map(Number);
+    hdr1 = header1.split(',').map(Number);
+    hdr2 = header2.split(',').map(Number);
     for (var i in header1) {
-        if (Math.abs(header1[i] - header2[i]) > .00001) {
+        if (Math.abs(hdr1[i] - hdr2[i]) > .00001) {
             return true;
         }
     }
