@@ -1,4 +1,3 @@
-var async = require('async');
 var Issue = require('../utils').Issue;
 
 /**
@@ -38,6 +37,7 @@ module.exports = function TSV (file, contents, isEvents, callback) {
     }
 
     var emptyCells = 0;
+    var NACells    = 0;
     // iterate rows
     for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
@@ -71,7 +71,8 @@ module.exports = function TSV (file, contents, isEvents, callback) {
                     character: "at column # " + (j+1),
                     code: 23
                 }));
-            } else if (column === "NA" || column === "na" || column === "nan") {
+            } else if ((column === "NA" || column === "na" || column === "nan") && NACells < 5) {
+                NACells++;
                 // check if missing value is properly labeled as 'n/a'
                 issues.push(new Issue({
                     file: file,
