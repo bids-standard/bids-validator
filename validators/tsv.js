@@ -1,4 +1,3 @@
-var async = require('async');
 var Issue = require('../utils').Issue;
 
 /**
@@ -37,54 +36,54 @@ module.exports = function TSV (file, contents, isEvents, callback) {
         }
     }
 
-    // iterate through rows
-    async.each(rows, function (row, cb) {
+    var emptyCells = 0;
+    var NACells    = 0;
+    // iterate rows
+    for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
 
-        //skip empty rows
-        if (!row || /^\s*$/.test(row)){
-            cb();
-            return
-        }
-        var columnsInRow = row.split('\t');
+        // skip empty rows
+        if (!row || /^\s*$/.test(row)) {continue;}
+
+        var columns = row.split('\t');
 
         // check for different length rows
-        if (columnsInRow.length !== headers.length) {
+        if (columns.length !== headers.length) {
             issues.push(new Issue({
                 file: file,
                 evidence: row,
-                line: rows.indexOf(row) + 1,
+                line: i + 1,
                 code: 22
             }));
         }
 
-        // iterate through columns
-        column_num = 1
-        async.each(columnsInRow, function (column, cb1) {
+        // iterate columns
+        for (var j = 0; j < columns.length; j++) {
+            var column = columns[j];
 
-            // check if missing value is properly labeled as 'n/a'
-            if (column === "") {
+            if (column === "" && emptyCells < 5) {
+                emptyCells++;
                 // empty cell should raise an error
                 issues.push(new Issue({
                     file: file,
                     evidence: row,
-                    line: rows.indexOf(row) + 1,
-                    character: "at column # "+column_num,
+                    line: i + 1,
+                    character: "at column # " + (j+1),
                     code: 23
                 }));
-            } else if (column === "NA" || column === "na" || column === "nan") {
-                // these cases should raise warning
+            } else if ((column === "NA" || column === "na" || column === "nan") && NACells < 5) {
+                NACells++;
+                // check if missing value is properly labeled as 'n/a'
                 issues.push(new Issue({
                     file: file,
                     evidence: row,
-                    line: rows.indexOf(row) + 1,
-                    character: "at column # "+column_num,
+                    line: i + 1,
+                    character: "at column # " + (j+1),
                     code: 24
                 }));
             }
-            column_num++
-	        cb1();
-        }, function () {cb();});
-    }, function () {
-        callback(issues);
-    });
+        }
+    }
+
+    callback(issues);
 };
