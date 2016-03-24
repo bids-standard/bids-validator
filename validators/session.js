@@ -59,7 +59,7 @@ var session = function missingSessionFiles(fileList) {
                 filename = subject_files[set_file].replace('<sub>', subject);
                 file.relativePath = '/' + subject + filename;
                 issues.push(new utils.Issue({
-                    file: file,
+                    file: {relativePath: file},
                     evidence: "Subject: " + subject + "; Missing file: " + filename,
                     code: 38
                 }));
