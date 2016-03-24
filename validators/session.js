@@ -45,7 +45,8 @@ var session = function missingSessionFiles(fileList) {
     var subject_files = [];
     for (var key in subjects) {
         var subject = subjects[key];
-        for (var file of subject) {
+        for (var i = 0; i < subject.length; i++) {
+            var file = subject[i];
             if (subject_files.indexOf(file) < 0) {
                 subject_files.push(file);
             }
