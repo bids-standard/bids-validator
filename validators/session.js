@@ -45,7 +45,8 @@ var session = function missingSessionFiles(fileList) {
     var subject_files = [];
     for (var key in subjects) {
         var subject = subjects[key];
-        for (var file of subject) {
+        for (var i = 0; i < subject.length; i++) {
+            var file = subject[i];
             if (subject_files.indexOf(file) < 0) {
                 subject_files.push(file);
             }
@@ -55,10 +56,9 @@ var session = function missingSessionFiles(fileList) {
     for (var subject in subjects) {
         for (var set_file in subject_files) {
             if (subjects[subject].indexOf(subject_files[set_file]) === -1) {
-                filename = subject_files[set_file].replace('<sub>', subject);
-                file.relativePath = '/' + subject + filename;
+                var relativePath = '/' + subject + subject_files[set_file].replace('<sub>', subject);
                 issues.push(new utils.Issue({
-                    file: file,
+                    file: {relativePath: relativePath},
                     evidence: "Subject: " + subject + "; Missing file: " + filename,
                     code: 38
                 }));
