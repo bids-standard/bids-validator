@@ -9,7 +9,7 @@ deployment:
       # Publish to NPM
       - echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
       - git checkout -f master
-      - npm publish
+      - npm run npmPublish
       # Update gh-pages demo site
       - git config --global user.email circleci@circleci
       - git config --global user.name CircleCI
