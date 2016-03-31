@@ -36,11 +36,13 @@ module.exports = function TSV (file, contents, isEvents, callback) {
         }
     }
 
-    var emptyCells = 0;
-    var NACells    = 0;
+    var columnMismatch = false;
+    var emptyCells     = false;
+    var NACells        = false;
     // iterate rows
     for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
+        if (columnMismatch && emptyCells && NACells) {break;}
 
         // skip empty rows
         if (!row || /^\s*$/.test(row)) {continue;}
@@ -48,7 +50,8 @@ module.exports = function TSV (file, contents, isEvents, callback) {
         var columns = row.split('\t');
 
         // check for different length rows
-        if (columns.length !== headers.length) {
+        if (columns.length !== headers.length && !columnMismatch) {
+            columnMismatch = true;
             issues.push(new Issue({
                 file: file,
                 evidence: row,
@@ -60,9 +63,10 @@ module.exports = function TSV (file, contents, isEvents, callback) {
         // iterate columns
         for (var j = 0; j < columns.length; j++) {
             var column = columns[j];
+            if (columnMismatch && emptyCells && NACells) {break;}
 
-            if (column === "" && emptyCells < 5) {
-                emptyCells++;
+            if (column === "" && !emptyCells) {
+                emptyCells = true;
                 // empty cell should raise an error
                 issues.push(new Issue({
                     file: file,
@@ -71,8 +75,8 @@ module.exports = function TSV (file, contents, isEvents, callback) {
                     character: "at column # " + (j+1),
                     code: 23
                 }));
-            } else if ((column === "NA" || column === "na" || column === "nan") && NACells < 5) {
-                NACells++;
+            } else if ((column === "NA" || column === "na" || column === "nan") && !NACells) {
+                NACells = true;
                 // check if missing value is properly labeled as 'n/a'
                 issues.push(new Issue({
                     file: file,
