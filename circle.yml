@@ -15,7 +15,7 @@ test:
     - printenv CIRCLE_PR_REPONAME
     - printenv CIRCLE_SHA1
     # end debug
-    - npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}.git\#${CIRCLE_SHA1}
+    - if [ -z ${CIRCLE_PR_USERNAME}]; then npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}.git\#${CIRCLE_SHA1}; else npm install git+https://git@github.com/incf/bids-validator.git\#${CIRCLE_BRANCH}; fi
     - gulp build
 
 deployment:
