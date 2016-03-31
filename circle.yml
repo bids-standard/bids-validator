@@ -10,6 +10,11 @@ test:
     - rm -rf node_modules/
     - git checkout gh-pages
     - npm install
+    # debug
+    - printenv CIRCLE_PR_USERNAME
+    - printenv CIRCLE_PR_REPONAME
+    - printenv CIRCLE_SHA1
+    # end debug
     - npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}.git\#${CIRCLE_SHA1}
     - gulp build
 
