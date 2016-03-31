@@ -3,14 +3,15 @@ machine:
     version: 4.3.0
 
 test:
-  # Run unit tests
-  - npm run test
-  # Test gh-pages build
-  - rm -rf node_modules/
-  - git checkout gh-pages
-  - npm install
-  - npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}.git\#${CIRCLE_SHA1}
-  - gulp build
+  override:
+    # Run unit tests
+    - npm run test
+    # Test gh-pages build
+    - rm -rf node_modules/
+    - git checkout gh-pages
+    - npm install
+    - npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}.git\#${CIRCLE_SHA1}
+    - gulp build
 
 deployment:
   production:
