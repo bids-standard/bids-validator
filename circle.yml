@@ -3,7 +3,7 @@ machine:
     version: 4.3.0
 
 test:
-  override:
+  post:
     # Run unit tests
     - npm run test
     # Test gh-pages build
