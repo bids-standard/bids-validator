@@ -199,7 +199,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             var intendedForFile = "/" + path.split("/")[1] + "/" + mergedDictionary['IntendedFor'];
             var onTheList = false;
             async.forEachOf(fileList, function (file, key, cb) {
-                if (file.path.endsWith(intendedForFile)){
+                if (path.endsWith(intendedForFile)){
                     onTheList = true;
                 }
                 cb();
