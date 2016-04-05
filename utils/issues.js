@@ -154,6 +154,10 @@ module.exports = {
         severity: 'warning',
         reason: "Not all sessions contain the same corresponding files. Each session should contain the same number of files with the same naming scheme."
 
-    } 
+    }, 
+    39: {
+        severity: 'warning',
+        reason: "Not all subjects/sessions/runs have the same scanning parameters"
+    }
 
 };
