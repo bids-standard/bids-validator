@@ -14,6 +14,7 @@ var utils  = require('../utils');
 var headerFields = function headerFields(headers) {
     var issues = [];
     issues = issues.concat(headerField(headers, 'dim'));
+
     issues = issues.concat(headerField(headers, 'pixdim'));
     return issues;
 }
@@ -31,6 +32,7 @@ var headerField = function headerField(headers, field) {
     var nifti_types = {};
     var issues = [];
     for (var header_index in headers) {
+        var badField = false;
         var field_value;
         var file = headers[header_index][0];
         var filename;
@@ -41,8 +43,31 @@ var headerField = function headerField(headers, field) {
         var subject;
         
         if (field === 'dim') {
+            if ((typeof header[field]) === 'undefined' || header[field] === null || header[field].length < header[field][0]) {
+                issues.push(new utils.Issue({
+                        file: nifti_file,
+                        code: 40
+                }));
+                continue;
+            }
             field_value = header[field].slice(1, header[field][0]+1).toString();
         } else if (field === 'pixdim') {
+            if ((typeof header['xyzt_units']) === 'undefined' || header['xyzt_units'] === null || header['xyzt_units'].length < 4) {
+                issues.push(new utils.Issue({
+                        file: nifti_file,
+                        code: 41
+                }));
+                badField = true;
+            } else if ((typeof header['pix_dim']) === 'undefined' || header['pix_dim'] === null || header['pix_dim'].length < 5) {
+                issues.push(new utils.Issue({
+                        file: nifti_file,
+                        code: 42
+                }));
+                badField = true;
+            }
+            if (badField === true) {
+                continue;
+            }
             field_value = [];
             var pix_dim = header[field].slice(1,5);
             var units = header['xyzt_units'].slice(0,4);
