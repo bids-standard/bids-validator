@@ -94,7 +94,7 @@ var BIDS = {
         var jsonContentsDict = {},
             bContentsDict    = {},
             events           = [],
-            niftis           = [];
+            niftis           = [],
             headers          = [];
 
         // validate individual files
