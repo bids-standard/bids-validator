@@ -160,5 +160,17 @@ module.exports = {
         severity: 'warning',
         reason: "Not all subjects/sessions/runs have the same scanning parameters"
     }
+    40: {
+        severity: 'warning',
+        reason: "Nifti file's header field for dimension information blank or too short."
+    },
+    41: {
+        severity: 'warning',
+        reason: "Nifti file's header field for unit information for x, y, z, and t dimensions empty or too short"
+    },
+    42: {
+        severity: 'warning',
+        reason: "Nifti file's header field for pixel dimension information empty or too short."
+    }
 
 };
