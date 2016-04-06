@@ -162,5 +162,9 @@ module.exports = {
     40: {
         severity: 'error',
         reason: "This file appears to be an orphaned symlinked. Make sure it correctly points to its referent."
+    },
+    41: {
+        severity: 'error',
+        reason: "We were unable to read this file. Make sure it is not corrupted, incorectly named or incorectly symlinked."
     }
 };

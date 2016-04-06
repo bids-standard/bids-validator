@@ -54,7 +54,7 @@ function readFile (file, callback) {
     	reader.onloadend = function (e) {
     		if (e.target.readyState == FileReader.DONE) {
                 if (!e.target.result) {
-                    callback(new Issue({code: 39, file: file}), null);
+                    callback(new Issue({code: 41, file: file}), null);
                     return;
                 }
     			callback(null, e.target.result);
@@ -152,7 +152,7 @@ function readNiftiHeader (file, callback) {
     } else {
 
         if (file.size == 0) {
-            callback({error: new Issue({code: 39, file: file})});
+            callback({error: new Issue({code: 41, file: file})});
             return;
         }
 
@@ -311,7 +311,7 @@ function testFile (file, callback) {
                 if (stats.isSymbolicLink()) {
                     callback(new Issue({code: 40, file: file}), stats);
                 } else {
-                    callback(new Issue({code: 39, file: file}), stats);
+                    callback(new Issue({code: 41, file: file}), stats);
                 }
             }
         });
