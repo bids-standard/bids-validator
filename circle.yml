@@ -2,12 +2,25 @@ machine:
   node:
     version: 4.3.0
 
+test:
+  override:
+    # Run unit tests
+    - npm run test
+    # Test gh-pages build
+    - rm -rf node_modules/
+    - git checkout gh-pages
+    - npm install
+    - if [ -z ${CIRCLE_PR_USERNAME}]; then npm install git+https://git@github.com/incf/bids-validator.git\#${CIRCLE_BRANCH}; else npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}.git\#${CIRCLE_SHA1}; fi
+    - gulp build
+
 deployment:
   production:
     branch: master
     commands:
       # Publish to NPM
       - echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
+      - git checkout -f master
+      - npm install publish
       - npm run npmPublish
       # Update gh-pages demo site
       - git config --global user.email circleci@circleci

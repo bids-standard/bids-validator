@@ -43,22 +43,23 @@ var session = function missingSessionFiles(fileList) {
     }
 
     var subject_files = [];
-    for (var subject in subjects) {
-        subject_files = subject_files.concat(subjects[subject])
+    for (var key in subjects) {
+        var subject = subjects[key];
+        for (var i = 0; i < subject.length; i++) {
+            var file = subject[i];
+            if (subject_files.indexOf(file) < 0) {
+                subject_files.push(file);
+            }
+        }
     }
-    // Converting to a Set removes all duplicates
-    var all_files = new Set(subject_files);
 
-    // Converting it back to an array for easy iteration
-    all_files = Array.from(all_files);
     for (var subject in subjects) {
-        for (var set_file in all_files) {
-            if (subjects[subject].indexOf(all_files[set_file]) === -1) {
-                filename = all_files[set_file].replace('<sub>', subject);
-                file.relativePath = '/' + subject + filename;
+        for (var set_file in subject_files) {
+            if (subjects[subject].indexOf(subject_files[set_file]) === -1) {
+                var fileThatsMissing = '/' + subject + subject_files[set_file].replace('<sub>', subject);
                 issues.push(new utils.Issue({
-                    file: file,
-                    evidence: "Subject: " + subject + "; Missing file: " + filename,
+                    file: {relativePath: subject_files[set_file]},
+                    evidence: "Subject: " + subject + "; Missing file: " + fileThatsMissing,
                     code: 38
                 }));
             }

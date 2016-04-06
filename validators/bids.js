@@ -7,6 +7,7 @@ var NIFTI  = require('./nii');
 var bval   = require('./bval');
 var bvec   = require('./bvec');
 var session = require('./session');
+var headerFields = require('./headerFields');
 
 var BIDS = {
 
@@ -94,6 +95,7 @@ var BIDS = {
             bContentsDict    = {},
             events           = [],
             niftis           = [];
+            headers          = [];
 
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
@@ -195,6 +197,7 @@ var BIDS = {
                             self.issues.push(header.error);
                             cb();
                         } else {
+                            headers.push([file, header]);
                             NIFTI(header, file, jsonContentsDict, bContentsDict, fileList, events, function (issues) {
                                 self.issues = self.issues.concat(issues);
                                 cb();
@@ -204,6 +207,7 @@ var BIDS = {
                 }
 
             }, function(){
+                self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 var issues = self.formatIssues(self.issues);
                 callback(issues.errors, issues.warnings);

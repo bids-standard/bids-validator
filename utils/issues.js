@@ -100,7 +100,7 @@ module.exports = {
 	},
 	25: {
 		severity: 'warning',
-		reason:   'Task scans should have a correspondings events.tsv file.'
+		reason:   'Task scans should have a correspondings events.tsv file. If this is a resting state scan you can ignore this warning or rename the task to include the work "rest".'
 	},
 	26: {
 		severity: 'error',
@@ -152,15 +152,15 @@ module.exports = {
 	},
     38: {
         severity: 'warning',
-        reason: "Not all sessions contain the same corresponding files. Each session should contain the same number of files with the same naming scheme."
+        reason: "Not all subjects contain the same files. Each subject should contain the same number of files with " +
+		"the same naming unless some files are known to be missing."
     },
     39: {
-        severity: 'error',
-        reason: "We were unable to read this file. Make sure it is is not corrupted or incorectly named or symlinked."
+        severity: 'warning',
+        reason: "Not all subjects/sessions/runs have the same scanning parameters"
     },
     40: {
         severity: 'error',
         reason: "This file appears to be an orphaned symlinked. Make sure it correctly points to its referent."
     }
-
 };
