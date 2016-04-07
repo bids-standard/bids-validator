@@ -14,7 +14,6 @@ var utils  = require('../utils');
 var headerFields = function headerFields(headers) {
     var issues = [];
     issues = issues.concat(headerField(headers, 'dim'));
-
     issues = issues.concat(headerField(headers, 'pixdim'));
     return issues;
 }
@@ -45,7 +44,7 @@ var headerField = function headerField(headers, field) {
         if (field === 'dim') {
             if ((typeof header[field]) === 'undefined' || header[field] === null || header[field].length < header[field][0]) {
                 issues.push(new utils.Issue({
-                        file: nifti_file,
+                        file: file,
                         code: 40
                 }));
                 continue;
@@ -54,17 +53,20 @@ var headerField = function headerField(headers, field) {
         } else if (field === 'pixdim') {
             if ((typeof header['xyzt_units']) === 'undefined' || header['xyzt_units'] === null || header['xyzt_units'].length < 4) {
                 issues.push(new utils.Issue({
-                        file: nifti_file,
+                        file: file,
                         code: 41
                 }));
                 badField = true;
-            } else if ((typeof header['pix_dim']) === 'undefined' || header['pix_dim'] === null || header['pix_dim'].length < 5) {
+            } 
+            if ((typeof header['pixdim']) === 'undefined' || header['pixdim'] === null || header['pixdim'].length < 4) {
+                console.log(header['pixdim']);
                 issues.push(new utils.Issue({
-                        file: nifti_file,
+                        file: file,
                         code: 42
                 }));
                 badField = true;
             }
+            console.log(header['xyzt_units']);
             if (badField === true) {
                 continue;
             }
