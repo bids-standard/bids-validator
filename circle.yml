@@ -4,6 +4,8 @@ machine:
 
 test:
   override:
+    # Lint
+    - npm run lint
     # Run unit tests
     - npm run test
     # Test gh-pages build
