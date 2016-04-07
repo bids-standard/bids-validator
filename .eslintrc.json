@@ -5,7 +5,10 @@
         "node": true
     },
     "globals": {
-        "Uint8Array": false
+        "Uint8Array": false,
+        "describe": false,
+        "before": false,
+        "it": false
     },
     "extends": "eslint:recommended",
     "rules": {
