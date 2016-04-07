@@ -8,7 +8,7 @@
     "url": "https://github.com/INCF/bids-validator.git"
   },
   "scripts": {
-    "lint": "./node_modules/eslint/bin/eslint.js ./**/*.js",
+    "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./utils/*.js ./validators/*.js",
     "test": "./node_modules/.bin/mocha tests/",
     "npmPublish": "publish"
   },
