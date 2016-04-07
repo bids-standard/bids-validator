@@ -236,8 +236,8 @@ function missingEvents(path, potentialEvents, events) {
     }
 
     // check for event file
-    for (var i = 0; i < potentialEvents.length; i++) {
-        var event = potentialEvents[i];
+    for (var j = 0; j < potentialEvents.length; j++) {
+        var event = potentialEvents[j];
         if (events.indexOf(event) > -1) {
             hasEvent = true;
         }
@@ -285,8 +285,8 @@ function potentialLocations(path) {
 
     if (ses) {
         var sessionLevelPath= "/" + sub + "/" + ses + "/" + sessionLevelComponentList.join("_");
-        potentialPaths.push(sessionLevelPath)
-    };
+        potentialPaths.push(sessionLevelPath);
+    }
 
     var subjectLevelPath = "/" + sub + "/" + subjectLevelComponentList.join("_");
     potentialPaths.push(subjectLevelPath);

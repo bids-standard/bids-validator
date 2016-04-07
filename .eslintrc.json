@@ -4,8 +4,15 @@
         "commonjs": true,
         "node": true
     },
+    "globals": {
+        "Uint8Array": false
+    },
     "extends": "eslint:recommended",
     "rules": {
+        "no-console": [
+            "error",
+            {"allow": ["warn"]}
+        ],
         "linebreak-style": [
             "error",
             "unix"
