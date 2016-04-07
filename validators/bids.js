@@ -8,7 +8,6 @@ var bval   = require('./bval');
 var bvec   = require('./bvec');
 var session = require('./session');
 var headerFields = require('./headerFields');
-var test = 'unused variable';
 
 var BIDS = {
 
