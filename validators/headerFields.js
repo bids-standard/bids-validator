@@ -124,7 +124,7 @@ var headerField = function headerField(headers, field) {
         }
     }
     for (var nifti_key in nifti_types) {
-        nifti_type = nifti_types[nifti_key];
+        var nifti_type = nifti_types[nifti_key];
         var max_field_value = Object.keys(nifti_type)[0];
         for (var field_value_key in nifti_type) {
             var field_value = nifti_type[field_value_key];
@@ -166,8 +166,8 @@ var headerField = function headerField(headers, field) {
  * the two headers are signifigantly different
  */
 function headerFieldCompare(header1, header2) {
-    hdr1 = header1.split(',');
-    hdr2 = header2.split(',');
+    var hdr1 = header1.split(',');
+    var hdr2 = header2.split(',');
     for (var i = 0; i < hdr1.length; i++) {
         var hdr1_val = Number(hdr1[i].match(/-?\d*\.?\d*/));
         var hdr2_val  = Number(hdr2[i].match(/-?\d*\.?\d*/));
