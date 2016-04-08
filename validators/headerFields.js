@@ -59,14 +59,12 @@ var headerField = function headerField(headers, field) {
                 badField = true;
             } 
             if ((typeof header['pixdim']) === 'undefined' || header['pixdim'] === null || header['pixdim'].length < 4) {
-                console.log(header['pixdim']);
                 issues.push(new utils.Issue({
                         file: file,
                         code: 42
                 }));
                 badField = true;
             }
-            console.log(header['xyzt_units']);
             if (badField === true) {
                 continue;
             }
