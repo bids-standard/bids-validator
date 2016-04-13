@@ -31,6 +31,7 @@ var headerField = function headerField(headers, field) {
     var nifti_types = {};
     var issues = [];
     for (var header_index in headers) {
+        var badField = false;
         var field_value;
         var file = headers[header_index][0];
         var filename;
@@ -41,8 +42,32 @@ var headerField = function headerField(headers, field) {
         var subject;
         
         if (field === 'dim') {
+            if ((typeof header[field]) === 'undefined' || header[field] === null || header[field].length < header[field][0]) {
+                issues.push(new utils.Issue({
+                        file: file,
+                        code: 40
+                }));
+                continue;
+            }
             field_value = header[field].slice(1, header[field][0]+1).toString();
         } else if (field === 'pixdim') {
+            if ((typeof header['xyzt_units']) === 'undefined' || header['xyzt_units'] === null || header['xyzt_units'].length < 4) {
+                issues.push(new utils.Issue({
+                        file: file,
+                        code: 41
+                }));
+                badField = true;
+            } 
+            if ((typeof header['pixdim']) === 'undefined' || header['pixdim'] === null || header['pixdim'].length < 4) {
+                issues.push(new utils.Issue({
+                        file: file,
+                        code: 42
+                }));
+                badField = true;
+            }
+            if (badField === true) {
+                continue;
+            }
             field_value = [];
             var pix_dim = header[field].slice(1,5);
             var units = header['xyzt_units'].slice(0,4);
@@ -99,7 +124,7 @@ var headerField = function headerField(headers, field) {
         }
     }
     for (var nifti_key in nifti_types) {
-        nifti_type = nifti_types[nifti_key];
+        var nifti_type = nifti_types[nifti_key];
         var max_field_value = Object.keys(nifti_type)[0];
         for (var field_value_key in nifti_type) {
             var field_value = nifti_type[field_value_key];
@@ -141,8 +166,8 @@ var headerField = function headerField(headers, field) {
  * the two headers are signifigantly different
  */
 function headerFieldCompare(header1, header2) {
-    hdr1 = header1.split(',');
-    hdr2 = header2.split(',');
+    var hdr1 = header1.split(',');
+    var hdr2 = header2.split(',');
     for (var i = 0; i < hdr1.length; i++) {
         var hdr1_val = Number(hdr1[i].match(/-?\d*\.?\d*/));
         var hdr2_val  = Number(hdr2[i].match(/-?\d*\.?\d*/));
