@@ -50,7 +50,6 @@ var BIDS = {
      */
     quickTest: function (fileList, callback) {
         var couldBeBIDS = false;
-        var self = this;
         for (var key in fileList) {
             if (fileList.hasOwnProperty(key)) {
                 var file = fileList[key];
@@ -135,6 +134,7 @@ var BIDS = {
                 utils.files.readFile(file, function (contents) {
                     bContentsDict[file.relativePath] = contents;
                     bvec(file, contents, function (issues) {
+                        self.issues = self.issues.concat(issues);
                         cb();
                     });
                 });
@@ -145,6 +145,7 @@ var BIDS = {
                 utils.files.readFile(file, function (contents) {
                     bContentsDict[file.relativePath] = contents;
                     bval(file, contents, function (issues) {
+                        self.issues = self.issues.concat(issues);
                         cb();
                     });
                 });
@@ -214,7 +215,7 @@ var BIDS = {
 
         // organize by severity
         for (var key in categorized) {
-            var issue = categorized[key];
+            issue = categorized[key];
             issue.code = key;
             if (issue.severity === 'error') {
                 errors.push(issue);

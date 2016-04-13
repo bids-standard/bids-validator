@@ -1,0 +1,28 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "node": true
+    },
+    "globals": {
+        "Uint8Array": false,
+        "describe": false,
+        "before": false,
+        "it": false
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "no-console": [
+            "error",
+            {"allow": ["warn"]}
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
+}

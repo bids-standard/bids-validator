@@ -43,17 +43,17 @@ var session = function missingSessionFiles(fileList) {
     }
 
     var subject_files = [];
-    for (var key in subjects) {
-        var subject = subjects[key];
+    for (var subjKey in subjects) {
+        subject = subjects[subjKey];
         for (var i = 0; i < subject.length; i++) {
-            var file = subject[i];
+            file = subject[i];
             if (subject_files.indexOf(file) < 0) {
                 subject_files.push(file);
             }
         }
     }
 
-    for (var subject in subjects) {
+    for (subject in subjects) {
         for (var set_file in subject_files) {
             if (subjects[subject].indexOf(subject_files[set_file]) === -1) {
                 var fileThatsMissing = '/' + subject + subject_files[set_file].replace('<sub>', subject);
