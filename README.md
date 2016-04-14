@@ -59,3 +59,5 @@ A note about OS X, the dependencies for the browser require a npm package called
 #### Testing
 
 To start the test suite run ```npm test``` from the project root.
+
+To run the linter which checks code conventions run ```npm run lint```.

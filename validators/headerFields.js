@@ -3,11 +3,11 @@ var utils  = require('../utils');
 /**
  * dimensions and resolution
  *
- * Checks dimensions and resolution for x, y, z, and time across subjects to 
- * ensure they are consistent. 
- * 
+ * Checks dimensions and resolution for x, y, z, and time across subjects to
+ * ensure they are consistent.
+ *
  * The fields we are interested in are all arrays and we are only looking at
- * the first for values in those arrays. To handle single values or longer 
+ * the first for values in those arrays. To handle single values or longer
  * arrays more arguments will need to be added to headerField.
  */
 
@@ -16,14 +16,14 @@ var headerFields = function headerFields(headers) {
     issues = issues.concat(headerField(headers, 'dim'));
     issues = issues.concat(headerField(headers, 'pixdim'));
     return issues;
-}
+};
 
 /**
- * Key to headerField working is the fact that we take and array of values 
- * from the nifti header and convert it to a string. This string is used to 
+ * Key to headerField working is the fact that we take and array of values
+ * from the nifti header and convert it to a string. This string is used to
  * comapre the header field value against other header field values and is used
- * as an attribute in the object nifti_types. Nifti types refers to the 
- * different types of nifti files we are comparing across subjects. Only the 
+ * as an attribute in the object nifti_types. Nifti types refers to the
+ * different types of nifti files we are comparing across subjects. Only the
  * dimensionality of similar anatomy/funtional/dwi headers are being compared.
  */
 
@@ -31,6 +31,7 @@ var headerField = function headerField(headers, field) {
     var nifti_types = {};
     var issues = [];
     for (var header_index in headers) {
+        var badField = false;
         var field_value;
         var file = headers[header_index][0];
         var filename;
@@ -39,26 +40,50 @@ var headerField = function headerField(headers, field) {
         var path = utils.files.relativePath(file);
         var run;
         var subject;
-        
+
         if (field === 'dim') {
+            if ((typeof header[field]) === 'undefined' || header[field] === null || header[field].length < header[field][0]) {
+                issues.push(new utils.Issue({
+                        file: file,
+                        code: 40
+                }));
+                continue;
+            }
             field_value = header[field].slice(1, header[field][0]+1).toString();
         } else if (field === 'pixdim') {
+            if ((typeof header['xyzt_units']) === 'undefined' || header['xyzt_units'] === null || header['xyzt_units'].length < 4) {
+                issues.push(new utils.Issue({
+                        file: file,
+                        code: 41
+                }));
+                badField = true;
+            } 
+            if ((typeof header['pixdim']) === 'undefined' || header['pixdim'] === null || header['pixdim'].length < 4) {
+                issues.push(new utils.Issue({
+                        file: file,
+                        code: 42
+                }));
+                badField = true;
+            }
+            if (badField === true) {
+                continue;
+            }
             field_value = [];
             var pix_dim = header[field].slice(1,5);
             var units = header['xyzt_units'].slice(0,4);
             for (var i = 0; i < 4; i++) {
-                field_value.push('' + pix_dim[i] + units[i]); 
+                field_value.push('' + pix_dim[i] + units[i]);
             }
             field_value = field_value.toString();
         } else {
-            console.log("Checks against header field: " + field + " are currently unsupported.")
+            console.warn("Checks against header field: " + field + " are currently unsupported.");
             return;
         }
-        
+
         if (!file || (typeof window != 'undefined' && !file.webkitRelativePath)) {
             continue;
         }
-         
+
         if (!utils.type.isBIDS(path)) {
             continue;
         }
@@ -69,7 +94,7 @@ var headerField = function headerField(headers, field) {
         } else {
             subject = match[0];
         }
-        // files are prepended with subject name, the following two commands 
+        // files are prepended with subject name, the following two commands
         // remove the subject from the file name to allow filenames to be more
         // easily compared
         filename = path.substring(path.match(subject).index + subject.length);
@@ -85,9 +110,9 @@ var headerField = function headerField(headers, field) {
 
         filename = filename.substring(filename.match(run).index + run.length);
         filename = filename.replace(run, '<run>');
-        
+
         if (!nifti_types.hasOwnProperty(filename)) {
-            nifti_types[filename] = {}
+            nifti_types[filename] = {};
             nifti_types[filename][field_value] = {'count': 1, 'files': [file]};
         } else {
             if (!nifti_types[filename].hasOwnProperty(field_value)) {
@@ -102,25 +127,25 @@ var headerField = function headerField(headers, field) {
         var nifti_type = nifti_types[nifti_key];
         var max_field_value = Object.keys(nifti_type)[0];
         for (var field_value_key in nifti_type) {
-            var field_value = nifti_type[field_value_key];
+            field_value = nifti_type[field_value_key];
             if (field_value.count > nifti_type[max_field_value].count) {
                 max_field_value = field_value_key;
             }
         }
-        for (var field_value_key in nifti_type) {
-            var field_value = nifti_type[field_value_key];
+        for (field_value_key in nifti_type) {
+            field_value = nifti_type[field_value_key];
             if (max_field_value !== field_value_key && headerFieldCompare(max_field_value, field_value_key)) {
                 for (var nifti_file_index in field_value.files) {
                     var nifti_file = field_value.files[nifti_file_index];
                     var evidence;
                     if (field === 'dim') {
-                        evidence = " The most common set of dimensions is: " + 
-                                  max_field_value + "(voxels), This file has the dimensions: " + 
-                                  field_value_key + "(voxels)"
+                        evidence = " The most common set of dimensions is: " +
+                                  max_field_value + "(voxels), This file has the dimensions: " +
+                                  field_value_key + "(voxels)";
                     } else if (field === 'pixdim') {
-                        evidence = " The most common resolution is: " + 
-                                  max_field_value.replace(/,/g, ' x ') + ", This file has the resolution: " + 
-                                  field_value_key.replace(/,/g, ' x ')
+                        evidence = " The most common resolution is: " +
+                                  max_field_value.replace(/,/g, ' x ') + ", This file has the resolution: " +
+                                  field_value_key.replace(/,/g, ' x ');
                     }
                         issues.push(new utils.Issue({
                         file: nifti_file,
@@ -131,13 +156,13 @@ var headerField = function headerField(headers, field) {
             }
         }
     }
-    return issues; 
+    return issues;
 };
 
 /**
- * if elements of the two arrays differ by less than one we won't raise a 
+ * if elements of the two arrays differ by less than one we won't raise a
  * warning about them. There are a large number of floating point rounding
- * errors that cause resolutions to be slightly different. Returns true if 
+ * errors that cause resolutions to be slightly different. Returns true if
  * the two headers are signifigantly different
  */
 function headerFieldCompare(header1, header2) {

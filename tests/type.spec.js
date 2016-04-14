@@ -1,4 +1,4 @@
-var assert = require('chai').assert
+var assert = require('chai').assert;
 var utils   = require('../utils');
 var Test = require("mocha/lib/test");
 
@@ -11,7 +11,7 @@ var suiteAnat = describe('utils.type.isAnat', function(){
             "/sub-16/anat/sub-16_T1w.json",
             "/sub-16/anat/sub-16_run-01_T1w.nii.gz",
             "/sub-16/anat/sub-16_acq-highres_T1w.nii.gz",
-            "/sub-16/anat/sub-16_rec-mc_T1w.nii.gz",
+            "/sub-16/anat/sub-16_rec-mc_T1w.nii.gz"
         ];
 
         goodFilenames.forEach(function (path) {
@@ -21,12 +21,14 @@ var suiteAnat = describe('utils.type.isAnat', function(){
             }));
         });
 
-        var badFilenames = ["/sub-1/anat/sub-15_inplaneT2.nii.gz",
+        var badFilenames = [
+            "/sub-1/anat/sub-15_inplaneT2.nii.gz",
             "/sub-15/ses-12/anat/sub-15_inplaneT2.nii.gz",
             "/sub-16/anat/sub-16_T1.nii.gz",
             "blaaa.nii.gz",
             "/sub-16/anat/sub-16_run-second_T1w.nii.gz",
-            "/sub-16/anat/sub-16_run-01_rec-mc_T1w.nii.gz",];
+            "/sub-16/anat/sub-16_run-01_rec-mc_T1w.nii.gz"
+        ];
 
         badFilenames.forEach(function (path) {
             suiteAnat.addTest(new Test("isAnat('" + path + "') === false", function (isdone){
@@ -46,12 +48,13 @@ var suiteAnat = describe('utils.type.isAnat', function(){
 
 var suiteFunc = describe('utils.type.isFunc', function(){
     before(function(done) {
-        var goodFilenames = ["/sub-15/func/sub-15_task-0back_bold.nii.gz",
+        var goodFilenames = [
+            "/sub-15/func/sub-15_task-0back_bold.nii.gz",
             "/sub-15/ses-12/func/sub-15_ses-12_task-0back_bold.nii.gz",
             "/sub-16/func/sub-16_task-0back_bold.json",
             "/sub-16/func/sub-16_task-0back_run-01_bold.nii.gz",
             "/sub-16/func/sub-16_task-0back_acq-highres_bold.nii.gz",
-            "/sub-16/func/sub-16_task-0back_rec-mc_bold.nii.gz",
+            "/sub-16/func/sub-16_task-0back_rec-mc_bold.nii.gz"
         ];
 
         goodFilenames.forEach(function (path) {
@@ -61,13 +64,15 @@ var suiteFunc = describe('utils.type.isFunc', function(){
             }));
         });
 
-        var badFilenames = ["/sub-1/func/sub-15_inplaneT2.nii.gz",
+        var badFilenames = [
+            "/sub-1/func/sub-15_inplaneT2.nii.gz",
             "/sub-15/ses-12/func/sub-15_inplaneT2.nii.gz",
             "/sub-16/func/sub-16_T1.nii.gz",
             "blaaa.nii.gz",
             "/sub-16/func/sub-16_run-second_T1w.nii.gz",
             "/sub-16/func/sub-16_task-0-back_rec-mc_bold.nii.gz",
-            "/sub-16/func/sub-16_run-01_rec-mc_T1w.nii.gz",];
+            "/sub-16/func/sub-16_run-01_rec-mc_T1w.nii.gz"
+        ];
 
         badFilenames.forEach(function (path) {
             suiteFunc.addTest(new Test("isFunc('" + path + "') === false", function (isdone){
@@ -102,10 +107,12 @@ var suiteTop = describe('utils.type.isTopLevel', function(){
             }));
         });
 
-        var badFilenames = ["/readme.txt",
+        var badFilenames = [
+            "/readme.txt",
             "/changelog",
             "/dataset_description.yml",
-            "/ses.json"];
+            "/ses.json"
+        ];
 
         badFilenames.forEach(function (path) {
             suiteTop.addTest(new Test("isTopLevel('" + path + "') === false", function (isdone){
@@ -124,8 +131,9 @@ var suiteTop = describe('utils.type.isTopLevel', function(){
 
 var suiteSession = describe('utils.type.isSessionLevel', function(){
     before(function(done) {
-        var goodFilenames = ["/sub-12/sub-12_scans.tsv",
-            "/sub-12/ses-pre/sub-12_ses-pre_scans.tsv",
+        var goodFilenames = [
+            "/sub-12/sub-12_scans.tsv",
+            "/sub-12/ses-pre/sub-12_ses-pre_scans.tsv"
         ];
 
         goodFilenames.forEach(function (path) {
@@ -155,10 +163,11 @@ var suiteSession = describe('utils.type.isSessionLevel', function(){
 
 var suiteDWI = describe('utils.type.isDWI', function(){
     before(function(done) {
-        var goodFilenames = ["/sub-12/dwi/sub-12_dwi.nii.gz",
+        var goodFilenames = [
+            "/sub-12/dwi/sub-12_dwi.nii.gz",
             "/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.nii.gz",
             "/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bvec",
-            "/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bval",
+            "/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bval"
         ];
 
         goodFilenames.forEach(function (path) {

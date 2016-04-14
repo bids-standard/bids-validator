@@ -17,10 +17,10 @@ if (typeof window === 'undefined') {
 // public API ---------------------------------------------------------------------
 
 var fileUtils = {
-	readFile: readFile,
+    readFile: readFile,
     readDir: readDir,
     readNiftiHeader: readNiftiHeader,
-	generateTree: generateTree,
+    generateTree: generateTree,
     relativePath: relativePath
 };
 
@@ -40,7 +40,7 @@ var fileUtils = {
  */
 function readFile (file, callback) {
     if (fs) {
-        testFile(file, function (issue, stats) {
+        testFile(file, function (issue) {
             if (issue) {
                 callback(issue, null);
                 return;
@@ -50,17 +50,17 @@ function readFile (file, callback) {
             });
         });
     } else {
-    	var reader = new FileReader();
-    	reader.onloadend = function (e) {
-    		if (e.target.readyState == FileReader.DONE) {
+        var reader = new FileReader();
+        reader.onloadend = function (e) {
+            if (e.target.readyState == FileReader.DONE) {
                 if (!e.target.result) {
-                    callback(new Issue({code: 41, file: file}), null);
+                    callback(new Issue({code: 44, file: file}), null);
                     return;
                 }
-    			callback(null, e.target.result);
-    		}
-    	};
-    	reader.readAsBinaryString(file);
+                callback(null, e.target.result);
+            }
+        };
+        reader.readAsBinaryString(file);
     }
 }
 
@@ -76,8 +76,8 @@ function readFile (file, callback) {
  */
 function readDir (dir, callback) {
     if (fs) {
-        files = getFiles(dir);
-        filesObj = {};
+        var files = getFiles(dir);
+        var filesObj = {};
         var str = dir.substr(dir.lastIndexOf('/') + 1) + '$';
         var subpath = dir.replace(new RegExp(str), '');
         for (var i = 0; i < files.length; i++) {
@@ -135,12 +135,12 @@ function readNiftiHeader (file, callback) {
                 .on('data', function (chunk) {
                     callback(parseNIfTIHeader(chunk, file));
                     decompressStream.pause();
-                }).on('error', function(err) {
+                }).on('error', function() {
                     callback(handleGunzipError(buffer, file));
                 });
 
             fs.open(file.path, 'r', function(status, fd) {
-                fs.read(fd, buffer, 0, bytesRead, 0, function(err, num) {
+                fs.read(fd, buffer, 0, bytesRead, 0, function() {
                     if (file.name.endsWith('.nii')) {
                         callback(parseNIfTIHeader(buffer, file));
                     } else {
@@ -152,7 +152,7 @@ function readNiftiHeader (file, callback) {
     } else {
 
         if (file.size == 0) {
-            callback({error: new Issue({code: 41, file: file})});
+            callback({error: new Issue({code: 44, file: file})});
             return;
         }
 
@@ -165,7 +165,7 @@ function readNiftiHeader (file, callback) {
         var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
         fileReader = new FileReader();
 
-        fileReader.onloadend = function (e) {
+        fileReader.onloadend = function () {
             var buffer = new Uint8Array(fileReader.result);
             var unzipped;
 
@@ -235,43 +235,43 @@ function parseNIfTIHeader (buffer, file) {
  * directory.
  */
 function generateTree (files) {
-	var pathList = {};
-	var dirTree = {};
+    var pathList = {};
+    var dirTree = {};
 
     // generate list of paths
-	for (var i = 0; i < files.length; i++) {
-		var file = files[i];
+    for (var i = 0; i < files.length; i++) {
+        var file = files[i];
         pathList[file.webkitRelativePath] = file;
     }
 
     // build path from list
     for (var key in pathList) {
-    	var path = key;
-    	var pathParts = path.split('/');
-    	var subObj = dirTree;
-    	for (var j = 0; j < pathParts.length; j++) {
-    		var part = pathParts[j];
-    		if (!subObj[part]) {
-    			subObj[part] = j < pathParts.length - 1 ? {} : pathList[key];
-    		}
-    		subObj = subObj[part];
-    	}
+        var path = key;
+        var pathParts = path.split('/');
+        var subObj = dirTree;
+        for (var j = 0; j < pathParts.length; j++) {
+            var part = pathParts[j];
+            if (!subObj[part]) {
+                subObj[part] = j < pathParts.length - 1 ? {} : pathList[key];
+            }
+            subObj = subObj[part];
+        }
     }
 
-	// convert dirTree to array structure
+    // convert dirTree to array structure
     function objToArr (obj) {
-    	var arr = [];
-    	for (var key in obj) {
-    		if (obj[key].webkitRelativePath && obj[key].webkitRelativePath.length > 0) {
-    			arr.push(obj[key]);
-    		} else {
-    			arr.push({name: key, type: 'folder', children: objToArr(obj[key])});
-    		}
-    	}
-    	return arr;
-	}
+        var arr = [];
+        for (var key in obj) {
+            if (obj[key].webkitRelativePath && obj[key].webkitRelativePath.length > 0) {
+                arr.push(obj[key]);
+            } else {
+                arr.push({name: key, type: 'folder', children: objToArr(obj[key])});
+            }
+        }
+        return arr;
+    }
 
-	dirTree = objToArr(dirTree);
+    dirTree = objToArr(dirTree);
 
     // return tree
     return dirTree;
@@ -289,9 +289,9 @@ function relativePath (file) {
     // This hack uniforms relative paths for command line calls to 'BIDS-examples/ds001/' and 'BIDS-examples/ds001'
     if (relPath[0] !== '/') {
         var pathParts = relPath.split('/');
-        relPath = '/' + pathParts.slice(1).join('/')
+        relPath = '/' + pathParts.slice(1).join('/');
     }
-    return relPath
+    return relPath;
 }
 
 /**
@@ -309,9 +309,9 @@ function testFile (file, callback) {
                 return;
             } else {
                 if (stats.isSymbolicLink()) {
-                    callback(new Issue({code: 40, file: file}), stats);
+                    callback(new Issue({code: 43, file: file}), stats);
                 } else {
-                    callback(new Issue({code: 41, file: file}), stats);
+                    callback(new Issue({code: 44, file: file}), stats);
                 }
             }
         });

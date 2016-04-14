@@ -45,7 +45,7 @@ module.exports = {
         var multiDirFieldmapRe = new RegExp('^\\/(?:dir-[0-9]+)_epi.json$');
 
 
-        return (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) || multiDirFieldmapRe.test(path))
+        return (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) || multiDirFieldmapRe.test(path));
     },
 
     isCodeOrDerivatives: function(path) {

@@ -160,10 +160,22 @@ module.exports = {
         reason: "Not all subjects/sessions/runs have the same scanning parameters"
     },
     40: {
+        severity: 'warning',
+        reason: "Nifti file's header field for dimension information blank or too short."
+    },
+    41: {
+        severity: 'warning',
+        reason: "Nifti file's header field for unit information for x, y, z, and t dimensions empty or too short"
+    },
+    42: {
+        severity: 'warning',
+        reason: "Nifti file's header field for pixel dimension information empty or too short."
+    },
+	43: {
         severity: 'error',
         reason: "This file appears to be an orphaned symlinked. Make sure it correctly points to its referent."
     },
-    41: {
+    44: {
         severity: 'error',
         reason: "We were unable to read this file. Make sure it is not corrupted, incorectly named or incorectly symlinked."
     }
