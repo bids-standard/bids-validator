@@ -12,8 +12,8 @@ module.exports = function bval (fileList) {
         modalities: []
     };
 
-    for (var key in fileList) {
-        var file = fileList[key];
+    for (var fileKey in fileList) {
+        var file = fileList[fileKey];
         var path = file.relativePath;
 
         var checks = {
@@ -23,14 +23,14 @@ module.exports = function bval (fileList) {
             'task': 'tasks'
         };
 
-        for (var key in checks) {
+        for (var checkKey in checks) {
             // var check = checks[i];
-            if (path.indexOf(key + '-') > -1) {
-                var task = path.slice(path.indexOf(key + '-'));
+            if (path.indexOf(checkKey + '-') > -1) {
+                var task = path.slice(path.indexOf(checkKey + '-'));
                     task = task.slice(0, task.indexOf('/'));
                     if (task.indexOf('_') > -1) {task = task.slice(0, task.indexOf('_'));}
-                    task = task.slice(key.length + 1);
-                if (summary[checks[key]].indexOf(task) === -1) {summary[checks[key]].push(task);}
+                    task = task.slice(checkKey.length + 1);
+                if (summary[checks[checkKey]].indexOf(task) === -1) {summary[checks[checkKey]].push(task);}
             }
         }
 
@@ -43,5 +43,5 @@ module.exports = function bval (fileList) {
 
     }
 
-    console.log(summary);
+    // console.log(summary);
 };
