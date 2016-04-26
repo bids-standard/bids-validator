@@ -9,7 +9,7 @@ module.exports = function bval (fileList) {
         subjects: [],
         runs:     [],
         tasks:    [],
-        suffixes: []
+        modalities: []
     };
 
     for (var key in fileList) {
@@ -38,7 +38,7 @@ module.exports = function bval (fileList) {
             var pathParts = path.split('_');
             var suffix    = pathParts[pathParts.length -1];
                 suffix    = suffix.slice(0, suffix.indexOf('.'));
-            if (summary.suffixes.indexOf(suffix) === -1) {summary.suffixes.push(suffix);}
+            if (summary.modalities.indexOf(suffix) === -1) {summary.modalities.push(suffix);}
         }
 
     }
