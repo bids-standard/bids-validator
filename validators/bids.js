@@ -88,6 +88,7 @@ var BIDS = {
      * package.
      */
     fullTest: function (fileList, callback) {
+        utils.summary(fileList);
         var self = this;
 
         var jsonContentsDict = {},
