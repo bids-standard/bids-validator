@@ -70,4 +70,5 @@ function logSummary (summary) {
     for (var i = 0; i < summary.modalities.length; i++) {
         console.log('\t' + summary.modalities[i]);
     }
+    console.log();
 }
