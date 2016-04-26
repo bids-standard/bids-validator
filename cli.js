@@ -7,7 +7,7 @@ var fs = require('fs');
 module.exports = function (dir, options) {
     options.filesPerIssueMax = 10;
     if (fs.existsSync(dir)) {
-        validate.BIDS(dir, options, function (errors, warnings) {
+        validate.BIDS(dir, options, function (errors, warnings, summary) {
             if (errors === 'Invalid') {
                 console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
             } else if (errors.length >= 1 || warnings.length >= 1) {
@@ -17,6 +17,7 @@ module.exports = function (dir, options) {
             else {
                 console.log(colors.green("This dataset appears to be BIDS compatible."));
             }
+            logSummary(summary);
         });
     } else {
         console.log(colors.red(dir + " does not exist"));
@@ -51,5 +52,22 @@ function logIssues (issues, color, options) {
 
         }
         console.log();
+    }
+}
+
+function logSummary (summary) {
+    console.log(colors.blue.underline('\t' + 'Summary:'));
+    console.log('\t' + summary.subjects.length + '\t- Subjects');
+    console.log('\t' + summary.sessions.length + '\t- Sessions');
+    console.log('\t' + summary.runs.length     + '\t- Runs');
+    console.log();
+    console.log(colors.grey('\t' + 'Tasks'));
+    for (var i = 0; i < summary.tasks.length; i++) {
+        console.log('\t' + summary.tasks[i]);
+    }
+    console.log();
+    console.log(colors.grey('\t' + 'Modalities'));
+    for (var i = 0; i < summary.modalities.length; i++) {
+        console.log('\t' + summary.modalities[i]);
     }
 }

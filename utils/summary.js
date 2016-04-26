@@ -44,4 +44,5 @@ module.exports = function bval (fileList) {
     }
 
     // console.log(summary);
+    return summary;
 };

@@ -88,7 +88,6 @@ var BIDS = {
      * package.
      */
     fullTest: function (fileList, callback) {
-        utils.summary(fileList);
         var self = this;
 
         var jsonContentsDict = {},
@@ -191,8 +190,9 @@ var BIDS = {
             }, function(){
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
-                var issues = self.formatIssues(self.issues);
-                callback(issues.errors, issues.warnings);
+                var issues  = self.formatIssues(self.issues);
+                var summary = utils.summary(fileList);
+                callback(issues.errors, issues.warnings, summary);
             });
         });
     },
