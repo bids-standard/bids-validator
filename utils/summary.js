@@ -24,8 +24,7 @@ module.exports = function bval (fileList) {
         };
 
         for (var checkKey in checks) {
-            // var check = checks[i];
-            if (path.indexOf(checkKey + '-') > -1) {
+            if (path && path.indexOf(checkKey + '-') > -1) {
                 var task = path.slice(path.indexOf(checkKey + '-'));
                     task = task.slice(0, task.indexOf('/'));
                     if (task.indexOf('_') > -1) {task = task.slice(0, task.indexOf('_'));}
@@ -34,7 +33,7 @@ module.exports = function bval (fileList) {
             }
         }
 
-        if (path.endsWith('.nii') || path.endsWith('.nii.gz')) {
+        if (path && (path.endsWith('.nii') || path.endsWith('.nii.gz'))) {
             var pathParts = path.split('_');
             var suffix    = pathParts[pathParts.length -1];
                 suffix    = suffix.slice(0, suffix.indexOf('.'));
@@ -43,6 +42,5 @@ module.exports = function bval (fileList) {
 
     }
 
-    // console.log(summary);
     return summary;
 };
