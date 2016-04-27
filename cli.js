@@ -1,8 +1,10 @@
 /*eslint no-console: ["error", {allow: ["log"]}] */
 
-var validate = require('./index.js');
-var colors = require('colors/safe');
-var fs = require('fs');
+var validate  = require('./index.js');
+var colors    = require('colors/safe');
+var cliff     = require('cliff');
+var pluralize = require('pluralize');
+var fs        = require('fs');
 
 module.exports = function (dir, options) {
     options.filesPerIssueMax = 10;
@@ -56,19 +58,32 @@ function logIssues (issues, color, options) {
 }
 
 function logSummary (summary) {
-    console.log(colors.blue.underline('\t' + 'Summary:'));
-    console.log('\t' + summary.subjects.length + '\t- Subjects');
-    console.log('\t' + summary.sessions.length + '\t- Sessions');
-    console.log('\t' + summary.runs.length     + '\t- Runs');
-    console.log();
-    console.log(colors.grey('\t' + 'Tasks'));
-    for (var i = 0; i < summary.tasks.length; i++) {
-        console.log('\t' + summary.tasks[i]);
+
+    // data
+    var column1 = [
+            summary.subjects.length + ' - ' + pluralize('Subject', summary.subjects.length),
+            summary.sessions.length + ' - ' + pluralize('Session', summary.sessions.length),
+            summary.runs.length     + ' - ' + pluralize('Run',     summary.runs.length)
+        ],
+        column2 = summary.tasks,
+        column3 = summary.modalities;
+
+    var longestColumn = Math.max(column1.length, column2.length, column3.length);
+    var pad = '       ';
+
+    // headers
+    var headers = [pad, colors.blue.underline('Summary:') + pad, colors.blue.underline('Tasks:') + pad, colors.blue.underline('Modalities:')]
+
+    // rows
+    var rows = [headers];
+    for (var i = 0; i < longestColumn; i++) {
+        var val1, val2, val3;
+        val1 = column1[i] ? column1[i] + pad : '';
+        val2 = column2[i] ? column2[i] + pad : '';
+        val3 = column3[i] ? column3[i] : '';
+        rows.push(['       ', val1, val2, val3]);
     }
-    console.log();
-    console.log(colors.grey('\t' + 'Modalities'));
-    for (var i = 0; i < summary.modalities.length; i++) {
-        console.log('\t' + summary.modalities[i]);
-    }
+    console.log(cliff.stringifyRows(rows));
+
     console.log();
 }
