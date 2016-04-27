@@ -4,6 +4,7 @@ var validate  = require('./index.js');
 var colors    = require('colors/safe');
 var cliff     = require('cliff');
 var pluralize = require('pluralize');
+var bytes     = require('bytes');
 var fs        = require('fs');
 
 module.exports = function (dir, options) {
@@ -64,6 +65,7 @@ function logSummary (summary) {
 
     // data
     var column1 = [
+            summary.totalFiles      + ' '   + pluralize('File', summary.totalFiles) + ', ' + bytes(summary.size),
             summary.subjects.length + ' - ' + pluralize('Subject', summary.subjects.length),
             numSessions             + ' - ' + pluralize('Session', numSessions),
             numRuns                 + ' - ' + pluralize('Run',     numRuns)
@@ -75,7 +77,7 @@ function logSummary (summary) {
     var pad = '       ';
 
     // headers
-    var headers = [pad, colors.blue.underline('Summary:') + pad, colors.blue.underline('Tasks:') + pad, colors.blue.underline('Modalities:')]
+    var headers = [pad, colors.blue.underline('Summary:') + pad, colors.blue.underline('Available Tasks:') + pad, colors.blue.underline('Available Modalities:')]
 
     // rows
     var rows = [headers];

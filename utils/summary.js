@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 /**
  * Summmary
  *
@@ -9,11 +11,19 @@ module.exports = function bval (fileList) {
         subjects: [],
         runs:     [],
         tasks:    [],
-        modalities: []
+        modalities: [],
+        totalFiles: Object.keys(fileList).length,
+        size: 0
     };
 
     for (var fileKey in fileList) {
         var file = fileList[fileKey];
+        if (typeof window !== 'undefined') {
+            if (file.size) {summary.size += file.size;}
+        } else {
+            if (!file.stats) {file.stats = fs.lstatSync(file.path);}
+            summary.size += file.stats.size;
+        }
         var path = file.relativePath;
 
         var checks = {
@@ -41,6 +51,5 @@ module.exports = function bval (fileList) {
         }
 
     }
-
     return summary;
 };
