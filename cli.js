@@ -59,11 +59,14 @@ function logIssues (issues, color, options) {
 
 function logSummary (summary) {
 
+    var numSessions = summary.sessions.length > 0 ? summary.sessions.length : 1,
+        numRuns     = summary.runs.length     > 0 ? summary.runs.length : 1;
+
     // data
     var column1 = [
             summary.subjects.length + ' - ' + pluralize('Subject', summary.subjects.length),
-            summary.sessions.length + ' - ' + pluralize('Session', summary.sessions.length),
-            summary.runs.length     + ' - ' + pluralize('Run',     summary.runs.length)
+            numSessions             + ' - ' + pluralize('Session', numSessions),
+            numRuns                 + ' - ' + pluralize('Run',     numRuns)
         ],
         column2 = summary.tasks,
         column3 = summary.modalities;
