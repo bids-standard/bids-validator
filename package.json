@@ -23,10 +23,12 @@
   "homepage": "https://github.com/INCF/bids-validator",
   "dependencies": {
     "async": "^1.2.1",
+    "cliff": "^0.1.10",
     "colors": "^1.1.0",
     "jshint": "^2.8.0",
     "nifti-js": "^1.0.0",
     "pako": "^0.2.8",
+    "pluralize": "^1.2.1",
     "yargs": "^3.25.0"
   },
   "devDependencies": {
