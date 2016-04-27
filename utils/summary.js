@@ -9,7 +9,6 @@ module.exports = function bval (fileList) {
     var summary = {
         sessions: [],
         subjects: [],
-        runs:     [],
         tasks:    [],
         modalities: [],
         totalFiles: Object.keys(fileList).length,
@@ -29,7 +28,6 @@ module.exports = function bval (fileList) {
         var checks = {
             'ses':  'sessions',
             'sub':  'subjects',
-            'run':  'runs',
             'task': 'tasks'
         };
 

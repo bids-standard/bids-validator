@@ -60,15 +60,13 @@ function logIssues (issues, color, options) {
 
 function logSummary (summary) {
 
-    var numSessions = summary.sessions.length > 0 ? summary.sessions.length : 1,
-        numRuns     = summary.runs.length     > 0 ? summary.runs.length : 1;
+    var numSessions = summary.sessions.length > 0 ? summary.sessions.length : 1;
 
     // data
     var column1 = [
             summary.totalFiles      + ' '   + pluralize('File', summary.totalFiles) + ', ' + bytes(summary.size),
             summary.subjects.length + ' - ' + pluralize('Subject', summary.subjects.length),
-            numSessions             + ' - ' + pluralize('Session', numSessions),
-            numRuns                 + ' - ' + pluralize('Run',     numRuns)
+            numSessions             + ' - ' + pluralize('Session', numSessions)
         ],
         column2 = summary.tasks,
         column3 = summary.modalities;
