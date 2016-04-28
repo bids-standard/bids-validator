@@ -1,4 +1,5 @@
 var async  = require('async');
+var fs     = require('fs');
 var utils  = require('../utils');
 
 var TSV    = require('./tsv');
@@ -96,9 +97,39 @@ var BIDS = {
             niftis           = [],
             headers          = [];
 
+        var summary = {
+            sessions: [],
+            subjects: [],
+            tasks:    [],
+            modalities: [],
+            totalFiles: Object.keys(fileList).length,
+            size: 0
+        };
+
         // validate individual files
         async.forEachOf(fileList, function (file, key, cb) {
-            file.relativePath = utils.files.relativePath(file);
+            var path = utils.files.relativePath(file);
+            file.relativePath = path;
+
+            // collect file stats
+            if (typeof window !== 'undefined') {
+                if (file.size) {summary.size += file.size;}
+            } else {
+                if (!file.stats) {file.stats = fs.lstatSync(file.path);}
+                summary.size += file.stats.size;
+            }
+
+            // collect sessions subjects
+            var checks = {'ses':  'sessions', 'sub':  'subjects'};
+            for (var checkKey in checks) {
+                if (path && path.indexOf(checkKey + '-') > -1) {
+                    var item = path.slice(path.indexOf(checkKey + '-'));
+                        item = item.slice(0, item.indexOf('/'));
+                        if (item.indexOf('_') > -1) {item = item.slice(0, item.indexOf('_'));}
+                        item = item.slice(checkKey.length + 1);
+                    if (summary[checks[checkKey]].indexOf(item) === -1) {summary[checks[checkKey]].push(item);}
+                }
+            }
 
             // validate path naming
             if (!utils.type.isBIDS(file.relativePath)) {
@@ -111,8 +142,15 @@ var BIDS = {
             }
 
             // capture niftis for later validation
-            else if (file.name.includes('.nii')) {
+            else if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {
                 niftis.push(file);
+
+                // collect modality summary
+                var pathParts = path.split('_');
+                var suffix    = pathParts[pathParts.length -1];
+                    suffix    = suffix.slice(0, suffix.indexOf('.'));
+                if (summary.modalities.indexOf(suffix) === -1) {summary.modalities.push(suffix);}
+
                 cb();
             }
 
@@ -157,6 +195,14 @@ var BIDS = {
                     json(file, contents, function (issues, jsObj) {
                         self.issues = self.issues.concat(issues);
                         jsonContentsDict[file.relativePath] = jsObj;
+
+                        // collect task summary
+                        if (file.name.indexOf('task') > -1) {
+                            var task = jsObj ? jsObj.TaskName : null;
+                            if (task && summary.tasks.indexOf(task) === -1) {
+                                summary.tasks.push(task);
+                            }
+                        }
                         cb();
                     });
                 });
@@ -191,9 +237,8 @@ var BIDS = {
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 var issues  = self.formatIssues(self.issues);
-                utils.summary(fileList, function (summary) {
-                    callback(issues.errors, issues.warnings, summary);
-                });
+                summary.modalities = self.groupModalities(summary.modalities);
+                callback(issues.errors, issues.warnings, summary);
             });
         });
     },
@@ -228,6 +273,44 @@ var BIDS = {
         }
 
         return {errors: errors, warnings: warnings};
+    },
+
+    /**
+     * Group Modalities
+     *
+     * Takes an array of modalities and looks for
+     * groupings definined in 'modalityGroups' and
+     * replaces any perfectly matched groupings with
+     * the grouping object key.
+     */
+    groupModalities: function (modalities) {
+
+        var modalityGroups = {
+            fieldmap: [
+                'magnitude1',
+                'magnitude2',
+                'phase1',
+                'phase2'
+            ]
+        };
+
+        for (var groupName in modalityGroups) {
+            var group = modalityGroups[groupName];
+            var match = true;
+            for (var i = 0; i < group.length; i++) {
+                if (modalities.indexOf(group[i]) === -1) {
+                    match = false;
+                }
+            }
+            if (match) {
+                modalities.push(groupName);
+                for (var j = 0; j < group.length; j++) {
+                    modalities.splice(modalities.indexOf(group[j]), 1);
+                }
+            }
+        }
+
+        return modalities;
     },
 
     /**
