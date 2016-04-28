@@ -285,27 +285,38 @@ var BIDS = {
      */
     groupModalities: function (modalities) {
 
-        var modalityGroups = {
-            fieldmap: [
+        var modalityGroups = [
+            [[
                 'magnitude1',
                 'magnitude2',
                 'phase1',
                 'phase2'
-            ]
-        };
+            ], "fieldmap"],
+            [[
+                'magnitude1',
+                'magnitude2',
+                'phasediff'
+            ], "fieldmap"],
+            [[
+                'magnitude',
+                'fieldmap'
+            ], "fieldmap"],
+            [['epi'], "fieldmap"]
+        ];
 
-        for (var groupName in modalityGroups) {
-            var group = modalityGroups[groupName];
+        for (var groupTouple_i in modalityGroups) {
+            var groupSet = modalityGroups[groupTouple_i][0];
+            var groupName = modalityGroups[groupTouple_i][1];
             var match = true;
-            for (var i = 0; i < group.length; i++) {
-                if (modalities.indexOf(group[i]) === -1) {
+            for (var i = 0; i < groupSet.length; i++) {
+                if (modalities.indexOf(groupSet[i]) === -1) {
                     match = false;
                 }
             }
             if (match) {
                 modalities.push(groupName);
-                for (var j = 0; j < group.length; j++) {
-                    modalities.splice(modalities.indexOf(group[j]), 1);
+                for (var j = 0; j < groupSet.length; j++) {
+                    modalities.splice(modalities.indexOf(groupSet[j]), 1);
                 }
             }
         }
