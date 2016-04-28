@@ -55,7 +55,10 @@ module.exports = function bval (fileList, callback) {
         // collect tasks from json files
         if (path && path.endsWith('.json') && (path.indexOf('task') > -1)) {
             files.readFile(file, function (data) {
-                summary.tasks.push(JSON.parse(data).TaskName);
+                var task = JSON.parse(data).TaskName;
+                if (task && summary.tasks.indexOf(task) === -1) {
+                    summary.tasks.push(task);
+                }
                 cb();
             });
         } else {
@@ -66,3 +69,5 @@ module.exports = function bval (fileList, callback) {
         callback(summary);
     });
 };
+
+
