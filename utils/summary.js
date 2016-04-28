@@ -59,7 +59,6 @@ module.exports = function bval (fileList, callback) {
                 try {
                     task = JSON.parse(data).TaskName;
                 }
-                catch (err) {}
                 finally {
                     if (task && summary.tasks.indexOf(task) === -1) {
                         summary.tasks.push(task);
