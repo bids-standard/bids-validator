@@ -71,8 +71,45 @@ module.exports = function bval (fileList, callback) {
         }
 
     }, function () {
+        summary.modalities = parseModalities(summary.modalities);
         callback(summary);
     });
 };
 
+/**
+ * Parse Modalities
+ *
+ * Takes an array of modalities and looks for
+ * groupings definined in 'modalityGroups' and
+ * replaces any perfectly matched groupings with
+ * the grouping object key.
+ */
+function parseModalities(modalities) {
 
+    var modalityGroups = {
+        fieldmap: [
+            'magnitude1',
+            'magnitude2',
+            'phase1',
+            'phase2'
+        ]
+    };
+
+    for (var groupName in modalityGroups) {
+        var group = modalityGroups[groupName];
+        var match = true;
+        for (var i = 0; i < group.length; i++) {
+            if (modalities.indexOf(group[i]) === -1) {
+                match = false;
+            }
+        }
+        if (match) {
+            modalities.push(groupName);
+            for (var j = 0; j < group.length; j++) {
+                modalities.splice(modalities.indexOf(group[j]), 1);
+            }
+        }
+    }
+
+    return modalities;
+}
