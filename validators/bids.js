@@ -191,8 +191,9 @@ var BIDS = {
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 var issues  = self.formatIssues(self.issues);
-                var summary = utils.summary(fileList);
-                callback(issues.errors, issues.warnings, summary);
+                utils.summary(fileList, function (summary) {
+                    callback(issues.errors, issues.warnings, summary);
+                });
             });
         });
     },

@@ -1,11 +1,13 @@
-var fs = require('fs');
+var files = require('./files');
+var fs    = require('fs');
+var async = require('async');
 
 /**
  * Summmary
  *
  * Takes a full file list and returns a object of summary data.
  */
-module.exports = function bval (fileList) {
+module.exports = function bval (fileList, callback) {
     var summary = {
         sessions: [],
         subjects: [],
@@ -15,20 +17,21 @@ module.exports = function bval (fileList) {
         size: 0
     };
 
-    for (var fileKey in fileList) {
-        var file = fileList[fileKey];
+    async.each(fileList, function (file, cb) {
+        var path = file.relativePath ? file.relativePath : file.webkitRelativePath;
+
+        // collect file stats
         if (typeof window !== 'undefined') {
             if (file.size) {summary.size += file.size;}
         } else {
             if (!file.stats) {file.stats = fs.lstatSync(file.path);}
             summary.size += file.stats.size;
         }
-        var path = file.relativePath;
 
+        // collect sessions subjects
         var checks = {
             'ses':  'sessions',
-            'sub':  'subjects',
-            'task': 'tasks'
+            'sub':  'subjects'
         };
 
         for (var checkKey in checks) {
@@ -41,6 +44,7 @@ module.exports = function bval (fileList) {
             }
         }
 
+        // collect modalities
         if (path && (path.endsWith('.nii') || path.endsWith('.nii.gz'))) {
             var pathParts = path.split('_');
             var suffix    = pathParts[pathParts.length -1];
@@ -48,6 +52,17 @@ module.exports = function bval (fileList) {
             if (summary.modalities.indexOf(suffix) === -1) {summary.modalities.push(suffix);}
         }
 
-    }
-    return summary;
+        // collect tasks from json files
+        if (path && path.endsWith('.json') && (path.indexOf('task') > -1)) {
+            files.readFile(file, function (data) {
+                summary.tasks.push(JSON.parse(data).TaskName);
+                cb();
+            });
+        } else {
+            cb();
+        }
+
+    }, function () {
+        callback(summary);
+    });
 };
