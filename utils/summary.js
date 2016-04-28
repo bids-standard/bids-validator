@@ -36,11 +36,11 @@ module.exports = function bval (fileList, callback) {
 
         for (var checkKey in checks) {
             if (path && path.indexOf(checkKey + '-') > -1) {
-                var task = path.slice(path.indexOf(checkKey + '-'));
-                    task = task.slice(0, task.indexOf('/'));
-                    if (task.indexOf('_') > -1) {task = task.slice(0, task.indexOf('_'));}
-                    task = task.slice(checkKey.length + 1);
-                if (summary[checks[checkKey]].indexOf(task) === -1) {summary[checks[checkKey]].push(task);}
+                var item = path.slice(path.indexOf(checkKey + '-'));
+                    item = item.slice(0, item.indexOf('/'));
+                    if (item.indexOf('_') > -1) {item = item.slice(0, item.indexOf('_'));}
+                    item = item.slice(checkKey.length + 1);
+                if (summary[checks[checkKey]].indexOf(item) === -1) {summary[checks[checkKey]].push(item);}
             }
         }
 
