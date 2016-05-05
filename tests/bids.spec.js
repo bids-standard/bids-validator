@@ -62,7 +62,13 @@ var suite = describe('BIDS example datasets ', function() {
     // we need to have at least one non-dynamic test
     it('validates path without trailing backslash', function(isdone) {
         var options = {ignoreNiftiHeaders: true};
-        validate.BIDS("tests/data/BIDS-examples-" + test_version + "/ds001", options, function (errors) {
+        validate.BIDS("tests/data/BIDS-examples-" + test_version + "/ds001", options, function (errors, warnings, summary) {
+            assert(summary.sessions.length === 0);
+            assert(summary.subjects.length === 16);
+            assert.deepEqual(summary.tasks, ['balloon analog risk task']);
+            assert.deepEqual(summary.modalities, ['T1w', 'inplaneT2', 'bold']);
+            assert(summary.totalFiles === 133);
+            assert(summary.size === 803546);
             assert.deepEqual(errors, []);
             isdone();
         });
@@ -71,7 +77,13 @@ var suite = describe('BIDS example datasets ', function() {
     // we need to have at least one non-dynamic test
     it('validates dataset with valid nifti headers', function(isdone) {
         var options = {ignoreNiftiHeaders: false};
-        validate.BIDS("tests/data/valid_headers", options, function (errors) {
+        validate.BIDS("tests/data/valid_headers", options, function (errors, warnings, summary) {
+            assert(summary.sessions.length === 0);
+            assert(summary.subjects.length === 1);
+            assert.deepEqual(summary.tasks, ['rhyme judgment']);
+            assert.deepEqual(summary.modalities, ['T1w', 'bold']);
+            assert(summary.totalFiles === 8);
+            assert(summary.size === 481906);
             assert.deepEqual(errors, []);
             isdone();
         });
