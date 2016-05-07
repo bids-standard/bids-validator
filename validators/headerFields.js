@@ -21,10 +21,10 @@ var headerFields = function headerFields(headers) {
 /**
  * Key to headerField working is the fact that we take and array of values
  * from the nifti header and convert it to a string. This string is used to
- * comapre the header field value against other header field values and is used
+ * compare the header field value against other header field values and is used
  * as an attribute in the object nifti_types. Nifti types refers to the
  * different types of nifti files we are comparing across subjects. Only the
- * dimensionality of similar anatomy/funtional/dwi headers are being compared.
+ * dimensionality of similar anatomy/functional/dwi headers are being compared.
  */
 
 var headerField = function headerField(headers, field) {
@@ -102,15 +102,10 @@ var headerField = function headerField(headers, field) {
 
         // generalize the run number so we can compare counts across all runs
         match = filename.match(/run-\d+/);
-        if (match === null) {
-            continue;
-        } else {
-            run = match[0];
+        if (match !== null) {
+            filename = filename.replace(match[0], '<run>');
         }
-
-        filename = filename.substring(filename.match(run).index + run.length);
-        filename = filename.replace(run, '<run>');
-
+        
         if (!nifti_types.hasOwnProperty(filename)) {
             nifti_types[filename] = {};
             nifti_types[filename][field_value] = {'count': 1, 'files': [file]};
