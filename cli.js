@@ -47,7 +47,7 @@ function logIssues (issues, color, options) {
                 console.log('\t\t\tEvidence: ' + file.evidence);
             }
 
-            if (!options.verbose && (j+1) >= options.filesPerIssueMax) {
+            if (!options.verbose && (j+1) > options.filesPerIssueMax) {
                 var remaining = issue.files.length - (j+1);
                 console.log('\t\t'+colors[color]('... and '+remaining+' more files having this issue (Use --verbose to see them all).'));
                 break;
@@ -59,34 +59,35 @@ function logIssues (issues, color, options) {
 }
 
 function logSummary (summary) {
+    if (summary) {
+        var numSessions = summary.sessions.length > 0 ? summary.sessions.length : 1;
 
-    var numSessions = summary.sessions.length > 0 ? summary.sessions.length : 1;
+        // data
+        var column1 = [
+                summary.totalFiles + ' ' + pluralize('File', summary.totalFiles) + ', ' + bytes(summary.size),
+                summary.subjects.length + ' - ' + pluralize('Subject', summary.subjects.length),
+                numSessions + ' - ' + pluralize('Session', numSessions)
+            ],
+            column2 = summary.tasks,
+            column3 = summary.modalities;
 
-    // data
-    var column1 = [
-            summary.totalFiles      + ' '   + pluralize('File', summary.totalFiles) + ', ' + bytes(summary.size),
-            summary.subjects.length + ' - ' + pluralize('Subject', summary.subjects.length),
-            numSessions             + ' - ' + pluralize('Session', numSessions)
-        ],
-        column2 = summary.tasks,
-        column3 = summary.modalities;
+        var longestColumn = Math.max(column1.length, column2.length, column3.length);
+        var pad = '       ';
 
-    var longestColumn = Math.max(column1.length, column2.length, column3.length);
-    var pad = '       ';
+        // headers
+        var headers = [pad, colors.blue.underline('Summary:') + pad, colors.blue.underline('Available Tasks:') + pad, colors.blue.underline('Available Modalities:')]
 
-    // headers
-    var headers = [pad, colors.blue.underline('Summary:') + pad, colors.blue.underline('Available Tasks:') + pad, colors.blue.underline('Available Modalities:')]
+        // rows
+        var rows = [headers];
+        for (var i = 0; i < longestColumn; i++) {
+            var val1, val2, val3;
+            val1 = column1[i] ? column1[i] + pad : '';
+            val2 = column2[i] ? column2[i] + pad : '';
+            val3 = column3[i] ? column3[i] : '';
+            rows.push(['       ', val1, val2, val3]);
+        }
+        console.log(cliff.stringifyRows(rows));
 
-    // rows
-    var rows = [headers];
-    for (var i = 0; i < longestColumn; i++) {
-        var val1, val2, val3;
-        val1 = column1[i] ? column1[i] + pad : '';
-        val2 = column2[i] ? column2[i] + pad : '';
-        val3 = column3[i] ? column3[i] : '';
-        rows.push(['       ', val1, val2, val3]);
+        console.log();
     }
-    console.log(cliff.stringifyRows(rows));
-
-    console.log();
 }
