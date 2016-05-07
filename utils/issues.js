@@ -138,13 +138,13 @@ module.exports = {
 		severity: 'error',
 		reason: "'PhaseEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
 	},
-	36: {
-		severity: 'error',
-		reason: "This file is too small to contain the minimal NIfTI header."
-	},
 	35: {
 		severity: 'error',
 		reason: "'SliceEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
+	},
+	36: {
+		severity: 'error',
+		reason: "This file is too small to contain the minimal NIfTI header."
 	},
 	37: {
 		severity: 'error',
@@ -154,8 +154,7 @@ module.exports = {
         severity: 'warning',
         reason: "Not all subjects contain the same files. Each subject should contain the same number of files with " +
 		"the same naming unless some files are known to be missing."
-
-    }, 
+    },
     39: {
         severity: 'warning',
         reason: "Not all subjects/sessions/runs have the same scanning parameters"
@@ -171,6 +170,13 @@ module.exports = {
     42: {
         severity: 'warning',
         reason: "Nifti file's header field for pixel dimension information empty or too short."
+    },
+	43: {
+        severity: 'error',
+        reason: "This file appears to be an orphaned symlinked. Make sure it correctly points to its referent."
+    },
+    44: {
+        severity: 'error',
+        reason: "We were unable to read this file. Make sure it is not corrupted, incorectly named or incorectly symlinked."
     }
-
 };
