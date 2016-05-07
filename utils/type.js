@@ -5,6 +5,9 @@
  * representing whether the given file path is valid within the
  * BIDS specification requirements.
  */
+var anatSuffixes = ["T1w", "T2w", "T1map", "T2map", "FLAIR", "PD", "PDT2", "inplaneT1", "inplaneT2","angio",
+    "defacemask", "SWImagandphase"];
+
 module.exports = {
 
     /**
@@ -39,13 +42,17 @@ module.exports = {
         var funcTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
             + '(_bold.json|_events.tsv|_physio.json|_stim.json)$');
 
+        var anatTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+_)?'
+            + '(' + anatSuffixes.join("|") + ').json$');
+
         var dwiTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
             + 'dwi.(?:json|bval|bvec)$');
 
         var multiDirFieldmapRe = new RegExp('^\\/(?:dir-[0-9]+)_epi.json$');
 
 
-        return (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) || multiDirFieldmapRe.test(path));
+        return (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) ||
+        anatTopRe.test(path) || multiDirFieldmapRe.test(path));
     },
 
     isCodeOrDerivatives: function(path) {
@@ -66,7 +73,24 @@ module.exports = {
         var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?_scans.tsv$');
-        return conditionalMatch(scansRe, path);
+
+        var funcSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
+            + '(_bold.json|_events.tsv|_physio.json|_stim.json)$');
+
+        var anatSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+_)?'
+            + '(' + anatSuffixes.join("|") + ').json$');
+
+        var dwiSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
+            + 'dwi.(?:json|bval|bvec)$');
+
+        return conditionalMatch(scansRe, path) || conditionalMatch(funcSesRe, path) ||
+            conditionalMatch(anatSesRe, path) || conditionalMatch(dwiSesRe, path);
     },
 
     /**
@@ -82,13 +106,11 @@ module.exports = {
      * Check if the file has a name appropriate for an anatomical scan
      */
     isAnat: function(path) {
-        var suffixes = ["T1w", "T2w", "T1map", "T2map", "FLAIR", "PD", "PDT2", "inplaneT1", "inplaneT2","angio",
-            "defacemask", "SWImagandphase"];
         var anatRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?anat' +
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
-            + suffixes.join("|")
+            + anatSuffixes.join("|")
             + ').(nii.gz|nii|json)$');
         return conditionalMatch(anatRe, path);
     },
