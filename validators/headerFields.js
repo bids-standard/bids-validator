@@ -12,9 +12,32 @@ var utils  = require('../utils');
  */
 
 var headerFields = function headerFields(headers) {
-    var issues = [];
-    issues = issues.concat(headerField(headers, 'dim'));
-    issues = issues.concat(headerField(headers, 'pixdim'));
+    var allIssuesDict = {};
+    var fields = ['dim', 'pixdim'];
+
+    /* turn a list of dicts into a dict of lists */
+    for (var field in fields){
+        var issues = headerField(headers, field);
+        for (var file in issues) {
+            if (issues.hasOwnProperty(file)) {
+                allIssuesDict[file].push(issues[file]);
+            } else {
+                allIssuesDict[file] = [issues[file]];
+            }
+        }
+    }
+
+    var issues = []
+    for (var file in allIssuesDict){
+        var firstIssue = allIssuesDict[file][0];
+        var evidence = '';
+        for (var issue in allIssuesDict[file]){
+            evidence = evidence + issue.evidence;
+        }
+        firstIssue.evidence = evidence;
+        issues.push(evidence);
+    }
+
     return issues;
 };
 
@@ -29,7 +52,7 @@ var headerFields = function headerFields(headers) {
 
 var headerField = function headerField(headers, field) {
     var nifti_types = {};
-    var issues = [];
+    var issues = {};
     for (var header_index in headers) {
         var badField = false;
         var field_value;
@@ -147,11 +170,11 @@ var headerField = function headerField(headers, field) {
                                   max_field_value.replace(/,/g, ' x ') + ", This file has the resolution: " +
                                   field_value_key.replace(/,/g, ' x ');
                     }
-                        issues.push(new utils.Issue({
-                        file: nifti_file,
-                        evidence: evidence,
-                        code: 39
-                    }));
+                        issues[nifti_file] = new utils.Issue({
+                            file: nifti_file,
+                            evidence: evidence,
+                            code: 39
+                        });
                 }
             }
         }
