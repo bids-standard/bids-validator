@@ -73,7 +73,24 @@ module.exports = {
         var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?_scans.tsv$');
-        return conditionalMatch(scansRe, path);
+
+        var funcSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
+            + '(_bold.json|_events.tsv|_physio.json|_stim.json)$');
+
+        var anatSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+_)?'
+            + '(' + anatSuffixes.join("|") + ').json$');
+
+        var dwiSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
+            + 'dwi.(?:json|bval|bvec)$');
+
+        return conditionalMatch(scansRe, path) || conditionalMatch(funcSesRe, path) ||
+            conditionalMatch(anatSesRe, path) || conditionalMatch(dwiSesRe, path);
     },
 
     /**
