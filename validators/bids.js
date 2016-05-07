@@ -157,12 +157,7 @@ var BIDS = {
 
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {
-                utils.files.readFile(file, function (issue, contents) {
-                    if (issue) {
-                        self.issues.push(issue);
-                        cb();
-                        return;
-                    }
+                utils.files.readFile(file, function (contents) {
                     var isEvents = file.name.endsWith('_events.tsv');
                     if (isEvents) {events.push(file.relativePath);}
                     TSV(file, contents, isEvents, function (issues) {
@@ -174,12 +169,7 @@ var BIDS = {
 
             // validate bvec
             else if (file.name && file.name.endsWith('.bvec')) {
-                utils.files.readFile(file, function (issue, contents) {
-                    if (issue) {
-                        self.issues.push(issue);
-                        cb();
-                        return;
-                    }
+                utils.files.readFile(file, function (contents) {
                     bContentsDict[file.relativePath] = contents;
                     bvec(file, contents, function (issues) {
                         self.issues = self.issues.concat(issues);
@@ -190,12 +180,7 @@ var BIDS = {
 
             // validate bval
             else if (file.name && file.name.endsWith('.bval')) {
-                utils.files.readFile(file, function (issue, contents) {
-                    if (issue) {
-                        self.issues.push(issue);
-                        cb();
-                        return;
-                    }
+                utils.files.readFile(file, function (contents) {
                     bContentsDict[file.relativePath] = contents;
                     bval(file, contents, function (issues) {
                         self.issues = self.issues.concat(issues);
@@ -206,12 +191,7 @@ var BIDS = {
 
             // validate json
             else if (file.name && file.name.endsWith('.json')) {
-                utils.files.readFile(file, function (issue, contents) {
-                    if (issue) {
-                        self.issues.push(issue);
-                        cb();
-                        return;
-                    }
+                utils.files.readFile(file, function (contents) {
                     json(file, contents, function (issues, jsObj) {
                         self.issues = self.issues.concat(issues);
                         jsonContentsDict[file.relativePath] = jsObj;
