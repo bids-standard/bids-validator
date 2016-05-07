@@ -38,7 +38,6 @@ var headerField = function headerField(headers, field) {
         var header = headers[header_index][1];
         var match;
         var path = utils.files.relativePath(file);
-        var run;
         var subject;
 
         if (field === 'dim') {
