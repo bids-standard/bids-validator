@@ -12,10 +12,38 @@ var utils  = require('../utils');
  */
 
 var headerFields = function headerFields(headers) {
-    var issues = [];
-    issues = issues.concat(headerField(headers, 'dim'));
-    issues = issues.concat(headerField(headers, 'pixdim'));
-    return issues;
+    var finalIssues = [];
+    var allIssues39Dict = {};
+    var fields = ['dim', 'pixdim'];
+
+    /* turn a list of dicts into a dict of lists */
+    for (var field in fields){
+        var issues = headerField(headers, fields[field]);
+        for (var file in issues) {
+            if (issues[file].code == 39) {
+                if (allIssues39Dict.hasOwnProperty(file)) {
+                    allIssues39Dict[file].push(issues[file]);
+                } else {
+                    allIssues39Dict[file] = [issues[file]];
+                }
+            } else {
+                finalIssues.push(issues[file]);
+            }
+        }
+    }
+
+
+    for (file in allIssues39Dict){
+        var firstIssue = allIssues39Dict[file][0];
+        var evidence = '';
+        for (var issue in allIssues39Dict[file]){
+            evidence = evidence + ' ' + allIssues39Dict[file][issue].evidence;
+        }
+        firstIssue.evidence = evidence;
+        finalIssues.push(firstIssue);
+    }
+
+    return finalIssues;
 };
 
 /**
@@ -29,7 +57,7 @@ var headerFields = function headerFields(headers) {
 
 var headerField = function headerField(headers, field) {
     var nifti_types = {};
-    var issues = [];
+    var issues = {};
     for (var header_index in headers) {
         var badField = false;
         var field_value;
@@ -43,26 +71,26 @@ var headerField = function headerField(headers, field) {
 
         if (field === 'dim') {
             if ((typeof header[field]) === 'undefined' || header[field] === null || header[field].length < header[field][0]) {
-                issues.push(new utils.Issue({
+                issues[nifti_file.relativePath] = new utils.Issue({
                         file: file,
                         code: 40
-                }));
+                });
                 continue;
             }
             field_value = header[field].slice(1, header[field][0]+1).toString();
         } else if (field === 'pixdim') {
             if ((typeof header['xyzt_units']) === 'undefined' || header['xyzt_units'] === null || header['xyzt_units'].length < 4) {
-                issues.push(new utils.Issue({
+                issues[nifti_file.relativePath] = new utils.Issue({
                         file: file,
                         code: 41
-                }));
+                });
                 badField = true;
             } 
             if ((typeof header['pixdim']) === 'undefined' || header['pixdim'] === null || header['pixdim'].length < 4) {
-                issues.push(new utils.Issue({
+                issues[nifti_file.relativePath] = new utils.Issue({
                         file: file,
                         code: 42
-                }));
+                });
                 badField = true;
             }
             if (badField === true) {
@@ -140,18 +168,18 @@ var headerField = function headerField(headers, field) {
                     var evidence;
                     if (field === 'dim') {
                         evidence = " The most common set of dimensions is: " +
-                                  max_field_value + "(voxels), This file has the dimensions: " +
-                                  field_value_key + "(voxels)";
+                                  max_field_value + " (voxels), This file has the dimensions: " +
+                                  field_value_key + " (voxels).";
                     } else if (field === 'pixdim') {
                         evidence = " The most common resolution is: " +
                                   max_field_value.replace(/,/g, ' x ') + ", This file has the resolution: " +
-                                  field_value_key.replace(/,/g, ' x ');
+                                  field_value_key.replace(/,/g, ' x ') + ".";
                     }
-                        issues.push(new utils.Issue({
-                        file: nifti_file,
-                        evidence: evidence,
-                        code: 39
-                    }));
+                        issues[nifti_file.relativePath] = new utils.Issue({
+                            file: nifti_file,
+                            evidence: evidence,
+                            code: 39
+                        });
                 }
             }
         }
