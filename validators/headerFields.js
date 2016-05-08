@@ -12,7 +12,7 @@ var utils  = require('../utils');
  */
 
 var headerFields = function headerFields(headers) {
-    var finalIssues = []
+    var finalIssues = [];
     var allIssues39Dict = {};
     var fields = ['dim', 'pixdim'];
 
@@ -27,13 +27,13 @@ var headerFields = function headerFields(headers) {
                     allIssues39Dict[file] = [issues[file]];
                 }
             } else {
-                finalIssues.push(issues[file])
+                finalIssues.push(issues[file]);
             }
         }
     }
 
 
-    for (var file in allIssues39Dict){
+    for (file in allIssues39Dict){
         var firstIssue = allIssues39Dict[file][0];
         var evidence = '';
         for (var issue in allIssues39Dict[file]){
