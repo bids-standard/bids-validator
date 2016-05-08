@@ -161,11 +161,11 @@ var headerField = function headerField(headers, field) {
                     var nifti_file = field_value.files[nifti_file_index];
                     var evidence;
                     if (field === 'dim') {
-                        evidence = " The most common set of dimensions is: " +
+                        evidence = "The most common set of dimensions is: " +
                                   max_field_value + " (voxels), This file has the dimensions: " +
                                   field_value_key + " (voxels).";
                     } else if (field === 'pixdim') {
-                        evidence = " The most common resolution is: " +
+                        evidence = "The most common resolution is: " +
                                   max_field_value.replace(/,/g, ' x ') + ", This file has the resolution: " +
                                   field_value_key.replace(/,/g, ' x ') + ".";
                     }
