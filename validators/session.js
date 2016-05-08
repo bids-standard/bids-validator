@@ -61,7 +61,8 @@ var session = function missingSessionFiles(fileList) {
                 issues.push(new utils.Issue({
                     file: {relativePath: fileThatsMissing,
                            webkitRelativePath: fileThatsMissing,
-                           name: fileThatsMissing},
+                           name: "missing file",//fileThatsMissing.substr(files[i].lastIndexOf('/') + 1),
+                           path: fileThatsMissing},
                     evidence: "This file is missing for subject " + subject + ", but is present for most other subjects.",
                     code: 38
                 }));
