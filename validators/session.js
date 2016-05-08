@@ -53,13 +53,14 @@ var session = function missingSessionFiles(fileList) {
         }
     }
 
+    subjects.sort();
     for (subject in subjects) {
         for (var set_file in subject_files) {
             if (subjects[subject].indexOf(subject_files[set_file]) === -1) {
                 var fileThatsMissing = '/' + subject + subject_files[set_file].replace('<sub>', subject);
                 issues.push(new utils.Issue({
-                    file: {relativePath: subject_files[set_file]},
-                    evidence: "Subject: " + subject + "; Missing file: " + fileThatsMissing,
+                    file: {relativePath: fileThatsMissing},
+                    //evidence: "Subject: " + subject + "; Missing file.",
                     code: 38
                 }));
             }
