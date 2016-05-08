@@ -17,9 +17,9 @@ var headerFields = function headerFields(headers) {
 
     /* turn a list of dicts into a dict of lists */
     for (var field in fields){
-        var issues = headerField(headers, field);
+        var issues = headerField(headers, fields[field]);
         for (var file in issues) {
-            if (issues.hasOwnProperty(file)) {
+            if (allIssuesDict.hasOwnProperty(file)) {
                 allIssuesDict[file].push(issues[file]);
             } else {
                 allIssuesDict[file] = [issues[file]];
@@ -32,10 +32,10 @@ var headerFields = function headerFields(headers) {
         var firstIssue = allIssuesDict[file][0];
         var evidence = '';
         for (var issue in allIssuesDict[file]){
-            evidence = evidence + issue.evidence;
+            evidence = evidence + ' ' + allIssuesDict[file][issue].evidence;
         }
         firstIssue.evidence = evidence;
-        issues.push(evidence);
+        issues.push(firstIssue);
     }
 
     return issues;
@@ -163,12 +163,12 @@ var headerField = function headerField(headers, field) {
                     var evidence;
                     if (field === 'dim') {
                         evidence = " The most common set of dimensions is: " +
-                                  max_field_value + "(voxels), This file has the dimensions: " +
-                                  field_value_key + "(voxels)";
+                                  max_field_value + " (voxels), This file has the dimensions: " +
+                                  field_value_key + " (voxels).";
                     } else if (field === 'pixdim') {
                         evidence = " The most common resolution is: " +
                                   max_field_value.replace(/,/g, ' x ') + ", This file has the resolution: " +
-                                  field_value_key.replace(/,/g, ' x ');
+                                  field_value_key.replace(/,/g, ' x ') + ".";
                     }
                         issues[nifti_file] = new utils.Issue({
                             file: nifti_file,
