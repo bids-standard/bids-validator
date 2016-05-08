@@ -37,9 +37,9 @@ var headerFields = function headerFields(headers) {
         var firstIssue = allIssues39Dict[file][0];
         var evidence = '';
         for (var issue in allIssues39Dict[file]){
-            evidence = evidence + ' ' + allIssues39Dict[file][issue].evidence;
+            evidence = evidence + ' ' + allIssues39Dict[file][issue].reason;
         }
-        firstIssue.evidence = evidence;
+        firstIssue.reason = evidence;
         finalIssues.push(firstIssue);
     }
 
@@ -171,7 +171,7 @@ var headerField = function headerField(headers, field) {
                     }
                         issues[nifti_file.relativePath] = new utils.Issue({
                             file: nifti_file,
-                            evidence: evidence,
+                            reason: evidence,
                             code: 39
                         });
                 }
