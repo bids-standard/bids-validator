@@ -98,7 +98,7 @@ var headerField = function headerField(headers, field) {
             field_value = [];
             var pix_dim = header[field].slice(1,5);
             var units = header['xyzt_units'].slice(0,4);
-            for (var i = 0; i < 4; i++) {
+            for (var i = 0; i < pix_dim.length; i++) {
                 field_value.push('' + pix_dim[i] + units[i]);
             }
             field_value = field_value.toString();
