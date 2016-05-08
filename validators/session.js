@@ -59,8 +59,8 @@ var session = function missingSessionFiles(fileList) {
             if (subjects[subject].indexOf(subject_files[set_file]) === -1) {
                 var fileThatsMissing = '/' + subject + subject_files[set_file].replace('<sub>', subject);
                 issues.push(new utils.Issue({
-                    file: {relativePath: fileThatsMissing},
-                    reason: "This file is missing for subject " + subject + ", but is present for most other subjects.",
+                    file: {relativePath: fileThatsMissing, webkitRelativePath: fileThatsMissing},
+                    evidence: "This file is missing for subject " + subject + ", but is present for most other subjects.",
                     code: 38
                 }));
             }
