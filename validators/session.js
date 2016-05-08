@@ -60,7 +60,6 @@ var session = function missingSessionFiles(fileList) {
                 var fileThatsMissing = '/' + subject + subject_files[set_file].replace('<sub>', subject);
                 issues.push(new utils.Issue({
                     file: {relativePath: fileThatsMissing},
-                    //evidence: "Subject: " + subject + "; Missing file.",
                     code: 38
                 }));
             }
