@@ -154,11 +154,10 @@ module.exports = {
         severity: 'warning',
         reason: "Not all subjects contain the same files. Each subject should contain the same number of files with " +
 		"the same naming unless some files are known to be missing."
-
     }, 
     39: {
         severity: 'warning',
-        reason: "Not all subjects/sessions/runs have the same scanning parameters"
+        reason: "Not all subjects/sessions/runs have the same scanning parameters."
     },
     40: {
         severity: 'warning',
