@@ -238,6 +238,17 @@ var BIDS = {
                 self.issues = self.issues.concat(session(fileList));
                 var issues  = self.formatIssues(self.issues);
                 summary.modalities = self.groupModalities(summary.modalities);
+                //remove fieldmap related warnings if no fieldmaps are present
+                if(summary.modalities.indexOf("fieldmap") < 0) {
+                    var filteredWarnings = [];
+                    var fieldmapRelatedCodes = ["6", "7", "8", "9"];
+                    for (var i in issues.warnings) {
+                        if (fieldmapRelatedCodes.indexOf(issues.warnings[i].code) < 0) {
+                            filteredWarnings.push(issues.warnings[i]);
+                        }
+                    }
+                    issues.warnings = filteredWarnings;
+                }
                 callback(issues.errors, issues.warnings, summary);
             });
         });
