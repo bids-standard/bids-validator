@@ -76,145 +76,148 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
         if (repetitionUnit === 'us') {repetitionTime = repetitionTime / 1000000; repetitionUnit = 's';}
     }
 
-    if (path.includes("_bold.nii") || path.includes("_sbref.nii") || path.includes("_dwi.nii")) {
-        if (!mergedDictionary.hasOwnProperty('EchoTime')) {
-            issues.push(new Issue({
-                file: file,
-                code: 6,
-                reason: "You should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
-            }));
-        }
-        if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
-            issues.push(new Issue({
-                file: file,
-                code: 7,
-                reason: "You should define 'PhaseEncodingDirection' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
-            }));
-        }
-        if (!mergedDictionary.hasOwnProperty('EffectiveEchoSpacing')) {
-            issues.push(new Issue({
-                file: file,
-                code: 8,
-                reason: "You should define 'EffectiveEchoSpacing' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
-            }));
-        }
-    }
-    if (path.includes("_dwi.nii")) {
-        if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
-            issues.push(new Issue({
-                file: file,
-                code: 9,
-                reason: "You should define 'TotalReadoutTime' for this file. If you don't provide this information field map correction using TOPUP might not be possible. " + sidecarMessage
-            }));
-        }
-    }
-    // we don't need slice timing or repetition time for SBref
-    if (path.includes("_bold.nii")) {
-        if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
-            issues.push(new Issue({
-                file: file,
-                code: 10,
-                reason: "You have to define 'RepetitionTime' for this file. " + sidecarMessage
-            }));
-        }
-
-        if (repetitionTime && mergedDictionary.RepetitionTime) {
-            if (repetitionUnit !== 's') {
+    if (!mergedDictionary.invalid) {
+        if (path.includes("_bold.nii") || path.includes("_sbref.nii") || path.includes("_dwi.nii")) {
+            if (!mergedDictionary.hasOwnProperty('EchoTime')) {
                 issues.push(new Issue({
                     file: file,
-                    code: 11
+                    code: 6,
+                    reason: "You should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
                 }));
-            } else {
-                var niftiTR = Number((repetitionTime).toFixed(6));
-                var jsonTR = Number((mergedDictionary.RepetitionTime).toFixed(6));
-                if (niftiTR !== jsonTR) {
-                    issues.push(new Issue({
-                        file: file,
-                        code: 12,
-                        reason: "Repetition time defined in the JSON (" + jsonTR + " sec.) did not match the one defined in the NIFTI header (" + niftiTR + " sec.)"
-                    }));
-                }
+            }
+            if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 7,
+                    reason: "You should define 'PhaseEncodingDirection' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
+                }));
+            }
+            if (!mergedDictionary.hasOwnProperty('EffectiveEchoSpacing')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 8,
+                    reason: "You should define 'EffectiveEchoSpacing' for this file. If you don't provide this information field map correction will not be possible. " + sidecarMessage
+                }));
+            }
+        }
+        if (path.includes("_dwi.nii")) {
+            if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 9,
+                    reason: "You should define 'TotalReadoutTime' for this file. If you don't provide this information field map correction using TOPUP might not be possible. " + sidecarMessage
+                }));
             }
         }
 
-        if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
-            issues.push(new Issue({
-                file: file,
-                code: 13,
-                reason: "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
-            }));
-        }
-    }
-    else if (path.includes("_phasediff.nii")){
-        if (!mergedDictionary.hasOwnProperty('EchoTime1')) {
-            issues.push(new Issue({
-                file: file,
-                code: 15,
-                reason: "You have to define 'EchoTime1' for this file. " + sidecarMessage
-            }));
-        }
-        if (!mergedDictionary.hasOwnProperty('EchoTime2')) {
-            issues.push(new Issue({
-                file: file,
-                code: 15,
-                reason: "You have to define 'EchoTime2' for this file. " + sidecarMessage
-            }));
-        }
-    } else if (path.includes("_phase1.nii") || path.includes("_phase2.nii")){
-        if (!mergedDictionary.hasOwnProperty('EchoTime')) {
-            issues.push(new Issue({
-                file: file,
-                code:16,
-                reason: "You have to define 'EchoTime' for this file. " + sidecarMessage
-            }));
-        }
-    } else if (path.includes("_fieldmap.nii")){
-        if (!mergedDictionary.hasOwnProperty('Units')) {
-            issues.push(new Issue({
-                file: file,
-                code: 17,
-                reason: "You have to define 'Units' for this file. " + sidecarMessage
-            }));
-        }
-    } else if (path.includes("_epi.nii")){
-        if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
-            issues.push(new Issue({
-                file: file,
-                code: 18,
-                reason: "You have to define 'PhaseEncodingDirection' for this file. " + sidecarMessage
-            }));
-        }
-        if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
-            issues.push(new Issue({
-                file: file,
-                code: 19,
-                reason: "You have to define 'TotalReadoutTime' for this file. " + sidecarMessage
-            }));
-        }
-    }
+        // we don't need slice timing or repetition time for SBref
+        if (path.includes("_bold.nii")) {
+            if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 10,
+                    reason: "You have to define 'RepetitionTime' for this file. " + sidecarMessage
+                }));
+            }
 
-    if (path.includes("_phasediff.nii") || path.includes("_phase1.nii") ||
-        path.includes("_phase2.nii") || path.includes("_fieldmap.nii") || path.includes("_epi.nii")){
-        if (mergedDictionary.hasOwnProperty('IntendedFor')) {
-            var intendedForFile = "/" + path.split("/")[1] + "/" + mergedDictionary['IntendedFor'];
-            var onTheList = false;
-            async.forEachOf(fileList, function (file, key, cb) {
-                var filePath = file.path ? file.path : file.webkitRelativePath;
-                if (filePath.endsWith(intendedForFile)){
-                    onTheList = true;
-                }
-                cb();
-            }, function(){
-                if (!onTheList) {
+            if (repetitionTime && mergedDictionary.RepetitionTime) {
+                if (repetitionUnit !== 's') {
                     issues.push(new Issue({
                         file: file,
-                        code: 37,
-                        reason: "'IntendedFor' property of this fieldmap ('" + mergedDictionary['IntendedFor'] + "') does " +
-                        "not point to an existing file. Please mind that this value should not include subject level directory " +
-                        "('/" + path.split("/")[1] + "/')."
+                        code: 11
                     }));
+                } else {
+                    var niftiTR = Number((repetitionTime).toFixed(6));
+                    var jsonTR = Number((mergedDictionary.RepetitionTime).toFixed(6));
+                    if (niftiTR !== jsonTR) {
+                        issues.push(new Issue({
+                            file: file,
+                            code: 12,
+                            reason: "Repetition time defined in the JSON (" + jsonTR + " sec.) did not match the one defined in the NIFTI header (" + niftiTR + " sec.)"
+                        }));
+                    }
                 }
-            });
+            }
+
+            if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 13,
+                    reason: "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
+                }));
+            }
+        }
+        else if (path.includes("_phasediff.nii")){
+            if (!mergedDictionary.hasOwnProperty('EchoTime1')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 15,
+                    reason: "You have to define 'EchoTime1' for this file. " + sidecarMessage
+                }));
+            }
+            if (!mergedDictionary.hasOwnProperty('EchoTime2')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 15,
+                    reason: "You have to define 'EchoTime2' for this file. " + sidecarMessage
+                }));
+            }
+        } else if (path.includes("_phase1.nii") || path.includes("_phase2.nii")){
+            if (!mergedDictionary.hasOwnProperty('EchoTime')) {
+                issues.push(new Issue({
+                    file: file,
+                    code:16,
+                    reason: "You have to define 'EchoTime' for this file. " + sidecarMessage
+                }));
+            }
+        } else if (path.includes("_fieldmap.nii")){
+            if (!mergedDictionary.hasOwnProperty('Units')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 17,
+                    reason: "You have to define 'Units' for this file. " + sidecarMessage
+                }));
+            }
+        } else if (path.includes("_epi.nii")){
+            if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 18,
+                    reason: "You have to define 'PhaseEncodingDirection' for this file. " + sidecarMessage
+                }));
+            }
+            if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 19,
+                    reason: "You have to define 'TotalReadoutTime' for this file. " + sidecarMessage
+                }));
+            }
+        }
+
+        if (path.includes("_phasediff.nii") || path.includes("_phase1.nii") ||
+            path.includes("_phase2.nii") || path.includes("_fieldmap.nii") || path.includes("_epi.nii")){
+            if (mergedDictionary.hasOwnProperty('IntendedFor')) {
+                var intendedForFile = "/" + path.split("/")[1] + "/" + mergedDictionary['IntendedFor'];
+                var onTheList = false;
+                async.forEachOf(fileList, function (file, key, cb) {
+                    var filePath = file.path ? file.path : file.webkitRelativePath;
+                    if (filePath.endsWith(intendedForFile)){
+                        onTheList = true;
+                    }
+                    cb();
+                }, function(){
+                    if (!onTheList) {
+                        issues.push(new Issue({
+                            file: file,
+                            code: 37,
+                            reason: "'IntendedFor' property of this fieldmap ('" + mergedDictionary['IntendedFor'] + "') does " +
+                            "not point to an existing file. Please mind that this value should not include subject level directory " +
+                            "('/" + path.split("/")[1] + "/')."
+                        }));
+                    }
+                });
+            }
         }
     }
 
@@ -315,6 +318,8 @@ function generateMergedSidecarDict(potentialSidecars, jsonContents) {
             for (var key in jsonObject) {
                 mergedDictionary[key] = jsonObject[key];
             }
+        } else if (jsonObject === null) {
+            mergedDictionary.invalid = true;
         }
     }
     return mergedDictionary;
