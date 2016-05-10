@@ -260,6 +260,9 @@ var BIDS = {
     formatIssues: function () {
         var errors = [], warnings = [];
 
+        // sort alphabetically by relative path of files
+        this.issues.sort(function(a,b) {return (a.file.relativePath > b.file.relativePath) ? 1 : ((b.file.relativePath > a.file.relativePath) ? -1 : 0);} );
+
         // organize by issue code
         var categorized = {};
         for (var i = 0; i < this.issues.length; i++) {
@@ -267,16 +270,19 @@ var BIDS = {
             if (!categorized[issue.code]) {
                 categorized[issue.code] = utils.issues[issue.code];
                 categorized[issue.code].files = [];
+                categorized[issue.code].additionalFileCount = 0;
             }
-            categorized[issue.code].files.push(issue);
+            if (this.options.verbose || (categorized[issue.code].files.length < 10)) {
+                categorized[issue.code].files.push(issue);
+            } else {
+                categorized[issue.code].additionalFileCount++;
+            }
         }
 
         // organize by severity
         for (var key in categorized) {
             issue = categorized[key];
             issue.code = key;
-            // sort alphabetically by relative path of files
-            issue.files.sort(function(a,b) {return (a.file.relativePath > b.file.relativePath) ? 1 : ((b.file.relativePath > a.file.relativePath) ? -1 : 0);} );
 
             if (issue.severity === 'error') {
                 errors.push(issue);
@@ -353,7 +359,8 @@ var BIDS = {
     parseOptions: function (options) {
         return {
             ignoreWarnings:     options.ignoreWarnings     ? true : false,
-            ignoreNiftiHeaders: options.ignoreNiftiHeaders ? true : false
+            ignoreNiftiHeaders: options.ignoreNiftiHeaders ? true : false,
+            verbose:            options.verbose            ? true : false
         };
     }
 };
