@@ -111,9 +111,6 @@ var headerField = function headerField(headers, field) {
             continue;
         }
 
-        if (!utils.type.isBIDS(path)) {
-            continue;
-        }
         //match the subject identifier up to the '/' in the full path to a file.
         match = path.match(/sub-(.*?)(?=\/)/);
         if (match === null) {
