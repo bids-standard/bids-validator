@@ -4,12 +4,7 @@
  * A collection to extensions to native javascript prototypes.
  */
 
-/**
- * String - Ends With
- *
- * A utility for checking if a string ends with a passed substring.
- * Polyfill based on MDN recommendation.
- */
+// String - Ends With (Polyfill based on MDN recommendation)
 if (!String.prototype.endsWith) {
   String.prototype.endsWith = function(searchString, position) {
       var subjectString = this.toString();
@@ -22,6 +17,15 @@ if (!String.prototype.endsWith) {
   };
 }
 
+// String - Starts With (Polyfill based on MDN recommendation)
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position){
+      position = position || 0;
+      return this.substr(position, searchString.length) === searchString;
+  };
+}
+
+// String - Includes
 if (!String.prototype.includes) {
     String.prototype.includes = function() {'use strict';
         return String.prototype.indexOf.apply(this, arguments) !== -1;
