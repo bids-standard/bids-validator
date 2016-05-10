@@ -8,7 +8,7 @@
  * String - Ends With
  *
  * A utility for checking if a string ends with a passed substring.
- * Polyfill based on MDN reccommendation.
+ * Polyfill based on MDN recommendation.
  */
 if (!String.prototype.endsWith) {
   String.prototype.endsWith = function(searchString, position) {

@@ -6,7 +6,7 @@ var Issue = utils.Issue;
  * NIFTI
  *
  * Takes a NifTi header, a file path and a callback
- * as arguments. And callsback with any issues
+ * as arguments. And calls back with any issues
  * it finds while validating against the BIDS
  * specification.
  */
@@ -64,7 +64,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
         issues.push(new Issue({
             code: 25,
             file: file,
-            reason: 'Task scans should have a correspondings events.tsv file. ' + eventsMessage
+            reason: 'Task scans should have a corresponding events.tsv file. ' + eventsMessage
         }));
     }
 

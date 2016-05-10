@@ -38,7 +38,7 @@ The BIDS validator works like most npm packages. You can install it by running `
 
 #### Through Command Line
 
-If you install the bids validator globally by using ```npm install -g bids-validator``` you will be able to use it as a command line tool. Once installed you should be able to run ```bids-validator /path/to/your/bids/directory``` and see any validation issues logged to the terminal. Run ```bids-validor``` without a directory path to see available options.
+If you install the bids validator globally by using ```npm install -g bids-validator``` you will be able to use it as a command line tool. Once installed you should be able to run ```bids-validator /path/to/your/bids/directory``` and see any validation issues logged to the terminal. Run ```bids-validator``` without a directory path to see available options.
 
 ## Development
 
@@ -48,8 +48,8 @@ To develop locally, clone the project and run ```npm install``` from the project
 
 A note about OS X, the dependencies for the browser require a npm package called node-gyp which needs xcode to be installed in order to be compiled.
 
-1. Create a seperate directory with the gh-pages branch in it.
-2. The local version of the validator needs to be added to npm. This is done through the command `npm --save relative/path/to/bids-validator`. 
+1. Create a separate directory with the gh-pages branch in it.
+2. The local version of the validator needs to be added to npm. This is done through the command `npm --save relative/path/to/bids-validator`.
 3. In the gh-pages package.json file replace `bids-validator: "latest"` with `bids-validator: "relative/path/to/bids-validator` so if the normal bids-validator project is in the same directory as the gh-pages project this line would read `bids-validator: "../bids-validator". This will install your local version of the bids-validator project instead of going to the central npm repository.
 4. The default gh-pages application minifies javascript. This make it difficult to test things locally. To disable minification of javascript comment out the line `.pipe(uglify())` in gulpfule.js
 5. In the gh-pages directory execute `npm install` and then `gulp build` this will install all the dependencies of the bids-validator browser application and build it.
