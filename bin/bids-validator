@@ -10,7 +10,7 @@ var argv = require('yargs')
     .boolean('ignoreNiftiHeaders')
     .describe('ignoreNiftiHeaders', 'disregard NIfTI header content during validation')
     .boolean('verbose')
-    .describe('verbose', 'Log more extensive infomation about issues.')
+    .describe('verbose', 'Log more extensive information about issues.')
     .epilogue("This tool checks if a dataset in a given directory is \
 compatible with the Brain Imaging Data Structure specification. To learn \
 more about Brain Imaging Data Structure visit http://bids.neuroimaging.io")

@@ -275,7 +275,7 @@ var BIDS = {
         for (var key in categorized) {
             issue = categorized[key];
             issue.code = key;
-            // sort alphabetically by reative path of files
+            // sort alphabetically by relative path of files
             issue.files.sort(function(a,b) {return (a.file.relativePath > b.file.relativePath) ? 1 : ((b.file.relativePath > a.file.relativePath) ? -1 : 0);} );
 
             if (issue.severity === 'error') {
@@ -293,7 +293,7 @@ var BIDS = {
      * Group Modalities
      *
      * Takes an array of modalities and looks for
-     * groupings definined in 'modalityGroups' and
+     * groupings defined in 'modalityGroups' and
      * replaces any perfectly matched groupings with
      * the grouping object key.
      */

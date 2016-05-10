@@ -4,7 +4,7 @@ var nifti = require('nifti-js');
 var Issue = require('./issue');
 
 /**
- * If the current enviroment is server side
+ * If the current environment is server side
  * nodejs/iojs import fs.
  */
 if (typeof window === 'undefined') {

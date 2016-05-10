@@ -100,7 +100,7 @@ module.exports = {
 	},
 	25: {
 		severity: 'warning',
-		reason:   'Task scans should have a correspondings events.tsv file. If this is a resting state scan you can ignore this warning or rename the task to include the work "rest".'
+		reason:   'Task scans should have a corresponding events.tsv file. If this is a resting state scan you can ignore this warning or rename the task to include the work "rest".'
 	},
 	26: {
 		severity: 'error',
