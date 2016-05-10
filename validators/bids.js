@@ -57,9 +57,7 @@ var BIDS = {
                 var path = utils.files.relativePath(file);
                 if (path) {
                     path = path.split('/');
-                    if (path[1] === 'derivatives') {continue;}
                     path = path.reverse();
-
                     if (
                         path[0].includes('.nii') &&
                         (
