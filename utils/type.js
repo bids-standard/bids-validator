@@ -56,13 +56,13 @@ module.exports = {
     },
 
     isAssociatedData: function(path) {
-        var codeOrDerivatives = new RegExp('^\\/(?:code|derivatives|sourcedata)\\/(?:.*)$');
-        return codeOrDerivatives.test(path);
+        var associatedData = new RegExp('^\\/(?:code|derivatives|sourcedata)\\/(?:.*)$');
+        return associatedData.test(path);
     },
 
     isVersionControl: function(path) {
-        var codeOrDerivatives = new RegExp('^\\/(?:[.]git)\\/(?:.*)$');
-        return codeOrDerivatives.test(path);
+        var versionControl = new RegExp('^\\/(?:[.]git)\\/(?:.*)$');
+        return versionControl.test(path);
     },
 
 
