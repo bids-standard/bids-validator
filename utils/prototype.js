@@ -17,14 +17,6 @@ if (!String.prototype.endsWith) {
   };
 }
 
-// String - Starts With (Polyfill based on MDN recommendation)
-if (!String.prototype.startsWith) {
-    String.prototype.startsWith = function(searchString, position){
-      position = position || 0;
-      return this.substr(position, searchString.length) === searchString;
-  };
-}
-
 // String - Includes
 if (!String.prototype.includes) {
     String.prototype.includes = function() {'use strict';
