@@ -18,16 +18,16 @@ module.exports = {
      */
     isBIDS: function(path) {
         return (
-            this.isTopLevel(path)          ||
-            this.isCodeOrDerivatives(path) ||
-            this.isSessionLevel(path)      ||
-            this.isSubjectLevel(path)      ||
-            this.isAnat(path)              ||
-            this.isDWI(path)               ||
-            this.isFunc(path)              ||
-            this.isBehavioral(path)        ||
-            this.isCont(path)              ||
-            this.isFieldMap(path)          ||
+            this.isTopLevel(path)       ||
+            this.isAssociatedData(path) ||
+            this.isSessionLevel(path)   ||
+            this.isSubjectLevel(path)   ||
+            this.isAnat(path)           ||
+            this.isDWI(path)            ||
+            this.isFunc(path)           ||
+            this.isBehavioral(path)     ||
+            this.isCont(path)           ||
+            this.isFieldMap(path)       ||
             this.isVersionControl(path)
         );
     },
@@ -55,8 +55,8 @@ module.exports = {
         anatTopRe.test(path) || multiDirFieldmapRe.test(path));
     },
 
-    isCodeOrDerivatives: function(path) {
-        var codeOrDerivatives = new RegExp('^\\/(?:code|derivatives)\\/(?:.*)$');
+    isAssociatedData: function(path) {
+        var codeOrDerivatives = new RegExp('^\\/(?:code|derivatives|sourcedata)\\/(?:.*)$');
         return codeOrDerivatives.test(path);
     },
 
