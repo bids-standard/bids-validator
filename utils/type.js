@@ -27,8 +27,7 @@ module.exports = {
             this.isFunc(path)           ||
             this.isBehavioral(path)     ||
             this.isCont(path)           ||
-            this.isFieldMap(path)       ||
-            this.isVersionControl(path)
+            this.isFieldMap(path)
         );
     },
 
@@ -56,15 +55,9 @@ module.exports = {
     },
 
     isAssociatedData: function(path) {
-        var associatedData = new RegExp('^\\/(?:code|derivatives|sourcedata)\\/(?:.*)$');
+        var associatedData = new RegExp('^\\/(?:code|derivatives|sourcedata|[.]git)\\/(?:.*)$');
         return associatedData.test(path);
     },
-
-    isVersionControl: function(path) {
-        var versionControl = new RegExp('^\\/(?:[.]git)\\/(?:.*)$');
-        return versionControl.test(path);
-    },
-
 
     /**
      * Check if the file has appropriate name for a session level
