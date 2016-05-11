@@ -110,11 +110,7 @@ var BIDS = {
             file.relativePath = path;
 
             // ignore associated data
-            if (
-                file.relativePath.startsWith('/code/') ||
-                file.relativePath.startsWith('/derivatives/') ||
-                file.relativePath.startsWith('/sourcedata/')
-            ) {cb();}
+            if (utils.type.isAssociatedData(file.relativePath)) {cb();}
 
             // validate path naming
             else if (!utils.type.isBIDS(file.relativePath)) {
@@ -203,13 +199,8 @@ var BIDS = {
                 summary.size += file.stats.size;
             }
 
-             // ignore associated data
-            if (
-                !file.relativePath.startsWith('/code/') &&
-                !file.relativePath.startsWith('/derivatives/') &&
-                !file.relativePath.startsWith('/sourcedata/')
-            ) {
-                // collect sessions subjects
+            // collect sessions subjects
+            if (!utils.type.isAssociatedData(file.relativePath)) {
                 var checks = {'ses':  'sessions', 'sub':  'subjects'};
                 for (var checkKey in checks) {
                     if (path && path.indexOf(checkKey + '-') > -1) {
