@@ -203,15 +203,22 @@ var BIDS = {
                 summary.size += file.stats.size;
             }
 
-            // collect sessions subjects
-            var checks = {'ses':  'sessions', 'sub':  'subjects'};
-            for (var checkKey in checks) {
-                if (path && path.indexOf(checkKey + '-') > -1) {
-                    var item = path.slice(path.indexOf(checkKey + '-'));
-                        item = item.slice(0, item.indexOf('/'));
-                        if (item.indexOf('_') > -1) {item = item.slice(0, item.indexOf('_'));}
-                        item = item.slice(checkKey.length + 1);
-                    if (summary[checks[checkKey]].indexOf(item) === -1) {summary[checks[checkKey]].push(item);}
+             // ignore associated data
+            if (
+                !file.relativePath.startsWith('/code/') &&
+                !file.relativePath.startsWith('/derivatives/') &&
+                !file.relativePath.startsWith('/sourcedata/')
+            ) {
+                // collect sessions subjects
+                var checks = {'ses':  'sessions', 'sub':  'subjects'};
+                for (var checkKey in checks) {
+                    if (path && path.indexOf(checkKey + '-') > -1) {
+                        var item = path.slice(path.indexOf(checkKey + '-'));
+                            item = item.slice(0, item.indexOf('/'));
+                            if (item.indexOf('_') > -1) {item = item.slice(0, item.indexOf('_'));}
+                            item = item.slice(checkKey.length + 1);
+                        if (summary[checks[checkKey]].indexOf(item) === -1) {summary[checks[checkKey]].push(item);}
+                    }
                 }
             }
 
