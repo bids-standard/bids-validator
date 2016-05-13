@@ -215,7 +215,13 @@ var BIDS = {
             if (typeof window !== 'undefined') {
                 if (file.size) {summary.size += file.size;}
             } else {
-                if (!file.stats) {file.stats = fs.lstatSync(file.path);}
+                if (!file.stats) {
+                    try {
+                        file.stats = fs.statSync(file.path);
+                    } catch (err) {
+                        file.stats = {size: 0};
+                    }
+                }
                 summary.size += file.stats.size;
             }
 
