@@ -18,17 +18,16 @@ module.exports = {
      */
     isBIDS: function(path) {
         return (
-            this.isTopLevel(path)          ||
-            this.isCodeOrDerivatives(path) ||
-            this.isSessionLevel(path)      ||
-            this.isSubjectLevel(path)      ||
-            this.isAnat(path)              ||
-            this.isDWI(path)               ||
-            this.isFunc(path)              ||
-            this.isBehavioral(path)        ||
-            this.isCont(path)              ||
-            this.isFieldMap(path)          ||
-            this.isVersionControl(path)
+            this.isTopLevel(path)       ||
+            this.isAssociatedData(path) ||
+            this.isSessionLevel(path)   ||
+            this.isSubjectLevel(path)   ||
+            this.isAnat(path)           ||
+            this.isDWI(path)            ||
+            this.isFunc(path)           ||
+            this.isBehavioral(path)     ||
+            this.isCont(path)           ||
+            this.isFieldMap(path)
         );
     },
 
@@ -55,16 +54,10 @@ module.exports = {
         anatTopRe.test(path) || multiDirFieldmapRe.test(path));
     },
 
-    isCodeOrDerivatives: function(path) {
-        var codeOrDerivatives = new RegExp('^\\/(?:code|derivatives)\\/(?:.*)$');
-        return codeOrDerivatives.test(path);
+    isAssociatedData: function(path) {
+        var associatedData = new RegExp('^\\/(?:code|derivatives|sourcedata|[.]git)\\/(?:.*)$');
+        return associatedData.test(path);
     },
-
-    isVersionControl: function(path) {
-        var codeOrDerivatives = new RegExp('^\\/(?:[.]git)\\/(?:.*)$');
-        return codeOrDerivatives.test(path);
-    },
-
 
     /**
      * Check if the file has appropriate name for a session level

@@ -57,9 +57,7 @@ var BIDS = {
                 var path = utils.files.relativePath(file);
                 if (path) {
                     path = path.split('/');
-                    if (path[1] === 'derivatives') {continue;}
                     path = path.reverse();
-
                     if (
                         path[0].includes('.nii') &&
                         (
@@ -111,28 +109,11 @@ var BIDS = {
             var path = utils.files.relativePath(file);
             file.relativePath = path;
 
-            // collect file stats
-            if (typeof window !== 'undefined') {
-                if (file.size) {summary.size += file.size;}
-            } else {
-                if (!file.stats) {file.stats = fs.lstatSync(file.path);}
-                summary.size += file.stats.size;
-            }
-
-            // collect sessions subjects
-            var checks = {'ses':  'sessions', 'sub':  'subjects'};
-            for (var checkKey in checks) {
-                if (path && path.indexOf(checkKey + '-') > -1) {
-                    var item = path.slice(path.indexOf(checkKey + '-'));
-                        item = item.slice(0, item.indexOf('/'));
-                        if (item.indexOf('_') > -1) {item = item.slice(0, item.indexOf('_'));}
-                        item = item.slice(checkKey.length + 1);
-                    if (summary[checks[checkKey]].indexOf(item) === -1) {summary[checks[checkKey]].push(item);}
-                }
-            }
+            // ignore associated data
+            if (utils.type.isAssociatedData(file.relativePath)) {cb();}
 
             // validate path naming
-            if (!utils.type.isBIDS(file.relativePath)) {
+            else if (!utils.type.isBIDS(file.relativePath)) {
                 self.issues.push(new utils.Issue({
                     file: file,
                     evidence: file.name,
@@ -208,6 +189,28 @@ var BIDS = {
                 });
             } else {
                 cb();
+            }
+
+            // collect file stats
+            if (typeof window !== 'undefined') {
+                if (file.size) {summary.size += file.size;}
+            } else {
+                if (!file.stats) {file.stats = fs.lstatSync(file.path);}
+                summary.size += file.stats.size;
+            }
+
+            // collect sessions subjects
+            if (!utils.type.isAssociatedData(file.relativePath)) {
+                var checks = {'ses':  'sessions', 'sub':  'subjects'};
+                for (var checkKey in checks) {
+                    if (path && path.indexOf(checkKey + '-') > -1) {
+                        var item = path.slice(path.indexOf(checkKey + '-'));
+                            item = item.slice(0, item.indexOf('/'));
+                            if (item.indexOf('_') > -1) {item = item.slice(0, item.indexOf('_'));}
+                            item = item.slice(checkKey.length + 1);
+                        if (summary[checks[checkKey]].indexOf(item) === -1) {summary[checks[checkKey]].push(item);}
+                    }
+                }
             }
 
         }, function () {
