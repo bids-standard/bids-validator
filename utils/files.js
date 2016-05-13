@@ -250,19 +250,24 @@ function relativePath (file) {
  * or null and stats if it is.
  */
 function testFile (file, callback) {
-    fs.lstat(file.path, function (statErr, stats) {
-        fs.access(file.path, function (accessErr) {
-            if (!accessErr) {
-                callback(null, stats);
-                return;
-            } else {
-                if (stats.isSymbolicLink()) {
+    fs.stat(file.path, function (statErr, stats) {
+        if (statErr) {
+            fs.lstat(file.path, function (lstatErr, lstats) {
+                if (lstats.isSymbolicLink()) {
                     callback(new Issue({code: 43, file: file}), stats);
                 } else {
                     callback(new Issue({code: 44, file: file}), stats);
                 }
-            }
-        });
+            });
+        } else {
+            fs.access(file.path, function (accessErr) {
+                if (!accessErr) {
+                    callback(null, stats);
+                } else {
+                    callback(new Issue({code: 44, file: file}), stats);
+                }
+            });
+        }
     });
 }
 
