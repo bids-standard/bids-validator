@@ -138,7 +138,12 @@ var BIDS = {
 
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {
-                utils.files.readFile(file, function (contents) {
+                utils.files.readFile(file, function (issue, contents) {
+                    if (issue) {
+                        self.issues.push(issue);
+                        cb();
+                        return;
+                    }
                     var isEvents = file.name.endsWith('_events.tsv');
                     if (isEvents) {events.push(file.relativePath);}
                     TSV(file, contents, isEvents, function (issues) {
@@ -150,7 +155,12 @@ var BIDS = {
 
             // validate bvec
             else if (file.name && file.name.endsWith('.bvec')) {
-                utils.files.readFile(file, function (contents) {
+                utils.files.readFile(file, function (issue, contents) {
+                    if (issue) {
+                        self.issues.push(issue);
+                        cb();
+                        return;
+                    }
                     bContentsDict[file.relativePath] = contents;
                     bvec(file, contents, function (issues) {
                         self.issues = self.issues.concat(issues);
@@ -161,7 +171,12 @@ var BIDS = {
 
             // validate bval
             else if (file.name && file.name.endsWith('.bval')) {
-                utils.files.readFile(file, function (contents) {
+                utils.files.readFile(file, function (issue, contents) {
+                    if (issue) {
+                        self.issues.push(issue);
+                        cb();
+                        return;
+                    }
                     bContentsDict[file.relativePath] = contents;
                     bval(file, contents, function (issues) {
                         self.issues = self.issues.concat(issues);
@@ -172,7 +187,12 @@ var BIDS = {
 
             // validate json
             else if (file.name && file.name.endsWith('.json')) {
-                utils.files.readFile(file, function (contents) {
+                utils.files.readFile(file, function (issue, contents) {
+                    if (issue) {
+                        self.issues.push(issue);
+                        cb();
+                        return;
+                    }
                     json(file, contents, function (issues, jsObj) {
                         self.issues = self.issues.concat(issues);
                         jsonContentsDict[file.relativePath] = jsObj;
@@ -195,7 +215,13 @@ var BIDS = {
             if (typeof window !== 'undefined') {
                 if (file.size) {summary.size += file.size;}
             } else {
-                if (!file.stats) {file.stats = fs.lstatSync(file.path);}
+                if (!file.stats) {
+                    try {
+                        file.stats = fs.statSync(file.path);
+                    } catch (err) {
+                        file.stats = {size: 0};
+                    }
+                }
                 summary.size += file.stats.size;
             }
 
