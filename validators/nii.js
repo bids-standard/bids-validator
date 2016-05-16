@@ -148,18 +148,11 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             }
         }
         else if (path.includes("_phasediff.nii")){
-            if (!mergedDictionary.hasOwnProperty('EchoTime1')) {
+            if (!mergedDictionary.hasOwnProperty('EchoTime1') || !mergedDictionary.hasOwnProperty('EchoTime2')) {
                 issues.push(new Issue({
                     file: file,
                     code: 15,
-                    reason: "You have to define 'EchoTime1' for this file. " + sidecarMessage
-                }));
-            }
-            if (!mergedDictionary.hasOwnProperty('EchoTime2')) {
-                issues.push(new Issue({
-                    file: file,
-                    code: 15,
-                    reason: "You have to define 'EchoTime2' for this file. " + sidecarMessage
+                    reason: "You have to define 'EchoTime1' and 'EchoTime2' for this file. " + sidecarMessage
                 }));
             }
         } else if (path.includes("_phase1.nii") || path.includes("_phase2.nii")){
