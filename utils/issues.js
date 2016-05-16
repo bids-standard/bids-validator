@@ -60,7 +60,7 @@ module.exports = {
     },
     15: {
         severity: 'error',
-        reason:   "You have to define 'EchoTime1' and/or 'EchoTime2' for this file."
+        reason:   "You have to define 'EchoTime1' and 'EchoTime2' for this file."
     },
     16: {
         severity: 'error',
