@@ -70,7 +70,7 @@ var headerField = function headerField(headers, field) {
 
         if (field === 'dim') {
             if ((typeof header[field]) === 'undefined' || header[field] === null || header[field].length < header[field][0]) {
-                issues[nifti_file.relativePath] = new utils.Issue({
+                issues[file.relativePath] = new utils.Issue({
                         file: file,
                         code: 40
                 });
@@ -79,14 +79,14 @@ var headerField = function headerField(headers, field) {
             field_value = header[field].slice(1, header[field][0]+1).toString();
         } else if (field === 'pixdim') {
             if ((typeof header['xyzt_units']) === 'undefined' || header['xyzt_units'] === null || header['xyzt_units'].length < 4) {
-                issues[nifti_file.relativePath] = new utils.Issue({
+                issues[file.relativePath] = new utils.Issue({
                         file: file,
                         code: 41
                 });
                 badField = true;
             } 
             if ((typeof header['pixdim']) === 'undefined' || header['pixdim'] === null || header['pixdim'].length < 4) {
-                issues[nifti_file.relativePath] = new utils.Issue({
+                issues[file.relativePath] = new utils.Issue({
                         file: file,
                         code: 42
                 });
