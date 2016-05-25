@@ -24,7 +24,7 @@ module.exports = function (dir, options) {
         });
     } else {
         console.log(colors.red(dir + " does not exist"));
-        process.exit(1);
+        process.exit(2);
     }
 };
 
