@@ -20,9 +20,11 @@ module.exports = function (dir, options) {
                 console.log(colors.green("This dataset appears to be BIDS compatible."));
             }
             logSummary(summary);
+            if (errors.length >= 1) {process.exit(1);}
         });
     } else {
         console.log(colors.red(dir + " does not exist"));
+        process.exit(2);
     }
 };
 
