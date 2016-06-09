@@ -178,5 +178,9 @@ module.exports = {
     44: {
         severity: 'error',
         reason: "We were unable to read this file. Make sure it is not corrupted, incorectly named or incorectly symlinked."
+    },
+    45: {
+        severity: 'error',
+        reason: "There are no subject folders (labeled \"sub-*\") in the root of this dataset."
     }
 };

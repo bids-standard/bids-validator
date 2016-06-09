@@ -93,7 +93,8 @@ var BIDS = {
             bContentsDict    = {},
             events           = [],
             niftis           = [],
-            headers          = [];
+            headers          = [],
+            hasSubjectDir    = false;
 
         var summary = {
             sessions: [],
@@ -108,6 +109,9 @@ var BIDS = {
         async.forEachOf(fileList, function (file, key, cb) {
             var path = utils.files.relativePath(file);
             file.relativePath = path;
+
+            // check for subject directory presence
+            if (path.startsWith('/sub-')) {hasSubjectDir = true;}
 
             // ignore associated data
             if (utils.type.isAssociatedData(file.relativePath)) {cb();}
@@ -262,13 +266,14 @@ var BIDS = {
                     });
                 }
 
-            }, function(){
+            }, function () {
+                if (!hasSubjectDir) {self.issues.push(new utils.Issue({code: 45}));}
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 var issues  = self.formatIssues(self.issues);
                 summary.modalities = self.groupModalities(summary.modalities);
                 //remove fieldmap related warnings if no fieldmaps are present
-                if(summary.modalities.indexOf("fieldmap") < 0) {
+                if (summary.modalities.indexOf("fieldmap") < 0) {
                     var filteredWarnings = [];
                     var fieldmapRelatedCodes = ["6", "7", "8", "9"];
                     for (var i in issues.warnings) {
@@ -290,7 +295,11 @@ var BIDS = {
         var errors = [], warnings = [];
 
         // sort alphabetically by relative path of files
-        this.issues.sort(function(a,b) {return (a.file.relativePath > b.file.relativePath) ? 1 : ((b.file.relativePath > a.file.relativePath) ? -1 : 0);} );
+        this.issues.sort(function (a,b) {
+            var aPath = a.file ? a.file.relativePath : '';
+            var bPath = b.file ? b.file.relativePath : '';
+            return (aPath > bPath) ? 1 : ((bPath > aPath) ? -1 : 0);
+        });
 
         // organize by issue code
         var categorized = {};
