@@ -174,6 +174,10 @@ module.exports = {
             '(?:_recording-[a-zA-Z0-9]+)?'
             + '(?:_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
         return conditionalMatch(contRe, path);
+    },
+
+    isNumber: function(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
     }
 
 };
