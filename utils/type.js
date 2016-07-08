@@ -36,10 +36,10 @@ module.exports = {
      */
     isTopLevel: function(path) {
         var fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv",
-            "/phasediff.json", "/phase1.json", "/phase2.json" ,"/fieldmap.json"];
+            "participants.json", "/phasediff.json", "/phase1.json", "/phase2.json" ,"/fieldmap.json"];
 
         var funcTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(_bold.json|_events.tsv|_physio.json|_stim.json)$');
+            + '(_bold.json|_events.json|_events.tsv|_physio.json|_stim.json)$');
 
         var anatTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+_)?'
             + '(' + anatSuffixes.join("|") + ').json$');
@@ -65,12 +65,12 @@ module.exports = {
     isSessionLevel: function(path) {
         var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
-            '\\/)?\\1(_\\2)?_scans.tsv$');
+            '\\/)?\\1(_\\2)?(_scans.tsv|_scans.json)$');
 
         var funcSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(_bold.json|_events.tsv|_physio.json|_stim.json)$');
+            + '(_bold.json|_events.json|_events.tsv|_physio.json|_stim.json)$');
 
         var anatSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
@@ -91,7 +91,7 @@ module.exports = {
      */
     isSubjectLevel: function(path) {
         var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/\\1_sessions.tsv$');
+            '\\/\\1(_sessions.tsv|_sessions.json)$');
         return scansRe.test(path);
     },
 
@@ -144,7 +144,7 @@ module.exports = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?func' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(?:_bold.nii.gz|_bold.nii|_bold.json|_sbref.nii.gz|_sbref.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
+            + '(?:_bold.nii.gz|_bold.nii|_bold.json|_sbref.nii.gz|_sbref.json|_events.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
         return conditionalMatch(funcRe, path);
     },
 
@@ -153,7 +153,7 @@ module.exports = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?beh' +
             '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(?:_beh.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
+            + '(?:_beh.json|_events.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$');
         return conditionalMatch(funcBeh, path);
     },
 
