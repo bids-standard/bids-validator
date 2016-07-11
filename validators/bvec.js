@@ -25,12 +25,16 @@ module.exports = function bvec (file, contents, callback) {
     for (var i = 0; i < rows.length; i++) {
         var row = rows[i].replace(/^\s+|\s+$/g, '').split(' ');
         if (!rowLength) {rowLength = row.length;}
+
+        // check for consistent row length
         if (rowLength !== row.length) {
             issues.push(new Issue({
                 code: 46,
                 file: file
             }));
         }
+
+        // check for proper separator and value type
         for (var j = 0; j < row.length; j++) {
             var value = row[j];
             if (!type.isNumber(value)) {

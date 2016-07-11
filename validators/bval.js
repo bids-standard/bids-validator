@@ -20,6 +20,7 @@ module.exports = function bval (file, contents, callback) {
         }));
     }
 
+    // check for proper separator and value type
     var row = contents.replace(/^\s+|\s+$/g, '').split(' ');
     var invalidValue = false;
     for (var j = 0; j < row.length; j++) {
