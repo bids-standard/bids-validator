@@ -22,6 +22,13 @@ describe('bvec', function(){
         });
 	});
 
+    it('should not allow rows of inconsistent length', function () {
+        bvec = '0 4 3 6 1 6 4\n 4 3 4 2 4 5\n 4 3 5 2 4 2 4 5';
+        validate.bvec({}, bvec, function (issues) {
+            assert(issues.length == 1 && issues[0].code == 46);
+        });
+    });
+
     it('should catch doublespace separators', function () {
         var bvec = '4  6  2  5\n3  2  3  5\n6  4  3  5';
         validate.bvec({}, bvec, function (issues) {
