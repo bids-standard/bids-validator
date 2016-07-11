@@ -21,18 +21,13 @@ module.exports = function bvec (file, contents, callback) {
     }
 
     var rows = contents.replace(/^\s+|\s+$/g, '').split('\n');
-    var rowLength, invalidValue = false;
+    var inconsistentRows, rowLength, invalidValue = false;
     for (var i = 0; i < rows.length; i++) {
         var row = rows[i].replace(/^\s+|\s+$/g, '').split(' ');
         if (!rowLength) {rowLength = row.length;}
 
         // check for consistent row length
-        if (rowLength !== row.length) {
-            issues.push(new Issue({
-                code: 46,
-                file: file
-            }));
-        }
+        if (rowLength !== row.length) {inconsistentRows = true;}
 
         // check for proper separator and value type
         for (var j = 0; j < row.length; j++) {
@@ -41,6 +36,12 @@ module.exports = function bvec (file, contents, callback) {
                 invalidValue = true;
             }
         }
+    }
+    if (inconsistentRows) {
+        issues.push(new Issue({
+            code: 46,
+            file: file
+        }));
     }
     if (invalidValue) {
         issues.push(new Issue({
