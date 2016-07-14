@@ -182,5 +182,13 @@ module.exports = {
     45: {
         severity: 'error',
         reason: "There are no subject folders (labeled \"sub-*\") in the root of this dataset."
+    },
+    46: {
+        severity: 'error',
+        reason: "Each row in a .bvec file should contain the same number of values."
+    },
+    47: {
+        severity: 'error',
+        reason: ".bval and .bvec files must be single space delimited and contain only numerical values."
     }
 };
