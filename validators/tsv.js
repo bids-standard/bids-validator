@@ -72,7 +72,7 @@ module.exports = function TSV (file, contents, callback) {
 // specific file checks -----------------------------------------------------
 
     // events.tsv
-    if (file.name === 'events.tsv') {
+    if (file.name.endsWith('_events.tsv')) {
         if (headers[0] !== "onset"){
             issues.push(new Issue({
                 file: file,

@@ -6,7 +6,7 @@ describe('TSV', function(){
 // general tsv checks ------------------------------------------------------------------
 
     var file = {
-        name: 'sub-08_ses-test_task-linebisection_events.tsv',
+        name: 'sub-08_ses-test_task-­nback_physio.tsv.gz',
         relativePath: '/sub-08/ses-test/func/sub-08_ses-test_task-linebisection_events.tsv'
     };
 
@@ -37,8 +37,8 @@ describe('TSV', function(){
 // events checks -----------------------------------------------------------------------
 
     var eventsFile = {
-        name: 'events.tsv',
-        relativePath: '/events.tsv'
+        name: 'sub-08_ses-test_task-linebisection_events.tsv',
+        relativePath: '/sub-08/ses-test/func/sub-08_ses-test_task-linebisection_events.tsv'
     };
 
     it('should require events files to have "onset" as first header', function () {
