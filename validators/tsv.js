@@ -98,7 +98,8 @@ module.exports = function TSV (file, contents, callback) {
         if (headers.indexOf('participant_id') === -1) {
             issues.push(new Issue({
                 file: file,
-                evidence: headers,
+                evidence: headers.join('\t'),
+                line: 1,
                 code: 48
             }));
         }
