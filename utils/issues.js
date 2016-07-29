@@ -193,6 +193,6 @@ module.exports = {
     },
     48: {
         severity: 'error',
-        reason:   "A participants file must have a 'participant_id' column"
+        reason:   "A participants file must have a 'participant_id' column."
     }
 };
