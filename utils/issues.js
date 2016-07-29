@@ -194,5 +194,9 @@ module.exports = {
     48: {
         severity: 'error',
         reason:   "A participants file must have a 'participant_id' column."
+    },
+    49: {
+        severity: 'error',
+        reason:   "Subjects found in this dataset did not match the participant_ids found in the participants.tsv file."
     }
 };

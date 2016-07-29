@@ -94,6 +94,7 @@ var BIDS = {
             events           = [],
             niftis           = [],
             headers          = [],
+            participants     = null,
             hasSubjectDir    = false;
 
         var summary = {
@@ -149,7 +150,13 @@ var BIDS = {
                         return;
                     }
                     if (file.name.endsWith('_events.tsv')) {events.push(file.relativePath);}
-                    TSV(file, contents, function (issues) {
+                    TSV(file, contents, function (issues, participantList) {
+                        if (participantList) {
+                            participants = {
+                                list: participantList,
+                                file: file
+                            };
+                        }
                         self.issues = self.issues.concat(issues);
                         cb();
                     });
@@ -267,6 +274,13 @@ var BIDS = {
 
             }, function () {
                 if (!hasSubjectDir) {self.issues.push(new utils.Issue({code: 45}));}
+                // check if participants file match found subjects
+                if (participants && !utils.array.equals(summary.subjects, participants.list, true)) {
+                    self.issues.push(new utils.Issue({
+                        code: 49,
+                        file: participants.file
+                    }));
+                }
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 var issues  = self.formatIssues(self.issues);

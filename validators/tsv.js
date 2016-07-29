@@ -94,15 +94,26 @@ module.exports = function TSV (file, contents, callback) {
     }
 
     // participants.tsv
+    var participants = null;
     if (file.name === 'participants.tsv') {
-        if (headers.indexOf('participant_id') === -1) {
+        var participantIdColumn = headers.indexOf('participant_id');
+        if (participantIdColumn === -1) {
             issues.push(new Issue({
                 file: file,
                 evidence: headers,
                 code: 48
             }));
+        } else {
+            participants = [];
+            for (var i = 1; i < rows.length; i++) {
+                var row = rows[i].split('\t');
+                // skip empty rows
+                if (!row || /^\s*$/.test(row)) {continue;}
+                participants.push(row[participantIdColumn].replace('sub-', ''));
+            }
         }
+
     }
 
-    callback(issues);
+    callback(issues, participants);
 };
