@@ -10,5 +10,5 @@ module.exports = {
 	files:  files,
 	Issue:  Issue,
 	issues: issues,
-	type:   type,
+	type:   type
 };

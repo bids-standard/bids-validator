@@ -106,8 +106,8 @@ module.exports = function TSV (file, contents, callback) {
             }));
         } else {
             participants = [];
-            for (var i = 1; i < rows.length; i++) {
-                var row = rows[i].split('\t');
+            for (var k = 1; k < rows.length; k++) {
+                row = rows[k].split('\t');
                 // skip empty rows
                 if (!row || /^\s*$/.test(row)) {continue;}
                 participants.push(row[participantIdColumn].replace('sub-', ''));
