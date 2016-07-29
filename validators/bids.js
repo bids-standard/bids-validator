@@ -148,9 +148,8 @@ var BIDS = {
                         cb();
                         return;
                     }
-                    var isEvents = file.name.endsWith('_events.tsv');
-                    if (isEvents) {events.push(file.relativePath);}
-                    TSV(file, contents, isEvents, function (issues) {
+                    if (file.name.endsWith('_events.tsv')) {events.push(file.relativePath);}
+                    TSV(file, contents, function (issues) {
                         self.issues = self.issues.concat(issues);
                         cb();
                     });
