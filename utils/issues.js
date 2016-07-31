@@ -190,5 +190,13 @@ module.exports = {
     47: {
         severity: 'error',
         reason: ".bval and .bvec files must be single space delimited and contain only numerical values."
+    },
+    48: {
+        severity: 'error',
+        reason:   "A participants file must have a 'participant_id' column."
+    },
+    49: {
+        severity: 'error',
+        reason:   "Subjects found in this dataset did not match the participant_ids found in the participants.tsv file."
     }
 };
