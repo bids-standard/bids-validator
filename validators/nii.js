@@ -77,6 +77,19 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
     }
 
     if (!mergedDictionary.invalid) {
+
+        // task scan checks
+        if (path.includes('_task-')) {
+            if (!mergedDictionary.hasOwnProperty('TaskName')) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 50,
+                    reason: "You have to define 'TotalReadoutTime' for this file. " + sidecarMessage
+                }));
+            }
+        }
+
+        // field map checks
         if (path.includes("_bold.nii") || path.includes("_sbref.nii") || path.includes("_dwi.nii")) {
             if (!mergedDictionary.hasOwnProperty('EchoTime')) {
                 issues.push(new Issue({
