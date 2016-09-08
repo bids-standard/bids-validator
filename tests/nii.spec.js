@@ -15,7 +15,8 @@ describe('NIFTI', function(){
             SliceTiming: 3,
             SliceEncodingDirection: 4,
             RepetitionTime: 1,
-            TotalReadoutTime: 3
+            TotalReadoutTime: 3,
+            TaskName: 'Mixed Event Related Probe'
         }
     };
     var events = [
@@ -25,7 +26,7 @@ describe('NIFTI', function(){
 
     it('should warn user about misisng events file', function() {
         validate.NIFTI(null, file, jsonContentsDict, {}, [], events, function (issues) {
-            assert(issues.length = 1);
+            assert(issues.length = 1 && issues[0].code == 25);
         });
     });
 
@@ -66,6 +67,13 @@ describe('NIFTI', function(){
         };
         validate.NIFTI(null, file, jsonContentsDict, {}, [], [], function (issues) {
             assert(issues.length == 2 && issues[0].code == 32 && issues[1].code == 33);
+        });
+    });
+
+    it('should catch missing task name definitions on task scans', function() {
+        delete jsonContentsDict['/sub-15/func/sub-15_task-mixedeventrelatedproberest_run-01_bold.json'].TaskName;
+        validate.NIFTI(null, file, jsonContentsDict, {}, [], events, function (issues) {
+            assert(issues.length = 1 && issues[0].code == 50);
         });
     });
 
