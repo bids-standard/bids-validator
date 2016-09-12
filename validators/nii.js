@@ -84,7 +84,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                 issues.push(new Issue({
                     file: file,
                     code: 50,
-                    reason: "You have to define 'TotalReadoutTime' for this file. " + sidecarMessage
+                    reason: "You have to define 'TaskName' for this file. " + sidecarMessage
                 }));
             }
         }
