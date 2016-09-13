@@ -198,5 +198,9 @@ module.exports = {
     49: {
         severity: 'error',
         reason:   "Subjects found in this dataset did not match the participant_ids found in the participants.tsv file."
+    },
+    50: {
+        severity: 'error',
+        reason: "You have to define 'TaskName' for this file."
     }
 };
