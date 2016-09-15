@@ -95,9 +95,9 @@ function readDir (dir, callback) {
 function getFiles (dir, files_){
     files_ = files_ || [];
     var files = fs.readdirSync(dir);
-    for (var i in files){
+    for (var i = 0; i < files.length; i++) {
         var name = dir + '/' + files[i];
-        if (fs.lstatSync(name).isDirectory()){
+        if (fs.lstatSync(name).isDirectory()) {
             getFiles(name, files_);
         } else {
             files_.push(name);

@@ -17,8 +17,9 @@ var headerFields = function headerFields(headers) {
     var fields = ['dim', 'pixdim'];
 
     /* turn a list of dicts into a dict of lists */
-    for (var field in fields){
-        var issues = headerField(headers, fields[field]);
+    for (var i = 0; i < fields.length; i++) {
+        var field = fields[i];
+        var issues = headerField(headers, field);
         for (var file in issues) {
             if (issues[file].code == 39) {
                 if (allIssues39Dict.hasOwnProperty(file)) {
@@ -58,7 +59,7 @@ var headerFields = function headerFields(headers) {
 var headerField = function headerField(headers, field) {
     var nifti_types = {};
     var issues = {};
-    for (var header_index in headers) {
+    for (var header_index = 0; header_index < headers.length; header_index++) {
         var badField = false;
         var field_value;
         var file = headers[header_index][0];
@@ -129,7 +130,7 @@ var headerField = function headerField(headers, field) {
         if (match !== null) {
             filename = filename.replace(match[0], '<run>');
         }
-        
+
         if (!nifti_types.hasOwnProperty(filename)) {
             nifti_types[filename] = {};
             nifti_types[filename][field_value] = {'count': 1, 'files': [file]};
@@ -154,7 +155,7 @@ var headerField = function headerField(headers, field) {
         for (field_value_key in nifti_type) {
             field_value = nifti_type[field_value_key];
             if (max_field_value !== field_value_key && headerFieldCompare(max_field_value, field_value_key)) {
-                for (var nifti_file_index in field_value.files) {
+                for (var nifti_file_index = 0; nifti_file_index < field_value.files.length; nifti_file_index++) {
                     var nifti_file = field_value.files[nifti_file_index];
                     var evidence;
                     if (field === 'dim') {

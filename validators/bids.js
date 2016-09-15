@@ -289,7 +289,7 @@ var BIDS = {
                 if (summary.modalities.indexOf("fieldmap") < 0) {
                     var filteredWarnings = [];
                     var fieldmapRelatedCodes = ["6", "7", "8", "9"];
-                    for (var i in issues.warnings) {
+                    for (var i = 0; i < issues.warnings.length; i++) {
                         if (fieldmapRelatedCodes.indexOf(issues.warnings[i].code) < 0) {
                             filteredWarnings.push(issues.warnings[i]);
                         }
@@ -375,7 +375,7 @@ var BIDS = {
             [['epi'], "fieldmap"]
         ];
 
-        for (var groupTouple_i in modalityGroups) {
+        for (var groupTouple_i = 0; groupTouple_i < modalityGroups.length; groupTouple_i++) {
             var groupSet = modalityGroups[groupTouple_i][0];
             var groupName = modalityGroups[groupTouple_i][1];
             var match = true;
