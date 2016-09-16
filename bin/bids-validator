@@ -4,6 +4,10 @@ process.title = 'bids-validator';
 
 var argv = require('yargs')
     .usage('Usage: $0 <dataset_directory> [options]')
+    .help('h')
+    .alias('h', 'help')
+    .version(require('../package.json').version)
+    .alias('version', 'v')
     .demand(1, 1)
     .boolean('ignoreWarnings')
     .describe('ignoreWarnings', 'disregard non-critical issues')
