@@ -8,7 +8,7 @@ var utils  = require('../utils');
  * files from the set.
  */
 var session = function missingSessionFiles(fileList) {
-    var subjects = [];
+    var subjects = {};
     var issues = [];
     for (var key in fileList) {
         var file = fileList[key];
@@ -43,6 +43,7 @@ var session = function missingSessionFiles(fileList) {
     }
 
     var subject_files = [];
+
     for (var subjKey in subjects) {
         subject = subjects[subjKey];
         for (var i = 0; i < subject.length; i++) {
@@ -53,9 +54,10 @@ var session = function missingSessionFiles(fileList) {
         }
     }
 
-    subjects.sort();
-    for (subject in subjects) {
-        for (var set_file in subject_files) {
+    var subjectKeys = Object.keys(subjects).sort();
+    for (var j = 0; j < subjectKeys.length; j++) {
+        subject = subjectKeys[j];
+        for (var set_file = 0; set_file < subject_files.length; set_file++) {
             if (subjects[subject].indexOf(subject_files[set_file]) === -1) {
                 var fileThatsMissing = '/' + subject + subject_files[set_file].replace('<sub>', subject);
                 issues.push(new utils.Issue({
