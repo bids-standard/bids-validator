@@ -173,7 +173,7 @@ module.exports = {
     },
     43: {
         severity: 'error',
-        reason: "This file appears to be an orphaned symlinked. Make sure it correctly points to its referent."
+        reason: "This file appears to be an orphaned symlink. Make sure it correctly points to its referent."
     },
     44: {
         severity: 'error',
