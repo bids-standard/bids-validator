@@ -17,10 +17,30 @@ module.exports = {
 	 */
 	Issue: Issue,
 
+    /**
+     * Filter Fieldmaps
+     *
+     * Remove fieldmap related warnings if no fieldmaps
+     * are present.
+     */
+    filterFieldMaps: function (warnings, summary) {
+        if (summary.modalities.indexOf("fieldmap") < 0) {
+            var filteredWarnings = [];
+            var fieldmapRelatedCodes = ["6", "7", "8", "9"];
+            for (var i = 0; i < warnings.length; i++) {
+                if (fieldmapRelatedCodes.indexOf(warnings[i].code) < 0) {
+                    filteredWarnings.push(warnings[i]);
+                }
+            }
+            warnings = filteredWarnings;
+        }
+        return warnings
+    },
+
 	/**
      * Format Issues
      */
-    format: function (issues, options) {
+    format: function (issues, summary, options) {
         var errors = [], warnings = [];
 
         // sort alphabetically by relative path of files
@@ -58,6 +78,8 @@ module.exports = {
             }
 
         }
+
+        warnings = this.filterFieldMaps(warnings, summary);
 
         return {errors: errors, warnings: warnings};
     }

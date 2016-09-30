@@ -284,20 +284,8 @@ var BIDS = {
                 }
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
-
-                var issues  = utils.issues.format(self.issues, self.options);
                 summary.modalities = utils.modalities.group(summary.modalities);
-                //remove fieldmap related warnings if no fieldmaps are present
-                if (summary.modalities.indexOf("fieldmap") < 0) {
-                    var filteredWarnings = [];
-                    var fieldmapRelatedCodes = ["6", "7", "8", "9"];
-                    for (var i = 0; i < issues.warnings.length; i++) {
-                        if (fieldmapRelatedCodes.indexOf(issues.warnings[i].code) < 0) {
-                            filteredWarnings.push(issues.warnings[i]);
-                        }
-                    }
-                    issues.warnings = filteredWarnings;
-                }
+                var issues = utils.issues.format(self.issues, summary, self.options);
                 callback(issues.errors, issues.warnings, summary);
             });
         });
