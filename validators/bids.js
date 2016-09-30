@@ -28,7 +28,7 @@ var BIDS = {
      */
     start: function (dir, options, callback) {
         var self = BIDS;
-        self.options = options ? self.parseOptions(options) : {};
+        self.options = utils.options.parse(options);
         BIDS.reset();
         utils.files.readDir(dir, function (files) {
             self.quickTest(files, function (couldBeBIDS) {
@@ -298,18 +298,8 @@ var BIDS = {
      */
     reset: function () {
         this.issues = [];
-    },
-
-    /**
-     * Parse Options
-     */
-    parseOptions: function (options) {
-        return {
-            ignoreWarnings:     options.ignoreWarnings     ? true : false,
-            ignoreNiftiHeaders: options.ignoreNiftiHeaders ? true : false,
-            verbose:            options.verbose            ? true : false
-        };
     }
+
 };
 
 module.exports = BIDS;
