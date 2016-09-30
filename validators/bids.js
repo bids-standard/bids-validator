@@ -1,6 +1,7 @@
 var async  = require('async');
 var fs     = require('fs');
 var utils  = require('../utils');
+var Issue  = utils.issues.Issue;
 
 var TSV    = require('./tsv');
 var json   = require('./json');
@@ -119,7 +120,7 @@ var BIDS = {
 
             // validate path naming
             else if (!utils.type.isBIDS(file.relativePath)) {
-                self.issues.push(new utils.Issue({
+                self.issues.push(new Issue({
                     file: file,
                     evidence: file.name,
                     code: 1
@@ -273,17 +274,18 @@ var BIDS = {
                 }
 
             }, function () {
-                if (!hasSubjectDir) {self.issues.push(new utils.Issue({code: 45}));}
+                if (!hasSubjectDir) {self.issues.push(new Issue({code: 45}));}
                 // check if participants file match found subjects
                 if (participants && !utils.array.equals(summary.subjects, participants.list, true)) {
-                    self.issues.push(new utils.Issue({
+                    self.issues.push(new Issue({
                         code: 49,
                         file: participants.file
                     }));
                 }
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
-                var issues  = self.formatIssues(self.issues);
+
+                var issues  = utils.issues.format(self.issues, self.options);
                 summary.modalities = self.groupModalities(summary.modalities);
                 //remove fieldmap related warnings if no fieldmaps are present
                 if (summary.modalities.indexOf("fieldmap") < 0) {
@@ -299,51 +301,6 @@ var BIDS = {
                 callback(issues.errors, issues.warnings, summary);
             });
         });
-    },
-
-    /**
-     * Format Issues
-     */
-    formatIssues: function () {
-        var errors = [], warnings = [];
-
-        // sort alphabetically by relative path of files
-        this.issues.sort(function (a,b) {
-            var aPath = a.file ? a.file.relativePath : '';
-            var bPath = b.file ? b.file.relativePath : '';
-            return (aPath > bPath) ? 1 : ((bPath > aPath) ? -1 : 0);
-        });
-
-        // organize by issue code
-        var categorized = {};
-        for (var i = 0; i < this.issues.length; i++) {
-            var issue = this.issues[i];
-            if (!categorized[issue.code]) {
-                categorized[issue.code] = utils.issues[issue.code];
-                categorized[issue.code].files = [];
-                categorized[issue.code].additionalFileCount = 0;
-            }
-            if (this.options.verbose || (categorized[issue.code].files.length < 10)) {
-                categorized[issue.code].files.push(issue);
-            } else {
-                categorized[issue.code].additionalFileCount++;
-            }
-        }
-
-        // organize by severity
-        for (var key in categorized) {
-            issue = categorized[key];
-            issue.code = key;
-
-            if (issue.severity === 'error') {
-                errors.push(issue);
-            } else if (issue.severity === 'warning' && !this.options.ignoreWarnings) {
-                warnings.push(issue);
-            }
-
-        }
-
-        return {errors: errors, warnings: warnings};
     },
 
     /**

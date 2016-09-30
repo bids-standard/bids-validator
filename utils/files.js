@@ -1,7 +1,7 @@
 // dependencies -------------------------------------------------------------------
 
 var nifti = require('nifti-js');
-var Issue = require('./issue');
+var Issue = require('./issues').Issue;
 
 /**
  * If the current environment is server side

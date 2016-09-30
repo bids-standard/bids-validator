@@ -1,4 +1,5 @@
-var utils  = require('../utils');
+var utils = require('../utils');
+var Issue = utils.issues.Issue;
 
 /**
  * dimensions and resolution
@@ -71,7 +72,7 @@ var headerField = function headerField(headers, field) {
 
         if (field === 'dim') {
             if ((typeof header[field]) === 'undefined' || header[field] === null || header[field].length < header[field][0]) {
-                issues[file.relativePath] = new utils.Issue({
+                issues[file.relativePath] = new Issue({
                         file: file,
                         code: 40
                 });
@@ -80,14 +81,14 @@ var headerField = function headerField(headers, field) {
             field_value = header[field].slice(1, header[field][0]+1).toString();
         } else if (field === 'pixdim') {
             if ((typeof header['xyzt_units']) === 'undefined' || header['xyzt_units'] === null || header['xyzt_units'].length < 4) {
-                issues[file.relativePath] = new utils.Issue({
+                issues[file.relativePath] = new Issue({
                         file: file,
                         code: 41
                 });
                 badField = true;
             } 
             if ((typeof header['pixdim']) === 'undefined' || header['pixdim'] === null || header['pixdim'].length < 4) {
-                issues[file.relativePath] = new utils.Issue({
+                issues[file.relativePath] = new Issue({
                         file: file,
                         code: 42
                 });
@@ -167,7 +168,7 @@ var headerField = function headerField(headers, field) {
                                   max_field_value.replace(/,/g, ' x ') + ", This file has the resolution: " +
                                   field_value_key.replace(/,/g, ' x ') + ".";
                     }
-                        issues[nifti_file.relativePath] = new utils.Issue({
+                        issues[nifti_file.relativePath] = new Issue({
                             file: nifti_file,
                             reason: evidence,
                             code: 39

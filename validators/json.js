@@ -1,5 +1,5 @@
 var JSHINT = require('jshint').JSHINT;
-var Issue = require('../utils').Issue;
+var Issue = require('../utils').issues.Issue;
 
 
 /**

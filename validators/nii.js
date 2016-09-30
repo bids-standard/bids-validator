@@ -1,6 +1,6 @@
 var async = require('async');
 var utils = require('../utils');
-var Issue = utils.Issue;
+var Issue = utils.issues.Issue;
 
 /**
  * NIFTI

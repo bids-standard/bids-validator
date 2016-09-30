@@ -1,4 +1,4 @@
-var issues = require('./issues');
+var issues = require('./list');
 
 /**
  * Issue
