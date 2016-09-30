@@ -3,35 +3,35 @@ var JSHINT = require('jshint').JSHINT;
 
 module.exports = {
 
-	/**
-	 * Parse
-	 *
-	 * Similar to native JSON.parse but uses
-	 * a callback structure, jshint for more
-	 * thorough error reporting and error formatting
-	 * of the rest of the validator.
-	 */
-	parse: function (file, contents, callback) {
-	    var jsObj = null;
-	    var err   = null;
-	    try {
-	        jsObj = JSON.parse(contents);
-	    }
-	    catch (exception) {
-	        err = exception;
-	    }
-	    finally {
-		    if (err) {
-		    	this.jshint(file, contents, (issues) => {
-		        	callback(issues, null);
-		        });
-		    } else {
-			    callback([], jsObj);
-		    }
-	    }
-	},
+    /**
+     * Parse
+     *
+     * Similar to native JSON.parse but uses
+     * a callback structure, jshint for more
+     * thorough error reporting and error formatting
+     * of the rest of the validator.
+     */
+    parse: function (file, contents, callback) {
+        var jsObj = null;
+        var err   = null;
+        try {
+            jsObj = JSON.parse(contents);
+        }
+        catch (exception) {
+            err = exception;
+        }
+        finally {
+            if (err) {
+                this.jshint(file, contents, function (issues) {
+                    callback(issues, null);
+                });
+            } else {
+                callback([], jsObj);
+            }
+        }
+    },
 
-	/**
+    /**
      * JSHint
      *
      * Checks known invalid JSON file
@@ -39,7 +39,7 @@ module.exports = {
      * verbose error message.
      */
     jshint: function (file, contents, callback) {
-    	var issues = [];
+        var issues = [];
         if (!JSHINT(contents)) {
             var out = JSHINT.data();
             for (var i = 0; out.errors.length > i; ++i) {
@@ -58,4 +58,4 @@ module.exports = {
         }
         callback(issues);
     }
-}
+};
