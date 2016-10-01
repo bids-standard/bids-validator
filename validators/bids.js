@@ -28,16 +28,22 @@ var BIDS = {
      */
     start: function (dir, options, callback) {
         var self = BIDS;
-        self.options = utils.options.parse(options);
-        BIDS.reset();
-        utils.files.readDir(dir, function (files) {
-            self.quickTest(files, function (couldBeBIDS) {
-                if (couldBeBIDS) {
-                    self.fullTest(files, callback);
-                } else {
-                    callback('Invalid');
-                }
-            });
+        utils.options.parse(options, function (issues, options) {
+            if (issues && issues.length > 0) {
+                // option parsing issues
+            } else {
+                self.options = options;
+                BIDS.reset();
+                utils.files.readDir(dir, function (files) {
+                    self.quickTest(files, function (couldBeBIDS) {
+                        if (couldBeBIDS) {
+                            self.fullTest(files, callback);
+                        } else {
+                            callback('Invalid');
+                        }
+                    });
+                });
+            }
         });
     },
 
