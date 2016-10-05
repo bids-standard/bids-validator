@@ -1,5 +1,6 @@
-var list  = require('./list');
-var Issue = require('./issue');
+var list      = require('./list');
+var Issue     = require('./issue');
+var config    = require('../config');
 
 module.exports = {
 
@@ -52,9 +53,16 @@ module.exports = {
 
         // organize by issue code
         var categorized = {};
+        var codes = []
         for (var i = 0; i < issues.length; i++) {
             var issue = issues[i];
+
+            if (config.ignoredFile(options.config, issue.file.relativePath)) {
+                continue;
+            }
+
             if (!categorized[issue.code]) {
+                codes.push(issue.code);
                 categorized[issue.code] = list[issue.code];
                 categorized[issue.code].files = [];
                 categorized[issue.code].additionalFileCount = 0;
@@ -66,10 +74,16 @@ module.exports = {
             }
         }
 
+        var serverityMap = config.interpret(codes, options.config);
+
         // organize by severity
         for (var key in categorized) {
             issue = categorized[key];
             issue.code = key;
+
+            if (serverityMap.hasOwnProperty(issue.code)) {
+                issue.severity = serverityMap[issue.code];
+            }
 
             if (issue.severity === 'error') {
                 errors.push(issue);
