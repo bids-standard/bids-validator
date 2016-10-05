@@ -12,7 +12,7 @@ module.exports = {
             ignoreWarnings:     options.ignoreWarnings     ? true : false,
             ignoreNiftiHeaders: options.ignoreNiftiHeaders ? true : false,
             verbose:            options.verbose            ? true : false,
-            config:             options.config             ? options.config : null
+            config:             options.config             ? options.config : {}
         };
         if (options.config && typeof options.config !== 'boolean') {
             this.parseConfig(options.config, function (issues, config) {
@@ -38,7 +38,7 @@ module.exports = {
                 }
             });
         } else if (typeof config === 'object') {
-            callback(null, {path: 'config'}, config);
+            callback(null, {path: 'config'}, JSON.stringify(config));
         }
     },
 
@@ -55,10 +55,10 @@ module.exports = {
                         callback(issues, null);
                     } else {
                         var parsed = {
-                            "ignore":      jsObj.ignore      ? jsObj.ignore      : [],
-                            "warn":        jsObj.warn        ? jsObj.warn        : [],
-                            "error":       jsObj.error       ? jsObj.error       : [],
-                            "ignoreFiles": jsObj.ignoreFiles ? jsObj.ignoreFiles : []
+                            "ignore":       jsObj.ignore       ? jsObj.ignore       : [],
+                            "warn":         jsObj.warn         ? jsObj.warn         : [],
+                            "error":        jsObj.error        ? jsObj.error        : [],
+                            "ignoredFiles": jsObj.ignoredFiles ? jsObj.ignoredFiles : []
                         };
                         callback(null, parsed);
                     }
