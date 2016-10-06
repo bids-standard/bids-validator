@@ -41,7 +41,7 @@ module.exports = function (dir, options) {
 function logIssues (issues, color, options) {
     for (var i = 0; i < issues.length; i++) {
         var issue = issues[i];
-        console.log('\t' + colors[color]((i + 1) + ': ' + issue.reason + ' (code: ' + issue.code + ')'));
+        console.log('\t' + colors[color]((i + 1) + ': ' + issue.reason + ' (code: ' + issue.code + ' - ' + issue.key + ')'));
         for (var j = 0; j < issue.files.length; j++) {
             var file = issues[i].files[j];
             if (!file || !file.file) {continue;}
