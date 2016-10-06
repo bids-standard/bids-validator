@@ -38,7 +38,9 @@ var suite = describe('BIDS example datasets ', function() {
         datasetDirectories.forEach(function testDataset(path){
             suite.addTest(new Test(path, function (isdone){
                 var options = {ignoreNiftiHeaders: true};
-                validate.BIDS("tests/data/BIDS-examples-" + test_version + "/" + path + "/", options, function (errors, warnings) {
+                validate.BIDS("tests/data/BIDS-examples-" + test_version + "/" + path + "/", options, function (issues) {
+                    var errors = issues.errors;
+                    var warnings = issues.warnings;
                     assert.deepEqual(errors, []);
                     var session_flag = false;
                     for (var warning in warnings) {
@@ -62,7 +64,9 @@ var suite = describe('BIDS example datasets ', function() {
     // we need to have at least one non-dynamic test
     it('validates path without trailing backslash', function(isdone) {
         var options = {ignoreNiftiHeaders: true};
-        validate.BIDS("tests/data/BIDS-examples-" + test_version + "/ds001", options, function (errors, warnings, summary) {
+        validate.BIDS("tests/data/BIDS-examples-" + test_version + "/ds001", options, function (issues, summary) {
+            var errors = issues.errors;
+            var warnings = issues.warnings;
             assert(summary.sessions.length === 0);
             assert(summary.subjects.length === 16);
             assert.deepEqual(summary.tasks, ['balloon analog risk task']);
@@ -77,7 +81,9 @@ var suite = describe('BIDS example datasets ', function() {
     // we need to have at least one non-dynamic test
     it('validates dataset with valid nifti headers', function(isdone) {
         var options = {ignoreNiftiHeaders: false};
-        validate.BIDS("tests/data/valid_headers", options, function (errors, warnings, summary) {
+        validate.BIDS("tests/data/valid_headers", options, function (issues, summary) {
+            var errors = issues.errors;
+            var warnings = issues.warnings;
             assert(summary.sessions.length === 0);
             assert(summary.subjects.length === 1);
             assert.deepEqual(summary.tasks, ['rhyme judgment']);
