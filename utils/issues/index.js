@@ -62,6 +62,7 @@ module.exports = {
             }
 
             if (!categorized[issue.code]) {
+                codes.push(issue.key);
                 codes.push(issue.code);
                 categorized[issue.code] = list[issue.code];
                 categorized[issue.code].files = [];
@@ -74,15 +75,19 @@ module.exports = {
             }
         }
 
-        var serverityMap = config.interpret(codes, options.config);
+        var severityMap = config.interpret(codes, options.config);
 
         // organize by severity
         for (var key in categorized) {
             issue = categorized[key];
             issue.code = key;
 
-            if (serverityMap.hasOwnProperty(issue.code)) {
-                issue.severity = serverityMap[issue.code];
+            if (severityMap.hasOwnProperty(issue.code)) {
+                issue.severity = severityMap[issue.code];
+            }
+
+            if (severityMap.hasOwnProperty(issue.key)) {
+                issue.severity = severityMap[issue.key];
             }
 
             if (issue.severity === 'error') {
