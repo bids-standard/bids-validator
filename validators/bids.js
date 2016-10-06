@@ -31,6 +31,7 @@ var BIDS = {
         utils.options.parse(options, function (issues, options) {
             if (issues && issues.length > 0) {
                 // option parsing issues
+                callback({config: issues});
             } else {
                 self.options = options;
                 BIDS.reset();
@@ -292,7 +293,7 @@ var BIDS = {
                 self.issues = self.issues.concat(session(fileList));
                 summary.modalities = utils.modalities.group(summary.modalities);
                 var issues = utils.issues.format(self.issues, summary, self.options);
-                callback(issues.errors, issues.warnings, summary);
+                callback(issues, summary);
             });
         });
     },
