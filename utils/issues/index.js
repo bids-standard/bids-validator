@@ -57,7 +57,7 @@ module.exports = {
         for (var i = 0; i < issues.length; i++) {
             var issue = issues[i];
 
-            if (config.ignoredFile(options.config, issue.file.relativePath)) {
+            if (issue.file && config.ignoredFile(options.config, issue.file.relativePath)) {
                 continue;
             }
 
