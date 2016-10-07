@@ -70,7 +70,7 @@ In addition to issue codes and keys these lists can also contain objects with an
 		]
 	}
 
-In the above example the two errors will only be ignored if both of them are triggered during validation.
+In the above example the two issues will only be ignored if both of them are triggered during validation.
 
 	{
 		"ignore": [
