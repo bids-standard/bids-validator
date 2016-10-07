@@ -38,6 +38,59 @@ If you would like to test individual files you can use the file specific checks 
 * validate.TSV()
 * validate.NIFTI()
 
+Additionally you can reformat stored errors against a new config using `validate.reformat()`
+
+#### Configuration
+
+You can configure the severity of errors by passing a json configuration file with a --c or --config flag to the command line interface or defining a config object on the options object passed during javascript usage.
+
+The basic configuration format is outlined below. All configuration is optional.
+
+    {
+    	"ignore": [],
+    	"warn": [],
+    	"error": [],
+    	ignoredFiles: []
+    }
+
+`ignoredFiles` takes a list of file paths or glob patterns you'd like to ignore.
+
+`ignore`, `warn`, and `error` take lists of issue codes or issue keys and change the severity of those issues so they are either ignored or reported as warnings or errors. You can find a list of all available issues at [utils/issues/list](https://github.com/INCF/bids-validator/tree/master/utils/issues/list.js.
+
+In addition to issue codes and keys these lists can also contain objects with and 'and' or 'or' properties set to arrays. These allow some level of conditional logic when configuring issues. For example:
+
+	{
+		"ignore": [
+			{
+				"and": [
+					"ECHO_TIME_GREATER_THAN",
+					"ECHO_TIME_NOT_DEFINED"
+				]
+			}
+		]
+	}
+
+In the above example the two errors will only be ignored if both of them are triggered during validation.
+
+	{
+		"ignore": [
+			{
+				"and": [
+					"ECHO_TIME_GREATER_THAN",
+					"ECHO_TIME_NOT_DEFINED"
+					{
+						"or": [
+							"ECHO_TIME1-2_NOT_DEFINED",
+							"ECHO_TIME_MUST_DEFINE"
+						]
+					}
+				]
+			}
+		]
+	}
+
+And in this example the listed issues will only be ignored if `ECHO_TIME_GREATER_THAN`, `ECHO_TIME_NOT_DEFINED` and either `ECHO_TIME1-2_NOT_DEFINED` or `ECHO_TIME_MUST_DEFINE` are triggered during validation.
+
 #### In the Browser
 
 The BIDS Validator currently works in the browser with [browserify](http://browserify.org/). You can add it to a browserify project by cloning the validator and requiring it with browserify syntax ```var validate = require('bids-validator');```.
