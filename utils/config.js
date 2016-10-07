@@ -7,10 +7,12 @@ var config = {
      * Ignored File
      */
     ignoredFile: function (conf, filePath) {
-        for (var i = 0; i < conf.ignoredFiles.length; i++) {
-            var ignoredPattern = conf.ignoredFiles[i];
-            if (minimatch(filePath, ignoredPattern)) {
-                return true;
+        if (conf.ignoredFiles) {
+            for (var i = 0; i < conf.ignoredFiles.length; i++) {
+                var ignoredPattern = conf.ignoredFiles[i];
+                if (minimatch(filePath, ignoredPattern)) {
+                    return true;
+                }
             }
         }
         return false;
