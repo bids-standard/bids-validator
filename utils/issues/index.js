@@ -2,7 +2,7 @@ var list      = require('./list');
 var Issue     = require('./issue');
 var config    = require('../config');
 
-module.exports = {
+var issues  = {
 
 	/**
 	 * List
@@ -41,11 +41,11 @@ module.exports = {
 	/**
      * Format Issues
      */
-    format: function (issues, summary, options) {
+    format: function (issueList, summary, options) {
         var errors = [], warnings = [];
 
         // sort alphabetically by relative path of files
-        issues.sort(function (a,b) {
+        issueList.sort(function (a,b) {
             var aPath = a.file ? a.file.relativePath : '';
             var bPath = b.file ? b.file.relativePath : '';
             return (aPath > bPath) ? 1 : ((bPath > aPath) ? -1 : 0);
@@ -54,8 +54,8 @@ module.exports = {
         // organize by issue code
         var categorized = {};
         var codes = []
-        for (var i = 0; i < issues.length; i++) {
-            var issue = issues[i];
+        for (var i = 0; i < issueList.length; i++) {
+            var issue = issueList[i];
 
             if (issue.file && config.ignoredFile(options.config, issue.file.relativePath)) {
                 continue;
@@ -101,5 +101,27 @@ module.exports = {
         warnings = this.filterFieldMaps(warnings, summary);
 
         return {errors: errors, warnings: warnings};
+    },
+
+    /**
+     * Reformat
+     *
+     * Takes an already formatted set of issues, a
+     * summary and a config object and returns the
+     * same issues reformatted agains the config.
+     */
+    reformat: function (issueList, summary, config) {
+        issueList = issueList.warnings.concat(issueList.errors);
+        var unformatted = [];
+        for (var i = 0; i < issueList.length; i++) {
+            var issue = issueList[i];
+            for (var j = 0; j < issue.files.length; j++) {
+                var file = issue.files[j];
+                unformatted.push(file);
+            }
+        }
+        return issues.format(unformatted, summary, {config});
     }
 };
+
+module.exports = issues;
