@@ -77,4 +77,15 @@ describe('NIFTI', function(){
         });
     });
 
+    it('should ignore missing task name definitions on sbref task scans', function() {
+        var file = {
+            name: 'sub-15_task-mixedeventrelatedprobe_acq-LR_sbref.nii.gz',
+            relativePath: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_acq-LR_sbref.nii.gz'
+        };
+        jsonContentsDict[file.relativePath.replace('.nii.gz', '.json')] = jsonContentsDict['/sub-15/func/sub-15_task-mixedeventrelatedproberest_run-01_bold.json'];
+        validate.NIFTI(null, file, jsonContentsDict, {}, [], events, function (issues) {
+            assert.deepEqual(issues, []);
+        });
+    });
+
 });
