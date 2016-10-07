@@ -47,7 +47,7 @@ module.exports = {
         var dwiTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
             + 'dwi.(?:json|bval|bvec)$');
 
-        var multiDirFieldmapRe = new RegExp('^\\/(?:dir-[0-9]+)_epi.json$');
+        var multiDirFieldmapRe = new RegExp('^\\/(?:dir-[a-zA-Z0-9]+)_epi.json$');
 
 
         return (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) ||
@@ -130,7 +130,7 @@ module.exports = {
         var anatRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?fmap' +
-            '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[0-9]+)?(?:_run-[0-9]+)?_(?:'
+            '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
             + suffixes.join("|")
             + ').(nii.gz|nii|json)$');
         return conditionalMatch(anatRe, path);
