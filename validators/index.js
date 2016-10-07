@@ -17,7 +17,7 @@ var validate = {
 	NIFTI: NIFTI,
 	bval: bval,
 	bvec: bvec,
-	reformat: utils.issues.reformat
+	// reformat: utils.issues.reformat
 };
 
 // exports -----------------------------------------------------------
