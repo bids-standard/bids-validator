@@ -110,7 +110,7 @@ var issues = {
      *
      * Takes an already formatted set of issues, a
      * summary and a config object and returns the
-     * same issues reformatted agains the config.
+     * same issues reformatted against the config.
      */
     reformat: function (issueList, summary, config) {
         issueList = issueList.warnings.concat(issueList.errors).concat(issueList.ignored);
