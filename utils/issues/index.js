@@ -42,7 +42,7 @@ var issues = {
      * Format Issues
      */
     format: function (issueList, summary, options) {
-        var errors = [], warnings = [];
+        var errors = [], warnings = [], ignored = [];
 
         // sort alphabetically by relative path of files
         issueList.sort(function (a,b) {
@@ -94,13 +94,15 @@ var issues = {
                 errors.push(issue);
             } else if (issue.severity === 'warning' && !options.ignoreWarnings) {
                 warnings.push(issue);
+            } else if (issue.severity === 'ignore') {
+                ignored.push(issue);
             }
 
         }
 
         warnings = this.filterFieldMaps(warnings, summary);
 
-        return {errors: errors, warnings: warnings};
+        return {errors: errors, warnings: warnings, ignored: ignored};
     },
 
     /**
@@ -111,7 +113,7 @@ var issues = {
      * same issues reformatted agains the config.
      */
     reformat: function (issueList, summary, config) {
-        issueList = issueList.warnings.concat(issueList.errors);
+        issueList = issueList.warnings.concat(issueList.errors).concat(issueList.ignored);
         var unformatted = [];
         for (var i = 0; i < issueList.length; i++) {
             var issue = issueList[i];
