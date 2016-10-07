@@ -6,7 +6,7 @@ var NIFTI  = require('./nii');
 var BIDS   = require('./bids').start;
 var bval   = require('./bval');
 var bvec   = require('./bvec');
-// var utils  = require('../utils');
+var utils  = require('../utils');
 
 // public api --------------------------------------------------------
 
@@ -16,8 +16,8 @@ var validate = {
 	TSV: TSV,
 	NIFTI: NIFTI,
 	bval: bval,
-	bvec: bvec
-	// reformat: utils.issues.reformat
+	bvec: bvec,
+	reformat: utils.issues.reformat
 };
 
 // exports -----------------------------------------------------------
