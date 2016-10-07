@@ -91,6 +91,28 @@ In the above example the two issues will only be ignored if both of them are tri
 
 And in this example the listed issues will only be ignored if `ECHO_TIME_GREATER_THAN`, `ECHO_TIME_NOT_DEFINED` and either `ECHO_TIME1-2_NOT_DEFINED` or `ECHO_TIME_MUST_DEFINE` are triggered during validation.
 
+"or" arrays are not supported at the lowest level because it wouldn't add any functionality. For example the following is not supported.
+
+	{
+		"ignore": [
+			{
+				"or": [
+					"ECHO_TIME_GREATER_THAN",
+					"ECHO_TIME_NOT_DEFINED"
+				]
+			}
+		]
+	}
+
+because it would be functionally the same as this
+
+	{
+		"ignore": [
+			"ECHO_TIME_GREATER_THAN",
+			"ECHO_TIME_NOT_DEFINED"
+		]
+	}
+
 #### In the Browser
 
 The BIDS Validator currently works in the browser with [browserify](http://browserify.org/). You can add it to a browserify project by cloning the validator and requiring it with browserify syntax ```var validate = require('bids-validator');```.
