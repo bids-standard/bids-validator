@@ -50,7 +50,7 @@ The basic configuration format is outlined below. All configuration is optional.
     	"ignore": [],
     	"warn": [],
     	"error": [],
-    	ignoredFiles: []
+    	"ignoredFiles": []
     }
 
 `ignoredFiles` takes a list of file paths or glob patterns you'd like to ignore.
