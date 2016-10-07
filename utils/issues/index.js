@@ -120,7 +120,7 @@ var issues = {
                 unformatted.push(file);
             }
         }
-        return issues.format(unformatted, summary, {config});
+        return issues.format(unformatted, summary, {config: config});
     }
 };
 
