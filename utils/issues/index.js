@@ -2,7 +2,7 @@ var list      = require('./list');
 var Issue     = require('./issue');
 var config    = require('../config');
 
-var issues  = {
+module.exports = {
 
 	/**
 	 * List
@@ -120,8 +120,8 @@ var issues  = {
                 unformatted.push(file);
             }
         }
-        return issues.format(unformatted, summary, {config});
+        return this.format(unformatted, summary, {config});
     }
 };
 
-module.exports = issues;
+// module.exports = issues;
