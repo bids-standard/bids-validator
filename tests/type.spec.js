@@ -197,7 +197,7 @@ var suiteDWI = describe('utils.type.isDWI', function(){
     });
 });
 
-var suitedAssociated = describe('utils.type.isAssociatedData', function () {
+describe('utils.type.isAssociatedData', function () {
     it('should return false for unknown root directories', function () {
         var badFilenames = [
             "/images/picture.jpeg",
