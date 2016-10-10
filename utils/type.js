@@ -5,7 +5,7 @@
  * representing whether the given file path is valid within the
  * BIDS specification requirements.
  */
-var anatSuffixes = ["T1w", "T2w", "T1map", "T2map", "FLAIR", "PD", "PDT2", "inplaneT1", "inplaneT2","angio",
+var anatSuffixes = ["T1w", "T2w", "T1map", "T2map", "T1rho", "FLAIR", "PD", "PDT2", "inplaneT1", "inplaneT2","angio",
     "defacemask", "SWImagandphase"];
 
 module.exports = {
