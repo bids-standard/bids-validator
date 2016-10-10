@@ -204,12 +204,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
         if (path.includes("_phasediff.nii") || path.includes("_phase1.nii") ||
             path.includes("_phase2.nii") || path.includes("_fieldmap.nii") || path.includes("_epi.nii")){
             if (mergedDictionary.hasOwnProperty('IntendedFor')) {
-
-              if (typeof mergedDictionary['IntendedFor'] == "string"){
-                var intendedFor = {1:mergedDictionary['IntendedFor']};
-              } else {
-                var intendedFor = mergedDictionary['IntendedFor'];
-              }
+              var intendedFor = typeof mergedDictionary['IntendedFor'] == "string" ? {1:mergedDictionary['IntendedFor']} : mergedDictionary['IntendedFor'];
 
               for(var key = 0; key<intendedFor.length; key++){
                 var intendedForFile = "/" + path.split("/")[1] + "/" + intendedFor[key];
