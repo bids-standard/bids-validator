@@ -204,7 +204,10 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
         if (path.includes("_phasediff.nii") || path.includes("_phase1.nii") ||
             path.includes("_phase2.nii") || path.includes("_fieldmap.nii") || path.includes("_epi.nii")){
             if (mergedDictionary.hasOwnProperty('IntendedFor')) {
-                var intendedForFile = "/" + path.split("/")[1] + "/" + mergedDictionary['IntendedFor'];
+              var intendedFor = mergedDictionary['IntendedFor'];
+              for(var key in intendedFor){
+                var onTheList = false;
+                var intendedForFile = "/" + path.split("/")[1] + "/" + intendedFor[key];
                 var onTheList = false;
                 async.forEachOf(fileList, function (file, key, cb) {
                     var filePath = file.path ? file.path : file.webkitRelativePath;
@@ -224,6 +227,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                     }
                 });
             }
+          }
         }
     }
 
