@@ -65,6 +65,20 @@ describe('TSV', function(){
         });
     });
 
+    it('should check for the presence fo any stimulus files declared', function () {
+        var tsv = 'onset\tduration\tstim_file\n' +
+                  'value-one\tvalue-two\timages/red-square.jpg';
+        var fileList = [{relativePath: '/stimuli/images/blue-square.jpg'}];
+        validate.TSV(eventsFile, tsv, fileList, function (issues) {
+            assert(issues.length === 1 && issues[0].code === 51);
+        });
+
+        fileList.push({relativePath: '/stimuli/images/red-square.jpg'});
+        validate.TSV(eventsFile, tsv, fileList, function (issues) {
+            assert.deepEqual(issues, []);
+        });
+    });
+
 // participants checks -----------------------------------------------------------------
 
     var participantsFile = {
