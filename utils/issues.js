@@ -205,6 +205,6 @@ module.exports = {
     },
     51: {
         severity: 'error',
-        reason: "A stimulus file was declared but not found in the dataset"
+        reason: "A stimulus file was declared but not found in the dataset."
     }
 };
