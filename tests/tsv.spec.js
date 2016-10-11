@@ -65,7 +65,7 @@ describe('TSV', function(){
         });
     });
 
-    it('should check for the presence fo any stimulus files declared', function () {
+    it('should check for the presence of any stimulus files declared', function () {
         var tsv = 'onset\tduration\tstim_file\n' +
                   'value-one\tvalue-two\timages/red-square.jpg';
         var fileList = [{relativePath: '/stimuli/images/blue-square.jpg'}];
