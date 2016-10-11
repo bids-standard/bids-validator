@@ -106,11 +106,12 @@ module.exports = function TSV (file, contents, fileList, callback) {
                 if (stimFile && stimFile !== 'n/a' && stimFile !== 'stim_file' && stimFiles.indexOf(stimFile) == -1) {
                     stimFiles.push(stimFile);
                     if (pathList.indexOf('/stimuli/' + stimFile) == -1) {
-                        // console.log('/stimuli/' + stimFile + ' not found');
                         issues.push(new Issue({
                             file: file,
                             evidence: stimFile,
-                            Reason: 'A stimulus file (' + stimFile + ') was declared but not found in /stimuli',
+                            reason: 'A stimulus file (' + stimFile + ') was declared but not found in /stimuli.',
+                            line: k + 1,
+                            character: rows[k].indexOf(stimFile),
                             code: 51
                         }));
                     }
