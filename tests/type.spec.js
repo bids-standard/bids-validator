@@ -196,3 +196,15 @@ var suiteDWI = describe('utils.type.isDWI', function(){
         require('assert').ok(true);
     });
 });
+
+describe('utils.type.isPhenotypic', function () {
+    it('should allow .tsv and .json files in the /phenotype directory', function () {
+        assert(utils.type.isPhenotypic('/phenotype/acds_adult.json'));
+        assert(utils.type.isPhenotypic('/phenotype/acds_adult.tsv'));
+    });
+
+    it('should not allow non .tsv and .json files in the /phenotype directory', function () {
+        assert(!utils.type.isPhenotypic('/phenotype/acds_adult.jpeg'));
+        assert(!utils.type.isPhenotypic('/phenotype/acds_adult.gif'));
+    });
+});
