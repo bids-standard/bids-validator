@@ -289,6 +289,12 @@ var BIDS = {
                         file: participants.file
                     }));
                 }
+                // check if dataset contains T1w
+                if (summary.modalities.indexOf('T1w') < 0) {
+                    self.issues.push(new Issue({
+                        code: 51,
+                    }));
+                }
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 summary.modalities = utils.modalities.group(summary.modalities);

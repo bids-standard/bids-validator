@@ -251,5 +251,10 @@ module.exports = {
         key: 'TASK_NAME_MUST_DEFINE',
         severity: 'error',
         reason: "You have to define 'TaskName' for this file."
+    },
+    51: {
+        key: 'NO_T1W',
+        severity: 'ignore',
+        reason: "Dataset does not contain any T1w scans."
     }
 };
