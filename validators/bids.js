@@ -292,7 +292,7 @@ var BIDS = {
                 // check if dataset contains T1w
                 if (summary.modalities.indexOf('T1w') < 0) {
                     self.issues.push(new Issue({
-                        code: 51,
+                        code: 51
                     }));
                 }
                 self.issues = self.issues.concat(headerFields(headers));
