@@ -95,7 +95,7 @@ module.exports = function TSV (file, contents, callback) {
 
     // participants.tsv
     var participants = null;
-    if (file.name === 'participants.tsv') {
+    if (file.name === 'participants.tsv' || file.relativePath.includes('phenotype/')) {
         var participantIdColumn = headers.indexOf('participant_id');
         if (participantIdColumn === -1) {
             issues.push(new Issue({
