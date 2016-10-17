@@ -193,7 +193,7 @@ module.exports = {
     },
     48: {
         severity: 'error',
-        reason:   "A participants file must have a 'participant_id' column."
+        reason:   "Participants and phenotype .tsv files must have a 'participant_id' column."
     },
     49: {
         severity: 'error',
