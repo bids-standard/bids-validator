@@ -37,6 +37,26 @@ var array = {
             }
         }
         return true;
+    },
+
+    /**
+     * Takes to arrays and returns an array of two
+     * arrays contains the differences contained
+     * in each array.
+     */
+    diff: function (array1, array2) {
+        var diff1 = [], diff2 = [];
+        for (var i = 0; i < array1.length; i++) {
+            var elem1 = array1[i];
+            var index = array2.indexOf(elem1);
+            if (index > -1) {
+                array2.splice(index, 1);
+            } else {
+                diff1.push(elem1);
+            }
+        }
+        diff2 = array2;
+        return [diff1, diff2];
     }
 };
 
