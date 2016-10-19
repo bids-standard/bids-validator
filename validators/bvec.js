@@ -1,4 +1,4 @@
-var Issue = require('../utils').Issue;
+var Issue = require('../utils').issues.Issue;
 var type  = require('../utils').type;
 
 /**

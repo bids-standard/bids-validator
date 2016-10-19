@@ -1,7 +1,7 @@
 // dependencies -------------------------------------------------------------------
 
 var nifti = require('nifti-js');
-var Issue = require('./issue');
+var Issue = require('./issues').Issue;
 
 /**
  * If the current environment is server side
@@ -253,7 +253,9 @@ function testFile (file, callback) {
     fs.stat(file.path, function (statErr, stats) {
         if (statErr) {
             fs.lstat(file.path, function (lstatErr, lstats) {
-                if (lstats.isSymbolicLink()) {
+                if (lstatErr) {
+                    callback(new Issue({code: 44, file: file}), stats);
+                } else if (lstats && lstats.isSymbolicLink()) {
                     callback(new Issue({code: 43, file: file}), stats);
                 } else {
                     callback(new Issue({code: 44, file: file}), stats);

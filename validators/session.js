@@ -1,4 +1,5 @@
-var utils  = require('../utils');
+var utils = require('../utils');
+var Issue = utils.issues.Issue;
 
 /**
  * session
@@ -60,7 +61,7 @@ var session = function missingSessionFiles(fileList) {
         for (var set_file = 0; set_file < subject_files.length; set_file++) {
             if (subjects[subject].indexOf(subject_files[set_file]) === -1) {
                 var fileThatsMissing = '/' + subject + subject_files[set_file].replace('<sub>', subject);
-                issues.push(new utils.Issue({
+                issues.push(new Issue({
                     file: {relativePath: fileThatsMissing,
                            webkitRelativePath: fileThatsMissing,
                            name: fileThatsMissing.substr(fileThatsMissing.lastIndexOf('/') + 1),

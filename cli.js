@@ -9,9 +9,19 @@ var fs        = require('fs');
 
 module.exports = function (dir, options) {
     if (fs.existsSync(dir)) {
-        validate.BIDS(dir, options, function (errors, warnings, summary) {
+        validate.BIDS(dir, options, function (issues, summary) {
+            var errors = issues.errors;
+            var warnings = issues.warnings;
             if (errors === 'Invalid') {
                 console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
+            } else if (issues.config && issues.config.length >= 1) {
+                console.log(colors.red('Invalid Config File'));
+                for (var i = 0; i < issues.config.length; i++) {
+                    var issue = issues.config[i];
+                    issue.file.file = {relativePath: issue.file.path};
+                    issue.files = [issue.file];
+                }
+                logIssues(issues.config, 'red', options);
             } else if (errors.length >= 1 || warnings.length >= 1) {
                 logIssues(errors, 'red', options);
                 logIssues(warnings, 'yellow', options);
@@ -20,7 +30,7 @@ module.exports = function (dir, options) {
                 console.log(colors.green("This dataset appears to be BIDS compatible."));
             }
             logSummary(summary);
-            if (errors.length >= 1) {process.exit(1);}
+            if (errors && errors.length >= 1 || issues.config && issues.config.length >= 1) {process.exit(1);}
         });
     } else {
         console.log(colors.red(dir + " does not exist"));
@@ -31,7 +41,7 @@ module.exports = function (dir, options) {
 function logIssues (issues, color, options) {
     for (var i = 0; i < issues.length; i++) {
         var issue = issues[i];
-        console.log('\t' + colors[color]((i + 1) + ': ' + issue.reason + ' (code: ' + issue.code + ')'));
+        console.log('\t' + colors[color]((i + 1) + ': ' + issue.reason + ' (code: ' + issue.code + ' - ' + issue.key + ')'));
         for (var j = 0; j < issue.files.length; j++) {
             var file = issues[i].files[j];
             if (!file || !file.file) {continue;}

@@ -1,4 +1,4 @@
-var issues = require('./issues');
+var issues = require('./list');
 
 /**
  * Issue
@@ -9,6 +9,7 @@ module.exports = function (options) {
 	var code = options.hasOwnProperty('code') ? options.code : null;
 	var issue = issues[code];
 
+	this.key       = issue.key;
 	this.code      = code;
 	this.file      = options.hasOwnProperty('file')      ? options.file      : null;
 	this.evidence  = options.hasOwnProperty('evidence')  ? options.evidence  : null;

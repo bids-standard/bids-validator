@@ -1,6 +1,6 @@
 {
   "name": "bids-validator",
-  "version": "0.18.23",
+  "version": "0.19.0",
   "description": "",
   "main": "index.js",
   "repository": {
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./**/*.js",
-    "test": "./node_modules/.bin/mocha tests/",
+    "test": "./node_modules/.bin/mocha tests/ tests/**/**.spec.js",
     "npmPublish": "publish"
   },
   "bin": {
@@ -27,6 +27,7 @@
     "cliff": "^0.1.10",
     "colors": "^1.1.0",
     "jshint": "^2.8.0",
+    "minimatch": "3.0.3",
     "nifti-js": "^1.0.0",
     "pako": "^0.2.8",
     "pluralize": "^1.2.1",
