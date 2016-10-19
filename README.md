@@ -42,7 +42,7 @@ Additionally you can reformat stored errors against a new config using `validate
 
 #### Configuration
 
-You can configure the severity of errors by passing a json configuration file with a --c or --config flag to the command line interface or defining a config object on the options object passed during javascript usage.
+You can configure the severity of errors by passing a json configuration file with a --c or --config flag to the command line interface or by defining a config object on the options object passed during javascript usage.
 
 The basic configuration format is outlined below. All configuration is optional.
 
