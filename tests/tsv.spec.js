@@ -70,7 +70,7 @@ describe('TSV', function(){
                   'value-one\tvalue-two\timages/red-square.jpg';
         var fileList = [{relativePath: '/stimuli/images/blue-square.jpg'}];
         validate.TSV(eventsFile, tsv, fileList, function (issues) {
-            assert(issues.length === 1 && issues[0].code === 51);
+            assert(issues.length === 1 && issues[0].code === 52);
         });
 
         fileList.push({relativePath: '/stimuli/images/red-square.jpg'});

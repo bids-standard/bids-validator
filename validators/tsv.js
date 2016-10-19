@@ -112,7 +112,7 @@ module.exports = function TSV (file, contents, fileList, callback) {
                             reason: 'A stimulus file (' + stimFile + ') was declared but not found in /stimuli.',
                             line: k + 1,
                             character: rows[k].indexOf(stimFile),
-                            code: 51
+                            code: 52
                         }));
                     }
                 }
@@ -122,7 +122,7 @@ module.exports = function TSV (file, contents, fileList, callback) {
 
     // participants.tsv
     var participants = null;
-    if (file.name === 'participants.tsv') {
+    if (file.name === 'participants.tsv' || file.relativePath.includes('phenotype/')) {
         var participantIdColumn = headers.indexOf('participant_id');
         if (participantIdColumn === -1) {
             issues.push(new Issue({
