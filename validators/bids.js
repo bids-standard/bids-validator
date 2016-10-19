@@ -310,7 +310,7 @@ var BIDS = {
                         var fileParticpants = phenotypeParticipants[j];
                         var diff = utils.array.diff(fileParticpants.list, summary.subjects)[0];
                         if (diff && diff.length > 0) {
-                            self.issues.push(new utils.Issue({
+                            self.issues.push(new Issue({
                                 code: 51,
                                 evidence: 'sub-' + diff.join(', sub-'),
                                 file: fileParticpants.file
