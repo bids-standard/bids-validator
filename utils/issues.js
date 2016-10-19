@@ -202,5 +202,9 @@ module.exports = {
     50: {
         severity: 'error',
         reason: "You have to define 'TaskName' for this file."
+    },
+    51: {
+        severity: 'error',
+        reason: "A stimulus file was declared but not found in the dataset."
     }
 };

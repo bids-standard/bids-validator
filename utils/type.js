@@ -55,7 +55,7 @@ module.exports = {
     },
 
     isAssociatedData: function(path) {
-        var associatedData = new RegExp('^\\/(?:code|derivatives|sourcedata|[.]git)\\/(?:.*)$');
+        var associatedData = new RegExp('^\\/(?:code|derivatives|sourcedata|stimuli|[.]git)\\/(?:.*)$');
         return associatedData.test(path);
     },
 
