@@ -240,7 +240,7 @@ module.exports = {
     48: {
         key: 'PARTICIPANT_ID_COLUMN',
         severity: 'error',
-        reason:   "A participants file must have a 'participant_id' column."
+        reason:   "Participants and phenotype .tsv files must have a 'participant_id' column."
     },
     49: {
         key: 'PARTICIPANT_ID_MISMATCH',
@@ -253,6 +253,16 @@ module.exports = {
         reason: "You have to define 'TaskName' for this file."
     },
     51: {
+        key: 'PHENOTYPE_SUBJECTS_MISSING',
+        severity: 'error',
+        reason: 'A phenotype/ .tsv file lists subjects that were not found in the dataset.'
+    },
+    52: {
+        key: 'STIMULUS_FILE_MISSING',
+        severity: 'error',
+        reason: "A stimulus file was declared but not found in the dataset."
+    },
+    53: {
         key: 'NO_T1W',
         severity: 'ignore',
         reason: "Dataset does not contain any T1w scans."

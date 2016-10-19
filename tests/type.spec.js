@@ -196,3 +196,41 @@ var suiteDWI = describe('utils.type.isDWI', function(){
         require('assert').ok(true);
     });
 });
+
+describe('utils.type.isPhenotypic', function () {
+    it('should allow .tsv and .json files in the /phenotype directory', function () {
+        assert(utils.type.isPhenotypic('/phenotype/acds_adult.json'));
+        assert(utils.type.isPhenotypic('/phenotype/acds_adult.tsv'));
+    });
+
+    it('should not allow non .tsv and .json files in the /phenotype directory', function () {
+        assert(!utils.type.isPhenotypic('/phenotype/acds_adult.jpeg'));
+        assert(!utils.type.isPhenotypic('/phenotype/acds_adult.gif'));
+    });
+});
+
+describe('utils.type.isAssociatedData', function () {
+    it('should return false for unknown root directories', function () {
+        var badFilenames = [
+            "/images/picture.jpeg",
+            "/temporary/test.json"
+        ];
+
+        badFilenames.forEach(function (path) {
+            assert.equal(utils.type.isAssociatedData(path), false);
+        });
+    });
+
+    it('should return true for associated data directories and any files within', function () {
+        var goodFilenames = [
+            "/code/test-script.py",
+            "/derivatives/sub-01_QA.pdf",
+            "/sourcedata/sub-01_ses-01_bold.dcm",
+            "/stimuli/text.pdf"
+        ];
+
+        goodFilenames.forEach(function (path) {
+            assert(utils.type.isAssociatedData(path));
+        });
+    });
+});

@@ -97,13 +97,14 @@ var BIDS = {
     fullTest: function (fileList, callback) {
         var self = this;
 
-        var jsonContentsDict = {},
-            bContentsDict    = {},
-            events           = [],
-            niftis           = [],
-            headers          = [],
-            participants     = null,
-            hasSubjectDir    = false;
+        var jsonContentsDict      = {},
+            bContentsDict         = {},
+            events                = [],
+            niftis                = [],
+            headers               = [],
+            participants          = null,
+            phenotypeParticipants = [],
+            hasSubjectDir         = false;
 
         var summary = {
             sessions: [],
@@ -158,12 +159,19 @@ var BIDS = {
                         return;
                     }
                     if (file.name.endsWith('_events.tsv')) {events.push(file.relativePath);}
-                    TSV(file, contents, function (issues, participantList) {
+                    TSV(file, contents, fileList, function (issues, participantList) {
                         if (participantList) {
-                            participants = {
-                                list: participantList,
-                                file: file
-                            };
+                            if (file.name.endsWith('participants.tsv')) {
+                                participants = {
+                                    list: participantList,
+                                    file: file
+                                };
+                            } else if (file.relativePath.includes('phenotype/')) {
+                                phenotypeParticipants.push({
+                                    list: participantList,
+                                    file: file
+                                });
+                            }
                         }
                         self.issues = self.issues.concat(issues);
                         cb();
@@ -289,11 +297,26 @@ var BIDS = {
                         file: participants.file
                     }));
                 }
+
                 // check if dataset contains T1w
                 if (summary.modalities.indexOf('T1w') < 0) {
                     self.issues.push(new Issue({
-                        code: 51
+                        code: 53
                     }));
+                }
+
+                if (phenotypeParticipants && phenotypeParticipants.length > 0) {
+                    for (var j = 0; j < phenotypeParticipants.length; j++) {
+                        var fileParticpants = phenotypeParticipants[j];
+                        var diff = utils.array.diff(fileParticpants.list, summary.subjects)[0];
+                        if (diff && diff.length > 0) {
+                            self.issues.push(new utils.Issue({
+                                code: 51,
+                                evidence: 'sub-' + diff.join(', sub-'),
+                                file: fileParticpants.file
+                            }));
+                        }
+                    }
                 }
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));

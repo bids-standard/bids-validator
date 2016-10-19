@@ -27,7 +27,8 @@ module.exports = {
             this.isFunc(path)           ||
             this.isBehavioral(path)     ||
             this.isCont(path)           ||
-            this.isFieldMap(path)
+            this.isFieldMap(path)       ||
+            this.isPhenotypic(path)
         );
     },
 
@@ -54,9 +55,20 @@ module.exports = {
         anatTopRe.test(path) || multiDirFieldmapRe.test(path));
     },
 
+    /**
+     * Check if file is appropriate associated data.
+     */
     isAssociatedData: function(path) {
-        var associatedData = new RegExp('^\\/(?:code|derivatives|sourcedata|[.]git)\\/(?:.*)$');
+        var associatedData = new RegExp('^\\/(?:code|derivatives|sourcedata|stimuli|[.]git)\\/(?:.*)$');
         return associatedData.test(path);
+    },
+
+    /**
+     * Check if file is phenotypic data.
+     */
+    isPhenotypic: function(path) {
+        var phenotypicData = new RegExp('^\\/(?:phenotype)\\/(?:.*.tsv|.*.json)$');
+        return phenotypicData.test(path);
     },
 
     /**
