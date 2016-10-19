@@ -151,7 +151,7 @@ var BIDS = {
                         return;
                     }
                     if (file.name.endsWith('_events.tsv')) {events.push(file.relativePath);}
-                    TSV(file, contents, function (issues, participantList) {
+                    TSV(file, contents, fileList, function (issues, participantList) {
                         if (participantList) {
                             if (file.name.endsWith('participants.tsv')) {
                                 participants = {

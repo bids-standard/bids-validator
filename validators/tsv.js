@@ -8,7 +8,7 @@ var Issue = require('../utils').Issue;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function TSV (file, contents, callback) {
+module.exports = function TSV (file, contents, fileList, callback) {
 
     var issues = [];
     var rows = contents.split('\n');
@@ -91,6 +91,33 @@ module.exports = function TSV (file, contents, callback) {
                 code: 21
             }));
         }
+
+        // create full dataset path list
+        var pathList = [];
+        for (var f in fileList) {
+            pathList.push(fileList[f].relativePath);
+        }
+
+        // check for stimuli file presence
+        var stimFiles = [];
+        if (headers.indexOf('stim_file') > -1) {
+            for (var k = 0; k < rows.length; k++) {
+                var stimFile = rows[k].split('\t')[headers.indexOf('stim_file')];
+                if (stimFile && stimFile !== 'n/a' && stimFile !== 'stim_file' && stimFiles.indexOf(stimFile) == -1) {
+                    stimFiles.push(stimFile);
+                    if (pathList.indexOf('/stimuli/' + stimFile) == -1) {
+                        issues.push(new Issue({
+                            file: file,
+                            evidence: stimFile,
+                            reason: 'A stimulus file (' + stimFile + ') was declared but not found in /stimuli.',
+                            line: k + 1,
+                            character: rows[k].indexOf(stimFile),
+                            code: 52
+                        }));
+                    }
+                }
+            }
+        }
     }
 
     // participants.tsv
@@ -106,8 +133,8 @@ module.exports = function TSV (file, contents, callback) {
             }));
         } else {
             participants = [];
-            for (var k = 1; k < rows.length; k++) {
-                row = rows[k].split('\t');
+            for (var l = 1; l < rows.length; l++) {
+                row = rows[l].split('\t');
                 // skip empty rows
                 if (!row || /^\s*$/.test(row)) {continue;}
                 participants.push(row[participantIdColumn].replace('sub-', ''));

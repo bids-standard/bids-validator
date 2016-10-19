@@ -100,7 +100,7 @@ module.exports = {
     },
     25: {
         severity: 'warning',
-        reason:   'Task scans should have a corresponding events.tsv file. If this is a resting state scan you can ignore this warning or rename the task to include the work "rest".'
+        reason:   'Task scans should have a corresponding events.tsv file. If this is a resting state scan you can ignore this warning or rename the task to include the word "rest".'
     },
     26: {
         severity: 'error',
@@ -206,5 +206,9 @@ module.exports = {
     51: {
         severity: 'error',
         reason: 'A phenotype/ .tsv file lists subjects that were not found in the dataset.'
+    },
+    52: {
+        severity: 'error',
+        reason: "A stimulus file was declared but not found in the dataset."
     }
 };
