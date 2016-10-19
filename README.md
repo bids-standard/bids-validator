@@ -57,6 +57,12 @@ The basic configuration format is outlined below. All configuration is optional.
 
 `ignore`, `warn`, and `error` take lists of issue codes or issue keys and changes the severity of those issues so they are either ignored or reported as warnings or errors. You can find a list of all available issues at [utils/issues/list](https://github.com/INCF/bids-validator/tree/master/utils/issues/list.js).
 
+Some issues may be ignored by default, but can be elevated to warnings or errors. These provide a way to check for common things that are more specific than BIDS compatibility. An example is a check for the presence of a T1w modality. The following would raise an error if no T1W image was found in a dataset.
+
+{
+	"error": ["NO_T1W"]
+}
+
 In addition to issue codes and keys these lists can also contain objects with and "and" or "or" properties set to arrays of codes or keys. These allow some level of conditional logic when configuring issues. For example:
 
 	{
