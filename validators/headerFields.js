@@ -189,6 +189,7 @@ var headerField = function headerField(headers, field) {
 function headerFieldCompare(header1, header2) {
     var hdr1 = header1.split(',');
     var hdr2 = header2.split(',');
+    if (hdr1.length !== hdr2.length) {return true;}
     for (var i = 0; i < hdr1.length; i++) {
         var hdr1_val = Number(hdr1[i].match(/-?\d*\.?\d*/));
         var hdr2_val  = Number(hdr2[i].match(/-?\d*\.?\d*/));
