@@ -30,6 +30,7 @@ deployment:
       - rm -rf node_modules/
       - rm -rf tests/
       - git checkout gh-pages
+      - git pull
       - npm install
       - gulp build
       - git status
