@@ -12,7 +12,7 @@ module.exports = function (dir, options) {
         validate.BIDS(dir, options, function (issues, summary) {
             var errors = issues.errors;
             var warnings = issues.warnings;
-            if (errors === 'Invalid') {
+            if (issues === 'Invalid') {
                 console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
             } else if (issues.config && issues.config.length >= 1) {
                 console.log(colors.red('Invalid Config File'));
