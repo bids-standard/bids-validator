@@ -77,6 +77,13 @@ var headerField = function headerField(headers, field) {
                         code: 40
                 });
                 continue;
+            } else if (file.name.indexOf('_bold') > -1 && (header[field][0] !== 4 || header[field].length !== 5)) {
+                issues[file.relativePath] = new Issue({
+                    file: file,
+                    code: 54,
+                    evidence: 'header field "dim" = ' + header[field]
+                });
+                continue;
             }
             field_value = header[field].slice(1, header[field][0]+1).toString();
         } else if (field === 'pixdim') {
