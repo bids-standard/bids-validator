@@ -266,5 +266,10 @@ module.exports = {
         key: 'NO_T1W',
         severity: 'ignore',
         reason: "Dataset does not contain any T1w scans."
+    },
+    54: {
+        key: 'BOLD_NOT_4D',
+        severity: 'error',
+        reason: 'Bold scans must be 4 dimensional.'
     }
 };
