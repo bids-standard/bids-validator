@@ -294,7 +294,7 @@ var BIDS = {
                 if (participants && !utils.array.equals(summary.subjects, participants.list, true)) {
                     self.issues.push(new Issue({
                         code: 49,
-                        evidence: summary.subjects.toString() +" is not \n" + participants.list.toString(),
+                        evidence: "Subjects(derived from BIDS folder structure):" + summary.subjects.toString() +" is not \n in participants.tsv file:" + participants.list.toString(),
                         file: participants.file
                     }));
                 }
