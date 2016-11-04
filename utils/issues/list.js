@@ -245,7 +245,7 @@ module.exports = {
     49: {
         key: 'PARTICIPANT_ID_MISMATCH',
         severity: 'error',
-        reason:   "Subjects found in this dataset did not match the participant_ids found in the participants.tsv file."
+        reason:   "Participant labels found in this dataset did not match the values in participant_id column found in the participants.tsv file."
     },
     50: {
         key: 'TASK_NAME_MUST_DEFINE',
