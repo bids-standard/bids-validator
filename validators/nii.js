@@ -140,8 +140,8 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                         code: 11
                     }));
                 } else {
-                    var niftiTR = Number((repetitionTime).toFixed(6));
-                    var jsonTR = Number((mergedDictionary.RepetitionTime).toFixed(6));
+                    var niftiTR = Number((repetitionTime).toFixed(3));
+                    var jsonTR = Number((mergedDictionary.RepetitionTime).toFixed(3));
                     if (niftiTR !== jsonTR) {
                         issues.push(new Issue({
                             file: file,
