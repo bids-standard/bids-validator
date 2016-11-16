@@ -113,7 +113,11 @@ var issues = {
      * same issues reformatted against the config.
      */
     reformat: function (issueList, summary, config) {
-        issueList = issueList.warnings.concat(issueList.errors).concat(issueList.ignored);
+        var errors   = issueList.errors   ? issueList.errors   : [],
+            warnings = issueList.warnings ? issueList.warnings : [],
+            ignored  = issueList.ignored  ? issueList.ignored  : [];
+
+        issueList = errors.concat(warnings).concat(ignored);
         var unformatted = [];
         for (var i = 0; i < issueList.length; i++) {
             var issue = issueList[i];
