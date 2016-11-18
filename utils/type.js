@@ -40,7 +40,7 @@ module.exports = {
             "participants.json", "/phasediff.json", "/phase1.json", "/phase2.json" ,"/fieldmap.json"];
 
         var funcTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(_bold.json|_events.json|_events.tsv|_physio.json|_stim.json)$');
+            + '(_bold.json|_sbref.json|_events.json|_events.tsv|_physio.json|_stim.json)$');
 
         var anatTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+_)?'
             + '(' + anatSuffixes.join("|") + ').json$');
@@ -82,7 +82,7 @@ module.exports = {
         var funcSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?'
-            + '(_bold.json|_events.json|_events.tsv|_physio.json|_stim.json)$');
+            + '(_bold.json|_sbref.json|_events.json|_events.tsv|_physio.json|_stim.json)$');
 
         var anatSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
