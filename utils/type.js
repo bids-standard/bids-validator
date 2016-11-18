@@ -138,7 +138,7 @@ module.exports = {
      * Check if the file has a name appropriate for a fieldmap scan
      */
     isFieldMap: function(path) {
-        var suffixes = ["phasediff", "phase1", "phase2", "magnitude1", "magnitude2", "fieldmap", "epi"];
+        var suffixes = ["phasediff", "phase1", "phase2", "magnitude1", "magnitude2", "magnitude", "fieldmap", "epi"];
         var anatRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?fmap' +
