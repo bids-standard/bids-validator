@@ -307,6 +307,8 @@ function potentialLocations(path) {
     var topLevelPath = "/" + topLevelComponentList.join("_");
     potentialPaths.push(topLevelPath);
 
+    potentialPaths.reverse();
+
     return potentialPaths;
 }
 
