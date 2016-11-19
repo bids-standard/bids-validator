@@ -30,21 +30,23 @@ module.exports = function (file, contents, callback) {
 function checkUnits (file, sidecar) {
     var issues = [];
     var schema = null;
-    if (file.path.endsWith("participants.json")){
-        schema = require('./schemas/data_dictionary.json');
-    } else if (file.path.endsWith("bold.json")){
-        schema = require('./schemas/bold.json');
-    }
-    if (schema) {
-        var validate = ajv.compile(schema);
-        var valid = validate(sidecar);
-        if (!valid) {
-            for (var i = 0; i < validate.errors.length; i++) {
-                issues.push(new Issue({
-                    file: file,
-                    code: 55,
-                    evidence: validate.errors[i].dataPath + ' ' +validate.errors[i].message
-                }));
+    if (file) {
+        if (file.path.endsWith("participants.json")) {
+            schema = require('./schemas/data_dictionary.json');
+        } else if (file.path.endsWith("bold.json") || file.path.endsWith("sbref.json")) {
+            schema = require('./schemas/bold.json');
+        }
+        if (schema) {
+            var validate = ajv.compile(schema);
+            var valid = validate(sidecar);
+            if (!valid) {
+                for (var i = 0; i < validate.errors.length; i++) {
+                    issues.push(new Issue({
+                        file: file,
+                        code: 55,
+                        evidence: validate.errors[i].dataPath + ' ' + validate.errors[i].message
+                    }));
+                }
             }
         }
     }
