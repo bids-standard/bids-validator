@@ -15,7 +15,7 @@
       "type": "string"
     },
     "RepetitionTime": {
-      "type": "integer"
+      "type": "number"
     },
     "SliceEncodingDirection": {
       "type": "string"
