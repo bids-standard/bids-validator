@@ -252,7 +252,7 @@ var BIDS = {
             }
 
             // collect sessions subjects
-            if (!utils.type.isAssociatedData(file.relativePath)) {
+            if (!utils.type.isAssociatedData(file.relativePath) && utils.type.isBIDS(file.relativePath)) {
                 var checks = {'ses':  'sessions', 'sub':  'subjects'};
                 for (var checkKey in checks) {
                     if (path && path.indexOf(checkKey + '-') > -1) {
