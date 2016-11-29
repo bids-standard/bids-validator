@@ -204,11 +204,11 @@ module.exports = {
         var values = {}, match;
 
         // capture subject
-        match = (/^\/sub-(\w+)/).exec(path);
+        match = (/^\/sub-([a-zA-Z0-9]+)/).exec(path);
         values.sub = match && match[1] ? match[1] : null;
 
         // capture session
-        match = (/^\/sub-\w+\/ses-(\w+)/).exec(path);
+        match = (/^\/sub-[a-zA-Z0-9]+\/ses-([a-zA-Z0-9]+)/).exec(path);
         values.ses = match && match[1] ? match[1] : null;
 
         return values;
