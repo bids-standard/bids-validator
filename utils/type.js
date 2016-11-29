@@ -203,11 +203,11 @@ module.exports = {
     getPathValues: function (path) {
         var values = {}, match;
 
-        // capture subjects
+        // capture subject
         match = (/^\/sub-(\w+)/).exec(path);
         values.sub = match && match[1] ? match[1] : null;
 
-        // capture sessions
+        // capture session
         match = (/^\/sub-\w+\/ses-(\w+)/).exec(path);
         values.ses = match && match[1] ? match[1] : null;
 
