@@ -289,10 +289,12 @@ var BIDS = {
             }, function () {
                 if (!hasSubjectDir) {self.issues.push(new Issue({code: 45}));}
                 // check if participants file match found subjects
-                if (participants && !utils.array.equals(summary.subjects, participants.list, true)) {
+                var participantsFromFile = participants.list.sort();
+                var participantsFromFolders = summary.subjects.sort();
+                if (participants && !utils.array.equals(participantsFromFolders, participantsFromFile, true)) {
                     self.issues.push(new Issue({
                         code: 49,
-                        evidence: "participants.tsv: " + participants.list.toString() + " folder structure: " +  summary.subjects.toString(),
+                        evidence: "participants.tsv: " + participantsFromFile.toString() + " folder structure: " +  participantsFromFolders.toString(),
                         file: participants.file
                     }));
                 }
