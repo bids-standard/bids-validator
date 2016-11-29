@@ -234,3 +234,12 @@ describe('utils.type.isAssociatedData', function () {
         });
     });
 });
+
+describe('utils.type.getPathValues', function () {
+    it('should return the correct path values from a valid file path', function () {
+        assert.equal(utils.type.getPathValues('/sub-22/ses-1/func/sub-22_ses-1_task-rest_acq-prefrontal_physio.tsv.gz').sub, 22);
+        assert.equal(utils.type.getPathValues('/sub-22/ses-1/func/sub-22_ses-1_task-rest_acq-prefrontal_physio.tsv.gz').ses, 1);
+        assert.equal(utils.type.getPathValues('/sub-22/func/sub-22_task-rest_acq-prefrontal_physio.tsv.gz').sub, 22);
+        assert.equal(utils.type.getPathValues('/sub-22/func/sub-22_task-rest_acq-prefrontal_physio.tsv.gz').ses, null);
+    });
+});

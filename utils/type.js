@@ -190,6 +190,28 @@ module.exports = {
 
     isNumber: function(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
+    },
+
+    /**
+     * Get Path Values
+     *
+     * Takes a file path and returns and values
+     * found for the following path keys.
+     * sub-
+     * ses-
+     */
+    getPathValues: function (path) {
+        var values = {}, match;
+
+        // capture subject
+        match = (/^\/sub-([a-zA-Z0-9]+)/).exec(path);
+        values.sub = match && match[1] ? match[1] : null;
+
+        // capture session
+        match = (/^\/sub-[a-zA-Z0-9]+\/ses-([a-zA-Z0-9]+)/).exec(path);
+        values.ses = match && match[1] ? match[1] : null;
+
+        return values;
     }
 
 };

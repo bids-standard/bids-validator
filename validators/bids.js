@@ -251,17 +251,15 @@ var BIDS = {
                 summary.size += file.stats.size;
             }
 
-            // collect sessions subjects
-            if (!utils.type.isAssociatedData(file.relativePath)) {
-                var checks = {'ses':  'sessions', 'sub':  'subjects'};
-                for (var checkKey in checks) {
-                    if (path && path.indexOf(checkKey + '-') > -1) {
-                        var item = path.slice(path.indexOf(checkKey + '-'));
-                            item = item.slice(0, item.indexOf('/'));
-                            if (item.indexOf('_') > -1) {item = item.slice(0, item.indexOf('_'));}
-                            item = item.slice(checkKey.length + 1);
-                        if (summary[checks[checkKey]].indexOf(item) === -1) {summary[checks[checkKey]].push(item);}
-                    }
+            // collect sessions & subjects
+            if (!utils.type.isAssociatedData(file.relativePath) && utils.type.isBIDS(file.relativePath)) {
+                var pathValues = utils.type.getPathValues(file.relativePath);
+
+                if (pathValues.sub && summary.subjects.indexOf(pathValues.sub) === -1) {
+                    summary.subjects.push(pathValues.sub);
+                }
+                if (pathValues.ses && summary.sessions.indexOf(pathValues.ses) === -1) {
+                    summary.sessions.push(pathValues.ses);
                 }
             }
 
