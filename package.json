@@ -31,7 +31,8 @@
     "nifti-js": "^1.0.0",
     "pako": "^0.2.8",
     "pluralize": "^1.2.1",
-    "yargs": "^3.25.0"
+    "yargs": "^3.25.0",
+    "ajv": "^4.9.0"
   },
   "devDependencies": {
     "adm-zip": "",

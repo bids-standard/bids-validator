@@ -271,5 +271,10 @@ module.exports = {
         key: 'BOLD_NOT_4D',
         severity: 'error',
         reason: 'Bold scans must be 4 dimensional.'
+    },
+    55: {
+        key: 'JSON_SCHEMA_VALIDATION_ERROR',
+        severity: 'error',
+        reason: 'JSON file is not formatted according the the schema.'
     }
 };
