@@ -289,14 +289,17 @@ var BIDS = {
             }, function () {
                 if (!hasSubjectDir) {self.issues.push(new Issue({code: 45}));}
                 // check if participants file match found subjects
-                var participantsFromFile = participants.list.sort();
-                var participantsFromFolders = summary.subjects.sort();
-                if (participants && !utils.array.equals(participantsFromFolders, participantsFromFile, true)) {
-                    self.issues.push(new Issue({
-                        code: 49,
-                        evidence: "participants.tsv: " + participantsFromFile.toString() + " folder structure: " +  participantsFromFolders.toString(),
-                        file: participants.file
-                    }));
+
+                if (participants){
+                    var participantsFromFile = participants.list.sort();
+                    var participantsFromFolders = summary.subjects.sort();
+                    if (!utils.array.equals(participantsFromFolders, participantsFromFile, true)) {
+                        self.issues.push(new Issue({
+                            code: 49,
+                            evidence: "participants.tsv: " + participantsFromFile.join(', ') + " folder structure: " + participantsFromFolders.join(', '),
+                            file: participants.file
+                        }));
+                    }
                 }
 
                 // check if dataset contains T1w
