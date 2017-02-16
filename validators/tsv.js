@@ -142,10 +142,7 @@ module.exports = function TSV (file, contents, fileList, callback) {
         }
 
     }
-
-    //start here
-
-    var filteredRows = [];
+  // check partcipants.tsv for age 89+
     var headers = rows[0].split('\t');
     var ageIndex = headers.indexOf('age');
     if (file.name === 'participants.tsv'){
@@ -154,7 +151,6 @@ module.exports = function TSV (file, contents, fileList, callback) {
         var row = row.slice(0,-1)
         var values = row.split('\t');
         var ageIdColumn = headers.indexOf("age\r");
-        // console.log(values[ageIdColumn])
         age = values[ageIdColumn]
         if (age == 89 || age > 89) {
             age_89_plus = true;
