@@ -276,5 +276,10 @@ module.exports = {
         key: 'JSON_SCHEMA_VALIDATION_ERROR',
         severity: 'error',
         reason: 'JSON file is not formatted according the the schema.'
+    },
+    56: {
+        key: 'Participants age 89 or 89+',
+        severity: 'warning',
+        reason: 'Participants age is 89 or 89+. Tag them as 89+'
     }
 };
