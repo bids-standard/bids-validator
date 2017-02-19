@@ -144,16 +144,14 @@ module.exports = function TSV (file, contents, fileList, callback) {
     }
   // check partcipants.tsv for age 89+
     var headers = rows[0].split('\t');
-    var ageIndex = headers.indexOf('age');
     if (file.name === 'participants.tsv'){
       for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
-        var row = row.slice(0,-1)
+        var row = row.slice(0,-1)   // remove /r after every row
         var values = row.split('\t');
         var ageIdColumn = headers.indexOf("age\r");
         age = values[ageIdColumn]
         if (age == 89 || age > 89) {
-            age_89_plus = true;
             issues.push(new Issue({
                 file: file,
                 evidence: row,

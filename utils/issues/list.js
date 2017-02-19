@@ -278,8 +278,8 @@ module.exports = {
         reason: 'JSON file is not formatted according the the schema.'
     },
     56: {
-        key: 'Participants age 89 or 89+',
+        key: 'Participants age 89 or higher',
         severity: 'warning',
-        reason: 'Participants age is 89 or 89+. Tag them as 89+'
+        reason: 'As per section 164.514(C) of "The De-dentification Standard" under HIPPA guidelines, participants with age 89 or higher should be tagged as 89+. More information can be found at https://www.hhs.gov/hipaa/for-professionals/privacy/special-topics/de-identification/#standard'
     }
 };
