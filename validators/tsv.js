@@ -145,11 +145,11 @@ module.exports = function TSV (file, contents, fileList, callback) {
   // check partcipants.tsv for age 89+
 
     if (file.name === 'participants.tsv'){
-      var header = rows[0].replace(/(\r\n|\n|\r)/gm,"").split('\t'); //remove EOL character if any
+      var header = rows[0].trim().split('\t');
       var ageIdColumn = header.indexOf("age");
       for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
-        var values = row.replace(/(\r\n|\n|\r)/gm,"").split('\t');//remove EOL character if any
+        var values = row.trim().split('\t');
         age = values[ageIdColumn]
         if (age >= 89) {
             issues.push(new Issue({
