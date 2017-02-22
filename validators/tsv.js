@@ -150,7 +150,7 @@ module.exports = function TSV (file, contents, fileList, callback) {
       for (var a = 0; a < rows.length; a++) {
         var line = rows[a];
         var line_values = line.trim().split('\t');
-        var age = line_values[ageIdColumn]
+        var age = line_values[ageIdColumn];
         if (age >= 89) {
             issues.push(new Issue({
                 file: file,
