@@ -103,8 +103,10 @@ describe('TSV', function(){
     });
 
     it("should not allow particpants with age 89 and above in participants.tsv file", function () {
-        var tsv = 'participant_id\theader-two\t4eader-three\n' +
-                  'sub-01\tgroup-A\t89\n';
+      var tsv = 'participant_id\theader-two\t4eader-three\n' +
+                'sub-01\tvalue-two\t89';
+        // var tsv = 'participant_id\theader-two\t4eader-three\n' +
+        //           'sub-01\tgroup-A\t89\n';
         validate.TSV(participantsFile, tsv, [], function (issues) {
             assert(issues.length === 1 && issues[0].code === 56);
         });
