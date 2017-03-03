@@ -124,7 +124,7 @@ var BIDS = {
             if (path.startsWith('/sub-')) {hasSubjectDir = true;}
 
             // ignore associated data
-            if (utils.type.isAssociatedData(file.relativePath)) {process.nextTick(function() { cb() });}
+            if (utils.type.isAssociatedData(file.relativePath)) {process.nextTick(cb);}
 
             // validate path naming
             else if (!utils.type.isBIDS(file.relativePath)) {
@@ -133,7 +133,7 @@ var BIDS = {
                     evidence: file.name,
                     code: 1
                 }));
-                process.nextTick(function() { cb() });
+                process.nextTick(cb);
             }
 
             // capture niftis for later validation
@@ -146,7 +146,7 @@ var BIDS = {
                     suffix    = suffix.slice(0, suffix.indexOf('.'));
                 if (summary.modalities.indexOf(suffix) === -1) {summary.modalities.push(suffix);}
 
-                process.nextTick(function() { cb() });
+                process.nextTick(cb);
             }
 
 
@@ -155,7 +155,7 @@ var BIDS = {
                 utils.files.readFile(file, function (issue, contents) {
                     if (issue) {
                         self.issues.push(issue);
-                        process.nextTick(function() { cb() });
+                        process.nextTick(cb);
                         return;
                     }
                     if (file.name.endsWith('_events.tsv')) {events.push(file.relativePath);}
@@ -174,7 +174,7 @@ var BIDS = {
                             }
                         }
                         self.issues = self.issues.concat(issues);
-                        process.nextTick(function() { cb() });
+                        process.nextTick(cb);
                     });
                 });
             }
@@ -184,13 +184,13 @@ var BIDS = {
                 utils.files.readFile(file, function (issue, contents) {
                     if (issue) {
                         self.issues.push(issue);
-                        process.nextTick(function() { cb() });
+                        process.nextTick(cb);
                         return;
                     }
                     bContentsDict[file.relativePath] = contents;
                     bvec(file, contents, function (issues) {
                         self.issues = self.issues.concat(issues);
-                        process.nextTick(function() { cb() });
+                        process.nextTick(cb);
                     });
                 });
             }
@@ -200,13 +200,13 @@ var BIDS = {
                 utils.files.readFile(file, function (issue, contents) {
                     if (issue) {
                         self.issues.push(issue);
-                        process.nextTick(function() { cb() });
+                        process.nextTick(cb);
                         return;
                     }
                     bContentsDict[file.relativePath] = contents;
                     bval(file, contents, function (issues) {
                         self.issues = self.issues.concat(issues);
-                        process.nextTick(function() { cb() });
+                        process.nextTick(cb);
                     });
                 });
             }
@@ -216,7 +216,7 @@ var BIDS = {
                 utils.files.readFile(file, function (issue, contents) {
                     if (issue) {
                         self.issues.push(issue);
-                        process.nextTick(function() { cb() });
+                        process.nextTick(cb);
                         return;
                     }
                     json(file, contents, function (issues, jsObj) {
@@ -230,11 +230,11 @@ var BIDS = {
                                 summary.tasks.push(task);
                             }
                         }
-                        process.nextTick(function() { cb() });
+                        process.nextTick(cb);
                     });
                 });
             } else {
-                process.nextTick(function() { cb() });
+                process.nextTick(cb);
             }
 
             // collect file stats
@@ -268,19 +268,19 @@ var BIDS = {
                 if (self.options.ignoreNiftiHeaders) {
                     NIFTI(null, file, jsonContentsDict, bContentsDict, fileList, events, function (issues) {
                         self.issues = self.issues.concat(issues);
-                        process.nextTick(function() { cb() });
+                        process.nextTick(cb);
                     });
                 } else {
                     utils.files.readNiftiHeader(file, function (header) {
                         // check if header could be read
                         if (header && header.hasOwnProperty('error')) {
                             self.issues.push(header.error);
-                            process.nextTick(function() { cb() });
+                            process.nextTick(cb);
                         } else {
                             headers.push([file, header]);
                             NIFTI(header, file, jsonContentsDict, bContentsDict, fileList, events, function (issues) {
                                 self.issues = self.issues.concat(issues);
-                                process.nextTick(function() { cb() });
+                                process.nextTick(cb);
                             });
                         }
                     });
