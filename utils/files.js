@@ -41,11 +41,11 @@ function readFile (file, callback) {
     if (fs) {
         testFile(file, function (issue) {
             if (issue) {
-                process.nextTick(function() { callback(issue, null) });
+                process.nextTick(function() { callback(issue, null); });
                 return;
             }
             fs.readFile(file.path, 'utf8', function (err, data) {
-                process.nextTick(function() { callback(null, data) });
+                process.nextTick(function() { callback(null, data); });
             });
         });
     } else {
@@ -264,9 +264,9 @@ function testFile (file, callback) {
         } else {
             fs.access(file.path, function (accessErr) {
                 if (!accessErr) {
-                    process.nextTick(function() { callback(null, stats) });
+                    process.nextTick(function() { callback(null, stats); });
                 } else {
-                    process.nextTick(function() { callback(new Issue({code: 44, file: file}), stats) });
+                    process.nextTick(function() { callback(new Issue({code: 44, file: file}), stats); });
                 }
             });
         }
