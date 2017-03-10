@@ -116,7 +116,7 @@ var BIDS = {
         };
 
         // validate individual files
-        async.forEachOfLimit(fileList, 200, function (file, key, cb) {
+        async.eachOfLimit(fileList, 200, function (file, key, cb) {
             var path = utils.files.relativePath(file);
             file.relativePath = path;
 
@@ -264,7 +264,7 @@ var BIDS = {
             }
 
         }, function () {
-            async.forEachOf(niftis, function (file, key, cb) {
+            async.eachOfLimit(niftis, 200, function (file, key, cb) {
                 if (self.options.ignoreNiftiHeaders) {
                     NIFTI(null, file, jsonContentsDict, bContentsDict, fileList, events, function (issues) {
                         self.issues = self.issues.concat(issues);
