@@ -208,7 +208,6 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
 
               for(var key = 0; key<intendedFor.length; key++){
                 var intendedForFile = "/" + path.split("/")[1] + "/" + intendedFor[key];
-                // console.log(intendedForFile)
                 var onTheList = false;
                 async.forEachOf(fileList, function (file, key, cb) {
                     var filePath = file.path ? file.path : file.webkitRelativePath;
