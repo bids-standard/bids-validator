@@ -105,9 +105,8 @@ describe('NIFTI', function(){
               RepetitionTime: 1,
               TotalReadoutTime: 3,
               TaskName: 'Mixed Event Related Probe',
-              IntendedFor: {'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
-              'sub-15_task-mixedeventrelatedprobe_run-02_bold.nii.gz'
-            }
+              IntendedFor: ['sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz','sub-15_task-mixedeventrelatedprobe_run-02_bold.nii.gz'
+            ]
           }
         }
       validate.NIFTI(null, file, jsonContentsDict, {}, [], events, function (issues) {
