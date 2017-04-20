@@ -88,4 +88,31 @@ describe('NIFTI', function(){
         });
     });
 
+    it('should genrate warning if files listed in IntendedFor of fieldmap json doesnot exist', function() {
+      var file = {
+          name: 'sub-09_ses-test_run-01_fieldmap.nii.gz',
+          path: '/ds114/sub-09/ses-test/dwi/sub-09_ses-test_run-01_fieldmap.nii.gz',
+          relativePath: '/sub-09/ses-test/dwi/sub-09_ses-test_run-01_fieldmap.nii.gz'
+      };
+
+      var jsonContentsDict = {
+          '/sub-09/ses-test/dwi/sub-09_ses-test_run-01_fieldmap.json': {
+              EchoTime: 1,
+              PhaseEncodingDirection: 3,
+              EffectiveEchoSpacing: 5,
+              SliceTiming: 3,
+              SliceEncodingDirection: 4,
+              RepetitionTime: 1,
+              TotalReadoutTime: 3,
+              TaskName: 'Mixed Event Related Probe',
+              IntendedFor: {'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
+              'sub-15_task-mixedeventrelatedprobe_run-02_bold.nii.gz'
+            }
+          }
+        }
+      validate.NIFTI(null, file, jsonContentsDict, {}, [], events, function (issues) {
+          assert(issues.length = 1 && issues[0].code == 37);
+      });
+    })
+
 });
