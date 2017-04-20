@@ -101,10 +101,10 @@ describe('NIFTI', function(){
               IntendedFor: ['sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz','sub-15_task-mixedeventrelatedprobe_run-02_bold.nii.gz'
             ]
           }
-        }
+        };
       validate.NIFTI(null, file, jsonContentsDict, {}, [], [], function (issues) {
           assert(issues.length = 2 && issues[0].code == 17  && issues[1].code == 37);
       });
-    })
+    });
 
 });
