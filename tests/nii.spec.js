@@ -97,20 +97,13 @@ describe('NIFTI', function(){
 
       var jsonContentsDict = {
           '/sub-09/ses-test/dwi/sub-09_ses-test_run-01_fieldmap.json': {
-              EchoTime: 1,
-              PhaseEncodingDirection: 3,
-              EffectiveEchoSpacing: 5,
-              SliceTiming: 3,
-              SliceEncodingDirection: 4,
-              RepetitionTime: 1,
-              TotalReadoutTime: 3,
               TaskName: 'Mixed Event Related Probe',
               IntendedFor: ['sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz','sub-15_task-mixedeventrelatedprobe_run-02_bold.nii.gz'
             ]
           }
         }
-      validate.NIFTI(null, file, jsonContentsDict, {}, [], events, function (issues) {
-          assert(issues.length = 1 && issues[0].code == 37);
+      validate.NIFTI(null, file, jsonContentsDict, {}, [], [], function (issues) {
+          assert(issues.length = 2 && issues[0].code == 17  && issues[1].code == 37);
       });
     })
 
