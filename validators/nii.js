@@ -43,14 +43,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
         }
 
         if (bval && bvec && header) {
-            if (bvec.split('\n').length <= 4){
-              issues.push(new Issue({
-                  code: 31,
-                  file: file,
-                  reason: '_dwi scans should have a corresponding .bvec file with three rows '
-              }));
-            }
-            if (bvec.split('\n').length === 4){
+            if (bvec.replace(/^\s+|\s+$/g, '').split('\n').length === 3){
               var volumes = [
                   bvec.split('\n')[0].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 1 length
                   bvec.split('\n')[1].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 2 length
