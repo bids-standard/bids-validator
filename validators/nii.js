@@ -60,6 +60,10 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                   }));
               }
             } else {
+              issues.push(new Issue({
+                  code: 31,
+                  file: file
+              }));
             }
           }
     }
