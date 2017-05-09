@@ -51,7 +51,6 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                   bval.replace(/^\s+|\s+$/g, '').split(' ').length,                // bval row length
                   header.dim[4]                                                    // header 4th dimension
               ];
-            // }
 
               if (!volumes.every(function(v) { return v === volumes[0]; })) {
                   issues.push(new Issue({
@@ -62,6 +61,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             } else {
               issues.push(new Issue({
                   code: 31,
+                  reason: 'bvec file not checked as it contains less than 3 rows',
                   file: file
               }));
             }
