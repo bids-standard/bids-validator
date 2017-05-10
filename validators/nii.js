@@ -42,7 +42,10 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             }));
         }
 
-        if (bval && bvec && header) {
+        if (bval && bvec && header){
+        /*
+        bvec length ==3 is checked at bvec.spec.js hence following if loop doesnot have else block
+        */
             if (bvec.replace(/^\s+|\s+$/g, '').split('\n').length === 3){
               var volumes = [
                   bvec.split('\n')[0].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 1 length
@@ -58,12 +61,6 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                       file: file
                   }));
               }
-            } else {
-              issues.push(new Issue({
-                  code: 31,
-                  reason: 'bvec file not checked as it contains less than 3 rows',
-                  file: file
-              }));
             }
           }
     }
