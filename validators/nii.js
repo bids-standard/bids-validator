@@ -212,21 +212,21 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
               var intendedFor = typeof mergedDictionary['IntendedFor'] == "string" ? [mergedDictionary['IntendedFor']] : mergedDictionary['IntendedFor'];
 
               for(var key = 0; key<intendedFor.length; key++){
-                var intendedForFile = "/" + path.split("/")[1] + "/" + intendedFor[key];
+                var intendedForFile = path.split("/")[1] + "/" + intendedFor[key];
                 var onTheList = false;
                 async.eachOfLimit(fileList, 200, function (file, key, cb) {
                     var filePath = file.path ? file.path : file.webkitRelativePath;
                     if (filePath.endsWith(intendedForFile)){
                         onTheList = true;
                     }
-                    process.nextTick(cb);
+                    cb();
                 }, function(){
                     if (!onTheList) {
                         issues.push(new Issue({
                             file: file,
                             code: 37,
-                            reason: "'IntendedFor' property of this fieldmap ('" + mergedDictionary['IntendedFor'] + "') does " +
-                            "not point to an existing file. Please mind that this value should not include subject level directory " +
+                            reason: "'IntendedFor' property of this fieldmap  ('" + path +
+                            "') does not point to an existing file('" +  intendedForFile  + "'). Please mind that this value should not include subject level directory " +
                             "('/" + path.split("/")[1] + "/')."
                         }));
                     }
