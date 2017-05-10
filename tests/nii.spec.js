@@ -121,6 +121,7 @@ describe('NIFTI', function(){
       var jsonContentsDict = {
           '/sub-15/ses-test/dwi/sub-15_ses-test_run-01_fieldmap.json': {
               TaskName: 'Mixed Event Related Probe',
+              Units: 'rad/s',
               IntendedFor: ['func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'
             ]
           }
@@ -129,11 +130,7 @@ describe('NIFTI', function(){
       var fileList = [{ name:'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
         path: 'sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
         relativePath: '/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'}];
-      // fileList.push({ name:'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
-      //   path: 'sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
-      //   relativePath: '/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'});
       validate.NIFTI(null, file, jsonContentsDict, {}, fileList, [], function (issues) {
-        console.log(issues)
           assert.deepEqual(issues, []);
       });
     });

@@ -207,11 +207,10 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
               var intendedFor = typeof mergedDictionary['IntendedFor'] == "string" ? [mergedDictionary['IntendedFor']] : mergedDictionary['IntendedFor'];
 
               for(var key = 0; key<intendedFor.length; key++){
-                var intendedForFile = "/" + path.split("/")[1] + "/" + intendedFor[key];
+                var intendedForFile = path.split("/")[1] + "/" + intendedFor[key];
                 var onTheList = false;
                 async.eachOfLimit(fileList, 200, function (file, key, cb) {
                     var filePath = file.path ? file.path : file.webkitRelativePath;
-                    // console.log(file)
                     if (filePath.endsWith(intendedForFile)){
                         onTheList = true;
                     }
