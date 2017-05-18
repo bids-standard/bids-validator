@@ -88,4 +88,51 @@ describe('NIFTI', function(){
         });
     });
 
+    it('should generate warning if files listed in IntendedFor of fieldmap json doesnot exist', function() {
+      var file = {
+          name: 'sub-09_ses-test_run-01_fieldmap.nii.gz',
+          path: '/ds114/sub-09/ses-test/dwi/sub-09_ses-test_run-01_fieldmap.nii.gz',
+          relativePath: '/sub-09/ses-test/dwi/sub-09_ses-test_run-01_fieldmap.nii.gz'
+      };
+
+      var jsonContentsDict = {
+          '/sub-09/ses-test/dwi/sub-09_ses-test_run-01_fieldmap.json': {
+              TaskName: 'Mixed Event Related Probe',
+              IntendedFor: ['func/sub-15_task-mixedeventrelatedprobe_run-05_bold.nii.gz','func/sub-15_task-mixedeventrelatedprobe_run-02_bold.nii.gz'
+            ]
+          }
+        };
+      var fileList = [];
+      fileList.push({ name:'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
+        path: 'sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
+        relativePath: '/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'});
+      validate.NIFTI(null, file, jsonContentsDict, {}, [], [], function (issues) {
+          assert(issues.length = 2 && issues[0].code == 17  && issues[1].code == 37);
+      });
+    });
+
+    it('should not generate warning if files listed in IntendedFor of fieldmap json exist', function() {
+      var file = {
+          name: 'sub-15_ses-test_run-01_fieldmap.nii.gz',
+          path: '/ds114/sub-15/ses-test/dwi/sub-15_ses-test_run-01_fieldmap.nii.gz',
+          relativePath: '/sub-15/ses-test/dwi/sub-15_ses-test_run-01_fieldmap.nii.gz'
+      };
+
+      var jsonContentsDict = {
+          '/sub-15/ses-test/dwi/sub-15_ses-test_run-01_fieldmap.json': {
+              TaskName: 'Mixed Event Related Probe',
+              Units: 'rad/s',
+              IntendedFor: ['func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'
+            ]
+          }
+        };
+
+      var fileList = [{ name:'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
+        path: 'sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
+        relativePath: '/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'}];
+      validate.NIFTI(null, file, jsonContentsDict, {}, fileList, [], function (issues) {
+          assert.deepEqual(issues, []);
+      });
+    });
+
 });

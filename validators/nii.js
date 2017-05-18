@@ -42,22 +42,27 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             }));
         }
 
-        if (bval && bvec && header) {
-            var volumes = [
-                bvec.split('\n')[0].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 1 length
-                bvec.split('\n')[1].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 2 length
-                bvec.split('\n')[2].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 3 length
-                bval.replace(/^\s+|\s+$/g, '').split(' ').length,                // bval row length
-                header.dim[4]                                                    // header 4th dimension
-            ];
+        if (bval && bvec && header){
+        /*
+        bvec length ==3 is checked at bvec.spec.js hence following if loop doesnot have else block
+        */
+            if (bvec.replace(/^\s+|\s+$/g, '').split('\n').length === 3){
+              var volumes = [
+                  bvec.split('\n')[0].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 1 length
+                  bvec.split('\n')[1].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 2 length
+                  bvec.split('\n')[2].replace(/^\s+|\s+$/g, '').split(' ').length, // bvec row 3 length
+                  bval.replace(/^\s+|\s+$/g, '').split(' ').length,                // bval row length
+                  header.dim[4]                                                    // header 4th dimension
+              ];
 
-            if (!volumes.every(function(v) { return v === volumes[0]; })) {
-                issues.push(new Issue({
-                    code: 29,
-                    file: file
-                }));
+              if (!volumes.every(function(v) { return v === volumes[0]; })) {
+                  issues.push(new Issue({
+                      code: 29,
+                      file: file
+                  }));
+              }
             }
-        }
+          }
     }
 
     if (missingEvents(path, potentialEvents, events)) {
@@ -207,21 +212,21 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
               var intendedFor = typeof mergedDictionary['IntendedFor'] == "string" ? [mergedDictionary['IntendedFor']] : mergedDictionary['IntendedFor'];
 
               for(var key = 0; key<intendedFor.length; key++){
-                var intendedForFile = "/" + path.split("/")[1] + "/" + intendedFor[key];
+                var intendedForFile = path.split("/")[1] + "/" + intendedFor[key];
                 var onTheList = false;
                 async.eachOfLimit(fileList, 200, function (file, key, cb) {
                     var filePath = file.path ? file.path : file.webkitRelativePath;
                     if (filePath.endsWith(intendedForFile)){
                         onTheList = true;
                     }
-                    process.nextTick(cb);
+                    cb();
                 }, function(){
                     if (!onTheList) {
                         issues.push(new Issue({
                             file: file,
                             code: 37,
-                            reason: "'IntendedFor' property of this fieldmap ('" + mergedDictionary['IntendedFor'] + "') does " +
-                            "not point to an existing file. Please mind that this value should not include subject level directory " +
+                            reason: "'IntendedFor' property of this fieldmap  ('" + path +
+                            "') does not point to an existing file('" +  intendedForFile  + "'). Please mind that this value should not include subject level directory " +
                             "('/" + path.split("/")[1] + "/')."
                         }));
                     }
