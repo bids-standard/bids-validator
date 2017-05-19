@@ -204,6 +204,7 @@ module.exports = {
      */
     getPathValues: function (path) {
         var values = {}, match;
+        console.log(path);
 
         // capture subject
         match = (/^\/sub-([a-zA-Z0-9]+)/).exec(path);

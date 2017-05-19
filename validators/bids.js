@@ -11,9 +11,10 @@ var bvec   = require('./bvec');
 var session = require('./session');
 var headerFields = require('./headerFields');
 
-var BIDS = {
+var BIDS;
+BIDS = {
 
-    options:  {},
+    options: {},
     issues: [],
 
     /**
@@ -97,34 +98,53 @@ var BIDS = {
     fullTest: function (fileList, callback) {
         var self = this;
 
-        var jsonContentsDict      = {},
-            bContentsDict         = {},
-            events                = [],
-            niftis                = [],
-            headers               = [],
-            participants          = null,
+        var jsonContentsDict = {},
+            bContentsDict = {},
+            events = [],
+            niftis = [],
+            headers = [],
+            participants = null,
             phenotypeParticipants = [],
-            hasSubjectDir         = false;
+            hasSubjectDir = false;
 
         var summary = {
             sessions: [],
             subjects: [],
-            tasks:    [],
+            tasks: [],
             modalities: [],
             totalFiles: Object.keys(fileList).length,
             size: 0
         };
 
+        for (var f in fileList) {
+            // console.log(fileList[f].relativePath);
+
+            var completename = fileList[f].relativePath;
+            // var filename_components = [];
+            var regex = '/-\w+_/';
+            var filenameTest_components = completename.match(/-\w+_/g);
+
+            console.log(completename);
+            console.log(filenameTest_components[0], typeof completename);
+
+        }
+
         // validate individual files
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
             var path = utils.files.relativePath(file);
             file.relativePath = path;
+            // console.log(path);
+
 
             // check for subject directory presence
-            if (path.startsWith('/sub-')) {hasSubjectDir = true;}
+            if (path.startsWith('/sub-')) {
+                hasSubjectDir = true;
+            }
 
             // ignore associated data
-            if (utils.type.isAssociatedData(file.relativePath)) {process.nextTick(cb);}
+            if (utils.type.isAssociatedData(file.relativePath)) {
+                process.nextTick(cb);
+            }
 
             // validate path naming
             else if (!utils.type.isBIDS(file.relativePath)) {
@@ -142,12 +162,32 @@ var BIDS = {
 
                 // collect modality summary
                 var pathParts = path.split('_');
-                var suffix    = pathParts[pathParts.length -1];
-                    suffix    = suffix.slice(0, suffix.indexOf('.'));
-                if (summary.modalities.indexOf(suffix) === -1) {summary.modalities.push(suffix);}
+                var suffix = pathParts[pathParts.length - 1];
+                suffix = suffix.slice(0, suffix.indexOf('.'));
+                if (summary.modalities.indexOf(suffix) === -1) {
+                    summary.modalities.push(suffix);
+                }
 
                 process.nextTick(cb);
             }
+
+            //check if filenames doesn't have any illegal character
+            // else if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz') || file.name.endsWith('.json') || file.name.endsWith('.tsv')){
+            //
+            //     var completename = file.name;
+            //     // var filename_components = [];
+            //     var regex = '/-\w+_/';
+            //     var filenameTest_components = completename.match(/-\w+_/g);
+            //
+            //     // var file_test = filename_components[1];
+            //     // console.log(typeof filenameTest_components, filenameTest_components)
+            //     // var result = filenameTest_components.map(function(filenameTest_component){return filenameTest_component;});
+            //     if(filenameTest_components instanceof Array){
+            //         console.log(completename);
+            //         console.log(filenameTest_components);
+            //     }
+            //
+            // }
 
 
             // validate tsv
@@ -158,7 +198,9 @@ var BIDS = {
                         process.nextTick(cb);
                         return;
                     }
-                    if (file.name.endsWith('_events.tsv')) {events.push(file.relativePath);}
+                    if (file.name.endsWith('_events.tsv')) {
+                        events.push(file.relativePath);
+                    }
                     TSV(file, contents, fileList, function (issues, participantList) {
                         if (participantList) {
                             if (file.name.endsWith('participants.tsv')) {
@@ -239,7 +281,9 @@ var BIDS = {
 
             // collect file stats
             if (typeof window !== 'undefined') {
-                if (file.size) {summary.size += file.size;}
+                if (file.size) {
+                    summary.size += file.size;
+                }
             } else {
                 if (!file.stats) {
                     try {
@@ -287,10 +331,12 @@ var BIDS = {
                 }
 
             }, function () {
-                if (!hasSubjectDir) {self.issues.push(new Issue({code: 45}));}
+                if (!hasSubjectDir) {
+                    self.issues.push(new Issue({code: 45}));
+                }
                 // check if participants file match found subjects
 
-                if (participants){
+                if (participants) {
                     var participantsFromFile = participants.list.sort();
                     var participantsFromFolders = summary.subjects.sort();
                     if (!utils.array.equals(participantsFromFolders, participantsFromFile, true)) {
