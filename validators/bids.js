@@ -117,15 +117,21 @@ BIDS = {
         };
 
         for (var f in fileList) {
-            // console.log(fileList[f].relativePath);
 
             var completename = fileList[f].relativePath;
-            // var filename_components = [];
-            var regex = '/-\w+_/';
-            var filenameTest_components = completename.match(/-\w+_/g);
+            var taskre = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
 
-            console.log(completename);
-            console.log(filenameTest_components[0], typeof completename);
+            var res = taskre.exec(completename);
+            if (res){
+                console.log(fileList[f].relativePath);
+                self.issues.push(new Issue({
+                    file: fileList[f].relativePath,
+                    code: 57,
+                    evidence: "task name contains illegal character: " + fileList[f].relativePath
+                }));
+
+            }
+
 
         }
 
@@ -133,7 +139,6 @@ BIDS = {
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
             var path = utils.files.relativePath(file);
             file.relativePath = path;
-            // console.log(path);
 
 
             // check for subject directory presence
