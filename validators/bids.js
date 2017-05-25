@@ -120,12 +120,13 @@ BIDS = {
 
             var completename = fileList[f].relativePath;
             var taskre = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
+            var val = new String(completename);
 
             var res = taskre.exec(completename);
             if (res){
-                console.log(fileList[f].relativePath);
+                console.log(completename);
                 self.issues.push(new Issue({
-                    file: fileList[f].relativePath,
+                    file: val,
                     code: 57,
                     evidence: "task name contains illegal character: " + fileList[f].relativePath
                 }));
