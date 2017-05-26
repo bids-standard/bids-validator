@@ -288,7 +288,7 @@ module.exports = {
         reason: 'Task Name contain an Illegal Character hypen or underscore. Please edit the filename as per BIDS spec.'
     },
     58: {
-        key: 'acq name contain illegal Character -/_',
+        key: 'Acq name contain illegal Character -/_',
         severity: 'error',
         reason: 'acq Name contain an Illegal Character hypen or underscore. Please edit the filename as per BIDS spec.'
     }

@@ -115,32 +115,39 @@ BIDS = {
             totalFiles: Object.keys(fileList).length,
             size: 0
         };
-
-        for (var f in fileList) {
-
-            var completename = fileList[f].relativePath;
-            var taskre = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
-            var val = new String(completename);
-
-            var res = taskre.exec(completename);
-            if (res){
-                console.log(completename);
-                self.issues.push(new Issue({
-                    file: val,
-                    code: 57,
-                    evidence: "task name contains illegal character: " + fileList[f].relativePath
-                }));
-
-            }
-
-
-        }
-
         // validate individual files
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
             var path = utils.files.relativePath(file);
             file.relativePath = path;
 
+            //check for illegal charcter in task name
+            for (var f in fileList) {
+                var completename = fileList[f].relativePath;
+                var taskre = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
+                var res = taskre.exec(completename);
+                if (res){
+                    self.issues.push(new Issue({
+                        file: fileList[f],
+                        code: 57,
+                        evidence: "task name contains illegal character: " + fileList[f].relativePath
+                    }));
+                }
+            }
+
+            // check for illegal character in acq name
+            for (var f in fileList) {
+                var completename = fileList[f].relativePath;
+                var acq_re = /sub-(.*?)_task-\w+.\w+(?:_acq-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*)?(?:_run-\d+)?_/g;
+                var acq_res = taskre.exec(completename);
+                if (acq_res){
+                    self.issues.push(new Issue({
+                        file: fileList[f],
+                        code: 58,
+                        evidence: "acq name contains illegal character: " + fileList[f].relativePath
+                    }));
+                }
+
+            }
 
             // check for subject directory presence
             if (path.startsWith('/sub-')) {
@@ -176,25 +183,6 @@ BIDS = {
 
                 process.nextTick(cb);
             }
-
-            //check if filenames doesn't have any illegal character
-            // else if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz') || file.name.endsWith('.json') || file.name.endsWith('.tsv')){
-            //
-            //     var completename = file.name;
-            //     // var filename_components = [];
-            //     var regex = '/-\w+_/';
-            //     var filenameTest_components = completename.match(/-\w+_/g);
-            //
-            //     // var file_test = filename_components[1];
-            //     // console.log(typeof filenameTest_components, filenameTest_components)
-            //     // var result = filenameTest_components.map(function(filenameTest_component){return filenameTest_component;});
-            //     if(filenameTest_components instanceof Array){
-            //         console.log(completename);
-            //         console.log(filenameTest_components);
-            //     }
-            //
-            // }
-
 
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {
