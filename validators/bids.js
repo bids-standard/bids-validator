@@ -122,14 +122,13 @@ BIDS = {
             var taskre = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
             var res = taskre.exec(completename);
             if (res!== null){
-                console.log(completename, res)
                 self.issues.push(new Issue({
                     file: fileList[f],
                     code: 57,
                     evidence: "task name contains illegal character: " + fileList[f].relativePath
                 }));
             }
-        };
+        }
 
         // check for illegal character in acq name
         for (var fi in fileList) {
