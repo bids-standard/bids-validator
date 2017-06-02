@@ -7,6 +7,7 @@
 1. Web version:
    1. Open [Google Chrome](https://www.google.com/chrome/) (currently the only supported browser)
    1. Go to http://incf.github.io/bids-validator/ and select a folder with your BIDs dataset.
+If the validator seems to be working longer than couple of minutes please open [developer tools ](https://developer.chrome.com/devtools) and report the error at [https://github.com/INCF/bids-validator/issues](https://github.com/INCF/bids-validator/issues).
 1. Command line version:
    1. Install [Node.js](https://nodejs.org) (at least version 4.4.4)
    1. From a terminal run `npm install -g bids-validator`
