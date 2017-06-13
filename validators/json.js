@@ -30,10 +30,10 @@ module.exports = function (file, contents, callback) {
 function checkUnits (file, sidecar) {
     var issues = [];
     var schema = null;
-    if (file.path) {
-        if (file.path.endsWith("participants.json")) {
+    if (file.name) {
+        if (file.name.endsWith("participants.json")) {
             schema = require('./schemas/data_dictionary.json');
-        } else if (file.path.endsWith("bold.json") || file.path.endsWith("sbref.json")) {
+        } else if (file.name.endsWith("bold.json") || file.name.endsWith("sbref.json")) {
             schema = require('./schemas/bold.json');
         }
         if (schema) {
