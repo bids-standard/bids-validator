@@ -221,6 +221,14 @@ var BIDS = {
                     }
                     json(file, contents, function (issues, jsObj) {
                         self.issues = self.issues.concat(issues);
+
+                        for (var i = 0; i < issues.length; i++) {
+                            if (issues[i].severity === 'error') {
+                                process.nextTick(cb);
+                                return;
+                            }
+                        }
+
                         jsonContentsDict[file.relativePath] = jsObj;
 
                         // collect task summary
