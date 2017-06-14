@@ -104,7 +104,7 @@ var BIDS = {
             headers               = [],
             participants          = null,
             phenotypeParticipants = [],
-            hasSubjectDir         = false;
+            hasSubjectDir         = false,
             hasDatasetDescription = false;
 
         var summary = {
