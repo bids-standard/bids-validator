@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {},
+  "id": "http://example.com/example.json",
+  "properties": {
+    "Authors": {
+      "id": "/properties/Authors",
+      "items": {
+        "id": "/properties/Authors/items",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "BIDSVersion": {
+      "id": "/properties/BIDSVersion",
+      "type": "string"
+    },
+    "Funding": {
+      "id": "/properties/Funding",
+      "type": "string"
+    },
+    "HowToAcknowledge": {
+      "id": "/properties/HowToAcknowledge",
+      "type": "string"
+    },
+    "License": {
+      "id": "/properties/License",
+      "type": "string"
+    },
+    "Name": {
+      "id": "/properties/Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "Name",
+    "BIDSVersion"
+  ],
+  "type": "object"
+}

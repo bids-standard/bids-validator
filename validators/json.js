@@ -35,6 +35,8 @@ function checkUnits (file, sidecar) {
             schema = require('./schemas/data_dictionary.json');
         } else if (file.name.endsWith("bold.json") || file.name.endsWith("sbref.json")) {
             schema = require('./schemas/bold.json');
+        } else if (file.relativePath === "/dataset_description.json") {
+            schema = require('./schemas/dataset_description.json');
         }
         if (schema) {
             var validate = ajv.compile(schema);
