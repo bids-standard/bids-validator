@@ -281,5 +281,10 @@ module.exports = {
         key: 'Participants age 89 or higher',
         severity: 'warning',
         reason: 'As per section 164.514(C) of "The De-dentification Standard" under HIPPA guidelines, participants with age 89 or higher should be tagged as 89+. More information can be found at https://www.hhs.gov/hipaa/for-professionals/privacy/special-topics/de-identification/#standard'
+    },
+    57: {
+        key: 'DATASET_DESCRIPTION_JSON_MISSING',
+        severity: 'error',
+        reason: 'The compulsory file /dataset_description.json is missing. See Section 8.1 of the BIDS specification.'
     }
 };
