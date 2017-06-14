@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://example.com/example.json",
+  "properties": {
+    "Authors": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "BIDSVersion": {
+      "type": "string"
+    },
+    "Funding": {
+      "type": "string"
+    },
+    "HowToAcknowledge": {
+      "type": "string"
+    },
+    "License": {
+      "type": "string"
+    },
+    "Name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "Name",
+    "BIDSVersion"
+  ],
+  "type": "object"
+}
