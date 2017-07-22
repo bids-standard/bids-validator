@@ -96,4 +96,19 @@ var suite = describe('BIDS example datasets ', function() {
             isdone();
         });
     });
+
+    // test for illegal characters used in acq and task name
+    it('validates dataset with illegal characters in task name', function(isdone) {
+        var options = {ignoreNiftiHeaders: false};
+        validate.BIDS("tests/data/valid_filenames", options, function (issues, summary) {
+            var errors = issues.errors;
+            var warnings = issues.warnings;
+            assert(summary.sessions.length === 0);
+            assert(summary.subjects.length === 1);
+            console.log(errors[0].code)
+            assert(errors[0].code === 57);
+            // console.log(issues)
+            isdone();
+        });
+    });
 });
