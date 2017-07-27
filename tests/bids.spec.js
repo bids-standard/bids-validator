@@ -105,9 +105,7 @@ var suite = describe('BIDS example datasets ', function() {
             var warnings = issues.warnings;
             assert(summary.sessions.length === 0);
             assert(summary.subjects.length === 1);
-            console.log(errors[0].code)
-            assert(errors[0].code === 57);
-            // console.log(issues)
+            assert(errors[0].code === '57');
             isdone();
         });
     });
