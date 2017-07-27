@@ -248,7 +248,7 @@ function missingEvents(path, potentialEvents, events) {
     var filenameParts  = pathParts[pathParts.length - 1].split('_');
     for (var i = 0; i < filenameParts.length; i++) {
         var part = filenameParts[i];
-        if (part.toLowerCase().indexOf('task') === 0 && part.toLowerCase().indexOf('rest') > -1) {
+        if (part.toLowerCase().indexOf('task') === 0 && part.indexOf('rest') > -1) {
             isRest = true;
         }
     }

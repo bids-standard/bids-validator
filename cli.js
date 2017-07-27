@@ -13,7 +13,7 @@ module.exports = function (dir, options) {
             var errors = issues.errors;
             var warnings = issues.warnings;
             if (issues === 'Invalid') {
-                console.log(colors.red("This does not appear to be a BIDS dataset. For more info go to http://bids.neuroimaging.io/"));
+                console.log(colors.red("The directory " + dir + " failed an initial Quick Test. This means the basic names and structure of the files and directories do not comply with BIDS specification. For more info go to http://bids.neuroimaging.io/"));
             } else if (issues.config && issues.config.length >= 1) {
                 console.log(colors.red('Invalid Config File'));
                 for (var i = 0; i < issues.config.length; i++) {
