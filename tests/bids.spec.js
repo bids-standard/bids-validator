@@ -90,7 +90,7 @@ var suite = describe('BIDS example datasets ', function() {
             assert.deepEqual(summary.tasks, ['rhyme judgment']);
             assert.deepEqual(summary.modalities, ['T1w', 'bold']);
             assert(summary.totalFiles === 8);
-            assert(summary.size === 481765);
+            assert(summary.size === 481793);
             assert.deepEqual(errors, []);
             assert(warnings.length === 1 && warnings[0].code === '13');
             isdone();
@@ -103,9 +103,7 @@ var suite = describe('BIDS example datasets ', function() {
         validate.BIDS("tests/data/valid_filenames", options, function (issues, summary) {
             var errors = issues.errors;
             var warnings = issues.warnings;
-            assert(summary.sessions.length === 0);
-            assert(summary.subjects.length === 1);
-            assert(errors[0].code === '57');
+            assert(errors[0].code === '55' && errors[1].code === '57');
             isdone();
         });
     });
