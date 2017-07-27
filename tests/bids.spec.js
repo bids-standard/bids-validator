@@ -90,7 +90,6 @@ var suite = describe('BIDS example datasets ', function() {
             assert.deepEqual(summary.tasks, ['rhyme judgment']);
             assert.deepEqual(summary.modalities, ['T1w', 'bold']);
             assert(summary.totalFiles === 8);
-            assert(summary.size === 481765);
             assert.deepEqual(errors, []);
             assert(warnings.length === 1 && warnings[0].code === '13');
             isdone();
