@@ -100,9 +100,8 @@ var suite = describe('BIDS example datasets ', function() {
     // test for illegal characters used in acq and task name
     it('validates dataset with illegal characters in task name', function(isdone) {
         var options = {ignoreNiftiHeaders: false};
-        validate.BIDS("tests/data/valid_filenames", options, function (issues, summary) {
+        validate.BIDS("tests/data/valid_filenames", options, function (issues) {
             var errors = issues.errors;
-            var warnings = issues.warnings;
             assert(errors[0].code === '55' && errors[1].code === '57');
             isdone();
         });
