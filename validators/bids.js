@@ -135,7 +135,7 @@ BIDS = {
                 self.issues.push(new Issue({
                     file: fileList[f],
                     code: 58,
-                    evidence: "acq name contains illegal character: " + fileList[fi].relativePath
+                    evidence: "acq name contains illegal character: " + fileList[f].relativePath
                 }));
             }
         }
