@@ -117,9 +117,12 @@ BIDS = {
         };
 
         //check for illegal charcter in task name
+        var taskre = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
+        var acq_re = /sub-(.*?)_task-\w+.\w+(_acq-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*)(?:_run-\d+)?_/g;
+
         for (var f in fileList) {
             var completename = fileList[f].relativePath;
-            var taskre = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
+            var acq_res = acq_re.exec(completename);
             var res = taskre.exec(completename);
             if (res!== null){
                 self.issues.push(new Issue({
@@ -128,22 +131,15 @@ BIDS = {
                     evidence: "task name contains illegal character: " + fileList[f].relativePath
                 }));
             }
-        }
-
-        // check for illegal character in acq name
-        for (var fi in fileList) {
-            var file_name = fileList[fi].relativePath;
-            var acq_re = /sub-(.*?)_task-\w+.\w+(_acq-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*)(?:_run-\d+)?_/g;
-            var acq_res = acq_re.exec(file_name);
             if (acq_res){
                 self.issues.push(new Issue({
-                    file: fileList[fi],
+                    file: fileList[f],
                     code: 58,
                     evidence: "acq name contains illegal character: " + fileList[fi].relativePath
                 }));
             }
-
         }
+
 
         // validate individual files
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
