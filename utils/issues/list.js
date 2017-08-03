@@ -283,12 +283,12 @@ module.exports = {
         reason: 'As per section 164.514(C) of "The De-dentification Standard" under HIPPA guidelines, participants with age 89 or higher should be tagged as 89+. More information can be found at https://www.hhs.gov/hipaa/for-professionals/privacy/special-topics/de-identification/#standard'
     },
     57: {
-        key: 'Task Name contain illegal Character -/_',
+        key: 'TASK_NAME_CONTAIN_ILLEGAL_CHARACTER',
         severity: 'error',
         reason: 'Task Name contain an Illegal Character hypen or underscore. Please edit the filename as per BIDS spec.'
     },
     58: {
-        key: 'Acq name contain illegal Character -/_',
+        key: 'ACQ_NAME_CONTAIN_ILLEGAL_CHARACTER',
         severity: 'error',
         reason: 'acq Name contain an Illegal Character hypen or underscore. Please edit the filename as per BIDS spec.'
     }
