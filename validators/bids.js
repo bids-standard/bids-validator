@@ -116,29 +116,35 @@ BIDS = {
             size: 0
         };
 
-        //check for illegal charcter in task name
-        var taskre = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
+
+        //check for illegal charcter in task name and acq name
+
+        var task_re = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
         var acq_re = /sub-(.*?)_task-\w+.\w+(_acq-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*)(?:_run-\d+)?_/g;
+
+        var illegalchar_regex_list = [
+            [task_re, 58,"task name contains illegal character:"],
+            [acq_re,59, "acq name contains illegal character:"]
+        ];
+
 
         for (var f in fileList) {
             var completename = fileList[f].relativePath;
-            var acq_res = acq_re.exec(completename);
-            var res = taskre.exec(completename);
-            if (res!== null){
-                self.issues.push(new Issue({
-                    file: fileList[f],
-                    code: 57,
-                    evidence: "task name contains illegal character: " + fileList[f].relativePath
-                }));
+
+            for (var err in illegalchar_regex_list) {
+                var err_regex = illegalchar_regex_list[err][0];
+                var err_code = illegalchar_regex_list[err][1];
+                var err_evidence = illegalchar_regex_list[err][2];
+
+                    if (err_regex.exec(completename)){
+                    self.issues.push(new Issue({
+                        file: fileList[f],
+                        code: err_code,
+                        evidence: err_evidence + fileList[f].relativePath
+                    }));
+                }
+              }
             }
-            if (acq_res){
-                self.issues.push(new Issue({
-                    file: fileList[f],
-                    code: 58,
-                    evidence: "acq name contains illegal character: " + fileList[f].relativePath
-                }));
-            }
-        }
 
 
         // validate individual files
