@@ -90,8 +90,19 @@ var suite = describe('BIDS example datasets ', function() {
             assert.deepEqual(summary.tasks, ['rhyme judgment']);
             assert.deepEqual(summary.modalities, ['T1w', 'bold']);
             assert(summary.totalFiles === 8);
+            assert(summary.size === 481793);
             assert.deepEqual(errors, []);
             assert(warnings.length === 1 && warnings[0].code === '13');
+            isdone();
+        });
+    });
+
+    // test for illegal characters used in acq and task name
+    it('validates dataset with illegal characters in task name', function(isdone) {
+        var options = {ignoreNiftiHeaders: false};
+        validate.BIDS("tests/data/valid_filenames", options, function (issues) {
+            var errors = issues.errors;
+            assert(errors[0].code === '58');
             isdone();
         });
     });

@@ -286,5 +286,15 @@ module.exports = {
         key: 'DATASET_DESCRIPTION_JSON_MISSING',
         severity: 'error',
         reason: 'The compulsory file /dataset_description.json is missing. See Section 8.1 of the BIDS specification.'
+    },
+    58: {
+        key: 'TASK_NAME_CONTAIN_ILLEGAL_CHARACTER',
+        severity: 'error',
+        reason: 'Task Name contain an Illegal Character hypen or underscore. Please edit the filename as per BIDS spec.'
+    },
+    59: {
+        key: 'ACQ_NAME_CONTAIN_ILLEGAL_CHARACTER',
+        severity: 'error',
+        reason: 'acq Name contain an Illegal Character hypen or underscore. Please edit the filename as per BIDS spec.'
     }
 };
