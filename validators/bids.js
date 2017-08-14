@@ -11,9 +11,10 @@ var bvec   = require('./bvec');
 var session = require('./session');
 var headerFields = require('./headerFields');
 
-var BIDS = {
+var BIDS;
+BIDS = {
 
-    options:  {},
+    options: {},
     issues: [],
 
     /**
@@ -97,23 +98,54 @@ var BIDS = {
     fullTest: function (fileList, callback) {
         var self = this;
 
-        var jsonContentsDict      = {},
-            bContentsDict         = {},
-            events                = [],
-            niftis                = [],
-            headers               = [],
-            participants          = null,
+        var jsonContentsDict = {},
+            bContentsDict = {},
+            events = [],
+            niftis = [],
+            headers = [],
+            participants = null,
             phenotypeParticipants = [],
-            hasSubjectDir         = false;
+            hasSubjectDir = false;
 
         var summary = {
             sessions: [],
             subjects: [],
-            tasks:    [],
+            tasks: [],
             modalities: [],
             totalFiles: Object.keys(fileList).length,
             size: 0
         };
+
+
+        //check for illegal charcter in task name and acq name
+
+        var task_re = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
+        var acq_re = /sub-(.*?)_task-\w+.\w+(_acq-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*)(?:_run-\d+)?_/g;
+
+        var illegalchar_regex_list = [
+            [task_re, 58,"task name contains illegal character:"],
+            [acq_re,59, "acq name contains illegal character:"]
+        ];
+
+
+        for (var f in fileList) {
+            var completename = fileList[f].relativePath;
+
+            for (var err in illegalchar_regex_list) {
+                var err_regex = illegalchar_regex_list[err][0];
+                var err_code = illegalchar_regex_list[err][1];
+                var err_evidence = illegalchar_regex_list[err][2];
+
+                    if (err_regex.exec(completename)){
+                    self.issues.push(new Issue({
+                        file: fileList[f],
+                        code: err_code,
+                        evidence: err_evidence + fileList[f].relativePath
+                    }));
+                }
+              }
+            }
+
 
         // validate individual files
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
@@ -121,10 +153,14 @@ var BIDS = {
             file.relativePath = path;
 
             // check for subject directory presence
-            if (path.startsWith('/sub-')) {hasSubjectDir = true;}
+            if (path.startsWith('/sub-')) {
+                hasSubjectDir = true;
+            }
 
             // ignore associated data
-            if (utils.type.isAssociatedData(file.relativePath)) {process.nextTick(cb);}
+            if (utils.type.isAssociatedData(file.relativePath)) {
+                process.nextTick(cb);
+            }
 
             // validate path naming
             else if (!utils.type.isBIDS(file.relativePath)) {
@@ -142,13 +178,14 @@ var BIDS = {
 
                 // collect modality summary
                 var pathParts = path.split('_');
-                var suffix    = pathParts[pathParts.length -1];
-                    suffix    = suffix.slice(0, suffix.indexOf('.'));
-                if (summary.modalities.indexOf(suffix) === -1) {summary.modalities.push(suffix);}
+                var suffix = pathParts[pathParts.length - 1];
+                suffix = suffix.slice(0, suffix.indexOf('.'));
+                if (summary.modalities.indexOf(suffix) === -1) {
+                    summary.modalities.push(suffix);
+                }
 
                 process.nextTick(cb);
             }
-
 
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {
@@ -158,7 +195,9 @@ var BIDS = {
                         process.nextTick(cb);
                         return;
                     }
-                    if (file.name.endsWith('_events.tsv')) {events.push(file.relativePath);}
+                    if (file.name.endsWith('_events.tsv')) {
+                        events.push(file.relativePath);
+                    }
                     TSV(file, contents, fileList, function (issues, participantList) {
                         if (participantList) {
                             if (file.name.endsWith('participants.tsv')) {
@@ -239,7 +278,9 @@ var BIDS = {
 
             // collect file stats
             if (typeof window !== 'undefined') {
-                if (file.size) {summary.size += file.size;}
+                if (file.size) {
+                    summary.size += file.size;
+                }
             } else {
                 if (!file.stats) {
                     try {
@@ -287,10 +328,12 @@ var BIDS = {
                 }
 
             }, function () {
-                if (!hasSubjectDir) {self.issues.push(new Issue({code: 45}));}
+                if (!hasSubjectDir) {
+                    self.issues.push(new Issue({code: 45}));
+                }
                 // check if participants file match found subjects
 
-                if (participants){
+                if (participants) {
                     var participantsFromFile = participants.list.sort();
                     var participantsFromFolders = summary.subjects.sort();
                     if (!utils.array.equals(participantsFromFolders, participantsFromFile, true)) {
