@@ -92,7 +92,7 @@ var suite = describe('BIDS example datasets ', function() {
             assert(summary.totalFiles === 8);
             assert(summary.size === 481793);
             assert.deepEqual(errors, []);
-            assert(warnings.length === 1 && warnings[0].code === '13');
+            assert(warnings.length === 2 && warnings[0].code === '13' && warnings[1].code === '60');
             isdone();
         });
     });

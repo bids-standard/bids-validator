@@ -296,5 +296,10 @@ module.exports = {
         key: 'ACQ_NAME_CONTAIN_ILLEGAL_CHARACTER',
         severity: 'error',
         reason: 'acq Name contain an Illegal Character hypen or underscore. Please edit the filename as per BIDS spec.'
-    }
+    },
+    60: {
+        key: 'SFORM_AND_QFORM_IN_IMAGE_HEADER_ARE_ZERO',
+        severity: 'warning',
+        reason: 'sform_code and qform_code in the image header are 0. The image/file is invalid or assumed to be in LAS orientation.'
+    },
 };
