@@ -102,7 +102,7 @@ var headerField = function headerField(headers, field) {
                 });
                 badField = true;
             }
-            if ((header['qform_code']=== 0) && header['sform_code'] === 0) {
+            if (header['qform_code']===0 && header['sform_code']===0) {
                 issues[file.relativePath] = new Issue({
                         file: file,
                         code: 60
