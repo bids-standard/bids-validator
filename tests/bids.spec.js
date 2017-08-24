@@ -84,7 +84,6 @@ var suite = describe('BIDS example datasets ', function() {
         var options = {ignoreNiftiHeaders: false};
         validate.BIDS("tests/data/valid_headers", options, function (issues, summary) {
             var errors = issues.errors;
-            var warnings = issues.warnings;
             assert(summary.sessions.length === 0);
             assert(summary.subjects.length === 1);
             assert.deepEqual(summary.tasks, ['rhyme judgment']);
