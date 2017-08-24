@@ -299,7 +299,7 @@ module.exports = {
     },
     60: {
         key: 'SFORM_AND_QFORM_IN_IMAGE_HEADER_ARE_ZERO',
-        severity: 'warning',
+        severity: 'error',
         reason: 'sform_code and qform_code in the image header are 0. The image/file will be considered invalid or assumed to be in LAS orientation.'
     },
 };
