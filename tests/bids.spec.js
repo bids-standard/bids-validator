@@ -84,6 +84,7 @@ var suite = describe('BIDS example datasets ', function() {
         var options = {ignoreNiftiHeaders: false};
         validate.BIDS("tests/data/valid_headers", options, function (issues, summary) {
             var errors = issues.errors;
+            var warnings = issues.warnings;
             assert(summary.sessions.length === 0);
             assert(summary.subjects.length === 1);
             assert.deepEqual(summary.tasks, ['rhyme judgment']);
@@ -91,6 +92,7 @@ var suite = describe('BIDS example datasets ', function() {
             assert(summary.totalFiles === 8);
             assert(summary.size === 481793);
             assert(errors[0].code === '60');
+            assert(warnings.length === 1 && warnings[0].code === '13')
             isdone();
         });
     });
