@@ -91,7 +91,7 @@ var suite = describe('BIDS example datasets ', function() {
             assert.deepEqual(summary.modalities, ['T1w', 'bold']);
             assert(summary.totalFiles === 8);
             assert(summary.size === 481793);
-            assert.deepEqual(errors, []);
+            assert(errors[0].code === '60');
             assert(warnings.length === 1 && warnings[0].code === '13');
             isdone();
         });
