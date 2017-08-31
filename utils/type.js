@@ -25,6 +25,7 @@ module.exports = {
             this.isAnat(path) ||
             this.isDWI(path) ||
             this.isFunc(path) ||
+            this.isMeg(path) ||
             this.isBehavioral(path) ||
             this.isCont(path) ||
             this.isFieldMap(path) ||
@@ -178,7 +179,16 @@ module.exports = {
         return conditionalMatch(funcRe, path);
     },
 
-    isBehavioral: function (path) {
+    isMeg: function(path) {
+        var MegRe = new RegExp('^\\\\/(sub-[a-zA-Z0-9]+)\)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?meg' +
+            '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:_proc-[a-zA-Z0-9]+)?_(?:_part-[0-9]+)?' +
+            '_meg.(|ctf|fif|4d|kit|kdf|itab)|_events.tsv|_channels.tsv)$');
+        return ConditionalMatch(MegRe, path);
+    },
+
+    isBehavioral: function(path) {
         var funcBeh = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?beh' +

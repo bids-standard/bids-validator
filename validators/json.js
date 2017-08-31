@@ -37,6 +37,8 @@ function checkUnits (file, sidecar) {
             schema = require('./schemas/bold.json');
         } else if (file.relativePath === "/dataset_description.json") {
             schema = require('./schemas/dataset_description.json');
+        } else if (file.name.endsWith("meg.json")) {
+            schema = require('./schemas/meg.json');
         }
         if (schema) {
             var validate = ajv.compile(schema);
