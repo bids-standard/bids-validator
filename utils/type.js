@@ -180,12 +180,12 @@ module.exports = {
     },
 
     isMeg: function(path) {
-        var MegRe = new RegExp('^\\\\/(sub-[a-zA-Z0-9]+)\)' +
+        var MegRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?meg' +
-            '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:_proc-[a-zA-Z0-9]+)?_(?:_part-[0-9]+)?' +
-            '_meg.(|ctf|fif|4d|kit|kdf|itab)|_events.tsv|_channels.tsv)$');
-        return ConditionalMatch(MegRe, path);
+            '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
+            '_(meg.(ctf|fif|4d|kit|kdf|itab)|(events.tsv|channels.tsv|meg.json|fid.json))$');
+        return conditionalMatch(MegRe, path);
     },
 
     isBehavioral: function(path) {
