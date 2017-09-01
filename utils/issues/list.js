@@ -346,5 +346,20 @@ module.exports = {
         key: 'FILENAME_COLUMN',
         severity: 'error',
         reason:   "_scans.tsv files must have a 'filename' column."
+    },
+    70: {
+        key: 'WRONG_NEW_LINE',
+        severity: 'error',
+        reason: "All TSV files must use Line Feed '\\n' characters to denote new lines. This files uses Carriage Return '\\r'."
+    },
+    71: {
+        key: 'CHANNELS_COLUMN_NAME',
+        severity: 'error',
+        reason:   "First column of the channels file must be named 'name'"
+    },
+    72: {
+        key: 'CHANNELS_COLUMN_TYPE',
+        severity: 'error',
+        reason:   "Second column of the events file must be named 'type'"
     }
 };
