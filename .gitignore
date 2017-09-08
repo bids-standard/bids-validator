@@ -5,5 +5,6 @@ tests/data/BIDS-examples-1.0.0-rc2
 tests/data/BIDS-examples-1.0.0-rc3u2
 tests/data/BIDS-examples-1.0.0-rc3u3
 tests/data/BIDS-examples-1.0.0-rc3u4
+tests/data/BIDS-examples-1.0.0-rc3u5
 tests/data/examples.zip
 npm-debug.log
