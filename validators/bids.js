@@ -43,7 +43,8 @@ BIDS = {
                         } else {
                             // Return an error immediately if quickTest fails
                             var issue = new Issue({
-                                code: 61
+                                code: 61,
+                                file: 'N/A'
                             });
                             callback({errors: [issue], warnings: []});
                         }
