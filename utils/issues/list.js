@@ -302,4 +302,9 @@ module.exports = {
         severity: 'error',
         reason: 'sform_code and qform_code in the image header are 0. The image/file will be considered invalid or assumed to be in LAS orientation.'
     },
+    61: {
+        key: 'QUICK_VALIDATION_FAILED',
+        severity: 'error',
+        reason: 'Quick validation failed. Check for structural/naming issues and at least one subject.',
+    }
 };

@@ -41,7 +41,11 @@ BIDS = {
                         if (couldBeBIDS) {
                             self.fullTest(files, callback);
                         } else {
-                            callback('Invalid');
+                            // Return an error immediately if quickTest fails
+                            var issue = new Issue({
+                                code: 61
+                            });
+                            callback({errors: [issue], warnings: []});
                         }
                     });
                 });
