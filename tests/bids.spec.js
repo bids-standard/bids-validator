@@ -1,6 +1,7 @@
 /*eslint no-console: ["error", { allow: ["log"] }] */
 
 var assert = require('chai').assert;
+var after = require('mocha').after;
 var validate = require('../index.js');
 var request = require('sync-request');
 var fs = require('fs');
@@ -111,7 +112,7 @@ var suite = describe('BIDS example datasets ', function() {
     describe('with enumerable array prototype methods', function() {
         before(function () {
             // Patch in a potentially iterable prototype
-            Array.prototype.broken = function () { /* custom extension */ }
+            Array.prototype.broken = function () { /* custom extension */ };
         });
         after(function () {
             // Unpatch the above
