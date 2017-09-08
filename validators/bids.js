@@ -131,10 +131,10 @@ BIDS = {
         for (var f in fileList) {
             var completename = fileList[f].relativePath;
 
-            for (var err in illegalchar_regex_list) {
-                var err_regex = illegalchar_regex_list[err][0];
-                var err_code = illegalchar_regex_list[err][1];
-                var err_evidence = illegalchar_regex_list[err][2];
+            for (var re_index = 0; re_index < illegalchar_regex_list.length; re_index++) {
+                var err_regex = illegalchar_regex_list[re_index][0];
+                var err_code = illegalchar_regex_list[re_index][1];
+                var err_evidence = illegalchar_regex_list[re_index][2];
 
                 if (err_regex.exec(completename)) {
                     self.issues.push(new Issue({
