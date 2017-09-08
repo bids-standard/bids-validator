@@ -46,7 +46,15 @@ BIDS = {
                                 code: 61,
                                 file: 'N/A'
                             });
-                            callback({errors: [issue], warnings: []});
+                            var summary = {
+                                sessions: [],
+                                subjects: [],
+                                tasks: [],
+                                modalities: [],
+                                totalFiles: Object.keys(files).length,
+                                size: 0
+                            };
+                            callback(utils.issues.format([issue], summary, options));
                         }
                     });
                 });
