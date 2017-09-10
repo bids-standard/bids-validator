@@ -17,6 +17,7 @@ if (typeof window === 'undefined') {
 // public API ---------------------------------------------------------------------
 
 var fileUtils = {
+    newFile: newFile,
     readFile: readFile,
     readDir: readDir,
     readNiftiHeader: readNiftiHeader,
@@ -271,6 +272,16 @@ function testFile (file, callback) {
             });
         }
     });
+}
+
+/**
+ * New File
+ *
+ * Creates a File object depending on if the environment supports the File API
+ * https://developer.mozilla.org/en-US/docs/Web/API/File
+ */
+function newFile(filename) {
+    return typeof File === 'undefined' ? filename : new File([''], filename);
 }
 
 module.exports = fileUtils;
