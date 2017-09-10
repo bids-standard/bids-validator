@@ -1,5 +1,6 @@
 var async  = require('async');
 var fs     = require('fs');
+var path   = require('path');
 var utils  = require('../utils');
 var Issue  = utils.issues.Issue;
 
@@ -44,7 +45,7 @@ BIDS = {
                             // Return an error immediately if quickTest fails
                             var issue = new Issue({
                                 code: 61,
-                                file: 'N/A'
+                                file: utils.files.newFile(path.basename(dir))
                             });
                             var summary = {
                                 sessions: [],
