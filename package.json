@@ -1,6 +1,6 @@
 {
   "name": "bids-validator",
-  "version": "0.22.4",
+  "version": "0.23.0",
   "description": "",
   "main": "index.js",
   "repository": {
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/INCF/bids-validator",
   "dependencies": {
+    "ajv": "^4.9.0",
     "async": "^2.1.5",
     "bytes": "^2.3.0",
     "cliff": "^0.1.10",
@@ -30,9 +31,9 @@
     "minimatch": "3.0.3",
     "nifti-js": "^1.0.0",
     "pako": "^1.0.4",
+    "path": "^0.12.7",
     "pluralize": "^3.1.0",
-    "yargs": "^6.6.0",
-    "ajv": "^4.9.0"
+    "yargs": "^6.6.0"
   },
   "devDependencies": {
     "adm-zip": "",

@@ -1,5 +1,6 @@
 var async  = require('async');
 var fs     = require('fs');
+var path   = require('path');
 var utils  = require('../utils');
 var Issue  = utils.issues.Issue;
 
@@ -41,7 +42,20 @@ BIDS = {
                         if (couldBeBIDS) {
                             self.fullTest(files, callback);
                         } else {
-                            callback('Invalid');
+                            // Return an error immediately if quickTest fails
+                            var issue = new Issue({
+                                code: 61,
+                                file: utils.files.newFile(path.basename(dir))
+                            });
+                            var summary = {
+                                sessions: [],
+                                subjects: [],
+                                tasks: [],
+                                modalities: [],
+                                totalFiles: Object.keys(files).length,
+                                size: 0
+                            };
+                            callback(utils.issues.format([issue], summary, options));
                         }
                     });
                 });
