@@ -305,6 +305,6 @@ module.exports = {
     61: {
         key: 'QUICK_VALIDATION_FAILED',
         severity: 'error',
-        reason: 'Quick validation failed. Check for structural/naming issues and at least one subject.',
+        reason: 'Quick validation failed - the general folder structure does not resamble a BIDS dataset. Have you chosen the right folder (with "sub-*/" subfolders)? Check for structural/naming issues and presence of at least one subject.',
     }
 };
