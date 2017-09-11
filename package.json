@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/INCF/bids-validator",
   "dependencies": {
-    "ajv": "^4.9.0",
+    "ajv": "^5.2.2",
     "async": "^2.1.5",
     "bytes": "^2.3.0",
     "cliff": "^0.1.10",
