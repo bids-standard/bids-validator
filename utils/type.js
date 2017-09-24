@@ -16,18 +16,18 @@ module.exports = {
      * Check if a given path is valid within the
      * bids spec.
      */
-    isBIDS: function(path) {
+    isBIDS: function (path) {
         return (
-            this.isTopLevel(path)       ||
+            this.isTopLevel(path) ||
             this.isAssociatedData(path) ||
-            this.isSessionLevel(path)   ||
-            this.isSubjectLevel(path)   ||
-            this.isAnat(path)           ||
-            this.isDWI(path)            ||
-            this.isFunc(path)           ||
-            this.isBehavioral(path)     ||
-            this.isCont(path)           ||
-            this.isFieldMap(path)       ||
+            this.isSessionLevel(path) ||
+            this.isSubjectLevel(path) ||
+            this.isAnat(path) ||
+            this.isDWI(path) ||
+            this.isFunc(path) ||
+            this.isBehavioral(path) ||
+            this.isCont(path) ||
+            this.isFieldMap(path) ||
             this.isPhenotypic(path)
         );
     },
@@ -35,9 +35,9 @@ module.exports = {
     /**
      * Check if the file has appropriate name for a top level file
      */
-    isTopLevel: function(path) {
+    isTopLevel: function (path) {
         var fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv",
-            "/participants.json", "/phasediff.json", "/phase1.json", "/phase2.json" ,"/fieldmap.json"];
+            "/participants.json", "/phasediff.json", "/phase1.json", "/phase2.json", "/fieldmap.json"];
 
         var funcTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_echo-[0-9]+)?'
             + '(_bold.json|_sbref.json|_events.json|_events.tsv|_physio.json|_stim.json|_beh.json)$');
@@ -60,7 +60,7 @@ module.exports = {
     /**
      * Check if file is appropriate associated data.
      */
-    isAssociatedData: function(path) {
+    isAssociatedData: function (path) {
         var associatedData = new RegExp('^\\/(?:code|derivatives|sourcedata|stimuli|[.]git)\\/(?:.*)$');
         return associatedData.test(path);
     },
@@ -68,7 +68,7 @@ module.exports = {
     /**
      * Check if file is phenotypic data.
      */
-    isPhenotypic: function(path) {
+    isPhenotypic: function (path) {
         var phenotypicData = new RegExp('^\\/(?:phenotype)\\/(?:.*.tsv|.*.json)$');
         return phenotypicData.test(path);
     },
@@ -76,7 +76,7 @@ module.exports = {
     /**
      * Check if the file has appropriate name for a session level
      */
-    isSessionLevel: function(path) {
+    isSessionLevel: function (path) {
         var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(_scans.tsv|_scans.json)$');
@@ -103,7 +103,7 @@ module.exports = {
     /**
      * Check if the file has appropriate name for a subject level
      */
-    isSubjectLevel: function(path) {
+    isSubjectLevel: function (path) {
         var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/\\1(_sessions.tsv|_sessions.json)$');
         return scansRe.test(path);
@@ -112,7 +112,7 @@ module.exports = {
     /**
      * Check if the file has a name appropriate for an anatomical scan
      */
-    isAnat: function(path) {
+    isAnat: function (path) {
         var anatRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?anat' +
@@ -125,7 +125,7 @@ module.exports = {
     /**
      * Check if the file has a name appropriate for a diffusion scan
      */
-    isDWI: function(path) {
+    isDWI: function (path) {
         var suffixes = ["dwi", "sbref"];
         var anatRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
@@ -139,7 +139,7 @@ module.exports = {
     /**
      * Check if the file has a name appropriate for a fieldmap scan
      */
-    isFieldMap: function(path) {
+    isFieldMap: function (path) {
         var suffixes = ["phasediff", "phase1", "phase2", "magnitude1", "magnitude2", "magnitude", "fieldmap", "epi"];
         var anatRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
@@ -153,7 +153,7 @@ module.exports = {
     /**
      * Check if the file has a name appropriate for a functional scan
      */
-    isFunc: function(path) {
+    isFunc: function (path) {
         var funcRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?func' +
@@ -162,7 +162,7 @@ module.exports = {
         return conditionalMatch(funcRe, path);
     },
 
-    isBehavioral: function(path) {
+    isBehavioral: function (path) {
         var funcBeh = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?beh' +
@@ -171,7 +171,7 @@ module.exports = {
         return conditionalMatch(funcBeh, path);
     },
 
-    isFuncBold: function(path) {
+    isFuncBold: function (path) {
         var funcRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?func' +
@@ -180,7 +180,7 @@ module.exports = {
         return conditionalMatch(funcRe, path);
     },
 
-    isCont: function(path) {
+    isCont: function (path) {
         var contRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?(?:func|beh)' +
@@ -190,7 +190,7 @@ module.exports = {
         return conditionalMatch(contRe, path);
     },
 
-    isNumber: function(n) {
+    isNumber: function (n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
     },
 
@@ -229,3 +229,6 @@ function conditionalMatch (expression, path) {
         }
         return false;
 }
+
+
+
