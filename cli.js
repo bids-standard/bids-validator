@@ -12,7 +12,7 @@ module.exports = function (dir, options) {
         validate.BIDS(dir, options, function (issues, summary) {
             var errors = issues.errors;
             var warnings = issues.warnings;
-            if (issues === 'Invalid') {
+            if (issues.errors.length === 1 && issues.errors[0].code === '61') {
                 console.log(colors.red("The directory " + dir + " failed an initial Quick Test. This means the basic names and structure of the files and directories do not comply with BIDS specification. For more info go to http://bids.neuroimaging.io/"));
             } else if (issues.config && issues.config.length >= 1) {
                 console.log(colors.red('Invalid Config File'));
@@ -30,7 +30,7 @@ module.exports = function (dir, options) {
                 console.log(colors.green("This dataset appears to be BIDS compatible."));
             }
             logSummary(summary);
-            if (errors && errors.length >= 1 || issues.config && issues.config.length >= 1) {process.exit(1);}
+            if (issues === 'Invalid' || errors && errors.length >= 1 || issues.config && issues.config.length >= 1) {process.exit(1);}
         });
     } else {
         console.log(colors.red(dir + " does not exist"));
@@ -45,7 +45,7 @@ function logIssues (issues, color, options) {
         for (var j = 0; j < issue.files.length; j++) {
             var file = issues[i].files[j];
             if (!file || !file.file) {continue;}
-            console.log('\t\t' + file.file.relativePath);
+            console.log('\t\t.' + file.file.relativePath);
             if (options.verbose) {console.log('\t\t\t' + file.reason);}
             if (file.line) {
                 var msg = '\t\t\t@ line: ' + file.line;

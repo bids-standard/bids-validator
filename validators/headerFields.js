@@ -70,6 +70,7 @@ var headerField = function headerField(headers, field) {
         var path = utils.files.relativePath(file);
         var subject;
 
+
         if (field === 'dim') {
             if ((typeof header[field]) === 'undefined' || header[field] === null || header[field].length < header[field][0]) {
                 issues[file.relativePath] = new Issue({
@@ -93,11 +94,18 @@ var headerField = function headerField(headers, field) {
                         code: 41
                 });
                 badField = true;
-            } 
+            }
             if ((typeof header['pixdim']) === 'undefined' || header['pixdim'] === null || header['pixdim'].length < 4) {
                 issues[file.relativePath] = new Issue({
                         file: file,
                         code: 42
+                });
+                badField = true;
+            }
+            if (header['qform_code']===0 && header['sform_code']===0) {
+                issues[file.relativePath] = new Issue({
+                        file: file,
+                        code: 60
                 });
                 badField = true;
             }
@@ -214,4 +222,3 @@ function headerFieldCompare(header1, header2) {
 }
 
 module.exports = headerFields;
-

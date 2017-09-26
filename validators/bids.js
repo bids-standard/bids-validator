@@ -1,5 +1,6 @@
 var async  = require('async');
 var fs     = require('fs');
+var path   = require('path');
 var utils  = require('../utils');
 var Issue  = utils.issues.Issue;
 
@@ -41,12 +42,54 @@ BIDS = {
                         if (couldBeBIDS) {
                             self.fullTest(files, callback);
                         } else {
-                            callback('Invalid');
+                            // Return an error immediately if quickTest fails
+                            var issue = self.quickTestError(dir);
+                            var summary = {
+                                sessions: [],
+                                subjects: [],
+                                tasks: [],
+                                modalities: [],
+                                totalFiles: Object.keys(files).length,
+                                size: 0
+                            };
+                            callback(utils.issues.format([issue], summary, options));
                         }
                     });
                 });
             }
         });
+    },
+
+    /*
+     * Generates an error for quickTest failures
+     */
+    quickTestError: function (dir) {
+        var filename;
+        if (typeof window === 'undefined') {
+            // For Node, grab the path from the dir string
+            filename = path.basename(dir);
+        } else {
+            // Browser side we need to look it up more carefully
+            if (dir.length && 'webkitRelativePath' in dir[0]) {
+                var wrp = dir[0].webkitRelativePath;
+                while (wrp.indexOf(path.sep) !== -1) {
+                    wrp = path.dirname(wrp);
+                }
+                filename = wrp;
+            } else {
+                // Fallback for non-standard webkitRelativePath
+                filename = 'uploaded-directory';
+            }
+        }
+        var issue = new Issue({
+            code: 61,
+            file: {
+                name: filename,
+                path: path.join('.', filename),
+                relativePath: path.join('', filename)
+            }
+        });
+        return issue;
     },
 
     /**
@@ -117,34 +160,34 @@ BIDS = {
         };
 
 
-        //check for illegal charcter in task name and acq name
+        // check for illegal character in task name and acq name
 
         var task_re = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
         var acq_re = /sub-(.*?)_task-\w+.\w+(_acq-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*)(?:_run-\d+)?_/g;
 
         var illegalchar_regex_list = [
-            [task_re, 58,"task name contains illegal character:"],
-            [acq_re,59, "acq name contains illegal character:"]
+            [task_re, 58, "task name contains illegal character:"],
+            [acq_re, 59, "acq name contains illegal character:"]
         ];
 
 
         for (var f in fileList) {
             var completename = fileList[f].relativePath;
 
-            for (var err in illegalchar_regex_list) {
-                var err_regex = illegalchar_regex_list[err][0];
-                var err_code = illegalchar_regex_list[err][1];
-                var err_evidence = illegalchar_regex_list[err][2];
+            for (var re_index = 0; re_index < illegalchar_regex_list.length; re_index++) {
+                var err_regex = illegalchar_regex_list[re_index][0];
+                var err_code = illegalchar_regex_list[re_index][1];
+                var err_evidence = illegalchar_regex_list[re_index][2];
 
-                    if (err_regex.exec(completename)){
+                if (err_regex.exec(completename)) {
                     self.issues.push(new Issue({
                         file: fileList[f],
                         code: err_code,
                         evidence: err_evidence + fileList[f].relativePath
                     }));
                 }
-              }
             }
+        }
 
 
         // validate individual files

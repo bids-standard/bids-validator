@@ -1,6 +1,7 @@
 /*eslint no-console: ["error", { allow: ["log"] }] */
 
 var assert = require('chai').assert;
+var after = require('mocha').after;
 var validate = require('../index.js');
 var request = require('sync-request');
 var fs = require('fs');
@@ -91,7 +92,7 @@ var suite = describe('BIDS example datasets ', function() {
             assert.deepEqual(summary.modalities, ['T1w', 'bold']);
             assert(summary.totalFiles === 8);
             assert(summary.size === 481793);
-            assert.deepEqual(errors, []);
+            assert(errors[0].code === '60');
             assert(warnings.length === 1 && warnings[0].code === '13');
             isdone();
         });
@@ -104,6 +105,27 @@ var suite = describe('BIDS example datasets ', function() {
             var errors = issues.errors;
             assert(errors[0].code === '58');
             isdone();
+        });
+    });
+
+    // Catch some browser specific iteration issues with for .. in loops
+    describe('with enumerable array prototype methods', function() {
+        before(function () {
+            // Patch in a potentially iterable prototype
+            Array.prototype.broken = function () { /* custom extension */ };
+        });
+        after(function () {
+            // Unpatch the above
+            delete Array.prototype.broken;
+        });
+        it('validates dataset with illegal characters in task name', function (isdone) {
+
+            var options = {ignoreNiftiHeaders: false};
+            validate.BIDS("tests/data/valid_filenames", options, function (issues) {
+                var errors = issues.errors;
+                assert(errors[0].code === '58');
+                isdone();
+            });
         });
     });
 });
