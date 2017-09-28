@@ -12,7 +12,10 @@
             "type": "string"
         },
         "Funding": {
-            "type": "string"
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
         },
         "HowToAcknowledge": {
             "type": "string"
