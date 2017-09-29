@@ -219,7 +219,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                     if (filePath.endsWith(intendedForFile)){
                         onTheList = true;
                     }
-                    cb();
+                    
                 }, function(){
                     if (!onTheList) {
                         issues.push(new Issue({
