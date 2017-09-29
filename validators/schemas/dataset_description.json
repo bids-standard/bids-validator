@@ -15,10 +15,10 @@
             "items": {
                 "type": "string"
             },
-            "type": "array"
+            "type": ["array", "string"]
         },
         "HowToAcknowledge": {
-            "type": "string"
+            "type": ["string", "array"]
         },
         "License": {
             "type": "string"
