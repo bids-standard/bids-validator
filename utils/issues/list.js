@@ -308,13 +308,13 @@ module.exports = {
         reason: 'Quick validation failed - the general folder structure does not resemble a BIDS dataset. Have you chosen the right folder (with "sub-*/" subfolders)? Check for structural/naming issues and presence of at least one subject.',
     },
     62: {
-        key: 'sub-id in filename doesnt match directory',
-        severity: 'warning',
-        reason: 'sub-id in the filename doesn\'t match with the path of the file. File seems to be saved in incorrect subject directory.'
+        key: 'SUBJECT_LABEL_IN_FILENAME_DOESNOT_MATCH_DIRECTORY',
+        severity: 'error',
+        reason: 'subject label in the filename doesn\'t match with the path of the file. File seems to be saved in incorrect subject directory.'
     },
     63: {
-        key: 'ses-id in filename doesnt match directory',
+        key: 'SESSION_LABEL_IN_FILENAME_DOESNOT_MATCH_DIRECTORY',
         severity: 'error',
-        reason: 'ses-id in the filename doesn\'t match with the path of the file. File seems to be saved in incorrect session directory.'
+        reason: 'Session label in the filename doesn\'t match with the path of the file. File seems to be saved in incorrect session directory.'
     }
 };
