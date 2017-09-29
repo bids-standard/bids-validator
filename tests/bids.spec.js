@@ -108,6 +108,16 @@ var suite = describe('BIDS example datasets ', function() {
         });
     });
 
+    // test for illegal characters used in sub name
+    it('validates dataset with illegal characters in sub name', function(isdone) {
+        var options = {ignoreNiftiHeaders: false};
+        validate.BIDS("tests/data/valid_filenames", options, function (issues) {
+            var errors = issues.errors;
+            assert(errors[1].code ==='62');
+            isdone();
+        });
+    });
+
     // Catch some browser specific iteration issues with for .. in loops
     describe('with enumerable array prototype methods', function() {
         before(function () {
