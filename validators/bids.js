@@ -165,9 +165,14 @@ BIDS = {
         var task_re = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
         var acq_re = /sub-(.*?)_task-\w+.\w+(_acq-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*)(?:_run-\d+)?_/g;
 
+        var sub_re = /sub-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*_/g;   // illegal character in sub
+        var ses_re = /ses-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*?_(.*?)/g; //illegal character in ses
+
         var illegalchar_regex_list = [
             [task_re, 58, "task name contains illegal character:"],
-            [acq_re, 59, "acq name contains illegal character:"]
+            [acq_re, 59, "acq name contains illegal character:"],
+            [sub_re, 62, "sub name contains illegal character:" ],
+            [ses_re, 63, "ses name contains illegal character:" ]
         ];
 
 
@@ -304,6 +309,15 @@ BIDS = {
                     }
                     json(file, contents, function (issues, jsObj) {
                         self.issues = self.issues.concat(issues);
+
+                        // abort further tests if schema test does not pass
+                        for (var i = 0; i < issues.length; i++) {
+                            if (issues[i].severity === 'error') {
+                                process.nextTick(cb);
+                                return;
+                            }
+                        }
+
                         jsonContentsDict[file.relativePath] = jsObj;
 
                         // collect task summary
