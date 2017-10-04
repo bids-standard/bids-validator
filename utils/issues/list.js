@@ -308,11 +308,21 @@ module.exports = {
         reason: 'Quick validation failed - the general folder structure does not resemble a BIDS dataset. Have you chosen the right folder (with "sub-*/" subfolders)? Check for structural/naming issues and presence of at least one subject.',
     },
     62: {
-        key: 'SUBJECT_LABEL_IN_FILENAME_DOESNOT_MATCH_DIRECTORY',
+        key: 'SUBJECT_VALUE_CONTAINS_ILLEGAL_CHARECTER',
         severity: 'error',
-        reason: 'subject label in the filename doesn\'t match with the path of the file. File seems to be saved in incorrect subject directory.'
+        reason: 'Sub label contain an Illegal Character hyphen or underscore. Please edit the filename as per BIDS spec.',
     },
     63: {
+        key: 'SESSION_VALUE_CONTAINS_ILLEGAL_CHARECTER',
+        severity: 'error',
+        reason: 'Ses label contain an Illegal Character hyphen or underscore. Please edit the filename as per BIDS spec.',
+    },
+    64: {
+        key: 'SUBJECT_LABEL_IN_FILENAME_DOESNOT_MATCH_DIRECTORY',
+        severity: 'error',
+        reason: 'Subject label in the filename doesn\'t match with the path of the file. File seems to be saved in incorrect subject directory.'
+    },
+    65: {
         key: 'SESSION_LABEL_IN_FILENAME_DOESNOT_MATCH_DIRECTORY',
         severity: 'error',
         reason: 'Session label in the filename doesn\'t match with the path of the file. File seems to be saved in incorrect session directory.'
