@@ -9,13 +9,7 @@ module.exports = {
     1: {
         key: 'NOT_INCLUDED',
         severity: 'warning',
-        reason: 'Files with such naming scheme are not part of BIDS specification. This error is most \
-                 commonly caused by typos in file names that make them not BIDS compatible. Please \ 
-                 consult the specification and make sure your fieles are named correctly. If this is \ 
-                 not a file naming issue (for example when including files not yet covered by the BIDS \ 
-                 spec) you can ignore this warning. Please note that derived (processed) data should be \ 
-                 placed in /derivatives folder and source data (such as DICOMS or behavioural logs in proprietary formats) \
-                 should be placed in the /sourcedata folder.'
+        reason: 'Files with such naming scheme are not part of BIDS specification. This error is most commonly caused by typos in file names that make them not BIDS compatible. Please consult the specification and make sure your fieles are named correctly. If this is not a file naming issue (for example when including files not yet covered by the BIDS specification) you can ignore this warning. Please note that derived (processed) data should be placed in /derivatives folder and source data (such as DICOMS or behavioural logs in proprietary formats) should be placed in the /sourcedata folder.'
     },
     2: {
         key: 'REPETITION_TIME_GREATER_THAN',
