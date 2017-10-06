@@ -18,6 +18,9 @@
             "type": ["array", "string"]
         },
         "HowToAcknowledge": {
+          "items": {
+              "type": "string"
+            },
             "type": ["string", "array"]
         },
         "License": {
