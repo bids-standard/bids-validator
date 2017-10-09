@@ -12,10 +12,16 @@
             "type": "string"
         },
         "Funding": {
-            "type": "string"
+            "items": {
+                "type": "string"
+            },
+            "type": ["array", "string"]
         },
         "HowToAcknowledge": {
-            "type": "string"
+          "items": {
+              "type": "string"
+            },
+            "type": ["string", "array"]
         },
         "License": {
             "type": "string"
