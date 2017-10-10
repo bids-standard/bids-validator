@@ -193,7 +193,7 @@ BIDS = {
                     }
                 }
             }
-        })
+        });
 
 
         // validate individual files
