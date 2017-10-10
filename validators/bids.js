@@ -186,7 +186,7 @@ BIDS = {
 
                     if (err_regex.exec(completename)) {
                         self.issues.push(new Issue({
-                            file: fileList[f],
+                            file: file,
                             code: err_code,
                             evidence: err_evidence + completename
                         }));
