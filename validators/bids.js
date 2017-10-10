@@ -177,7 +177,7 @@ BIDS = {
 
 
         for (var f in fileList) {
-            var completename = fileList[f].relativePath;
+            var completename = utils.files.relativePath(fileList[f]);
             if(!(completename.startsWith('/derivatives') || completename.startsWith('/code') || completename.startsWith('/sourcedata'))) {
                 for (var re_index = 0; re_index < illegalchar_regex_list.length; re_index++) {
                     var err_regex = illegalchar_regex_list[re_index][0];
