@@ -270,10 +270,10 @@ describe('BIDS.subIDsesIDmismatchtest', function () {
 
         callback = function (issues) {
             for (var i in issues) {
-                if (issues[i]['code'] === 62) {
+                if (issues[i]['code'] === 64) {
                     code62_seen = true;
                 }
-                else if (issues[i]['code'] === 63) {
+                else if (issues[i]['code'] === 65) {
                     code63_seen = false;
                 }
             }
