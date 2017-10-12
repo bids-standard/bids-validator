@@ -19,11 +19,11 @@ deployment:
   production:
     tag: /.*/
     commands:
-      # Set the version number
-      - sed -i -E 's/0.0.0/$CIRCLE_TAG/' package.json
       # Publish to NPM
       - echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
       - git checkout -f master
+      # Set the version number
+      - sed -i -E 's/0.0.0/$CIRCLE_TAG/' package.json
       - npm install publish
       - npm run npmPublish
       # Update gh-pages demo site
