@@ -17,8 +17,10 @@ test:
 
 deployment:
   production:
-    branch: master
+    tag: /.*/
     commands:
+      # Set the version number
+      - sed -i -E 's/("version": ")[A-Za-z0-9.-]+/\1$CIRCLE_TAG/' package.json
       # Publish to NPM
       - echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
       - git checkout -f master
