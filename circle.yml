@@ -31,7 +31,7 @@ deployment:
       - git config --global user.name CircleCI
       - rm -rf node_modules/
       - rm -rf tests/
-      - git checkout gh-pages
+      - git checkout gh-pages -f
       - git pull
       - npm install
       - gulp build
