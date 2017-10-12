@@ -495,7 +495,7 @@ BIDS = {
                     // console.log("before call  ",subses_mismatch);
                     subses_mismatch = true;
                     self.issues.push(new Issue({
-                        code: 61,
+                        code: 64,
                         evidence: "File: " + file.relativePath + " is saved in incorrect subject directory as per sub-id in filename.",
                         file: file
                     }));
@@ -504,7 +504,7 @@ BIDS = {
                 if (fileValues.ses !== pathValues.ses) {
                     subses_mismatch = true;
                     self.issues.push(new Issue({
-                        code: 62,
+                        code: 65,
                         evidence: "File: " + file.relativePath + " is saved in incorrect session directory as per ses-id in filename.",
                         file: file
                     }));
