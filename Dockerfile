@@ -12,4 +12,4 @@ COPY . /src
 
 RUN npm install -g /src
 
-ENTRYPOINT /usr/bin/bids-validator
+ENTRYPOINT ["/usr/bin/bids-validator"]
