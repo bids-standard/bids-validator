@@ -106,6 +106,7 @@ BIDS = {
     quickTest: function (fileList, callback) {
         var couldBeBIDS = false;
         for (var key in fileList) {
+            console.log(key)
             if (fileList.hasOwnProperty(key)) {
                 var file = fileList[key];
                 var path = file.relativePath;
@@ -118,7 +119,10 @@ BIDS = {
                             path[1] == 'anat' ||
                             path[1] == 'func' ||
                             path[1] == 'dwi'
-                        ) &&
+                        ) ||
+                        (path[0].includes('.json') &&
+                         path[1] == 'meg')
+                        &&
                         (
                             (path[2] && path[2].indexOf('ses-') == 0) ||
                             (path[2] && path[2].indexOf('sub-') == 0)
