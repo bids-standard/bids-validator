@@ -29,7 +29,6 @@
         "required": ["MEGCoordinateSystem",
                     "MEGCoordinateUnits",
                     "EEGCoordinateSystem",
-                    "EEGCoordinateUnits",
                     "IntendedFor",
                     "AnatomicalMRICoordinateSystem",
                     "AnatomicalMRICoordinateUnits",
