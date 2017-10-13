@@ -24,17 +24,19 @@
                 "EEGPlacementScheme": {"type" : "string"},
                 "EEGReference": {"type" : "string"},
                 "DewarPosition": {"type" : "string"},
-                "SoftwareFilters": {"type" : "string"},
+                "SoftwareFilters": {"type" : "object",
+                                    "additionalProperties": {"type":"object"}
+                },
                 "RecordingDuration": {"type" : "number"},
                 "RecordingType": {"type" : "string"},
                 "EpochLength": {"type" : ["number","string"]},
                 "DeviceSoftwareVersion": {"type" : "string"},
-                "ContinuousHeadLocalization": {"type" : "string"},
+                "ContinuousHeadLocalization": {"type" : "boolean"},
                 "CoilFrequency": {"type" : "number"},
                 "MaxMovement": {"type" : "number"},
                 "SubjectArtefactDescription": {"type" : "string"},
-                "DigitizedLandmarks": {"type" : "string"},
-                "DigitizedHeadPoints": {"type" : "string"}
+                "DigitizedLandmarks": {"type" : "boolean"},
+                "DigitizedHeadPoints": {"type" : "boolean"}
                     },
         "required": [   "TaskName",
                         "Manufacturer",

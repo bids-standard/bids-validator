@@ -106,7 +106,6 @@ BIDS = {
     quickTest: function (fileList, callback) {
         var couldBeBIDS = false;
         for (var key in fileList) {
-            console.log(key)
             if (fileList.hasOwnProperty(key)) {
                 var file = fileList[key];
                 var path = file.relativePath;
