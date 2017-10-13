@@ -11,7 +11,9 @@
                 "AnatomicalMRICoordinateSystem": {"type": "string","minLength": 1},
                 "AnatomicalMRICoordinateUnits": {"type": "string","minLength": 1},
                 "AnatomicalMRICoordinateSystemDescription": {"type": "string"},
-                "CoilCoordinates": {"type": "string","minLength": 1},
+                "CoilCoordinates": {"type": "object",
+                                    "additionalProperties": {"type": "array"}
+                                   },
                 "CoilCoordinateSystem": {"type": "string","minLength": 1},
                 "CoilCoordinateUnits": {"type": "string","minLength": 1},
                 "CoilCoordinateSystemDescription": {"type": "string"},
