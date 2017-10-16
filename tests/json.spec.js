@@ -31,4 +31,24 @@ describe('JSON', function(){
 			assert(issues.length === 1 && issues[0].code == 55);
 		});
 	});
+
+    var meg_file = {
+        name: 'sub-01_run-01_meg.json',
+        relativePath: '/sub-01_run-01_meg.json'
+    };
+
+    it('*_meg.json sidecars should have required key/value pairs', function(){
+        var jsonObj = '{"TaskName": "Audiovis", "Manufacturer": "Elekta", "SamplingFrequency": 1000, ' +
+                      '"MEGChannelCount": 306, "MEGREFChannelCount": 0, "EEGChannelCount": 32,' +
+                      '"EOGChannelCount": 1, "ECGChannelCount": 0, "EMGChannelCount": 0,' +
+                      '"MiscChannelCount": 4, "TriggerChannelCount": 4}';
+        validate.JSON(meg_file, jsonObj, function (issues) {
+            assert(issues.length === 0);
+        });
+
+        var jsonObjInval = jsonObj.replace(/"EOGChannelCount": 1, /g, '');
+        validate.JSON(meg_file, jsonObjInval, function(issues){
+            assert(issues && issues.length === 1);
+        });
+    });
 });
