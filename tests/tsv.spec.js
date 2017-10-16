@@ -178,7 +178,24 @@ var channelsFile = {
         var tsv = 'header-one\ttype\t4eader-three\n' +
             'value-one\tvalue-two\tvalue-three';
         validate.TSV(channelsFile, tsv, [], function (issues) {
-            assert(issues.length === 1 && issues[0].code === 61);
+            assert(issues.length === 1 && issues[0].code === 64);
+        });
+    });
+
+    it("should not allow channels.tsv files without name columns", function () {
+        var tsv = 'name\theader-two\t4eader-three\n' +
+            'value-one\tvalue-two\tvalue-three';
+        validate.TSV(channelsFile, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 65);
+        });
+    });
+
+
+    it("should not allow channels.tsv files without name columns", function () {
+        var tsv = 'name\ttype\t4eader-three\n' +
+            'value-one\tvalue-two\tvalue-three';
+        validate.TSV(channelsFile, tsv, [], function (issues) {
+            assert(issues.length === 0);
         });
     });
 });
