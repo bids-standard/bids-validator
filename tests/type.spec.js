@@ -204,6 +204,42 @@ var suiteDWI = describe('utils.type.isDWI', function(){
     });
 });
 
+
+var suiteMEG = describe('utils.type.isMEG', function(){
+    before(function(done) {
+        var goodFilenames = [
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.json",
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_part-01_meg.fif",
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_channels.tsv"
+        ];
+
+        goodFilenames.forEach(function (path) {
+            suiteMEG.addTest(new Test("isMeg('" + path + "') === true", function (isdone){
+                assert.equal(utils.type.isMeg(path), true);
+                isdone();
+            }));
+        });
+
+        var badFilenames = [
+            "/sub-01/meg/sub-01_ses-001_task-rest_run-01_meg.json",
+            "/sub-01/ses-001/meg/sub-12_ses-001_task-rest_run-01_part-01_meg.fif",
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.tsv"];
+
+        badFilenames.forEach(function (path) {
+            suiteMEG.addTest(new Test("isMeg('" + path + "') === false", function (isdone){
+                assert.equal(utils.type.isMeg(path), false);
+                isdone();
+            }));
+        });
+        done();
+    });
+
+    // we need to have at least one non-dynamic test
+    return it('dummy test', function() {
+        require('assert').ok(true);
+    });
+});
+
 describe('utils.type.isPhenotypic', function () {
     it('should allow .tsv and .json files in the /phenotype directory', function () {
         assert(utils.type.isPhenotypic('/phenotype/acds_adult.json'));
