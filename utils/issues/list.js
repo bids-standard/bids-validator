@@ -316,5 +316,15 @@ module.exports = {
         key: 'SESSION_VALUE_CONTAINS_ILLEGAL_CHARECTER',
         severity: 'error',
         reason: 'Ses label contain an Illegal Character hyphen or underscore. Please edit the filename as per BIDS spec.',
+    },
+    64: {
+        key: 'SUBJECT_LABEL_IN_FILENAME_DOESNOT_MATCH_DIRECTORY',
+        severity: 'error',
+        reason: 'Subject label in the filename doesn\'t match with the path of the file. File seems to be saved in incorrect subject directory.'
+    },
+    65: {
+        key: 'SESSION_LABEL_IN_FILENAME_DOESNOT_MATCH_DIRECTORY',
+        severity: 'error',
+        reason: 'Session label in the filename doesn\'t match with the path of the file. File seems to be saved in incorrect session directory.'
     }
 };
