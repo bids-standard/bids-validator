@@ -246,9 +246,8 @@ describe('utils.type.getPathValues', function () {
 });
 
 describe('BIDS.subIDsesIDmismatchtest', function () {
-    // var issues = [{code: 61}, {code: 62}];
-    var code62_seen = false;
-    var code63_seen = false;
+    var code64_seen = false;
+    var code65_seen = false;
     it('should return if sub and ses doesnt match', function () {
 
         var files = { '0':
@@ -271,14 +270,14 @@ describe('BIDS.subIDsesIDmismatchtest', function () {
         callback = function (issues) {
             for (var i in issues) {
                 if (issues[i]['code'] === 64) {
-                    code62_seen = true;
+                    code64_seen = true;
                 }
                 else if (issues[i]['code'] === 65) {
-                    code63_seen = false;
+                    code65_seen = false;
                 }
             }
-            assert(code62_seen);
-            assert(code63_seen);
+            assert(code64_seen);
+            assert(code65_seen);
         };
         assert.equal(BIDS.subIDsesIDmismatchtest(files, callback), true);
         });
