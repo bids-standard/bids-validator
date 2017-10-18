@@ -417,7 +417,7 @@ BIDS = {
                         if (!utils.array.equals(fileParticpants.list, summary.subjects.sort(), true)){
                         self.issues.push(new Issue({
                             code: 51,
-                            evidence: `${fileParticpants.file} - fileParticpants.list \n ${Subjects} - fileParticpants`,
+                            evidence: fileParticpants.file + "- " + fileParticpants.list + "  Subjects -" + fileParticpants,
                             file: fileParticpants.file
                         }));
                       }
