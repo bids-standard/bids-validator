@@ -390,10 +390,12 @@ BIDS = {
                     self.issues.push(new Issue({code: 45}));
                 }
                 // check if participants file match found subjects
-
+                var participantsFromFolders = summary.subjects.sort();
+                //console.log(summary.subjects.sort())
                 if (participants) {
                     var participantsFromFile = participants.list.sort();
-                    var participantsFromFolders = summary.subjects.sort();
+                    //console.log(summary.subjects.sort())
+                    //var participantsFromFolders = summary.subjects.sort();
                     if (!utils.array.equals(participantsFromFolders, participantsFromFile, true)) {
                         self.issues.push(new Issue({
                             code: 49,
@@ -409,18 +411,19 @@ BIDS = {
                         code: 53
                     }));
                 }
-
-                if (phenotypeParticipants && phenotypeParticipants.length > 0) {
-                    for (var j = 0; j < phenotypeParticipants.length; j++) {
-                        var fileParticpants = phenotypeParticipants[j];
-                        var diff = utils.array.diff(fileParticpants.list, summary.subjects)[0];
-                        if (diff && diff.length > 0) {
-                            self.issues.push(new Issue({
-                                code: 51,
-                                evidence: 'sub-' + diff.join(', sub-'),
-                                file: fileParticpants.file
-                            }));
-                        }
+                
+                //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
+                var subjectslist = summary.subjects.sort();
+                for (var j=0; j < phenotypeParticipants.length; j++){
+                    var fileParticpants = phenotypeParticipants[j];
+                    if (phenotypeParticipants && phenotypeParticipants.length > 0) {
+                        if (!utils.array.equals(fileParticpants.list, summary.subjects.sort(), true)){
+                        self.issues.push(new Issue({
+                            code: 51,
+                            evidence: 'sub-' + diff.join(', sub-'),
+                            file: fileParticpants.file
+                        }));
+                      }
                     }
                 }
                 self.issues = self.issues.concat(headerFields(headers));
