@@ -1,6 +1,7 @@
 var assert = require('chai').assert;
 var utils   = require('../utils');
 var Test = require("mocha/lib/test");
+var BIDS = require('../validators/bids');
 
 
 var suiteAnat = describe('utils.type.isAnat', function(){
@@ -242,4 +243,42 @@ describe('utils.type.getPathValues', function () {
         assert.equal(utils.type.getPathValues('/sub-22/func/sub-22_task-rest_acq-prefrontal_physio.tsv.gz').sub, 22);
         assert.equal(utils.type.getPathValues('/sub-22/func/sub-22_task-rest_acq-prefrontal_physio.tsv.gz').ses, null);
     });
+});
+
+describe('BIDS.subIDsesIDmismatchtest', function () {
+    var code64_seen = false;
+    var code65_seen = false;
+    it('should return if sub and ses doesnt match', function () {
+
+        var files = { '0':
+           { name: 'sub-22_ses-1_task-rest_acq-prefrontal_physio.tsv.gz',
+             path: 'tests/data/BIDS-examples-1.0.0-rc3u5/ds001/sub-22_ses-1_task-rest_acq-prefrontal_physio.tsv.gz',
+             relativePath: 'ds001/sub-22_ses-1_task-rest_acq-prefrontal_physio.tsv.gz' },
+          '1':
+           { name: '/sub-22/ses-1/func/sub-23_ses-1_task-rest_acq-prefrontal_physio.tsv.gz',
+             path: 'tests/data/BIDS-examples-1.0.0-rc3u5/ds001/sub-22/ses-1/func/sub-23_ses-1_task-rest_acq-prefrontal_physio.tsv.gz',
+             relativePath: 'ds001/sub-22/ses-1/func/sub-23_ses-1_task-rest_acq-prefrontal_physio.tsv.gz' },
+          '2':
+           { name: '/sub-22/ses-1/func/sub-22_ses-2_task-rest_acq-prefrontal_physio.tsv.gz',
+             path: 'tests/data/BIDS-examples-1.0.0-rc3u5/ds001/sub-22/ses-1/func/sub-22_ses-2_task-rest_acq-prefrontal_physio.tsv.gz',
+             relativePath: '/sub-22/ses-1/func/sub-22_ses-2_task-rest_acq-prefrontal_physio.tsv.gz' },
+          '3':
+           { name: '/sub-25/ses-2/func/sub-22_ses-1_task-rest_acq-prefrontal_physio.tsv.gz',
+             path: 'tests/data/BIDS-examples-1.0.0-rc3u5/ds001/sub-25/ses-2/func/sub-22_ses-1_task-rest_acq-prefrontal_physio.tsv.gz',
+             relativePath: 'ds001//sub-25/ses-2/func/sub-22_ses-1_task-rest_acq-prefrontal_physio.tsv.gz' }},
+
+        callback = function (issues) {
+            for (var i in issues) {
+                if (issues[i]['code'] === 64) {
+                    code64_seen = true;
+                }
+                else if (issues[i]['code'] === 65) {
+                    code65_seen = false;
+                }
+            }
+            assert(code64_seen);
+            assert(code65_seen);
+        };
+        assert.equal(BIDS.subIDsesIDmismatchtest(files, callback), true);
+        });
 });
