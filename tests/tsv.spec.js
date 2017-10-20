@@ -178,7 +178,7 @@ var channelsFile = {
         var tsv = 'header-one\ttype\t4eader-three\n' +
             'value-one\tvalue-two\tvalue-three';
         validate.TSV(channelsFile, tsv, [], function (issues) {
-            assert(issues.length === 1 && issues[0].code === 64);
+            assert(issues.length === 1 && issues[0].code === 66);
         });
     });
 
@@ -186,7 +186,7 @@ var channelsFile = {
         var tsv = 'name\theader-two\t4eader-three\n' +
             'value-one\tvalue-two\tvalue-three';
         validate.TSV(channelsFile, tsv, [], function (issues) {
-            assert(issues.length === 1 && issues[0].code === 65);
+            assert(issues.length === 1 && issues[0].code === 67);
         });
     });
 
