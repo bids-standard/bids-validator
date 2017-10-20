@@ -41,9 +41,6 @@
         "required": [
             "TaskName",
             "Manufacturer",
-            "ManufacturerModelName",
-            "DeviceSerialNumber",
-            "SoftwareVersions",
             "SamplingFrequency",
             "MEGChannelCount",
             "MEGREFChannelCount",
