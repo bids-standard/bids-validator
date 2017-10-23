@@ -57,11 +57,12 @@ The basic configuration format is outlined below. All configuration is optional.
     	"ignoredFiles": []
     }
 
-`ignoredFiles` takes a list of file paths or glob patterns you'd like to ignore. Lets say we want to ignore all files and sub-directory under `/derivatives/`. Note that adding two stars `**` in path makes validator recognize all files and sub-dir to be ignored. 
+`ignoredFiles` takes a list of file paths or glob patterns you'd like to ignore. Lets say we want to ignore all files and sub-directory under `/derivatives/`.
 
 {
 	"ignoredFiles": ["/derivatives/**"]
 }
+Note that adding two stars `**` in path makes validator recognize all files and sub-dir to be ignored. 
 
 `ignore`, `warn`, and `error` take lists of issue codes or issue keys and change the severity of those issues so they are either ignored or reported as warnings or errors. You can find a list of all available issues at [utils/issues/list](https://github.com/INCF/bids-validator/tree/master/utils/issues/list.js).
 
