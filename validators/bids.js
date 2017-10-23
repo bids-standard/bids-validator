@@ -149,6 +149,7 @@ BIDS = {
             participants = null,
             phenotypeParticipants = [],
             hasSubjectDir = false;
+        var hasDatasetDescription = false;
 
         var summary = {
             sessions: [],
@@ -158,6 +159,9 @@ BIDS = {
             totalFiles: Object.keys(fileList).length,
             size: 0
         };
+
+        // var subses_mismatch = false;
+        self.subIDsesIDmismatchtest(fileList);
 
 
         // check for illegal character in task name and acq name
@@ -176,8 +180,8 @@ BIDS = {
         ];
 
 
-        for (var f in fileList) {
-            var completename = fileList[f].relativePath;
+        async.eachOfLimit(fileList, 200, function (file) {
+            var completename = utils.files.relativePath(file);
             if(!(completename.startsWith('/derivatives') || completename.startsWith('/code') || completename.startsWith('/sourcedata'))) {
                 for (var re_index = 0; re_index < illegalchar_regex_list.length; re_index++) {
                     var err_regex = illegalchar_regex_list[re_index][0];
@@ -186,14 +190,14 @@ BIDS = {
 
                     if (err_regex.exec(completename)) {
                         self.issues.push(new Issue({
-                            file: fileList[f],
+                            file: file,
                             code: err_code,
-                            evidence: err_evidence + fileList[f].relativePath
+                            evidence: err_evidence + completename
                         }));
                     }
                 }
             }
-        }
+        });
 
 
         // validate individual files
@@ -204,6 +208,11 @@ BIDS = {
             // check for subject directory presence
             if (path.startsWith('/sub-')) {
                 hasSubjectDir = true;
+            }
+
+            // check for dataset_description.json presence
+            if (path === '/dataset_description.json') {
+                hasDatasetDescription = true;
             }
 
             // ignore associated data
@@ -389,6 +398,9 @@ BIDS = {
                 if (!hasSubjectDir) {
                     self.issues.push(new Issue({code: 45}));
                 }
+                if (!hasDatasetDescription) {
+                    self.issues.push(new Issue({code: 57}));
+                }
                 // check if participants file match found subjects
                 if (participants) {
                     var participantsFromFile = participants.list.sort();
@@ -430,6 +442,87 @@ BIDS = {
                 callback(issues, summary);
             });
         });
+    },
+
+    /**
+     * subid and sesid mismatch test. Generates error if ses-id and sub-id are different for any file, Takes a file list and return issues
+     */
+    subIDsesIDmismatchtest: function(fileList){
+        var self = this;
+        var subses_mismatch = false;
+
+        /**
+         * getPathandFileValues
+         * Takes a file path and returns values
+         * found following keys for both path and file keys.
+         * sub-
+         * ses-
+         *
+         *
+         */
+        function getPathandFileValues(path){
+            var values = {}, match;
+            var file_name ={}, unmat;
+
+            // capture subject
+            match = (/^\/sub-([a-zA-Z0-9]+)/).exec(path);
+            values.sub = match && match[1] ? match[1] : null;
+
+            // capture session
+            match = (/^\/sub-[a-zA-Z0-9]+\/ses-([a-zA-Z0-9]+)/).exec(path);
+            values.ses = match && match[1] ? match[1] : null;
+
+            //capture session and subject id from filename to find if files are in
+            // correct sub/ses directory
+            var filename = path.replace(/^.*[\\\/]/, '');
+
+            // capture sub from file name
+            unmat = (/^sub-([a-zA-Z0-9]+)/).exec(filename);
+            file_name.sub = unmat && unmat[1] ? unmat[1] : null;
+
+
+            // capture session from file name
+            unmat = (/^sub-[a-zA-Z0-9]+_ses-([a-zA-Z0-9]+)/).exec(filename);
+            file_name.ses = unmat && unmat[1] ? unmat[1] : null;
+
+            return [values,file_name];
+        }
+
+
+        // validates if sub/ses-id in filename matches with ses/sub directory file is saved
+        async.eachOfLimit(fileList, 200, function (file) {
+            var path = utils.files.relativePath(file);
+            file.relativePath = path;
+            var values = getPathandFileValues(file.relativePath);
+
+            var pathValues = values[0];
+            var fileValues = values[1];
+            // console.log(path, '/n' ,values);
+
+            if (fileValues.sub !== null || fileValues.ses !== null) {
+                if (fileValues.sub !== pathValues.sub) {
+                    // console.log("before call  ",subses_mismatch);
+                    subses_mismatch = true;
+                    self.issues.push(new Issue({
+                        code: 64,
+                        evidence: "File: " + file.relativePath + " is saved in incorrect subject directory as per sub-id in filename.",
+                        file: file
+                    }));
+                }
+
+                if (fileValues.ses !== pathValues.ses) {
+                    subses_mismatch = true;
+                    self.issues.push(new Issue({
+                        code: 65,
+                        evidence: "File: " + file.relativePath + " is saved in incorrect session directory as per ses-id in filename.",
+                        file: file
+                    }));
+                }
+            }
+
+        });
+        return subses_mismatch;
+
     },
 
     /**

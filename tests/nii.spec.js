@@ -88,7 +88,7 @@ describe('NIFTI', function(){
         });
     });
 
-    it('should generate warning if files listed in IntendedFor of fieldmap json doesnot exist', function() {
+    it('should generate warning if files listed in IntendedFor of fieldmap json do not exist', function() {
       var file = {
           name: 'sub-09_ses-test_run-01_fieldmap.nii.gz',
           path: '/ds114/sub-09/ses-test/dwi/sub-09_ses-test_run-01_fieldmap.nii.gz',
