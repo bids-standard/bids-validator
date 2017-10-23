@@ -59,9 +59,9 @@ The basic configuration format is outlined below. All configuration is optional.
 
 `ignoredFiles` takes a list of file paths or glob patterns you'd like to ignore. Lets say we want to ignore all files and sub-directory under `/derivatives/`.
 
-{
-	"ignoredFiles": ["/derivatives/**"]
-}
+	{
+		"ignoredFiles": ["/derivatives/**"]
+	}
 
 Note that adding two stars `**` in path makes validator recognize all files and sub-dir to be ignored.
 
@@ -69,9 +69,9 @@ Note that adding two stars `**` in path makes validator recognize all files and 
 
 Some issues may be ignored by default, but can be elevated to warnings or errors. These provide a way to check for common things that are more specific than BIDS compatibility. An example is a check for the presence of a T1w modality. The following would raise an error if no T1W image was found in a dataset.
 
-{
-	"error": ["NO_T1W"]
-}
+	{
+		"error": ["NO_T1W"]
+	}
 
 In addition to issue codes and keys these lists can also contain objects with and "and" or "or" properties set to arrays of codes or keys. These allow some level of conditional logic when configuring issues. For example:
 
