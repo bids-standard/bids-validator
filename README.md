@@ -62,7 +62,8 @@ The basic configuration format is outlined below. All configuration is optional.
 {
 	"ignoredFiles": ["/derivatives/**"]
 }
-Note that adding two stars `**` in path makes validator recognize all files and sub-dir to be ignored. 
+
+Note that adding two stars `**` in path makes validator recognize all files and sub-dir to be ignored.
 
 `ignore`, `warn`, and `error` take lists of issue codes or issue keys and change the severity of those issues so they are either ignored or reported as warnings or errors. You can find a list of all available issues at [utils/issues/list](https://github.com/INCF/bids-validator/tree/master/utils/issues/list.js).
 
