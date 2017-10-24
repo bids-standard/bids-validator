@@ -17,7 +17,9 @@
                 "CoilCoordinateSystem": {"type": "string","minLength": 1},
                 "CoilCoordinateUnits": {"type": "string","minLength": 1},
                 "CoilCoordinateSystemDescription": {"type": "string"},
-                "LandmarkCoordinates": {"type": "string","minLength": 1},
+                "LandmarkCoordinates": {"type": "object",
+                                        "additionalProperties": {"type": "array"}
+                                       },
                 "LandmarkCoordinateSystem": {"type": "string","minLength": 1},
                 "LandmarkCoordinateUnits": {"type": "string","minLength": 1},
                 "LandmarkCoordinateSystemDescription": {"type": "string"},
@@ -28,7 +30,6 @@
                 },
         "required": ["MEGCoordinateSystem",
                     "MEGCoordinateUnits",
-                    "EEGCoordinateSystem",
                     "IntendedFor",
                     "AnatomicalMRICoordinateSystem",
                     "AnatomicalMRICoordinateUnits",
