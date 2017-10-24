@@ -39,5 +39,6 @@
                     "LandmarkCoordinates",
                     "LandmarkCoordinateSystem",
                     "LandmarkCoordinateUnits"
-                  ]
+                  ],
+        "additionalProperties": false
 }

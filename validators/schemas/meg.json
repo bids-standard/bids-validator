@@ -50,5 +50,6 @@
             "EMGChannelCount",
             "MiscChannelCount",
             "TriggerChannelCount"
-        ]
+        ],
+       "additionalProperties": false
 }
