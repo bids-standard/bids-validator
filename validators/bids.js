@@ -423,20 +423,9 @@ BIDS = {
                 }
 
                 //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
-                TSV.checkphenotype_tsv(phenotypeParticipants, summary);
+                TSV.checkphenotype_tsv(phenotypeParticipants, summary, self.issues);
 
-                // for (var j=0; j < phenotypeParticipants.length; j++){
-                //     var fileParticpants = phenotypeParticipants[j];
-                //     if (phenotypeParticipants && phenotypeParticipants.length > 0) {
-                //         if (!utils.array.equals(fileParticpants.list, summary.subjects.sort(), true)){
-                //         self.issues.push(new Issue({
-                //             code: 51,
-                //             evidence: fileParticpants.file + "- " + fileParticpants.list + "  Subjects -" + fileParticpants,
-                //             file: fileParticpants.file
-                //         }));
-                //       }
-                //     }
-                // }
+                
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 summary.modalities = utils.modalities.group(summary.modalities);
