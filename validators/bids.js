@@ -5,7 +5,7 @@ var utils  = require('../utils');
 var Issue  = utils.issues.Issue;
 // var checkphenotype_tsv= require('./tsv');
 
-var TSV    = require('./TSV');
+var TSV    = require('./TSV.js');
 var json   = require('./json');
 var NIFTI  = require('./nii');
 var bval   = require('./bval');
