@@ -168,7 +168,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
 
     callback(issues, participants);
 };
-var checkphenotype_tsv = function (phenotypeParticipants, summary, issues) {
+var checkphenotype = function (phenotypeParticipants, summary, issues) {
     // var self = this;
     for (var j=0; j < phenotypeParticipants.length; j++){
         var fileParticpants = phenotypeParticipants[j];
@@ -185,5 +185,5 @@ var checkphenotype_tsv = function (phenotypeParticipants, summary, issues) {
 };
 module.exports = {
     TSV: TSV,
-    checkphenotype_tsv : checkphenotype_tsv
+    checkphenotype : checkphenotype
 };
