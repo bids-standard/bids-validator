@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 var Issue = require('../utils').issues.Issue;
 var files = require('../utils/files');
-// var BIDS = require('./bids.js');
+var utils  = require('../utils');
+
 /**
  * TSV
  *
