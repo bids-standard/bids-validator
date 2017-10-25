@@ -3,8 +3,9 @@ var fs     = require('fs');
 var path   = require('path');
 var utils  = require('../utils');
 var Issue  = utils.issues.Issue;
+// var checkphenotype_tsv= require('./tsv');
 
-var TSV    = require('./tsv');
+var TSV    = require('./TSV');
 var json   = require('./json');
 var NIFTI  = require('./nii');
 var bval   = require('./bval');
@@ -256,7 +257,7 @@ BIDS = {
                     if (file.name.endsWith('_events.tsv')) {
                         events.push(file.relativePath);
                     }
-                    TSV(file, contents, fileList, function (issues, participantList) {
+                    TSV.TSV(file, contents, fileList, function (issues, participantList) {
                         if (participantList) {
                             if (file.name.endsWith('participants.tsv')) {
                                 participants = {
@@ -268,6 +269,7 @@ BIDS = {
                                     list: participantList,
                                     file: file
                                 });
+                                console.log(phenotypeParticipants);
                             }
                         }
                         self.issues = self.issues.concat(issues);
@@ -422,19 +424,20 @@ BIDS = {
                 }
 
                 //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
+                TSV.checkphenotype_tsv(phenotypeParticipants, summary);
 
-                for (var j=0; j < phenotypeParticipants.length; j++){
-                    var fileParticpants = phenotypeParticipants[j];
-                    if (phenotypeParticipants && phenotypeParticipants.length > 0) {
-                        if (!utils.array.equals(fileParticpants.list, summary.subjects.sort(), true)){
-                        self.issues.push(new Issue({
-                            code: 51,
-                            evidence: fileParticpants.file + "- " + fileParticpants.list + "  Subjects -" + fileParticpants,
-                            file: fileParticpants.file
-                        }));
-                      }
-                    }
-                }
+                // for (var j=0; j < phenotypeParticipants.length; j++){
+                //     var fileParticpants = phenotypeParticipants[j];
+                //     if (phenotypeParticipants && phenotypeParticipants.length > 0) {
+                //         if (!utils.array.equals(fileParticpants.list, summary.subjects.sort(), true)){
+                //         self.issues.push(new Issue({
+                //             code: 51,
+                //             evidence: fileParticpants.file + "- " + fileParticpants.list + "  Subjects -" + fileParticpants,
+                //             file: fileParticpants.file
+                //         }));
+                //       }
+                //     }
+                // }
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 summary.modalities = utils.modalities.group(summary.modalities);
@@ -537,3 +540,4 @@ BIDS = {
 };
 
 module.exports = BIDS;
+// module.exports = { BIDS.fullTes, fullTest:summary };

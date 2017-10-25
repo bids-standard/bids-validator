@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 var Issue = require('../utils').issues.Issue;
-
+var files = require('../utils/files');
+// var BIDS = require('./bids.js');
 /**
  * TSV
  *
@@ -8,7 +10,7 @@ var Issue = require('../utils').issues.Issue;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function TSV (file, contents, fileList, callback) {
+var TSV = function TSV (file, contents, fileList, callback) {
 
     var issues = [];
     var rows = contents.split('\n');
@@ -142,6 +144,27 @@ module.exports = function TSV (file, contents, fileList, callback) {
         }
 
     }
+
+    //check phenotype/*tsv
+    // phenotypeParticipants = [],
+    // if(file.relativePath.includes('phenotype/') && file.name.endsWith('.tsv')){
+    //     files.readFile(file, function (issue, contents) {
+    //         TSV(file, contents, fileList, function (issues, participantList) {
+    //             if (participantList) {
+    //                 if (file.relativePath.includes('phenotype/')) {
+    //                     phenotypeParticipants.push({
+    //                         list: participantList,
+    //                         file: file
+    //                     });
+    //                 }
+    //             }
+    //             // self.issues = self.issues.concat(issues);
+    //             process.nextTick(cb);
+    //         });
+    //     });
+
+
+
   // check partcipants.tsv for age 89+
 
     if (file.name === 'participants.tsv'){
@@ -164,4 +187,23 @@ module.exports = function TSV (file, contents, fileList, callback) {
     }
 
     callback(issues, participants);
+};
+var checkphenotype_tsv = function (phenotypeParticipants, summary) {
+    for (var j=0; j < phenotypeParticipants.length; j++){
+        var fileParticpants = phenotypeParticipants[j];
+        if (phenotypeParticipants && phenotypeParticipants.length > 0) {
+            if (!utils.array.equals(fileParticpants.list, summary.subjects.sort(), true)){
+                self.issues.push(new Issue({
+                    code: 51,
+                    evidence: fileParticpants.file + "- " + fileParticpants.list + "  Subjects -" + fileParticpants,
+                    file: fileParticpants.file
+                }));
+                console.log("checking participants id in phenotype")
+            }
+        }
+    }
+};
+module.exports = {
+    TSV: TSV,
+    checkphenotype_tsv : checkphenotype_tsv
 };
