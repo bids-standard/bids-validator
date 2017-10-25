@@ -144,7 +144,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
             }
         }
 
-    };
+    }
   // check partcipants.tsv for age 89+
 
     if (file.name === 'participants.tsv'){
