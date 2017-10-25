@@ -425,7 +425,7 @@ BIDS = {
                 //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
                 TSV.checkphenotype_tsv(phenotypeParticipants, summary, self.issues);
 
-                
+
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 summary.modalities = utils.modalities.group(summary.modalities);
@@ -528,4 +528,4 @@ BIDS = {
 };
 
 module.exports = BIDS;
-// module.exports = { BIDS.fullTes, fullTest:summary };
+
