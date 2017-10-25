@@ -144,28 +144,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
             }
         }
 
-    }
-
-    //check phenotype/*tsv
-    // phenotypeParticipants = [],
-    // if(file.relativePath.includes('phenotype/') && file.name.endsWith('.tsv')){
-    //     files.readFile(file, function (issue, contents) {
-    //         TSV(file, contents, fileList, function (issues, participantList) {
-    //             if (participantList) {
-    //                 if (file.relativePath.includes('phenotype/')) {
-    //                     phenotypeParticipants.push({
-    //                         list: participantList,
-    //                         file: file
-    //                     });
-    //                 }
-    //             }
-    //             // self.issues = self.issues.concat(issues);
-    //             process.nextTick(cb);
-    //         });
-    //     });
-
-
-
+    };
   // check partcipants.tsv for age 89+
 
     if (file.name === 'participants.tsv'){
