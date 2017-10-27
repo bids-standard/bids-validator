@@ -60,6 +60,22 @@ function checkUnits (file, sidecar) {
             code: 2
         }));
     }
+    if (sidecar.hasOwnProperty('RepetitionTime') && sidecar.hasOwnProperty('SliceTiming')) {
+        var SliceTimingArray = sidecar["SliceTiming"];
+        var invalid_timesArray = []
+        SliceTimingArray.filter(function(time){
+            if (time > sidecar['RepetitionTime']){
+                invalid_timesArray.push(time)
+            }
+        });
+        if (invalid_timesArray.length > 0){
+            issues.push(new Issue({
+                file: file,
+                code: 66,
+                evidence: invalid_timesArray
+            }));
+        }
+    }
     if (sidecar.hasOwnProperty('EchoTime') && sidecar["EchoTime"] > 1) {
         issues.push(new Issue({
             file: file,
