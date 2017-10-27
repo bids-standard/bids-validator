@@ -62,10 +62,10 @@ function checkUnits (file, sidecar) {
     }
     if (sidecar.hasOwnProperty('RepetitionTime') && sidecar.hasOwnProperty('SliceTiming')) {
         var SliceTimingArray = sidecar["SliceTiming"];
-        var invalid_timesArray = []
+        var invalid_timesArray = [];
         SliceTimingArray.filter(function(time){
             if (time > sidecar['RepetitionTime']){
-                invalid_timesArray.push(time)
+                invalid_timesArray.push(time);
             }
         });
         if (invalid_timesArray.length > 0){
