@@ -23,6 +23,10 @@ module.exports = {
                 'phasediff'
             ], "fieldmap"],
             [[
+                'magnitude1',
+                'phasediff'
+            ], "fieldmap"],
+            [[
                 'magnitude',
                 'fieldmap'
             ], "fieldmap"],
