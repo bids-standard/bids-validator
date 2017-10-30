@@ -330,6 +330,6 @@ module.exports = {
     66: {
         key: 'SLICETIMING_VALUES_GREATOR_THAN_REPETITION_TIME',
         severity: 'error',
-        reason: 'SliceTiming value/s in json contains invalid value as it is greator than RepetitionTime.'
+        reason: '"SliceTiming" value/s contains invalid value as it is greator than RepetitionTime.  SliceTiming values should be in seconds not milliseconds (common mistake).'
     }
 };

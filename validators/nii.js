@@ -164,6 +164,23 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                     reason: "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
                 }));
             }
+
+            if (mergedDictionary.hasOwnProperty('SliceTiming')) {
+                var SliceTimingArray = mergedDictionary["SliceTiming"];
+                var invalid_timesArray = [];
+                for (var t = 0; t<SliceTimingArray.length; t++){
+                    if (SliceTimingArray[t] > mergedDictionary['RepetitionTime']){
+                        invalid_timesArray.push(SliceTimingArray[t]);
+                    }
+                }
+                if (invalid_timesArray.length > 0){
+                    issues.push(new Issue({
+                        file: file,
+                        code: 66,
+                        evidence: invalid_timesArray
+                    }));
+                }
+            }
         }
         else if (path.includes("_phasediff.nii")){
             if (!mergedDictionary.hasOwnProperty('EchoTime1') || !mergedDictionary.hasOwnProperty('EchoTime2')) {

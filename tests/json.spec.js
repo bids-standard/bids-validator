@@ -24,13 +24,4 @@ describe('JSON', function(){
 			assert(issues && issues.length === 1);
 		});
 	});
-
-	it('sidecar SliceTiming shouldnot be greator than RepetitionTime', function(){
-		var jsonObjInval = '{"RepetitionTime": 1.2, "echo_time": 0.005, "flip_angle": 90, "TaskName": "Rest", "SliceTiming":[0.0, 1.7759, 0.0517, 0.8276, 0.1034, 1.8793, 0.1552]}';
-		validate.JSON(file, jsonObjInval, function (issues) {
-			assert(issues.length === 1 && issues);
-		});
-	});
-
-
 });
