@@ -165,19 +165,14 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                 }));
             }
 
-            if (mergedDictionary.hasOwnProperty('SliceTiming')) {
+            if (mergedDictionary.hasOwnProperty('SliceTiming') && mergedDictionary["SliceTiming"].constructor === Array) {
                 var SliceTimingArray = mergedDictionary["SliceTiming"];
-                var invalid_timesArray = [];
-                for (var t = 0; t<SliceTimingArray.length; t++){
-                    if (SliceTimingArray[t] > mergedDictionary['RepetitionTime']){
-                        invalid_timesArray.push(SliceTimingArray[t]);
-                    }
-                }
-                if (invalid_timesArray.length > 0){
+                var invalid_valuesArray = checkSliceTimingArray(SliceTimingArray, mergedDictionary['RepetitionTime']);
+                if (invalid_valuesArray.length > 0){
                     issues.push(new Issue({
                         file: file,
                         code: 66,
-                        evidence: invalid_timesArray
+                        evidence: invalid_valuesArray
                     }));
                 }
             }
@@ -358,7 +353,20 @@ function generateMergedSidecarDict(potentialSidecars, jsonContents) {
     }
     return mergedDictionary;
 }
+/**
+ * Function to check each SoliceTime from SliceTiming Array
+ *
+ */
 
+function checkSliceTimingArray(array, repetitionTime){
+    for (var t = 0; t < array.length; t++){
+        var invalid_timesArray = [];
+        if (array[t] > repetitionTime){
+            invalid_timesArray.push(array[t]);
+        }
+    }
+    return invalid_timesArray;
+}
 /**
  * Get B-File Contents
  *
