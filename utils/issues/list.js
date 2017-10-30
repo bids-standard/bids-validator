@@ -326,5 +326,10 @@ module.exports = {
         key: 'SESSION_LABEL_IN_FILENAME_DOESNOT_MATCH_DIRECTORY',
         severity: 'error',
         reason: 'Session label in the filename doesn\'t match with the path of the file. File seems to be saved in incorrect session directory.'
+    },
+    66: {
+        key: 'SLICETIMING_VALUES_GREATOR_THAN_REPETITION_TIME',
+        severity: 'error',
+        reason: '"SliceTiming" value/s contains invalid value as it is greator than RepetitionTime.  SliceTiming values should be in seconds not milliseconds (common mistake).'
     }
 };
