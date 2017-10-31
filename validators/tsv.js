@@ -154,17 +154,14 @@ var TSV = function TSV (file, contents, fileList, callback) {
     callback(issues, participants);
 };
 var checkphenotype = function (phenotypeParticipants, summary, issues) {
-    // var self = this;
     for (var j=0; j < phenotypeParticipants.length; j++){
         var fileParticpants = phenotypeParticipants[j];
-        if (phenotypeParticipants && phenotypeParticipants.length > 0) {
-            if (!utils.array.equals(fileParticpants.list, summary.subjects.sort(), true)){
-                issues.push(new Issue({
-                    code: 51,
-                    evidence: fileParticpants.file + "- " + fileParticpants.list + "  Subjects -" + fileParticpants,
-                    file: fileParticpants.file
-                }));
-            }
+        if (phenotypeParticipants && phenotypeParticipants.length > 0 && (!utils.array.equals(fileParticpants.list, summary.subjects.sort(), true))) {
+            issues.push(new Issue({
+                code: 51,
+                evidence: fileParticpants.file + "- " + fileParticpants.list + "  Subjects -" + fileParticpants,
+                file: fileParticpants.file
+            }));
         }
     }
 };
