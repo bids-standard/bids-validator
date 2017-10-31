@@ -148,22 +148,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
   // check partcipants.tsv for age 89+
 
     if (file.name === 'participants.tsv'){
-      var header = rows[0].trim().split('\t');
-      var ageIdColumn = header.indexOf("age");
-      for (var a = 0; a < rows.length; a++) {
-        var line = rows[a];
-        var line_values = line.trim().split('\t');
-        var age = line_values[ageIdColumn];
-        if (age >= 89) {
-            issues.push(new Issue({
-                file: file,
-                evidence: line,
-                line: a + 1,
-                character: "age of partcipant is above 89 ",
-                code: 56
-            }));
-          }
-          }
+        checkage89_plus(rows, file, issues);
     }
 
     callback(issues, participants);
@@ -183,6 +168,25 @@ var checkphenotype = function (phenotypeParticipants, summary, issues) {
         }
     }
 };
+
+var checkage89_plus = function(rows, file, issues){
+    var header = rows[0].trim().split('\t');
+    var ageIdColumn = header.indexOf("age");
+    for (var a = 0; a < rows.length; a++) {
+        var line = rows[a];
+        var line_values = line.trim().split('\t');
+        var age = line_values[ageIdColumn];
+        if (age >= 89) {
+            issues.push(new Issue({
+                file: file,
+                evidence: line,
+                line: a + 1,
+                character: "age of partcipant is above 89 ",
+                code: 56
+            }));
+        }
+    }
+}
 module.exports = {
     TSV: TSV,
     checkphenotype : checkphenotype
