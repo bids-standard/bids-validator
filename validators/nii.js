@@ -164,6 +164,18 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                     reason: "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " + sidecarMessage
                 }));
             }
+
+            if (mergedDictionary.hasOwnProperty('SliceTiming') && mergedDictionary["SliceTiming"].constructor === Array) {
+                var SliceTimingArray = mergedDictionary["SliceTiming"];
+                var invalid_valuesArray = checkSliceTimingArray(SliceTimingArray, mergedDictionary['RepetitionTime']);
+                if (invalid_valuesArray.length > 0){
+                    issues.push(new Issue({
+                        file: file,
+                        code: 66,
+                        evidence: invalid_valuesArray
+                    }));
+                }
+            }
         }
         else if (path.includes("_phasediff.nii")){
             if (!mergedDictionary.hasOwnProperty('EchoTime1') || !mergedDictionary.hasOwnProperty('EchoTime2')) {
@@ -341,7 +353,20 @@ function generateMergedSidecarDict(potentialSidecars, jsonContents) {
     }
     return mergedDictionary;
 }
+/**
+ * Function to check each SoliceTime from SliceTiming Array
+ *
+ */
 
+function checkSliceTimingArray(array, repetitionTime){
+    for (var t = 0; t < array.length; t++){
+        var invalid_timesArray = [];
+        if (array[t] > repetitionTime){
+            invalid_timesArray.push(array[t]);
+        }
+    }
+    return invalid_timesArray;
+}
 /**
  * Get B-File Contents
  *

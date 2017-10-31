@@ -135,4 +135,37 @@ describe('NIFTI', function(){
       });
     });
 
+    it('SliceTiming should not be greater than RepetitionTime', function(){
+        var jsonContentsDict_new = {
+            '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.json': {
+                "RepetitionTime": 1.5,
+                "TaskName": "AntiSaccade (AS) Rewarded & Neutral with varying dot position",
+                "EchoTime": 0.025,
+                "NumberofPhaseEncodingSteps": 64,
+                "FlipAngle": 70,
+                "PhaseEncodingDirection": "j",
+                "SliceTiming": [
+                    0.0,
+                    1.3448,
+                    1.6207,
+                    1.3966,
+                    0.6724,
+                    1.4483,
+                    1.7241
+                ]
+            }
+        };
+        var file_new = {
+            name: 'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
+            relativePath: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'
+        };
+        var events = [
+            '/sub-15/func/sub-14_task-mixedeventrelatedprobe_run-01_events.tsv',
+            '/sub-15/run-01_events.tsv'
+        ];
+        validate.NIFTI(null, file_new, jsonContentsDict_new, {}, [], events, function (issues) {
+            assert(issues[2].code === 66 && issues.length === 3);
+        });
+    });
+
 });

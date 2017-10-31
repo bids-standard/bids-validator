@@ -24,5 +24,4 @@ describe('JSON', function(){
 			assert(issues && issues.length === 1);
 		});
 	});
-
 });
