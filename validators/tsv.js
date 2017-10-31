@@ -186,7 +186,7 @@ var checkage89_plus = function(rows, file, issues){
             }));
         }
     }
-}
+};
 module.exports = {
     TSV: TSV,
     checkphenotype : checkphenotype
