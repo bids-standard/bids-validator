@@ -25,12 +25,13 @@ var issues = {
      * are present.
      */
     filterFieldMaps: function (issueList, summary) {
-        if (summary.modalities.indexOf("fieldmap") > 0) {
+        if (summary.modalities.indexOf("fieldmap") < 0) {
             var filteredIssueList = [];
-            var fieldmapRelatedCodes = ["6", "7", "8", "9"];
+            var fieldmapRelatedCodes = [6, 7, 8, 9];
             for (var i = 0; i < issueList.length; i++) {
-                if (fieldmapRelatedCodes.indexOf(issueList[i].code) < 0) {
-                    filteredIssueList.push(issueList[i]);
+                var issue = issueList[i];
+                if (fieldmapRelatedCodes.indexOf(issue.code) < 0) {
+                    filteredIssueList.push(issue);
                 }
             }
             issueList = filteredIssueList;
