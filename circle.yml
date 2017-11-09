@@ -2,8 +2,8 @@ machine:
   node:
     version: 6.11.0
     
-dependencies:
-  cache_directories:
+general:
+  artifacts:
     - "~/web_version"
 
 test:
