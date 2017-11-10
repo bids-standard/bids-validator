@@ -1,6 +1,10 @@
 machine:
   node:
     version: 6.11.0
+    
+general:
+  artifacts:
+    - "~/web_version"
 
 test:
   override:
@@ -13,7 +17,7 @@ test:
     - git checkout gh-pages
     - npm install
     - if [ -z ${CIRCLE_PR_USERNAME}]; then npm install ${CIRCLE_REPOSITORY_URL}.git\#${CIRCLE_SHA1}; else npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}.git\#${CIRCLE_SHA1}; fi
-    - gulp build
+    - gulp build && rsync -av --exclude=".*" --exclude="node_modules" --exclude="src" --exclude="tests" . ~/web_version/
 
 deployment:
   production:
