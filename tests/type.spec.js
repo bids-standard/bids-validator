@@ -98,7 +98,10 @@ var suiteTop = describe('utils.type.isTopLevel', function(){
             "/dataset_description.json",
             "/ses-pre_task-rest_bold.json",
             "/dwi.bval",
-            "/dwi.bvec"
+            "/dwi.bvec",
+            "/T1w.json",
+            "/acq-test_dwi.json",
+            "/rec-test_physio.json"
         ];
 
         goodFilenames.forEach(function (path) {
@@ -112,7 +115,10 @@ var suiteTop = describe('utils.type.isTopLevel', function(){
             "/readme.txt",
             "/changelog",
             "/dataset_description.yml",
-            "/ses.json"
+            "/ses.json",
+            "/_T1w.json",
+            "/_dwi.json",
+            "/_task-test_physio.json"
         ];
 
         badFilenames.forEach(function (path) {
