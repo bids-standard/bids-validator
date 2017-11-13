@@ -2,7 +2,7 @@
 
 var nifti = require('nifti-js');
 var Issue = require('./issues').Issue;
-var type =  require('./type')
+var type =  require('./type');
 
 /**
  * If the current environment is server side

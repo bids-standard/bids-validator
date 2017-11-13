@@ -202,7 +202,7 @@ module.exports = {
     isIgnoredPath: function (path) {
         var ignoredDirsRe = new RegExp('^\\/(derivatives|sourcedata|code).*$');
         var ignoreHiddenRe = new RegExp('^.*\\/[\\.].+$');
-        return conditionalMatch(ignoredDirsRe, path) || conditionalMatch(ignoreHiddenRe, path)
+        return conditionalMatch(ignoredDirsRe, path) || conditionalMatch(ignoreHiddenRe, path);
     },
 
     /**
