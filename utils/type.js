@@ -194,6 +194,10 @@ module.exports = {
         return !isNaN(parseFloat(n)) && isFinite(n);
     },
 
+    isIgnoredPath: function (path) {
+        var ignoredDirsRe = new RegExp();
+    },
+
     /**
      * Get Path Values
      *

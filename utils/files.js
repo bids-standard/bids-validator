@@ -21,8 +21,7 @@ var fileUtils = {
     newFile: newFile,
     readFile: readFile,
     readDir: readDir,
-    readNiftiHeader: readNiftiHeader,
-    relativePath: relativePath
+    readNiftiHeader: readNiftiHeader
 };
 
 // implementations ----------------------------------------------------------------
@@ -77,32 +76,45 @@ function readFile (file, callback) {
  */
 function readDir (dir, callback) {
     if (fs) {
-        var files = getFiles(dir);
         var filesObj = {};
         var str = dir.substr(dir.lastIndexOf('/') + 1) + '$';
-        var subpath = dir.replace(new RegExp(str), '');
+        var rootpath = dir.replace(new RegExp(str), '');
+        var files = getFiles(dir, [], rootpath);
+        // converting array to object
         for (var i = 0; i < files.length; i++) {
-            filesObj[i] = {
-                name: files[i].substr(files[i].lastIndexOf('/') + 1),
-                path: files[i],
-                relativePath: files[i].replace(subpath, '')
-            };
+            filesObj[i] = files[i];
         }
         callback(filesObj);
     } else {
-        callback(dir);
+        var filesObj = {};
+        for (var i = 0; i < dir.length; i++) {
+            var fileObj = dir[i];
+            fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath)
+            filesObj[i] = fileObj;
+        }
+        callback(filesObj);
     }
 }
 
-function getFiles (dir, files_){
+function getFiles (dir, files_, rootpath){
     files_ = files_ || [];
     var files = fs.readdirSync(dir);
     for (var i = 0; i < files.length; i++) {
-        var name = dir + '/' + files[i];
-        if (fs.lstatSync(name).isDirectory()) {
-            getFiles(name, files_);
+        var fullPath = dir + '/' + files[i];
+        var relativePath = fullPath.replace(rootpath, '');
+        relativePath = harmonizeRelativePath(relativePath);
+        var fileName = files[i];
+
+        var fileObj = {
+            name: fileName,
+            path: fullPath,
+            relativePath: relativePath
+        };
+
+        if (fs.lstatSync(fullPath).isDirectory()) {
+            getFiles(fullPath, files_, rootpath);
         } else {
-            files_.push(name);
+            files_.push(fileObj);
         }
     }
     return files_;
@@ -233,15 +245,14 @@ function parseNIfTIHeader (buffer, file) {
  * Takes a file and returns the correct relative path property
  * base on the environment.
  */
-function relativePath (file) {
-    var relPath = (typeof window != 'undefined' ? file.webkitRelativePath : file.relativePath);
+function harmonizeRelativePath(path) {
 
     // This hack uniforms relative paths for command line calls to 'BIDS-examples/ds001/' and 'BIDS-examples/ds001'
-    if (relPath[0] !== '/') {
-        var pathParts = relPath.split('/');
-        relPath = '/' + pathParts.slice(1).join('/');
+    if (path[0] !== '/') {
+        var pathParts = path.split('/');
+        path = '/' + pathParts.slice(1).join('/');
     }
-    return relPath;
+    return path;
 }
 
 /**
