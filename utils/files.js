@@ -65,6 +65,19 @@ function readFile (file, callback) {
     }
 }
 
+function harmonizeAndFilter(dir) {
+    var filesList = [];
+    for (var i = 0; i < dir.length; i++) {
+        var fileObj = dir[i];
+        fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
+        if (type.isIgnoredPath(fileObj.relativePath)) {
+            continue;
+        }
+        filesList.push(fileObj);
+    }
+    return filesList;
+}
+
 /**
  * Read Directory
  *
@@ -83,15 +96,7 @@ function readDir (dir, callback) {
         var rootpath = dir.replace(new RegExp(str), '');
         filesList = getFiles(dir, [], rootpath);
     } else {
-        filesList = [];
-        for (var i = 0; i < dir.length; i++) {
-            var fileObj = dir[i];
-            fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
-            if (type.isIgnoredPath(fileObj.relativePath)){
-                continue;
-            }
-            filesList.push(fileObj);
-        }
+        filesList = harmonizeAndFilter(dir);
     }
     // converting array to object
     for (var j = 0; j < filesList.length; j++) {
