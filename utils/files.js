@@ -2,6 +2,7 @@
 
 var nifti = require('nifti-js');
 var Issue = require('./issues').Issue;
+var type =  require('./type')
 
 /**
  * If the current environment is server side
@@ -75,25 +76,28 @@ function readFile (file, callback) {
  * object to the callback.
  */
 function readDir (dir, callback) {
+    var filesObj = {};
+    var filesList = [];
     if (fs) {
-        var filesObj = {};
         var str = dir.substr(dir.lastIndexOf('/') + 1) + '$';
         var rootpath = dir.replace(new RegExp(str), '');
-        var files = getFiles(dir, [], rootpath);
-        // converting array to object
-        for (var i = 0; i < files.length; i++) {
-            filesObj[i] = files[i];
-        }
-        callback(filesObj);
+        filesList = getFiles(dir, [], rootpath);
     } else {
-        var filesObj = {};
+        filesList = [];
         for (var i = 0; i < dir.length; i++) {
             var fileObj = dir[i];
-            fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath)
-            filesObj[i] = fileObj;
+            fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
+            if (type.isIgnoredPath(fileObj.relativePath)){
+                continue;
+            }
+            filesList.push(fileObj);
         }
-        callback(filesObj);
     }
+    // converting array to object
+    for (var j = 0; j < filesList.length; j++) {
+        filesObj[j] = filesList[j];
+    }
+    callback(filesObj);
 }
 
 function getFiles (dir, files_, rootpath){
@@ -103,6 +107,9 @@ function getFiles (dir, files_, rootpath){
         var fullPath = dir + '/' + files[i];
         var relativePath = fullPath.replace(rootpath, '');
         relativePath = harmonizeRelativePath(relativePath);
+        if (type.isIgnoredPath(relativePath)){
+            continue;
+        }
         var fileName = files[i];
 
         var fileObj = {
