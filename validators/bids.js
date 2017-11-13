@@ -215,7 +215,7 @@ BIDS = {
             }
 
             // ignore associated data
-            if (utils.type.isAssociatedData(file.relativePath)) {
+            if (utils.type.isStimuliData(file.relativePath)) {
                 process.nextTick(cb);
             }
 
@@ -359,7 +359,7 @@ BIDS = {
             }
 
             // collect sessions & subjects
-            if (!utils.type.isAssociatedData(file.relativePath) && utils.type.isBIDS(file.relativePath)) {
+            if (!utils.type.isStimuliData(file.relativePath) && utils.type.isBIDS(file.relativePath)) {
                 var pathValues = utils.type.getPathValues(file.relativePath);
 
                 if (pathValues.sub && summary.subjects.indexOf(pathValues.sub) === -1) {
