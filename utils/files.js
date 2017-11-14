@@ -65,18 +65,7 @@ function readFile (file, callback) {
     }
 }
 
-function harmonizeAndFilter(dir) {
-    var filesList = [];
-    for (var i = 0; i < dir.length; i++) {
-        var fileObj = dir[i];
-        fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
-        if (type.isIgnoredPath(fileObj.relativePath)) {
-            continue;
-        }
-        filesList.push(fileObj);
-    }
-    return filesList;
-}
+
 
 /**
  * Read Directory
@@ -92,11 +81,9 @@ function readDir (dir, callback) {
     var filesObj = {};
     var filesList = [];
     if (fs) {
-        var str = dir.substr(dir.lastIndexOf('/') + 1) + '$';
-        var rootpath = dir.replace(new RegExp(str), '');
-        filesList = getFiles(dir, [], rootpath);
+        filesList = preprocessNode(dir);
     } else {
-        filesList = harmonizeAndFilter(dir);
+        filesList = preprocessBrowser(dir);
     }
     // converting array to object
     for (var j = 0; j < filesList.length; j++) {
@@ -105,7 +92,42 @@ function readDir (dir, callback) {
     callback(filesObj);
 }
 
-function getFiles (dir, files_, rootpath){
+/**
+ * Preprocess file objects from a browser
+ *
+ * 1. Filters out ignored files and folder.
+ * 2. Adds 'relativePath' field of each file object.
+ */
+function preprocessBrowser(filesObj) {
+    var filesList = [];
+    for (var i = 0; i < filesObj.length; i++) {
+        var fileObj = filesObj[i];
+        fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
+        if (type.isIgnoredPath(fileObj.relativePath)) {
+            continue;
+        }
+        filesList.push(fileObj);
+    }
+    return filesList;
+}
+
+/**
+ * Preprocess directory path from a Node CLI
+ *
+ * 1. Recursively travers the directory tree
+ * 2. Filters out ignored files and folder.
+ * 3. Harmonizes the 'relativePath' field
+ */
+function preprocessNode(dir) {
+    var str = dir.substr(dir.lastIndexOf('/') + 1) + '$';
+    var rootpath = dir.replace(new RegExp(str), '');
+    return getFiles(dir, [], rootpath);
+}
+
+/**
+ * Recursive helper function for 'preprocessNode'
+ */
+function getFiles(dir, files_, rootpath){
     files_ = files_ || [];
     var files = fs.readdirSync(dir);
     for (var i = 0; i < files.length; i++) {
