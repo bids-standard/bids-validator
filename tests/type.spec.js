@@ -242,6 +242,30 @@ describe('utils.type.isAssociatedData', function () {
     });
 });
 
+describe('utils.type.isStimuliData', function () {
+    it('should return false for unknown root directories', function () {
+        var badFilenames = [
+            "/images/picture.jpeg",
+            "/temporary/test.json"
+        ];
+
+        badFilenames.forEach(function (path) {
+            assert.equal(utils.type.isStimuliData(path), false);
+        });
+    });
+
+    it('should return true for stimuli data directories and any files within', function () {
+        var goodFilenames = [
+            "/stimuli/sub-01/mov.avi",
+            "/stimuli/text.pdf"
+        ];
+
+        goodFilenames.forEach(function (path) {
+            assert(utils.type.isStimuliData(path));
+        });
+    });
+});
+
 describe('utils.type.getPathValues', function () {
     it('should return the correct path values from a valid file path', function () {
         assert.equal(utils.type.getPathValues('/sub-22/ses-1/func/sub-22_ses-1_task-rest_acq-prefrontal_physio.tsv.gz').sub, 22);

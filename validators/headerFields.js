@@ -67,7 +67,7 @@ var headerField = function headerField(headers, field) {
         var filename;
         var header = headers[header_index][1];
         var match;
-        var path = utils.files.relativePath(file);
+        var path = file.relativePath;
         var subject;
 
 

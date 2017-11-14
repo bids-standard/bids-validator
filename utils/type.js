@@ -19,7 +19,7 @@ module.exports = {
     isBIDS: function (path) {
         return (
             this.isTopLevel(path) ||
-            this.isAssociatedData(path) ||
+            this.isStimuliData(path) ||
             this.isSessionLevel(path) ||
             this.isSubjectLevel(path) ||
             this.isAnat(path) ||
@@ -63,6 +63,11 @@ module.exports = {
     isAssociatedData: function (path) {
         var associatedData = new RegExp('^\\/(?:code|derivatives|sourcedata|stimuli|[.]git)\\/(?:.*)$');
         return associatedData.test(path);
+    },
+
+    isStimuliData: function (path) {
+        var stimuliDataRe = new RegExp('^\\/(?:stimuli)\\/(?:.*)$');
+        return stimuliDataRe.test(path);
     },
 
     /**
@@ -192,6 +197,12 @@ module.exports = {
 
     isNumber: function (n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
+    },
+
+    isIgnoredPath: function (path) {
+        var ignoredDirsRe = new RegExp('^\\/(derivatives|sourcedata|code).*$');
+        var ignoreHiddenRe = new RegExp('^.*\\/[\\.].+$');
+        return conditionalMatch(ignoredDirsRe, path) || conditionalMatch(ignoreHiddenRe, path);
     },
 
     /**

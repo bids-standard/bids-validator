@@ -19,8 +19,8 @@ var session = function missingSessionFiles(fileList) {
             continue;
         }
 
-        var path = utils.files.relativePath(file);
-        if (!utils.type.isBIDS(path) || utils.type.isAssociatedData(path)) {
+        var path = file.relativePath;
+        if (!utils.type.isBIDS(path) || utils.type.isStimuliData(path)) {
             continue;
         }
         var subject;
