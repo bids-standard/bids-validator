@@ -112,14 +112,15 @@ describe('TSV', function(){
     it("should check participants listed in phenotype/*tsv and sub-ids ", function () {
         var phenotypeParticipants= [{
             list:
-            [   '10159',
-                '10171',
-                '10189'],
+                [
+                    '10159',
+                    '10171',
+                    '10189'
+                ],
             file:
             { name: 'vmnm.tsv',
             path: '/corral-repl/utexas/poldracklab/openfmri/shared2/ds000030/ds030_R1.0.5/ds000030_R1.0.5//phenotype/vmnm.tsv',
-            relativePath: '/phenotype/vmnm.tsv',
-            stats: [Object] } } ];
+            relativePath: '/phenotype/vmnm.tsv'}}];
         var summary = { sessions: [],
             subjects:
                 [
@@ -130,8 +131,8 @@ describe('TSV', function(){
             totalFiles: 43,
             size: 11845 };
         var issues = [];
-        validate.TSV.checkphenotype(phenotypeParticipants, summary, issues, function(issues){
-            assert(issues.length === 0 && issues[0].code === 51);
+        validate.TSV.checkphenotype(phenotypeParticipants, summary, issues, function(){
+            assert(issues.length === 1 && issues[0].code === 51);
         });
     });
 
