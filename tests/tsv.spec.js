@@ -131,7 +131,7 @@ describe('TSV', function(){
             totalFiles: 43,
             size: 11845 };
         var issues = [];
-        validate.TSV.checkphenotype(phenotypeParticipants, summary, issues, function(){
+        validate.TSV.checkphenotype(phenotypeParticipants, summary, issues, function(issues){
             assert(issues.length === 1 && issues[0].code === 51);
         });
     });
