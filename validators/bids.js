@@ -107,7 +107,7 @@ BIDS = {
         for (var key in fileList) {
             if (fileList.hasOwnProperty(key)) {
                 var file = fileList[key];
-                var path = utils.files.relativePath(file);
+                var path = file.relativePath;
                 if (path) {
                     path = path.split('/');
                     path = path.reverse();
@@ -182,7 +182,7 @@ BIDS = {
 
 
         async.eachOfLimit(fileList, 200, function (file) {
-            var completename = utils.files.relativePath(file);
+            var completename = file.relativePath;
             if(!(completename.startsWith('/derivatives') || completename.startsWith('/code') || completename.startsWith('/sourcedata'))) {
                 for (var re_index = 0; re_index < illegalchar_regex_list.length; re_index++) {
                     var err_regex = illegalchar_regex_list[re_index][0];
@@ -203,8 +203,7 @@ BIDS = {
 
         // validate individual files
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
-            var path = utils.files.relativePath(file);
-            file.relativePath = path;
+            var path = file.relativePath;
 
             // check for subject directory presence
             if (path.startsWith('/sub-')) {
@@ -217,7 +216,7 @@ BIDS = {
             }
 
             // ignore associated data
-            if (utils.type.isAssociatedData(file.relativePath)) {
+            if (utils.type.isStimuliData(file.relativePath)) {
                 process.nextTick(cb);
             }
 
@@ -361,7 +360,7 @@ BIDS = {
             }
 
             // collect sessions & subjects
-            if (!utils.type.isAssociatedData(file.relativePath) && utils.type.isBIDS(file.relativePath)) {
+            if (!utils.type.isStimuliData(file.relativePath) && utils.type.isBIDS(file.relativePath)) {
                 var pathValues = utils.type.getPathValues(file.relativePath);
 
                 if (pathValues.sub && summary.subjects.indexOf(pathValues.sub) === -1) {
@@ -482,8 +481,6 @@ BIDS = {
 
         // validates if sub/ses-id in filename matches with ses/sub directory file is saved
         async.eachOfLimit(fileList, 200, function (file) {
-            var path = utils.files.relativePath(file);
-            file.relativePath = path;
             var values = getPathandFileValues(file.relativePath);
 
             var pathValues = values[0];

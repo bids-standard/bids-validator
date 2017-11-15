@@ -24,18 +24,16 @@ var issues = {
      * Remove fieldmap related warnings if no fieldmaps
      * are present.
      */
-    filterFieldMaps: function (warnings, summary) {
-        if (summary.modalities.indexOf("fieldmap") < 0) {
-            var filteredWarnings = [];
-            var fieldmapRelatedCodes = ["6", "7", "8", "9"];
-            for (var i = 0; i < warnings.length; i++) {
-                if (fieldmapRelatedCodes.indexOf(warnings[i].code) < 0) {
-                    filteredWarnings.push(warnings[i]);
-                }
+    filterFieldMaps: function (issueList) {
+        var filteredIssueList = [];
+        var fieldmapRelatedCodes = [6, 7, 8, 9];
+        for (var i = 0; i < issueList.length; i++) {
+            var issue = issueList[i];
+            if (fieldmapRelatedCodes.indexOf(issue.code) < 0) {
+                filteredIssueList.push(issue);
             }
-            warnings = filteredWarnings;
         }
-        return warnings
+        return filteredIssueList
     },
 
 	/**
@@ -43,6 +41,10 @@ var issues = {
      */
     format: function (issueList, summary, options) {
         var errors = [], warnings = [], ignored = [];
+
+        if (summary.modalities.indexOf("fieldmap") < 0) {
+            issueList = this.filterFieldMaps(issueList);
+        }
 
         // sort alphabetically by relative path of files
         issueList.sort(function (a,b) {
@@ -99,8 +101,6 @@ var issues = {
             }
 
         }
-
-        warnings = this.filterFieldMaps(warnings, summary);
 
         return {errors: errors, warnings: warnings, ignored: ignored};
     },

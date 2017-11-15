@@ -227,7 +227,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                 var intendedForFile = path.split("/")[1] + "/" + intendedFor[key];
                 var onTheList = false;
                 async.eachOfLimit(fileList, 200, function (file) {
-                    var filePath = file.path ? file.path : file.webkitRelativePath;
+                    var filePath = file.relativePath;
                     if (filePath.endsWith(intendedForFile)){
                         onTheList = true;
                     }

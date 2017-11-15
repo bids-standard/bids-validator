@@ -2,6 +2,7 @@
 
 var nifti = require('nifti-js');
 var Issue = require('./issues').Issue;
+var type =  require('./type');
 
 /**
  * If the current environment is server side
@@ -21,8 +22,7 @@ var fileUtils = {
     newFile: newFile,
     readFile: readFile,
     readDir: readDir,
-    readNiftiHeader: readNiftiHeader,
-    relativePath: relativePath
+    readNiftiHeader: readNiftiHeader
 };
 
 // implementations ----------------------------------------------------------------
@@ -65,6 +65,8 @@ function readFile (file, callback) {
     }
 }
 
+
+
 /**
  * Read Directory
  *
@@ -76,33 +78,77 @@ function readFile (file, callback) {
  * object to the callback.
  */
 function readDir (dir, callback) {
+    var filesObj = {};
+    var filesList = [];
     if (fs) {
-        var files = getFiles(dir);
-        var filesObj = {};
-        var str = dir.substr(dir.lastIndexOf('/') + 1) + '$';
-        var subpath = dir.replace(new RegExp(str), '');
-        for (var i = 0; i < files.length; i++) {
-            filesObj[i] = {
-                name: files[i].substr(files[i].lastIndexOf('/') + 1),
-                path: files[i],
-                relativePath: files[i].replace(subpath, '')
-            };
-        }
-        callback(filesObj);
+        filesList = preprocessNode(dir);
     } else {
-        callback(dir);
+        filesList = preprocessBrowser(dir);
     }
+    // converting array to object
+    for (var j = 0; j < filesList.length; j++) {
+        filesObj[j] = filesList[j];
+    }
+    callback(filesObj);
 }
 
-function getFiles (dir, files_){
+/**
+ * Preprocess file objects from a browser
+ *
+ * 1. Filters out ignored files and folder.
+ * 2. Adds 'relativePath' field of each file object.
+ */
+function preprocessBrowser(filesObj) {
+    var filesList = [];
+    for (var i = 0; i < filesObj.length; i++) {
+        var fileObj = filesObj[i];
+        fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
+        if (type.isIgnoredPath(fileObj.relativePath)) {
+            continue;
+        }
+        filesList.push(fileObj);
+    }
+    return filesList;
+}
+
+/**
+ * Preprocess directory path from a Node CLI
+ *
+ * 1. Recursively travers the directory tree
+ * 2. Filters out ignored files and folder.
+ * 3. Harmonizes the 'relativePath' field
+ */
+function preprocessNode(dir) {
+    var str = dir.substr(dir.lastIndexOf('/') + 1) + '$';
+    var rootpath = dir.replace(new RegExp(str), '');
+    return getFiles(dir, [], rootpath);
+}
+
+/**
+ * Recursive helper function for 'preprocessNode'
+ */
+function getFiles(dir, files_, rootpath){
     files_ = files_ || [];
     var files = fs.readdirSync(dir);
     for (var i = 0; i < files.length; i++) {
-        var name = dir + '/' + files[i];
-        if (fs.lstatSync(name).isDirectory()) {
-            getFiles(name, files_);
+        var fullPath = dir + '/' + files[i];
+        var relativePath = fullPath.replace(rootpath, '');
+        relativePath = harmonizeRelativePath(relativePath);
+        if (type.isIgnoredPath(relativePath)){
+            continue;
+        }
+        var fileName = files[i];
+
+        var fileObj = {
+            name: fileName,
+            path: fullPath,
+            relativePath: relativePath
+        };
+
+        if (fs.lstatSync(fullPath).isDirectory()) {
+            getFiles(fullPath, files_, rootpath);
         } else {
-            files_.push(name);
+            files_.push(fileObj);
         }
     }
     return files_;
@@ -233,15 +279,14 @@ function parseNIfTIHeader (buffer, file) {
  * Takes a file and returns the correct relative path property
  * base on the environment.
  */
-function relativePath (file) {
-    var relPath = (typeof window != 'undefined' ? file.webkitRelativePath : file.relativePath);
+function harmonizeRelativePath(path) {
 
     // This hack uniforms relative paths for command line calls to 'BIDS-examples/ds001/' and 'BIDS-examples/ds001'
-    if (relPath[0] !== '/') {
-        var pathParts = relPath.split('/');
-        relPath = '/' + pathParts.slice(1).join('/');
+    if (path[0] !== '/') {
+        var pathParts = path.split('/');
+        path = '/' + pathParts.slice(1).join('/');
     }
-    return relPath;
+    return path;
 }
 
 /**
