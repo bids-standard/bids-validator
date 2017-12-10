@@ -10,6 +10,7 @@ var NIFTI  = require('./nii');
 var bval   = require('./bval');
 var bvec   = require('./bvec');
 var session = require('./session');
+var checkAnyDataPresent = require('./checkAnyDataPresent');
 var headerFields = require('./headerFields');
 
 var BIDS;
@@ -436,6 +437,7 @@ BIDS = {
                 }
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
+                self.issues = self.issues.concat(checkAnyDataPresent(fileList, summary.subjects));
                 summary.modalities = utils.modalities.group(summary.modalities);
                 var issues = utils.issues.format(self.issues, summary, self.options);
                 callback(issues, summary);
