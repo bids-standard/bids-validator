@@ -138,4 +138,14 @@ var suite = describe('BIDS example datasets ', function() {
             });
         });
     });
+
+    it('checks for subjects with no valid data', function (isdone) {
+        var options = {ignoreNiftiHeaders: true};
+        validate.BIDS("tests/data/no_valid_data", options, function (issues) {
+            var errors = issues.errors;
+            assert(errors.length === 1);
+            assert(errors[0].code === '67');
+            isdone();
+        });
+    });
 });
