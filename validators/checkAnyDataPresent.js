@@ -1,16 +1,19 @@
 var utils = require('../utils');
 var Issue = utils.issues.Issue;
 
+function addIfNotPresent(folderSubjects, subject) {
+    if (folderSubjects.indexOf(subject) == -1) {
+        folderSubjects.push(subject);
+    }
+}
+
 function getFolderSubjects(fileList) {
     var folderSubjects = [];
     for (var key in fileList) {
         var file = fileList[key];
         var match = file.relativePath.match(/sub-(.*?)(?=\/)/);
         if (match) {
-            var subject = match[1];
-            if (folderSubjects.indexOf(subject) == -1) {
-                folderSubjects.push(subject);
-            }
+            addIfNotPresent(folderSubjects, match[1]);
         }
     }
     return folderSubjects;
