@@ -139,7 +139,6 @@ var suite = describe('BIDS example datasets ', function() {
         });
     });
 
-    // Catch some browser specific iteration issues with for .. in loops
     it('checks for subjects with no valid data', function (isdone) {
         var options = {ignoreNiftiHeaders: true};
         validate.BIDS("tests/data/no_valid_data", options, function (issues) {
