@@ -1,16 +1,8 @@
 var utils = require('../utils');
 var Issue = utils.issues.Issue;
 
-/**
- * session
- *
- * Takes a list of files and creates a set of file names that occur in subject
- * directories. Then generates a warning if a given subject is missing any
- * files from the set.
- */
-var checkAnyDataPresent = function checkAnyDataPresent(fileList, summarySubjects) {
+function getFolderSubjects(fileList) {
     var folderSubjects = [];
-    var issues = [];
     for (var key in fileList) {
         var file = fileList[key];
         var match = file.relativePath.match(/sub-(.*?)(?=\/)/);
@@ -21,6 +13,17 @@ var checkAnyDataPresent = function checkAnyDataPresent(fileList, summarySubjects
             }
         }
     }
+    return folderSubjects;
+}
+
+/**
+ * checkAnyDataPresent
+ *
+ * Takes a list of files and participants with valid data. Checks if they match.
+ */
+var checkAnyDataPresent = function checkAnyDataPresent(fileList, summarySubjects) {
+    var issues = [];
+    var folderSubjects = getFolderSubjects(fileList);
 
     var subjectsWithoutAnyValidData = folderSubjects.filter(function (i) {
         return summarySubjects.indexOf(i) < 0;
