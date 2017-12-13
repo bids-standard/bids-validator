@@ -11,6 +11,7 @@ var NIFTI  = require('./nii');
 var bval   = require('./bval');
 var bvec   = require('./bvec');
 var session = require('./session');
+var checkAnyDataPresent = require('./checkAnyDataPresent');
 var headerFields = require('./headerFields');
 
 var BIDS;
@@ -168,7 +169,7 @@ BIDS = {
         // check for illegal character in task name and acq name
 
         var task_re = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g;
-        var acq_re = /sub-(.*?)_task-\w+.\w+(_acq-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*)(?:_run-\d+)?_/g;
+        var acq_re = /sub-(.*?)(_task-\w+.\w+)?(_acq-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*)(?:_run-\d+)?_/g;
 
         var sub_re = /sub-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*_/g;   // illegal character in sub
         var ses_re = /ses-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*?_(.*?)/g; //illegal character in ses
@@ -427,6 +428,7 @@ BIDS = {
 
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
+                self.issues = self.issues.concat(checkAnyDataPresent(fileList, summary.subjects));
                 summary.modalities = utils.modalities.group(summary.modalities);
                 var issues = utils.issues.format(self.issues, summary, self.options);
                 callback(issues, summary);

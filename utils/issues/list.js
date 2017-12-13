@@ -275,7 +275,7 @@ module.exports = {
     55: {
         key: 'JSON_SCHEMA_VALIDATION_ERROR',
         severity: 'error',
-        reason: 'JSON file is not formatted according the the schema.'
+        reason: 'JSON file is not formatted according the schema.'
     },
     56: {
         key: 'Participants age 89 or higher',
@@ -330,6 +330,11 @@ module.exports = {
     66: {
         key: 'SLICETIMING_VALUES_GREATOR_THAN_REPETITION_TIME',
         severity: 'error',
-        reason: '"SliceTiming" value/s contains invalid value as it is greator than RepetitionTime.  SliceTiming values should be in seconds not milliseconds (common mistake).'
+        reason: '"SliceTiming" value/s contains invalid value as it is greater than RepetitionTime.  SliceTiming values should be in seconds not milliseconds (common mistake).'
+    },
+    67: {
+        key: 'NO_VALID_DATA_FOUND_FOR_SUBJECT',
+        severity: 'error',
+        reason: 'No BIDS compatible data found for at least one subject.'
     }
 };
