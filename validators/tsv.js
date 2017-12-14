@@ -1,4 +1,7 @@
+/* eslint-disable no-unused-vars */
 var Issue = require('../utils').issues.Issue;
+var files = require('../utils/files');
+var utils  = require('../utils');
 
 /**
  * TSV
@@ -8,7 +11,7 @@ var Issue = require('../utils').issues.Issue;
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function TSV (file, contents, fileList, callback) {
+var TSV = function TSV (file, contents, fileList, callback) {
 
     var issues = [];
     var rows = contents.split('\n');
@@ -145,9 +148,28 @@ module.exports = function TSV (file, contents, fileList, callback) {
   // check partcipants.tsv for age 89+
 
     if (file.name === 'participants.tsv'){
-      var header = rows[0].trim().split('\t');
-      var ageIdColumn = header.indexOf("age");
-      for (var a = 0; a < rows.length; a++) {
+        checkage89_plus(rows, file, issues);
+    }
+
+    callback(issues, participants);
+};
+var checkphenotype = function (phenotypeParticipants, summary, issues) {
+    for (var j=0; j < phenotypeParticipants.length; j++){
+        var fileParticpants = phenotypeParticipants[j];
+        if (phenotypeParticipants && phenotypeParticipants.length > 0 && (!utils.array.equals(fileParticpants.list, summary.subjects.sort(), true))) {
+            issues.push(new Issue({
+                code: 51,
+                evidence: fileParticpants.file + "- " + fileParticpants.list + "  Subjects -" + fileParticpants,
+                file: fileParticpants.file
+            }));
+        }
+    }
+};
+
+var checkage89_plus = function(rows, file, issues){
+    var header = rows[0].trim().split('\t');
+    var ageIdColumn = header.indexOf("age");
+    for (var a = 0; a < rows.length; a++) {
         var line = rows[a];
         var line_values = line.trim().split('\t');
         var age = line_values[ageIdColumn];
@@ -159,9 +181,10 @@ module.exports = function TSV (file, contents, fileList, callback) {
                 character: "age of partcipant is above 89 ",
                 code: 56
             }));
-          }
-          }
+        }
     }
-
-    callback(issues, participants);
+};
+module.exports = {
+    TSV: TSV,
+    checkphenotype : checkphenotype
 };

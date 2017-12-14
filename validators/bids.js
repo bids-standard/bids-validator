@@ -4,6 +4,7 @@ var path   = require('path');
 var utils  = require('../utils');
 var Issue  = utils.issues.Issue;
 
+
 var TSV    = require('./tsv');
 var json   = require('./json');
 var NIFTI  = require('./nii');
@@ -256,7 +257,7 @@ BIDS = {
                     if (file.name.endsWith('_events.tsv')) {
                         events.push(file.relativePath);
                     }
-                    TSV(file, contents, fileList, function (issues, participantList) {
+                    TSV.TSV(file, contents, fileList, function (issues, participantList) {
                         if (participantList) {
                             if (file.name.endsWith('participants.tsv')) {
                                 participants = {
@@ -402,7 +403,6 @@ BIDS = {
                     self.issues.push(new Issue({code: 57}));
                 }
                 // check if participants file match found subjects
-
                 if (participants) {
                     var participantsFromFile = participants.list.sort();
                     var participantsFromFolders = summary.subjects.sort();
@@ -422,19 +422,10 @@ BIDS = {
                     }));
                 }
 
-                if (phenotypeParticipants && phenotypeParticipants.length > 0) {
-                    for (var j = 0; j < phenotypeParticipants.length; j++) {
-                        var fileParticpants = phenotypeParticipants[j];
-                        var diff = utils.array.diff(fileParticpants.list, summary.subjects)[0];
-                        if (diff && diff.length > 0) {
-                            self.issues.push(new Issue({
-                                code: 51,
-                                evidence: 'sub-' + diff.join(', sub-'),
-                                file: fileParticpants.file
-                            }));
-                        }
-                    }
-                }
+                //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
+                TSV.checkphenotype(phenotypeParticipants, summary, self.issues);
+
+
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
                 self.issues = self.issues.concat(checkAnyDataPresent(fileList, summary.subjects));
