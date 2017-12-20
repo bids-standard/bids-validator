@@ -359,8 +359,8 @@ function generateMergedSidecarDict(potentialSidecars, jsonContents) {
  */
 
 function checkSliceTimingArray(array, repetitionTime){
+    var invalid_timesArray = [];
     for (var t = 0; t < array.length; t++){
-        var invalid_timesArray = [];
         if (array[t] > repetitionTime){
             invalid_timesArray.push(array[t]);
         }
