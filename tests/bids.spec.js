@@ -18,6 +18,13 @@ function getDirectories(srcpath) {
 
 var missing_session_files = ['7t_trt', 'ds006', 'ds007', 'ds008', 'ds051', 'ds052', 'ds105', 'ds108', 'ds109', 'ds113b'];
 
+function assertErrorCode(errors, expected_error_code) {
+    var matchingErrors = errors.filter(function (error) {
+        return error.code === expected_error_code;
+    });
+    assert(matchingErrors.length >= 0);
+}
+
 var suite = describe('BIDS example datasets ', function() {
     this.timeout(100000);
 
@@ -102,8 +109,7 @@ var suite = describe('BIDS example datasets ', function() {
     it('validates dataset with illegal characters in task name', function(isdone) {
         var options = {ignoreNiftiHeaders: false};
         validate.BIDS("tests/data/valid_filenames", options, function (issues) {
-            var errors = issues.errors;
-            assert(errors[0].code === '58');
+            assertErrorCode(issues.errors, '58');
             isdone();
         });
     });
@@ -112,8 +118,7 @@ var suite = describe('BIDS example datasets ', function() {
     it('validates dataset with illegal characters in sub name', function(isdone) {
         var options = {ignoreNiftiHeaders: false};
         validate.BIDS("tests/data/valid_filenames", options, function (issues) {
-            var errors = issues.errors;
-            assert(errors[2].code ==='64');
+            assertErrorCode(issues.errors, '64');
             isdone();
         });
     });
@@ -129,11 +134,9 @@ var suite = describe('BIDS example datasets ', function() {
             delete Array.prototype.broken;
         });
         it('validates dataset with illegal characters in task name', function (isdone) {
-
             var options = {ignoreNiftiHeaders: false};
             validate.BIDS("tests/data/valid_filenames", options, function (issues) {
-                var errors = issues.errors;
-                assert(errors[0].code === '58');
+                assertErrorCode(issues.errors, '58');
                 isdone();
             });
         });
@@ -142,9 +145,7 @@ var suite = describe('BIDS example datasets ', function() {
     it('checks for subjects with no valid data', function (isdone) {
         var options = {ignoreNiftiHeaders: true};
         validate.BIDS("tests/data/no_valid_data", options, function (issues) {
-            var errors = issues.errors;
-            assert(errors.length === 1);
-            assert(errors[0].code === '67');
+            assertErrorCode(issues.errors, '67');
             isdone();
         });
     });
