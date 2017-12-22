@@ -66,18 +66,16 @@ function readFile (file, callback) {
     }
 }
 
-function getBIDSIgnore(dir, callback) {
-    var ig = ignore()
-        .add('.bidsignore')
-        .add('/derivatives')
-        .add('/sourcedata')
-        .add('/code')
-        .add('.*');
-
+/**
+ * Get File object corresponding to the .bidsignore file
+ * @param dir
+ * @returns File object or null if not found
+ */
+function getBIDSIgnoreFileObj(dir) {
     var bidsIgnoreFileObj = null;
     if (fs) {
         var path = dir + "/.bidsignore";
-        if (fs.existsSync(path)){
+        if (fs.existsSync(path)) {
             bidsIgnoreFileObj = {path: path};
         }
     } else {
@@ -90,6 +88,17 @@ function getBIDSIgnore(dir, callback) {
             }
         }
     }
+    return bidsIgnoreFileObj;
+}
+
+function getBIDSIgnore(dir, callback) {
+    var ig = ignore()
+        .add('/derivatives')
+        .add('/sourcedata')
+        .add('/code')
+        .add('.*');
+
+    var bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir);
     if (bidsIgnoreFileObj) {
         readFile(bidsIgnoreFileObj, function (issue, content) {
             ig = ig.add(content);
