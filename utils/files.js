@@ -123,7 +123,7 @@ function readDir (dir, callback) {
     if (fs) {
         filesList = preprocessNode(dir, ig);
     } else {
-        filesList = preprocessBrowser(dir);
+        filesList = preprocessBrowser(dir, ig);
     }
     // converting array to object
     for (var j = 0; j < filesList.length; j++) {
@@ -143,7 +143,7 @@ function preprocessBrowser(filesObj, ig) {
     for (var i = 0; i < filesObj.length; i++) {
         var fileObj = filesObj[i];
         fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
-        if (type.isIgnoredPath(fileObj.relativePath)) {
+        if (ig.ignores(path.relative('/', fileObj.relativePath))) {
             continue;
         }
         filesList.push(fileObj);
