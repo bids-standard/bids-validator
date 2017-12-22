@@ -3,6 +3,8 @@
 var nifti = require('nifti-js');
 var Issue = require('./issues').Issue;
 var type =  require('./type');
+var ignore = require('ignore');
+var path = require('path');
 
 /**
  * If the current environment is server side
@@ -65,7 +67,43 @@ function readFile (file, callback) {
     }
 }
 
+function addBIDSIgnore(dir) {
+    var ig = ignore().add('.bidsignore');
+    var bidsIgnoreFileObj = null;
+    var ready = false;
+    if (fs) {
+        var path = dir + "/.bidsignore";
+        if (fs.existsSync(path)){
+            bidsIgnoreFileObj = {path: path};
+        }
+    } else {
+        for (var i = 0; i < dir.length; i++) {
+            var fileObj = dir[i];
+            var relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
+            if (relativePath === "/.bidsignore") {
+                bidsIgnoreFileObj = fileObj;
+                break;
+            }
+        }
+    }
+    if (bidsIgnoreFileObj) {
+        readFile(bidsIgnoreFileObj, function (issue, content) {
+            ig = ig.add(content);
+            ready = true;
+        });
 
+        //TODO: rewrite this in an asynchronous way
+        var check = function () {
+            if (ready === true) {
+                return;
+            }
+            setTimeout(check, 100);
+        };
+        check();
+    }
+
+    return ig;
+}
 
 /**
  * Read Directory
@@ -80,8 +118,10 @@ function readFile (file, callback) {
 function readDir (dir, callback) {
     var filesObj = {};
     var filesList = [];
+    var ig = addBIDSIgnore(dir);
+
     if (fs) {
-        filesList = preprocessNode(dir);
+        filesList = preprocessNode(dir, ig);
     } else {
         filesList = preprocessBrowser(dir);
     }
@@ -98,7 +138,7 @@ function readDir (dir, callback) {
  * 1. Filters out ignored files and folder.
  * 2. Adds 'relativePath' field of each file object.
  */
-function preprocessBrowser(filesObj) {
+function preprocessBrowser(filesObj, ig) {
     var filesList = [];
     for (var i = 0; i < filesObj.length; i++) {
         var fileObj = filesObj[i];
@@ -118,23 +158,23 @@ function preprocessBrowser(filesObj) {
  * 2. Filters out ignored files and folder.
  * 3. Harmonizes the 'relativePath' field
  */
-function preprocessNode(dir) {
+function preprocessNode(dir, ig) {
     var str = dir.substr(dir.lastIndexOf('/') + 1) + '$';
     var rootpath = dir.replace(new RegExp(str), '');
-    return getFiles(dir, [], rootpath);
+    return getFiles(dir, [], rootpath, ig);
 }
 
 /**
  * Recursive helper function for 'preprocessNode'
  */
-function getFiles(dir, files_, rootpath){
+function getFiles(dir, files_, rootpath, ig){
     files_ = files_ || [];
     var files = fs.readdirSync(dir);
     for (var i = 0; i < files.length; i++) {
         var fullPath = dir + '/' + files[i];
         var relativePath = fullPath.replace(rootpath, '');
         relativePath = harmonizeRelativePath(relativePath);
-        if (type.isIgnoredPath(relativePath)){
+        if (ig.ignores(path.relative('/', relativePath))) {
             continue;
         }
         var fileName = files[i];
@@ -146,7 +186,7 @@ function getFiles(dir, files_, rootpath){
         };
 
         if (fs.lstatSync(fullPath).isDirectory()) {
-            getFiles(fullPath, files_, rootpath);
+            getFiles(fullPath, files_, rootpath, ig);
         } else {
             files_.push(fileObj);
         }
