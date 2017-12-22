@@ -2,7 +2,6 @@
 
 var nifti = require('nifti-js');
 var Issue = require('./issues').Issue;
-var type =  require('./type');
 var ignore = require('ignore');
 var path = require('path');
 
