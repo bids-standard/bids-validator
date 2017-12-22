@@ -66,10 +66,15 @@ function readFile (file, callback) {
     }
 }
 
-function addBIDSIgnore(dir) {
-    var ig = ignore().add('.bidsignore');
+function getBIDSIgnore(dir, callback) {
+    var ig = ignore()
+        .add('.bidsignore')
+        .add('/derivatives')
+        .add('/sourcedata')
+        .add('/code')
+        .add('.*');
+
     var bidsIgnoreFileObj = null;
-    var ready = false;
     if (fs) {
         var path = dir + "/.bidsignore";
         if (fs.existsSync(path)){
@@ -88,19 +93,11 @@ function addBIDSIgnore(dir) {
     if (bidsIgnoreFileObj) {
         readFile(bidsIgnoreFileObj, function (issue, content) {
             ig = ig.add(content);
-            ready = true;
+            callback(ig);
         });
-
-        //TODO: rewrite this in an asynchronous way
-        var check = function () {
-            if (ready === true) {
-                return;
-            }
-            setTimeout(check, 100);
-        };
-        check();
+    } else {
+        callback(ig);
     }
-
     return ig;
 }
 
@@ -117,18 +114,20 @@ function addBIDSIgnore(dir) {
 function readDir (dir, callback) {
     var filesObj = {};
     var filesList = [];
-    var ig = addBIDSIgnore(dir);
 
-    if (fs) {
-        filesList = preprocessNode(dir, ig);
-    } else {
-        filesList = preprocessBrowser(dir, ig);
+    function callbackWrapper(ig) {
+        if (fs) {
+            filesList = preprocessNode(dir, ig);
+        } else {
+            filesList = preprocessBrowser(dir, ig);
+        }
+        // converting array to object
+        for (var j = 0; j < filesList.length; j++) {
+            filesObj[j] = filesList[j];
+        }
+        callback(filesObj);
     }
-    // converting array to object
-    for (var j = 0; j < filesList.length; j++) {
-        filesObj[j] = filesList[j];
-    }
-    callback(filesObj);
+    getBIDSIgnore(dir, callbackWrapper);
 }
 
 /**
