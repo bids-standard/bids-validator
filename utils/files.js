@@ -66,6 +66,28 @@ function readFile (file, callback) {
     }
 }
 
+function getBIDSIgnoreFileObjNode(dir) {
+    var bidsIgnoreFileObj = null;
+    var path = dir + "/.bidsignore";
+    if (fs.existsSync(path)) {
+        bidsIgnoreFileObj = {path: path};
+    }
+    return bidsIgnoreFileObj;
+}
+
+function getBIDSIgnoreFileObjBrowser(dir) {
+    var bidsIgnoreFileObj = null;
+    for (var i = 0; i < dir.length; i++) {
+        var fileObj = dir[i];
+        var relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
+        if (relativePath === "/.bidsignore") {
+            bidsIgnoreFileObj = fileObj;
+            break;
+        }
+    }
+    return bidsIgnoreFileObj;
+}
+
 /**
  * Get File object corresponding to the .bidsignore file
  * @param dir
@@ -74,19 +96,9 @@ function readFile (file, callback) {
 function getBIDSIgnoreFileObj(dir) {
     var bidsIgnoreFileObj = null;
     if (fs) {
-        var path = dir + "/.bidsignore";
-        if (fs.existsSync(path)) {
-            bidsIgnoreFileObj = {path: path};
-        }
+        bidsIgnoreFileObj = getBIDSIgnoreFileObjNode(dir);
     } else {
-        for (var i = 0; i < dir.length; i++) {
-            var fileObj = dir[i];
-            var relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
-            if (relativePath === "/.bidsignore") {
-                bidsIgnoreFileObj = fileObj;
-                break;
-            }
-        }
+        bidsIgnoreFileObj = getBIDSIgnoreFileObjBrowser(dir);
     }
     return bidsIgnoreFileObj;
 }
