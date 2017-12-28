@@ -44,6 +44,11 @@ If you would like to test individual files you can use the file specific checks 
 
 Additionally you can reformat stored errors against a new config using `validate.reformat()`
 
+#### .bidsignore
+Optionally one can include a `.bidsignore` file in the root of the dataset. This file lists patterns (compatible
+with the [.gitignore syntax](https://git-scm.com/docs/gitignore)) defining files that should be ignored by the
+validator. This option is useful when the validated dataset includes file types not yet supported by BIDS specification.
+
 #### Configuration
 
 You can configure the severity of errors by passing a json configuration file with a --c or --config flag to the command line interface or by defining a config object on the options object passed during javascript usage.
