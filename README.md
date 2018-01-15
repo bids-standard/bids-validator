@@ -49,6 +49,9 @@ Optionally one can include a `.bidsignore` file in the root of the dataset. This
 with the [.gitignore syntax](https://git-scm.com/docs/gitignore)) defining files that should be ignored by the
 validator. This option is useful when the validated dataset includes file types not yet supported by BIDS specification.
 
+   *_not_bids.txt
+   extra_data/
+
 #### Configuration
 
 You can configure the severity of errors by passing a json configuration file with a --c or --config flag to the command line interface or by defining a config object on the options object passed during javascript usage.
