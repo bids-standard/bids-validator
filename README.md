@@ -49,8 +49,9 @@ Optionally one can include a `.bidsignore` file in the root of the dataset. This
 with the [.gitignore syntax](https://git-scm.com/docs/gitignore)) defining files that should be ignored by the
 validator. This option is useful when the validated dataset includes file types not yet supported by BIDS specification.
 
-   *_not_bids.txt
-   extra_data/
+    *_not_bids.txt
+    extra_data/
+
 
 #### Configuration
 
