@@ -24,4 +24,11 @@ describe('JSON', function(){
 			assert(issues && issues.length === 1);
 		});
 	});
+
+	it('should detect negative value for SliceTiming', function(){
+		var jsonObj = '{"SliceTiming": [-1.0, 0.0, 1.0]}';
+		validate.JSON(file, jsonObj, function (issues) {
+			assert(issues.length === 1 && issues[0].code == 55);
+		});
+	});
 });
