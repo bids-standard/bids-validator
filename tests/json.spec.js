@@ -26,7 +26,7 @@ describe('JSON', function(){
 	});
 
 	it('should detect negative value for SliceTiming', function(){
-		var jsonObj = '{"SliceTiming": [-1.0, 0.0, 1.0]}';
+		var jsonObj = '{"RepetitionTime": 1.2, "SliceTiming": [-1.0, 0.0, 1.0], "TaskName": "Rest"}';
 		validate.JSON(file, jsonObj, function (issues) {
 			assert(issues.length === 1 && issues[0].code == 55);
 		});
