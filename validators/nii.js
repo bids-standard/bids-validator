@@ -1,6 +1,28 @@
 var utils = require('../utils');
 var Issue = utils.issues.Issue;
 
+function checkIfIntendedExists(path, intendedForFile, fileList, issues, file) {
+    var intendedForFileFull = "/" + path.split("/")[1] + "/" + intendedForFile;
+    var onTheList = false;
+
+    for (var key2 in fileList) {
+        var filePath = fileList[key2].relativePath;
+        if (filePath === intendedForFileFull) {
+            onTheList = true;
+        }
+    }
+    if (!onTheList) {
+        issues.push(new Issue({
+            file: file,
+            code: 37,
+            reason: "'IntendedFor' property of this fieldmap  ('" + path +
+            "') does not point to an existing file('" + intendedForFile + "'). Please mind that this value should not include subject level directory " +
+            "('/" + path.split("/")[1] + "/').",
+            evidence: intendedForFile
+        }));
+    }
+}
+
 /**
  * NIFTI
  *
@@ -224,26 +246,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
 
             for (var key = 0; key < intendedFor.length; key++) {
                 var intendedForFile = intendedFor[key];
-                var intendedForFileFull = "/" + path.split("/")[1] + "/" + intendedForFile;
-                var onTheList = false;
-
-                for (var key2 in fileList) {
-                    var filePath = fileList[key2].relativePath;
-                    if (filePath === intendedForFileFull) {
-                        onTheList = true;
-                    }
-                }
-                if (!onTheList) {
-                    issues.push(new Issue({
-                        file: file,
-                        code: 37,
-                        reason: "'IntendedFor' property of this fieldmap  ('" + path +
-                        "') does not point to an existing file('" + intendedForFile + "'). Please mind that this value should not include subject level directory " +
-                        "('/" + path.split("/")[1] + "/').",
-                        evidence: intendedForFile
-                    }));
-                }
-            }
+                checkIfIntendedExists(path, intendedForFile, fileList, issues, file);
             }
         }
     }
