@@ -224,25 +224,26 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
               var intendedFor = typeof mergedDictionary['IntendedFor'] == "string" ? [mergedDictionary['IntendedFor']] : mergedDictionary['IntendedFor'];
 
               for(var key = 0; key<intendedFor.length; key++){
-                var intendedForFile = path.split("/")[1] + "/" + intendedFor[key];
+                var intendedForFile = intendedFor[key];
+                var intendedForFileFull = "/" + path.split("/")[1] + "/" + intendedForFile;
                 var onTheList = false;
-                async.eachOfLimit(fileList, 200, function (file) {
-                    var filePath = file.relativePath;
-                    if (filePath.endsWith(intendedForFile)){
+
+                for(var key2 in fileList){
+                    var filePath = fileList[key2].relativePath;
+                    if (filePath === intendedForFileFull){
                         onTheList = true;
                     }
-
-                }, function(){
-                    if (!onTheList) {
-                        issues.push(new Issue({
-                            file: file,
-                            code: 37,
-                            reason: "'IntendedFor' property of this fieldmap  ('" + path +
-                            "') does not point to an existing file('" +  intendedForFile  + "'). Please mind that this value should not include subject level directory " +
-                            "('/" + path.split("/")[1] + "/')."
-                        }));
-                    }
-                });
+                }
+                if (!onTheList) {
+                    issues.push(new Issue({
+                        file: file,
+                        code: 37,
+                        reason: "'IntendedFor' property of this fieldmap  ('" + path +
+                        "') does not point to an existing file('" +  intendedForFile  + "'). Please mind that this value should not include subject level directory " +
+                        "('/" + path.split("/")[1] + "/').",
+                        evidence: intendedForFile
+                    }));
+                }
             }
           }
         }

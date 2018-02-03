@@ -129,7 +129,7 @@ describe('NIFTI', function(){
 
       var fileList = [{ name:'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
         path: 'sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
-        relativePath: '/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'}];
+        relativePath: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'}];
       validate.NIFTI(null, file, jsonContentsDict, {}, fileList, [], function (issues) {
           assert.deepEqual(issues, []);
       });
