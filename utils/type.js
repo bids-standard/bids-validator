@@ -155,6 +155,17 @@ module.exports = {
         return conditionalMatch(anatRe, path);
     },
 
+    isFieldMapMainNii: function (path) {
+        var suffixes = ["phasediff", "phase1", "phase2", "fieldmap", "epi"];
+        var anatRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?fmap' +
+            '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
+            + suffixes.join("|")
+            + ').(nii.gz|nii)$');
+        return conditionalMatch(anatRe, path);
+    },
+
     /**
      * Check if the file has a name appropriate for a functional scan
      */

@@ -1,6 +1,27 @@
-var async = require('async');
 var utils = require('../utils');
 var Issue = utils.issues.Issue;
+
+function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
+    var intendedForFileFull = "/" + file.relativePath.split("/")[1] + "/" + intendedForFile;
+    var onTheList = false;
+
+    for (var key2 in fileList) {
+        var filePath = fileList[key2].relativePath;
+        if (filePath === intendedForFileFull) {
+            onTheList = true;
+        }
+    }
+    if (!onTheList) {
+        issues.push(new Issue({
+            file: file,
+            code: 37,
+            reason: "'IntendedFor' property of this fieldmap  ('" + file.relativePath +
+            "') does not point to an existing file('" + intendedForFile + "'). Please mind that this value should not include subject level directory " +
+            "('/" + file.relativePath.split("/")[1] + "/').",
+            evidence: intendedForFile
+        }));
+    }
+}
 
 /**
  * NIFTI
@@ -218,33 +239,13 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
             }
         }
 
-        if (path.includes("_phasediff.nii") || path.includes("_phase1.nii") ||
-            path.includes("_phase2.nii") || path.includes("_fieldmap.nii") || path.includes("_epi.nii")){
-            if (mergedDictionary.hasOwnProperty('IntendedFor')) {
-              var intendedFor = typeof mergedDictionary['IntendedFor'] == "string" ? [mergedDictionary['IntendedFor']] : mergedDictionary['IntendedFor'];
+        if (utils.type.isFieldMapMainNii(path) && mergedDictionary.hasOwnProperty('IntendedFor')) {
+            var intendedFor = typeof mergedDictionary['IntendedFor'] == "string" ? [mergedDictionary['IntendedFor']] : mergedDictionary['IntendedFor'];
 
-              for(var key = 0; key<intendedFor.length; key++){
-                var intendedForFile = path.split("/")[1] + "/" + intendedFor[key];
-                var onTheList = false;
-                async.eachOfLimit(fileList, 200, function (file) {
-                    var filePath = file.relativePath;
-                    if (filePath.endsWith(intendedForFile)){
-                        onTheList = true;
-                    }
-
-                }, function(){
-                    if (!onTheList) {
-                        issues.push(new Issue({
-                            file: file,
-                            code: 37,
-                            reason: "'IntendedFor' property of this fieldmap  ('" + path +
-                            "') does not point to an existing file('" +  intendedForFile  + "'). Please mind that this value should not include subject level directory " +
-                            "('/" + path.split("/")[1] + "/')."
-                        }));
-                    }
-                });
+            for (var key = 0; key < intendedFor.length; key++) {
+                var intendedForFile = intendedFor[key];
+                checkIfIntendedExists(intendedForFile, fileList, issues, file);
             }
-          }
         }
     }
 
