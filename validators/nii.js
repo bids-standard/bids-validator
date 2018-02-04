@@ -1,8 +1,8 @@
 var utils = require('../utils');
 var Issue = utils.issues.Issue;
 
-function checkIfIntendedExists(path, intendedForFile, fileList, issues, file) {
-    var intendedForFileFull = "/" + path.split("/")[1] + "/" + intendedForFile;
+function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
+    var intendedForFileFull = "/" + file.relativePath.split("/")[1] + "/" + intendedForFile;
     var onTheList = false;
 
     for (var key2 in fileList) {
@@ -15,9 +15,9 @@ function checkIfIntendedExists(path, intendedForFile, fileList, issues, file) {
         issues.push(new Issue({
             file: file,
             code: 37,
-            reason: "'IntendedFor' property of this fieldmap  ('" + path +
+            reason: "'IntendedFor' property of this fieldmap  ('" + file.relativePath +
             "') does not point to an existing file('" + intendedForFile + "'). Please mind that this value should not include subject level directory " +
-            "('/" + path.split("/")[1] + "/').",
+            "('/" + file.relativePath.split("/")[1] + "/').",
             evidence: intendedForFile
         }));
     }
@@ -246,7 +246,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
 
             for (var key = 0; key < intendedFor.length; key++) {
                 var intendedForFile = intendedFor[key];
-                checkIfIntendedExists(path, intendedForFile, fileList, issues, file);
+                checkIfIntendedExists(intendedForFile, fileList, issues, file);
             }
         }
     }
