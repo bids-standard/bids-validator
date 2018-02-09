@@ -156,24 +156,8 @@ var TSV = function TSV (file, contents, fileList, callback) {
 
     // channels.tsv
     if (file.name.endsWith('_channels.tsv')) {
-        if (headers[0] !== "name") {
-            issues.push(new Issue({
-                file: file,
-                evidence: headers,
-                line: 1,
-                character: rows[0].indexOf(headers[0]),
-                code: 71
-            }));
-        }
-        if (headers[1] !== "type") {
-            issues.push(new Issue({
-                file: file,
-                evidence: headers,
-                line: 1,
-                character: rows[0].indexOf(headers[1]),
-                code: 72
-            }));
-        }
+        checkheader('name', 0, file, 71);
+        checkheader('type', 1, file, 72);
     }
   // check partcipants.tsv for age 89+
 

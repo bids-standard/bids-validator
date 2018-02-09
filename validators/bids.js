@@ -112,14 +112,14 @@ BIDS = {
                 if (path) {
                     path = path.split('/');
                     path = path.reverse();
+                    var isCorrectModality = false;
                     if (
                         (path[0].includes('.nii') && ['anat', 'func', 'dwi'].indexOf(path[1]) !=-1 ) ||
-                        (path[0].includes('.json') && path[1] == 'meg') &&
-                        (
-                            (path[2] && path[2].indexOf('ses-') == 0) ||
-                            (path[2] && path[2].indexOf('sub-') == 0)
-                        )
-                    ) {
+                        (path[0].includes('.json') && path[1] == 'meg')
+                    ){
+                        isCorrectModality = true;
+                    }
+                    if (path[2] && (path[2].indexOf('ses-') == 0 || path[2].indexOf('sub-') == 0) && isCorrectModality){
                         couldBeBIDS = true;
                         break;
                     }
