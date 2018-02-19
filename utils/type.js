@@ -39,8 +39,8 @@ module.exports = {
         var fixedTopLevelNames = ["/README", "/CHANGES", "/dataset_description.json", "/participants.tsv",
             "/participants.json", "/phasediff.json", "/phase1.json", "/phase2.json", "/fieldmap.json"];
 
-        var funcTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_echo-[0-9]+)?'
-            + '(_bold.json|_sbref.json|_events.json|_events.tsv|_physio.json|_stim.json|_beh.json)$');
+        var funcTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:echo-[0-9]+_)?'
+            + '(bold.json|sbref.json|events.json|events.tsv|physio.json|stim.json|beh.json)$');
 
         var anatTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?'
             + '(' + anatSuffixes.join("|") + ').json$');
