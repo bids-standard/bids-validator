@@ -31,6 +31,7 @@ BIDS = {
      * arguments to the callback.
      */
     start: function (dir, options, callback) {
+      if (fs.existsSync(dir)) {
         var self = BIDS;
         utils.options.parse(options, function (issues, options) {
             if (issues && issues.length > 0) {
@@ -60,6 +61,17 @@ BIDS = {
                 });
             }
         });
+      }else{
+        var issue = new Issue({
+            code: 44,
+            file: {
+                name: filename,
+                path: path.join('.', filename),
+                relativePath: path.join('', filename)
+            }
+        });
+        return issue;
+      }
     },
 
     /*
