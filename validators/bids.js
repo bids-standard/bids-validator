@@ -62,6 +62,7 @@ BIDS = {
             }
         });
       }else{
+        var filename = path.basename(dir);
         var issue = new Issue({
             code: 44,
             file: {
