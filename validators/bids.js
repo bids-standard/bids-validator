@@ -64,7 +64,7 @@ BIDS = {
       }else{
         var filename = path.basename(dir);
         var issue = new Issue({
-            code: 44,
+            code: 68,
             file: {
                 name: filename,
                 path: path.join('.', filename),
