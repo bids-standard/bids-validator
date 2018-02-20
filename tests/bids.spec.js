@@ -155,7 +155,7 @@ var suite = describe('BIDS example datasets ', function() {
         var options = {ignoreNiftiHeaders: true};
         validate.BIDS("./path/does/not/exist", options, function (issues) {
             assertErrorCode(issues.errors, '68');
-            isdone();
+            done();
         });
     });
 });
