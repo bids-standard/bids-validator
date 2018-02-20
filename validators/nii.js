@@ -315,19 +315,21 @@ function potentialLocations(path) {
     });
 
     if (ses) {
-        var sessionLevelPath= "/" + sub + "/" + ses + "/" + sessionLevelComponentList.join("_");
-        potentialPaths.push(sessionLevelPath);
+        addPotentialPaths(sessionLevelComponentList, potentialPaths, 2, "/" + sub + "/" + ses + "/");
     }
-
-    var subjectLevelPath = "/" + sub + "/" + subjectLevelComponentList.join("_");
-    potentialPaths.push(subjectLevelPath);
-
-    var topLevelPath = "/" + topLevelComponentList.join("_");
-    potentialPaths.push(topLevelPath);
-
+    addPotentialPaths(subjectLevelComponentList, potentialPaths, 1, "/" + sub + "/");
+    addPotentialPaths(topLevelComponentList, potentialPaths, 0, "/");
     potentialPaths.reverse();
 
     return potentialPaths;
+}
+
+function addPotentialPaths(componentList, potentialPaths, offset, prefix) {
+    for (var i = componentList.length; i > offset; i--) {
+        var tmpList = componentList.slice(0, i-1).concat([componentList[componentList.length-1]]);
+        var sessionLevelPath = prefix + tmpList.join("_");
+        potentialPaths.push(sessionLevelPath);
+    }
 }
 
 /**
