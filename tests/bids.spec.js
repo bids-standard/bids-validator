@@ -152,10 +152,10 @@ var suite = describe('BIDS example datasets ', function() {
 
     // test for directory path not existing
     it('checks for non-existing directory', function (isdone) {
-        var options = {ignoreNiftiHeaders: false};
-        validate.BIDS("tests/path/does/not/exist", options, function (issues) {
+        var options = {ignoreNiftiHeaders: true};
+        validate.BIDS("path", options, function (issues) {
             assertErrorCode(issues.errors, '68');
-            isdone();
         });
+        isdone();
     });
 });
