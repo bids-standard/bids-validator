@@ -157,5 +157,6 @@ var suite = describe('BIDS example datasets ', function() {
             assertErrorCode(issues.errors, '68');
             isdone();
         });
+        done();
     });
 });
