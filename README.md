@@ -5,7 +5,7 @@
 ## Quickstart
 
 1. Web version:
-   1. Open [Google Chrome](https://www.google.com/chrome/) (currently the only supported browser)
+   1. Open [Google Chrome](https://www.google.com/chrome/) or [Mozilla Firefox](https://mozilla.org/firefox) (currently the only supported browsers)
    1. Go to http://incf.github.io/bids-validator/ and select a folder with your BIDs dataset.
 If the validator seems to be working longer than couple of minutes please open [developer tools ](https://developer.chrome.com/devtools) and report the error at [https://github.com/INCF/bids-validator/issues](https://github.com/INCF/bids-validator/issues).
 1. Command line version:
@@ -140,7 +140,7 @@ because it would be functionally the same as this
 
 #### In the Browser
 
-The BIDS Validator currently works in the browser with [browserify](http://browserify.org/). You can add it to a browserify project by cloning the validator and requiring it with browserify syntax ```var validate = require('bids-validator');```.
+The BIDS Validator currently works in the browser with [browserify](http://browserify.org/) or [webpack](https://webpack.js.org/). You can add it to a project by cloning the validator and requiring it with browserify syntax ```var validate = require('bids-validator');``` or an ES2015 webpack import ```import validate from 'bids-validator'```.
 
 #### On the Server
 
