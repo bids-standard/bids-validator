@@ -154,7 +154,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
   // check _scans.tsv for column filename
 
     if(file.name.endsWith('_scans.tsv')){
-      if(headers.indexOf('filename' === -1)){
+      if(headers.indexOf('filename') === -1){
         issues.push(new Issue({
             file: file,
             evidence: headers.join('\t'),
