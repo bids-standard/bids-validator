@@ -42,14 +42,11 @@
             "TaskName",
             "Manufacturer",
             "SamplingFrequency",
-            "MEGChannelCount",
-            "MEGREFChannelCount",
-            "EEGChannelCount",
-            "EOGChannelCount",
-            "ECGChannelCount",
-            "EMGChannelCount",
-            "MiscChannelCount",
-            "TriggerChannelCount"
+            "PowerLineFrequency",
+            "DewarPosition",
+            "SoftwareFilters",
+            "DigitizedLandmarks",
+            "DigitizedHeadPoints"
         ],
        "additionalProperties": false
 }

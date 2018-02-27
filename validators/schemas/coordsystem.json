@@ -7,7 +7,13 @@
                 "EEGCoordinateSystem": {"type": "string","minLength": 1},
                 "EEGCoordinateUnits": {"type": "string","minLength": 1},
                 "EEGCoordinateSystemDescription": {"type": "string"},
-                "IntendedFor": {"type": "string","minLength": 1},
+                "IntendedFor": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
                 "AnatomicalMRICoordinateSystem": {"type": "string","minLength": 1},
                 "AnatomicalMRICoordinateUnits": {"type": "string","minLength": 1},
                 "AnatomicalMRICoordinateSystemDescription": {"type": "string"},
@@ -30,7 +36,6 @@
                 },
         "required": ["MEGCoordinateSystem",
                     "MEGCoordinateUnits",
-                    "IntendedFor",
                     "AnatomicalMRICoordinateSystem",
                     "AnatomicalMRICoordinateUnits",
                     "CoilCoordinates",
