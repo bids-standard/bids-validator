@@ -39,8 +39,8 @@ function checkUnits (file, sidecar) {
             schema = require('./schemas/dataset_description.json');
         } else if (file.name.endsWith("meg.json")) {
             schema = require('./schemas/meg.json');
-        } else if (file.name.endsWith("fid.json")) {
-            schema = require('./schemas/fid.json');
+        } else if (file.name.endsWith("coordsystem.json")) {
+            schema = require('./schemas/coordsystem.json');
         }
         if (schema) {
             var validate = ajv.compile(schema);
