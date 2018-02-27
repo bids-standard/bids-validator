@@ -151,6 +151,19 @@ var TSV = function TSV (file, contents, fileList, callback) {
         checkage89_plus(rows, file, issues);
     }
 
+  // check _scans.tsv for column filename
+
+    if(file.name === '_scans.tsv'){
+      if(headers.indexOf('filename')){
+        issues.push(new Issue({
+            file: file,
+            evidence: headers.join('\t'),
+            line: 1,
+            code: 68
+        }));
+      }
+    }
+
     callback(issues, participants);
 };
 var checkphenotype = function (phenotypeParticipants, summary, issues) {
