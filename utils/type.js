@@ -102,8 +102,14 @@ module.exports = {
             '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
             + 'dwi.(?:json|bval|bvec)$');
 
+        var megSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
+            + '(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$');
+
         return conditionalMatch(scansRe, path) || conditionalMatch(funcSesRe, path) ||
-            conditionalMatch(anatSesRe, path) || conditionalMatch(dwiSesRe, path);
+            conditionalMatch(anatSesRe, path) || conditionalMatch(dwiSesRe, path) ||
+            conditionalMatch(megSesRe, path);
     },
 
     /**
@@ -184,7 +190,7 @@ module.exports = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?meg' +
             '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
-            '(_meg.(ctf|fif|4d|kit|kdf|itab)|(_meg.ds\\/.*)|(_events.tsv|_channels.tsv|_meg.json|_fid.json|_photo.jpg|_headshape.pos))$');
+            '(_meg.(ctf|fif|4d|kit|kdf|itab)|(_meg.ds\\/.*)|(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$');
         return conditionalMatch(MegRe, path);
     },
 
