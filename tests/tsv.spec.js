@@ -109,6 +109,29 @@ describe('TSV', function(){
         });
     });
 
+// _scans checks -----------------------------------------------------------------
+
+    var scansFile = {
+        name: 'sub-08_ses-test_task-linebisection_scans.tsv',
+        relativePath: '/sub-08/ses-test/func/sub-08_ses-test_task-linebisection_scans.tsv'
+    };
+
+    it("should not allow _scans.tsv files without filename column", function () {
+        var tsv = 'header-one\theader-two\theader-three\n' +
+                  'value-one\tvalue-two\tvalue-three';
+        validate.TSV.TSV(scansFile, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 68);
+        });
+    });
+
+    it("should allow _scans.tsv files with filename column", function () {
+        var tsv = 'header-one\tfilename\theader-three\n' +
+                  'value-one\tvalue-two\tvalue-three';
+        validate.TSV.TSV(scansFile, tsv, [], function (issues) {
+            assert.deepEqual(issues, []);
+        });
+    });
+
     it("should check participants listed in phenotype/*tsv and sub-ids ", function () {
         var phenotypeParticipants= [{
             list:
