@@ -124,6 +124,14 @@ describe('TSV', function(){
         });
     });
 
+    it("should allow _scans.tsv files with filename column", function () {
+        var tsv = 'header-one\tfilename\theader-three\n' +
+                  'value-one\tvalue-two\tvalue-three';
+        validate.TSV.TSV(scansFile, tsv, [], function (issues) {
+            assert.deepEqual(issues, []);
+        });
+    });
+
     it("should check participants listed in phenotype/*tsv and sub-ids ", function () {
         var phenotypeParticipants= [{
             list:
