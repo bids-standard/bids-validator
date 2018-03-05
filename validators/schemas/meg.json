@@ -40,7 +40,6 @@
                     },
         "required": [
             "TaskName",
-            "Manufacturer",
             "SamplingFrequency",
             "PowerLineFrequency",
             "DewarPosition",
