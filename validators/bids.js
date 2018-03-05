@@ -218,7 +218,6 @@ BIDS = {
 
             // ignore files flagged by utils.files.getBIDSIgnore()
             if (file.ignore) {
-                console.log('ignored file: ', file)
                 process.nextTick(cb);
             }
 
