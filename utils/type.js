@@ -51,11 +51,14 @@ module.exports = {
 
         var multiDirFieldmapRe = new RegExp('^\\/(?:dir-[a-zA-Z0-9]+)_epi.json$');
 
+        var megTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
+            + '(_meg.json)$');
+
         var otherTopFiles = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?'
             + '(physio.json|stim.json)$');
 
         return (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) ||
-        anatTopRe.test(path) || multiDirFieldmapRe.test(path) || otherTopFiles.test(path));
+        anatTopRe.test(path) || multiDirFieldmapRe.test(path) || otherTopFiles.test(path) || megTopRe.test(path));
     },
 
     /**
