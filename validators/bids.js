@@ -216,8 +216,14 @@ BIDS = {
                 hasDatasetDescription = true;
             }
 
+            // ignore files flagged by utils.files.getBIDSIgnore()
+            if (file.ignore) {
+                console.log('ignored file: ', file)
+                process.nextTick(cb);
+            }
+
             // ignore associated data
-            if (utils.type.isStimuliData(file.relativePath)) {
+            else if (utils.type.isStimuliData(file.relativePath)) {
                 process.nextTick(cb);
             }
 
