@@ -52,7 +52,7 @@ module.exports = {
         var multiDirFieldmapRe = new RegExp('^\\/(?:dir-[a-zA-Z0-9]+)_epi.json$');
 
         var megTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
-            + '(_meg.json)$');
+            + '(_meg.json|_channels.tsv|_photo.jpg|_coordsystem.json)$');
 
         var otherTopFiles = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?'
             + '(physio.json|stim.json)$');
@@ -193,7 +193,7 @@ module.exports = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?meg' +
             '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
-            '(_meg.(ctf|fif|4d|kit|kdf|itab)|(_meg.ds\\/.*)|(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$');
+            '(_meg.(ctf|fif|fif.gz|4d|kit|kdf|itab)|(_meg.ds\\/.*)|(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$');
         return conditionalMatch(MegRe, path);
     },
 
