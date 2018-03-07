@@ -38,8 +38,7 @@
                 "DigitizedHeadPointsCoordinateSystemDescription": {"type": "string"}
                 },
         "required": ["MEGCoordinateSystem",
-                     "MEGCoordinateUnits",
-                     "FiducialsDescription"
+                     "MEGCoordinateUnits"
                   ],
         "additionalProperties": false
 }
