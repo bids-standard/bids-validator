@@ -8,11 +8,16 @@
                 "EEGCoordinateUnits": {"type": "string","minLength": 1},
                 "EEGCoordinateSystemDescription": {"type": "string"},
                 "IntendedFor": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string",
-                    "minLength": 1
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    {"type": "string", "minLength": 1}
+                  ]
                 },
                 "FiducialsDescription": {"type": "string", "minLength": 1},
                 "HeadCoilCoordinates": {"type": "object",
