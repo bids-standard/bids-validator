@@ -32,7 +32,15 @@
                 "RecordingType": {"type" : "string"},
                 "EpochLength": {"type" : ["number","string"]},
                 "ContinuousHeadLocalization": {"type" : "boolean"},
-                "CoilFrequency": {"type" : "number"},
+                "HeadCoilFrequency": {
+                  "anyOf": [
+                    {"type" : "number"},
+                    {
+                      "type": "array",
+                      "items": {"type": "number"}
+                    }
+                  ]
+                },
                 "MaxMovement": {"type" : "number"},
                 "SubjectArtefactDescription": {"type" : "string"},
                 "DigitizedLandmarks": {"type" : "boolean"},
