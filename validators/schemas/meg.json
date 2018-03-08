@@ -41,6 +41,18 @@
                     }
                   ]
                 },
+                "AssociatedEmptyRoom": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    {"type": "string", "minLength": 1}
+                  ]
+                },
                 "MaxMovement": {"type" : "number"},
                 "SubjectArtefactDescription": {"type" : "string"},
                 "DigitizedLandmarks": {"type" : "boolean"},
