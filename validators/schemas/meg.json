@@ -9,6 +9,7 @@
                 "InstitutionName": {"type": "string"},
                 "InstitutionAddress": {"type": "string"},
                 "Manufacturer": {"type": "string","minLength": 1},
+                "ManufacturersModelName": {"type": "string", "minLength": 1},
                 "DeviceSerialNumber": {"type": "string"},
                 "SoftwareVersions": {"type": "string"},
                 "PowerLineFrequency": {"type": "number"},
