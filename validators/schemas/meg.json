@@ -29,8 +29,14 @@
                 "ManufacturersAmplifierModelName": {"type": "string"},
                 "ManufacturersCapModelName": {"type": "string"},
                 "DewarPosition": {"type" : "string"},
-                "SoftwareFilters": {"type" : "object",
+                "SoftwareFilters": {
+                  "anyOf": [
+                    {"type" : "object",
                                     "additionalProperties": {"type":"object"}
+                    },
+                    {"type": "string", "pattern": "^none$"}
+
+                  ]
                 },
                 "RecordingDuration": {"type" : "number"},
                 "RecordingType": {"type" : "string"},
