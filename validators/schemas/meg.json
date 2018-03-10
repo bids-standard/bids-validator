@@ -34,7 +34,7 @@
                     {"type" : "object",
                                     "additionalProperties": {"type":"object"}
                     },
-                    {"type": "string", "pattern": "^none$"}
+                    {"type": "string", "pattern": "^n/a$"}
 
                   ]
                 },
