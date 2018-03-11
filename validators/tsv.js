@@ -76,7 +76,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
 
     // events.tsv
     if (file.name.endsWith('_events.tsv')) {
-        if (headers[0] !== "onset"){
+        if ((headers.length == 0) || (headers[0] !== "onset")){
             issues.push(new Issue({
                 file: file,
                 evidence: headers,
@@ -85,7 +85,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
                 code: 20
             }));
         }
-        if (headers[1].trim() !== "duration"){
+        if ((headers.length <= 1) || (headers[1].trim() !== "duration")){
             issues.push(new Issue({
                 file: file,
                 evidence: headers,
