@@ -81,16 +81,14 @@ var TSV = function TSV (file, contents, fileList, callback) {
                 file: file,
                 evidence: headers,
                 line: 1,
-                character: rows[0].indexOf(headers[0]),
                 code: 20
             }));
         }
-        if ((headers.length <= 1) || (headers[1].trim() !== "duration")){
+        if ((headers.length == 1) || (headers[1].trim() !== "duration")){
             issues.push(new Issue({
                 file: file,
                 evidence: headers,
                 line: 1,
-                character: rows[0].indexOf(headers[1]),
                 code: 21
             }));
         }
