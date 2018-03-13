@@ -361,5 +361,10 @@ module.exports = {
         key: 'CHANNELS_COLUMN_TYPE',
         severity: 'error',
         reason:   "Second column of the channels file must be named 'type'"
+    },
+    72: {
+        key: 'CHANNELS_COLUMN_UNITS',
+        severity: 'error',
+        reason:   "Third column of the channels file must be named 'unit'"
     }
 };
