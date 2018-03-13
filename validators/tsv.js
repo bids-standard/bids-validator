@@ -14,6 +14,16 @@ var utils  = require('../utils');
 var TSV = function TSV (file, contents, fileList, callback) {
 
     var issues = [];
+    if ((contents.includes('\r')) && (!contents.includes('\n'))) {
+        issues.push(new Issue({
+            file: file,
+            evidence: contents,
+            code: 69
+        }));
+        callback(issues, null);
+        return;
+    }
+
     var rows = contents.split('\n');
     var headers = rows[0].split('\t');
 
