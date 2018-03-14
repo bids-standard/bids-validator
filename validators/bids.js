@@ -206,11 +206,6 @@ BIDS = {
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
             var path = file.relativePath;
 
-            // ignore files flagged by utils.files.getBIDSIgnore()
-            if (file.ignore) {
-                process.nextTick(cb);
-            }
-
             // check for subject directory presence
             if (path.startsWith('/sub-')) {
                 hasSubjectDir = true;
@@ -219,6 +214,11 @@ BIDS = {
             // check for dataset_description.json presence
             if (path === '/dataset_description.json') {
                 hasDatasetDescription = true;
+            }
+
+            // ignore files flagged by utils.files.getBIDSIgnore()
+            if (file.ignore) {
+                process.nextTick(cb);
             }
 
             // ignore associated data
