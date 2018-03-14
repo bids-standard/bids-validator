@@ -346,10 +346,5 @@ module.exports = {
         key: 'FILENAME_COLUMN',
         severity: 'error',
         reason:   "_scans.tsv files must have a 'filename' column."
-    },
-    69: {
-        key: 'WRONG_NEW_LINE',
-        severity: 'error',
-        reason:   "All TSV files must use Line Feed '\\n' characters to denote new lines. This files uses Carriage Return '\\r'."
     }
 };
