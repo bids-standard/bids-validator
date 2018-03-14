@@ -206,18 +206,13 @@ BIDS = {
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
             var path = file.relativePath;
 
-            // check for subject directory presence
-            if (path.startsWith('/sub-')) {
-                hasSubjectDir = true;
-            }
-
-            // check for dataset_description.json presence
-            if (path === '/dataset_description.json') {
-                hasDatasetDescription = true;
+            // ignore files flagged by utils.files.getBIDSIgnore()
+            if (file.ignore) {
+                process.nextTick(cb);
             }
 
             // ignore associated data
-            if (utils.type.isStimuliData(file.relativePath)) {
+            else if (utils.type.isStimuliData(file.relativePath)) {
                 process.nextTick(cb);
             }
 
@@ -342,6 +337,16 @@ BIDS = {
                 });
             } else {
                 process.nextTick(cb);
+            }
+
+            // check for subject directory presence
+            if (path.startsWith('/sub-')) {
+                hasSubjectDir = true;
+            }
+
+            // check for dataset_description.json presence
+            if (path === '/dataset_description.json') {
+                hasDatasetDescription = true;
             }
 
             // collect file stats

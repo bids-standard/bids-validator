@@ -163,7 +163,7 @@ function preprocessBrowser(filesObj, ig) {
         var fileObj = filesObj[i];
         fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath);
         if (ig.ignores(path.relative('/', fileObj.relativePath))) {
-            continue;
+            fileObj.ignore = true;
         }
         filesList.push(fileObj);
     }
@@ -193,9 +193,7 @@ function getFiles(dir, files_, rootpath, ig){
         var fullPath = dir + '/' + files[i];
         var relativePath = fullPath.replace(rootpath, '');
         relativePath = harmonizeRelativePath(relativePath);
-        if (ig.ignores(path.relative('/', relativePath))) {
-            continue;
-        }
+        
         var fileName = files[i];
 
         var fileObj = {
@@ -203,6 +201,10 @@ function getFiles(dir, files_, rootpath, ig){
             path: fullPath,
             relativePath: relativePath
         };
+
+        if (ig.ignores(path.relative('/', relativePath))) {
+            fileObj.ignore = true;
+        }
 
         if (fs.lstatSync(fullPath).isDirectory()) {
             getFiles(fullPath, files_, rootpath, ig);
