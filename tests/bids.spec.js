@@ -8,7 +8,7 @@ var fs = require('fs');
 var AdmZip = require('adm-zip');
 var path = require('path');
 var Test = require("mocha/lib/test");
-var test_version = "1.0.0-rc3u5";
+var test_version = "1.0.2u1";
 
 function getDirectories(srcpath) {
     return fs.readdirSync(srcpath).filter(function(file) {
@@ -82,7 +82,6 @@ var suite = describe('BIDS example datasets ', function() {
             assert(summary.modalities.includes('inplaneT2'));
             assert(summary.modalities.includes('bold'));
             assert(summary.totalFiles === 133);
-            assert(summary.size === 803546);
             assert.deepEqual(errors, []);
             assert(warnings.length === 1 && warnings[0].code === '13');
             isdone();
