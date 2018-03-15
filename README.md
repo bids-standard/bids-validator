@@ -152,7 +152,9 @@ If you install the bids validator globally by using ```npm install -g bids-valid
 
 ## Development
 
-To develop locally, clone the project and run ```npm install``` from the project root. This will install external dependencies.
+To develop locally, clone the project and run ```npm install``` from the project root. This will install external dependencies. If
+you wish to install ```bids-validator``` globally (so that you can run it in other folders), use the following command to install it
+globally: ```npm install -g```
 
 #### Running Locally in a Browser
 
