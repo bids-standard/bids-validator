@@ -365,6 +365,6 @@ module.exports = {
     72: {
         key: 'CHANNELS_COLUMN_UNITS',
         severity: 'error',
-        reason:   "Third column of the channels file must be named 'unit'"
+        reason:   "Third column of the channels file must be named 'units'"
     }
 };
