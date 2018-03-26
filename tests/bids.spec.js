@@ -17,7 +17,7 @@ function getDirectories(srcpath) {
 }
 
 var missing_session_files = ['7t_trt', 'ds006', 'ds007', 'ds008', 'ds051', 'ds052', 'ds105', 'ds108', 'ds109', 'ds113b',
-                             'ds000117'];
+                             'ds000117', 'ds000246', 'ds000247'];
 
 function assertErrorCode(errors, expected_error_code) {
     var matchingErrors = errors.filter(function (error) {
