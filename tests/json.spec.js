@@ -38,15 +38,15 @@ describe('JSON', function(){
     };
 
     it('*_meg.json sidecars should have required key/value pairs', function(){
-        var jsonObj = '{"TaskName": "Audiovis", "Manufacturer": "Elekta", "SamplingFrequency": 1000, ' +
-                      '"MEGChannelCount": 306, "MEGREFChannelCount": 0, "EEGChannelCount": 32,' +
-                      '"EOGChannelCount": 1, "ECGChannelCount": 0, "EMGChannelCount": 0,' +
-                      '"MiscChannelCount": 4, "TriggerChannelCount": 4}';
+        var jsonObj = '{"TaskName": "Audiovis", "SamplingFrequency": 1000, ' +
+                      ' "PowerLineFrequency": 50, "DewarPosition": "Upright", ' +
+                      ' "SoftwareFilters": "n/a", "DigitizedLandmarks": true,' +
+                      ' "DigitizedHeadPoints": false}';
         validate.JSON(meg_file, jsonObj, function (issues) {
             assert(issues.length === 0);
         });
 
-        var jsonObjInval = jsonObj.replace(/"EOGChannelCount": 1, /g, '');
+        var jsonObjInval = jsonObj.replace(/"SamplingFrequency": 1000, /g, '');
         validate.JSON(meg_file, jsonObjInval, function(issues){
             assert(issues && issues.length === 1);
         });

@@ -175,25 +175,25 @@ var channelsFile = {
     };
 
     it("should not allow channels.tsv files without name column", function () {
-        var tsv = 'header-one\ttype\t4eader-three\n' +
+        var tsv = 'header-one\ttype\tunits\n' +
             'value-one\tvalue-two\tvalue-three';
         validate.TSV.TSV(channelsFile, tsv, [], function (issues) {
-            assert(issues.length === 1 && issues[0].code === 68);
+            assert(issues.length === 1 && issues[0].code === 70);
         });
     });
 
     it("should not allow channels.tsv files without type column", function () {
-        var tsv = 'name\theader-two\t4eader-three\n' +
+        var tsv = 'name\theader-two\tunits\n' +
             'value-one\tvalue-two\tvalue-three';
         validate.TSV.TSV(channelsFile, tsv, [], function (issues) {
-            assert(issues.length === 1 && issues[0].code === 69);
+            assert(issues.length === 1 && issues[0].code === 71);
         });
     });
 
 
-    it("should allow channels.tsv files with name and type columns", function () {
-        var tsv = 'name\ttype\t4eader-three\n' +
-            'value-one\tvalue-two\tvalue-three';
+    it("should allow channels.tsv files with name, type and units columns", function () {
+        var tsv = 'name\ttype\tunits\theader-four\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four';
         validate.TSV.TSV(channelsFile, tsv, [], function (issues) {
             assert(issues.length === 0);
         });
