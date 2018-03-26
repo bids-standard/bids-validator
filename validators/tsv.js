@@ -167,9 +167,9 @@ var TSV = function TSV (file, contents, fileList, callback) {
 
     // channels.tsv
     if (file.name.endsWith('_channels.tsv')) {
-        checkheader('name', 0, file, 70);
-        checkheader('type', 1, file, 71);
-        checkheader('units', 2, file, 72);
+        checkheader('name', 0, file, 71);
+        checkheader('type', 1, file, 72);
+        checkheader('units', 2, file, 73);
     }
   // check partcipants.tsv for age 89+
 
