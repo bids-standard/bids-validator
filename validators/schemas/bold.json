@@ -5,6 +5,9 @@
         "CogAtlasID": {
             "type": "string"
         },
+        "CogPOID": {
+            "type": "string"
+        },
         "EchoTime": {
             "type": "number"
         },
@@ -30,5 +33,10 @@
         "TaskName": {
             "type": "string"
         }
-    }
+    },
+    "required": [
+      "TaskName",
+      "RepetitionTime"
+    ]
+
 }

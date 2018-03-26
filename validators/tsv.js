@@ -83,6 +83,17 @@ var TSV = function TSV (file, contents, fileList, callback) {
     }
 
 // specific file checks -----------------------------------------------------
+    var checkheader = function checkheader (headername, idx, file, code) {
+        if (headers[idx] !== headername){
+            issues.push(new Issue({
+                file: file,
+                evidence: headers,
+                line: 1,
+                character: rows[0].indexOf(headers[idx]),
+                code: code
+            }));
+        }
+    };
 
     // events.tsv
     if (file.name.endsWith('_events.tsv')) {
@@ -153,6 +164,13 @@ var TSV = function TSV (file, contents, fileList, callback) {
         }
 
     }
+
+    // channels.tsv
+    if (file.name.endsWith('_channels.tsv')) {
+        checkheader('name', 0, file, 71);
+        checkheader('type', 1, file, 72);
+        checkheader('units', 2, file, 73);
+    }
   // check partcipants.tsv for age 89+
 
     if (file.name === 'participants.tsv'){
@@ -173,6 +191,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
     }
 
     callback(issues, participants);
+
 };
 var checkphenotype = function (phenotypeParticipants, summary, issues) {
     for (var j=0; j < phenotypeParticipants.length; j++){
