@@ -28,7 +28,13 @@
         },
         "Name": {
             "type": "string"
-        }
+        },
+	"ReferencesAndLinks": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+	}
     },
     "required": [
         "Name",
