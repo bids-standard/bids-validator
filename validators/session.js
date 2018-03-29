@@ -66,7 +66,7 @@ var session = function missingSessionFiles(fileList) {
                            webkitRelativePath: fileThatsMissing,
                            name: fileThatsMissing.substr(fileThatsMissing.lastIndexOf('/') + 1),
                            path: fileThatsMissing},
-                    reason: "This file is missing for subject " + subject + ", but is present for most other subjects.",
+                    reason: "This file is missing for subject " + subject + ", but is present for at least one other subject.",
                     code: 38
                 }));
             }
