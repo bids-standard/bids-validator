@@ -158,6 +158,34 @@ BIDS = {
             size: 0
         };
 
+
+        // collect file directory statistics
+        async.eachOfLimit(fileList, 200, function(file) {
+            // collect file stats
+            if (typeof window !== 'undefined') {
+                if (file.size) {
+                    summary.size += file.size;
+                }
+            } else {
+                if (!file.stats) {
+                    try {
+                        file.stats = fs.statSync(file.path);
+                    } catch (err) {
+                        file.stats = {size: 0};
+                    }
+                }
+                summary.size += file.stats.size;
+            }
+        }); 
+
+        // remove ignored files from list:
+        Object.keys(fileList).forEach(function(key) {
+            if (fileList[key].ignore) {
+                delete fileList[key];
+            }
+        });
+
+
         // var subses_mismatch = false;
         self.subIDsesIDmismatchtest(fileList);
 
@@ -202,13 +230,8 @@ BIDS = {
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
             var path = file.relativePath;
 
-            // ignore files flagged by utils.files.getBIDSIgnore()
-            if (file.ignore) {
-                process.nextTick(cb);
-            }
-
             // ignore associated data
-            else if (utils.type.isStimuliData(file.relativePath)) {
+            if (utils.type.isStimuliData(file.relativePath)) {
                 process.nextTick(cb);
             }
 
@@ -343,22 +366,6 @@ BIDS = {
             // check for dataset_description.json presence
             if (path === '/dataset_description.json') {
                 hasDatasetDescription = true;
-            }
-
-            // collect file stats
-            if (typeof window !== 'undefined') {
-                if (file.size) {
-                    summary.size += file.size;
-                }
-            } else {
-                if (!file.stats) {
-                    try {
-                        file.stats = fs.statSync(file.path);
-                    } catch (err) {
-                        file.stats = {size: 0};
-                    }
-                }
-                summary.size += file.stats.size;
             }
 
             // collect sessions & subjects
