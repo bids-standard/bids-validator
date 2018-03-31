@@ -374,6 +374,26 @@ BIDS = {
             }
 
         }, function () {
+            // check if same file with .nii and .nii.gz extensions is present
+            var niftiCounts = niftis
+            .map((val) => { return {count: 1, val: val.name.split('.')[0]}})
+            .reduce((a, b) => {
+              a[b.val] = (a[b.val] || 0) + b.count
+              return a}, {})
+
+            var duplicates = Object.keys(niftiCounts).filter((a) => niftiCounts[a] > 1);
+            if (duplicates.length !== 0) {
+                for (var key in duplicates) {
+                    var duplicateFiles = niftis.filter((a) => a.name.split('.')[0] === duplicates[key]);
+                    for (var file in duplicateFiles) {
+                        self.issues.push(new Issue({
+                                code: 74,
+                                file: duplicateFiles[file]
+                            }));
+                    }
+                }
+            }
+
             async.eachOfLimit(niftis, 200, function (file, key, cb) {
                 if (self.options.ignoreNiftiHeaders) {
                     NIFTI(null, file, jsonContentsDict, bContentsDict, fileList, events, function (issues) {
