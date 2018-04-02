@@ -107,6 +107,15 @@ var suite = describe('BIDS example datasets ', function() {
         });
     });
 
+    // test for duplicate files present with both .nii and .nii.gz extension
+    it('validates dataset for duplicate files present with both .nii and .nii.gz extension', function(isdone) {
+        var options = {ignoreNiftiHeaders: false};
+        validate.BIDS("tests/data/valid_filenames", options, function (issues) {
+            assertErrorCode(issues.errors, '74');
+            isdone();
+        });
+    });
+
     // test for illegal characters used in acq and task name
     it('validates dataset with illegal characters in task name', function(isdone) {
         var options = {ignoreNiftiHeaders: false};
