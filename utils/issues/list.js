@@ -366,5 +366,10 @@ module.exports = {
         key: 'CHANNELS_COLUMN_UNITS',
         severity: 'error',
         reason:   "Third column of the channels file must be named 'units'"
+    },
+    74: {
+        key: 'DUPLICATE_NIFTI_FILES',
+        severity: 'error',
+        reason:   "Nifti file exist with both '.nii' and '.nii.gz' extensions."
     }
 };
