@@ -40,6 +40,8 @@ function checkUnits (file, sidecar) {
             schema = require('./schemas/dataset_description.json');
         } else if (file.name.endsWith("meg.json")) {
             schema = require('./schemas/meg.json');
+        } else if (file.name.endsWith("ieeg.json")) {
+            schema = require('./schemas/ieeg.json');
         } else if (file.name.endsWith("coordsystem.json")) {
             schema = require('./schemas/coordsystem.json');
         }

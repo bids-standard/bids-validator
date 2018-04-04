@@ -1,0 +1,26 @@
+{
+        "type": "object",
+        "properties": {
+                "iEEGDepthChannelCount": {"type" : "integer"},
+                "iEEGSurfChannelCount": {"type" : "integer"},
+                "iEEGPlacementScheme": {"type": "string"},
+                "iEEGReferenceScheme": {"type": "string"},
+                "Stimulation": {"type": "boolean"},
+                "Medication": {"type": "string"},
+                    },
+        "required": [
+            "TaskName",
+            "Manufacturer",
+            "PowerLineFrequency",
+            "iEEGSurfChannelCount",
+            "iEEGSurfChannelCount",
+            "EEGChannelCount",
+            "EOGChannelCount",
+            "ECGChannelCount",
+            "EMGChannelCount",
+            "MiscChannelCount",
+            "TriggerChannelCount",
+            "PowerLineFrequency",
+        ],
+       "additionalProperties": false
+}

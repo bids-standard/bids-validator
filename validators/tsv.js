@@ -169,11 +169,22 @@ var TSV = function TSV (file, contents, fileList, callback) {
     }
 
     // channels.tsv
-    if (file.name.endsWith('_channels.tsv')) {
+    if (file.name.endsWith('_channels_meg.tsv')) {
         checkheader('name', 0, file, 71);
         checkheader('type', 1, file, 72);
         checkheader('units', 2, file, 73);
     }
+
+    if (file.name.endsWith('_channels_ieeg.tsv')) {
+        checkheader('name', 0, file, 71);
+        checkheader('type', 1, file, 72);
+        checkheader('units', 2, file, 73);
+        checkheader('sampling_frequency', 3, file, 75)
+        checkheader('low_cutoff', 3, file, 76)
+        checkheader('high_cutoff', 3, file, 77)
+        checkheader('notch', 3, file, 78)
+    }
+
   // check partcipants.tsv for age 89+
 
     if (file.name === 'participants.tsv'){

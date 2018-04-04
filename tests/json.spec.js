@@ -32,23 +32,43 @@ describe('JSON', function(){
 		});
 	});
 
-    var meg_file = {
-        name: 'sub-01_run-01_meg.json',
-        relativePath: '/sub-01_run-01_meg.json'
-    };
+  var meg_file = {
+      name: 'sub-01_run-01_meg.json',
+      relativePath: '/sub-01_run-01_meg.json'
+  };
 
-    it('*_meg.json sidecars should have required key/value pairs', function(){
-        var jsonObj = '{"TaskName": "Audiovis", "SamplingFrequency": 1000, ' +
-                      ' "PowerLineFrequency": 50, "DewarPosition": "Upright", ' +
-                      ' "SoftwareFilters": "n/a", "DigitizedLandmarks": true,' +
-                      ' "DigitizedHeadPoints": false}';
-        validate.JSON(meg_file, jsonObj, function (issues) {
-            assert(issues.length === 0);
-        });
+  it('*_meg.json sidecars should have required key/value pairs', function(){
+      var jsonObj = '{"TaskName": "Audiovis", "SamplingFrequency": 1000, ' +
+                    ' "PowerLineFrequency": 50, "DewarPosition": "Upright", ' +
+                    ' "SoftwareFilters": "n/a", "DigitizedLandmarks": true,' +
+                    ' "DigitizedHeadPoints": false}';
+      validate.JSON(meg_file, jsonObj, function (issues) {
+          assert(issues.length === 0);
+      });
 
-        var jsonObjInval = jsonObj.replace(/"SamplingFrequency": 1000, /g, '');
-        validate.JSON(meg_file, jsonObjInval, function(issues){
-            assert(issues && issues.length === 1);
-        });
-    });
+      var jsonObjInval = jsonObj.replace(/"SamplingFrequency": 1000, /g, '');
+      validate.JSON(meg_file, jsonObjInval, function(issues){
+          assert(issues && issues.length === 1);
+      });
+  });
+
+	var ieeg_file = {
+      name: 'sub-01_run-01_ieeg.json',
+      relativePath: '/sub-01_run-01_ieeg.json'
+  };
+
+  it('*_ieeg.json sidecars should have required key/value pairs', function(){
+      var jsonObj = '{"TaskName": "Audiovis", "SamplingFrequency": 1000, ' +
+                    ' "PowerLineFrequency": 50, "DewarPosition": "Upright", ' +
+                    ' "SoftwareFilters": "n/a", "DigitizedLandmarks": true,' +
+                    ' "DigitizedHeadPoints": false}';
+      validate.JSON(ieeg_file, jsonObj, function (issues) {
+          assert(issues.length === 0);
+      });
+
+      var jsonObjInval = jsonObj.replace(/"SamplingFrequency": 1000, /g, '');
+      validate.JSON(ieeg_file, jsonObjInval, function(issues){
+          assert(issues && issues.length === 1);
+      });
+  });
 });

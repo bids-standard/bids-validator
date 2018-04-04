@@ -378,4 +378,24 @@ module.exports = {
         severity: 'warning',
         reason: 'There are files in the /stimuli directory that are not utilized in any _events.tsv file.'
     },
+    78: {
+        key: 'CHANNELS_COLUMN_SFREQ',
+        severity: 'error',
+        reason:   "Fourth column of the channels file must be named 'sampling_frequency'"
+    },
+    79: {
+        key: 'CHANNELS_COLUMN_LOWCUT',
+        severity: 'error',
+        reason:   "Third column of the channels file must be named 'low_cutoff'"
+    },
+    80: {
+        key: 'CHANNELS_COLUMN_HIGHCUT',
+        severity: 'error',
+        reason:   "Third column of the channels file must be named 'high_cutoff'"
+    },
+    81: {
+        key: 'CHANNELS_COLUMN_NOTCH',
+        severity: 'error',
+        reason:   "Third column of the channels file must be named 'notch'"
+    }
 };

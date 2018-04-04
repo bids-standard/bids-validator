@@ -26,6 +26,7 @@ module.exports = {
             this.isDWI(path) ||
             this.isFunc(path) ||
             this.isMeg(path) ||
+            this.isIEEG(path) ||
             this.isBehavioral(path) ||
             this.isCont(path) ||
             this.isFieldMap(path) ||
@@ -52,13 +53,17 @@ module.exports = {
         var multiDirFieldmapRe = new RegExp('^\\/(?:dir-[a-zA-Z0-9]+)_epi.json$');
 
         var megTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
-            + '(_meg.json|_channels.tsv|_photo.jpg|_coordsystem.json)$');
+            + '(_meg.json|_channels.tsv|_photo.jpg|_coordsystem_meg.json)$');
+
+        var ieegTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
+            + '(_ieeg.json|_channels.tsv|_electrodes.tsv|_photo.jpg|_coordsystem_ieeg.json)$');
 
         var otherTopFiles = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?'
             + '(physio.json|stim.json)$');
 
         return (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) ||
-        anatTopRe.test(path) || multiDirFieldmapRe.test(path) || otherTopFiles.test(path) || megTopRe.test(path));
+        anatTopRe.test(path) || multiDirFieldmapRe.test(path) || otherTopFiles.test(path) || megTopRe.test(path) ||
+        ieegTopRe.test(path));
     },
 
     /**
@@ -110,9 +115,14 @@ module.exports = {
             '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
             + '(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$');
 
+        var ieegSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
+            + '(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$');
+
         return conditionalMatch(scansRe, path) || conditionalMatch(funcSesRe, path) ||
             conditionalMatch(anatSesRe, path) || conditionalMatch(dwiSesRe, path) ||
-            conditionalMatch(megSesRe, path);
+            conditionalMatch(megSesRe, path) || conditionalMatch(ieegSesRe, path);
     },
 
     /**
@@ -201,6 +211,15 @@ module.exports = {
             '\\/)?meg' +
             '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
             '(_meg(.fif|.fif.gz|.ds\\/.*|\\/.*)|(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$');
+        return conditionalMatch(MegRe, path);
+    },
+
+    isIEEG: function(path) {
+        var IEEGRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?ieeg' +
+            '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
+            '(_ieeg.(edf|gdf|fif|fif.gz)|(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$');
         return conditionalMatch(MegRe, path);
     },
 
