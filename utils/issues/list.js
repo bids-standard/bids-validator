@@ -344,19 +344,9 @@ module.exports = {
         reason: "All TSV files must use Line Feed '\\n' characters to denote new lines. This files uses Carriage Return '\\r'."
     },
     71: {
-        key: 'CHANNELS_COLUMN_NAME',
+        key: 'MISSING_TSV_COLUMN',
         severity: 'error',
-        reason:   "First column of the channels file must be named 'name'"
-    },
-    72: {
-        key: 'CHANNELS_COLUMN_TYPE',
-        severity: 'error',
-        reason:   "Second column of the channels file must be named 'type'"
-    },
-    73: {
-        key: 'CHANNELS_COLUMN_UNITS',
-        severity: 'error',
-        reason:   "Third column of the channels file must be named 'units'"
+        reason:   "The column names of the channels file must begin with ['name', 'type', 'units', 'sampling_frequency', 'low_cutoff', 'high_cutoff', 'notch']"
     },
     74: {
         key: 'DUPLICATE_NIFTI_FILES',
