@@ -6,7 +6,7 @@
                 "iEEGPlacementScheme": {"type": "string"},
                 "iEEGReferenceScheme": {"type": "string"},
                 "Stimulation": {"type": "boolean"},
-                "Medication": {"type": "string"},
+                "Medication": {"type": "string"}
                     },
         "required": [
             "TaskName",
@@ -20,7 +20,7 @@
             "EMGChannelCount",
             "MiscChannelCount",
             "TriggerChannelCount",
-            "PowerLineFrequency",
+            "PowerLineFrequency"
         ],
        "additionalProperties": false
 }

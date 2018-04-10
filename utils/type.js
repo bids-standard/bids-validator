@@ -220,7 +220,7 @@ module.exports = {
             '\\/)?ieeg' +
             '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
             '(_ieeg.(edf|gdf|fif|fif.gz)|(_events.tsv|_channels.tsv|_ieeg.json|_coordsystem_ieeg.json|_photo.jpg|_headshape.pos))$');
-        return conditionalMatch(MegRe, path);
+        return conditionalMatch(IEEGRe, path);
     },
 
     isBehavioral: function(path) {
