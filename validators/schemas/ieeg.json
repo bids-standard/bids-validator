@@ -23,8 +23,8 @@
                 "EMGChannelCount": {"type" : "integer"},
                 "MiscChannelCount": {"type" : "integer"},
                 "TriggerChannelCount": {"type" : "integer"},
-                "iEEGDepthChannelCount": {"type" : "integer"},
-                "iEEGSurfChannelCount": {"type" : "integer"},
+                "SEEGChannelCount": {"type" : "integer"},
+                "ECOGChannelCount": {"type" : "integer"},
                 "iEEGPlacementScheme": {"type": "string"},
                 "iEEGReferenceScheme": {"type": "string"},
                 "Stimulation": {"type": "boolean"},
@@ -33,14 +33,6 @@
         "required": [
             "TaskName",
             "Manufacturer",
-            "iEEGSurfChannelCount",
-            "iEEGDepthChannelCount",
-            "EEGChannelCount",
-            "EOGChannelCount",
-            "ECGChannelCount",
-            "EMGChannelCount",
-            "MiscChannelCount",
-            "TriggerChannelCount",
             "PowerLineFrequency"
         ],
        "additionalProperties": false
