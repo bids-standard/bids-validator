@@ -1,44 +1,17 @@
 {
         "type": "object",
         "properties": {
-                "MEGCoordinateSystem": {"type": "string","minLength": 1},
-                "MEGCoordinateUnits": {"type": "string","minLength": 1},
-                "MEGCoordinateSystemDescription": {"type": "string"},
-                "EEGCoordinateSystem": {"type": "string","minLength": 1},
-                "EEGCoordinateUnits": {"type": "string","minLength": 1},
-                "EEGCoordinateSystemDescription": {"type": "string"},
-                "IntendedFor": {
-                  "anyOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "minLength": 1
-                      }
-                    },
-                    {"type": "string", "minLength": 1}
-                  ]
+                "iEEGCoordinateSystem": {"type": "string","minLength": 1},
+                "iEEGCoordinateUnits": {"type": "string","minLength": 1},
+                "iEEGCoordinateProcessingDescripton": {"type": "string","minLength": 1},
+                "IntendedFor": {"type": "string","minLength": 1},
+                "AssociatedImageCoordinateSystem": {"type": "string","minLength": 1},
+                "AssociatedImageCoordinateUnits": {"type": "string","minLength": 1},
+                "iEEGCoordinateProcessingReference": {"type": "string","minLength": 1},
+                "AssociatedImageCoordinateSystemDescription": {"type": "string","minLength": 1}
                 },
-                "FiducialsDescription": {"type": "string", "minLength": 1},
-                "HeadCoilCoordinates": {"type": "object",
-                                        "additionalProperties": {"type": "array"}
-                                       },
-                "HeadCoilCoordinateSystem": {"type": "string","minLength": 1},
-                "HeadCoilCoordinateUnits": {"type": "string","minLength": 1},
-                "HeadCoilCoordinateSystemDescription": {"type": "string"},
-                "AnatomicalLandmarkCoordinates": {"type": "object",
-                                                  "additionalProperties": {"type": "array"}
-                                                 },
-                "AnatomicalLandmarkCoordinateSystem": {"type": "string","minLength": 1},
-                "AnatomicalLandmarkCoordinateUnits": {"type": "string","minLength": 1},
-                "AnatomicalLandmarkCoordinateSystemDescription": {"type": "string"},
-                "DigitizedHeadPoints": {"type": "string"},
-                "DigitizedHeadPointsCoordinateSystem": {"type": "string"},
-                "DigitizedHeadPointsCoordinateUnits": {"type": "string"},
-                "DigitizedHeadPointsCoordinateSystemDescription": {"type": "string"}
-                },
-        "required": ["MEGCoordinateSystem",
-                     "MEGCoordinateUnits"
+        "required": ["iEEGCoordinateSystem",
+                     "iEEGCoordinateUnits"
                   ],
         "additionalProperties": false
 }

@@ -58,15 +58,18 @@ describe('JSON', function(){
   };
 
   it('*_ieeg.json sidecars should have required key/value pairs', function(){
-      var jsonObj = '{"TaskName": "Audiovis", "SamplingFrequency": 1000, ' +
-                    ' "PowerLineFrequency": 50, "DewarPosition": "Upright", ' +
-                    ' "SoftwareFilters": "n/a", "DigitizedLandmarks": true,' +
-                    ' "DigitizedHeadPoints": false}';
+      var jsonObj = '{"TaskName": "Audiovis", "Manufacturer": "TDT", ' +
+                    ' "PowerLineFrequency": 50, "iEEGSurfChannelCount": 10, ' +
+                    ' "iEEGDepthChannelCount": 10, "EEGChannelCount": 10,' +
+										' "EOGChannelCount": 10, "ECGChannelCount": 10,' +
+										' "MiscChannelCount": 10,' +
+										' "EMGChannelCount": 10, "TriggerChannelCount": 10}';
       validate.JSON(ieeg_file, jsonObj, function (issues) {
+				  console.log(issues)
           assert(issues.length === 0);
       });
 
-      var jsonObjInval = jsonObj.replace(/"SamplingFrequency": 1000, /g, '');
+      var jsonObjInval = jsonObj.replace(/"iEEGSurfChannelCount": 10, /g, '');
       validate.JSON(ieeg_file, jsonObjInval, function(issues){
           assert(issues && issues.length === 1);
       });

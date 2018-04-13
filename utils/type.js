@@ -53,10 +53,10 @@ module.exports = {
         var multiDirFieldmapRe = new RegExp('^\\/(?:dir-[a-zA-Z0-9]+)_epi.json$');
 
         var megTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
-            + '(_meg.json|_channels.tsv|_photo.jpg|_coordsystem_meg.json)$');
+            + '(_meg.json|_channels.tsv|_photo.jpg|_coordsystem.json)$');
 
         var ieegTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
-            + '(_ieeg.json|_channels.tsv|_electrodes.tsv|_photo.jpg|_coordsystem_ieeg.json)$');
+            + '(_ieeg.json|_channels.tsv|_electrodes.tsv|_photo.jpg|_coordsystem.json)$');
 
         var otherTopFiles = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?'
             + '(physio.json|stim.json)$');
@@ -113,12 +113,12 @@ module.exports = {
         var megSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
-            + '(_events.tsv|_channels.tsv|_meg.json|_coordsystem_meg.json|_photo.jpg|_headshape.pos)$');
+            + '(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$');
 
         var ieegSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
-            + '(_events.tsv|_channels.tsv|_ieeg.json|_coordsystem_ieeg.json|_photo.jpg|_headshape.pos)$');
+            + '(_events.tsv|_channels.tsv|_electrodes.tsv|_ieeg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$');
 
         return conditionalMatch(scansRe, path) || conditionalMatch(funcSesRe, path) ||
             conditionalMatch(anatSesRe, path) || conditionalMatch(dwiSesRe, path) ||
@@ -219,7 +219,7 @@ module.exports = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?ieeg' +
             '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
-            '(_ieeg.(edf|gdf|fif|fif.gz)|(_events.tsv|_channels.tsv|_ieeg.json|_coordsystem_ieeg.json|_photo.jpg|_headshape.pos))$');
+            '(_ieeg.(edf|gdf|fif|fif.gz)|(_events.tsv|_channels.tsv|_electrodes.tsv|_ieeg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$');
         return conditionalMatch(IEEGRe, path);
     },
 

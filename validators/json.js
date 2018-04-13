@@ -31,6 +31,7 @@ module.exports = function (file, contents, callback) {
 function checkUnits (file, sidecar) {
     var issues = [];
     var schema = null;
+
     if (file.name) {
         if (file.name.endsWith("participants.json")) {
             schema = require('./schemas/data_dictionary.json');
@@ -42,9 +43,9 @@ function checkUnits (file, sidecar) {
             schema = require('./schemas/meg.json');
         } else if (file.name.endsWith("ieeg.json")) {
             schema = require('./schemas/ieeg.json');
-        } else if (file.name.endsWith("coordsystem_meg.json")) {
+        } else if (file.path.includes('/meg/') && file.name.endsWith("coordsystem.json")) {
             schema = require('./schemas/coordsystem_meg.json');
-        } else if (file.name.endsWith("coordsystem_ieeg.json")) {
+        } else if (file.path.includes('/ieeg/') && file.name.endsWith("coordsystem.json")) {
             schema = require('./schemas/coordsystem_ieeg.json');
         }
         if (schema) {
