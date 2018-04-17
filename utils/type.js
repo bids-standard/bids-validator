@@ -6,7 +6,7 @@
  * BIDS specification requirements.
  */
 var anatSuffixes = ["T1w", "T2w", "T1map", "T2map", "T1rho", "FLAIR", "PD", "PDT2", "inplaneT1", "inplaneT2","angio",
-    "defacemask", "SWImagandphase", "T2star", "FLASH", "PDmap"];
+    "SWImagandphase", "T2star", "FLASH", "PDmap"];
 
 module.exports = {
 
@@ -134,7 +134,14 @@ module.exports = {
             '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:'
             + anatSuffixes.join("|")
             + ').(nii.gz|nii|json)$');
-        return conditionalMatch(anatRe, path);
+
+        var anatDefacemaskRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?anat' +
+            '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_mod-('
+            + anatSuffixes.join("|")
+            + '))?_defacemask.(nii.gz|nii)$');
+        return conditionalMatch(anatRe, path) || conditionalMatch(anatDefacemaskRe, path);
     },
 
     /**
