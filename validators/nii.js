@@ -159,21 +159,29 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                 }));
             }
 
-            if (mergedDictionary.RepetitionTime && header) {
-                if (repetitionUnit !== 's') {
+            if(header) {
+                if (typeof repetitionTime === 'undefined') {
                     issues.push(new Issue({
                         file: file,
-                        code: 11
+                        code: 75
                     }));
-                } else {
-                    var niftiTR = Number((repetitionTime).toFixed(3));
-                    var jsonTR = Number((mergedDictionary.RepetitionTime).toFixed(3));
-                    if (niftiTR !== jsonTR) {
+                }
+                else if (mergedDictionary.RepetitionTime) {
+                    if (repetitionUnit !== 's') {
                         issues.push(new Issue({
                             file: file,
-                            code: 12,
-                            reason: "Repetition time defined in the JSON (" + jsonTR + " sec.) did not match the one defined in the NIFTI header (" + niftiTR + " sec.)"
+                            code: 11
                         }));
+                    } else {
+                        var niftiTR = Number((repetitionTime).toFixed(3));
+                        var jsonTR = Number((mergedDictionary.RepetitionTime).toFixed(3));
+                        if (niftiTR !== jsonTR) {
+                            issues.push(new Issue({
+                                file: file,
+                                code: 12,
+                                reason: "Repetition time defined in the JSON (" + jsonTR + " sec.) did not match the one defined in the NIFTI header (" + niftiTR + " sec.)"
+                            }));
+                        }
                     }
                 }
             }

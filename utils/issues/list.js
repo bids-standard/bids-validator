@@ -371,5 +371,10 @@ module.exports = {
         key: 'DUPLICATE_NIFTI_FILES',
         severity: 'error',
         reason:   "Nifti file exist with both '.nii' and '.nii.gz' extensions."
+    },
+    75: {
+        key: 'NIFTI_PIXDIM4',
+        severity: 'error',
+        reason: "Nifti file's header is missing time dimension information."
     }
 };
