@@ -148,6 +148,7 @@ BIDS = {
                 directory: [],
             },
             niftis = [],
+            ephys = [],
             headers = [],
             participants = null,
             phenotypeParticipants = [],
@@ -266,6 +267,21 @@ BIDS = {
             }
 
             process.nextTick(cb);
+            }
+            
+            // capture ieeg files for summary
+            else if (file.name.endsWith('.gdf') || file.name.endsWith('.edf') || file.name.endsWith('.fif') || file.name.endsWith('.fif.gz')) {
+                ephys.push(file);
+
+                // collect modality summary
+                var pathParts = path.split('_');
+                var suffix = pathParts[pathParts.length - 1];
+                suffix = suffix.slice(0, suffix.indexOf('.'));
+                if (summary.modalities.indexOf(suffix) === -1) {
+                    summary.modalities.push(suffix);
+                }
+
+                process.nextTick(cb);
             }
 
             // validate tsv
