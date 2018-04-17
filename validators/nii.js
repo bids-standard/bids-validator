@@ -159,7 +159,13 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                 }));
             }
 
-            if (mergedDictionary.RepetitionTime && header) {
+            if (typeof repetitionTime === 'undefined' && header) {
+                issues.push(new Issue({
+                    file: file,
+                    code: 75
+                }));
+            }
+            else if (mergedDictionary.RepetitionTime && header) {
                 if (repetitionUnit !== 's') {
                     issues.push(new Issue({
                         file: file,
