@@ -351,7 +351,7 @@ module.exports = {
     72: {
         key: 'MISSING_TSV_COLUMN_IEEG_CHANNELS',
         severity: 'error',
-        reason:   "The column names of the channels file must begin with ['name', 'type', 'units', 'sampling_frequency', 'low_cutoff', 'high_cutoff', 'notch']"
+        reason:   "The column names of the channels file must begin with ['name', 'type', 'units', 'sampling_frequency', 'low_cutoff', 'high_cutoff', 'notch', 'reference']"
     },
     73: {
         key: 'MISSING_TSV_COLUMN_IEEG_ELECTRODES',
