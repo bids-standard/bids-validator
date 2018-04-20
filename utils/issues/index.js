@@ -80,9 +80,9 @@ var issues = {
         var severityMap = config.interpret(codes, options.config);
 
         // organize by severity
-        for (var key in categorized) {
-            issue = categorized[key];
-            issue.code = key;
+        for (var code in categorized) {
+            issue = categorized[code];
+            issue.code = code;
 
             if (severityMap.hasOwnProperty(issue.code)) {
                 issue.severity = severityMap[issue.code];
@@ -93,7 +93,13 @@ var issues = {
             }
 
             if (issue.severity === 'error') {
-                errors.push(issue);
+                // Schema validation issues will yield the JSON file invalid, we should display them first to attract
+                // user attention.
+                if (code == 55) {
+                    errors.unshift(issue);
+                } else {
+                    errors.push(issue);
+                }
             } else if (issue.severity === 'warning' && !options.ignoreWarnings) {
                 warnings.push(issue);
             } else if (issue.severity === 'ignore') {
