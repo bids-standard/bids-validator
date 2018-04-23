@@ -235,6 +235,8 @@ BIDS = {
         // validate individual files
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
             var path = file.relativePath;
+            var pathParts = path.split('_');
+            var suffix = pathParts[pathParts.length - 1];
 
             // ignore associated data
             if (utils.type.isStimuliData(file.relativePath)) {
@@ -259,6 +261,12 @@ BIDS = {
             if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
 
             // collect modality summary
+            suffix = suffix.slice(0, suffix.indexOf('.'));
+            if (summary.modalities.indexOf(suffix) === -1) {
+                summary.modalities.push(suffix);
+            }
+
+            // collect modality summary
             var pathParts = path.split('_');
             var suffix = pathParts[pathParts.length - 1];
             suffix = suffix.slice(0, suffix.indexOf('.'));
@@ -268,14 +276,12 @@ BIDS = {
 
             process.nextTick(cb);
             }
-            
+
             // capture ieeg files for summary
             else if (file.name.endsWith('.gdf') || file.name.endsWith('.edf') || file.name.endsWith('.fif') || file.name.endsWith('.fif.gz')) {
                 ephys.push(file);
 
                 // collect modality summary
-                var pathParts = path.split('_');
-                var suffix = pathParts[pathParts.length - 1];
                 suffix = suffix.slice(0, suffix.indexOf('.'));
                 if (summary.modalities.indexOf(suffix) === -1) {
                     summary.modalities.push(suffix);

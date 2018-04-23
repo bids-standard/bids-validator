@@ -258,7 +258,6 @@ var channelsFileIEEG = {
         var tsv = 'name\ttype\tunits\tsampling_frequency\tlow_cutoff\thigh_cutoff\tnotch\treference\n' +
             'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight';
         validate.TSV.TSV(channelsFileIEEG, tsv, [], function (issues) {
-            console.log(issues)
             assert(issues.length === 0);
         });
     });
