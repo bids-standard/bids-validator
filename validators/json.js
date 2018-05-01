@@ -88,17 +88,5 @@ function checkUnits (file, sidecar) {
             code: 5
         }));
     }
-    if (sidecar.hasOwnProperty('PhaseEncodingDirection') && ["i", "i-", "j", "j-", "k", "k-"].indexOf(sidecar["PhaseEncodingDirection"]) == -1) {
-        issues.push(new Issue({
-            file: file,
-            code: 34
-        }));
-    }
-    if (sidecar.hasOwnProperty('SliceEncodingDirection') && ["i", "i-", "j", "j-", "k", "k-"].indexOf(sidecar["SliceEncodingDirection"]) == -1) {
-        issues.push(new Issue({
-            file: file,
-            code: 35
-        }));
-    }
     return issues;
 }
