@@ -366,5 +366,10 @@ module.exports = {
         key: 'NIFTI_PIXDIM4',
         severity: 'error',
         reason: "Nifti file's header is missing time dimension information."
+    },
+    76: {
+        key: 'EFFECTIVEECHOSPACING_TOO_LARGE',
+        severity: 'error',
+        reason: "Abnormally high value of 'EffectiveEchoSpacing'."
     }
 };
