@@ -171,20 +171,10 @@ module.exports = {
         severity: 'error',
         reason: "DWI scans should have a corresponding .bval file."
     },
-    34: {
-        key: 'PHASE_ENCODING_DIRECTION',
-        severity: 'error',
-        reason: "'PhaseEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
-    },
     36: {
         key: 'NIFTI_TOO_SMALL',
         severity: 'error',
         reason: "This file is too small to contain the minimal NIfTI header."
-    },
-    35: {
-        key: 'SLICE_ENCODING_DIRECTION',
-        severity: 'error',
-        reason: "'SliceEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
     },
     37: {
         key: 'INTENDED_FOR',
@@ -376,5 +366,10 @@ module.exports = {
         key: 'NIFTI_PIXDIM4',
         severity: 'error',
         reason: "Nifti file's header is missing time dimension information."
+    },
+    76: {
+        key: 'EFFECTIVEECHOSPACING_TOO_LARGE',
+        severity: 'error',
+        reason: "Abnormally high value of 'EffectiveEchoSpacing'."
     }
 };
