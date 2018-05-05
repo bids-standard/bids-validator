@@ -30,7 +30,7 @@ deployment:
       # Publish to NPM
       - npm install -g npm-cli-login
       - npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
-      - git checkout -f master
+      - git checkout -f $CIRCLE_TAG
       # Set the version number
       - sed -i -E "s/0.0.0/$CIRCLE_TAG/" package.json
       - npm install publish
