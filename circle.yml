@@ -16,6 +16,9 @@ test:
     - npm run lint
     # Run unit tests
     - npm run test
+    # Smoke tests
+    - bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders
+    - bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders --json
     # Test gh-pages build
     - rm -rf node_modules/
     - git checkout gh-pages
