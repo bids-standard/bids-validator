@@ -7,31 +7,50 @@ var pluralize = require('pluralize');
 var bytes     = require('bytes');
 var fs        = require('fs');
 
-module.exports = function (dir, options) {
+module.exports = function(dir, options) {
     if (fs.existsSync(dir)) {
-        validate.BIDS(dir, options, function (issues, summary) {
-            var errors = issues.errors;
-            var warnings = issues.warnings;
-            if (issues.errors.length === 1 && issues.errors[0].code === '61') {
-                console.log(colors.red("The directory " + dir + " failed an initial Quick Test. This means the basic names and structure of the files and directories do not comply with BIDS specification. For more info go to http://bids.neuroimaging.io/"));
-            } else if (issues.config && issues.config.length >= 1) {
-                console.log(colors.red('Invalid Config File'));
-                for (var i = 0; i < issues.config.length; i++) {
-                    var issue = issues.config[i];
-                    issue.file.file = {relativePath: issue.file.path};
-                    issue.files = [issue.file];
+        if (options.json) {
+            validate.BIDS(dir, options, function (issues, summary) {
+                console.log(JSON.stringify({ issues, summary }));
+            });
+        } else {
+            validate.BIDS(dir, options, function (issues, summary) {
+                var errors = issues.errors;
+                var warnings = issues.warnings;
+                if (issues.errors.length === 1 && issues.errors[0].code === "61") {
+                    console.log(
+                        colors.red(
+                            "The directory " +
+                            dir +
+                            " failed an initial Quick Test. This means the basic names and structure of the files and directories do not comply with BIDS specification. For more info go to http://bids.neuroimaging.io/"
+                        )
+                    );
+                } else if (issues.config && issues.config.length >= 1) {
+                    console.log(colors.red("Invalid Config File"));
+                    for (var i = 0; i < issues.config.length; i++) {
+                        var issue = issues.config[i];
+                        issue.file.file = { relativePath: issue.file.path };
+                        issue.files = [issue.file];
+                    }
+                    logIssues(issues.config, "red", options);
+                } else if (errors.length >= 1 || warnings.length >= 1) {
+                    logIssues(errors, "red", options);
+                    logIssues(warnings, "yellow", options);
+                } else {
+                    console.log(
+                        colors.green("This dataset appears to be BIDS compatible.")
+                    );
                 }
-                logIssues(issues.config, 'red', options);
-            } else if (errors.length >= 1 || warnings.length >= 1) {
-                logIssues(errors, 'red', options);
-                logIssues(warnings, 'yellow', options);
-            }
-            else {
-                console.log(colors.green("This dataset appears to be BIDS compatible."));
-            }
-            logSummary(summary);
-            if (issues === 'Invalid' || errors && errors.length >= 1 || issues.config && issues.config.length >= 1) {process.exit(1);}
-        });
+                logSummary(summary);
+                if (
+                    issues === "Invalid" ||
+                    (errors && errors.length >= 1) ||
+                    (issues.config && issues.config.length >= 1)
+                ) {
+                    process.exit(1);
+                }
+            });
+        }
     } else {
         console.log(colors.red(dir + " does not exist"));
         process.exit(2);
