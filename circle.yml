@@ -43,7 +43,7 @@ deployment:
       - git checkout gh-pages -f
       - git pull
       - npm install
-      - gulp build
+      - ./node_modules/.bin/gulp build
       - git status
       - git commit dist/ --allow-empty -m "Circle CI - validator demo update"
       - git push origin gh-pages
