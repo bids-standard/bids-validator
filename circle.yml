@@ -1,11 +1,15 @@
 machine:
   node:
-    version: 6.11.0
+    version: 8.9.0
     
 general:
   artifacts:
     - "~/web_version"
 
+dependencies:
+  override:
+    - rm -rf node_modules/
+    - npm install
 test:
   override:
     # Lint
