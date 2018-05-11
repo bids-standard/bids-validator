@@ -22,24 +22,19 @@
                 "TriggerChannelCount": {"type" : "integer"},
                 "EEGPlacementScheme": {"type" : "string"},
                 "EEGReference": {"type" : "string"},
-                "ManufacturersAmplifierModelName": {"type": "string"},
-                "ManufacturersCapModelName": {"type": "string"},
+                "CapManufacturer": {"type": "string"},
+                "CapManufacturersModelName": {"type": "string"},
                 "SoftwareFilters": {
                   "anyOf": [
-                    {"type" : "object",
-                                    "additionalProperties": {"type":"object"}
-                    },
+                    {"type": "object", "additionalProperties": {"type":"object"}},
                     {"type": "string", "pattern": "^n/a$"}
-
                   ]
                 },
                 "RecordingDuration": {"type" : "number"},
                 "RecordingType": {"type" : "string"},
                 "EpochLength": {"type" : ["number","string"]},
-                "SubjectArtefactDescription": {"type" : "string"},
-                "DigitizedLandmarks": {"type" : "boolean"},
-                "DigitizedHeadPoints": {"type" : "boolean"}
-                    },
+                "SubjectArtefactDescription": {"type" : "string"}
+        },
         "required": [
             "TaskName",
             "SamplingFrequency",
