@@ -106,7 +106,7 @@ function getBIDSIgnoreFileObj(dir) {
 function getBIDSIgnore(dir, callback) {
     var ig = ignore()
         .add('.*')
-        .add('!*.icloud)
+        .add('!*.icloud')
         .add('/derivatives')
         .add('/sourcedata')
         .add('/code');
