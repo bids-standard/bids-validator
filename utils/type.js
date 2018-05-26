@@ -117,7 +117,7 @@ module.exports = {
         var eegSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
-            + '(_events.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$');
+            + '(_events.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg)$');
 
         return conditionalMatch(scansRe, path) || conditionalMatch(funcSesRe, path) ||
             conditionalMatch(anatSesRe, path) || conditionalMatch(dwiSesRe, path) ||
@@ -218,7 +218,7 @@ module.exports = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?eeg' +
             '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
-            '(_eeg.(vhdr|edf|bfd|gdf|set|fdt)|(_events.tsv|_electrodes.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg))$');
+            '(_eeg.(vhdr|vmrk|eeg|edf|bfd|gdf|set|fdt)|(_events.tsv|_electrodes.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg))$');
         return conditionalMatch(EegRe, path);
     },
 
