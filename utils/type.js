@@ -219,7 +219,7 @@ module.exports = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?ieeg' +
             '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?(?:_space-[a-zA-Z0-9]+)?' +
-            '(_ieeg.(edf|gdf|fif|fif.gz)|(_events.tsv|_channels.tsv|_electrodes.tsv|_ieeg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$');
+            '(_ieeg.(edf|vhdr|vmrk|dat)|(_events.tsv|_channels.tsv|_electrodes.tsv|_ieeg.json|_coordsystem.json|_photo.jpg))$');
         return conditionalMatch(IEEGRe, path);
     },
 

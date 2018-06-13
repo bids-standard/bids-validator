@@ -278,7 +278,7 @@ BIDS = {
             }
 
             // capture ieeg files for summary
-            else if (file.name.endsWith('.gdf') || file.name.endsWith('.edf') || file.name.endsWith('.fif') || file.name.endsWith('.fif.gz')) {
+            else if (file.name.endsWith('.edf') || file.name.endsWith('.vhdr') || file.name.endsWith('.vmrk') || file.name.endsWith('.dat')) {
                 ephys.push(file);
 
                 // collect modality summary

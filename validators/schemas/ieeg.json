@@ -26,7 +26,8 @@
                 "SEEGChannelCount": {"type" : "integer"},
                 "ECOGChannelCount": {"type" : "integer"},
                 "iEEGPlacementScheme": {"type": "string"},
-                "iEEGReferenceScheme": {"type": "string"},
+                "iEEGReference": {"type": "string"},
+                "iEEGGround": {"type": "string"},
                 "Stimulation": {"type": "boolean"},
                 "Medication": {"type": "string"}
                     },

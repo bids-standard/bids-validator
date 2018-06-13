@@ -4,11 +4,8 @@
                 "iEEGCoordinateSystem": {"type": "string","minLength": 1},
                 "iEEGCoordinateUnits": {"type": "string","minLength": 1},
                 "iEEGCoordinateProcessingDescripton": {"type": "string","minLength": 1},
-                "IntendedFor": {"type": "string","minLength": 1},
-                "AssociatedImageCoordinateSystem": {"type": "string","minLength": 1},
-                "AssociatedImageCoordinateUnits": {"type": "string","minLength": 1},
                 "iEEGCoordinateProcessingReference": {"type": "string","minLength": 1},
-                "AssociatedImageCoordinateSystemDescription": {"type": "string","minLength": 1}
+                "IntendedFor": {"type": "string","minLength": 1}
                 },
         "required": ["iEEGCoordinateSystem",
                      "iEEGCoordinateUnits"

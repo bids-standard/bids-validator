@@ -250,9 +250,10 @@ var suiteIEEG = describe('utils.type.isIEEG', function(){
     before(function(done) {
         var goodFilenames = [
             "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json",
-            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.fif",
             "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.edf",
-            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.gdf",
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.vhdr",
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.vmrk",
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.dat",
             "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_channels.tsv",
             "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_electrodes.tsv"
         ];
