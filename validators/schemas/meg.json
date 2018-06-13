@@ -24,11 +24,10 @@
                 "EMGChannelCount": {"type" : "integer"},
                 "MiscChannelCount": {"type" : "integer"},
                 "TriggerChannelCount": {"type" : "integer"},
-                "EEGSamplingFrequency": {"type" : "number"},
                 "EEGPlacementScheme": {"type" : "string"},
                 "EEGReference": {"type" : "string"},
-                "ManufacturersAmplifierModelName": {"type": "string"},
-                "ManufacturersCapModelName": {"type": "string"},
+                "CapManufacturer": {"type": "string"},
+                "CapManufacturersModelName": {"type": "string"},
                 "DewarPosition": {"type" : "string"},
                 "SoftwareFilters": {
                   "anyOf": [
