@@ -192,7 +192,6 @@ var TSV = function TSV (file, contents, fileList, callback) {
         checkheader('y', 2, file, 73);
         checkheader('z', 3, file, 73);
         checkheader('size', 4, file, 73);
-        checkheader('type', 5, file, 73);
     }
 
   // check partcipants.tsv for age 89+
