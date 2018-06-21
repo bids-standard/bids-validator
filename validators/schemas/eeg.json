@@ -9,7 +9,7 @@
                 "InstitutionName": {"type": "string"},
                 "InstitutionAddress": {"type": "string"},
                 "Manufacturer": {"type": "string","minLength": 1},
-                "ManufacturerModelName": {"type": "string", "minLength": 1},
+                "ManufacturersModelName": {"type": "string", "minLength": 1},
                 "DeviceSerialNumber": {"type": "string"},
                 "DeviceSoftwareVersion": {"type": "string"},
                 "SoftwareVersions": {"type": "string"},
@@ -25,7 +25,7 @@
                 "EEGReference": {"type" : "string"},
                 "EEGGround": {"type" : "string"},
                 "CapManufacturer": {"type": "string"},
-                "CapModelName": {"type": "string"},
+                "CapManufacturersModelName": {"type": "string"},
                 "HardwareFilters": {
                   "anyOf": [
                     {"type": "object", "additionalProperties": {"type":"object"}},
