@@ -18,7 +18,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
         issues.push(new Issue({
             file: file,
             evidence: contents,
-            code: 69
+            code: 70
         }));
         callback(issues, null);
         return;
