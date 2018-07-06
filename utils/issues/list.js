@@ -12,7 +12,8 @@ module.exports = {
         reason: 'Files with such naming scheme are not part of BIDS specification. This error is most commonly ' +
         'caused by typos in file names that make them not BIDS compatible. Please consult the specification and ' +
         'make sure your files are named correctly. If this is not a file naming issue (for example when including ' +
-        'files not yet covered by the BIDS specification) you should include a ".bidsignore" file in your dataset. Please ' +
+        'files not yet covered by the BIDS specification) you should include a ".bidsignore" file in your dataset (see' +
+        ' https://github.com/INCF/bids-validator#bidsignore for details). Please ' +
         'note that derived (processed) data should be placed in /derivatives folder and source data (such as DICOMS ' +
         'or behavioural logs in proprietary formats) should be placed in the /sourcedata folder.'
     },
