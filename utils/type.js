@@ -200,7 +200,7 @@ module.exports = {
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?meg' +
             '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
-            '(_meg.(ctf|fif|fif.gz|4d|kit|kdf|itab)|(_meg.ds\\/.*)|(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$');
+            '(_meg.(fif|fif.gz|sqd|con|kdf|chn|trg|raw|raw.mhd)|(_meg.ds\\/.*)|(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$');
         return conditionalMatch(MegRe, path);
     },
 
