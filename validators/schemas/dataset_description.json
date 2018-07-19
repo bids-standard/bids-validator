@@ -2,39 +2,54 @@
     "$schema": "http://json-schema.org/draft-06/schema#",
     "$id": "http://example.com/example.json",
     "properties": {
+        "Name": {
+            "type": "string"
+        },
+        "BIDSVersion": {
+            "type": "string"
+        },
+        "License": {
+            "type": "string"
+        },
         "Authors": {
             "items": {
                 "type": "string"
             },
             "type": "array"
         },
-        "BIDSVersion": {
-            "type": "string"
+        "Acknowledgements": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "HowToAcknowledge": {
+            "items": {
+                "type": "string"
+            },
+            "type": [
+                "string",
+                "array"
+            ]
         },
         "Funding": {
             "items": {
                 "type": "string"
             },
-            "type": ["array", "string"]
+            "type": [
+                "array",
+                "string"
+            ]
         },
-        "HowToAcknowledge": {
-          "items": {
-              "type": "string"
-            },
-            "type": ["string", "array"]
-        },
-        "License": {
-            "type": "string"
-        },
-        "Name": {
-            "type": "string"
-        },
-	"ReferencesAndLinks": {
+        "ReferencesAndLinks": {
             "items": {
                 "type": "string"
             },
             "type": "array"
-	}
+        },
+        "DatasetDOI": {
+            "type": "string"
+        }
     },
     "required": [
         "Name",
