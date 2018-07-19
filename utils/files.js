@@ -105,10 +105,11 @@ function getBIDSIgnoreFileObj(dir) {
 
 function getBIDSIgnore(dir, callback) {
     var ig = ignore()
+        .add('.*')
+        .add('!*.icloud')
         .add('/derivatives')
         .add('/sourcedata')
-        .add('/code')
-        .add('.*');
+        .add('/code');
 
     var bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir);
     if (bidsIgnoreFileObj) {
@@ -247,14 +248,19 @@ function readNiftiHeader (file, callback) {
                     callback(handleGunzipError(buffer, file));
                 });
 
-            fs.open(file.path, 'r', function(status, fd) {
-                fs.read(fd, buffer, 0, bytesRead, 0, function() {
-                    if (file.name.endsWith('.nii')) {
-                        callback(parseNIfTIHeader(buffer, file));
-                    } else {
-                        decompressStream.write(buffer);
-                    }
-                });
+            fs.open(file.path, 'r', function(err, fd) {
+                if (err){
+                    callback({error: new Issue({code: 44, file: file})});
+                    return;
+                } else {
+                    fs.read(fd, buffer, 0, bytesRead, 0, function () {
+                        if (file.name.endsWith('.nii')) {
+                            callback(parseNIfTIHeader(buffer, file));
+                        } else {
+                            decompressStream.write(buffer);
+                        }
+                    });
+                }
             });
         });
     } else {
