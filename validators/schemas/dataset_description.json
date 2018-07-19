@@ -21,7 +21,10 @@
             "items": {
                 "type": "string"
             },
-            "type": "array"
+            "type": [
+                "string",
+                "array"
+            ]
         },
         "HowToAcknowledge": {
             "items": {
