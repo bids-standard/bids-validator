@@ -18,7 +18,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
         issues.push(new Issue({
             file: file,
             evidence: contents,
-            code: 69
+            code: 70
         }));
         callback(issues, null);
         return;
@@ -68,7 +68,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
                     character: "at column # " + (j+1),
                     code: 23
                 }));
-            } else if ((value === "NA" || value === "na" || value === "nan") && !NACells) {
+            } else if ((value === "NA" || value === "na" || value === "nan" || value === "NaN") && !NACells) {
                 NACells = true;
                 // check if missing value is properly labeled as 'n/a'
                 issues.push(new Issue({

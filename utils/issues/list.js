@@ -12,7 +12,8 @@ module.exports = {
         reason: 'Files with such naming scheme are not part of BIDS specification. This error is most commonly ' +
         'caused by typos in file names that make them not BIDS compatible. Please consult the specification and ' +
         'make sure your files are named correctly. If this is not a file naming issue (for example when including ' +
-        'files not yet covered by the BIDS specification) you should include a ".bidsignore" file in your dataset. Please ' +
+        'files not yet covered by the BIDS specification) you should include a ".bidsignore" file in your dataset (see' +
+        ' https://github.com/INCF/bids-validator#bidsignore for details). Please ' +
         'note that derived (processed) data should be placed in /derivatives folder and source data (such as DICOMS ' +
         'or behavioural logs in proprietary formats) should be placed in the /sourcedata folder.'
     },
@@ -171,20 +172,10 @@ module.exports = {
         severity: 'error',
         reason: "DWI scans should have a corresponding .bval file."
     },
-    34: {
-        key: 'PHASE_ENCODING_DIRECTION',
-        severity: 'error',
-        reason: "'PhaseEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
-    },
     36: {
         key: 'NIFTI_TOO_SMALL',
         severity: 'error',
         reason: "This file is too small to contain the minimal NIfTI header."
-    },
-    35: {
-        key: 'SLICE_ENCODING_DIRECTION',
-        severity: 'error',
-        reason: "'SliceEncodingDirection' needs to be one of 'i', 'i-, 'j', 'j-', 'k', or k-'"
     },
     37: {
         key: 'INTENDED_FOR',
@@ -376,5 +367,10 @@ module.exports = {
         key: 'NIFTI_PIXDIM4',
         severity: 'error',
         reason: "Nifti file's header is missing time dimension information."
+    },
+    76: {
+        key: 'EFFECTIVEECHOSPACING_TOO_LARGE',
+        severity: 'error',
+        reason: "Abnormally high value of 'EffectiveEchoSpacing'."
     }
 };

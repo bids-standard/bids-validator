@@ -9,19 +9,24 @@
             "type": "string"
         },
         "EchoTime": {
-            "type": "number"
+            "type": "number",
+            "exclusiveMinimum": 0
         },
         "EffectiveEchoSpacing": {
-            "type": "number"
+            "type": "number",
+            "exclusiveMinimum": 0
         },
         "PhaseEncodingDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["i", "j", "k", "i-", "j-", "k-"]
         },
         "RepetitionTime": {
-            "type": "number"
+            "type": "number",
+            "exclusiveMinimum": 0
         },
         "SliceEncodingDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["i", "j", "k", "i-", "j-", "k-"]
         },
         "SliceTiming": {
             "type": "array",

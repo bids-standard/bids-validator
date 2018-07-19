@@ -1,31 +1,39 @@
 machine:
   node:
-    version: 6.11.0
+    version: 8.9.0
     
 general:
   artifacts:
     - "~/web_version"
 
+dependencies:
+  override:
+    - rm -rf node_modules/
+    - npm install
 test:
   override:
     # Lint
     - npm run lint
     # Run unit tests
     - npm run test
+    # Smoke tests
+    - bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders
+    - bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders --json
     # Test gh-pages build
     - rm -rf node_modules/
     - git checkout gh-pages
     - npm install
     - if [ -z ${CIRCLE_PR_USERNAME}]; then npm install ${CIRCLE_REPOSITORY_URL}.git\#${CIRCLE_SHA1}; else npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}.git\#${CIRCLE_SHA1}; fi
-    - gulp build && rsync -av --exclude=".*" --exclude="node_modules" --exclude="src" --exclude="tests" . ~/web_version/
+    - ./node_modules/.bin/gulp build && rsync -av --exclude=".*" --exclude="node_modules" --exclude="src" --exclude="tests" . ~/web_version/
 
 deployment:
   production:
     tag: /.*/
     commands:
       # Publish to NPM
-      - echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
-      - git checkout -f master
+      - npm install -g npm-cli-login
+      - npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
+      - git checkout -f $CIRCLE_TAG
       # Set the version number
       - sed -i -E "s/0.0.0/$CIRCLE_TAG/" package.json
       - npm install publish
@@ -38,7 +46,7 @@ deployment:
       - git checkout gh-pages -f
       - git pull
       - npm install
-      - gulp build
+      - ./node_modules/.bin/gulp build
       - git status
       - git commit dist/ --allow-empty -m "Circle CI - validator demo update"
       - git push origin gh-pages

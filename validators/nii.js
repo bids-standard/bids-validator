@@ -157,6 +157,15 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                     code: 10,
                     reason: "You have to define 'RepetitionTime' for this file. " + sidecarMessage
                 }));
+            } else if (header && mergedDictionary.EffectiveEchoSpacing && mergedDictionary.PhaseEncodingDirection) {
+                var axes = { i:0, j:1, k:2 };
+                if (mergedDictionary.EffectiveEchoSpacing * header.dim[axes[mergedDictionary.PhaseEncodingDirection[0]]] > mergedDictionary.RepetitionTime){
+                    issues.push(new Issue({
+                        file: file,
+                        code: 76,
+                        reason: "Abnormally high value of 'EffectiveEchoSpacing' (" + mergedDictionary.EffectiveEchoSpacing + " seconds)."
+                    }));
+                }
             }
 
             if (typeof repetitionTime === 'undefined' && header) {
