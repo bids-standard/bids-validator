@@ -246,7 +246,7 @@ BIDS = {
             }
 
             // check nifti and MEG files
-        else if (RegExp('\.nii|i\.gz|\.fif|f\.gz|\.sqd|\.con|\.kdf|\.chn|\.trg|\.raw|\.mhf').test(file.name.slice(-4))) {
+        else if (RegExp('^.*\.(nii|nii\.gz|fif|fif\.gz|sqd|con|kdf|chn|trg|raw|raw\.mhf)$').test(file.name)) {
 
             // capture nifties for later validation
             if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
