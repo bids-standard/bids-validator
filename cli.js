@@ -118,7 +118,7 @@ function logSummary (summary) {
         console.log();
         
         //Neurostars message
-console.log(colors.red("If you have any questions please post on https://neurostars.org/tags/bids"));
+        console.log(colors.red("If you have any questions please post on https://neurostars.org/tags/bids"));
 
         console.log();
     }
