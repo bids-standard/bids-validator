@@ -176,7 +176,7 @@ BIDS = {
                 }
                 summary.size += file.stats.size;
             }
-        }); 
+        });
 
         // remove ignored files from list:
         Object.keys(fileList).forEach(function(key) {
@@ -245,19 +245,26 @@ BIDS = {
                 process.nextTick(cb);
             }
 
-            // capture niftis for later validation
-            else if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {
-                niftis.push(file);
+            // check nifti and MEG files
+            else if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz') ||
+                     file.name.endsWith('.fif') || file.name.endsWith('.fif.gz') ||
+                     file.name.endsWith('.sqd') || file.name.endsWith('con') ||
+                     file.name.endsWith('kdf') || file.name.endsWith('chn') ||
+                     file.name.endsWith('trg') || file.name.endsWith('raw') ||
+                     file.name.endsWith('raw.mhd')) {
 
-                // collect modality summary
-                var pathParts = path.split('_');
-                var suffix = pathParts[pathParts.length - 1];
-                suffix = suffix.slice(0, suffix.indexOf('.'));
-                if (summary.modalities.indexOf(suffix) === -1) {
-                    summary.modalities.push(suffix);
-                }
+            // capture nifties for later validation
+            if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
 
-                process.nextTick(cb);
+            // collect modality summary
+            var pathParts = path.split('_');
+            var suffix = pathParts[pathParts.length - 1];
+            suffix = suffix.slice(0, suffix.indexOf('.'));
+            if (summary.modalities.indexOf(suffix) === -1) {
+                summary.modalities.push(suffix);
+            }
+
+            process.nextTick(cb);
             }
 
             // validate tsv
