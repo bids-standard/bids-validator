@@ -115,8 +115,7 @@ BIDS = {
                     var isCorrectModality = false;
                     if (
                         (path[0].includes('.nii') && ['anat', 'func', 'dwi'].indexOf(path[1]) !=-1 ) ||
-                        (path[0].includes('.json') && path[1] == 'meg') ||
-                        (path[0].includes('.json') && path[1] == 'eeg')
+                        (path[0].includes('.json') && (path[1] == 'meg' || path[1] == 'eeg'))
                     ){
                         isCorrectModality = true;
                     }
