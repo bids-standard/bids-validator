@@ -246,19 +246,21 @@ BIDS = {
                 process.nextTick(cb);
             }
 
-            // capture niftis for later validation
-            else if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {
-                niftis.push(file);
+            // check nifti and MEG files
+        else if (RegExp('^.*\.(nii|nii\.gz|fif|fif\.gz|sqd|con|kdf|chn|trg|raw|raw\.mhf)$').test(file.name)) {
 
-                // collect modality summary
-                var pathParts = path.split('_');
-                var suffix = pathParts[pathParts.length - 1];
-                suffix = suffix.slice(0, suffix.indexOf('.'));
-                if (summary.modalities.indexOf(suffix) === -1) {
-                    summary.modalities.push(suffix);
-                }
+            // capture nifties for later validation
+            if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
 
-                process.nextTick(cb);
+            // collect modality summary
+            var pathParts = path.split('_');
+            var suffix = pathParts[pathParts.length - 1];
+            suffix = suffix.slice(0, suffix.indexOf('.'));
+            if (summary.modalities.indexOf(suffix) === -1) {
+                summary.modalities.push(suffix);
+            }
+
+            process.nextTick(cb);
             }
 
             // validate tsv
