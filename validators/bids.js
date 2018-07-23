@@ -235,7 +235,7 @@ BIDS = {
                                          'nii|nii\.gz|', // MRI
                                          'fif|fif\.gz|sqd|con|kdf|chn|trg|raw|raw\.mhf|', // MEG
                                          'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt', // EEG
-                                         ')$'].join(''))
+                                         ')$'].join(''));
 
             // ignore associated data
             if (utils.type.isStimuliData(file.relativePath)) {
