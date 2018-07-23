@@ -231,6 +231,13 @@ BIDS = {
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
             var path = file.relativePath;
 
+            // Make RegExp for detecting modalities from data file extensions
+            var dataExtRE = new RegExp (['^.*\.(',
+                                         'nii|nii\.gz|', // MRI
+                                         'fif|fif\.gz|sqd|con|kdf|chn|trg|raw|raw\.mhf|', // MEG
+                                         'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt', // EEG
+                                         ')$'].join(''))
+
             // ignore associated data
             if (utils.type.isStimuliData(file.relativePath)) {
                 process.nextTick(cb);
@@ -246,22 +253,23 @@ BIDS = {
                 process.nextTick(cb);
             }
 
-            // check nifti and MEG files
-        else if (RegExp('^.*\.(nii|nii\.gz|fif|fif\.gz|sqd|con|kdf|chn|trg|raw|raw\.mhf)$').test(file.name)) {
+            // check modality by data file extension ...
+            // and capture data files for later sanity checks (when available)
+            else if (dataExtRE.test(file.name)) {
 
-            // capture nifties for later validation
-            if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
+                // capture nifties for later validation
+                if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
 
-            // collect modality summary
-            var pathParts = path.split('_');
-            var suffix = pathParts[pathParts.length - 1];
-            suffix = suffix.slice(0, suffix.indexOf('.'));
-            if (summary.modalities.indexOf(suffix) === -1) {
-                summary.modalities.push(suffix);
-            }
+                // collect modality summary
+                var pathParts = path.split('_');
+                var suffix = pathParts[pathParts.length - 1];
+                suffix = suffix.slice(0, suffix.indexOf('.'));
+                if (summary.modalities.indexOf(suffix) === -1) {
+                    summary.modalities.push(suffix);
+                }
 
-            process.nextTick(cb);
-            }
+                process.nextTick(cb);
+                }
 
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {
