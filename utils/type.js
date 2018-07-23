@@ -90,32 +90,26 @@ module.exports = {
      * Check if the file has appropriate name for a session level
      */
     isSessionLevel: function (path) {
-        var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(_scans.tsv|_scans.json)$');
 
-        var funcSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var funcSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_echo-[0-9]+)?'
             + '(_bold.json|_sbref.json|_events.json|_events.tsv|_physio.json|_stim.json)$');
 
-        var anatSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var anatSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+_)?'
             + '(' + anatSuffixes.join("|") + ').json$');
 
-        var dwiSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var dwiSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
             + 'dwi.(?:json|bval|bvec)$');
 
-        var megSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var megSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
             + '(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$');
 
-        var eegSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var eegSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
             + '(_events.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg)$');
 
