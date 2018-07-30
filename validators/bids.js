@@ -246,7 +246,7 @@ BIDS = {
             }
 
             // check nifti and MEG files
-        else if (RegExp('^.*\.(nii|nii\.gz|fif|fif\.gz|sqd|con|kdf|chn|trg|raw|raw\.mhf)$').test(file.name)) {
+        else if (RegExp('^.*\\.(nii|nii\\.gz|fif|fif\\.gz|sqd|con|kdf|chn|trg|raw|raw\\.mhf)$').test(file.name)) {
 
             // capture nifties for later validation
             if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
@@ -496,7 +496,7 @@ BIDS = {
 
             //capture session and subject id from filename to find if files are in
             // correct sub/ses directory
-            var filename = path.replace(/^.*[\\\/]/, '');
+            var filename = path.replace(/^.*[\\/]/, '');
 
             // capture sub from file name
             unmat = (/^sub-([a-zA-Z0-9]+)/).exec(filename);
