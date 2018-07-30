@@ -22,26 +22,26 @@
   },
   "homepage": "https://github.com/INCF/bids-validator",
   "dependencies": {
-    "ajv": "^5.2.2",
+    "ajv": "^6.5.2",
     "async": "^2.1.5",
-    "bytes": "^2.3.0",
+    "bytes": "^3.0.0",
     "cliff": "^0.1.10",
     "colors": "^1.1.0",
+    "ignore": "^4.0.2",
     "jshint": "^2.8.0",
-    "minimatch": "3.0.3",
+    "minimatch": "3.0.4",
     "nifti-js": "^1.0.0",
     "pako": "^1.0.4",
     "path": "^0.12.7",
-    "pluralize": "^3.1.0",
-    "yargs": "^6.6.0",
-    "ignore": "^3.3.7"
+    "pluralize": "^7.0.0",
+    "yargs": "^12.0.1"
   },
   "devDependencies": {
     "adm-zip": "",
     "chai": "",
-    "eslint": "^3.16.1",
-    "mocha": "^3.2.0",
+    "eslint": "^5.2.0",
+    "mocha": "^5.2.0",
     "publish": "^0.6.0",
-    "sync-request": "4.0.1"
+    "sync-request": "6.0.0"
   }
 }

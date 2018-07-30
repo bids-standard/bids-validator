@@ -1,6 +1,7 @@
 var utils = require('../utils');
 var Ajv = require('ajv');
 var ajv = new Ajv({allErrors: true});
+ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
 var Issue = utils.issues.Issue;
 
 /**
