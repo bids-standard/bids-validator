@@ -210,6 +210,7 @@ var suiteMEG = describe('utils.type.isMEG', function(){
         var goodFilenames = [
             "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.sqd",
             "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.raw.mhd",
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/xyz",  // for e.g., BTi files
             "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_markers.sqd",
             "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.json",
             "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_part-01_meg.fif",
@@ -224,6 +225,8 @@ var suiteMEG = describe('utils.type.isMEG', function(){
         });
 
         var badFilenames = [
+            // only parent directory name matters for KIT/BTi systems
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_megggg/sub-01_ses-001_task-rest_run-01_meg.sqd",
             "/sub-01/meg/sub-01_ses-001_task-rest_run-01_meg.json",
             "/sub-01/ses-001/meg/sub-12_ses-001_task-rest_run-01_part-01_meg.fif",
             "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.tsv"];
