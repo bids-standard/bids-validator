@@ -10,6 +10,7 @@ var json   = require('./json');
 var NIFTI  = require('./nii');
 var bval   = require('./bval');
 var bvec   = require('./bvec');
+var Events = require('./events');
 var session = require('./session');
 var checkAnyDataPresent = require('./checkAnyDataPresent');
 var headerFields = require('./headerFields');
@@ -142,6 +143,10 @@ BIDS = {
         var jsonContentsDict = {},
             bContentsDict = {},
             events = [],
+            stimuli = {
+                events: [],
+                directory: [],
+            },
             niftis = [],
             headers = [],
             participants = null,
@@ -232,6 +237,7 @@ BIDS = {
 
             // ignore associated data
             if (utils.type.isStimuliData(file.relativePath)) {
+                stimuli.directory.push(file);
                 process.nextTick(cb);
             }
 
@@ -273,7 +279,7 @@ BIDS = {
                     if (file.name.endsWith('_events.tsv')) {
                         events.push(file.relativePath);
                     }
-                    TSV.TSV(file, contents, fileList, function (issues, participantList) {
+                    TSV.TSV(file, contents, fileList, function (issues, participantList, stimFiles) {
                         if (participantList) {
                             if (file.name.endsWith('participants.tsv')) {
                                 participants = {
@@ -286,6 +292,10 @@ BIDS = {
                                     file: file
                                 });
                             }
+                        }
+                        if (stimFiles.length) {
+                            // add unique new events to the stimuli.events array
+                            stimuli.events = [... new Set([...stimuli.events, ...stimFiles])];
                         }
                         self.issues = self.issues.concat(issues);
                         process.nextTick(cb);
@@ -455,6 +465,8 @@ BIDS = {
                 //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
                 TSV.checkphenotype(phenotypeParticipants, summary, self.issues);
 
+                // check that all stimuli files present in /stimuli are included in an _events.tsv file
+                Events.checkStimuli(stimuli, self.issues);
 
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));
