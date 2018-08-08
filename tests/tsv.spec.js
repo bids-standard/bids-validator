@@ -87,6 +87,15 @@ describe('TSV', function(){
         });
     });
 
+    it('should return all values in the stim_file column as a list', function () {
+        var tsv = 'onset\tduration\tstim_file\n' +
+                  'value-one\tvalue-two\timages/red-square.jpg';
+        var fileList = [{relativePath: '/stimuli/images/red-square.jpg'}];
+        validate.TSV.TSV(eventsFile, tsv, fileList, function (issues, participants, stimFiles) {
+            assert(stimFiles.length === 1 && stimFiles[0] === '/stimuli/images/red-square.jpg');
+        });
+    });
+
 // participants checks -----------------------------------------------------------------
 
     var participantsFile = {
