@@ -84,7 +84,7 @@ var suite = describe('BIDS example datasets ', function() {
             assert(summary.modalities.includes('bold'));
             assert(summary.totalFiles === 133);
             assert.deepEqual(errors, []);
-            assert(warnings.length === 1 && warnings[0].code === '13');
+            assert(warnings.length === 2 && warnings[0].code === '13');
             isdone();
         });
     });
@@ -102,7 +102,7 @@ var suite = describe('BIDS example datasets ', function() {
             assert(summary.modalities.includes('bold'));
             assert(summary.totalFiles === 10);
             assert(errors[0].code === '60');
-            assert(warnings.length === 1 && warnings[0].code === '13');
+            assert(warnings.length === 2 && warnings[0].code === '13');
             isdone();
         });
     });
@@ -157,6 +157,14 @@ var suite = describe('BIDS example datasets ', function() {
         var options = {ignoreNiftiHeaders: true};
         validate.BIDS("tests/data/no_valid_data", options, function (issues) {
             assertErrorCode(issues.errors, '67');
+            isdone();
+        });
+    });
+
+    it('checks for tabular files without corresponding data dictionaries', function (isdone) {
+        var options = {ignoreNiftiHeaders: true};
+        validate.BIDS("tests/data/BIDS-examples-" + test_version + "/ds001", options, function (issues) {
+            assert(issues.warnings[1].code === '77');
             isdone();
         });
     });

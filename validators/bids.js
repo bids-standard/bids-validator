@@ -246,24 +246,32 @@ BIDS = {
             }
 
             // check nifti and MEG files
-        else if (RegExp('^.*\.(nii|nii\.gz|fif|fif\.gz|sqd|con|kdf|chn|trg|raw|raw\.mhf)$').test(file.name)) {
+            else if (RegExp('^.*\.(nii|nii\.gz|fif|fif\.gz|sqd|con|kdf|chn|trg|raw|raw\.mhf)$').test(file.name)) {
+                // capture nifties for later validation
+                if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
 
-            // capture nifties for later validation
-            if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
+                // collect modality summary
+                var pathParts = path.split('_');
+                var suffix = pathParts[pathParts.length - 1];
+                suffix = suffix.slice(0, suffix.indexOf('.'));
+                if (summary.modalities.indexOf(suffix) === -1) {
+                    summary.modalities.push(suffix);
+                }
 
-            // collect modality summary
-            var pathParts = path.split('_');
-            var suffix = pathParts[pathParts.length - 1];
-            suffix = suffix.slice(0, suffix.indexOf('.'));
-            if (summary.modalities.indexOf(suffix) === -1) {
-                summary.modalities.push(suffix);
-            }
-
-            process.nextTick(cb);
+                process.nextTick(cb);
             }
 
             // validate tsv
-            else if (file.name && file.name.endsWith('.tsv')) {
+            else if (file.name && file.name.endsWith('.tsv')) {            
+                // Generate name for corresponding data dictionary file
+                let dict_path = file.path.replace(".tsv", ".json");
+                // Check if data dictionary file exists
+                if (!fs.existsSync(dict_path)) {
+                    self.issues.push(new Issue({
+                        code: 77,
+                        file: file
+                    }));                    
+                }
                 utils.files.readFile(file, function (issue, contents) {
                     if (issue) {
                         self.issues.push(issue);
