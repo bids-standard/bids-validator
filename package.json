@@ -44,7 +44,10 @@
     "adm-zip": "",
     "chai": "",
     "eslint": "^5.2.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.2",
     "mocha": "^5.2.0",
+    "prettier": "^1.14.2",
     "publish": "^0.6.0",
     "sync-request": "6.0.0"
   }
