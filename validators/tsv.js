@@ -14,6 +14,7 @@ var utils  = require('../utils');
 var TSV = function TSV (file, contents, fileList, callback) {
 
     var issues = [];
+    var stimPaths = [];
     if ((contents.includes('\r')) && (!contents.includes('\n'))) {
         issues.push(new Issue({
             file: file,
@@ -120,14 +121,16 @@ var TSV = function TSV (file, contents, fileList, callback) {
             pathList.push(fileList[f].relativePath);
         }
 
-        // check for stimuli file presence
+        // check for stimuli file
         var stimFiles = [];
         if (headers.indexOf('stim_file') > -1) {
             for (var k = 0; k < rows.length; k++) {
                 var stimFile = rows[k].split('\t')[headers.indexOf('stim_file')];
+                var stimPath = '/stimuli/' + stimFile;
                 if (stimFile && stimFile !== 'n/a' && stimFile !== 'stim_file' && stimFiles.indexOf(stimFile) == -1) {
                     stimFiles.push(stimFile);
-                    if (pathList.indexOf('/stimuli/' + stimFile) == -1) {
+                    stimPaths.push(stimPath);
+                    if (pathList.indexOf(stimPath) == -1) {
                         issues.push(new Issue({
                             file: file,
                             evidence: stimFile,
@@ -190,7 +193,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
       }
     }
 
-    callback(issues, participants);
+    callback(issues, participants, stimPaths);
 
 };
 var checkphenotype = function (phenotypeParticipants, summary, issues) {

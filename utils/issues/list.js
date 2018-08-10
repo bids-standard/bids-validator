@@ -372,5 +372,10 @@ module.exports = {
         key: 'EFFECTIVEECHOSPACING_TOO_LARGE',
         severity: 'error',
         reason: "Abnormally high value of 'EffectiveEchoSpacing'."
-    }
+    },
+    77: {
+        key: 'UNUSED_STIMULUS',
+        severity: 'warning',
+        reason: 'There are files in the /stimuli directory that are not utilized in any _events.tsv file.'
+    },
 };
