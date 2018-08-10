@@ -243,7 +243,7 @@ BIDS = {
             }
 
             // validate path naming
-            else if (!utils.type.isBIDS(file.relativePath)) {
+            else if (!utils.type.isBIDS(file.relativePath, BIDS.options.bep006)) {
                 self.issues.push(new Issue({
                     file: file,
                     evidence: file.name,
@@ -379,7 +379,7 @@ BIDS = {
             }
 
             // collect sessions & subjects
-            if (!utils.type.isStimuliData(file.relativePath) && utils.type.isBIDS(file.relativePath)) {
+            if (!utils.type.isStimuliData(file.relativePath) && utils.type.isBIDS(file.relativePath, BIDS.options.bep006)) {
                 var pathValues = utils.type.getPathValues(file.relativePath);
 
                 if (pathValues.sub && summary.subjects.indexOf(pathValues.sub) === -1) {
