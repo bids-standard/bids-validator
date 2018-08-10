@@ -17,6 +17,8 @@ var argv = require('yargs')
     .describe('verbose', 'Log more extensive information about issues.')
     .boolean('json')
     .describe('json', 'Output results as JSON.')
+    .boolean('bep006')
+    .describe('bep006', 'Enable support for BIDS extension protocol 006.')
     .option('config', {
         alias: 'c',
         describe: 'Optional configuration file. See https://github.com/INCF/bids-validator for more info.'
