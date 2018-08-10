@@ -231,9 +231,9 @@ BIDS = {
             var path = file.relativePath;
 
             // Make RegExp for detecting modalities from data file extensions
-            var dataExtRE = new RegExp (['^.*\.(',
-                                         'nii|nii\.gz|', // MRI
-                                         'fif|fif\.gz|sqd|con|kdf|chn|trg|raw|raw\.mhf|', // MEG
+            var dataExtRE = new RegExp (['^.*\\.(',
+                                         'nii|nii\\.gz|', // MRI
+                                         'fif|fif\\.gz|sqd|con|kdf|chn|trg|raw|raw\\.mhf|', // MEG
                                          'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt', // EEG
                                          ')$'].join(''));
 
@@ -504,7 +504,7 @@ BIDS = {
 
             //capture session and subject id from filename to find if files are in
             // correct sub/ses directory
-            var filename = path.replace(/^.*[\\\/]/, '');
+            var filename = path.replace(/^.*[\\/]/, '');
 
             // capture sub from file name
             unmat = (/^sub-([a-zA-Z0-9]+)/).exec(filename);
