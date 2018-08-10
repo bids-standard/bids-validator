@@ -40,7 +40,7 @@ BIDS = {
                 self.options = options;
                 BIDS.reset();
                 utils.files.readDir(dir, function (files) {
-                    self.quickTest(files, options.bep006, function (couldBeBIDS) {
+                    self.quickTest(files, BIDS.options.bep006, function (couldBeBIDS) {
                         if (couldBeBIDS) {
                             self.fullTest(files, callback);
                         } else {
