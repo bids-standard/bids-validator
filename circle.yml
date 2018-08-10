@@ -1,52 +1,81 @@
-machine:
-  node:
-    version: 8.9.0
-    
-general:
-  artifacts:
-    - "~/web_version"
+version: 2
 
-dependencies:
-  override:
-    - rm -rf node_modules/
-    - npm install
-test:
-  override:
-    # Lint
-    - npm run lint
-    # Run unit tests
-    - npm run test
-    # Smoke tests
-    - bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders
-    - bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders --json
-    # Test gh-pages build
-    - rm -rf node_modules/
-    - git checkout gh-pages
-    - npm install
-    - if [ -z ${CIRCLE_PR_USERNAME}]; then npm install ${CIRCLE_REPOSITORY_URL}.git\#${CIRCLE_SHA1}; else npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}.git\#${CIRCLE_SHA1}; fi
-    - ./node_modules/.bin/gulp build && rsync -av --exclude=".*" --exclude="node_modules" --exclude="src" --exclude="tests" . ~/web_version/
-
-deployment:
-  production:
-    tag: /.*/
-    commands:
+jobs:
+  test:
+    docker:
+      - image: node:8.11.3-alpine
+    steps:
+      - checkout
+      - run: apk --no-cache add ca-certificates
+      - restore_cache:
+          keys:
+            - npm-deps-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: npm-deps-{{ checksum "package.json" }}
+          paths: node_modules
+      - run: 
+          name: Eslint
+          command: npm run lint
+      - run: 
+          name: Mocha tests
+          command: npm run test
+      - run:
+          name: Smoke tests
+          command: bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders && bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders --json
+  githubPagesTest:
+    docker:
+      - image: node:8.11.3-alpine
+    steps:
+      - checkout
+      - run: apk --no-cache add ca-certificates
+      - restore_cache:
+          keys:
+            - npm-deps-{{ checksum "package.json" }}
+      - run: apk --no-cache add rsync git python build-base openssh
+      - run: git checkout -f gh-pages
+      - run: npm install
+      - run: if [ -z ${CIRCLE_PR_USERNAME}]; then npm install git+${CIRCLE_REPOSITORY_URL/git@github.com:/https://github.com/}\#${CIRCLE_SHA1}; else npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}\#${CIRCLE_SHA1}; fi
+      - run: ./node_modules/.bin/gulp build && rsync -av --exclude=".*" --exclude="node_modules" --exclude="src" --exclude="tests" . ~/web_version/
+  deployment:
+    docker:
+      - image: node:8.11.3-alpine
+    steps:
+      - checkout
       # Publish to NPM
-      - npm install -g npm-cli-login
-      - npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
-      - git checkout -f $CIRCLE_TAG
+      - run: npm install -g npm-cli-login
+      - run: npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
+      - run: git checkout -f $CIRCLE_TAG
       # Set the version number
-      - sed -i -E "s/0.0.0/$CIRCLE_TAG/" package.json
-      - npm install publish
-      - npm run npmPublish
+      - run: sed -i -E "s/0.0.0/$CIRCLE_TAG/" package.json
+      - run: npm install publish
+      - run: npm run npmPublish
       # Update gh-pages demo site
-      - git config --global user.email circleci@circleci
-      - git config --global user.name CircleCI
-      - rm -rf node_modules/
-      - rm -rf tests/
-      - git checkout gh-pages -f
-      - git pull
-      - npm install
-      - ./node_modules/.bin/gulp build
-      - git status
-      - git commit dist/ --allow-empty -m "Circle CI - validator demo update"
-      - git push origin gh-pages
+      - run: git config --global user.email circleci@circleci
+      - run: git config --global user.name CircleCI
+      - run: rm -rf node_modules/
+      - run: rm -rf tests/
+      - run: git checkout gh-pages -f
+      - run: git pull
+      - run: npm install
+      - run: ./node_modules/.bin/gulp build
+      - run: git status
+      - run: git commit dist/ --allow-empty -m "Circle CI - validator demo update"
+      - run: git push origin gh-pages
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - test
+      - githubPagesTest:
+          requires:
+            - test
+      - deployment:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/
