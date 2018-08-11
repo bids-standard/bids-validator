@@ -18,7 +18,7 @@ var argv = require('yargs')
     .boolean('json')
     .describe('json', 'Output results as JSON')
     .boolean('bep006')
-    .describe('bep006', 'Enable support for BIDS extension proposal 006')
+    .describe('bep006', 'Enable support for BIDS Extension Proposal 006')
     .option('config', {
         alias: 'c',
         describe: 'Optional configuration file. See https://github.com/INCF/bids-validator for more info'
