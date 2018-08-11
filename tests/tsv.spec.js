@@ -308,14 +308,6 @@ var electrodesFileIEEG = {
         });
     });
 
-    it("should not allow electrodes.tsv files without type column", function () {
-        var tsv = 'name\tx\ty\tz\tsize\tblah\n' +
-            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n';
-        validate.TSV.TSV(electrodesFileIEEG, tsv, [], function (issues) {
-            assert(issues.length === 1 && issues[0].code === 73);
-        });
-    });
-
     it("correct columns should pass for ieeg electrodes file", function () {
         var tsv = 'name\tx\ty\tz\tsize\ttype\n' +
             'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n';
