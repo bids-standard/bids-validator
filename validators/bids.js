@@ -40,7 +40,7 @@ BIDS = {
                 self.options = options;
                 BIDS.reset();
                 utils.files.readDir(dir, function (files) {
-                    self.quickTest(files, function (couldBeBIDS) {
+                    self.quickTest(files, BIDS.options.bep006, function (couldBeBIDS) {
                         if (couldBeBIDS) {
                             self.fullTest(files, callback);
                         } else {
@@ -103,7 +103,7 @@ BIDS = {
      * otherwise it will throw a callback with a
      * generic error.
      */
-    quickTest: function (fileList, callback) {
+    quickTest: function (fileList, bep006, callback) {
         var couldBeBIDS = false;
         for (var key in fileList) {
             if (fileList.hasOwnProperty(key)) {
@@ -115,7 +115,7 @@ BIDS = {
                     var isCorrectModality = false;
                     if (
                         (path[0].includes('.nii') && ['anat', 'func', 'dwi'].indexOf(path[1]) !=-1 ) ||
-                        (path[0].includes('.json') && (path[1] == 'meg' || path[1] == 'eeg'))
+                        (path[0].includes('.json') && (path[1] == 'meg' || (path[1] == 'eeg' && bep006)))
                     ){
                         isCorrectModality = true;
                     }
@@ -243,7 +243,7 @@ BIDS = {
             }
 
             // validate path naming
-            else if (!utils.type.isBIDS(file.relativePath)) {
+            else if (!utils.type.isBIDS(file.relativePath, BIDS.options.bep006)) {
                 self.issues.push(new Issue({
                     file: file,
                     evidence: file.name,
@@ -379,7 +379,7 @@ BIDS = {
             }
 
             // collect sessions & subjects
-            if (!utils.type.isStimuliData(file.relativePath) && utils.type.isBIDS(file.relativePath)) {
+            if (!utils.type.isStimuliData(file.relativePath) && utils.type.isBIDS(file.relativePath, BIDS.options.bep006)) {
                 var pathValues = utils.type.getPathValues(file.relativePath);
 
                 if (pathValues.sub && summary.subjects.indexOf(pathValues.sub) === -1) {

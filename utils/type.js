@@ -16,7 +16,7 @@ module.exports = {
      * Check if a given path is valid within the
      * bids spec.
      */
-    isBIDS: function (path) {
+    isBIDS: function (path, bep006) {
         return (
             this.isTopLevel(path) ||
             this.isStimuliData(path) ||
@@ -26,7 +26,7 @@ module.exports = {
             this.isDWI(path) ||
             this.isFunc(path) ||
             this.isMeg(path) ||
-            this.isEeg(path) ||
+            (this.isEeg(path) && bep006) ||
             this.isBehavioral(path) ||
             this.isCont(path) ||
             this.isFieldMap(path) ||
