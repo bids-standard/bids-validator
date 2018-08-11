@@ -41,7 +41,7 @@ BIDS = {
                 self.options = options;
                 BIDS.reset();
                 utils.files.readDir(dir, function (files) {
-                    self.quickTest(files, BIDS.options.bep010, function (couldBeBIDS) {
+                    self.quickTest(files, function (couldBeBIDS) {
                         if (couldBeBIDS) {
                             self.fullTest(files, callback);
                         } else {
@@ -104,7 +104,7 @@ BIDS = {
      * otherwise it will throw a callback with a
      * generic error.
      */
-    quickTest: function (fileList, bep010, callback) {
+    quickTest: function (fileList, callback) {
         var couldBeBIDS = false;
         for (var key in fileList) {
             if (fileList.hasOwnProperty(key)) {
@@ -117,7 +117,7 @@ BIDS = {
                     if (
                         (path[0].includes('.nii') && ['anat', 'func', 'dwi'].indexOf(path[1]) !=-1 ) ||
                         (path[0].includes('.json') && ['meg'].indexOf(path[1]) !=-1) ||
-                        (path[0].includes('.json') && (['ieeg'].indexOf(path[1]) !=-1) && bep010 )
+                        (path[0].includes('.json') && (['ieeg'].indexOf(path[1]) !=-1) && BIDS.options.bep010 )
                     ){
                         isCorrectModality = true;
                     }
