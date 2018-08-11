@@ -59,7 +59,7 @@ describe('JSON', function(){
 
   it('*_ieeg.json sidecars should have required key/value pairs', function(){
       var jsonObj = '{"TaskName": "Audiovis", "Manufacturer": "TDT", ' +
-                    ' "PowerLineFrequency": 50}';
+                    ' "PowerLineFrequency": 50, "SamplingFrequency": 10, "iEEGReference": "reference"}';
       validate.JSON(ieeg_file, jsonObj, function (issues) {
           assert(issues.length === 0);
       });
