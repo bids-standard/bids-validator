@@ -37,8 +37,19 @@
                 "DigitizedHeadPointsCoordinateUnits": {"type": "string"},
                 "DigitizedHeadPointsCoordinateSystemDescription": {"type": "string"}
                 },
-        "required": ["MEGCoordinateSystem",
-                     "MEGCoordinateUnits"
-                  ],
+        "anyOf": [
+            {
+                "required": [
+                    "MEGCoordinateSystem",
+                    "MEGCoordinateUnits"
+                ]
+            },
+            {
+                "required": [
+                    "EEGCoordinateSystem",
+                    "EEGCoordinateUnits"
+                ]
+            }
+        ],
         "additionalProperties": false
 }

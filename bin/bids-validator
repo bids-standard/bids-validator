@@ -10,16 +10,20 @@ var argv = require('yargs')
     .alias('version', 'v')
     .demand(1, 1)
     .boolean('ignoreWarnings')
-    .describe('ignoreWarnings', 'disregard non-critical issues')
+    .describe('ignoreWarnings', 'Disregard non-critical issues')
     .boolean('ignoreNiftiHeaders')
-    .describe('ignoreNiftiHeaders', 'disregard NIfTI header content during validation')
+    .describe('ignoreNiftiHeaders', 'Disregard NIfTI header content during validation')
     .boolean('verbose')
-    .describe('verbose', 'Log more extensive information about issues.')
+    .describe('verbose', 'Log more extensive information about issues')
+    .boolean('json')
+    .describe('json', 'Output results as JSON')
+    .boolean('bep006')
+    .describe('bep006', 'Enable support for BIDS Extension Proposal 006')
     .boolean('bep010')
     .describe('bep010', 'Enable support for BIDS extension proposal 010')
     .option('config', {
         alias: 'c',
-        describe: 'Optional configuration file. See https://github.com/INCF/bids-validator for more info.'
+        describe: 'Optional configuration file. See https://github.com/INCF/bids-validator for more info'
     })
     .epilogue("This tool checks if a dataset in a given directory is \
 compatible with the Brain Imaging Data Structure specification. To learn \

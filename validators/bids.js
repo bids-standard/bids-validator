@@ -113,14 +113,17 @@ BIDS = {
                 if (path) {
                     path = path.split('/');
                     path = path.reverse();
+
                     var isCorrectModality = false;
-                    if (
-                        (path[0].includes('.nii') && ['anat', 'func', 'dwi'].indexOf(path[1]) !=-1 ) ||
-                        (path[0].includes('.json') && ['meg'].indexOf(path[1]) !=-1) ||
-                        (path[0].includes('.json') && (['ieeg'].indexOf(path[1]) !=-1) && BIDS.options.bep010 )
-                    ){
-                        isCorrectModality = true;
-                    }
+                    // MRI
+                    if (path[0].includes('.nii') && ['anat', 'func', 'dwi'].indexOf(path[1]) !=-1) {isCorrectModality = true;}
+                    // MEG
+                    else if (path[0].includes('.json') && ['meg'].indexOf(path[1]) !=-1) {isCorrectModality = true;}
+                    // EEG
+                    else if (path[0].includes('.json') && (['eeg'].indexOf(path[1]) !=-1)  && BIDS.options.bep006) {isCorrectModality = true;}
+                    // iEEG
+                    else if (path[0].includes('.json') && (['ieeg'].indexOf(path[1]) !=-1) && BIDS.options.bep010) { isCorrectModality = true;}
+
                     if (path[2] && (path[2].indexOf('ses-') == 0 || path[2].indexOf('sub-') == 0) && isCorrectModality){
                         couldBeBIDS = true;
                         break;
@@ -239,6 +242,13 @@ BIDS = {
             const pathParts = path.split('_');
             const suffix = pathParts[pathParts.length - 1];
 
+            // Make RegExp for detecting modalities from data file extensions
+            var dataExtRE = new RegExp (['^.*\\.(',
+                                         'nii|nii\\.gz|', // MRI
+                                         'fif|fif\\.gz|sqd|con|kdf|chn|trg|raw|raw\\.mhf|', // MEG
+                                         'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt', // EEG
+                                         ')$'].join(''));
+
             // ignore associated data
             if (utils.type.isStimuliData(file.relativePath)) {
                 stimuli.directory.push(file);
@@ -246,7 +256,7 @@ BIDS = {
             }
 
             // validate path naming
-            else if (!utils.type.isBIDS(file.relativePath, BIDS.options.bep010)) {
+            else if (!utils.type.isBIDS(file.relativePath, BIDS.options.bep006, BIDS.options.bep010)) {
                 self.issues.push(new Issue({
                     file: file,
                     evidence: file.name,
@@ -255,11 +265,12 @@ BIDS = {
                 process.nextTick(cb);
             }
 
-            // check nifti and MEG files
-        else if (RegExp('^.*\\.(nii|nii\\.gz|fif|fif\\.gz|sqd|con|kdf|chn|trg|raw|raw\\.mhf)$').test(file.name)) {
+            // check modality by data file extension ...
+            // and capture data files for later sanity checks (when available)
+            else if (dataExtRE.test(file.name)) {
 
-            // capture nifties for later validation
-            if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
+                // capture nifties for later validation
+                if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
 
             // collect modality summary
             const modality = suffix.slice(0, suffix.indexOf('.'));
@@ -267,8 +278,8 @@ BIDS = {
                 summary.modalities.push(modality);
             }
 
-            process.nextTick(cb);
-            }
+                process.nextTick(cb);
+                }
 
             // capture ieeg files for summary
             else if (file.name.endsWith('.edf') || file.name.endsWith('.vhdr') || file.name.endsWith('.vmrk') || file.name.endsWith('.dat')) {
@@ -396,7 +407,7 @@ BIDS = {
             }
 
             // collect sessions & subjects
-            if (!utils.type.isStimuliData(file.relativePath) && utils.type.isBIDS(file.relativePath, BIDS.options.bep010)) {
+            if (!utils.type.isStimuliData(file.relativePath) && utils.type.isBIDS(file.relativePath, BIDS.options.bep006, BIDS.options.bep010)) {
                 var pathValues = utils.type.getPathValues(file.relativePath);
 
                 if (pathValues.sub && summary.subjects.indexOf(pathValues.sub) === -1) {

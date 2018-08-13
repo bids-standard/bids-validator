@@ -27,6 +27,7 @@ module.exports = {
             this.isFunc(path) ||
             this.isMeg(path) ||
             (this.isIEEG(path) && bep010) ||
+            (this.isEeg(path) && bep006) ||
             this.isBehavioral(path) ||
             this.isCont(path) ||
             this.isFieldMap(path) ||
@@ -57,13 +58,14 @@ module.exports = {
 
         var ieegTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
             + '(_ieeg.json|_channels.tsv|_electrodes.tsv|_photo.jpg|_coordsystem.json)$');
+        var eegTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
+            + '(_eeg.json|_channels.tsv|_photo.jpg|_coordsystem.json)$');
 
         var otherTopFiles = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?'
             + '(physio.json|stim.json)$');
 
         return (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) ||
-        anatTopRe.test(path) || multiDirFieldmapRe.test(path) || otherTopFiles.test(path) || megTopRe.test(path) ||
-        ieegTopRe.test(path));
+        anatTopRe.test(path) || multiDirFieldmapRe.test(path) || otherTopFiles.test(path) || megTopRe.test(path) || eegTopRe.test(path) || ieegTopRe.test(path));
     },
 
     /**
@@ -91,29 +93,28 @@ module.exports = {
      * Check if the file has appropriate name for a session level
      */
     isSessionLevel: function (path) {
-        var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var scansRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(_scans.tsv|_scans.json)$');
 
-        var funcSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var funcSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_echo-[0-9]+)?'
             + '(_bold.json|_sbref.json|_events.json|_events.tsv|_physio.json|_stim.json)$');
 
-        var anatSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var anatSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+_)?'
             + '(' + anatSuffixes.join("|") + ').json$');
 
-        var dwiSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var dwiSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?'
             + 'dwi.(?:json|bval|bvec)$');
 
-        var megSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
-            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+        var megSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
             '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
             + '(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$');
+
+        var eegSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
+            + '(_events.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg)$');
 
         var ieegSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
             '\\/(?:(ses-[a-zA-Z0-9]+)' +
@@ -122,6 +123,7 @@ module.exports = {
 
         return conditionalMatch(scansRe, path) || conditionalMatch(funcSesRe, path) ||
             conditionalMatch(anatSesRe, path) || conditionalMatch(dwiSesRe, path) ||
+            conditionalMatch(megSesRe, path) || conditionalMatch(eegSesRe, path) ||
             conditionalMatch(megSesRe, path) || conditionalMatch(ieegSesRe, path);
     },
 
@@ -212,6 +214,15 @@ module.exports = {
             '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
             '(_meg(.fif|.fif.gz|.ds\\/.*|\\/.*)|(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$');
         return conditionalMatch(MegRe, path);
+    },
+
+    isEeg: function(path) {
+        var EegRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?eeg' +
+            '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
+            '(_eeg.(vhdr|vmrk|eeg|edf|bdf|set|fdt|cnt)|(_events.tsv|_electrodes.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg))$');
+        return conditionalMatch(EegRe, path);
     },
 
     isIEEG: function(path) {

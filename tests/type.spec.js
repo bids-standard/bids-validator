@@ -246,6 +246,41 @@ var suiteMEG = describe('utils.type.isMEG', function(){
     });
 });
 
+var suiteEEG = describe('utils.type.isEEG', function(){
+    before(function(done) {
+        var goodFilenames = [
+            "/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.json",
+            "/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_part-01_eeg.edf",
+            "/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_channels.tsv"
+        ];
+
+        goodFilenames.forEach(function (path) {
+            suiteEEG.addTest(new Test("isEeg('" + path + "') === true", function (isdone){
+                assert.equal(utils.type.isEeg(path), true);
+                isdone();
+            }));
+        });
+
+        var badFilenames = [
+            "/sub-01/eeg/sub-01_ses-001_task-rest_run-01_eeg.json",
+            "/sub-01/ses-001/eeg/sub-12_ses-001_task-rest_run-01_part-01_eeg.edf",
+            "/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.tsv"];
+
+        badFilenames.forEach(function (path) {
+            suiteEEG.addTest(new Test("isEeg('" + path + "') === false", function (isdone){
+                assert.equal(utils.type.isEeg(path), false);
+                isdone();
+            }));
+        });
+        done();
+    });
+
+    // we need to have at least one non-dynamic test
+    return it('dummy test', function() {
+        require('assert').ok(true);
+    });
+});
+
 var suiteIEEG = describe('utils.type.isIEEG', function(){
     before(function(done) {
         var goodFilenames = [

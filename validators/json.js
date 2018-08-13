@@ -47,6 +47,10 @@ function checkUnits (file, sidecar) {
             schema = require('./schemas/coordsystem_meg.json');
         } else if (file.path.includes('/ieeg/') && file.name.endsWith("coordsystem.json")) {
             schema = require('./schemas/coordsystem_ieeg.json');
+        } else if (file.name.endsWith("eeg.json")) {
+            schema = require('./schemas/eeg.json');
+        } else if (file.name.endsWith("coordsystem.json")) {
+            schema = require('./schemas/coordsystem.json');
         }
         if (schema) {
             var validate = ajv.compile(schema);
