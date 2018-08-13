@@ -378,4 +378,9 @@ module.exports = {
         severity: 'warning',
         reason: 'There are files in the /stimuli directory that are not utilized in any _events.tsv file.'
     },
+    84: {
+        key: 'ACQTIME_FMT',
+        severity: 'error',
+        reason: 'Entries in the "acq_time" column of _scans.tsv should be expressed in the following format YYYY-MM-DDTHH:mm:ss (year, month, day, hour (24h), minute, second; this is equivalent to the RFC3339 “date-time” format. '
+    },
 };
