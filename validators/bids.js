@@ -112,14 +112,22 @@ BIDS = {
                 if (path) {
                     path = path.split('/');
                     path = path.reverse();
+
+                    // Check if we find the correct modality
                     var isCorrectModality = false;
-                    if (
-                        (path[0].includes('.nii') && ['anat', 'func', 'dwi'].indexOf(path[1]) !=-1 ) ||
-                        (path[0].includes('.json') && ['meg'].indexOf(path[1]) !=-1) ||
-                        (path[0].includes('.json') && (['eeg'].indexOf(path[1]) !=-1)  && BIDS.options.bep006)
-                    ){
+                    // MRI
+                    if (path[0].includes('.nii') && ['anat', 'func', 'dwi'].indexOf(path[1]) !=-1) {
                         isCorrectModality = true;
                     }
+                    // MEG
+                    else if (path[0].includes('.json') && ['meg'].indexOf(path[1]) !=-1) {
+                        isCorrectModality = true;
+                    }
+                    // EEG
+                    else if (path[0].includes('.json') && (['eeg'].indexOf(path[1]) !=-1)  && BIDS.options.bep006) {
+                        isCorrectModality = true;
+                    }
+
                     if (path[2] && (path[2].indexOf('ses-') == 0 || path[2].indexOf('sub-') == 0) && isCorrectModality){
                         couldBeBIDS = true;
                         break;
