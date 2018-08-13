@@ -381,6 +381,6 @@ module.exports = {
     83: {
         key: 'ECHOTIME1_2_DIFFERENCE_UNREASONABLE',
         severity: 'error',
-        reason: 'The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - .01.'
+        reason: 'The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - 0.01.'
     }
 };
