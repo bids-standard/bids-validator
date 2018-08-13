@@ -124,7 +124,7 @@ module.exports = {
         return conditionalMatch(scansRe, path) || conditionalMatch(funcSesRe, path) ||
             conditionalMatch(anatSesRe, path) || conditionalMatch(dwiSesRe, path) ||
             conditionalMatch(megSesRe, path) || conditionalMatch(eegSesRe, path) ||
-            conditionalMatch(megSesRe, path) || conditionalMatch(ieegSesRe, path);
+            conditionalMatch(ieegSesRe, path);
     },
 
     /**
