@@ -149,6 +149,22 @@ describe('TSV', function(){
         });
     });
 
+    it("should not allow improperly formatted acq_time column entries", function() {
+        const tsv = 'filename\tacq_time\n' +
+                    'value-one\t000001';
+        validate.TSV.TSV(scansFile, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 84);
+        });
+    });
+
+    it("should allow properly formatted acq_time column entries", function() {
+        const tsv = 'filename\tacq_time\n' +
+                    'value-one\t2017-05-03T06:45:45';
+        validate.TSV.TSV(scansFile, tsv, [], function (issues) {
+            assert.deepEqual(issues, []);
+        });
+    });
+
     it("should check participants listed in phenotype/*tsv and sub-ids ", function () {
         var phenotypeParticipants= [{
             list:
