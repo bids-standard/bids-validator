@@ -227,7 +227,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                     issues.push(new Issue({
                         file: file,
                         code: 83,
-                        reason: "The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - 0.01." + sidecarMessage
+                        reason: "The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - 0.01. " + sidecarMessage
                     }));
                 }
             }

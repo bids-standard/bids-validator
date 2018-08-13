@@ -378,4 +378,9 @@ module.exports = {
         severity: 'warning',
         reason: 'There are files in the /stimuli directory that are not utilized in any _events.tsv file.'
     },
+    83: {
+        key: 'ECHOTIME1_2_DIFFERENCE_UNREASONABLE',
+        severity: 'error',
+        reason: 'The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - .01.'
+    }
 };
