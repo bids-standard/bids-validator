@@ -287,7 +287,10 @@ BIDS = {
                         return;
                     }
                     if (file.name.endsWith('_events.tsv')) {
-                        events.push(file.relativePath);
+                        events.push({
+                            path: file.relativePath,
+                            contents: contents
+                        });
                     }
                     TSV.TSV(file, contents, fileList, function (issues, participantList, stimFiles) {
                         if (participantList) {
@@ -475,11 +478,15 @@ BIDS = {
                 //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
                 TSV.checkphenotype(phenotypeParticipants, summary, self.issues);
 
-                // Events validation
-                Events.Events(stimuli, self.issues);
-
+                // validate nii header fields
                 self.issues = self.issues.concat(headerFields(headers));
+
+                // Events validation
+                Events.Events(events, stimuli, headers, jsonContentsDict, self.issues);
+
+                // validation session files
                 self.issues = self.issues.concat(session(fileList));
+
                 self.issues = self.issues.concat(checkAnyDataPresent(fileList, summary.subjects));
                 summary.modalities = utils.modalities.group(summary.modalities);
                 var issues = utils.issues.format(self.issues, summary, self.options);
