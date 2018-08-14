@@ -288,6 +288,7 @@ BIDS = {
                     }
                     if (file.name.endsWith('_events.tsv')) {
                         events.push({
+                            file: file,
                             path: file.relativePath,
                             contents: contents
                         });

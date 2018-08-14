@@ -262,7 +262,7 @@ function missingEvents(path, potentialEvents, events) {
     // check for event file
     for (var j = 0; j < potentialEvents.length; j++) {
         var event = potentialEvents[j];
-        if (events.indexOf(event) > -1) {
+        if (events.find(e => e.path == event)) {
             hasEvent = true;
         }
     }
