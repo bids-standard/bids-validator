@@ -378,4 +378,15 @@ module.exports = {
         severity: 'warning',
         reason: 'There are files in the /stimuli directory that are not utilized in any _events.tsv file.'
     },
+    85: {
+        key: 'SUSPICIOUSLY_LONG_EVENT_DESIGN',
+        severity: 'warning',
+        reason: 'The onset of the last event is after the total duration of the corresponding scan. This design is suspiciously long. '
+    },
+    86: {
+        key: 'SUSPICIOUSLY_SHORT_EVENT_DESIGN',
+        severity: 'warning',
+        reason: 'The onset of the last event is less than half the total duration of the corresponding scan. This design is suspiciously short. '
+
+    },
 };
