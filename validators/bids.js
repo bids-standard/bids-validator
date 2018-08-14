@@ -247,6 +247,7 @@ BIDS = {
                                          'nii|nii\\.gz|', // MRI
                                          'fif|fif\\.gz|sqd|con|kdf|chn|trg|raw|raw\\.mhf|', // MEG
                                          'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt', // EEG
+                                         'dat', // iEEG
                                          ')$'].join(''));
 
             // ignore associated data
@@ -284,12 +285,6 @@ BIDS = {
             // capture ieeg files for summary
             else if (file.name.endsWith('.edf') || file.name.endsWith('.vhdr') || file.name.endsWith('.vmrk') || file.name.endsWith('.dat')) {
                 ephys.push(file);
-
-                // collect modality summary
-                const modality = suffix.slice(0, suffix.indexOf('.'));
-                if (summary.modalities.indexOf(modality) === -1) {
-                    summary.modalities.push(modality);
-                }
 
                 process.nextTick(cb);
             }
