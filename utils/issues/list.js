@@ -373,7 +373,7 @@ module.exports = {
         severity: 'error',
         reason: "Abnormally high value of 'EffectiveEchoSpacing'."
     },
-    77: {
+    82: {
         key: 'TABULARFILE_WITHOUT_DATADICTIONARY',
         severity: 'warning',
         reason: "Tabular file does not have accompanying data dictionary."
