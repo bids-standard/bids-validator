@@ -475,8 +475,8 @@ BIDS = {
                 //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
                 TSV.checkphenotype(phenotypeParticipants, summary, self.issues);
 
-                // check that all stimuli files present in /stimuli are included in an _events.tsv file
-                Events.checkStimuli(stimuli, self.issues);
+                // Events validation
+                Events.Events(stimuli, self.issues);
 
                 self.issues = self.issues.concat(headerFields(headers));
                 self.issues = self.issues.concat(session(fileList));

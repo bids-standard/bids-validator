@@ -1,6 +1,13 @@
 /* eslint-disable no-unused-vars */
 var Issue = require('../utils').issues.Issue;
 
+const Events = function(stimuli, issues) {
+    // check that all stimuli files present in /stimuli are included in an _events.tsv file
+    checkStimuli(stimuli, issues);
+    
+    return;
+};
+
 var checkStimuli = function (stimuli, issues) {
     const stimuliFromEvents = stimuli.events;
     const stimuliFromDirectory = stimuli.directory;
@@ -20,5 +27,5 @@ var checkStimuli = function (stimuli, issues) {
 };
 
 module.exports = {
-    checkStimuli: checkStimuli,
+    Events: Events,
 };

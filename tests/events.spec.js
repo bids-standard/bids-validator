@@ -13,7 +13,7 @@ describe('Events', function(){
             events: ['/stimuli/images/red-square.jpg'],
             directory: [{relativePath: '/stimuli/images/blue-square.jpg'}],
         };
-        validate.Events.checkStimuli(stimuli, issues);
+        validate.Events.Events(stimuli, issues);
         assert(issues.length === 1 && issues[0].code === 77);
     });
 
@@ -23,7 +23,7 @@ describe('Events', function(){
             events: ['/stimuli/images/red-square.jpg'],
             directory: [{relativePath: '/stimuli/images/red-square.jpg'}],
         };
-        validate.Events.checkStimuli(stimuli, issues);
+        validate.Events.Events(stimuli, issues);
         assert(issues.length === 0);
     });
 });
