@@ -283,7 +283,7 @@ BIDS = {
                 }
 
             // capture ieeg files for summary
-            else if (file.name.endsWith('.edf') || file.name.endsWith('.vhdr') || file.name.endsWith('.vmrk') || file.name.endsWith('.dat')) {
+            else if (['edf', 'vhdr', 'vmrk', 'dat', 'cnt', 'bdf', 'set'].includes(file.name.split('.').pop())) {
                 ephys.push(file);
 
                 process.nextTick(cb);
