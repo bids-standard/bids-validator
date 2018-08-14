@@ -247,7 +247,7 @@ BIDS = {
                                          'nii|nii\\.gz|', // MRI
                                          'fif|fif\\.gz|sqd|con|kdf|chn|trg|raw|raw\\.mhf|', // MEG
                                          'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt', // EEG
-                                         'dat', // iEEG
+                                         'dat|nwb|tdat|tidx|tmet', // iEEG
                                          ')$'].join(''));
 
             // ignore associated data
@@ -283,7 +283,7 @@ BIDS = {
                 }
 
             // capture ieeg files for summary
-            else if (['edf', 'vhdr', 'vmrk', 'dat', 'cnt', 'bdf', 'set'].includes(file.name.split('.').pop())) {
+            else if (['edf', 'vhdr', 'vmrk', 'dat', 'cnt', 'bdf', 'set', 'nwb', 'tdat', 'tidx', 'tmet'].includes(file.name.split('.').pop())) {
                 ephys.push(file);
 
                 process.nextTick(cb);
