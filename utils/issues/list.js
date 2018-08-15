@@ -381,6 +381,6 @@ module.exports = {
     87: {
         key: 'SLICETIMING_ELEMENTS',
         severity: 'warning',
-        reason: 'The number of elements in the SliceTiming array should match the \'k\' dimension of the corresponding nifti volumne.'
+        reason: 'The number of elements in the SliceTiming array should match the \'k\' dimension of the corresponding nifti volume.'
     }
 };
