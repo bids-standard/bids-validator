@@ -6,7 +6,7 @@
  * BIDS specification requirements.
  */
 var anatSuffixes = ["T1w", "T2w", "T1map", "T2map", "T1rho", "FLAIR", "PD", "PDT2", "inplaneT1", "inplaneT2","angio",
-    "SWImagandphase", "T2star", "FLASH", "PDmap"];
+    "SWImagandphase", "T2star", "FLASH", "PDmap", "photo"];
 
 module.exports = {
 
@@ -16,7 +16,7 @@ module.exports = {
      * Check if a given path is valid within the
      * bids spec.
      */
-    isBIDS: function (path, bep006) {
+    isBIDS: function (path, bep006, bep010) {
         return (
             this.isTopLevel(path) ||
             this.isStimuliData(path) ||
@@ -26,6 +26,7 @@ module.exports = {
             this.isDWI(path) ||
             this.isFunc(path) ||
             this.isMeg(path) ||
+            (this.isIEEG(path) && bep010) ||
             (this.isEeg(path) && bep006) ||
             this.isBehavioral(path) ||
             this.isCont(path) ||
@@ -55,6 +56,8 @@ module.exports = {
         var megTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
             + '(_meg.json|_channels.tsv|_photo.jpg|_coordsystem.json)$');
 
+        var ieegTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
+            + '(_ieeg.json|_channels.tsv|_electrodes.tsv|_photo.jpg|_coordsystem.json)$');
         var eegTopRe = new RegExp('^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
             + '(_eeg.json|_channels.tsv|_photo.jpg|_coordsystem.json)$');
 
@@ -62,7 +65,7 @@ module.exports = {
             + '(physio.json|stim.json)$');
 
         return (fixedTopLevelNames.indexOf(path) != -1 || funcTopRe.test(path) || dwiTopRe.test(path) ||
-        anatTopRe.test(path) || multiDirFieldmapRe.test(path) || otherTopFiles.test(path) || megTopRe.test(path) || eegTopRe.test(path));
+        anatTopRe.test(path) || multiDirFieldmapRe.test(path) || otherTopFiles.test(path) || megTopRe.test(path) || eegTopRe.test(path) || ieegTopRe.test(path));
     },
 
     /**
@@ -113,9 +116,15 @@ module.exports = {
             '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?'
             + '(_events.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg)$');
 
+        var ieegSesRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_space-[a-zA-Z0-9]+)?'
+            + '(_events.tsv|_channels.tsv|_electrodes.tsv|_ieeg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$');
+
         return conditionalMatch(scansRe, path) || conditionalMatch(funcSesRe, path) ||
             conditionalMatch(anatSesRe, path) || conditionalMatch(dwiSesRe, path) ||
-            conditionalMatch(megSesRe, path) || conditionalMatch(eegSesRe, path);
+            conditionalMatch(megSesRe, path) || conditionalMatch(eegSesRe, path) ||
+            conditionalMatch(ieegSesRe, path);
     },
 
     /**
@@ -214,6 +223,15 @@ module.exports = {
             '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
             '(_eeg.(vhdr|vmrk|eeg|edf|bdf|set|fdt|cnt)|(_events.tsv|_electrodes.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg))$');
         return conditionalMatch(EegRe, path);
+    },
+
+    isIEEG: function(path) {
+        var IEEGRe = new RegExp('^\\/(sub-[a-zA-Z0-9]+)' +
+            '\\/(?:(ses-[a-zA-Z0-9]+)' +
+            '\\/)?ieeg' +
+            '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?(?:_space-[a-zA-Z0-9]+)?' +
+            '(_ieeg.(edf|vhdr|vmrk|dat)|(_events.tsv|_channels.tsv|_electrodes.tsv|_ieeg.json|_coordsystem.json|_photo.jpg))$');
+        return conditionalMatch(IEEGRe, path);
     },
 
     isBehavioral: function(path) {

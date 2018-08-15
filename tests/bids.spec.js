@@ -160,4 +160,22 @@ var suite = describe('BIDS example datasets ', function() {
             isdone();
         });
     });
+
+    it('validates ieeg modalities', function(isdone) {
+        var options = {ignoreNiftiHeaders: true};
+        validate.BIDS("tests/data/BIDS-examples-" + test_version + "/ds001", options, function (issues, summary) {
+            var errors = issues.errors;
+            var warnings = issues.warnings;
+            assert(summary.sessions.length === 0);
+            assert(summary.subjects.length === 16);
+            assert.deepEqual(summary.tasks, ['balloon analog risk task']);
+            assert(summary.modalities.includes('T1w'));
+            assert(summary.modalities.includes('inplaneT2'));
+            assert(summary.modalities.includes('bold'));
+            assert(summary.totalFiles === 133);
+            assert.deepEqual(errors, []);
+            assert(warnings.length === 1 && warnings[0].code === '13');
+            isdone();
+        });
+    });
 });
