@@ -193,6 +193,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                 }
             }
 
+            // check that slice timing is defined
             if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
                 issues.push(new Issue({
                     file: file,
@@ -201,14 +202,28 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                 }));
             }
 
+            // check that slice timing has the proper length
+            if (header && mergedDictionary.hasOwnProperty('SliceTiming') && mergedDictionary["SliceTiming"].constructor === Array) {
+                var sliceTimingArray = mergedDictionary['SliceTiming'];
+                var kDim = header.dim[3];
+                if (sliceTimingArray.length !== kDim) {
+                    issues.push(new Issue({
+                        file: file,
+                        code: 87,
+                        evidence: sliceTimingArray
+                    }));
+                }
+            }
+
+            // check that slice timing values are greater than repetition time
             if (mergedDictionary.hasOwnProperty('SliceTiming') && mergedDictionary["SliceTiming"].constructor === Array) {
                 var SliceTimingArray = mergedDictionary["SliceTiming"];
-                var invalid_valuesArray = checkSliceTimingArray(SliceTimingArray, mergedDictionary['RepetitionTime']);
-                if (invalid_valuesArray.length > 0){
+                var valuesGreaterThanRepetitionTime = sliceTimingGreaterThanRepetitionTime(SliceTimingArray, mergedDictionary['RepetitionTime']);
+                if (valuesGreaterThanRepetitionTime.length > 0){
                     issues.push(new Issue({
                         file: file,
                         code: 66,
-                        evidence: invalid_valuesArray
+                        evidence: valuesGreaterThanRepetitionTime
                     }));
                 }
             }
@@ -376,7 +391,7 @@ function generateMergedSidecarDict(potentialSidecars, jsonContents) {
  *
  */
 
-function checkSliceTimingArray(array, repetitionTime){
+function sliceTimingGreaterThanRepetitionTime(array, repetitionTime){
     var invalid_timesArray = [];
     for (var t = 0; t < array.length; t++){
         if (array[t] > repetitionTime){

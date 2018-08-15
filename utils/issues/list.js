@@ -378,4 +378,9 @@ module.exports = {
         severity: 'warning',
         reason: 'There are files in the /stimuli directory that are not utilized in any _events.tsv file.'
     },
+    87: {
+        key: 'SLICETIMING_ELEMENTS',
+        severity: 'warning',
+        reason: 'The number of elements in the SliceTiming array should match the \'k\' dimension of the corresponding nifti volumne.'
+    }
 };
