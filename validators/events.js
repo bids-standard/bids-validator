@@ -3,14 +3,12 @@ const async = require('async');
 const utils = require('../utils');
 const Issue = utils.issues.Issue;
 
-const Events = function(events, stimuli, headers, jsonContents, issues) {
+const validateEvents = function(events, stimuli, headers, jsonContents, issues) {
     // check that all stimuli files present in /stimuli are included in an _events.tsv file
     checkStimuli(stimuli, issues);
 
     // check the events file for suspiciously long or short durations
     checkDesignLength(events, headers, jsonContents, issues);
-
-    return;
 };
 
 const checkStimuli = function (stimuli, issues) {
@@ -91,9 +89,9 @@ const checkDesignLength = function(events, headers, jsonContents, issues) {
 
    
         }
-    }, () => {return;});
+    });
 };
 
 module.exports = {
-    Events: Events,
+    validateEvents: validateEvents,
 };

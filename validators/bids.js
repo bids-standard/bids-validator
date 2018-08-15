@@ -483,7 +483,7 @@ BIDS = {
                 self.issues = self.issues.concat(headerFields(headers));
 
                 // Events validation
-                Events.Events(events, stimuli, headers, jsonContentsDict, self.issues);
+                Events.validateEvents(events, stimuli, headers, jsonContentsDict, self.issues);
 
                 // validation session files
                 self.issues = self.issues.concat(session(fileList));
