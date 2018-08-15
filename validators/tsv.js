@@ -2,8 +2,8 @@
 var Issue = require('../utils').issues.Issue;
 var files = require('../utils/files');
 var utils  = require('../utils');
-var moment = require('moment');
-
+var dateIsValid = require('date-fns/isValid');
+var parseDate = require('date-fns/parse');
 /**
  * TSV
  *
@@ -236,7 +236,7 @@ var checkage89_plus = function(rows, file, issues){
 };
 
 const checkAcqTimeFormat = function(rows, file, issues) {
-    const format = 'YYYY-MM-DDTHH:mm:ss';
+    const format = "YYYY-MM-DD'T'HH:mm:ss";
     const header = rows[0].trim().split('\t');
     const acqTimeColumn = header.indexOf('acq_time');
     const testRows = rows.slice(1);
@@ -244,7 +244,8 @@ const checkAcqTimeFormat = function(rows, file, issues) {
         const line = testRows[i];
         const lineValues = line.trim().split('\t');
         const acqTime = lineValues[acqTimeColumn];
-        if (acqTime && !moment(acqTime, format, true).isValid()) {
+        const isValid = dateIsValid(parseDate(acqTime, format, new Date()));
+        if (acqTime && !isValid) {
             issues.push(new Issue({
                 file: file,
                 evidence: file,
