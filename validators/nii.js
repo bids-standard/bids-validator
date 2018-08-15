@@ -210,7 +210,7 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                     issues.push(new Issue({
                         file: file,
                         code: 87,
-                        evidence: sliceTimingArray
+                        evidence: "SliceTiming array is of length " + sliceTimingArray.length + " and the value of the 'k' dimension is " + kDim + " for the corresponding nifti header."
                     }));
                 }
             }
