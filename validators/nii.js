@@ -221,6 +221,16 @@ module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, 
                     reason: "You have to define 'EchoTime1' and 'EchoTime2' for this file. " + sidecarMessage
                 }));
             }
+            if (mergedDictionary.hasOwnProperty('EchoTime1') && mergedDictionary.hasOwnProperty('EchoTime2')) {
+                const echoTimeDifference = mergedDictionary['EchoTime2'] - mergedDictionary['EchoTime1'];
+                if (echoTimeDifference < 0.0001 || echoTimeDifference > 0.01) {
+                    issues.push(new Issue({
+                        file: file,
+                        code: 83,
+                        reason: "The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - 0.01. " + sidecarMessage
+                    }));
+                }
+            }
         } else if (path.includes("_phase1.nii") || path.includes("_phase2.nii")){
             if (!mergedDictionary.hasOwnProperty('EchoTime')) {
                 issues.push(new Issue({

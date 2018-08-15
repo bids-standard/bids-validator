@@ -397,5 +397,10 @@ module.exports = {
         key: 'CHANNELS_COLUMN_NOTCH',
         severity: 'error',
         reason:   "Third column of the channels file must be named 'notch'"
+    },
+    83: {
+        key: 'ECHOTIME1_2_DIFFERENCE_UNREASONABLE',
+        severity: 'error',
+        reason: 'The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - 0.01.'
     }
 };
