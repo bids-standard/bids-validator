@@ -344,19 +344,19 @@ module.exports = {
         reason: "All TSV files must use Line Feed '\\n' characters to denote new lines. This files uses Carriage Return '\\r'."
     },
     71: {
-        key: 'CHANNELS_COLUMN_NAME',
+        key: 'MISSING_TSV_COLUMN_MEG',
         severity: 'error',
-        reason:   "First column of the channels file must be named 'name'"
+        reason:   "The column names of the channels file must begin with ['name', 'type', 'units']"
     },
     72: {
-        key: 'CHANNELS_COLUMN_TYPE',
+        key: 'MISSING_TSV_COLUMN_IEEG_CHANNELS',
         severity: 'error',
-        reason:   "Second column of the channels file must be named 'type'"
+        reason:   "The column names of the channels file must begin with ['name', 'type', 'units', 'sampling_frequency', 'low_cutoff', 'high_cutoff', 'notch', 'reference']"
     },
     73: {
-        key: 'CHANNELS_COLUMN_UNITS',
+        key: 'MISSING_TSV_COLUMN_IEEG_ELECTRODES',
         severity: 'error',
-        reason:   "Third column of the channels file must be named 'units'"
+        reason:   "The column names of the electrodes file must begin with ['name', 'x', 'y', 'z', 'size', 'type']"
     },
     74: {
         key: 'DUPLICATE_NIFTI_FILES',
@@ -377,6 +377,26 @@ module.exports = {
         key: 'UNUSED_STIMULUS',
         severity: 'warning',
         reason: 'There are files in the /stimuli directory that are not utilized in any _events.tsv file.'
+    },
+    78: {
+        key: 'CHANNELS_COLUMN_SFREQ',
+        severity: 'error',
+        reason:   "Fourth column of the channels file must be named 'sampling_frequency'"
+    },
+    79: {
+        key: 'CHANNELS_COLUMN_LOWCUT',
+        severity: 'error',
+        reason:   "Third column of the channels file must be named 'low_cutoff'"
+    },
+    80: {
+        key: 'CHANNELS_COLUMN_HIGHCUT',
+        severity: 'error',
+        reason:   "Third column of the channels file must be named 'high_cutoff'"
+    },
+    81: {
+        key: 'CHANNELS_COLUMN_NOTCH',
+        severity: 'error',
+        reason:   "Third column of the channels file must be named 'notch'"
     },
     83: {
         key: 'ECHOTIME1_2_DIFFERENCE_UNREASONABLE',
