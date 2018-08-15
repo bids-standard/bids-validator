@@ -242,9 +242,9 @@ const checkAcqTimeFormat = function(rows, file, issues) {
     const testRows = rows.slice(1);
     for (let i = 0; i < testRows.length; i++) {
         const line = testRows[i];
-        const line_values = line.trim().split('\t');
-        const acq_time = line_values[acqTimeColumn];
-        if (acq_time && !moment(acq_time, format, true).isValid()) {
+        const lineValues = line.trim().split('\t');
+        const acqTime = lineValues[acqTimeColumn];
+        if (acqTime && !moment(acqTime, format, true).isValid()) {
             issues.push(new Issue({
                 file: file,
                 evidence: file,
