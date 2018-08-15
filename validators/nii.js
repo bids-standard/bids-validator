@@ -1,28 +1,6 @@
 var utils = require('../utils');
 var Issue = utils.issues.Issue;
 
-function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
-    var intendedForFileFull = "/" + file.relativePath.split("/")[1] + "/" + intendedForFile;
-    var onTheList = false;
-
-    for (var key2 in fileList) {
-        var filePath = fileList[key2].relativePath;
-        if (filePath === intendedForFileFull) {
-            onTheList = true;
-        }
-    }
-    if (!onTheList) {
-        issues.push(new Issue({
-            file: file,
-            code: 37,
-            reason: "'IntendedFor' property of this fieldmap  ('" + file.relativePath +
-            "') does not point to an existing file('" + intendedForFile + "'). Please mind that this value should not include subject level directory " +
-            "('/" + file.relativePath.split("/")[1] + "/').",
-            evidence: intendedForFile
-        }));
-    }
-}
-
 /**
  * NIFTI
  *
@@ -34,17 +12,17 @@ function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
 module.exports = function NIFTI (header, file, jsonContentsDict, bContentsDict, fileList, events, callback) {
     var path = file.relativePath;
     var issues = [];
-    var potentialSidecars = potentialLocations(path.replace(".gz", "").replace(".nii", ".json"));
-    var potentialEvents   = potentialLocations(path.replace(".gz", "").replace("bold.nii", "events.tsv"));
-    var mergedDictionary  = generateMergedSidecarDict(potentialSidecars, jsonContentsDict);
+    var potentialSidecars = utils.files.potentialLocations(path.replace(".gz", "").replace(".nii", ".json"));
+    var potentialEvents   = utils.files.potentialLocations(path.replace(".gz", "").replace("bold.nii", "events.tsv"));
+    var mergedDictionary  = utils.files.generateMergedSidecarDict(potentialSidecars, jsonContentsDict);
     var sidecarMessage    = "It can be included one of the following locations: " + potentialSidecars.join(", ");
     var eventsMessage     = "It can be included one of the following locations: " + potentialEvents.join(", ");
 
     if (path.includes('_dwi.nii')) {
-        var potentialBvecs = potentialLocations(path.replace(".gz", "").replace(".nii", ".bvec"));
-        var potentialBvals = potentialLocations(path.replace(".gz", "").replace(".nii", ".bval"));
-        var bvec = getBFileContent(potentialBvecs, bContentsDict);
-        var bval = getBFileContent(potentialBvals, bContentsDict);
+        var potentialBvecs = utils.files.potentialLocations(path.replace(".gz", "").replace(".nii", ".bvec"));
+        var potentialBvals = utils.files.potentialLocations(path.replace(".gz", "").replace(".nii", ".bval"));
+        var bvec = utils.files.getBFileContent(potentialBvecs, bContentsDict);
+        var bval = utils.files.getBFileContent(potentialBvals, bContentsDict);
         var bvecMessage = "It can be included in one of the following locations: " + potentialBvecs.join(", ");
         var bvalMessage = "It can be included in one of the following locations: " + potentialBvals.join(", ");
 
@@ -294,7 +272,7 @@ function missingEvents(path, potentialEvents, events) {
     // check for event file
     for (var j = 0; j < potentialEvents.length; j++) {
         var event = potentialEvents[j];
-        if (events.indexOf(event) > -1) {
+        if (events.find(e => e.path == event)) {
             hasEvent = true;
         }
     }
@@ -303,84 +281,6 @@ function missingEvents(path, potentialEvents, events) {
 }
 
 
-/**
- * Potential Locations
- *
- * Takes the path to the lowest possible level of
- * a file that can be hierarchily positioned and
- * return a list of all possible locations for that
- * file.
- */
-function potentialLocations(path) {
-    var potentialPaths = [path];
-    var pathComponents = path.split('/');
-    var filenameComponents = pathComponents[pathComponents.length - 1].split("_");
-
-    var sessionLevelComponentList = [],
-        subjectLevelComponentList = [],
-        topLevelComponentList = [],
-        ses = null,
-        sub = null;
-
-    filenameComponents.forEach(function (filenameComponent) {
-        if (filenameComponent.substring(0, 3) != "run") {
-            sessionLevelComponentList.push(filenameComponent);
-            if (filenameComponent.substring(0, 3) == "ses") {
-                ses = filenameComponent;
-
-            } else {
-                subjectLevelComponentList.push(filenameComponent);
-                if (filenameComponent.substring(0, 3) == "sub") {
-                    sub = filenameComponent;
-                } else {
-                    topLevelComponentList.push(filenameComponent);
-                }
-            }
-        }
-    });
-
-    if (ses) {
-        addPotentialPaths(sessionLevelComponentList, potentialPaths, 2, "/" + sub + "/" + ses + "/");
-    }
-    addPotentialPaths(subjectLevelComponentList, potentialPaths, 1, "/" + sub + "/");
-    addPotentialPaths(topLevelComponentList, potentialPaths, 0, "/");
-    potentialPaths.reverse();
-
-    return potentialPaths;
-}
-
-function addPotentialPaths(componentList, potentialPaths, offset, prefix) {
-    for (var i = componentList.length; i > offset; i--) {
-        var tmpList = componentList.slice(0, i-1).concat([componentList[componentList.length-1]]);
-        var sessionLevelPath = prefix + tmpList.join("_");
-        potentialPaths.push(sessionLevelPath);
-    }
-}
-
-/**
- * Generate Merged Sidecar Dictionary
- *
- * Takes an array of potential sidecards and a
- * master object dictionary of all JSON file
- * content and returns a merged dictionary
- * containing all values from the potential
- * sidecars.
- */
-function generateMergedSidecarDict(potentialSidecars, jsonContents) {
-    var mergedDictionary = {};
-    for (var i = 0; i < potentialSidecars.length; i++) {
-        var sidecarName = potentialSidecars[i];
-        var jsonObject = jsonContents[sidecarName];
-        if (jsonObject) {
-            for (var key in jsonObject) {
-                mergedDictionary[key] = jsonObject[key];
-            }
-        } else if (jsonObject === null) {
-            mergedDictionary.invalid = true;
-        }
-    }
-    return mergedDictionary;
-}
 /**
  * Function to check each SoliceTime from SliceTiming Array
  *
@@ -395,18 +295,25 @@ function checkSliceTimingArray(array, repetitionTime){
     }
     return invalid_timesArray;
 }
-/**
- * Get B-File Contents
- *
- * Takes an array of potential bval or bvec files
- * and a master b-file contents dictionary and returns
- * the contents of the desired file.
- */
-function getBFileContent(potentialBFiles, bContentsDict) {
-    for (var i = 0; i < potentialBFiles.length; i++) {
-        var potentialBFile = potentialBFiles[i];
-        if (bContentsDict.hasOwnProperty(potentialBFile)) {
-            return bContentsDict[potentialBFile];
+
+function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
+    var intendedForFileFull = "/" + file.relativePath.split("/")[1] + "/" + intendedForFile;
+    var onTheList = false;
+
+    for (var key2 in fileList) {
+        var filePath = fileList[key2].relativePath;
+        if (filePath === intendedForFileFull) {
+            onTheList = true;
         }
+    }
+    if (!onTheList) {
+        issues.push(new Issue({
+            file: file,
+            code: 37,
+            reason: "'IntendedFor' property of this fieldmap  ('" + file.relativePath +
+            "') does not point to an existing file('" + intendedForFile + "'). Please mind that this value should not include subject level directory " +
+            "('/" + file.relativePath.split("/")[1] + "/').",
+            evidence: intendedForFile
+        }));
     }
 }
