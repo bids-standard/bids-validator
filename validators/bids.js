@@ -15,6 +15,65 @@ var checkAnyDataPresent = require('./checkAnyDataPresent');
 var headerFields = require('./headerFields');
 
 var BIDS;
+
+
+/**
+ * Potential Locations
+ *
+ * Takes the path to the lowest possible level of
+ * a file that can be hierarchily positioned and
+ * return a list of all possible locations for that
+ * file.
+ */
+function addPotentialPaths(componentList, potentialPaths, offset, prefix) {
+    for (var i = componentList.length; i > offset; i--) {
+        var tmpList = componentList.slice(0, i-1).concat([componentList[componentList.length-1]]);
+        var sessionLevelPath = prefix + tmpList.join("_");
+        potentialPaths.push(sessionLevelPath);
+    }
+}
+
+function potentialLocations(path) {
+    var potentialPaths = [path];
+    var pathComponents = path.split('/');
+    var filenameComponents = pathComponents[pathComponents.length - 1].split("_");
+
+    var sessionLevelComponentList = [],
+        subjectLevelComponentList = [],
+        topLevelComponentList = [],
+        ses = null,
+        sub = null;
+
+    filenameComponents.forEach(function (filenameComponent) {
+        if (filenameComponent.substring(0, 3) != "run") {
+            sessionLevelComponentList.push(filenameComponent);
+            if (filenameComponent.substring(0, 3) == "ses") {
+                ses = filenameComponent;
+
+            } else {
+                subjectLevelComponentList.push(filenameComponent);
+                if (filenameComponent.substring(0, 3) == "sub") {
+                    sub = filenameComponent;
+                } else {
+                    topLevelComponentList.push(filenameComponent);
+                }
+            }
+        }
+    });
+
+    if (ses) {
+        addPotentialPaths(sessionLevelComponentList, potentialPaths, 2, "/" + sub + "/" + ses + "/");
+    }
+    addPotentialPaths(subjectLevelComponentList, potentialPaths, 1, "/" + sub + "/");
+    addPotentialPaths(topLevelComponentList, potentialPaths, 0, "/");
+    potentialPaths.reverse();
+
+    return potentialPaths;
+}
+
+
+
+
 BIDS = {
 
     options: {},
@@ -264,9 +323,23 @@ BIDS = {
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {            
                 // Generate name for corresponding data dictionary file
+                console.log("Check for data dictionary for " + file.path);
                 let dict_path = file.path.replace(".tsv", ".json");
+                exists = false;
+                potentialDicts = potentialLocations(dict_path);
+                // Need to check for .json file at all levels of heirarchy
+                console.log("Potential data dictionaries:" + potentialLocations(dict_path));
+                // Get list of fileList keys
+                let idxs = Object.keys(fileList);
+                for (let i of idxs) {
+                    if (potentialDicts.indexOf(fileList[i].path) > -1) {
+                        exists = true;
+                        break;
+                    }
+                }
+
                 // Check if data dictionary file exists
-                if (!fs.existsSync(dict_path)) {
+                if (!exists) {  // Can't use fs.exists because there's no file system in browser implementations
                     self.issues.push(new Issue({
                         code: 77,
                         file: file
