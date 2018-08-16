@@ -20,8 +20,12 @@ describe('NIFTI', function(){
         }
     };
     var events = [
-        '/sub-15/func/sub-14_task-mixedeventrelatedprobe_run-01_events.tsv',
-        '/sub-15/run-01_events.tsv'
+        {
+            path: '/sub-15/func/sub-14_task-mixedeventrelatedprobe_run-01_events.tsv'
+        }, 
+        {
+            path: '/sub-15/run-01_events.tsv'
+        }
     ];
 
     it('should warn user about misisng events file', function() {
@@ -159,12 +163,95 @@ describe('NIFTI', function(){
             name: 'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
             relativePath: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'
         };
-        var events = [
-            '/sub-15/func/sub-14_task-mixedeventrelatedprobe_run-01_events.tsv',
-            '/sub-15/run-01_events.tsv'
-        ];
         validate.NIFTI(null, file_new, jsonContentsDict_new, {}, [], events, function (issues) {
             assert(issues[2].code === 66 && issues.length === 3);
+        });
+    });
+
+    it('SliceTiming should be the same length as the k dimension of the corresponding nifti header', function(){
+        var jsonContents = {
+            '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.json': {
+                "RepetitionTime": 16.5,
+                "TaskName": "AntiSaccade (AS) Rewarded & Neutral with varying dot position",
+                "EchoTime": 0.025,
+                "EffectiveEchoSpacing": .05, 
+                "NumberofPhaseEncodingSteps": 64,
+                "FlipAngle": 70,
+                "PhaseEncodingDirection": "j",
+                "SliceTiming": [
+                    0.0,
+                    1.3448,
+                    1.6207,
+                    1.3966,
+                    0.6724,
+                    1.4483,
+                    1.7241
+                ]
+            }
+        };
+        var testFile = {
+            name: 'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
+            relativePath: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'
+        };
+        var header = {
+            dim: [ 4, 128, 128, 7, 71 ],
+            pixdim: [ -1, 2, 2, 2, 16.5 ],
+            xyzt_units: [ 'mm', 'mm', 'mm', 's' ]
+        };
+        var events = [
+            {
+                path: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_events.tsv'
+            }, 
+            {
+                path: '/sub-15/run-01_events.tsv'
+            }
+        ];
+        validate.NIFTI(header, testFile, jsonContents, {}, [], events, function (issues) {
+            assert.deepEqual(issues, []);
+        });
+    });
+
+    it('SliceTiming should not have a length different than the k dimension of the corresponding nifti header', function(){
+        var jsonContents = {
+            '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.json': {
+                "RepetitionTime": 16.5,
+                "TaskName": "AntiSaccade (AS) Rewarded & Neutral with varying dot position",
+                "EchoTime": 0.025,
+                "EffectiveEchoSpacing": .05, 
+                "NumberofPhaseEncodingSteps": 64,
+                "FlipAngle": 70,
+                "PhaseEncodingDirection": "j",
+                "SliceTiming": [
+                    0.0,
+                    1.3448,
+                    1.6207,
+                    1.3966,
+                    0.6724,
+                    1.4483,
+                    1.7241
+                ]
+            }
+        };
+        var testFile = {
+            name: 'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
+            relativePath: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'
+        };
+        var header = {
+            dim: [ 4, 128, 128, 5, 71 ],
+            pixdim: [ -1, 2, 2, 2, 16.5 ],
+            xyzt_units: [ 'mm', 'mm', 'mm', 's' ]
+        };
+        var events = [
+            {
+                path: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_events.tsv'
+            }, 
+            {
+                path: '/sub-15/run-01_events.tsv'
+            }
+        ];
+
+        validate.NIFTI(header, testFile, jsonContents, {}, [], events, function (issues) {
+            assert(issues.length === 1 && issues[0].code === 87);
         });
     });
 

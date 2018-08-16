@@ -412,6 +412,10 @@ module.exports = {
         key: 'SUSPICIOUSLY_SHORT_EVENT_DESIGN',
         severity: 'warning',
         reason: 'The onset of the last event is less than half the total duration of the corresponding scan. This design is suspiciously short. '
-
-    }
+    },
+    87: {
+        key: 'SLICETIMING_ELEMENTS',
+        severity: 'warning',
+        reason: 'The number of elements in the SliceTiming array should match the \'k\' dimension of the corresponding nifti volume.'
+    },
 };
