@@ -20,8 +20,12 @@ describe('NIFTI', function(){
         }
     };
     var events = [
-        '/sub-15/func/sub-14_task-mixedeventrelatedprobe_run-01_events.tsv',
-        '/sub-15/run-01_events.tsv'
+        {
+            path: '/sub-15/func/sub-14_task-mixedeventrelatedprobe_run-01_events.tsv'
+        }, 
+        {
+            path: '/sub-15/run-01_events.tsv'
+        }
     ];
 
     it('should warn user about misisng events file', function() {
@@ -159,10 +163,6 @@ describe('NIFTI', function(){
             name: 'sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
             relativePath: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'
         };
-        var events = [
-            '/sub-15/func/sub-14_task-mixedeventrelatedprobe_run-01_events.tsv',
-            '/sub-15/run-01_events.tsv'
-        ];
         validate.NIFTI(null, file_new, jsonContentsDict_new, {}, [], events, function (issues) {
             assert(issues[2].code === 66 && issues.length === 3);
         });
@@ -199,8 +199,12 @@ describe('NIFTI', function(){
             xyzt_units: [ 'mm', 'mm', 'mm', 's' ]
         };
         var events = [
-            '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_events.tsv',
-            '/sub-15/run-01_events.tsv'
+            {
+                path: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_events.tsv'
+            }, 
+            {
+                path: '/sub-15/run-01_events.tsv'
+            }
         ];
         validate.NIFTI(header, testFile, jsonContents, {}, [], events, function (issues) {
             assert.deepEqual(issues, []);
@@ -238,14 +242,19 @@ describe('NIFTI', function(){
             xyzt_units: [ 'mm', 'mm', 'mm', 's' ]
         };
         var events = [
-            '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_events.tsv',
-            '/sub-15/run-01_events.tsv'
+            {
+                path: '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_events.tsv'
+            }, 
+            {
+                path: '/sub-15/run-01_events.tsv'
+            }
         ];
+
         validate.NIFTI(header, testFile, jsonContents, {}, [], events, function (issues) {
             assert(issues.length === 1 && issues[0].code === 87);
         });
     });
-    
+
     it('should throw an error for _phasediff.nii files with associated (EchoTime2 - EchoTime1) less than 0.0001', function(){
         var phaseDiffJson = {
             '/sub-01/func/sub-01_ses-mri_phasediff.json': {
