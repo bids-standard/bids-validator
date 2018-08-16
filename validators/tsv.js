@@ -14,6 +14,7 @@ var utils  = require('../utils');
 var TSV = function TSV (file, contents, fileList, callback) {
 
     var issues = [];
+    var stimPaths = [];
     if ((contents.includes('\r')) && (!contents.includes('\n'))) {
         issues.push(new Issue({
             file: file,
@@ -120,14 +121,16 @@ var TSV = function TSV (file, contents, fileList, callback) {
             pathList.push(fileList[f].relativePath);
         }
 
-        // check for stimuli file presence
+        // check for stimuli file
         var stimFiles = [];
         if (headers.indexOf('stim_file') > -1) {
             for (var k = 0; k < rows.length; k++) {
                 var stimFile = rows[k].split('\t')[headers.indexOf('stim_file')];
+                var stimPath = '/stimuli/' + stimFile;
                 if (stimFile && stimFile !== 'n/a' && stimFile !== 'stim_file' && stimFiles.indexOf(stimFile) == -1) {
                     stimFiles.push(stimFile);
-                    if (pathList.indexOf('/stimuli/' + stimFile) == -1) {
+                    stimPaths.push(stimPath);
+                    if (pathList.indexOf(stimPath) == -1) {
                         issues.push(new Issue({
                             file: file,
                             evidence: stimFile,
@@ -166,11 +169,31 @@ var TSV = function TSV (file, contents, fileList, callback) {
     }
 
     // channels.tsv
-    if (file.name.endsWith('_channels.tsv')) {
+    if (file.relativePath.includes('/meg/') && file.name.endsWith('_channels.tsv')) {
         checkheader('name', 0, file, 71);
-        checkheader('type', 1, file, 72);
-        checkheader('units', 2, file, 73);
+        checkheader('type', 1, file, 71);
+        checkheader('units', 2, file, 71);
     }
+
+    if (file.relativePath.includes('/ieeg/') && file.name.endsWith('_channels.tsv')) {
+        checkheader('name', 0, file, 72);
+        checkheader('type', 1, file, 72);
+        checkheader('units', 2, file, 72);
+        checkheader('sampling_frequency', 3, file, 72);
+        checkheader('low_cutoff', 4, file, 72);
+        checkheader('high_cutoff', 5, file, 72);
+        checkheader('notch', 6, file, 72);
+        checkheader('reference', 7, file, 72);
+    }
+
+    if (file.relativePath.includes('/ieeg/') && file.name.endsWith('_electrodes.tsv')) {
+        checkheader('name', 0, file, 73);
+        checkheader('x', 1, file, 73);
+        checkheader('y', 2, file, 73);
+        checkheader('z', 3, file, 73);
+        checkheader('size', 4, file, 73);
+    }
+
   // check partcipants.tsv for age 89+
 
     if (file.name === 'participants.tsv'){
@@ -190,7 +213,7 @@ var TSV = function TSV (file, contents, fileList, callback) {
       }
     }
 
-    callback(issues, participants);
+    callback(issues, participants, stimPaths);
 
 };
 var checkphenotype = function (phenotypeParticipants, summary, issues) {

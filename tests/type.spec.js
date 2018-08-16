@@ -208,6 +208,10 @@ var suiteDWI = describe('utils.type.isDWI', function(){
 var suiteMEG = describe('utils.type.isMEG', function(){
     before(function(done) {
         var goodFilenames = [
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.sqd",
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.raw.mhd",
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/xyz",  // for e.g., BTi files
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_markers.sqd",
             "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.json",
             "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_part-01_meg.fif",
             "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_channels.tsv"
@@ -221,6 +225,8 @@ var suiteMEG = describe('utils.type.isMEG', function(){
         });
 
         var badFilenames = [
+            // only parent directory name matters for KIT/BTi systems
+            "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_megggg/sub-01_ses-001_task-rest_run-01_meg.sqd",
             "/sub-01/meg/sub-01_ses-001_task-rest_run-01_meg.json",
             "/sub-01/ses-001/meg/sub-12_ses-001_task-rest_run-01_part-01_meg.fif",
             "/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.tsv"];
@@ -228,6 +234,80 @@ var suiteMEG = describe('utils.type.isMEG', function(){
         badFilenames.forEach(function (path) {
             suiteMEG.addTest(new Test("isMeg('" + path + "') === false", function (isdone){
                 assert.equal(utils.type.isMeg(path), false);
+                isdone();
+            }));
+        });
+        done();
+    });
+
+    // we need to have at least one non-dynamic test
+    return it('dummy test', function() {
+        require('assert').ok(true);
+    });
+});
+
+var suiteEEG = describe('utils.type.isEEG', function(){
+    before(function(done) {
+        var goodFilenames = [
+            "/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.json",
+            "/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_part-01_eeg.edf",
+            "/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_channels.tsv"
+        ];
+
+        goodFilenames.forEach(function (path) {
+            suiteEEG.addTest(new Test("isEeg('" + path + "') === true", function (isdone){
+                assert.equal(utils.type.isEeg(path), true);
+                isdone();
+            }));
+        });
+
+        var badFilenames = [
+            "/sub-01/eeg/sub-01_ses-001_task-rest_run-01_eeg.json",
+            "/sub-01/ses-001/eeg/sub-12_ses-001_task-rest_run-01_part-01_eeg.edf",
+            "/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.tsv"];
+
+        badFilenames.forEach(function (path) {
+            suiteEEG.addTest(new Test("isEeg('" + path + "') === false", function (isdone){
+                assert.equal(utils.type.isEeg(path), false);
+                isdone();
+            }));
+        });
+        done();
+    });
+
+    // we need to have at least one non-dynamic test
+    return it('dummy test', function() {
+        require('assert').ok(true);
+    });
+});
+
+var suiteIEEG = describe('utils.type.isIEEG', function(){
+    before(function(done) {
+        var goodFilenames = [
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json",
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.edf",
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.vhdr",
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.vmrk",
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.dat",
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_channels.tsv",
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_electrodes.tsv"
+        ];
+
+        goodFilenames.forEach(function (path) {
+            suiteIEEG.addTest(new Test("isIEEG('" + path + "') === true", function (isdone){
+                assert.equal(utils.type.isIEEG(path), true);
+                isdone();
+            }));
+        });
+
+        var badFilenames = [
+            "/sub-01/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json",
+            "/sub-01/ses-001/ieeg/sub-12_ses-001_task-rest_run-01_part-01_ieeg.fif",
+            "/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.tsv"];
+
+        badFilenames.forEach(function (path) {
+            suiteIEEG.addTest(new Test("isIEEG('" + path + "') === false", function (isdone){
+                assert.equal(utils.type.isIEEG(path), false);
                 isdone();
             }));
         });

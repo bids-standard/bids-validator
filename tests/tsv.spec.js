@@ -87,6 +87,15 @@ describe('TSV', function(){
         });
     });
 
+    it('should return all values in the stim_file column as a list', function () {
+        var tsv = 'onset\tduration\tstim_file\n' +
+                  'value-one\tvalue-two\timages/red-square.jpg';
+        var fileList = [{relativePath: '/stimuli/images/red-square.jpg'}];
+        validate.TSV.TSV(eventsFile, tsv, fileList, function (issues, participants, stimFiles) {
+            assert(stimFiles.length === 1 && stimFiles[0] === '/stimuli/images/red-square.jpg');
+        });
+    });
+
 // participants checks -----------------------------------------------------------------
 
     var participantsFile = {
@@ -186,7 +195,7 @@ var channelsFile = {
         var tsv = 'name\theader-two\tunits\n' +
             'value-one\tvalue-two\tvalue-three';
         validate.TSV.TSV(channelsFile, tsv, [], function (issues) {
-            assert(issues.length === 1 && issues[0].code === 72);
+            assert(issues.length === 1 && issues[0].code === 71);
         });
     });
 
@@ -195,6 +204,114 @@ var channelsFile = {
         var tsv = 'name\ttype\tunits\theader-four\n' +
             'value-one\tvalue-two\tvalue-three\tvalue-four';
         validate.TSV.TSV(channelsFile, tsv, [], function (issues) {
+            assert(issues.length === 0);
+        });
+    });
+
+var channelsFileIEEG = {
+        name: 'sub-01_ses-ieeg_task-facerecognition_run-01_channels.tsv',
+        relativePath: '/sub-01/ses-ieeg/ieeg/sub-01_ses-meg_task-facerecognition_run-01_channels.tsv'
+    };
+
+    it("should not allow channels.tsv files without sampling_frequency column", function () {
+        var tsv = 'name\ttype\tunits\tcolumn_four\tlow_cutoff\thigh_cutoff\tnotch\treference\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight';
+        validate.TSV.TSV(channelsFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 72);
+        });
+    });
+
+    it("should not allow channels.tsv files without low_cutoff column", function () {
+        var tsv = 'name\ttype\tunits\tsampling_frequency\tcolumn_five\thigh_cutoff\tnotch\treference\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight';
+        validate.TSV.TSV(channelsFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 72);
+        });
+    });
+
+
+    it("should not allow channels.tsv files without high_cutoff column", function () {
+        var tsv = 'name\ttype\tunits\tsampling_frequency\tlow_cutoff\tcolumn_six\tnotch\treference\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight';
+        validate.TSV.TSV(channelsFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 72);
+        });
+    });
+
+    it("should not allow channels.tsv files without notch column", function () {
+        var tsv = 'name\ttype\tunits\tsampling_frequency\tlow_cutoff\thigh_cutoff\tcolumn_seven\treference\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight';
+        validate.TSV.TSV(channelsFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 72);
+        });
+    });
+
+    it("should not allow channels.tsv files without reference column", function () {
+        var tsv = 'name\ttype\tunits\tsampling_frequency\tlow_cutoff\thigh_cutoff\tnotch\tcolumn-eight\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight';
+        validate.TSV.TSV(channelsFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 72);
+        });
+    });
+
+    it("correct columns should pass for ieeg", function () {
+        var tsv = 'name\ttype\tunits\tsampling_frequency\tlow_cutoff\thigh_cutoff\tnotch\treference\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight';
+        validate.TSV.TSV(channelsFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 0);
+        });
+    });
+
+var electrodesFileIEEG = {
+        name: 'sub-01_ses-ieeg_task-facerecognition_run-01_electrodes.tsv',
+        relativePath: '/sub-01/ses-ieeg/ieeg/sub-01_ses-ieeg_task-facerecognition_run-01_electrodes.tsv'
+    };
+
+    it("should not allow electrodes.tsv files without name column", function () {
+        var tsv = 'blah\tx\ty\tz\tsize\ttype\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n';
+        validate.TSV.TSV(electrodesFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 73);
+        });
+    });
+
+    it("should not allow electrodes.tsv files without x column", function () {
+        var tsv = 'name\tblah\ty\tz\tsize\ttype\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n';
+        validate.TSV.TSV(electrodesFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 73);
+        });
+    });
+
+
+    it("should not allow electrodes.tsv files without y column", function () {
+        var tsv = 'name\tx\tblah\tz\tsize\ttype\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n';
+        validate.TSV.TSV(electrodesFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 73);
+        });
+    });
+
+    it("should not allow electrodes.tsv files without z column", function () {
+        var tsv = 'name\tx\ty\tblah\tsize\ttype\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n';
+        validate.TSV.TSV(electrodesFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 73);
+        });
+    });
+
+    it("should not allow electrodes.tsv files without size column", function () {
+        var tsv = 'name\tx\ty\tz\tblah\ttype\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n';
+        validate.TSV.TSV(electrodesFileIEEG, tsv, [], function (issues) {
+            assert(issues.length === 1 && issues[0].code === 73);
+        });
+    });
+
+    it("correct columns should pass for ieeg electrodes file", function () {
+        var tsv = 'name\tx\ty\tz\tsize\ttype\n' +
+            'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n';
+        validate.TSV.TSV(electrodesFileIEEG, tsv, [], function (issues) {
             assert(issues.length === 0);
         });
     });
