@@ -245,5 +245,59 @@ describe('NIFTI', function(){
             assert(issues.length === 1 && issues[0].code === 87);
         });
     });
+    
+    it('should throw an error for _phasediff.nii files with associated (EchoTime2 - EchoTime1) less than 0.0001', function(){
+        var phaseDiffJson = {
+            '/sub-01/func/sub-01_ses-mri_phasediff.json': {
+                "RepetitionTime": 0.4,
+                "EchoTime1": 0.00515,
+                "EchoTime2": 0.00519,
+                "FlipAngle": 60,
+            }
+        };
+        var phaseDiffFile = {
+            name: 'sub-01_ses-mri_phasediff.nii',
+            relativePath: '/sub-01/func/sub-01_ses-mri_phasediff.nii'
+        };
+        validate.NIFTI(null, phaseDiffFile, phaseDiffJson, {}, [], events, function (issues) {
+            assert(issues[0].code === 83 && issues.length === 1);
+        });
+    });
+
+    it('should throw an error for _phasediff.nii files with associated (EchoTime2 - EchoTime1) greater than 0.01', function(){
+        var phaseDiffJson = {
+            '/sub-01/func/sub-01_ses-mri_phasediff.json': {
+                "RepetitionTime": 0.4,
+                "EchoTime1": 0.00515,
+                "EchoTime2": 0.1019,
+                "FlipAngle": 60,
+            }
+        };
+        var phaseDiffFile = {
+            name: 'sub-01_ses-mri_phasediff.nii',
+            relativePath: '/sub-01/func/sub-01_ses-mri_phasediff.nii'
+        };
+        validate.NIFTI(null, phaseDiffFile, phaseDiffJson, {}, [], events, function (issues) {
+            assert(issues[0].code === 83 && issues.length === 1);
+        });
+    });
+
+    it('should give not error for _phasediff.nii files with reasonable values of associated (EchoTime2 - EchoTime1)', function(){
+        var phaseDiffJson = {
+            '/sub-01/func/sub-01_ses-mri_phasediff.json': {
+                "RepetitionTime": 0.4,
+                "EchoTime1": 0.00515,
+                "EchoTime2": 0.00819,
+                "FlipAngle": 60,
+            }
+        };
+        var phaseDiffFile = {
+            name: 'sub-01_ses-mri_phasediff.nii',
+            relativePath: '/sub-01/func/sub-01_ses-mri_phasediff.nii'
+        };
+        validate.NIFTI(null, phaseDiffFile, phaseDiffJson, {}, [], events, function (issues) {
+            assert(issues.length === 0);
+        });
+    });
 
 });
