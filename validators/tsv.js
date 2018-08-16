@@ -170,11 +170,31 @@ var TSV = function TSV (file, contents, fileList, callback) {
     }
 
     // channels.tsv
-    if (file.name.endsWith('_channels.tsv')) {
+    if (file.relativePath.includes('/meg/') && file.name.endsWith('_channels.tsv')) {
         checkheader('name', 0, file, 71);
-        checkheader('type', 1, file, 72);
-        checkheader('units', 2, file, 73);
+        checkheader('type', 1, file, 71);
+        checkheader('units', 2, file, 71);
     }
+
+    if (file.relativePath.includes('/ieeg/') && file.name.endsWith('_channels.tsv')) {
+        checkheader('name', 0, file, 72);
+        checkheader('type', 1, file, 72);
+        checkheader('units', 2, file, 72);
+        checkheader('sampling_frequency', 3, file, 72);
+        checkheader('low_cutoff', 4, file, 72);
+        checkheader('high_cutoff', 5, file, 72);
+        checkheader('notch', 6, file, 72);
+        checkheader('reference', 7, file, 72);
+    }
+
+    if (file.relativePath.includes('/ieeg/') && file.name.endsWith('_electrodes.tsv')) {
+        checkheader('name', 0, file, 73);
+        checkheader('x', 1, file, 73);
+        checkheader('y', 2, file, 73);
+        checkheader('z', 3, file, 73);
+        checkheader('size', 4, file, 73);
+    }
+
   // check partcipants.tsv for age 89+
 
     if (file.name === 'participants.tsv'){

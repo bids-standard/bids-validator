@@ -121,6 +121,8 @@ BIDS = {
                     else if (path[0].includes('.json') && ['meg'].indexOf(path[1]) !=-1) {isCorrectModality = true;}
                     // EEG
                     else if (path[0].includes('.json') && (['eeg'].indexOf(path[1]) !=-1)  && BIDS.options.bep006) {isCorrectModality = true;}
+                    // iEEG
+                    else if (path[0].includes('.json') && (['ieeg'].indexOf(path[1]) !=-1) && BIDS.options.bep010) { isCorrectModality = true;}
 
                     if (path[2] && (path[2].indexOf('ses-') == 0 || path[2].indexOf('sub-') == 0) && isCorrectModality){
                         couldBeBIDS = true;
@@ -150,6 +152,7 @@ BIDS = {
                 directory: [],
             },
             niftis = [],
+            ephys = [],
             headers = [],
             participants = null,
             phenotypeParticipants = [],
@@ -235,13 +238,15 @@ BIDS = {
 
         // validate individual files
         async.eachOfLimit(fileList, 200, function (file, key, cb) {
-            var path = file.relativePath;
+            const path = file.relativePath;
+            const pathParts = path.split('_');
+            const suffix = pathParts[pathParts.length - 1];
 
             // Make RegExp for detecting modalities from data file extensions
             var dataExtRE = new RegExp (['^.*\\.(',
                                          'nii|nii\\.gz|', // MRI
                                          'fif|fif\\.gz|sqd|con|kdf|chn|trg|raw|raw\\.mhf|', // MEG
-                                         'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt', // EEG
+                                         'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt|dat|nwb|tdat|tidx|tmet', // EEG/iEEG
                                          ')$'].join(''));
 
             // ignore associated data
@@ -251,7 +256,7 @@ BIDS = {
             }
 
             // validate path naming
-            else if (!utils.type.isBIDS(file.relativePath, BIDS.options.bep006)) {
+            else if (!utils.type.isBIDS(file.relativePath, BIDS.options.bep006, BIDS.options.bep010)) {
                 self.issues.push(new Issue({
                     file: file,
                     evidence: file.name,
@@ -267,16 +272,21 @@ BIDS = {
                 // capture nifties for later validation
                 if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
 
-                // collect modality summary
-                var pathParts = path.split('_');
-                var suffix = pathParts[pathParts.length - 1];
-                suffix = suffix.slice(0, suffix.indexOf('.'));
-                if (summary.modalities.indexOf(suffix) === -1) {
-                    summary.modalities.push(suffix);
-                }
+            // collect modality summary
+            const modality = suffix.slice(0, suffix.indexOf('.'));
+            if (summary.modalities.indexOf(modality) === -1) {
+                summary.modalities.push(modality);
+            }
 
                 process.nextTick(cb);
                 }
+
+            // capture ieeg files for summary
+            else if (['edf', 'vhdr', 'vmrk', 'dat', 'cnt', 'bdf', 'set', 'nwb', 'tdat', 'tidx', 'tmet'].includes(file.name.split('.').pop())) {
+                ephys.push(file);
+
+                process.nextTick(cb);
+            }
 
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {
@@ -287,7 +297,11 @@ BIDS = {
                         return;
                     }
                     if (file.name.endsWith('_events.tsv')) {
-                        events.push(file.relativePath);
+                        events.push({
+                            file: file,
+                            path: file.relativePath,
+                            contents: contents
+                        });
                     }
                     TSV.TSV(file, contents, fileList, function (issues, participantList, stimFiles) {
                         if (participantList) {
@@ -391,7 +405,7 @@ BIDS = {
             }
 
             // collect sessions & subjects
-            if (!utils.type.isStimuliData(file.relativePath) && utils.type.isBIDS(file.relativePath, BIDS.options.bep006)) {
+            if (!utils.type.isStimuliData(file.relativePath) && utils.type.isBIDS(file.relativePath, BIDS.options.bep006, BIDS.options.bep010)) {
                 var pathValues = utils.type.getPathValues(file.relativePath);
 
                 if (pathValues.sub && summary.subjects.indexOf(pathValues.sub) === -1) {
@@ -475,11 +489,15 @@ BIDS = {
                 //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
                 TSV.checkphenotype(phenotypeParticipants, summary, self.issues);
 
-                // check that all stimuli files present in /stimuli are included in an _events.tsv file
-                Events.checkStimuli(stimuli, self.issues);
-
+                // validate nii header fields
                 self.issues = self.issues.concat(headerFields(headers));
+
+                // Events validation
+                Events.validateEvents(events, stimuli, headers, jsonContentsDict, self.issues);
+
+                // validation session files
                 self.issues = self.issues.concat(session(fileList));
+
                 self.issues = self.issues.concat(checkAnyDataPresent(fileList, summary.subjects));
                 summary.modalities = utils.modalities.group(summary.modalities);
                 var issues = utils.issues.format(self.issues, summary, self.options);

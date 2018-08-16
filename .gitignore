@@ -4,3 +4,5 @@ tests/data/BIDS-examples-*
 tests/data/examples.zip
 npm-debug.log
 .idea/
+.ipynb_checkpoints
+package-lock.json

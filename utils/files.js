@@ -23,7 +23,11 @@ var fileUtils = {
     newFile: newFile,
     readFile: readFile,
     readDir: readDir,
-    readNiftiHeader: readNiftiHeader
+    readNiftiHeader: readNiftiHeader,
+    generateMergedSidecarDict: generateMergedSidecarDict,
+    potentialLocations: potentialLocations,
+    getBFileContent: getBFileContent
+
 };
 
 // implementations ----------------------------------------------------------------
@@ -338,6 +342,101 @@ function parseNIfTIHeader (buffer, file) {
     }
     // file was not originally gzipped
     return header;
+}
+
+/**
+ * Generate Merged Sidecar Dictionary
+ *
+ * Takes an array of potential sidecards and a
+ * master object dictionary of all JSON file
+ * content and returns a merged dictionary
+ * containing all values from the potential
+ * sidecars.
+ */
+function generateMergedSidecarDict(potentialSidecars, jsonContents) {
+    var mergedDictionary = {};
+    for (var i = 0; i < potentialSidecars.length; i++) {
+        var sidecarName = potentialSidecars[i];
+        var jsonObject = jsonContents[sidecarName];
+        if (jsonObject) {
+            for (var key in jsonObject) {
+                mergedDictionary[key] = jsonObject[key];
+            }
+        } else if (jsonObject === null) {
+            mergedDictionary.invalid = true;
+        }
+    }
+    return mergedDictionary;
+}
+
+/**
+ * Potential Locations
+ *
+ * Takes the path to the lowest possible level of
+ * a file that can be hierarchily positioned and
+ * return a list of all possible locations for that
+ * file.
+ */
+function potentialLocations(path) {
+    var potentialPaths = [path];
+    var pathComponents = path.split('/');
+    var filenameComponents = pathComponents[pathComponents.length - 1].split("_");
+
+    var sessionLevelComponentList = [],
+        subjectLevelComponentList = [],
+        topLevelComponentList = [],
+        ses = null,
+        sub = null;
+
+    filenameComponents.forEach(function (filenameComponent) {
+        if (filenameComponent.substring(0, 3) != "run") {
+            sessionLevelComponentList.push(filenameComponent);
+            if (filenameComponent.substring(0, 3) == "ses") {
+                ses = filenameComponent;
+
+            } else {
+                subjectLevelComponentList.push(filenameComponent);
+                if (filenameComponent.substring(0, 3) == "sub") {
+                    sub = filenameComponent;
+                } else {
+                    topLevelComponentList.push(filenameComponent);
+                }
+            }
+        }
+    });
+
+    if (ses) {
+        addPotentialPaths(sessionLevelComponentList, potentialPaths, 2, "/" + sub + "/" + ses + "/");
+    }
+    addPotentialPaths(subjectLevelComponentList, potentialPaths, 1, "/" + sub + "/");
+    addPotentialPaths(topLevelComponentList, potentialPaths, 0, "/");
+    potentialPaths.reverse();
+
+    return potentialPaths;
+}
+
+function addPotentialPaths(componentList, potentialPaths, offset, prefix) {
+    for (var i = componentList.length; i > offset; i--) {
+        var tmpList = componentList.slice(0, i-1).concat([componentList[componentList.length-1]]);
+        var sessionLevelPath = prefix + tmpList.join("_");
+        potentialPaths.push(sessionLevelPath);
+    }
+}
+
+/**
+ * Get B-File Contents
+ *
+ * Takes an array of potential bval or bvec files
+ * and a master b-file contents dictionary and returns
+ * the contents of the desired file.
+ */
+function getBFileContent(potentialBFiles, bContentsDict) {
+    for (var i = 0; i < potentialBFiles.length; i++) {
+        var potentialBFile = potentialBFiles[i];
+        if (bContentsDict.hasOwnProperty(potentialBFile)) {
+            return bContentsDict[potentialBFile];
+        }
+    }
 }
 
 /**

@@ -344,19 +344,19 @@ module.exports = {
         reason: "All TSV files must use Line Feed '\\n' characters to denote new lines. This files uses Carriage Return '\\r'."
     },
     71: {
-        key: 'CHANNELS_COLUMN_NAME',
+        key: 'MISSING_TSV_COLUMN_MEG',
         severity: 'error',
-        reason:   "First column of the channels file must be named 'name'"
+        reason:   "The column names of the channels file must begin with ['name', 'type', 'units']"
     },
     72: {
-        key: 'CHANNELS_COLUMN_TYPE',
+        key: 'MISSING_TSV_COLUMN_IEEG_CHANNELS',
         severity: 'error',
-        reason:   "Second column of the channels file must be named 'type'"
+        reason:   "The column names of the channels file must begin with ['name', 'type', 'units', 'sampling_frequency', 'low_cutoff', 'high_cutoff', 'notch', 'reference']"
     },
     73: {
-        key: 'CHANNELS_COLUMN_UNITS',
+        key: 'MISSING_TSV_COLUMN_IEEG_ELECTRODES',
         severity: 'error',
-        reason:   "Third column of the channels file must be named 'units'"
+        reason:   "The column names of the electrodes file must begin with ['name', 'x', 'y', 'z', 'size', 'type']"
     },
     74: {
         key: 'DUPLICATE_NIFTI_FILES',
@@ -378,9 +378,45 @@ module.exports = {
         severity: 'warning',
         reason: 'There are files in the /stimuli directory that are not utilized in any _events.tsv file.'
     },
+    78: {
+        key: 'CHANNELS_COLUMN_SFREQ',
+        severity: 'error',
+        reason:   "Fourth column of the channels file must be named 'sampling_frequency'"
+    },
+    79: {
+        key: 'CHANNELS_COLUMN_LOWCUT',
+        severity: 'error',
+        reason:   "Third column of the channels file must be named 'low_cutoff'"
+    },
+    80: {
+        key: 'CHANNELS_COLUMN_HIGHCUT',
+        severity: 'error',
+        reason:   "Third column of the channels file must be named 'high_cutoff'"
+    },
+    81: {
+        key: 'CHANNELS_COLUMN_NOTCH',
+        severity: 'error',
+        reason:   "Third column of the channels file must be named 'notch'"
+    },
+    83: {
+        key: 'ECHOTIME1_2_DIFFERENCE_UNREASONABLE',
+        severity: 'error',
+        reason: 'The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - 0.01.'
+    },
     84: {
         key: 'ACQTIME_FMT',
         severity: 'error',
         reason: 'Entries in the "acq_time" column of _scans.tsv should be expressed in the following format YYYY-MM-DDTHH:mm:ss (year, month, day, hour (24h), minute, second; this is equivalent to the RFC3339 “date-time” format. '
     },
+    85: {
+        key: 'SUSPICIOUSLY_LONG_EVENT_DESIGN',
+        severity: 'warning',
+        reason: 'The onset of the last event is after the total duration of the corresponding scan. This design is suspiciously long. '
+    },
+    86: {
+        key: 'SUSPICIOUSLY_SHORT_EVENT_DESIGN',
+        severity: 'warning',
+        reason: 'The onset of the last event is less than half the total duration of the corresponding scan. This design is suspiciously short. '
+
+    }
 };
