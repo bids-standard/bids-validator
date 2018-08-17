@@ -33,7 +33,7 @@ const checkDesignLength = function(events, headers, jsonContents, issues) {
     // get all headers associated with task data
     var taskHeaders = headers.filter(header => {
         const file = header[0];
-        return file.path.includes('_task-');
+        return file.relativePath.includes('_task-');
     });
 
     // loop through headers with files that are tasks
@@ -47,7 +47,7 @@ const checkDesignLength = function(events, headers, jsonContents, issues) {
         const numVols = dim[4];
 
         // get the json sidecar dictionary associated with that nifti scan
-        const potentialSidecars = utils.files.potentialLocations(file.path.replace(".gz", "").replace(".nii", ".json"));
+        const potentialSidecars = utils.files.potentialLocations(file.relativePath.replace(".gz", "").replace(".nii", ".json"));
         const mergedDictionary  = utils.files.generateMergedSidecarDict(potentialSidecars, jsonContents);
 
         // extract the 'RepetitionTime' field from said sidecar (TR)

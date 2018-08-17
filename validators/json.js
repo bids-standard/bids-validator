@@ -43,9 +43,9 @@ function checkUnits (file, sidecar) {
             schema = require('./schemas/meg.json');
         } else if (file.name.endsWith("ieeg.json")) {
             schema = require('./schemas/ieeg.json');
-        } else if (file.path.includes('/meg/') && file.name.endsWith("coordsystem.json")) {
+        } else if (file.relativePath.includes('/meg/') && file.name.endsWith("coordsystem.json")) {
             schema = require('./schemas/coordsystem_meg.json');
-        } else if (file.path.includes('/ieeg/') && file.name.endsWith("coordsystem.json")) {
+        } else if (file.relativePath.includes('/ieeg/') && file.name.endsWith("coordsystem.json")) {
             schema = require('./schemas/coordsystem_ieeg.json');
         } else if (file.name.endsWith("eeg.json")) {
             schema = require('./schemas/eeg.json');
