@@ -17,64 +17,6 @@ var headerFields = require('./headerFields');
 
 var BIDS;
 
-
-/**
- * Potential Locations
- *
- * Takes the path to the lowest possible level of
- * a file that can be hierarchily positioned and
- * return a list of all possible locations for that
- * file.
- */
-function addPotentialPaths(componentList, potentialPaths, offset, prefix) {
-    for (var i = componentList.length; i > offset; i--) {
-        var tmpList = componentList.slice(0, i-1).concat([componentList[componentList.length-1]]);
-        var sessionLevelPath = prefix + tmpList.join("_");
-        potentialPaths.push(sessionLevelPath);
-    }
-}
-
-function potentialLocations(path) {
-    var potentialPaths = [path];
-    var pathComponents = path.split('/');
-    var filenameComponents = pathComponents[pathComponents.length - 1].split("_");
-
-    var sessionLevelComponentList = [],
-        subjectLevelComponentList = [],
-        topLevelComponentList = [],
-        ses = null,
-        sub = null;
-
-    filenameComponents.forEach(function (filenameComponent) {
-        if (filenameComponent.substring(0, 3) != "run") {
-            sessionLevelComponentList.push(filenameComponent);
-            if (filenameComponent.substring(0, 3) == "ses") {
-                ses = filenameComponent;
-
-            } else {
-                subjectLevelComponentList.push(filenameComponent);
-                if (filenameComponent.substring(0, 3) == "sub") {
-                    sub = filenameComponent;
-                } else {
-                    topLevelComponentList.push(filenameComponent);
-                }
-            }
-        }
-    });
-
-    if (ses) {
-        addPotentialPaths(sessionLevelComponentList, potentialPaths, 2, "/" + sub + "/" + ses + "/");
-    }
-    addPotentialPaths(subjectLevelComponentList, potentialPaths, 1, "/" + sub + "/");
-    addPotentialPaths(topLevelComponentList, potentialPaths, 0, "/");
-    potentialPaths.reverse();
-
-    return potentialPaths;
-}
-
-
-
-
 BIDS = {
 
     options: {},
@@ -324,22 +266,6 @@ BIDS = {
                 process.nextTick(cb);
             }
 
-<<<<<<< HEAD
-            // check nifti and MEG files
-            else if (RegExp('^.*\.(nii|nii\.gz|fif|fif\.gz|sqd|con|kdf|chn|trg|raw|raw\.mhf)$').test(file.name)) {
-                // capture nifties for later validation
-                if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {niftis.push(file);}
-
-                // collect modality summary
-                var pathParts = path.split('_');
-                var suffix = pathParts[pathParts.length - 1];
-                suffix = suffix.slice(0, suffix.indexOf('.'));
-                if (summary.modalities.indexOf(suffix) === -1) {
-                    summary.modalities.push(suffix);
-                }
-
-                process.nextTick(cb);
-=======
             // check modality by data file extension ...
             // and capture data files for later sanity checks (when available)
             else if (dataExtRE.test(file.name)) {
@@ -361,18 +287,17 @@ BIDS = {
                 ephys.push(file);
 
                 process.nextTick(cb);
->>>>>>> upstream/master
             }
 
             // validate tsv
             else if (file.name && file.name.endsWith('.tsv')) {            
                 // Generate name for corresponding data dictionary file
-                console.log("Check for data dictionary for " + file.path);
+                //console.log("Check for data dictionary for " + file.path);
                 let dict_path = file.path.replace(".tsv", ".json");
-                exists = false;
-                potentialDicts = potentialLocations(dict_path);
+                let exists = false;
+                let potentialDicts = utils.files.potentialLocations(dict_path);
                 // Need to check for .json file at all levels of heirarchy
-                console.log("Potential data dictionaries:" + potentialLocations(dict_path));
+                //console.log("Potential data dictionaries:" + utils.files.potentialLocations(dict_path));
                 // Get list of fileList keys
                 let idxs = Object.keys(fileList);
                 for (let i of idxs) {
@@ -384,8 +309,9 @@ BIDS = {
 
                 // Check if data dictionary file exists
                 if (!exists) {  // Can't use fs.exists because there's no file system in browser implementations
+                    //console.log("Missing data dictionary found");
                     self.issues.push(new Issue({
-                        code: 77,
+                        code: 82,
                         file: file
                     }));                    
                 }
