@@ -16,6 +16,7 @@ var checkAnyDataPresent = require('./checkAnyDataPresent');
 var headerFields = require('./headerFields');
 
 var BIDS;
+
 BIDS = {
 
     options: {},
@@ -289,7 +290,31 @@ BIDS = {
             }
 
             // validate tsv
-            else if (file.name && file.name.endsWith('.tsv')) {
+            else if (file.name && file.name.endsWith('.tsv')) {            
+                // Generate name for corresponding data dictionary file
+                //console.log("Check for data dictionary for " + file.path);
+                let dict_path = file.relativePath.replace(".tsv", ".json");
+                let exists = false;
+                let potentialDicts = utils.files.potentialLocations(dict_path);
+                // Need to check for .json file at all levels of heirarchy
+                //console.log("Potential data dictionaries:" + utils.files.potentialLocations(dict_path));
+                // Get list of fileList keys
+                let idxs = Object.keys(fileList);
+                for (let i of idxs) {
+                    if (potentialDicts.indexOf(fileList[i].relativePath) > -1) {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                // Check if data dictionary file exists
+                if (!exists) {  // Can't use fs.exists because there's no file system in browser implementations
+                    //console.log("Missing data dictionary found");
+                    self.issues.push(new Issue({
+                        code: 82,
+                        file: file
+                    }));                    
+                }
                 utils.files.readFile(file, function (issue, contents) {
                     if (issue) {
                         self.issues.push(issue);
