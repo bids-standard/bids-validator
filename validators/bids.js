@@ -293,7 +293,7 @@ BIDS = {
             else if (file.name && file.name.endsWith('.tsv')) {            
                 // Generate name for corresponding data dictionary file
                 //console.log("Check for data dictionary for " + file.path);
-                let dict_path = file.path.replace(".tsv", ".json");
+                let dict_path = file.relativePath.replace(".tsv", ".json");
                 let exists = false;
                 let potentialDicts = utils.files.potentialLocations(dict_path);
                 // Need to check for .json file at all levels of heirarchy
@@ -301,7 +301,7 @@ BIDS = {
                 // Get list of fileList keys
                 let idxs = Object.keys(fileList);
                 for (let i of idxs) {
-                    if (potentialDicts.indexOf(fileList[i].path) > -1) {
+                    if (potentialDicts.indexOf(fileList[i].relativePath) > -1) {
                         exists = true;
                         break;
                     }
