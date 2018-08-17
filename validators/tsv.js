@@ -2,7 +2,8 @@
 var Issue = require('../utils').issues.Issue;
 var files = require('../utils/files');
 var utils  = require('../utils');
-
+var dateIsValid = require('date-fns/isValid');
+var parseDate = require('date-fns/parse');
 /**
  * TSV
  *
@@ -200,9 +201,10 @@ var TSV = function TSV (file, contents, fileList, callback) {
         checkage89_plus(rows, file, issues);
     }
 
-  // check _scans.tsv for column filename
+  
 
     if(file.name.endsWith('_scans.tsv')){
+      // check _scans.tsv for column filename
       if(!(headers.indexOf('filename') > -1)){
         issues.push(new Issue({
             line: 1,
@@ -210,6 +212,11 @@ var TSV = function TSV (file, contents, fileList, callback) {
             evidence: headers.join('\t'),
             code: 68
         }));
+      }
+
+      // if _scans.tsv has the acq_time header, check datetime format
+      if (headers.indexOf('acq_time') > -1) {
+          checkAcqTimeFormat(rows, file, issues);
       }
     }
 
@@ -247,6 +254,29 @@ var checkage89_plus = function(rows, file, issues){
         }
     }
 };
+
+const checkAcqTimeFormat = function(rows, file, issues) {
+    const format = "YYYY-MM-DD'T'HH:mm:ss";
+    const header = rows[0].trim().split('\t');
+    const acqTimeColumn = header.indexOf('acq_time');
+    const testRows = rows.slice(1);
+    for (let i = 0; i < testRows.length; i++) {
+        const line = testRows[i];
+        const lineValues = line.trim().split('\t');
+        const acqTime = lineValues[acqTimeColumn];
+        const isValid = dateIsValid(parseDate(acqTime, format, new Date()));
+        if (acqTime && !isValid) {
+            issues.push(new Issue({
+                file: file,
+                evidence: file,
+                line: i + 2,
+                character: 'acq_time is not in the format YYYY-MM-DDTHH:mm:ss ',
+                code: 84,
+            }));
+        }
+    }
+};
+
 module.exports = {
     TSV: TSV,
     checkphenotype : checkphenotype

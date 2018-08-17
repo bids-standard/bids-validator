@@ -403,6 +403,11 @@ module.exports = {
         severity: 'error',
         reason: 'The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - 0.01.'
     },
+    84: {
+        key: 'ACQTIME_FMT',
+        severity: 'error',
+        reason: 'Entries in the "acq_time" column of _scans.tsv should be expressed in the following format YYYY-MM-DDTHH:mm:ss (year, month, day, hour (24h), minute, second; this is equivalent to the RFC3339 “date-time” format. '
+    },
     85: {
         key: 'SUSPICIOUSLY_LONG_EVENT_DESIGN',
         severity: 'warning',
