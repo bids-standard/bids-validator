@@ -11,16 +11,20 @@ var type = require('../utils').type
  */
 module.exports = function bvec(file, contents, callback) {
   var issues = []
-  
+
   // throw error if contents are undefined or the wrong type
-  if (!contents || typeof(contents) !== 'string') {
-    let evidence = contents ? 'The contents of this .bvec file have type ' + typeof(contents) + ' but should be a string.' : 'The contents of this .bvec file are undefined.'
+  if (!contents || typeof contents !== 'string') {
+    let evidence = contents
+      ? 'The contents of this .bvec file have type ' +
+        typeof contents +
+        ' but should be a string.'
+      : 'The contents of this .bvec file are undefined.'
     issues.push(
       new Issue({
         code: 88,
         file: file,
-        evidence: evidence
-      })
+        evidence: evidence,
+      }),
     )
     return callback(issues)
   }
