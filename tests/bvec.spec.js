@@ -35,4 +35,18 @@ describe('bvec', function() {
       assert(issues.length == 1 && issues[0].code == 47)
     })
   })
+
+  it('should not allow undefined bvecs', function() {
+    const bvec = undefined
+    validate.bvec({}, bvec, function(issues) {
+      assert(issues.length == 1 && issues[0].code == 88)
+    })
+  })
+
+  it('should not allow bvecs of types other than string', function() {
+    const bvec = [0, 1, 2, 3]
+    validate.bvec({}, bvec, function(issues) {
+      assert(issues.length == 1 && issues[0].code == 88)
+    })
+  })
 })
