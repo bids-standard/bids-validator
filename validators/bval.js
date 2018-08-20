@@ -12,6 +12,19 @@ var type = require('../utils').type
 module.exports = function bval(file, contents, callback) {
   var issues = []
 
+  // throw error if contents are undefined or the wrong type
+  if (!contents || typeof(contents) !== 'string') {
+    let evidence = contents ? 'The contents of this .bval file have type ' + typeof(contents) + ' but should be a string.' : 'The contents of this .bval file are undefined.'
+    issues.push(
+      new Issue({
+        code: 89,
+        file: file,
+        evidence: evidence
+      })
+    )
+    return callback(issues)
+  }
+
   if (contents.replace(/^\s+|\s+$/g, '').split('\n').length !== 1) {
     issues.push(
       new Issue({
