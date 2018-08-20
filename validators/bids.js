@@ -177,6 +177,7 @@ BIDS = {
         directory: [],
       },
       niftis = [],
+      jsonFiles = [],
       ephys = [],
       headers = [],
       participants = null,
@@ -452,7 +453,7 @@ BIDS = {
           })
         }
 
-        // validate json
+        // load json data for validation later
         else if (file.name && file.name.endsWith('.json')) {
           utils.files.readFile(file, function(issue, contents) {
             if (issue) {
@@ -460,7 +461,7 @@ BIDS = {
               process.nextTick(cb)
               return
             }
-            json(file, contents, function(issues, jsObj) {
+            utils.json.parse(file, contents, function(issues, jsObj) {
               self.issues = self.issues.concat(issues)
 
               // abort further tests if schema test does not pass
@@ -472,14 +473,7 @@ BIDS = {
               }
 
               jsonContentsDict[file.relativePath] = jsObj
-
-              // collect task summary
-              if (file.name.indexOf('task') > -1) {
-                var task = jsObj ? jsObj.TaskName : null
-                if (task && summary.tasks.indexOf(task) === -1) {
-                  summary.tasks.push(task)
-                }
-              }
+              jsonFiles.push(file)
               process.nextTick(cb)
             })
           })
@@ -523,62 +517,60 @@ BIDS = {
         }
       },
       function() {
-        // check if same file with .nii and .nii.gz extensions is present
-        var niftiCounts = niftis
-          .map(function(val) {
-            return { count: 1, val: val.name.split('.')[0] }
-          })
-          .reduce(function(a, b) {
-            a[b.val] = (a[b.val] || 0) + b.count
-            return a
-          }, {})
-
-        var duplicates = Object.keys(niftiCounts).filter(function(a) {
-          return niftiCounts[a] > 1
-        })
-        if (duplicates.length !== 0) {
-          for (var key in duplicates) {
-            var duplicateFiles = niftis.filter(function(a) {
-              return a.name.split('.')[0] === duplicates[key]
-            })
-            for (var file in duplicateFiles) {
-              self.issues.push(
-                new Issue({
-                  code: 74,
-                  file: duplicateFiles[file],
-                }),
-              )
-            }
-          }
-        }
-
+        // check json data
         async.eachOfLimit(
-          niftis,
+          jsonFiles,
           200,
           function(file, key, cb) {
-            if (self.options.ignoreNiftiHeaders) {
-              NIFTI(
-                null,
-                file,
-                jsonContentsDict,
-                bContentsDict,
-                fileList,
-                events,
-                function(issues) {
-                  self.issues = self.issues.concat(issues)
-                  process.nextTick(cb)
-                },
-              )
-            } else {
-              utils.files.readNiftiHeader(file, function(header) {
-                // check if header could be read
-                if (header && header.hasOwnProperty('error')) {
-                  self.issues.push(header.error)
-                  process.nextTick(cb)
-                } else {
-                  headers.push([file, header])
+            json(file, jsonContentsDict, function(issues, jsObj) {
+              self.issues = self.issues.concat(issues)
+              // collect task summary
+              if (file.name.indexOf('task') > -1) {
+                var task = jsObj ? jsObj.TaskName : null
+                if (task && summary.tasks.indexOf(task) === -1) {
+                  summary.tasks.push(task)
+                }
+              }
+              process.nextTick(cb)
+            })
+          },
+          function() {
+            // check if same file with .nii and .nii.gz extensions is present
+            var niftiCounts = niftis
+              .map(function(val) {
+                return { count: 1, val: val.name.split('.')[0] }
+              })
+              .reduce(function(a, b) {
+                a[b.val] = (a[b.val] || 0) + b.count
+                return a
+              }, {})
+
+            var duplicates = Object.keys(niftiCounts).filter(function(a) {
+              return niftiCounts[a] > 1
+            })
+            if (duplicates.length !== 0) {
+              for (var key in duplicates) {
+                var duplicateFiles = niftis.filter(function(a) {
+                  return a.name.split('.')[0] === duplicates[key]
+                })
+                for (var file in duplicateFiles) {
+                  self.issues.push(
+                    new Issue({
+                      code: 74,
+                      file: duplicateFiles[file],
+                    }),
+                  )
+                }
+              }
+            }
+
+            async.eachOfLimit(
+              niftis,
+              200,
+              function(file, key, cb) {
+                if (self.options.ignoreNiftiHeaders) {
                   NIFTI(
-                    header,
+                    null,
                     file,
                     jsonContentsDict,
                     bContentsDict,
@@ -589,75 +581,101 @@ BIDS = {
                       process.nextTick(cb)
                     },
                   )
+                } else {
+                  utils.files.readNiftiHeader(file, function(header) {
+                    // check if header could be read
+                    if (header && header.hasOwnProperty('error')) {
+                      self.issues.push(header.error)
+                      process.nextTick(cb)
+                    } else {
+                      headers.push([file, header])
+                      NIFTI(
+                        header,
+                        file,
+                        jsonContentsDict,
+                        bContentsDict,
+                        fileList,
+                        events,
+                        function(issues) {
+                          self.issues = self.issues.concat(issues)
+                          process.nextTick(cb)
+                        },
+                      )
+                    }
+                  })
                 }
-              })
-            }
-          },
-          function() {
-            if (!hasSubjectDir) {
-              self.issues.push(new Issue({ code: 45 }))
-            }
-            if (!hasDatasetDescription) {
-              self.issues.push(new Issue({ code: 57 }))
-            }
-            // check if participants file match found subjects
-            if (participants) {
-              var participantsFromFile = participants.list.sort()
-              var participantsFromFolders = summary.subjects.sort()
-              if (
-                !utils.array.equals(
-                  participantsFromFolders,
-                  participantsFromFile,
-                  true,
+              },
+              function() {
+                if (!hasSubjectDir) {
+                  self.issues.push(new Issue({ code: 45 }))
+                }
+                if (!hasDatasetDescription) {
+                  self.issues.push(new Issue({ code: 57 }))
+                }
+                // check if participants file match found subjects
+                if (participants) {
+                  var participantsFromFile = participants.list.sort()
+                  var participantsFromFolders = summary.subjects.sort()
+                  if (
+                    !utils.array.equals(
+                      participantsFromFolders,
+                      participantsFromFile,
+                      true,
+                    )
+                  ) {
+                    self.issues.push(
+                      new Issue({
+                        code: 49,
+                        evidence:
+                          'participants.tsv: ' +
+                          participantsFromFile.join(', ') +
+                          ' folder structure: ' +
+                          participantsFromFolders.join(', '),
+                        file: participants.file,
+                      }),
+                    )
+                  }
+                }
+
+                // check if dataset contains T1w
+                if (summary.modalities.indexOf('T1w') < 0) {
+                  self.issues.push(
+                    new Issue({
+                      code: 53,
+                    }),
+                  )
+                }
+
+                //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
+                TSV.checkphenotype(phenotypeParticipants, summary, self.issues)
+
+                // validate nii header fields
+                self.issues = self.issues.concat(headerFields(headers))
+
+                // Events validation
+                Events.validateEvents(
+                  events,
+                  stimuli,
+                  headers,
+                  jsonContentsDict,
+                  self.issues,
                 )
-              ) {
-                self.issues.push(
-                  new Issue({
-                    code: 49,
-                    evidence:
-                      'participants.tsv: ' +
-                      participantsFromFile.join(', ') +
-                      ' folder structure: ' +
-                      participantsFromFolders.join(', '),
-                    file: participants.file,
-                  }),
+
+                // validation session files
+                self.issues = self.issues.concat(session(fileList))
+
+                self.issues = self.issues.concat(
+                  checkAnyDataPresent(fileList, summary.subjects),
                 )
-              }
-            }
-
-            // check if dataset contains T1w
-            if (summary.modalities.indexOf('T1w') < 0) {
-              self.issues.push(
-                new Issue({
-                  code: 53,
-                }),
-              )
-            }
-
-            //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
-            TSV.checkphenotype(phenotypeParticipants, summary, self.issues)
-
-            // validate nii header fields
-            self.issues = self.issues.concat(headerFields(headers))
-
-            // Events validation
-            Events.validateEvents(
-              events,
-              stimuli,
-              headers,
-              jsonContentsDict,
-              self.issues,
+                summary.modalities = utils.modalities.group(summary.modalities)
+                var issues = utils.issues.format(
+                  self.issues,
+                  summary,
+                  self.options,
+                )
+                callback(issues, summary)
+              },
             )
-
-            // validation session files
-            self.issues = self.issues.concat(session(fileList))
-
-            self.issues = self.issues.concat(
-              checkAnyDataPresent(fileList, summary.subjects),
-            )
-            summary.modalities = utils.modalities.group(summary.modalities)
-            var issues = utils.issues.format(self.issues, summary, self.options)
-            callback(issues, summary)
           },
         )
       },
