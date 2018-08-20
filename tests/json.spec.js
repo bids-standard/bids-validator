@@ -95,4 +95,77 @@ describe('JSON', function() {
       assert(issues && issues.length === 1)
     })
   })
+
+  it('should use inherited sidecars to find missing fields', function() {
+    const multiEntryJsonDict = {}
+
+    // this json file is missing the SamplingFrequency field
+    const partialJsonObj = {
+      TaskName: 'Audiovis',
+      PowerLineFrequency: 50,
+      DewarPosition: 'Upright',
+      SoftwareFilters: 'n/a',
+      DigitizedLandmarks: true,
+      DigitizedHeadPoints: false,
+    }
+    multiEntryJsonDict[meg_file.relativePath] = partialJsonObj
+
+    // this json file (sitting at the root directory level)
+    // provides the missing json field
+    const inheritedMegFile = {
+      name: 'meg.json',
+      relativePath: '/meg.json',
+    }
+
+    const restOfJsonObj = {
+      SamplingFrequency: 2000,
+    }
+    multiEntryJsonDict[inheritedMegFile.relativePath] = restOfJsonObj
+
+    // json validation will pass because (when merged) there are no
+    // missing data fields
+    validate.JSON(meg_file, multiEntryJsonDict, function(issues) {
+      assert(issues.length == 0)
+    })
+  })
+
+  it('should favor the sidecar on the directory level closest to the file being validated', function() {
+    const multiEntryJsonDict = {}
+    const lowLevelFile = {
+      name: 'run-01_meg.json',
+      relativePath: '/sub-01/run-01_meg.json',
+    }
+
+    // this json file has a good SamplingFrequency field
+    const partialJsonObj = {
+      TaskName: 'Audiovis',
+      SamplingFrequency: 1000,
+      PowerLineFrequency: 50,
+      DewarPosition: 'Upright',
+      SoftwareFilters: 'n/a',
+      DigitizedLandmarks: true,
+      DigitizedHeadPoints: false,
+    }
+    multiEntryJsonDict[lowLevelFile.relativePath] = partialJsonObj
+
+    // this json file (sitting at the root directory level)
+    // also has a SamplingFrequency field, but it is wrong.
+    const inheritedMegFile = {
+      name: 'meg.json',
+      relativePath: '/meg.json',
+    }
+
+    const restOfJsonObj = {
+      SamplingFrequency: '',
+    }
+    multiEntryJsonDict[inheritedMegFile.relativePath] = restOfJsonObj
+
+    // json validation will pass because merged dictionaries prefer
+    // field values of the json sidecar furthest from the root.
+    // /meg.json is closer to the root than /sub-01/run-01_meg.json
+    // and so the values of the latter should be preferred.
+    validate.JSON(lowLevelFile, multiEntryJsonDict, function(issues) {
+      assert(issues.length == 0)
+    })
+  })
 })
