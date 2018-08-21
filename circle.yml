@@ -81,9 +81,15 @@ workflows:
       - githubPagesTest:
           requires:
             - test
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
       - deployment:
           requires:
             - test
+            - githubPagesTest
           filters:
             branches:
               ignore: /.*/
