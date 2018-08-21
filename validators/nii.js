@@ -229,7 +229,7 @@ module.exports = function NIFTI(
         mergedDictionary.EffectiveEchoSpacing &&
         mergedDictionary.PhaseEncodingDirection
       ) {
-        var axes = { i: 0, j: 1, k: 2 }
+        var axes = { i: 1, j: 2, k: 3 }
         if (
           mergedDictionary.EffectiveEchoSpacing *
             header.dim[axes[mergedDictionary.PhaseEncodingDirection[0]]] >
