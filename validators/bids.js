@@ -465,46 +465,51 @@ BIDS = {
               noExt.length,
             )
             const dictArgs = dictName.split('_')
-            console.log('Sidecar path: ' + file.relativePath)
-            console.log(
-              'Sidecar path:' + dictPath + ' - Sidecar args: ' + dictArgs,
-            )
+
+            // if (
+            //   file.relativePath ===
+            //   '/task-rhymejudgment_bold.json'
+            // ) {
+            // console.log('Sidecar path: ' + file.relativePath)
+            // console.log(
+            //   'Sidecar path:' + dictPath + ' - Sidecar args: ' + dictArgs,
+            // )
             const idxs = Object.keys(fileList)
             let dataFile = false
             // Iterate file paths from file list
             for (let i of idxs) {
               const path = fileList[i].relativePath
-              if (path.contains(dictPath)) {
-                let argMatch = True
+              //console.log(path)
+              if (path.includes(dictPath)) {
+                let argMatch = true
+                //console.log(dictArgs)
                 for (let j in dictArgs) {
-                  console.log('Checking arg ' + j)
-                  if (path.contains(j)) {
-                    argMatch = true
-                  } else {
-                    argMatch = false
+                  // Only use arg if it's a string - exclude any functions
+                  if (typeof dictArgs[j] === 'string') {
+                    //console.log('Checking arg ' + dictArgs[j])
+                    if (!path.includes(dictArgs[j])) {
+                      argMatch = false
+                      //console.log('Path problem: ' + dictArgs[j])
+                      break
+                    }
+                  }
+                }
+                if (argMatch) {
+                  // Everything's matching, make sure it's the data dictionary
+                  if (fileList[i].relativePath != file.relativePath) {
+                    // TODO: test that it's a valid data file format
+
+                    dataFile = true
+                    //console.log('Match!')
                     break
                   }
                 }
               }
-              //console.log('File path: ' + fileList[i].relativePath)
-              const extIdx = fileList[i].relativePath.indexOf('.')
-              const currNoExt = fileList[i].relativePath.substring(0, extIdx)
-              //console.log('Checking path: ' + currNoExt)
-              // Check if file name matches the json file but with a different extension
-              if (
-                currNoExt.endsWith(noExt) &&
-                fileList[i].relativePath != file.relativePath
-              ) {
-                console.log('Match!')
-                // Is it a recognized data file format?
-                //if () {
-                dataFile = true
-                break
-                //}
-              }
             }
             if (!dataFile) {
-              console.log('Missing data file for json file ' + file.path)
+              console.log(
+                'Missing data file for json file ' + file.relativePath,
+              )
               // self.issues.push(
               //   new Issue({
               //     code: 88,
