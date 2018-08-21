@@ -7,6 +7,7 @@
                 "CogAtlasID": {"type": "string"},
                 "CogPOID": {"type": "string"},
                 "InstitutionName": {"type": "string"},
+                "InstitutionalDepartmentName": {"type": "string"},
                 "InstitutionAddress": {"type": "string"},
                 "Manufacturer": {"type": "string","minLength": 1},
                 "ManufacturersModelName": {"type": "string", "minLength": 1},
