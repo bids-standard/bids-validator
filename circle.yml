@@ -42,6 +42,11 @@ jobs:
       - image: node:8.11.3-alpine
     steps:
       - checkout
+      - run: apk --no-cache add ca-certificates
+      - restore_cache:
+          keys:
+            - npm-deps-{{ checksum "package.json" }}
+      - run: apk --no-cache add git python build-base openssh
       # Publish to NPM
       - run: npm install -g npm-cli-login
       - run: npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
