@@ -483,11 +483,18 @@ module.exports = {
   88: {
     key: 'MALFORMED_BVEC',
     severity: 'error',
-    reason: 'The contents of this .bvec file are undefined or severely malformed. '
+    reason:
+      'The contents of this .bvec file are undefined or severely malformed. ',
   },
   89: {
     key: 'MALFORMED_BVAL',
     severity: 'error',
-    reason: 'The contents of this .bval file are undefined or severely malformed. '
-  }
+    reason:
+      'The contents of this .bval file are undefined or severely malformed. ',
+  },
+  90: {
+    key: 'SIDECAR_WITHOUT_DATAFILE',
+    severity: 'error',
+    reason: 'A json sidecar file was found without a corresponding data file',
+  },
 }

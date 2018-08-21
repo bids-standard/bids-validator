@@ -454,6 +454,65 @@ BIDS = {
 
         // validate json
         else if (file.name && file.name.endsWith('.json')) {
+          // Verify that the json file has an accompanying data file
+          // Dataset descriptions don't have data files
+          if (file.name != 'dataset_description.json') {
+            // Remove extension
+            const noExt = file.relativePath.replace('.json', '')
+            const dictPath = noExt.substring(0, noExt.lastIndexOf('/') + 1)
+            const dictName = noExt.substring(
+              noExt.lastIndexOf('/') + 1,
+              noExt.length,
+            )
+            const dictArgs = dictName.split('_')
+            console.log('Sidecar path: ' + file.relativePath)
+            console.log(
+              'Sidecar path:' + dictPath + ' - Sidecar args: ' + dictArgs,
+            )
+            const idxs = Object.keys(fileList)
+            let dataFile = false
+            // Iterate file paths from file list
+            for (let i of idxs) {
+              const path = fileList[i].relativePath
+              if (path.contains(dictPath)) {
+                let argMatch = True
+                for (let j in dictArgs) {
+                  console.log('Checking arg ' + j)
+                  if (path.contains(j)) {
+                    argMatch = true
+                  } else {
+                    argMatch = false
+                    break
+                  }
+                }
+              }
+              //console.log('File path: ' + fileList[i].relativePath)
+              const extIdx = fileList[i].relativePath.indexOf('.')
+              const currNoExt = fileList[i].relativePath.substring(0, extIdx)
+              //console.log('Checking path: ' + currNoExt)
+              // Check if file name matches the json file but with a different extension
+              if (
+                currNoExt.endsWith(noExt) &&
+                fileList[i].relativePath != file.relativePath
+              ) {
+                console.log('Match!')
+                // Is it a recognized data file format?
+                //if () {
+                dataFile = true
+                break
+                //}
+              }
+            }
+            if (!dataFile) {
+              console.log('Missing data file for json file ' + file.path)
+              // self.issues.push(
+              //   new Issue({
+              //     code: 88,
+              //     file: file,
+              //   }),
+              // )
+            }
+          }
           utils.files.readFile(file, function(issue, contents) {
             if (issue) {
               self.issues.push(issue)
