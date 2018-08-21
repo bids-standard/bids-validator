@@ -484,8 +484,11 @@ BIDS = {
                 let argMatch = true
                 //console.log(dictArgs)
                 for (let j in dictArgs) {
-                  // Only use arg if it's a string - exclude any functions
-                  if (typeof dictArgs[j] === 'string') {
+                  // Only use arg if it's a string and not 'coordsystem' since that doesn't appear in the datafiles
+                  if (
+                    typeof dictArgs[j] === 'string' &&
+                    dictArgs[j] != 'coordsystem'
+                  ) {
                     //console.log('Checking arg ' + dictArgs[j])
                     if (!path.includes(dictArgs[j])) {
                       argMatch = false
