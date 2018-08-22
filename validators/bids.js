@@ -277,17 +277,6 @@ BIDS = {
         const pathParts = path.split('_')
         const suffix = pathParts[pathParts.length - 1]
 
-        // Make RegExp for detecting modalities from data file extensions
-        var dataExtRE = new RegExp(
-          [
-            '^.*\\.(',
-            'nii|nii\\.gz|', // MRI
-            'fif|sqd|con|kdf|chn|trg|raw|raw\\.mhf|', // MEG
-            'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt|dat|nwb|tdat|tidx|tmet', // EEG/iEEG
-            ')$',
-          ].join(''),
-        )
-
         // ignore associated data
         if (utils.type.file.isStimuliData(file.relativePath)) {
           stimuli.directory.push(file)
@@ -314,7 +303,7 @@ BIDS = {
 
         // check modality by data file extension ...
         // and capture data files for later sanity checks (when available)
-        else if (dataExtRE.test(file.name)) {
+        else if (utils.files.dataExtRE().test(file.name)) {
           // capture nifties for later validation
           if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {
             niftis.push(file)
@@ -487,10 +476,11 @@ BIDS = {
                 if (argMatch) {
                   // Make sure it's not the data dictionary itself
                   if (fileList[i].relativePath != file.relativePath) {
-                    // TODO: test that it's a valid data file format
-
-                    dataFile = true
-                    break
+                    // Test that it's a valid data file format
+                    if (utils.files.dataExtRE().test(fileList[i].name)) {
+                      dataFile = true
+                      break
+                    }
                   }
                 }
               }
