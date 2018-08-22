@@ -452,8 +452,11 @@ BIDS = {
         // validate json
         else if (file.name && file.name.endsWith('.json')) {
           // Verify that the json file has an accompanying data file
-          // Dataset descriptions don't have data files
-          if (file.name != 'dataset_description.json') {
+          // Need to limit checks to files in sub-*/**/ - Not all data dictionaries are sidecars
+          const pathArgs = file.relativePath.split('/')
+          const isSidecar =
+            pathArgs[1].includes('sub-') && pathArgs.length > 3 ? true : false
+          if (isSidecar) {
             // Remove extension
             const noExt = file.relativePath.replace('.json', '')
             const dictPath = noExt.substring(0, noExt.lastIndexOf('/') + 1)
@@ -482,7 +485,7 @@ BIDS = {
                   }
                 }
                 if (argMatch) {
-                  // Everything's matching, make sure it's the data dictionary
+                  // Make sure it's not the data dictionary itself
                   if (fileList[i].relativePath != file.relativePath) {
                     // TODO: test that it's a valid data file format
 
