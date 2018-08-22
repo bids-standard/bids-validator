@@ -41,6 +41,9 @@ jobs:
     docker:
       - image: node:8.11.3-alpine
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - '44:93:5a:f4:2b:2d:c1:8a:f2:8e:8b:e9:27:5f:93:25'
       - checkout
       - run: apk --no-cache add ca-certificates
       - run: apk --no-cache add git python build-base openssh
@@ -58,6 +61,7 @@ jobs:
       - run: rm -rf node_modules/
       - run: rm -rf tests/
       - run: git checkout gh-pages -f
+      - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: git pull
       - run: npm install
       - run: ./node_modules/.bin/gulp build
