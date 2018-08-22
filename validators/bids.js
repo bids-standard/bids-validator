@@ -353,12 +353,10 @@ BIDS = {
         // validate tsv
         else if (file.name && file.name.endsWith('.tsv')) {
           // Generate name for corresponding data dictionary file
-          //console.log("Check for data dictionary for " + file.path);
           let dict_path = file.relativePath.replace('.tsv', '.json')
           let exists = false
           let potentialDicts = utils.files.potentialLocations(dict_path)
           // Need to check for .json file at all levels of heirarchy
-          //console.log("Potential data dictionaries:" + utils.files.potentialLocations(dict_path));
           // Get list of fileList keys
           let idxs = Object.keys(fileList)
           for (let i of idxs) {
@@ -371,7 +369,6 @@ BIDS = {
           // Check if data dictionary file exists
           if (!exists) {
             // Can't use fs.exists because there's no file system in browser implementations
-            //console.log("Missing data dictionary found");
             self.issues.push(
               new Issue({
                 code: 82,
@@ -465,34 +462,21 @@ BIDS = {
               noExt.length,
             )
             const dictArgs = dictName.split('_')
-
-            // if (
-            //   file.relativePath ===
-            //   '/task-rhymejudgment_bold.json'
-            // ) {
-            // console.log('Sidecar path: ' + file.relativePath)
-            // console.log(
-            //   'Sidecar path:' + dictPath + ' - Sidecar args: ' + dictArgs,
-            // )
             const idxs = Object.keys(fileList)
             let dataFile = false
             // Iterate file paths from file list
             for (let i of idxs) {
               const path = fileList[i].relativePath
-              //console.log(path)
               if (path.includes(dictPath)) {
                 let argMatch = true
-                //console.log(dictArgs)
                 for (let j in dictArgs) {
                   // Only use arg if it's a string and not 'coordsystem' since that doesn't appear in the datafiles
                   if (
                     typeof dictArgs[j] === 'string' &&
                     dictArgs[j] != 'coordsystem'
                   ) {
-                    //console.log('Checking arg ' + dictArgs[j])
                     if (!path.includes(dictArgs[j])) {
                       argMatch = false
-                      //console.log('Path problem: ' + dictArgs[j])
                       break
                     }
                   }
@@ -503,22 +487,18 @@ BIDS = {
                     // TODO: test that it's a valid data file format
 
                     dataFile = true
-                    //console.log('Match!')
                     break
                   }
                 }
               }
             }
             if (!dataFile) {
-              console.log(
-                'Missing data file for json file ' + file.relativePath,
+              self.issues.push(
+                new Issue({
+                  code: 88,
+                  file: file,
+                }),
               )
-              // self.issues.push(
-              //   new Issue({
-              //     code: 88,
-              //     file: file,
-              //   }),
-              // )
             }
           }
           utils.files.readFile(file, function(issue, contents) {

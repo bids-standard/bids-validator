@@ -227,4 +227,16 @@ var suite = describe('BIDS example datasets ', function() {
       },
     )
   })
+
+  it('checks for data dictionaries without corresponding data files', function(isdone) {
+    var options = { ignoreNiftiHeaders: true }
+    validate.BIDS(
+      'tests/data/BIDS-examples-' + test_version + '/ds000117',
+      options,
+      function(issues) {
+        assert(issues.errors.length === 1 && issues.errors[0].code === '88')
+        isdone()
+      },
+    )
+  })
 })
