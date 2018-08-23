@@ -421,7 +421,7 @@ module.exports = function NIFTI(
     }
 
     if (
-      utils.type.isFieldMapMainNii(path) &&
+      utils.type.file.isFieldMapMainNii(path) &&
       mergedDictionary.hasOwnProperty('IntendedFor')
     ) {
       var intendedFor =

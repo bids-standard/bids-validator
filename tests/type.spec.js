@@ -3,7 +3,7 @@ var utils = require('../utils')
 var Test = require('mocha/lib/test')
 var BIDS = require('../validators/bids')
 
-var suiteAnat = describe('utils.type.isAnat', function() {
+var suiteAnat = describe('utils.type.file.isAnat', function() {
   before(function(done) {
     var goodFilenames = [
       '/sub-15/anat/sub-15_inplaneT2.nii.gz',
@@ -18,7 +18,7 @@ var suiteAnat = describe('utils.type.isAnat', function() {
     goodFilenames.forEach(function(path) {
       suiteAnat.addTest(
         new Test("isAnat('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.isAnat(path), true)
+          assert.equal(utils.type.file.isAnat(path), true)
           isdone()
         }),
       )
@@ -36,7 +36,7 @@ var suiteAnat = describe('utils.type.isAnat', function() {
     badFilenames.forEach(function(path) {
       suiteAnat.addTest(
         new Test("isAnat('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.isAnat(path), false)
+          assert.equal(utils.type.file.isAnat(path), false)
           isdone()
         }),
       )
@@ -50,7 +50,7 @@ var suiteAnat = describe('utils.type.isAnat', function() {
   })
 })
 
-var suiteFunc = describe('utils.type.isFunc', function() {
+var suiteFunc = describe('utils.type.file.isFunc', function() {
   before(function(done) {
     var goodFilenames = [
       '/sub-15/func/sub-15_task-0back_bold.nii.gz',
@@ -64,7 +64,7 @@ var suiteFunc = describe('utils.type.isFunc', function() {
     goodFilenames.forEach(function(path) {
       suiteFunc.addTest(
         new Test("isFunc('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.isFunc(path), true)
+          assert.equal(utils.type.file.isFunc(path), true)
           isdone()
         }),
       )
@@ -83,7 +83,7 @@ var suiteFunc = describe('utils.type.isFunc', function() {
     badFilenames.forEach(function(path) {
       suiteFunc.addTest(
         new Test("isFunc('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.isFunc(path), false)
+          assert.equal(utils.type.file.isFunc(path), false)
           isdone()
         }),
       )
@@ -97,7 +97,7 @@ var suiteFunc = describe('utils.type.isFunc', function() {
   })
 })
 
-var suiteTop = describe('utils.type.isTopLevel', function() {
+var suiteTop = describe('utils.type.file.isTopLevel', function() {
   before(function(done) {
     var goodFilenames = [
       '/README',
@@ -114,7 +114,7 @@ var suiteTop = describe('utils.type.isTopLevel', function() {
     goodFilenames.forEach(function(path) {
       suiteTop.addTest(
         new Test("isTopLevel('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.isTopLevel(path), true)
+          assert.equal(utils.type.file.isTopLevel(path), true)
           isdone()
         }),
       )
@@ -133,7 +133,7 @@ var suiteTop = describe('utils.type.isTopLevel', function() {
     badFilenames.forEach(function(path) {
       suiteTop.addTest(
         new Test("isTopLevel('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.isTopLevel(path), false)
+          assert.equal(utils.type.file.isTopLevel(path), false)
           isdone()
         }),
       )
@@ -147,7 +147,7 @@ var suiteTop = describe('utils.type.isTopLevel', function() {
   })
 })
 
-var suiteSession = describe('utils.type.isSessionLevel', function() {
+var suiteSession = describe('utils.type.file.isSessionLevel', function() {
   before(function(done) {
     var goodFilenames = [
       '/sub-12/sub-12_scans.tsv',
@@ -157,7 +157,7 @@ var suiteSession = describe('utils.type.isSessionLevel', function() {
     goodFilenames.forEach(function(path) {
       suiteSession.addTest(
         new Test("isSessionLevel('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.isSessionLevel(path), true)
+          assert.equal(utils.type.file.isSessionLevel(path), true)
           isdone()
         }),
       )
@@ -171,7 +171,7 @@ var suiteSession = describe('utils.type.isSessionLevel', function() {
     badFilenames.forEach(function(path) {
       suiteSession.addTest(
         new Test("isSessionLevel('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.isSessionLevel(path), false)
+          assert.equal(utils.type.file.isSessionLevel(path), false)
           isdone()
         }),
       )
@@ -185,7 +185,7 @@ var suiteSession = describe('utils.type.isSessionLevel', function() {
   })
 })
 
-var suiteDWI = describe('utils.type.isDWI', function() {
+var suiteDWI = describe('utils.type.file.isDWI', function() {
   before(function(done) {
     var goodFilenames = [
       '/sub-12/dwi/sub-12_dwi.nii.gz',
@@ -197,7 +197,7 @@ var suiteDWI = describe('utils.type.isDWI', function() {
     goodFilenames.forEach(function(path) {
       suiteDWI.addTest(
         new Test("isDWI('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.isDWI(path), true)
+          assert.equal(utils.type.file.isDWI(path), true)
           isdone()
         }),
       )
@@ -213,7 +213,7 @@ var suiteDWI = describe('utils.type.isDWI', function() {
     badFilenames.forEach(function(path) {
       suiteDWI.addTest(
         new Test("isDWI('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.isDWI(path), false)
+          assert.equal(utils.type.file.isDWI(path), false)
           isdone()
         }),
       )
@@ -227,7 +227,7 @@ var suiteDWI = describe('utils.type.isDWI', function() {
   })
 })
 
-var suiteMEG = describe('utils.type.isMEG', function() {
+var suiteMEG = describe('utils.type.file.isMEG', function() {
   before(function(done) {
     var goodFilenames = [
       '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.sqd',
@@ -242,7 +242,7 @@ var suiteMEG = describe('utils.type.isMEG', function() {
     goodFilenames.forEach(function(path) {
       suiteMEG.addTest(
         new Test("isMeg('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.isMeg(path), true)
+          assert.equal(utils.type.file.isMeg(path), true)
           isdone()
         }),
       )
@@ -259,7 +259,7 @@ var suiteMEG = describe('utils.type.isMEG', function() {
     badFilenames.forEach(function(path) {
       suiteMEG.addTest(
         new Test("isMeg('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.isMeg(path), false)
+          assert.equal(utils.type.file.isMeg(path), false)
           isdone()
         }),
       )
@@ -273,7 +273,7 @@ var suiteMEG = describe('utils.type.isMEG', function() {
   })
 })
 
-var suiteEEG = describe('utils.type.isEEG', function() {
+var suiteEEG = describe('utils.type.file.isEEG', function() {
   before(function(done) {
     var goodFilenames = [
       '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.json',
@@ -284,7 +284,7 @@ var suiteEEG = describe('utils.type.isEEG', function() {
     goodFilenames.forEach(function(path) {
       suiteEEG.addTest(
         new Test("isEeg('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.isEeg(path), true)
+          assert.equal(utils.type.file.isEeg(path), true)
           isdone()
         }),
       )
@@ -299,7 +299,7 @@ var suiteEEG = describe('utils.type.isEEG', function() {
     badFilenames.forEach(function(path) {
       suiteEEG.addTest(
         new Test("isEeg('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.isEeg(path), false)
+          assert.equal(utils.type.file.isEeg(path), false)
           isdone()
         }),
       )
@@ -313,7 +313,7 @@ var suiteEEG = describe('utils.type.isEEG', function() {
   })
 })
 
-var suiteIEEG = describe('utils.type.isIEEG', function() {
+var suiteIEEG = describe('utils.type.file.isIEEG', function() {
   before(function(done) {
     var goodFilenames = [
       '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json',
@@ -328,7 +328,7 @@ var suiteIEEG = describe('utils.type.isIEEG', function() {
     goodFilenames.forEach(function(path) {
       suiteIEEG.addTest(
         new Test("isIEEG('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.isIEEG(path), true)
+          assert.equal(utils.type.file.isIEEG(path), true)
           isdone()
         }),
       )
@@ -343,7 +343,7 @@ var suiteIEEG = describe('utils.type.isIEEG', function() {
     badFilenames.forEach(function(path) {
       suiteIEEG.addTest(
         new Test("isIEEG('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.isIEEG(path), false)
+          assert.equal(utils.type.file.isIEEG(path), false)
           isdone()
         }),
       )
@@ -357,24 +357,24 @@ var suiteIEEG = describe('utils.type.isIEEG', function() {
   })
 })
 
-describe('utils.type.isPhenotypic', function() {
+describe('utils.type.file.isPhenotypic', function() {
   it('should allow .tsv and .json files in the /phenotype directory', function() {
-    assert(utils.type.isPhenotypic('/phenotype/acds_adult.json'))
-    assert(utils.type.isPhenotypic('/phenotype/acds_adult.tsv'))
+    assert(utils.type.file.isPhenotypic('/phenotype/acds_adult.json'))
+    assert(utils.type.file.isPhenotypic('/phenotype/acds_adult.tsv'))
   })
 
   it('should not allow non .tsv and .json files in the /phenotype directory', function() {
-    assert(!utils.type.isPhenotypic('/phenotype/acds_adult.jpeg'))
-    assert(!utils.type.isPhenotypic('/phenotype/acds_adult.gif'))
+    assert(!utils.type.file.isPhenotypic('/phenotype/acds_adult.jpeg'))
+    assert(!utils.type.file.isPhenotypic('/phenotype/acds_adult.gif'))
   })
 })
 
-describe('utils.type.isAssociatedData', function() {
+describe('utils.type.file.isAssociatedData', function() {
   it('should return false for unknown root directories', function() {
     var badFilenames = ['/images/picture.jpeg', '/temporary/test.json']
 
     badFilenames.forEach(function(path) {
-      assert.equal(utils.type.isAssociatedData(path), false)
+      assert.equal(utils.type.file.isAssociatedData(path), false)
     })
   })
 
@@ -387,17 +387,17 @@ describe('utils.type.isAssociatedData', function() {
     ]
 
     goodFilenames.forEach(function(path) {
-      assert(utils.type.isAssociatedData(path))
+      assert(utils.type.file.isAssociatedData(path))
     })
   })
 })
 
-describe('utils.type.isStimuliData', function() {
+describe('utils.type.file.isStimuliData', function() {
   it('should return false for unknown root directories', function() {
     var badFilenames = ['/images/picture.jpeg', '/temporary/test.json']
 
     badFilenames.forEach(function(path) {
-      assert.equal(utils.type.isStimuliData(path), false)
+      assert.equal(utils.type.file.isStimuliData(path), false)
     })
   })
 
@@ -405,7 +405,7 @@ describe('utils.type.isStimuliData', function() {
     var goodFilenames = ['/stimuli/sub-01/mov.avi', '/stimuli/text.pdf']
 
     goodFilenames.forEach(function(path) {
-      assert(utils.type.isStimuliData(path))
+      assert(utils.type.file.isStimuliData(path))
     })
   })
 })
