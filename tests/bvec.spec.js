@@ -49,4 +49,11 @@ describe('bvec', function() {
       assert(issues.length == 1 && issues[0].code == 88)
     })
   })
+
+  it('should not allow bvals to be submitted in place of bvec', function() {
+    const bval = '4 6 7'
+    validate.bvec({}, bval, function(issues) {
+      assert(issues.length == 1 && issues[0].code == 31)
+    })
+  })
 })
