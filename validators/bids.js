@@ -289,7 +289,7 @@ BIDS = {
         )
 
         // ignore associated data
-        if (utils.type.isStimuliData(file.relativePath)) {
+        if (utils.type.file.isStimuliData(file.relativePath)) {
           stimuli.directory.push(file)
           process.nextTick(cb)
         }
@@ -499,7 +499,7 @@ BIDS = {
 
         // collect sessions & subjects
         if (
-          !utils.type.isStimuliData(file.relativePath) &&
+          !utils.type.file.isStimuliData(file.relativePath) &&
           utils.type.isBIDS(
             file.relativePath,
             BIDS.options.bep006,

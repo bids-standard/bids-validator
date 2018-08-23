@@ -10,23 +10,49 @@ var type = require('../utils').type
  * against the BIDS specification.
  */
 module.exports = function bval(file, contents, callback) {
-  var issues = []
+  let issues = []
 
-  if (contents.replace(/^\s+|\s+$/g, '').split('\n').length !== 1) {
+  // break val if type of contents is not string
+  issues = issues.concat(checkType(contents, file))
+  if (issues.length) {
+    return callback(issues)
+  }
+
+  // check number of rows in contents
+  issues = issues.concat(checkNumberOfRows(contents, file))
+
+  // check for proper separator and value type
+  issues = issues.concat(checkSeparatorAndValueType(contents, file))
+
+  callback(issues)
+}
+
+function checkType(contents, file) {
+  let issues = []
+  // throw error if contents are not string
+  if (!type.checkType(contents, 'string')) {
+    let evidence =
+      'The contents of this .bval file have type ' +
+      typeof contents +
+      ' but should be a string.'
     issues.push(
       new Issue({
-        code: 30,
+        code: 89,
         file: file,
+        evidence: evidence,
       }),
     )
   }
+  return issues
+}
 
-  // check for proper separator and value type
-  var row = contents.replace(/^\s+|\s+$/g, '').split(' ')
-  var invalidValue = false
-  for (var j = 0; j < row.length; j++) {
-    var value = row[j]
-    if (!type.isNumber(value)) {
+function checkSeparatorAndValueType(contents, file) {
+  let issues = []
+  const row = contents.replace(/^\s+|\s+$/g, '').split(' ')
+  let invalidValue = false
+  for (let j = 0; j < row.length; j++) {
+    const value = row[j]
+    if (!type.checkType(value, 'number')) {
       invalidValue = true
     }
   }
@@ -38,6 +64,19 @@ module.exports = function bval(file, contents, callback) {
       }),
     )
   }
+  return issues
+}
 
-  callback(issues)
+function checkNumberOfRows(contents, file) {
+  let issues = []
+  const numberOfRows = contents.replace(/^\s+|\s+$/g, '').split('\n').length
+  if (numberOfRows !== 1) {
+    issues.push(
+      new Issue({
+        code: 30,
+        file: file,
+      }),
+    )
+  }
+  return issues
 }

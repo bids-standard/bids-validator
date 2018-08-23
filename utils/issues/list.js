@@ -480,4 +480,14 @@ module.exports = {
     reason:
       "The number of elements in the SliceTiming array should match the 'k' dimension of the corresponding nifti volume.",
   },
+  88: {
+    key: 'MALFORMED_BVEC',
+    severity: 'error',
+    reason: 'The contents of this .bvec file are undefined or severely malformed. '
+  },
+  89: {
+    key: 'MALFORMED_BVAL',
+    severity: 'error',
+    reason: 'The contents of this .bval file are undefined or severely malformed. '
+  }
 }
