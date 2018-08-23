@@ -500,7 +500,7 @@ BIDS = {
             if (!dataFile) {
               self.issues.push(
                 new Issue({
-                  code: 88,
+                  code: 90,
                   file: file,
                 }),
               )
