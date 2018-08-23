@@ -370,16 +370,12 @@ module.exports = {
     return conditionalMatch(contRe, path)
   },
 
-  isNumber: function(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n)
-  },
-
-  isUndefined: function(obj) {
-    return typeof obj == 'undefined'
-  },
-
-  isString: function(obj) {
-    return typeof obj == 'string'
+  checkType(obj, typeString) {
+    if (typeString == 'number') {
+      return !isNaN(parseFloat(obj)) && isFinite(obj)
+    } else {
+      return typeof obj == typeString
+    }
   },
 
   /**

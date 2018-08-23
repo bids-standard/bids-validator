@@ -10,10 +10,29 @@ var type = require('../utils').type
  * against the BIDS specification.
  */
 module.exports = function bvec(file, contents, callback) {
-  var issues = []
+  let issues = []
 
+  issues = issues.concat(checkType(contents, file))
+  if (issues.length) {
+    return callback(issues)
+  }
+
+  // check that there are exactly three rows
+  issues = issues.concat(checkNumberOfRows(contents, file))
+
+  // check that each row is the same length
+  issues = issues.concat(checkRowConsistency(contents, file))
+
+  // check that each value is a number
+  issues = issues.concat(checkValueValidity(contents, file))
+
+  callback(issues)
+}
+
+function checkType(contents, file) {
+  let issues = []
   // throw error if contents are undefined or the wrong type
-  if (!contents || typeof contents !== 'string') {
+  if (!type.checkType(contents, 'string')) {
     let evidence = contents
       ? 'The contents of this .bvec file have type ' +
         typeof contents +
@@ -26,9 +45,12 @@ module.exports = function bvec(file, contents, callback) {
         evidence: evidence,
       }),
     )
-    return callback(issues)
   }
+  return issues
+}
 
+function checkNumberOfRows(contents, file) {
+  let issues = []
   if (contents.replace(/^\s+|\s+$/g, '').split('\n').length !== 3) {
     issues.push(
       new Issue({
@@ -37,46 +59,40 @@ module.exports = function bvec(file, contents, callback) {
       }),
     )
   }
+  return issues
+}
 
-  var rows = contents.replace(/^\s+|\s+$/g, '').split('\n')
-  var inconsistentRows,
-    rowLength,
-    invalidValue = false
-  for (var i = 0; i < rows.length; i++) {
-    var row = rows[i].replace(/^\s+|\s+$/g, '').split(' ')
+function checkRowConsistency(contents, file) {
+  let rowLength = false
+
+  const rows = contents.replace(/^\s+|\s+$/g, '').split('\n')
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i].replace(/^\s+|\s+$/g, '').split(' ')
     if (!rowLength) {
       rowLength = row.length
     }
 
     // check for consistent row length
     if (rowLength !== row.length) {
-      inconsistentRows = true
+      return [new Issue({ code: 46, file: file })]
     }
+  }
+  return []
+}
+
+function checkValueValidity(contents, file) {
+  const rows = contents.replace(/^\s+|\s+$/g, '').split('\n')
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i].replace(/^\s+|\s+$/g, '').split(' ')
 
     // check for proper separator and value type
-    for (var j = 0; j < row.length; j++) {
-      var value = row[j]
-      if (!type.isNumber(value)) {
-        invalidValue = true
-      }
+    const hasIssue = row
+      .map(value => !type.checkType(value, 'number'))
+      .some(val => val)
+    if (hasIssue) {
+      return [new Issue({ code: 47, file: file })]
     }
   }
-  if (inconsistentRows) {
-    issues.push(
-      new Issue({
-        code: 46,
-        file: file,
-      }),
-    )
-  }
-  if (invalidValue) {
-    issues.push(
-      new Issue({
-        code: 47,
-        file: file,
-      }),
-    )
-  }
-
-  callback(issues)
+  return []
 }
