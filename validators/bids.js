@@ -481,10 +481,22 @@ BIDS = {
                       dataFile = true
                       break
                     }
+                    // MEG datafiles may be a folder, therefore not contained in fileList, will need to look in paths
+                    if (
+                      noExt.endsWith('_meg') ||
+                      noExt.endsWith('_coordsystem')
+                    ) {
+                      // Check for folder ending in meg.ds
+                      if (fileList[i].relativePath.includes('_meg.ds')) {
+                        dataFile = true
+                        break
+                      }
+                    }
                   }
                 }
               }
             }
+
             if (!dataFile) {
               self.issues.push(
                 new Issue({
