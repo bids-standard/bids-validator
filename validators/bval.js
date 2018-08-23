@@ -31,11 +31,10 @@ function checkType(contents, file) {
   let issues = []
   // throw error if contents are not string
   if (!type.checkType(contents, 'string')) {
-    let evidence = contents
-      ? 'The contents of this .bval file have type ' +
-        typeof contents +
-        ' but should be a string.'
-      : 'The contents of this .bval file are undefined.'
+    let evidence =
+      'The contents of this .bval file have type ' +
+      typeof contents +
+      ' but should be a string.'
     issues.push(
       new Issue({
         code: 89,
@@ -70,7 +69,8 @@ function checkSeparatorAndValueType(contents, file) {
 
 function checkNumberOfRows(contents, file) {
   let issues = []
-  if (contents.replace(/^\s+|\s+$/g, '').split('\n').length !== 1) {
+  const numberOfRows = contents.replace(/^\s+|\s+$/g, '').split('\n').length
+  if (numberOfRows !== 1) {
     issues.push(
       new Issue({
         code: 30,
