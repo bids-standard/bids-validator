@@ -374,6 +374,14 @@ module.exports = {
     return !isNaN(parseFloat(n)) && isFinite(n)
   },
 
+  isUndefined: function(obj) {
+    return typeof obj == 'undefined'
+  },
+
+  isString: function(obj) {
+    return typeof obj == 'string'
+  },
+
   /**
    * Get Path Values
    *
