@@ -3,11 +3,10 @@
  * eg. corresponding files
  */
 // dependencies -------------------------------------------------------------------
-var Issue = require('./issues').Issue
 var files = require('./files')
 
 // public API ---------------------------------------------------------------------
-bidsFileUtils = {
+const bidsFileUtils = {
   checkSidecarForDatafiles: checkSidecarForDatafiles,
 }
 
@@ -15,7 +14,7 @@ bidsFileUtils = {
 /**
  * Verify that JSON sidecars have corresponding data files
  */
-function checkSidecarForDatafiles(file, fileList, pathArgs) {
+function checkSidecarForDatafiles(file, fileList) {
   const noExt = file.relativePath.replace('.json', '')
   const dictPath = noExt.substring(0, noExt.lastIndexOf('/') + 1)
   const dictName = noExt.substring(noExt.lastIndexOf('/') + 1, noExt.length)

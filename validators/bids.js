@@ -449,7 +449,6 @@ BIDS = {
             const dataFile = utils.bids_files.checkSidecarForDatafiles(
               file,
               fileList,
-              pathArgs,
             )
             if (!dataFile) {
               self.issues.push(
