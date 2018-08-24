@@ -28,34 +28,52 @@ function checkSidecarForDatafiles(file, fileList) {
       let argMatch = true
       for (let j in dictArgs) {
         // Only use arg if it's a string and not 'coordsystem' since that doesn't appear in the datafiles
-        if (typeof dictArgs[j] === 'string' && dictArgs[j] != 'coordsystem') {
-          if (!path.includes(dictArgs[j])) {
-            argMatch = false
-            break
-          }
+        if (
+          typeof dictArgs[j] === 'string' &&
+          dictArgs[j] != 'coordsystem' &&
+          !path.includes(dictArgs[j])
+        ) {
+          argMatch = false
+          break
         }
       }
       if (argMatch) {
-        // Make sure it's not the data dictionary itself
-        if (fileList[i].relativePath != file.relativePath) {
-          // Test that it's a valid data file format
-          if (files.dataExtRE().test(fileList[i].name)) {
-            dataFile = true
-            break
-          }
-          // MEG datafiles may be a folder, therefore not contained in fileList, will need to look in paths
-          if (noExt.endsWith('_meg') || noExt.endsWith('_coordsystem')) {
-            // Check for folder ending in meg.ds
-            if (fileList[i].relativePath.includes('_meg.ds')) {
-              dataFile = true
-              break
-            }
-          }
+        dataFile = verifyDatafileMatch(file.relativePath, noExt, fileList[i])
+        if (dataFile) {
+          break
         }
       }
     }
   }
   return dataFile
+}
+
+/**
+ * Accepts path to sidecar file, the sidecar filename without extension
+ * and the datafile that's a potential match
+ * Returns boolean indicating if file evaluates as valid datafile
+ */
+function verifyDatafileMatch(sidecarPath, noExt, matchFile) {
+  let match = false
+  // Make sure it's not the data dictionary itself
+  if (matchFile.relativePath != sidecarPath) {
+    //console.log('Sidecar: ' + sidecarPath + ', Match path: ' + matchFile.relativePath)
+    // Test that it's a valid data file format
+    if (files.dataExtRE().test(matchFile.name)) {
+      //console.log('Its not itself')
+      match = true
+      //break
+    }
+    // MEG datafiles may be a folder, therefore not contained in fileList, will need to look in paths
+    if (!match && (noExt.endsWith('_meg') || noExt.endsWith('_coordsystem'))) {
+      // Check for folder ending in meg.ds
+      if (matchFile.relativePath.includes('_meg.ds')) {
+        match = true
+        //break
+      }
+    }
+  }
+  return match
 }
 
 module.exports = bidsFileUtils
