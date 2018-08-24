@@ -357,7 +357,6 @@ BIDS = {
 
           // Check if data dictionary file exists
           if (!exists) {
-            // Can't use fs.exists because there's no file system in browser implementations
             self.issues.push(
               new Issue({
                 code: 82,
@@ -446,57 +445,12 @@ BIDS = {
           const isSidecar =
             pathArgs[1].includes('sub-') && pathArgs.length > 3 ? true : false
           if (isSidecar) {
-            // Remove extension
-            const noExt = file.relativePath.replace('.json', '')
-            const dictPath = noExt.substring(0, noExt.lastIndexOf('/') + 1)
-            const dictName = noExt.substring(
-              noExt.lastIndexOf('/') + 1,
-              noExt.length,
+            // Check for suitable datafile accompanying this sidecar
+            const dataFile = utils.bids_files.checkSidecarForDatafiles(
+              file,
+              fileList,
+              pathArgs,
             )
-            const dictArgs = dictName.split('_')
-            const idxs = Object.keys(fileList)
-            let dataFile = false
-            // Iterate file paths from file list
-            for (let i of idxs) {
-              const path = fileList[i].relativePath
-              if (path.includes(dictPath)) {
-                let argMatch = true
-                for (let j in dictArgs) {
-                  // Only use arg if it's a string and not 'coordsystem' since that doesn't appear in the datafiles
-                  if (
-                    typeof dictArgs[j] === 'string' &&
-                    dictArgs[j] != 'coordsystem'
-                  ) {
-                    if (!path.includes(dictArgs[j])) {
-                      argMatch = false
-                      break
-                    }
-                  }
-                }
-                if (argMatch) {
-                  // Make sure it's not the data dictionary itself
-                  if (fileList[i].relativePath != file.relativePath) {
-                    // Test that it's a valid data file format
-                    if (utils.files.dataExtRE().test(fileList[i].name)) {
-                      dataFile = true
-                      break
-                    }
-                    // MEG datafiles may be a folder, therefore not contained in fileList, will need to look in paths
-                    if (
-                      noExt.endsWith('_meg') ||
-                      noExt.endsWith('_coordsystem')
-                    ) {
-                      // Check for folder ending in meg.ds
-                      if (fileList[i].relativePath.includes('_meg.ds')) {
-                        dataFile = true
-                        break
-                      }
-                    }
-                  }
-                }
-              }
-            }
-
             if (!dataFile) {
               self.issues.push(
                 new Issue({

@@ -2,6 +2,7 @@ require('./prototype')
 var array = require('./array')
 var config = require('./config')
 var files = require('./files')
+var bids_files = require('./bids_files')
 var issues = require('./issues')
 var json = require('./json')
 var modalities = require('./modalities')
@@ -12,6 +13,7 @@ module.exports = {
   array: array,
   config: config,
   files: files,
+  bids_files: bids_files,
   issues: issues,
   json: json,
   modalities: modalities,
