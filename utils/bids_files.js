@@ -27,7 +27,7 @@ function checkSidecarForDatafiles(file, fileList) {
   }
   const idxs = Object.keys(fileList)
   // Check each file in fileList for potential match - return true on first match
-  let dataFile = idxs.some(checkFileListForMatch, [args])
+  let dataFile = idxs.some(checkFileListForMatch, args)
   return dataFile
 }
 
@@ -35,11 +35,10 @@ function checkSidecarForDatafiles(file, fileList) {
  * Check file list for first valid match for sidecar file
  */
 function checkFileListForMatch(i) {
-  const args = this[0]
-  const path = args.fileList[i].relativePath
+  const path = this.fileList[i].relativePath
   let match = false
   // Only proceed if path includes the path to sidecar
-  let dictArgs = path.includes(args.dictPath) ? args.dictArgs : []
+  let dictArgs = path.includes(this.dictPath) ? this.dictArgs : []
   let argMatch = false
   for (let j of dictArgs) {
     argMatch = true
@@ -50,9 +49,9 @@ function checkFileListForMatch(i) {
   }
   if (argMatch) {
     match = verifyDatafileMatch(
-      args.file.relativePath,
-      args.noExt,
-      args.fileList[i],
+      this.file.relativePath,
+      this.noExt,
+      this.fileList[i],
     )
   }
   return match
