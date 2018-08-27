@@ -16,36 +16,46 @@ const bidsFileUtils = {
  */
 function checkSidecarForDatafiles(file, fileList) {
   const noExt = file.relativePath.replace('.json', '')
-  const dictPath = noExt.substring(0, noExt.lastIndexOf('/') + 1)
   const dictName = noExt.substring(noExt.lastIndexOf('/') + 1, noExt.length)
-  const dictArgs = dictName.split('_')
+  const args = {
+    dictArgs: dictName.split('_'),
+    dictName: dictName,
+    dictPath: noExt.substring(0, noExt.lastIndexOf('/') + 1),
+    file: file,
+    fileList: fileList,
+    noExt: noExt,
+  }
   const idxs = Object.keys(fileList)
-  let dataFile = false
-  // Iterate file paths from file list
-  for (let i of idxs) {
-    const path = fileList[i].relativePath
-    if (path.includes(dictPath)) {
-      let argMatch = true
-      for (let j in dictArgs) {
-        // Only use arg if it's a string and not 'coordsystem' since that doesn't appear in the datafiles
-        if (
-          typeof dictArgs[j] === 'string' &&
-          dictArgs[j] != 'coordsystem' &&
-          !path.includes(dictArgs[j])
-        ) {
-          argMatch = false
-          break
-        }
-      }
-      if (argMatch) {
-        dataFile = verifyDatafileMatch(file.relativePath, noExt, fileList[i])
-        if (dataFile) {
-          break
-        }
-      }
+  // Check each file in fileList for potential match - return true on first match
+  let dataFile = idxs.some(checkFileListForMatch, [args])
+  return dataFile
+}
+
+/**
+ * Check file list for first valid match for sidecar file
+ */
+function checkFileListForMatch(i) {
+  const args = this[0]
+  const path = args.fileList[i].relativePath
+  let match = false
+  // Only proceed if path includes the path to sidecar
+  let dictArgs = path.includes(args.dictPath) ? args.dictArgs : []
+  let argMatch = false
+  for (let j of dictArgs) {
+    argMatch = true
+    if (typeof j === 'string' && j != 'coordsystem' && !path.includes(j)) {
+      argMatch = false
+      break
     }
   }
-  return dataFile
+  if (argMatch) {
+    match = verifyDatafileMatch(
+      args.file.relativePath,
+      args.noExt,
+      args.fileList[i],
+    )
+  }
+  return match
 }
 
 /**
@@ -55,23 +65,22 @@ function checkSidecarForDatafiles(file, fileList) {
  */
 function verifyDatafileMatch(sidecarPath, noExt, matchFile) {
   let match = false
+  let megDs = false
   // Make sure it's not the data dictionary itself
-  if (matchFile.relativePath != sidecarPath) {
-    //console.log('Sidecar: ' + sidecarPath + ', Match path: ' + matchFile.relativePath)
-    // Test that it's a valid data file format
-    if (files.dataExtRE().test(matchFile.name)) {
-      //console.log('Its not itself')
-      match = true
-      //break
-    }
-    // MEG datafiles may be a folder, therefore not contained in fileList, will need to look in paths
-    if (!match && (noExt.endsWith('_meg') || noExt.endsWith('_coordsystem'))) {
-      // Check for folder ending in meg.ds
-      if (matchFile.relativePath.includes('_meg.ds')) {
-        match = true
-        //break
-      }
-    }
+  const isSelf = matchFile.relativePath === sidecarPath
+  if (!isSelf && files.dataExtRE().test(matchFile.name)) {
+    match = true
+  }
+  // MEG datafiles may be a folder, therefore not contained in fileList, will need to look in paths
+  if (
+    !isSelf &&
+    !match &&
+    (noExt.endsWith('_meg') || noExt.endsWith('_coordsystem'))
+  ) {
+    megDs = matchFile.relativePath.includes('_meg.ds')
+  }
+  if (megDs) {
+    match = true
   }
   return match
 }
