@@ -14,10 +14,10 @@ jobs:
       - save_cache:
           key: npm-deps-{{ checksum "package.json" }}
           paths: node_modules
-      - run: 
+      - run:
           name: Eslint
           command: npm run lint
-      - run: 
+      - run:
           name: Mocha tests
           command: npm run test
       - run:
@@ -41,14 +41,19 @@ jobs:
     docker:
       - image: node:8.11.3-alpine
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - '44:93:5a:f4:2b:2d:c1:8a:f2:8e:8b:e9:27:5f:93:25'
       - checkout
+      - run: apk --no-cache add ca-certificates
+      - run: apk --no-cache add git python build-base openssh
       # Publish to NPM
       - run: npm install -g npm-cli-login
       - run: npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
       - run: git checkout -f $CIRCLE_TAG
       # Set the version number
       - run: sed -i -E "s/0.0.0/$CIRCLE_TAG/" package.json
-      - run: npm install publish
+      - run: npm install -g publish
       - run: npm run npmPublish
       # Update gh-pages demo site
       - run: git config --global user.email circleci@circleci
@@ -56,6 +61,7 @@ jobs:
       - run: rm -rf node_modules/
       - run: rm -rf tests/
       - run: git checkout gh-pages -f
+      - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: git pull
       - run: npm install
       - run: ./node_modules/.bin/gulp build
@@ -67,13 +73,24 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - test
+      - test:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
       - githubPagesTest:
           requires:
             - test
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
       - deployment:
           requires:
             - test
+            - githubPagesTest
           filters:
             branches:
               ignore: /.*/

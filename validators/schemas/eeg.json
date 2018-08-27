@@ -7,19 +7,15 @@
                 "CogAtlasID": {"type": "string"},
                 "CogPOID": {"type": "string"},
                 "InstitutionName": {"type": "string"},
-                "InstitutionalDepartmentName": {"type": "string"},
                 "InstitutionAddress": {"type": "string"},
                 "Manufacturer": {"type": "string","minLength": 1},
                 "ManufacturersModelName": {"type": "string", "minLength": 1},
                 "DeviceSerialNumber": {"type": "string"},
+                "DeviceSoftwareVersion": {"type": "string"},
                 "SoftwareVersions": {"type": "string"},
                 "PowerLineFrequency": {"type": "number"},
                 "SamplingFrequency": {"type": "number"},
-                "MEGChannelCount": {"type": "integer"},
-                "MEGREFChannelCount": {"type": "integer"},
                 "EEGChannelCount": {"type" : "integer"},
-                "ECOGChannelCount": {"type" : "integer"},
-                "SEEGChannelCount": {"type" : "integer"},
                 "EOGChannelCount": {"type" : "integer"},
                 "ECGChannelCount": {"type" : "integer"},
                 "EMGChannelCount": {"type" : "integer"},
@@ -27,56 +23,35 @@
                 "TriggerChannelCount": {"type" : "integer"},
                 "EEGPlacementScheme": {"type" : "string"},
                 "EEGReference": {"type" : "string"},
+                "EEGGround": {"type" : "string"},
                 "CapManufacturer": {"type": "string"},
                 "CapManufacturersModelName": {"type": "string"},
-                "DewarPosition": {"type" : "string"},
+                "HardwareFilters": {
+                  "anyOf": [
+                    {"type": "object", "additionalProperties": {"type":"object"}},
+                    {"type": "string", "pattern": "^n/a$"}
+                  ]
+                },
                 "SoftwareFilters": {
                   "anyOf": [
-                    {"type" : "object",
-                                    "additionalProperties": {"type":"object"}
-                    },
+                    {"type": "object", "additionalProperties": {"type":"object"}},
                     {"type": "string", "pattern": "^n/a$"}
-
                   ]
                 },
                 "RecordingDuration": {"type" : "number"},
                 "RecordingType": {"type" : "string"},
                 "EpochLength": {"type" : ["number","string"]},
-                "ContinuousHeadLocalization": {"type" : "boolean"},
-                "HeadCoilFrequency": {
-                  "anyOf": [
-                    {"type" : "number"},
-                    {
-                      "type": "array",
-                      "items": {"type": "number"}
-                    }
-                  ]
-                },
-                "AssociatedEmptyRoom": {
-                  "anyOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "minLength": 1
-                      }
-                    },
-                    {"type": "string", "minLength": 1}
-                  ]
-                },
-                "MaxMovement": {"type" : "number"},
-                "SubjectArtefactDescription": {"type" : "string"},
-                "DigitizedLandmarks": {"type" : "boolean"},
-                "DigitizedHeadPoints": {"type" : "boolean"}
-                    },
+                "SubjectArtefactDescription": {"type" : "string"}
+        },
         "required": [
             "TaskName",
             "SamplingFrequency",
-            "PowerLineFrequency",
-            "DewarPosition",
-            "SoftwareFilters",
-            "DigitizedLandmarks",
-            "DigitizedHeadPoints"
+            "EEGChannelCount",
+            "EOGChannelCount",
+            "ECGChannelCount",
+            "EMGChannelCount",
+            "EEGReference",
+            "PowerLineFrequency"
         ],
        "additionalProperties": false
 }
