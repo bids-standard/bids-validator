@@ -420,7 +420,6 @@ BIDS = {
           })
         }
 
-
         // validate bvec
         else if (file.name && file.name.endsWith('.bvec')) {
           utils.files.readFile(file, function(issue, contents) {
