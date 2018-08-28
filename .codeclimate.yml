@@ -2,9 +2,12 @@ version: '2'
 checks:
   similar-code:
     config:
-      count_threshold: 3
       threshold: 50
   identical-code:
     config:
-      count_threshold: 3
       threshold: 50
+plugins:
+  duplication:
+    enabled: true
+    config:
+      count_threshold: 3
