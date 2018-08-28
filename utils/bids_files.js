@@ -35,19 +35,16 @@ function checkSidecarForDatafiles(file, fileList) {
  * Check file list for first valid match for sidecar file
  */
 function checkFileListForMatch(i) {
-  const path = this.fileList[i].relativePath
+  this.path = this.fileList[i].relativePath
   let match = false
-  // Only proceed if path includes the path to sidecar
-  let dictArgs = path.includes(this.dictPath) ? this.dictArgs : []
-  let argMatch = false
-  for (let j of dictArgs) {
-    argMatch = true
-    if (typeof j === 'string' && j != 'coordsystem' && !path.includes(j)) {
-      argMatch = false
-      break
-    }
-  }
-  if (argMatch) {
+  // Only check file if path includes the path to sidecar
+  const dictArgs = this.path.includes(this.dictPath) ? this.dictArgs : []
+  // Set true if dictArgs and all dictargs exist in file path (except 'coordsystem')
+  let pathMatch =
+    dictArgs.length > 0
+      ? dictArgs.every(arg => arg === 'coordsystem' || this.path.includes(arg))
+      : false
+  if (pathMatch) {
     match = verifyDatafileMatch(
       this.file.relativePath,
       this.noExt,
