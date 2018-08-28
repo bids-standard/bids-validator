@@ -380,103 +380,107 @@ BIDS = {
               }),
             )
           }
-          utils.files.readFile(file, function(issue, contents) {
-            if (issue) {
+          utils.files
+            .readFile(file)
+            .then(contents => {
+              if (file.name.endsWith('_events.tsv')) {
+                events.push({
+                  file: file,
+                  path: file.relativePath,
+                  contents: contents,
+                })
+              }
+              TSV.TSV(file, contents, fileList, function(
+                issues,
+                participantList,
+                stimFiles,
+              ) {
+                if (participantList) {
+                  if (file.name.endsWith('participants.tsv')) {
+                    participants = {
+                      list: participantList,
+                      file: file,
+                    }
+                  } else if (file.relativePath.includes('phenotype/')) {
+                    phenotypeParticipants.push({
+                      list: participantList,
+                      file: file,
+                    })
+                  }
+                }
+                if (stimFiles.length) {
+                  // add unique new events to the stimuli.events array
+                  stimuli.events = [
+                    ...new Set([...stimuli.events, ...stimFiles]),
+                  ]
+                }
+                self.issues = self.issues.concat(issues)
+                process.nextTick(cb)
+              })
+            })
+            .catch(issue => {
               self.issues.push(issue)
               process.nextTick(cb)
-              return
-            }
-            if (file.name.endsWith('_events.tsv')) {
-              events.push({
-                file: file,
-                path: file.relativePath,
-                contents: contents,
-              })
-            }
-            TSV.TSV(file, contents, fileList, function(
-              issues,
-              participantList,
-              stimFiles,
-            ) {
-              if (participantList) {
-                if (file.name.endsWith('participants.tsv')) {
-                  participants = {
-                    list: participantList,
-                    file: file,
-                  }
-                } else if (file.relativePath.includes('phenotype/')) {
-                  phenotypeParticipants.push({
-                    list: participantList,
-                    file: file,
-                  })
-                }
-              }
-              if (stimFiles.length) {
-                // add unique new events to the stimuli.events array
-                stimuli.events = [...new Set([...stimuli.events, ...stimFiles])]
-              }
-              self.issues = self.issues.concat(issues)
-              process.nextTick(cb)
             })
-          })
         }
 
         // validate bvec
         else if (file.name && file.name.endsWith('.bvec')) {
-          utils.files.readFile(file, function(issue, contents) {
-            if (issue) {
+          utils.files
+            .readFile(file)
+            .then(contents => {
+              bContentsDict[file.relativePath] = contents
+              bvec(file, contents, function(issues) {
+                self.issues = self.issues.concat(issues)
+                process.nextTick(cb)
+              })
+            })
+            .catch(issue => {
               self.issues.push(issue)
               process.nextTick(cb)
-              return
-            }
-            bContentsDict[file.relativePath] = contents
-            bvec(file, contents, function(issues) {
-              self.issues = self.issues.concat(issues)
-              process.nextTick(cb)
             })
-          })
         }
 
         // validate bval
         else if (file.name && file.name.endsWith('.bval')) {
-          utils.files.readFile(file, function(issue, contents) {
-            if (issue) {
+          utils.files
+            .readFile(file)
+            .then(contents => {
+              bContentsDict[file.relativePath] = contents
+              bval(file, contents, function(issues) {
+                self.issues = self.issues.concat(issues)
+                process.nextTick(cb)
+              })
+            })
+            .catch(issue => {
               self.issues.push(issue)
               process.nextTick(cb)
-              return
-            }
-            bContentsDict[file.relativePath] = contents
-            bval(file, contents, function(issues) {
-              self.issues = self.issues.concat(issues)
-              process.nextTick(cb)
             })
-          })
         }
 
         // load json data for validation later
         else if (file.name && file.name.endsWith('.json')) {
-          utils.files.readFile(file, function(issue, contents) {
-            if (issue) {
-              self.issues.push(issue)
-              process.nextTick(cb)
-              return
-            }
-            utils.json.parse(file, contents, function(issues, jsObj) {
-              self.issues = self.issues.concat(issues)
+          utils.files
+            .readFile(file)
+            .then(contents => {
+              utils.json.parse(file, contents, function(issues, jsObj) {
+                self.issues = self.issues.concat(issues)
 
-              // abort further tests if schema test does not pass
-              for (var i = 0; i < issues.length; i++) {
-                if (issues[i].severity === 'error') {
+                // abort further tests if schema test does not pass
+                if (issues.some(issue => issue.severity === 'error')) {
                   process.nextTick(cb)
                   return
                 }
-              }
 
-              jsonContentsDict[file.relativePath] = jsObj
-              jsonFiles.push(file)
+                jsonContentsDict[file.relativePath] = jsObj
+                jsonFiles.push(file)
+                process.nextTick(cb)
+              })
+            })
+            .catch(issue => {
+              self.issues.push(issue)
               process.nextTick(cb)
             })
-          })
         } else {
           process.nextTick(cb)
         }
