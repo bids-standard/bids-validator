@@ -77,7 +77,7 @@ var TSV = function TSV(file, contents, fileList, callback) {
             file: file,
             evidence: row,
             line: i + 1,
-            character: 'at column # ' + (j + 1),
+            reason: 'at column # ' + (j + 1),
             code: 23,
           }),
         )
@@ -95,7 +95,7 @@ var TSV = function TSV(file, contents, fileList, callback) {
             file: file,
             evidence: row,
             line: i + 1,
-            character: 'at column # ' + (j + 1),
+            reason: 'at column # ' + (j + 1),
             code: 24,
           }),
         )
@@ -309,7 +309,7 @@ var checkage89_plus = function(rows, file, issues) {
           file: file,
           evidence: line,
           line: a + 1,
-          character: 'age of partcipant is above 89 ',
+          reason: 'age of partcipant is above 89 ',
           code: 56,
         }),
       )
@@ -333,7 +333,7 @@ const checkAcqTimeFormat = function(rows, file, issues) {
           file: file,
           evidence: file,
           line: i + 2,
-          character: 'acq_time is not in the format YYYY-MM-DDTHH:mm:ss ',
+          reason: 'acq_time is not in the format YYYY-MM-DDTHH:mm:ss ',
           code: 84,
         }),
       )
