@@ -77,7 +77,7 @@ var TSV = function TSV(file, contents, fileList, callback) {
             file: file,
             evidence: row,
             line: i + 1,
-            reason: 'at column # ' + (j + 1),
+            reason: 'Missing value at column # ' + (j + 1),
             code: 23,
           }),
         )
@@ -95,7 +95,7 @@ var TSV = function TSV(file, contents, fileList, callback) {
             file: file,
             evidence: row,
             line: i + 1,
-            reason: 'at column # ' + (j + 1),
+            reason: 'Missing value at column # ' + (j + 1),
             code: 24,
           }),
         )
