@@ -86,9 +86,11 @@ module.exports = {
         '^\\/(?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?' +
           'dwi.(?:json|bval|bvec)$',
       )
-      
-      var multiDirFieldmapRe = new RegExp('^\\/(?:acq-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)epi.json$')
-      
+
+      var multiDirFieldmapRe = new RegExp(
+        '^\\/(?:acq-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)epi.json$',
+      )
+
       var megTopRe = new RegExp(
         '^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?' +
           '(_meg.json|_channels.tsv|_photo.jpg|_coordsystem.json)$',
