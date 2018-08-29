@@ -483,11 +483,19 @@ module.exports = {
   88: {
     key: 'MALFORMED_BVEC',
     severity: 'error',
-    reason: 'The contents of this .bvec file are undefined or severely malformed. '
+    reason:
+      'The contents of this .bvec file are undefined or severely malformed. ',
   },
   89: {
     key: 'MALFORMED_BVAL',
     severity: 'error',
-    reason: 'The contents of this .bval file are undefined or severely malformed. '
-  }
+    reason:
+      'The contents of this .bval file are undefined or severely malformed. ',
+  },
+  91: {
+    key: '_FIELDMAP_WITHOUT_MAGNITUDE_FILE',
+    severity: 'error',
+    reason:
+      '_fieldmap.nii[.gz] file does not have accompanying _magnitude.nii[.gz] file. ',
+  },
 }

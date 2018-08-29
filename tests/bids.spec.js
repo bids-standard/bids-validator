@@ -227,4 +227,15 @@ var suite = describe('BIDS example datasets ', function() {
       },
     )
   })
+
+  it('checks for fieldmaps with no _magnitude file', function(isdone) {
+    var options = { ignoreNiftiHeaders: true }
+    validate.BIDS('tests/data/fieldmap_without_magnitude', options, function(
+      issues,
+    ) {
+      console.log(issues)
+      assert(issues.errors.length === 2 && issues.errors[1].code === '91')
+      isdone()
+    })
+  })
 })
