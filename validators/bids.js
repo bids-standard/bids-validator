@@ -287,7 +287,6 @@ BIDS = {
             ')$',
           ].join(''),
         )
-
         // ignore associated data
         if (utils.type.file.isStimuliData(file.relativePath)) {
           stimuli.directory.push(file)
@@ -311,7 +310,6 @@ BIDS = {
           )
           process.nextTick(cb)
         }
-
         // check modality by data file extension ...
         // and capture data files for later sanity checks (when available)
         else if (dataExtRE.test(file.name)) {
@@ -319,7 +317,6 @@ BIDS = {
           if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {
             niftis.push(file)
           }
-
           // collect modality summary
           const modality = suffix.slice(0, suffix.indexOf('.'))
           if (summary.modalities.indexOf(modality) === -1) {
@@ -551,6 +548,34 @@ BIDS = {
             }
           }
         }
+        // Check for _fieldmap nifti exists without corresponding _magnitude
+        // TODO: refactor into external function call
+        const fieldmaps = niftis.filter(
+          nifti =>
+            nifti.name.endsWith('_fieldmap.nii') ||
+            nifti.name.endsWith('fieldmap.nii.gz'),
+        )
+        for (let fieldmap of fieldmaps) {
+          console.log('Fieldmap: ' + fieldmap.name)
+          const magName = fieldmap.name.split('_fieldmap')[0] + '_magnitude'
+          console.log('magName: ' + magName + '.nii')
+          // Check for corresponding _magnitude file
+          const fileKeys = Object.keys(fileList)
+          const match = fileKeys.some(key =>
+            fileList[key].name.includes(magName + '.nii'),
+          )
+          if (!match) {
+            self.issues.push(
+              new Issue({
+                code: 91,
+                file: fieldmap,
+              }),
+            )
+          }
+        }
+
+        // End fieldmap check
+        //
 
         async.eachOfLimit(
           niftis,
