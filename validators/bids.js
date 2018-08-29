@@ -566,29 +566,51 @@ BIDS = {
             }
             // Check for _fieldmap nifti exists without corresponding _magnitude
             // TODO: refactor into external function call
-            const fieldmaps = niftis.filter(
-              nifti =>
-                nifti.name.endsWith('_fieldmap.nii') ||
-                nifti.name.endsWith('fieldmap.nii.gz'),
+            const niftiNames = niftis.map(nifti => nifti.name)
+            const fieldmaps = niftiNames.filter(
+              nifti => nifti.indexOf('_fieldmap') > -1,
             )
-            for (let fieldmap of fieldmaps) {
-              console.log('Fieldmap: ' + fieldmap.name)
-              const magName = fieldmap.name.split('_fieldmap')[0] + '_magnitude'
-              console.log('magName: ' + magName + '.nii')
-              // Check for corresponding _magnitude file
-              const fileKeys = Object.keys(fileList)
-              const match = fileKeys.some(key =>
-                fileList[key].name.includes(magName + '.nii'),
+            const magnitudes = niftiNames.filter(
+              nifti => nifti.indexOf('_magnitude') > -1,
+            )
+            fieldmaps.map(nifti => {
+              const associatedMagnitudeFile = nifti.replace(
+                'fieldmap',
+                'magnitude',
               )
-              if (!match) {
+              if (magnitudes.indexOf(associatedMagnitudeFile) === -1) {
                 self.issues.push(
                   new Issue({
                     code: 91,
-                    file: fieldmap,
+                    file: niftis.find(niftiFile => niftiFile.name == nifti),
                   }),
                 )
               }
-            }
+            })
+
+            // const fieldmaps = niftis.filter(
+            //   nifti =>
+            //     nifti.name.endsWith('_fieldmap.nii') ||
+            //     nifti.name.endsWith('fieldmap.nii.gz'),
+            // )
+            // for (let fieldmap of fieldmaps) {
+            //   console.log('Fieldmap: ' + fieldmap.name)
+            //   const magName = fieldmap.name.split('_fieldmap')[0] + '_magnitude'
+            //   console.log('magName: ' + magName + '.nii')
+            //   // Check for corresponding _magnitude file
+            //   const fileKeys = Object.keys(fileList)
+            //   const match = fileKeys.some(key =>
+            //     fileList[key].name.includes(magName + '.nii'),
+            //   )
+            //   if (!match) {
+            //     self.issues.push(
+            //       new Issue({
+            //         code: 91,
+            //         file: fieldmap,
+            //       }),
+            //     )
+            //   }
+            // }
 
             // End fieldmap check
             //
