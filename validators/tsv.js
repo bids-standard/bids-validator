@@ -331,7 +331,7 @@ const checkAcqTimeFormat = function(rows, file, issues) {
       issues.push(
         new Issue({
           file: file,
-          evidence: file,
+          evidence: acqTime,
           line: i + 2,
           reason: 'acq_time is not in the format YYYY-MM-DDTHH:mm:ss ',
           code: 84,
