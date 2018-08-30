@@ -127,7 +127,7 @@ function getBIDSIgnore(dir, callback) {
 
   var bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir)
   if (bidsIgnoreFileObj) {
-    readFile(bidsIgnoreFileObj, function(issue, content) {
+    readFile(bidsIgnoreFileObj).then(content => {
       ig = ig.add(content)
       callback(ig)
     })

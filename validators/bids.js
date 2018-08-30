@@ -13,6 +13,7 @@ var Events = require('./events')
 var session = require('./session')
 var checkAnyDataPresent = require('./checkAnyDataPresent')
 var headerFields = require('./headerFields')
+const dataExtRE = require('../utils/data_extensions.js')
 
 var BIDS
 
@@ -304,7 +305,7 @@ BIDS = {
 
         // check modality by data file extension ...
         // and capture data files for later sanity checks (when available)
-        else if (utils.files.dataExtRE().test(file.name)) {
+        else if (dataExtRE.test(file.name)) {
           // capture nifties for later validation
           if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {
             niftis.push(file)
