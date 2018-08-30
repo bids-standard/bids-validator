@@ -27,9 +27,24 @@ var fileUtils = {
   generateMergedSidecarDict: generateMergedSidecarDict,
   potentialLocations: potentialLocations,
   getBFileContent: getBFileContent,
+  dataExtRE: dataExtRE,
 }
 
 // implementations ----------------------------------------------------------------
+/**
+ * Make RegExp for detecting modalities from data file extensions
+ */
+function dataExtRE() {
+  return new RegExp(
+    [
+      '^.*\\.(',
+      'nii|nii\\.gz|', // MRI
+      'fif|fif\\.gz|sqd|con|kdf|chn|trg|raw|raw\\.mhf|', // MEG
+      'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt|dat|nwb|tdat|tidx|tmet', // EEG/iEEG
+      ')$',
+    ].join(''),
+  )
+}
 
 /**
  * Read
