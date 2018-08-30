@@ -587,33 +587,8 @@ BIDS = {
                 )
               }
             })
-
-            // const fieldmaps = niftis.filter(
-            //   nifti =>
-            //     nifti.name.endsWith('_fieldmap.nii') ||
-            //     nifti.name.endsWith('fieldmap.nii.gz'),
-            // )
-            // for (let fieldmap of fieldmaps) {
-            //   console.log('Fieldmap: ' + fieldmap.name)
-            //   const magName = fieldmap.name.split('_fieldmap')[0] + '_magnitude'
-            //   console.log('magName: ' + magName + '.nii')
-            //   // Check for corresponding _magnitude file
-            //   const fileKeys = Object.keys(fileList)
-            //   const match = fileKeys.some(key =>
-            //     fileList[key].name.includes(magName + '.nii'),
-            //   )
-            //   if (!match) {
-            //     self.issues.push(
-            //       new Issue({
-            //         code: 91,
-            //         file: fieldmap,
-            //       }),
-            //     )
-            //   }
-            // }
-
             // End fieldmap check
-            //
+
             async.eachOfLimit(
               niftis,
               200,
