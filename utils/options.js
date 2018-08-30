@@ -31,13 +31,14 @@ module.exports = {
   loadConfig: function(config, callback) {
     if (typeof config === 'string') {
       // load file
-      files.readFile({ path: config }, function(issue, contents) {
-        if (issue) {
-          callback([issue], { path: config }, null)
-        } else {
+      files
+        .readFile({ path: config })
+        .then(contents => {
           callback(null, { path: config }, contents)
-        }
-      })
+        })
+        .catch(issue => {
+          callback([issue], { path: config }, null)
+        })
     } else if (typeof config === 'object') {
       callback(null, { path: 'config' }, JSON.stringify(config))
     }

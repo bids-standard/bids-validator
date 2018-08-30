@@ -177,6 +177,7 @@ BIDS = {
         directory: [],
       },
       niftis = [],
+      jsonFiles = [],
       ephys = [],
       headers = [],
       participants = null,
@@ -364,80 +365,85 @@ BIDS = {
               }),
             )
           }
-          utils.files.readFile(file, function(issue, contents) {
-            if (issue) {
+          utils.files
+            .readFile(file)
+            .then(contents => {
+              if (file.name.endsWith('_events.tsv')) {
+                events.push({
+                  file: file,
+                  path: file.relativePath,
+                  contents: contents,
+                })
+              }
+              TSV.TSV(file, contents, fileList, function(
+                issues,
+                participantList,
+                stimFiles,
+              ) {
+                if (participantList) {
+                  if (file.name.endsWith('participants.tsv')) {
+                    participants = {
+                      list: participantList,
+                      file: file,
+                    }
+                  } else if (file.relativePath.includes('phenotype/')) {
+                    phenotypeParticipants.push({
+                      list: participantList,
+                      file: file,
+                    })
+                  }
+                }
+                if (stimFiles.length) {
+                  // add unique new events to the stimuli.events array
+                  stimuli.events = [
+                    ...new Set([...stimuli.events, ...stimFiles]),
+                  ]
+                }
+                self.issues = self.issues.concat(issues)
+                process.nextTick(cb)
+              })
+            })
+            .catch(issue => {
               self.issues.push(issue)
               process.nextTick(cb)
-              return
-            }
-            if (file.name.endsWith('_events.tsv')) {
-              events.push({
-                file: file,
-                path: file.relativePath,
-                contents: contents,
-              })
-            }
-            TSV.TSV(file, contents, fileList, function(
-              issues,
-              participantList,
-              stimFiles,
-            ) {
-              if (participantList) {
-                if (file.name.endsWith('participants.tsv')) {
-                  participants = {
-                    list: participantList,
-                    file: file,
-                  }
-                } else if (file.relativePath.includes('phenotype/')) {
-                  phenotypeParticipants.push({
-                    list: participantList,
-                    file: file,
-                  })
-                }
-              }
-              if (stimFiles.length) {
-                // add unique new events to the stimuli.events array
-                stimuli.events = [...new Set([...stimuli.events, ...stimFiles])]
-              }
-              self.issues = self.issues.concat(issues)
-              process.nextTick(cb)
             })
-          })
         }
 
         // validate bvec
         else if (file.name && file.name.endsWith('.bvec')) {
-          utils.files.readFile(file, function(issue, contents) {
-            if (issue) {
+          utils.files
+            .readFile(file)
+            .then(contents => {
+              bContentsDict[file.relativePath] = contents
+              bvec(file, contents, function(issues) {
+                self.issues = self.issues.concat(issues)
+                process.nextTick(cb)
+              })
+            })
+            .catch(issue => {
               self.issues.push(issue)
               process.nextTick(cb)
-              return
-            }
-            bContentsDict[file.relativePath] = contents
-            bvec(file, contents, function(issues) {
-              self.issues = self.issues.concat(issues)
-              process.nextTick(cb)
             })
-          })
         }
 
         // validate bval
         else if (file.name && file.name.endsWith('.bval')) {
-          utils.files.readFile(file, function(issue, contents) {
-            if (issue) {
+          utils.files
+            .readFile(file)
+            .then(contents => {
+              bContentsDict[file.relativePath] = contents
+              bval(file, contents, function(issues) {
+                self.issues = self.issues.concat(issues)
+                process.nextTick(cb)
+              })
+            })
+            .catch(issue => {
               self.issues.push(issue)
               process.nextTick(cb)
-              return
-            }
-            bContentsDict[file.relativePath] = contents
-            bval(file, contents, function(issues) {
-              self.issues = self.issues.concat(issues)
-              process.nextTick(cb)
             })
-          })
         }
 
-        // validate json
+        // load json data for validation later
         else if (file.name && file.name.endsWith('.json')) {
           // Verify that the json file has an accompanying data file
           // Need to limit checks to files in sub-*/**/ - Not all data dictionaries are sidecars
@@ -459,35 +465,27 @@ BIDS = {
               )
             }
           }
-          utils.files.readFile(file, function(issue, contents) {
-            if (issue) {
-              self.issues.push(issue)
-              process.nextTick(cb)
-              return
-            }
-            json(file, contents, function(issues, jsObj) {
-              self.issues = self.issues.concat(issues)
+          utils.files
+            .readFile(file)
+            .then(contents => {
+              utils.json.parse(file, contents, function(issues, jsObj) {
+                self.issues = self.issues.concat(issues)
 
-              // abort further tests if schema test does not pass
-              for (var i = 0; i < issues.length; i++) {
-                if (issues[i].severity === 'error') {
+                // abort further tests if schema test does not pass
+                if (issues.some(issue => issue.severity === 'error')) {
                   process.nextTick(cb)
                   return
                 }
-              }
 
-              jsonContentsDict[file.relativePath] = jsObj
-
-              // collect task summary
-              if (file.name.indexOf('task') > -1) {
-                var task = jsObj ? jsObj.TaskName : null
-                if (task && summary.tasks.indexOf(task) === -1) {
-                  summary.tasks.push(task)
-                }
-              }
+                jsonContentsDict[file.relativePath] = jsObj
+                jsonFiles.push(file)
+                process.nextTick(cb)
+              })
+            })
+            .catch(issue => {
+              self.issues.push(issue)
               process.nextTick(cb)
             })
-          })
         } else {
           process.nextTick(cb)
         }
@@ -528,62 +526,60 @@ BIDS = {
         }
       },
       function() {
-        // check if same file with .nii and .nii.gz extensions is present
-        var niftiCounts = niftis
-          .map(function(val) {
-            return { count: 1, val: val.name.split('.')[0] }
-          })
-          .reduce(function(a, b) {
-            a[b.val] = (a[b.val] || 0) + b.count
-            return a
-          }, {})
-
-        var duplicates = Object.keys(niftiCounts).filter(function(a) {
-          return niftiCounts[a] > 1
-        })
-        if (duplicates.length !== 0) {
-          for (var key in duplicates) {
-            var duplicateFiles = niftis.filter(function(a) {
-              return a.name.split('.')[0] === duplicates[key]
-            })
-            for (var file in duplicateFiles) {
-              self.issues.push(
-                new Issue({
-                  code: 74,
-                  file: duplicateFiles[file],
-                }),
-              )
-            }
-          }
-        }
-
+        // check json data
         async.eachOfLimit(
-          niftis,
+          jsonFiles,
           200,
           function(file, key, cb) {
-            if (self.options.ignoreNiftiHeaders) {
-              NIFTI(
-                null,
-                file,
-                jsonContentsDict,
-                bContentsDict,
-                fileList,
-                events,
-                function(issues) {
-                  self.issues = self.issues.concat(issues)
-                  process.nextTick(cb)
-                },
-              )
-            } else {
-              utils.files.readNiftiHeader(file, function(header) {
-                // check if header could be read
-                if (header && header.hasOwnProperty('error')) {
-                  self.issues.push(header.error)
-                  process.nextTick(cb)
-                } else {
-                  headers.push([file, header])
+            json(file, jsonContentsDict, function(issues, jsObj) {
+              self.issues = self.issues.concat(issues)
+              // collect task summary
+              if (file.name.indexOf('task') > -1) {
+                var task = jsObj ? jsObj.TaskName : null
+                if (task && summary.tasks.indexOf(task) === -1) {
+                  summary.tasks.push(task)
+                }
+              }
+              process.nextTick(cb)
+            })
+          },
+          function() {
+            // check if same file with .nii and .nii.gz extensions is present
+            var niftiCounts = niftis
+              .map(function(val) {
+                return { count: 1, val: val.name.split('.')[0] }
+              })
+              .reduce(function(a, b) {
+                a[b.val] = (a[b.val] || 0) + b.count
+                return a
+              }, {})
+
+            var duplicates = Object.keys(niftiCounts).filter(function(a) {
+              return niftiCounts[a] > 1
+            })
+            if (duplicates.length !== 0) {
+              for (var key in duplicates) {
+                var duplicateFiles = niftis.filter(function(a) {
+                  return a.name.split('.')[0] === duplicates[key]
+                })
+                for (var file in duplicateFiles) {
+                  self.issues.push(
+                    new Issue({
+                      code: 74,
+                      file: duplicateFiles[file],
+                    }),
+                  )
+                }
+              }
+            }
+
+            async.eachOfLimit(
+              niftis,
+              200,
+              function(file, key, cb) {
+                if (self.options.ignoreNiftiHeaders) {
                   NIFTI(
-                    header,
+                    null,
                     file,
                     jsonContentsDict,
                     bContentsDict,
@@ -594,75 +590,101 @@ BIDS = {
                       process.nextTick(cb)
                     },
                   )
+                } else {
+                  utils.files.readNiftiHeader(file, function(header) {
+                    // check if header could be read
+                    if (header && header.hasOwnProperty('error')) {
+                      self.issues.push(header.error)
+                      process.nextTick(cb)
+                    } else {
+                      headers.push([file, header])
+                      NIFTI(
+                        header,
+                        file,
+                        jsonContentsDict,
+                        bContentsDict,
+                        fileList,
+                        events,
+                        function(issues) {
+                          self.issues = self.issues.concat(issues)
+                          process.nextTick(cb)
+                        },
+                      )
+                    }
+                  })
                 }
-              })
-            }
-          },
-          function() {
-            if (!hasSubjectDir) {
-              self.issues.push(new Issue({ code: 45 }))
-            }
-            if (!hasDatasetDescription) {
-              self.issues.push(new Issue({ code: 57 }))
-            }
-            // check if participants file match found subjects
-            if (participants) {
-              var participantsFromFile = participants.list.sort()
-              var participantsFromFolders = summary.subjects.sort()
-              if (
-                !utils.array.equals(
-                  participantsFromFolders,
-                  participantsFromFile,
-                  true,
+              },
+              function() {
+                if (!hasSubjectDir) {
+                  self.issues.push(new Issue({ code: 45 }))
+                }
+                if (!hasDatasetDescription) {
+                  self.issues.push(new Issue({ code: 57 }))
+                }
+                // check if participants file match found subjects
+                if (participants) {
+                  var participantsFromFile = participants.list.sort()
+                  var participantsFromFolders = summary.subjects.sort()
+                  if (
+                    !utils.array.equals(
+                      participantsFromFolders,
+                      participantsFromFile,
+                      true,
+                    )
+                  ) {
+                    self.issues.push(
+                      new Issue({
+                        code: 49,
+                        evidence:
+                          'participants.tsv: ' +
+                          participantsFromFile.join(', ') +
+                          ' folder structure: ' +
+                          participantsFromFolders.join(', '),
+                        file: participants.file,
+                      }),
+                    )
+                  }
+                }
+
+                // check if dataset contains T1w
+                if (summary.modalities.indexOf('T1w') < 0) {
+                  self.issues.push(
+                    new Issue({
+                      code: 53,
+                    }),
+                  )
+                }
+
+                //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
+                TSV.checkphenotype(phenotypeParticipants, summary, self.issues)
+
+                // validate nii header fields
+                self.issues = self.issues.concat(headerFields(headers))
+
+                // Events validation
+                Events.validateEvents(
+                  events,
+                  stimuli,
+                  headers,
+                  jsonContentsDict,
+                  self.issues,
                 )
-              ) {
-                self.issues.push(
-                  new Issue({
-                    code: 49,
-                    evidence:
-                      'participants.tsv: ' +
-                      participantsFromFile.join(', ') +
-                      ' folder structure: ' +
-                      participantsFromFolders.join(', '),
-                    file: participants.file,
-                  }),
+
+                // validation session files
+                self.issues = self.issues.concat(session(fileList))
+
+                self.issues = self.issues.concat(
+                  checkAnyDataPresent(fileList, summary.subjects),
                 )
-              }
-            }
-
-            // check if dataset contains T1w
-            if (summary.modalities.indexOf('T1w') < 0) {
-              self.issues.push(
-                new Issue({
-                  code: 53,
-                }),
-              )
-            }
-
-            //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
-            TSV.checkphenotype(phenotypeParticipants, summary, self.issues)
-
-            // validate nii header fields
-            self.issues = self.issues.concat(headerFields(headers))
-
-            // Events validation
-            Events.validateEvents(
-              events,
-              stimuli,
-              headers,
-              jsonContentsDict,
-              self.issues,
+                summary.modalities = utils.modalities.group(summary.modalities)
+                var issues = utils.issues.format(
+                  self.issues,
+                  summary,
+                  self.options,
+                )
+                callback(issues, summary)
+              },
             )
-
-            // validation session files
-            self.issues = self.issues.concat(session(fileList))
-
-            self.issues = self.issues.concat(
-              checkAnyDataPresent(fileList, summary.subjects),
-            )
-            summary.modalities = utils.modalities.group(summary.modalities)
-            var issues = utils.issues.format(self.issues, summary, self.options)
-            callback(issues, summary)
           },
         )
       },

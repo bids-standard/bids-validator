@@ -12,18 +12,19 @@ var Issue = utils.issues.Issue
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function(file, contents, callback) {
+module.exports = function(file, jsonContentsDict, callback) {
   // primary flow --------------------------------------------------------------------
 
   var issues = []
-
-  utils.json.parse(file, contents, function(pissues, jsObj) {
-    issues = pissues
-    if (jsObj) {
-      issues = issues.concat(checkUnits(file, jsObj))
-    }
-    callback(issues, jsObj)
-  })
+  var potentialSidecars = utils.files.potentialLocations(file.relativePath)
+  var mergedDictionary = utils.files.generateMergedSidecarDict(
+    potentialSidecars,
+    jsonContentsDict,
+  )
+  if (mergedDictionary) {
+    issues = issues.concat(checkUnits(file, mergedDictionary))
+  }
+  callback(issues, mergedDictionary)
 }
 
 // individual checks ---------------------------------------------------------------

@@ -58,34 +58,34 @@ function dataExtRE() {
  * In node the file should be a path to a file.
  *
  */
-function readFile(file, callback) {
-  if (fs) {
-    testFile(file, function(issue) {
-      if (issue) {
-        process.nextTick(function() {
-          callback(issue, null)
-        })
-        return
-      }
-      fs.readFile(file.path, 'utf8', function(err, data) {
-        process.nextTick(function() {
-          callback(null, data)
+function readFile(file) {
+  return new Promise((resolve, reject) => {
+    if (fs) {
+      testFile(file, function(issue) {
+        if (issue) {
+          process.nextTick(function() {
+            return reject(issue)
+          })
+        }
+        fs.readFile(file.path, 'utf8', function(err, data) {
+          process.nextTick(function() {
+            return resolve(data)
+          })
         })
       })
-    })
-  } else {
-    var reader = new FileReader()
-    reader.onloadend = function(e) {
-      if (e.target.readyState == FileReader.DONE) {
-        if (!e.target.result) {
-          callback(new Issue({ code: 44, file: file }), null)
-          return
+    } else {
+      var reader = new FileReader()
+      reader.onloadend = function(e) {
+        if (e.target.readyState == FileReader.DONE) {
+          if (!e.target.result) {
+            return reject(new Issue({ code: 44, file: file }))
+          }
+          return resolve(e.target.result)
         }
-        callback(null, e.target.result)
       }
+      reader.readAsBinaryString(file)
     }
-    reader.readAsBinaryString(file)
-  }
+  })
 }
 
 function getBIDSIgnoreFileObjNode(dir) {
@@ -135,7 +135,7 @@ function getBIDSIgnore(dir, callback) {
 
   var bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir)
   if (bidsIgnoreFileObj) {
-    readFile(bidsIgnoreFileObj, function(issue, content) {
+    readFile(bidsIgnoreFileObj).then(content => {
       ig = ig.add(content)
       callback(ig)
     })
