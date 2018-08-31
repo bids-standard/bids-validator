@@ -497,4 +497,10 @@ module.exports = {
     severity: 'error',
     reason: 'A json sidecar file was found without a corresponding data file',
   },
+  91: {
+    key: '_FIELDMAP_WITHOUT_MAGNITUDE_FILE',
+    severity: 'error',
+    reason:
+      '_fieldmap.nii[.gz] file does not have accompanying _magnitude.nii[.gz] file. ',
+  },
 }

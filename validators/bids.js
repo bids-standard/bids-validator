@@ -302,7 +302,6 @@ BIDS = {
           )
           process.nextTick(cb)
         }
-
         // check modality by data file extension ...
         // and capture data files for later sanity checks (when available)
         else if (dataExtRE.test(file.name)) {
@@ -310,7 +309,6 @@ BIDS = {
           if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {
             niftis.push(file)
           }
-
           // collect modality summary
           const modality = suffix.slice(0, suffix.indexOf('.'))
           if (summary.modalities.indexOf(modality) === -1) {
@@ -573,6 +571,30 @@ BIDS = {
                 }
               }
             }
+            // Check for _fieldmap nifti exists without corresponding _magnitude
+            // TODO: refactor into external function call
+            const niftiNames = niftis.map(nifti => nifti.name)
+            const fieldmaps = niftiNames.filter(
+              nifti => nifti.indexOf('_fieldmap') > -1,
+            )
+            const magnitudes = niftiNames.filter(
+              nifti => nifti.indexOf('_magnitude') > -1,
+            )
+            fieldmaps.map(nifti => {
+              const associatedMagnitudeFile = nifti.replace(
+                'fieldmap',
+                'magnitude',
+              )
+              if (magnitudes.indexOf(associatedMagnitudeFile) === -1) {
+                self.issues.push(
+                  new Issue({
+                    code: 91,
+                    file: niftis.find(niftiFile => niftiFile.name == nifti),
+                  }),
+                )
+              }
+            })
+            // End fieldmap check
 
             async.eachOfLimit(
               niftis,
