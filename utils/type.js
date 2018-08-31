@@ -87,7 +87,9 @@ module.exports = {
           'dwi.(?:json|bval|bvec)$',
       )
 
-      var multiDirFieldmapRe = new RegExp('^\\/(?:dir-[a-zA-Z0-9]+)_epi.json$')
+      var multiDirFieldmapRe = new RegExp(
+        '^\\/(?:acq-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)epi.json$',
+      )
 
       var megTopRe = new RegExp(
         '^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?' +

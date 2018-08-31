@@ -492,6 +492,11 @@ module.exports = {
     reason:
       'The contents of this .bval file are undefined or severely malformed. ',
   },
+  90: {
+    key: 'SIDECAR_WITHOUT_DATAFILE',
+    severity: 'error',
+    reason: 'A json sidecar file was found without a corresponding data file',
+  },
   91: {
     key: '_FIELDMAP_WITHOUT_MAGNITUDE_FILE',
     severity: 'error',

@@ -13,6 +13,7 @@ var Events = require('./events')
 var session = require('./session')
 var checkAnyDataPresent = require('./checkAnyDataPresent')
 var headerFields = require('./headerFields')
+const dataExtRE = require('../utils/data_extensions.js')
 
 var BIDS
 
@@ -278,16 +279,6 @@ BIDS = {
         const pathParts = path.split('_')
         const suffix = pathParts[pathParts.length - 1]
 
-        // Make RegExp for detecting modalities from data file extensions
-        var dataExtRE = new RegExp(
-          [
-            '^.*\\.(',
-            'nii|nii\\.gz|', // MRI
-            'fif|sqd|con|kdf|chn|trg|raw|raw\\.mhf|', // MEG
-            'eeg|vhdr|vmrk|edf|cnt|bdf|set|fdt|dat|nwb|tdat|tidx|tmet', // EEG/iEEG
-            ')$',
-          ].join(''),
-        )
         // ignore associated data
         if (utils.type.file.isStimuliData(file.relativePath)) {
           stimuli.directory.push(file)
@@ -351,12 +342,10 @@ BIDS = {
         // validate tsv
         else if (file.name && file.name.endsWith('.tsv')) {
           // Generate name for corresponding data dictionary file
-          //console.log("Check for data dictionary for " + file.path);
           let dict_path = file.relativePath.replace('.tsv', '.json')
           let exists = false
           let potentialDicts = utils.files.potentialLocations(dict_path)
           // Need to check for .json file at all levels of heirarchy
-          //console.log("Potential data dictionaries:" + utils.files.potentialLocations(dict_path));
           // Get list of fileList keys
           let idxs = Object.keys(fileList)
           for (let i of idxs) {
@@ -368,8 +357,6 @@ BIDS = {
 
           // Check if data dictionary file exists
           if (!exists) {
-            // Can't use fs.exists because there's no file system in browser implementations
-            //console.log("Missing data dictionary found");
             self.issues.push(
               new Issue({
                 code: 82,
@@ -457,6 +444,26 @@ BIDS = {
 
         // load json data for validation later
         else if (file.name && file.name.endsWith('.json')) {
+          // Verify that the json file has an accompanying data file
+          // Need to limit checks to files in sub-*/**/ - Not all data dictionaries are sidecars
+          const pathArgs = file.relativePath.split('/')
+          const isSidecar =
+            pathArgs[1].includes('sub-') && pathArgs.length > 3 ? true : false
+          if (isSidecar) {
+            // Check for suitable datafile accompanying this sidecar
+            const dataFile = utils.bids_files.checkSidecarForDatafiles(
+              file,
+              fileList,
+            )
+            if (!dataFile) {
+              self.issues.push(
+                new Issue({
+                  code: 90,
+                  file: file,
+                }),
+              )
+            }
+          }
           utils.files
             .readFile(file)
             .then(contents => {
