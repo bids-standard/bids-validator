@@ -171,6 +171,13 @@ describe('TSV', function() {
     })
   })
 
+  it('should allow n/a as acq_time column entries', function() {
+    const tsv = 'filename\tacq_time\n' + 'value-one\tn/a'
+    validate.TSV.TSV(scansFile, tsv, [], function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
   it('should allow properly formatted acq_time column entries', function() {
     const tsv = 'filename\tacq_time\n' + 'value-one\t2017-05-03T06:45:45'
     validate.TSV.TSV(scansFile, tsv, [], function(issues) {
