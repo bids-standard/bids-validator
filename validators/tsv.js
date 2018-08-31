@@ -326,7 +326,10 @@ const checkAcqTimeFormat = function(rows, file, issues) {
     const line = testRows[i]
     const lineValues = line.trim().split('\t')
     const acqTime = lineValues[acqTimeColumn]
-    const isValid = dateIsValid(parseDate(acqTime, format, new Date()))
+    var isValid = dateIsValid(parseDate(acqTime, format, new Date()))
+    if (acqTime === 'n/a') {
+      isValid = true
+    }
     if (acqTime && !isValid) {
       issues.push(
         new Issue({
