@@ -245,4 +245,26 @@ var suite = describe('BIDS example datasets ', function() {
       isdone()
     })
   })
+
+  it('should not throw a warning if all _phasediff.nii are associated with _magnitude1.nii', function(isdone) {
+    var options = { ignoreNiftiHeaders: true }
+    validate.BIDS(
+      'tests/data/BIDS-examples-' + test_version + '/hcp_example_bids',
+      options,
+      function(issues) {
+        assert.deepEqual(issues.errors, [])
+        isdone()
+      },
+    )
+  })
+
+  it('should throw a warning if there are _phasediff.nii without an associated _magnitude1.nii', function(isdone) {
+    var options = { ignoreNiftiHeaders: true }
+    validate.BIDS('tests/data/phasediff_without_magnitude1', options, function(
+      issues,
+    ) {
+      assert(issues.warnings.length == 2 && issues.warnings[1].code === '92')
+      isdone()
+    })
+  })
 })
