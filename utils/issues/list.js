@@ -503,4 +503,10 @@ module.exports = {
     reason:
       '_fieldmap.nii[.gz] file does not have accompanying _magnitude.nii[.gz] file. ',
   },
+  92: {
+    key: 'MISSING_MAGNITUDE1_FILE',
+    severity: 'warning',
+    reason:
+      'Each _phasediff.nii[.gz] file should be associated with a _magnitude1.nii[.gz] file.',
+  },
 }

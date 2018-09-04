@@ -596,6 +596,28 @@ BIDS = {
             })
             // End fieldmap check
 
+            // check to see if each phasediff is associated with magnitude1
+            const phaseDiffNiftis = niftiNames.filter(
+              nifti => nifti.indexOf('phasediff') > -1,
+            )
+            const magnitude1Niftis = niftiNames.filter(
+              nifti => nifti.indexOf('magnitude1') > -1,
+            )
+            phaseDiffNiftis.map(nifti => {
+              const associatedMagnitudeFile = nifti.replace(
+                'phasediff',
+                'magnitude1',
+              )
+              if (magnitude1Niftis.indexOf(associatedMagnitudeFile) === -1) {
+                self.issues.push(
+                  new Issue({
+                    code: 92,
+                    file: niftis.find(niftiFile => niftiFile.name == nifti),
+                  }),
+                )
+              }
+            })
+
             async.eachOfLimit(
               niftis,
               200,
