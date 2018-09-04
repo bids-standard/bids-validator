@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "IntendedFor": { "type": "string", "minLength": 1 },
+    "FiducialsDescription": { "type": "string", "minLength": 1 },
+    "EEGCoordinateSystem": { "type": "string", "minLength": 1 },
+    "EEGCoordinateUnits": { "type": "string", "minLength": 1 },
+    "EEGCoordinateSystemDescription": { "type": "string" },
+    "AnatomicalLandmarkCoordinateSystem": { "type": "string", "minLength": 1 },
+    "AnatomicalLandmarkCoordinateUnits": { "type": "string", "minLength": 1 },
+    "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string" }
+  },
+  "required": ["EEGCoordinateSystem", "EEGCoordinateUnits"],
+  "additionalProperties": false
+}
