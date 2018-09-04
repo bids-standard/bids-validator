@@ -231,6 +231,10 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+bids-validator-common@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/bids-validator-common/-/bids-validator-common-0.1.6.tgz#be38a0a16f254c9e87fc6d6664a27ca5590068d6"
+
 bl@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/bl/-/bl-1.1.2.tgz#fdca871a99713aa00d19e3bbba41c44787a65398"
