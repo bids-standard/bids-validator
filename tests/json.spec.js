@@ -168,4 +168,34 @@ describe('JSON', function() {
       assert(issues.length == 0)
     })
   })
+
+  it('*_bold.json sidecars should not have EffectiveEchoSpacing > TotalReadoutTime', () => {
+    // this json dictionary generates a sidecar with EffectiveEchoSpacing > TotalReadoutTime,
+    // which is nonsensical
+    const fieldMapJsonDict = {
+      EffectiveEchoSpacing: 3,
+      TotalReadoutTime: 1,
+    }
+    jsonDict[file.relativePath] = fieldMapJsonDict
+
+    // validation should return an error of code 93
+    validate.JSON(file, jsonDict, issues => {
+      assert(issues.length == 1 && issues[0].code == '93')
+    })
+  })
+
+  it('*_bold.json sidecars should have EffectiveEchoSpacing < TotalReadoutTime', () => {
+    // this json dictionary generates a sidecar with EffectiveEchoSpacing < TotalReadoutTime,
+    // which is reasonable
+    const fieldMapJsonDict = {
+      EffectiveEchoSpacing: 3,
+      TotalReadoutTime: 5,
+    }
+    jsonDict[file.relativePath] = fieldMapJsonDict
+
+    // validation should pass with no errors.
+    validate.JSON(file, jsonDict, issues => {
+      assert.deepEqual(issues, [])
+    })
+  })
 })

@@ -23,6 +23,7 @@ module.exports = function(file, jsonContentsDict, callback) {
   )
   if (mergedDictionary) {
     issues = issues.concat(checkUnits(file, mergedDictionary))
+    issues = issues.concat(compareSidecarProperties(file, mergedDictionary))
   }
   callback(issues, mergedDictionary)
 }
@@ -126,6 +127,26 @@ function checkUnits(file, sidecar) {
       new Issue({
         file: file,
         code: 5,
+      }),
+    )
+  }
+
+  return issues
+}
+
+function compareSidecarProperties(file, sidecar) {
+  let issues = []
+
+  // check that EffectiveEchoSpacing < TotalReadoutTime
+  if (
+    sidecar.hasOwnProperty('TotalReadoutTime') &&
+    sidecar.hasOwnProperty('EffectiveEchoSpacing') &&
+    sidecar['TotalReadoutTime'] < sidecar['EffectiveEchoSpacing']
+  ) {
+    issues.push(
+      new Issue({
+        file: file,
+        code: 93,
       }),
     )
   }
