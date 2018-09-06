@@ -16,7 +16,7 @@ const isNode = typeof window === 'undefined'
  */
 function readFile(file) {
   return new Promise((resolve, reject) => {
-    if (fs) {
+    if (isNode) {
       testFile(file, function(issue) {
         if (issue) {
           process.nextTick(function() {
