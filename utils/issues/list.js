@@ -509,4 +509,10 @@ module.exports = {
     reason:
       'Each _phasediff.nii[.gz] file should be associated with a _magnitude1.nii[.gz] file.',
   },
+  94: {
+    key: 'MAGNITUDE_FILE_WITH_TOO_MANY_DIMENSIONS',
+    severity: 'error',
+    reason:
+      '_magnitude1.nii[.gz] and _magnitude2.nii[.gz] files must not have more than three dimensions. ',
+  },
 }
