@@ -170,7 +170,7 @@ BIDS = {
   fullTest: function(fileList, callback) {
     var self = this
 
-    var jsonContentsDict = {},
+    let jsonContentsDict = {},
       bContentsDict = {},
       events = [],
       stimuli = {
@@ -184,6 +184,8 @@ BIDS = {
       participants = null,
       phenotypeParticipants = [],
       hasSubjectDir = false
+
+    let tsvs = []
     var hasDatasetDescription = false
 
     var summary = {
@@ -194,7 +196,6 @@ BIDS = {
       totalFiles: Object.keys(fileList).length,
       size: 0,
     }
-
     // collect file directory statistics
     async.eachOfLimit(fileList, 200, function(file) {
       // collect file stats
@@ -341,32 +342,14 @@ BIDS = {
 
         // validate tsv
         else if (file.name && file.name.endsWith('.tsv')) {
-          // Generate name for corresponding data dictionary file
-          let dict_path = file.relativePath.replace('.tsv', '.json')
-          let exists = false
-          let potentialDicts = utils.files.potentialLocations(dict_path)
-          // Need to check for .json file at all levels of heirarchy
-          // Get list of fileList keys
-          let idxs = Object.keys(fileList)
-          for (let i of idxs) {
-            if (potentialDicts.indexOf(fileList[i].relativePath) > -1) {
-              exists = true
-              break
-            }
-          }
-
-          // Check if data dictionary file exists
-          if (!exists) {
-            self.issues.push(
-              new Issue({
-                code: 82,
-                file: file,
-              }),
-            )
-          }
           utils.files
             .readFile(file)
             .then(contents => {
+              // Push TSV to list for custom column verification after all data dictionaries have been read
+              tsvs.push({
+                file: file,
+                contents: contents,
+              })
               if (file.name.endsWith('_events.tsv')) {
                 events.push({
                   file: file,
@@ -713,6 +696,11 @@ BIDS = {
                   headers,
                   jsonContentsDict,
                   self.issues,
+                )
+
+                // validate custom fields in all TSVs and add any issues to the list
+                self.issues = self.issues.concat(
+                  TSV.validateTsvColumns(tsvs, jsonContentsDict),
                 )
 
                 // validation session files

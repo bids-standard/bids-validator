@@ -1,0 +1,28 @@
+{
+  "channels": [
+    "description",
+    "high_cutoff",
+    "low_cutoff",
+    "name",
+    "notch",
+    "sampling_frequency",
+    "software_filters",
+    "status",
+    "status_description",
+    "type",
+    "units"
+  ],
+  "events": [
+    "duration",
+    "HED",
+    "onset",
+    "trial_type",
+    "response_time",
+    "stim_file"
+  ],
+  "misc": [],
+  "participants": ["participant_id"],
+  "phenotype": ["participant_id"],
+  "scans": ["acq_time", "filename"],
+  "sessions": ["acq_time", "session_id"]
+}

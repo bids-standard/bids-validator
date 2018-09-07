@@ -194,12 +194,14 @@ var suite = describe('BIDS example datasets ', function() {
     })
   })
 
-  it('checks for tabular files without corresponding data dictionaries', function(isdone) {
+  it('checks for tabular files with custom columns not described in a data dictionary', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
       'tests/data/BIDS-examples-' + test_version + '/ds001',
+      //'tests/data/ds001344-1.0.0',
       options,
       function(issues) {
+        //console.log(issues)
         assert(issues.warnings.length === 2 && issues.warnings[1].code === '82')
         isdone()
       },

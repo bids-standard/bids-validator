@@ -66,7 +66,9 @@ function addPotentialPaths(componentList, potentialPaths, offset, prefix) {
       .slice(0, i - 1)
       .concat([componentList[componentList.length - 1]])
     var sessionLevelPath = prefix + tmpList.join('_')
-    potentialPaths.push(sessionLevelPath)
+    if (!potentialPaths.includes(sessionLevelPath)) {
+      potentialPaths.push(sessionLevelPath)
+    }
   }
 }
 
