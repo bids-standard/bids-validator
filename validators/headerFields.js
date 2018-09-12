@@ -93,7 +93,7 @@ var headerField = function headerField(headers, field) {
       } else if (
         (file.name.indexOf('magnitude1') > -1 ||
           file.name.indexOf('magnitude2') > -1) &&
-        header[field][0] > 4
+        header[field][0] !== 4
       ) {
         issues[file.relativePath] = new Issue({
           file: file,
