@@ -63,4 +63,55 @@ describe('headerFields', () => {
     const issues = headerFields(headers)
     assert.deepEqual(issues, [])
   })
+
+  it('should throw an error if _T1w files has the wrong dimensions.', () => {
+    // each of these headers has one too many dimensions on the 'dim' field.
+    // the first entry is the total count, and the following three entries are spatial.
+    const headers = [
+      [
+        {
+          name: 'sub-01_T1w.nii',
+          relativePath: 'sub-01_T1w.nii',
+        },
+        {
+          dim: [5, 1, 1, 1, 1],
+          pixdim: [5, 1, 1, 1, 1],
+          xyzt_units: [5, 1, 1, 1, 1],
+        },
+      ],
+      [
+        {
+          name: 'sub-02_T1w.nii',
+          relativePath: 'sub-02_T1w.nii',
+        },
+        {
+          dim: [3, 1, 1],
+          pixdim: [4, 1, 1, 1],
+          xyzt_units: [4, 1, 1, 1],
+        },
+      ],
+    ]
+    const issues = headerFields(headers)
+    assert(
+      issues.length == 2 && issues[0].code == '95' && issues[1].code == '95',
+    )
+  })
+
+  it('_T1w files should have exactly 3 dimensions.', () => {
+    const headers = [
+      [
+        {
+          name: 'sub-01_T1w.nii',
+          relativePath: 'sub-01_T1w.nii',
+        },
+        {
+          dim: [4, 1, 1, 1],
+          pixdim: [4, 1, 1, 1],
+          xyzt_units: [4, 1, 1, 1],
+        },
+      ],
+    ]
+    const issues = headerFields(headers)
+    assert.deepEqual(issues, [])
+  })
 })

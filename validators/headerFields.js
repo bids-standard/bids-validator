@@ -100,6 +100,12 @@ var headerField = function headerField(headers, field) {
           code: 94,
           evidence: 'this magnitude file has more than three dimensions. ',
         })
+      } else if (file.name.indexOf('T1w') > -1 && header[field][0] !== 4) {
+        issues[file.relativePath] = new Issue({
+          file: file,
+          code: 95,
+          evidence: 'this T1w file does not have exactly three dimensions. ',
+        })
       }
       field_value = header[field].slice(1, header[field][0] + 1).toString()
     } else if (field === 'pixdim') {
