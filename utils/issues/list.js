@@ -515,4 +515,9 @@ module.exports = {
     reason:
       '_magnitude1.nii[.gz] and _magnitude2.nii[.gz] files must not have more than three dimensions. ',
   },
+  95: {
+    key: 'T1W_FILE_WITH_TOO_MANY_DIMENSIONS',
+    severity: 'error',
+    reason: '_T1w.nii[.gz] files must have exactly three dimensions. ',
+  },
 }
