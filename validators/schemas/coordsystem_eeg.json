@@ -6,6 +6,10 @@
     "EEGCoordinateSystem": { "type": "string", "minLength": 1 },
     "EEGCoordinateUnits": { "type": "string", "minLength": 1 },
     "EEGCoordinateSystemDescription": { "type": "string" },
+    "AnatomicalLandmarkCoordinates": {
+      "type": "object",
+      "additionalProperties": { "type": "array" }
+    },
     "AnatomicalLandmarkCoordinateSystem": { "type": "string", "minLength": 1 },
     "AnatomicalLandmarkCoordinateUnits": { "type": "string", "minLength": 1 },
     "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string" }
