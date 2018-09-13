@@ -20,13 +20,13 @@ module.exports = function(dir, options) {
         if (issues.errors.length === 1 && issues.errors[0].code === '61') {
           console.log(
             colors.red(
-              'The directory ' +
+              '[ERR]  The directory ' +
                 dir +
                 ' failed an initial Quick Test. This means the basic names and structure of the files and directories do not comply with BIDS specification. For more info go to http://bids.neuroimaging.io/',
             ),
           )
         } else if (issues.config && issues.config.length >= 1) {
-          console.log(colors.red('Invalid Config File'))
+          console.log(colors.red('[ERR]  Invalid Config File'))
           for (var i = 0; i < issues.config.length; i++) {
             var issue = issues.config[i]
             issue.file.file = { relativePath: issue.file.path }
@@ -58,14 +58,16 @@ module.exports = function(dir, options) {
 }
 
 function logIssues(issues, color, options) {
+  const severity = color == 'red' ? 'ERR' : 'WARN'
   for (var i = 0; i < issues.length; i++) {
-    var issue = issues[i]
+    const issue = issues[i]
+    const issueNumber = i + 1
     console.log(
       '\t' +
         colors[color](
-          i +
-            1 +
+          issueNumber +
             ': ' +
+            `[${severity}] ` +
             issue.reason +
             ' (code: ' +
             issue.code +
