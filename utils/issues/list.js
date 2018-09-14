@@ -509,6 +509,12 @@ module.exports = {
     reason:
       'Each _phasediff.nii[.gz] file should be associated with a _magnitude1.nii[.gz] file.',
   },
+  93: {
+    key: 'EFFECTIVEECHOSPACING_LARGER_THAN_TOTALREADOUTTIME',
+    severity: 'error',
+    reason:
+      'EffectiveEchoSpacing should always be smaller than TotalReadoutTime. ',
+  },
   94: {
     key: 'MAGNITUDE_FILE_WITH_TOO_MANY_DIMENSIONS',
     severity: 'error',
