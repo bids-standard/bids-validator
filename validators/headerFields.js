@@ -90,6 +90,22 @@ var headerField = function headerField(headers, field) {
           evidence: 'header field "dim" = ' + header[field],
         })
         continue
+      } else if (
+        (file.name.indexOf('magnitude1') > -1 ||
+          file.name.indexOf('magnitude2') > -1) &&
+        header[field][0] !== 4
+      ) {
+        issues[file.relativePath] = new Issue({
+          file: file,
+          code: 94,
+          evidence: 'this magnitude file has more than three dimensions. ',
+        })
+      } else if (file.name.indexOf('T1w') > -1 && header[field][0] !== 4) {
+        issues[file.relativePath] = new Issue({
+          file: file,
+          code: 95,
+          evidence: 'this T1w file does not have exactly three dimensions. ',
+        })
       }
       field_value = header[field].slice(1, header[field][0] + 1).toString()
     } else if (field === 'pixdim') {

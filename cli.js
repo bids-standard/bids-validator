@@ -153,7 +153,7 @@ function logSummary(summary) {
 
     //Neurostars message
     console.log(
-      colors.red(
+      colors.white(
         'If you have any questions please post on https://neurostars.org/tags/bids',
       ),
     )

@@ -783,6 +783,9 @@ BIDS = {
 
     // validates if sub/ses-id in filename matches with ses/sub directory file is saved
     async.eachOfLimit(fileList, 200, function(file) {
+      if (utils.type.file.isStimuliData(file.relativePath)) {
+        return
+      }
       var values = getPathandFileValues(file.relativePath)
 
       var pathValues = values[0]
