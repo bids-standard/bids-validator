@@ -93,14 +93,14 @@ var headerField = function headerField(headers, field) {
       } else if (
         (file.name.indexOf('magnitude1') > -1 ||
           file.name.indexOf('magnitude2') > -1) &&
-        header[field][0] !== 4
+        header[field].length !== 4
       ) {
         issues[file.relativePath] = new Issue({
           file: file,
           code: 94,
           evidence: 'this magnitude file has more than three dimensions. ',
         })
-      } else if (file.name.indexOf('T1w') > -1 && header[field][0] !== 4) {
+      } else if (file.name.indexOf('T1w') > -1 && header[field].length !== 4) {
         issues[file.relativePath] = new Issue({
           file: file,
           code: 95,
