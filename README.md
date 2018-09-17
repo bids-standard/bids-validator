@@ -34,7 +34,7 @@ Available options include:
 
 For example:
 
-```validate.BIDS(directory, {ignoreWarnings: true}, function (errors, warnings) {console.log(errors, warnings);});```
+```validate.BIDS(directory, {ignoreWarnings: true}, function (issues, summary) {console.log(issues.errors, issues.warnings);});```
 
 If you would like to test individual files you can use the file specific checks that we expose.
 * validate.BIDS()
