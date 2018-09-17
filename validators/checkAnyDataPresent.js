@@ -2,7 +2,7 @@ var utils = require('../utils')
 var Issue = utils.issues.Issue
 
 function addIfNotPresent(folderSubjects, subject) {
-  if (folderSubjects.indexOf(subject) == -1) {
+  if (folderSubjects.indexOf(subject) == -1 && subject !== 'emptyroom') {
     folderSubjects.push(subject)
   }
 }
@@ -13,6 +13,7 @@ function getFolderSubjects(fileList) {
     var file = fileList[key]
     var match = file.relativePath.match(/sub-(.*?)(?=\/)/)
     if (match) {
+      // console.log('match:', match)
       addIfNotPresent(folderSubjects, match[1])
     }
   }
@@ -30,7 +31,6 @@ var checkAnyDataPresent = function checkAnyDataPresent(
 ) {
   var issues = []
   var folderSubjects = getFolderSubjects(fileList)
-
   var subjectsWithoutAnyValidData = folderSubjects.filter(function(i) {
     return summarySubjects.indexOf(i) < 0
   })

@@ -205,7 +205,11 @@ var TSV = function TSV(file, contents, fileList, callback) {
         if (!row || /^\s*$/.test(row)) {
           continue
         }
-        participants.push(row[participantIdColumn].replace('sub-', ''))
+        const participant = row[participantIdColumn].replace('sub-', '')
+        if (participant == 'emptyroom') {
+          continue
+        }
+        participants.push(participant)
       }
     }
   }
