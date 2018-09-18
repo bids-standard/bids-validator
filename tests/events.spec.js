@@ -5,8 +5,8 @@ describe('Events', function() {
   const headers = [
     [
       {
-        path: 'sub01_task-test_bold.nii.gz',
-        relativePath: 'sub01_task-test_bold.nii.gz',
+        path: '/sub01/sub01_task-test_bold.nii.gz',
+        relativePath: '/sub01/sub01_task-test_bold.nii.gz',
       },
       { dim: [4, 0, 0, 0, 10] },
     ],
@@ -41,13 +41,13 @@ describe('Events', function() {
     const issues = []
     const events = [
       {
-        file: { path: 'sub01_task-test_events.tsv' },
-        path: 'sub01_task-test_events.tsv',
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
         contents: '12\tsomething\tsomething\n',
       },
     ]
     const jsonDictionary = {
-      'sub01_task-test_bold.json': {
+      '/sub01/sub01_task-test_bold.json': {
         RepetitionTime: 1,
       },
     }
@@ -60,13 +60,13 @@ describe('Events', function() {
     const issues = []
     const events = [
       {
-        file: { path: 'sub01_task-test_events.tsv' },
-        path: 'sub01_task-test_events.tsv',
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
         contents: '2\tsomething\tsomething\n',
       },
     ]
     const jsonDictionary = {
-      'sub01_task-test_bold.json': {
+      '/sub01/sub01_task-test_bold.json': {
         RepetitionTime: 1,
       },
     }
@@ -79,13 +79,13 @@ describe('Events', function() {
     const issues = []
     const events = [
       {
-        file: { path: 'sub01_task-test_events.tsv' },
-        path: 'sub01_task-test_events.tsv',
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
         contents: '7\tsomething\tsomething\n',
       },
     ]
     const jsonDictionary = {
-      'sub01_task-test_bold.json': {
+      '/sub01/sub01_task-test_bold.json': {
         RepetitionTime: 1,
       },
     }

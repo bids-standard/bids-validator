@@ -1,75 +1,72 @@
-/**
- * Potential Locations
- *
- * Takes the path to the lowest possible level of
- * a file that can be hierarchily positioned and
- * return a list of all possible locations for that
- * file.
- */
-function potentialLocations(path) {
-  var potentialPaths = [path]
-  var pathComponents = path.split('/')
-  var filenameComponents = pathComponents[pathComponents.length - 1].split('_')
+const potentialLocations = path => {
+  //add a '/' at the beginning of the path if it doesn't exist yet
+  path = path.startsWith('/') ? path : '/' + path
+  const splitPath = path.split('/')
+  const filename = splitPath[splitPath.length - 1] // filename path component
+  const pathComponents = splitPath.splice(0, splitPath.length - 1) // all path components before
 
-  const components = extractComponents(filenameComponents)
+  // split the filename into separate components
+  const filenameComponents = filename.split('_')
 
-  if (components.ses) {
-    addPotentialPaths(
-      components.sessionLevelComponentList,
-      potentialPaths,
-      2,
-      '/' + components.sub + '/' + components.ses + '/',
-    )
+  // create components object consisting of path + filename component lists
+  const components = {
+    path: pathComponents,
+    filename: filenameComponents,
   }
-  addPotentialPaths(
-    components.subjectLevelComponentList,
-    potentialPaths,
-    1,
-    '/' + components.sub + '/',
-  )
-  addPotentialPaths(components.topLevelComponentList, potentialPaths, 0, '/')
-  potentialPaths.reverse()
 
-  return potentialPaths
+  // generate relevant paths and put into closest -> root order
+  let paths = [path].concat(potentialPaths(components)).reverse()
+  return paths
 }
 
-function extractComponents(filenameComponents) {
-  let components = {
-    ses: null,
-    sub: null,
-    topLevelComponentList: [],
-    sessionLevelComponentList: [],
-    subjectLevelComponentList: [],
-  }
+const potentialPaths = components => {
+  let filenameComponents = components.filename // get the underscore separated file components
+  let pathComponents = components.path // get the path components before file
+  const fileIndex = filenameComponents.length - 1 // index of the filename in file components
+  const file = filenameComponents[fileIndex] // filename (events.tsv, bold.json, etc)
+  const informationalFileComponents = filenameComponents.slice(0, fileIndex) // all non-filename file path components (ses-*, sub-*, task-*, etc)
 
-  filenameComponents.forEach(function(filenameComponent) {
-    if (filenameComponent.substring(0, 3) != 'run') {
-      components.sessionLevelComponentList.push(filenameComponent)
-      if (filenameComponent.substring(0, 3) == 'ses') {
-        components.ses = filenameComponent
-      } else {
-        components.subjectLevelComponentList.push(filenameComponent)
-        if (filenameComponent.substring(0, 3) == 'sub') {
-          components.sub = filenameComponent
-        } else {
-          components.topLevelComponentList.push(filenameComponent)
-        }
-      }
+  // filter filename components that are allowed only in a lower directory
+  // eg if we are root level we will not want sub-* included in the possible
+  // paths for this level. Also we do not want to include run in that list.
+  const nonPathSpecificFileComponents = informationalFileComponents
+    .filter(component => pathComponents.indexOf(component) < 0)
+    .filter(component => component.indexOf('run') < 0)
+
+  // loop through all the directory levels - root, sub, (ses), (datatype)
+  let paths = []
+  pathComponents.map((component, i) => {
+    const activeDirectoryComponents = pathComponents.slice(0, i + 1) // the directory components in the current working level
+    const directoryString = activeDirectoryComponents.join('/') // path of active directory
+
+    const prefixComponents = informationalFileComponents.filter(
+      component => activeDirectoryComponents.indexOf(component) > -1,
+    )
+
+    const prefix = prefixComponents.join('_')
+
+    // loop through the non path-specific file components and generate the filename
+    // based on directory + appropriate combinations of filename components
+    for (let j = nonPathSpecificFileComponents.length; j > -1; j--) {
+      // new file name
+      const filename = nonPathSpecificFileComponents
+        .slice(0, j)
+        .concat([file])
+        .join('_')
+
+      // join directory + filepath strings together to get entire path
+      paths.push(constructFileName(directoryString, filename, prefix))
     }
   })
-  return components
+
+  return paths
 }
 
-function addPotentialPaths(componentList, potentialPaths, offset, prefix) {
-  for (var i = componentList.length; i > offset; i--) {
-    var tmpList = componentList
-      .slice(0, i - 1)
-      .concat([componentList[componentList.length - 1]])
-    var sessionLevelPath = prefix + tmpList.join('_')
-    if (!potentialPaths.includes(sessionLevelPath)) {
-      potentialPaths.push(sessionLevelPath)
-    }
-  }
+const constructFileName = (directoryString, filename, prefix) => {
+  // join the prefix + filename if prefix exists
+  const filePathString = prefix ? [prefix, filename].join('_') : filename
+  const newPath = directoryString + '/' + filePathString
+  return newPath
 }
 
 module.exports = potentialLocations
