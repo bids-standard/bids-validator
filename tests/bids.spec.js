@@ -28,7 +28,6 @@ var missing_session_files = [
   'ds109',
   'ds113b',
   'ds000117',
-  'ds000246',
   'ds000247',
 ]
 

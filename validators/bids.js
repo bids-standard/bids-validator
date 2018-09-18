@@ -490,16 +490,19 @@ BIDS = {
           )
         ) {
           var pathValues = utils.type.getPathValues(file.relativePath)
+          const isEmptyRoom = pathValues.sub && pathValues.sub == 'emptyroom'
 
           if (
             pathValues.sub &&
-            summary.subjects.indexOf(pathValues.sub) === -1
+            summary.subjects.indexOf(pathValues.sub) === -1 &&
+            !isEmptyRoom
           ) {
             summary.subjects.push(pathValues.sub)
           }
           if (
             pathValues.ses &&
-            summary.sessions.indexOf(pathValues.ses) === -1
+            summary.sessions.indexOf(pathValues.ses) === -1 &&
+            !isEmptyRoom
           ) {
             summary.sessions.push(pathValues.ses)
           }
