@@ -201,7 +201,6 @@ var suite = describe('BIDS example datasets ', function() {
       //'tests/data/ds001344-1.0.0',
       options,
       function(issues) {
-        //console.log(issues)
         assert(issues.warnings.length === 2 && issues.warnings[1].code === '82')
         isdone()
       },

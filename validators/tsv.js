@@ -378,14 +378,11 @@ const getCustomColumns = function(headers, type) {
   const customCols = []
   // Iterate column headers
   for (let col of headers) {
-    //console.log('Column name: ' + col)
     // If it's a custom column
     if (!nonCustomColumns[type].includes(col)) {
-      //console.log('Field name: ' + col + ' is not in ' + nonCustomColumns[type])
       customCols.push(col)
     }
   }
-  //console.log(customCols)
   return customCols
 }
 
@@ -397,10 +394,9 @@ const getCustomColumns = function(headers, type) {
 const validateTsvColumns = function(tsvs, jsonContentsDict) {
   let tsvIssues = []
   tsvs.map(tsv => {
-    const tsvType = getTsvType(tsv.file)
     const customColumns = getCustomColumns(
       tsv.contents.split('\n')[0].split('\t'),
-      tsvType,
+      getTsvType(tsv.file),
     )
     if (customColumns.length > 0) {
       // Get merged data dictionary for this file
@@ -412,12 +408,17 @@ const validateTsvColumns = function(tsvs, jsonContentsDict) {
         jsonContentsDict,
       )
       const keys = Object.keys(mergedDict)
-      // Check each custom field against merged data dict
-      customColumns.map(col => {
-        if (!keys.includes(col)) {
-          tsvIssues.push(customColumnIssue(tsv.file, col, potentialSidecars))
-        }
-      })
+      // Gather undefined columns for the file
+      let undefinedCols = customColumns.filter(col => !keys.includes(col))
+      // Create an issue for all undefined columns in this file
+      undefinedCols.length &&
+        tsvIssues.push(
+          customColumnIssue(
+            tsv.file,
+            undefinedCols.join(', '),
+            potentialSidecars,
+          ),
+        )
     }
   })
   // Return array of all instances of undescribed custom columns
@@ -429,9 +430,9 @@ const customColumnIssue = function(file, col, locations) {
     code: 82,
     file: file,
     evidence:
-      'Column ' +
+      'Columns: ' +
       col +
-      ' is not defined, please define in: ' +
+      ' not defined, please define in: ' +
       locations.toString().replace(',', ', '),
   })
 }
