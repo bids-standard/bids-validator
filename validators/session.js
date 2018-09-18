@@ -31,6 +31,13 @@ var session = function missingSessionFiles(fileList) {
     } else {
       subject = match[0]
     }
+
+    // suppress inconsistent subject warnings for sub-emptyroom scans
+    // in MEG data
+    if (subject == 'sub-emptyroom') {
+      continue
+    }
+
     // initialize an empty array if we haven't seen this subject before
     if (typeof subjects[subject] === 'undefined') {
       subjects[subject] = []
