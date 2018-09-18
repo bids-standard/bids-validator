@@ -3,7 +3,6 @@ var fs = require('fs')
 var path = require('path')
 var utils = require('../utils')
 var Issue = utils.issues.Issue
-
 var TSV = require('./tsv')
 var json = require('./json')
 var NIFTI = require('./nii')
@@ -13,7 +12,6 @@ var Events = require('./events')
 var session = require('./session')
 var checkAnyDataPresent = require('./checkAnyDataPresent')
 var headerFields = require('./headerFields')
-const dataExtRE = require('../utils/data_extensions.js')
 
 var BIDS
 
@@ -305,7 +303,7 @@ BIDS = {
         }
         // check modality by data file extension ...
         // and capture data files for later sanity checks (when available)
-        else if (dataExtRE.test(file.name)) {
+        else if (utils.type.file.isModality(file.name)) {
           // capture nifties for later validation
           if (file.name.endsWith('.nii') || file.name.endsWith('.nii.gz')) {
             niftis.push(file)
@@ -778,11 +776,9 @@ BIDS = {
 
       var pathValues = values[0]
       var fileValues = values[1]
-      // console.log(path, '/n' ,values);
 
       if (fileValues.sub !== null || fileValues.ses !== null) {
         if (fileValues.sub !== pathValues.sub) {
-          // console.log("before call  ",subses_mismatch);
           subses_mismatch = true
           self.issues.push(
             new Issue({

@@ -5,24 +5,57 @@
  * representing whether the given file path is valid within the
  * BIDS specification requirements.
  */
-var anatSuffixes = [
-  'T1w',
-  'T2w',
-  'T1map',
-  'T2map',
-  'T1rho',
-  'FLAIR',
-  'PD',
-  'PDT2',
-  'inplaneT1',
-  'inplaneT2',
-  'angio',
-  'SWImagandphase',
-  'T2star',
-  'FLASH',
-  'PDmap',
-  'photo',
-]
+
+/**
+ * Import RegExps from bids-validator-common
+ */
+const associated_data_rules = require('../bids_validator/rules/associated_data_rules.json')
+const file_level_rules = require('../bids_validator/rules/file_level_rules.json')
+const fixed_top_level_names = require('../bids_validator/rules/fixed_top_level_names.json')
+const phenotypic_rules = require('../bids_validator/rules/phenotypic_rules.json')
+const session_level_rules = require('../bids_validator/rules/session_level_rules.json')
+const subject_level_rules = require('../bids_validator/rules/subject_level_rules.json')
+const top_level_rules = require('../bids_validator/rules/top_level_rules.json')
+
+// Associated data
+const associatedData = buildRegExp(associated_data_rules.associated_data)
+// File level
+const anatData = buildRegExp(file_level_rules.anat)
+const anatDefacemaskData = buildRegExp(file_level_rules.anat_defacemask)
+const behavioralData = buildRegExp(file_level_rules.behavioral)
+const contData = buildRegExp(file_level_rules.cont)
+const dwiData = buildRegExp(file_level_rules.dwi)
+const eegData = buildRegExp(file_level_rules.eeg)
+const fieldmapData = buildRegExp(file_level_rules.field_map)
+const fieldmapMainNiiData = buildRegExp(file_level_rules.field_map_main_nii)
+const funcData = buildRegExp(file_level_rules.func)
+const funcBoldData = buildRegExp(file_level_rules.func_bold)
+const ieegData = buildRegExp(file_level_rules.ieeg)
+const megData = buildRegExp(file_level_rules.meg)
+const modalityData = buildRegExp(file_level_rules.modalities)
+const stimuliData = buildRegExp(file_level_rules.stimuli)
+// Phenotypic data
+const phenotypicData = buildRegExp(phenotypic_rules.phenotypic_data)
+// Session level
+const anatSes = buildRegExp(session_level_rules.anat_ses)
+const dwiSes = buildRegExp(session_level_rules.dwi_ses)
+const eegSes = buildRegExp(session_level_rules.eeg_ses)
+const funcSes = buildRegExp(session_level_rules.func_ses)
+const ieegSes = buildRegExp(session_level_rules.ieeg_ses)
+const megSes = buildRegExp(session_level_rules.meg_ses)
+const scansSes = buildRegExp(session_level_rules.scans)
+// Subject level
+const subjectLevel = buildRegExp(subject_level_rules.subject_level)
+// Top level
+const fixedTopLevelNames = fixed_top_level_names.fixed_top_level_names
+const funcTop = buildRegExp(top_level_rules.func_top)
+const anatTop = buildRegExp(top_level_rules.anat_top)
+const dwiTop = buildRegExp(top_level_rules.dwi_top)
+const eegTop = buildRegExp(top_level_rules.eeg_top)
+const ieegTop = buildRegExp(top_level_rules.ieeg_top)
+const multiDirFieldmap = buildRegExp(top_level_rules.multi_dir_fieldmap)
+const otherTopFiles = buildRegExp(top_level_rules.other_top_files)
+const megTop = buildRegExp(top_level_rules.meg_top)
 
 module.exports = {
   /**
@@ -58,68 +91,16 @@ module.exports = {
      * Check if the file has appropriate name for a top level file
      */
     isTopLevel: function(path) {
-      var fixedTopLevelNames = [
-        '/README',
-        '/CHANGES',
-        '/dataset_description.json',
-        '/participants.tsv',
-        '/participants.json',
-        '/phasediff.json',
-        '/phase1.json',
-        '/phase2.json',
-        '/fieldmap.json',
-      ]
-
-      var funcTopRe = new RegExp(
-        '^\\/(?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:echo-[0-9]+_)?' +
-          '(bold.json|sbref.json|events.json|events.tsv|physio.json|stim.json|beh.json)$',
-      )
-
-      var anatTopRe = new RegExp(
-        '^\\/(?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?' +
-          '(' +
-          anatSuffixes.join('|') +
-          ').json$',
-      )
-
-      var dwiTopRe = new RegExp(
-        '^\\/(?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?' +
-          'dwi.(?:json|bval|bvec)$',
-      )
-
-      var multiDirFieldmapRe = new RegExp(
-        '^\\/(?:acq-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)epi.json$',
-      )
-
-      var megTopRe = new RegExp(
-        '^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?' +
-          '(_meg.json|_channels.tsv|_photo.jpg|_coordsystem.json)$',
-      )
-
-      var ieegTopRe = new RegExp(
-        '^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?' +
-          '(_ieeg.json|_channels.tsv|_electrodes.tsv|_photo.jpg|_coordsystem.json)$',
-      )
-      var eegTopRe = new RegExp(
-        '^\\/(?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?' +
-          '(_eeg.json|_channels.tsv|_photo.jpg|_coordsystem.json)$',
-      )
-
-      var otherTopFiles = new RegExp(
-        '^\\/(?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?' +
-          '(physio.json|stim.json)$',
-      )
-
       return (
         fixedTopLevelNames.indexOf(path) != -1 ||
-        funcTopRe.test(path) ||
-        dwiTopRe.test(path) ||
-        anatTopRe.test(path) ||
-        multiDirFieldmapRe.test(path) ||
+        funcTop.test(path) ||
+        dwiTop.test(path) ||
+        anatTop.test(path) ||
+        multiDirFieldmap.test(path) ||
         otherTopFiles.test(path) ||
-        megTopRe.test(path) ||
-        eegTopRe.test(path) ||
-        ieegTopRe.test(path)
+        megTop.test(path) ||
+        eegTop.test(path) ||
+        ieegTop.test(path)
       )
     },
 
@@ -127,81 +108,37 @@ module.exports = {
      * Check if file is appropriate associated data.
      */
     isAssociatedData: function(path) {
-      var associatedData = new RegExp(
-        '^\\/(?:code|derivatives|sourcedata|stimuli|[.]git)\\/(?:.*)$',
-      )
       return associatedData.test(path)
     },
 
     isStimuliData: function(path) {
-      var stimuliDataRe = new RegExp('^\\/(?:stimuli)\\/(?:.*)$')
-      return stimuliDataRe.test(path)
+      return stimuliData.test(path)
     },
 
     /**
      * Check if file is phenotypic data.
      */
     isPhenotypic: function(path) {
-      var phenotypicData = new RegExp('^\\/(?:phenotype)\\/(?:.*.tsv|.*.json)$')
       return phenotypicData.test(path)
     },
-
+    /**
+     * Check if file is a modality
+     */
+    isModality: function(path) {
+      return modalityData.test(path)
+    },
     /**
      * Check if the file has appropriate name for a session level
      */
     isSessionLevel: function(path) {
-      var scansRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?\\1(_\\2)?(_scans.tsv|_scans.json)$',
-      )
-
-      var funcSesRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_echo-[0-9]+)?' +
-          '(_bold.json|_sbref.json|_events.json|_events.tsv|_physio.json|_stim.json)$',
-      )
-
-      var anatSesRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+_)?' +
-          '(' +
-          anatSuffixes.join('|') +
-          ').json$',
-      )
-
-      var dwiSesRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_)?' +
-          'dwi.(?:json|bval|bvec)$',
-      )
-
-      var megSesRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?' +
-          '(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$',
-      )
-
-      var eegSesRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?' +
-          '(_events.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg)$',
-      )
-
-      var ieegSesRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_space-[a-zA-Z0-9]+)?' +
-          '(_events.tsv|_channels.tsv|_electrodes.tsv|_ieeg.json|_coordsystem.json|_photo.jpg|_headshape.pos)$',
-      )
-
       return (
-        conditionalMatch(scansRe, path) ||
-        conditionalMatch(funcSesRe, path) ||
-        conditionalMatch(anatSesRe, path) ||
-        conditionalMatch(dwiSesRe, path) ||
-        conditionalMatch(megSesRe, path) ||
-        conditionalMatch(eegSesRe, path) ||
-        conditionalMatch(ieegSesRe, path)
+        conditionalMatch(scansSes, path) ||
+        conditionalMatch(funcSes, path) ||
+        conditionalMatch(anatSes, path) ||
+        conditionalMatch(dwiSes, path) ||
+        conditionalMatch(megSes, path) ||
+        conditionalMatch(eegSes, path) ||
+        conditionalMatch(ieegSes, path)
       )
     },
 
@@ -209,36 +146,16 @@ module.exports = {
      * Check if the file has appropriate name for a subject level
      */
     isSubjectLevel: function(path) {
-      var scansRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' + '\\/\\1(_sessions.tsv|_sessions.json)$',
-      )
-      return scansRe.test(path)
+      return subjectLevel.test(path)
     },
 
     /**
      * Check if the file has a name appropriate for an anatomical scan
      */
     isAnat: function(path) {
-      var anatRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?anat' +
-          '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:' +
-          anatSuffixes.join('|') +
-          ').(nii.gz|nii|json)$',
-      )
-
-      var anatDefacemaskRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?anat' +
-          '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_mod-(' +
-          anatSuffixes.join('|') +
-          '))?_defacemask.(nii.gz|nii)$',
-      )
       return (
-        conditionalMatch(anatRe, path) ||
-        conditionalMatch(anatDefacemaskRe, path)
+        conditionalMatch(anatData, path) ||
+        conditionalMatch(anatDefacemaskData, path)
       )
     },
 
@@ -246,135 +163,49 @@ module.exports = {
      * Check if the file has a name appropriate for a diffusion scan
      */
     isDWI: function(path) {
-      var suffixes = ['dwi', 'sbref']
-      var anatRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?dwi' +
-          '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:' +
-          suffixes.join('|') +
-          ').(nii.gz|nii|json|bvec|bval)$',
-      )
-      return conditionalMatch(anatRe, path)
+      return conditionalMatch(dwiData, path)
     },
 
     /**
      * Check if the file has a name appropriate for a fieldmap scan
      */
     isFieldMap: function(path) {
-      var suffixes = [
-        'phasediff',
-        'phase1',
-        'phase2',
-        'magnitude1',
-        'magnitude2',
-        'magnitude',
-        'fieldmap',
-        'epi',
-      ]
-      var anatRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?fmap' +
-          '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:' +
-          suffixes.join('|') +
-          ').(nii.gz|nii|json)$',
-      )
-      return conditionalMatch(anatRe, path)
+      return conditionalMatch(fieldmapData, path)
     },
 
     isFieldMapMainNii: function(path) {
-      var suffixes = ['phasediff', 'phase1', 'phase2', 'fieldmap', 'epi']
-      var anatRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?fmap' +
-          '\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:' +
-          suffixes.join('|') +
-          ').(nii.gz|nii)$',
-      )
-      return conditionalMatch(anatRe, path)
+      return conditionalMatch(fieldmapMainNiiData, path)
     },
 
     /**
      * Check if the file has a name appropriate for a functional scan
      */
     isFunc: function(path) {
-      var funcRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?func' +
-          '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_echo-[0-9]+)?' +
-          '(?:_bold.nii.gz|_bold.nii|_bold.json|_sbref.nii.gz|_sbref.nii|_sbref.json|_events.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json|_defacemask.nii.gz|_defacemask.nii)$',
-      )
-      return conditionalMatch(funcRe, path)
+      return conditionalMatch(funcData, path)
     },
 
     isMeg: function(path) {
-      var MegRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?meg' +
-          '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
-          '(_meg(.fif|.ds\\/.*|\\/.*)|(_events.tsv|_channels.tsv|_meg.json|_coordsystem.json|_photo.jpg|_headshape.pos))$',
-      )
-      return conditionalMatch(MegRe, path)
+      return conditionalMatch(megData, path)
     },
 
     isEeg: function(path) {
-      var EegRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?eeg' +
-          '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?' +
-          '(_eeg.(vhdr|vmrk|eeg|edf|bdf|set|fdt|cnt)|(_events.tsv|_electrodes.tsv|_channels.tsv|_eeg.json|_coordsystem.json|_photo.jpg))$',
-      )
-      return conditionalMatch(EegRe, path)
+      return conditionalMatch(eegData, path)
     },
 
     isIEEG: function(path) {
-      var IEEGRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?ieeg' +
-          '\\/\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?(?:_space-[a-zA-Z0-9]+)?' +
-          '(_ieeg.(edf|vhdr|vmrk|dat)|(_events.tsv|_channels.tsv|_electrodes.tsv|_ieeg.json|_coordsystem.json|_photo.jpg))$',
-      )
-      return conditionalMatch(IEEGRe, path)
+      return conditionalMatch(ieegData, path)
     },
 
     isBehavioral: function(path) {
-      var funcBeh = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?beh' +
-          '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?' +
-          '(?:_beh.json|_beh.tsv|_events.json|_events.tsv|_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$',
-      )
-      return conditionalMatch(funcBeh, path)
+      return conditionalMatch(behavioralData, path)
     },
 
     isFuncBold: function(path) {
-      var funcRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?func' +
-          '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_echo-[0-9]+)?' +
-          '(?:_bold.nii.gz|_bold.nii|_sbref.nii.gz|_sbref.nii)$',
-      )
-      return conditionalMatch(funcRe, path)
+      return conditionalMatch(funcBoldData, path)
     },
 
     isCont: function(path) {
-      var contRe = new RegExp(
-        '^\\/(sub-[a-zA-Z0-9]+)' +
-          '\\/(?:(ses-[a-zA-Z0-9]+)' +
-          '\\/)?(?:func|beh)' +
-          '\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?' +
-          '(?:_recording-[a-zA-Z0-9]+)?' +
-          '(?:_physio.tsv.gz|_stim.tsv.gz|_physio.json|_stim.json)$',
-      )
-      return conditionalMatch(contRe, path)
+      return conditionalMatch(contData, path)
     },
   },
 
@@ -420,4 +251,21 @@ function conditionalMatch(expression, path) {
     }
   }
   return false
+}
+
+/**
+ * Insert tokens into RegExps from bids-validator-common
+ */
+function buildRegExp(obj) {
+  if (obj.tokens) {
+    let regExp = obj.regexp
+    const keys = Object.keys(obj.tokens)
+    for (let key of keys) {
+      const args = obj.tokens[key].join('|')
+      regExp = regExp.replace(key, args)
+    }
+    return new RegExp(regExp)
+  } else {
+    return new RegExp(obj.regexp)
+  }
 }
