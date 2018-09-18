@@ -446,9 +446,10 @@ module.exports = {
     reason: "Third column of the channels file must be named 'notch'",
   },
   82: {
-    key: 'TABULARFILE_WITHOUT_DATADICTIONARY',
+    key: 'CUSTOM_COLUMN_WITHOUT_DESCRIPTION',
     severity: 'warning',
-    reason: 'Tabular file does not have accompanying data dictionary.',
+    reason:
+      'Tabular file contains custom columns not described in a data dictionary',
   },
   83: {
     key: 'ECHOTIME1_2_DIFFERENCE_UNREASONABLE',
