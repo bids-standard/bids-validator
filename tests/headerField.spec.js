@@ -2,7 +2,7 @@ const assert = require('assert')
 const headerFields = require('../validators/headerFields')
 
 describe('headerFields', () => {
-  it('should throw an error if _magnitude1 or _magnitude2 files do not have exactly dimensions.', () => {
+  it('should throw an error if _magnitude1 or _magnitude2 files do not have exactly 3 dimensions.', () => {
     const headers = [
       // each of these headers has one too many dimensions on the 'dim' field.
       [
@@ -69,9 +69,9 @@ describe('headerFields', () => {
           relativePath: 'sub-01_magnitude1.nii',
         },
         {
-          dim: [4, 1, 1, 1],
-          pixdim: [4, 1, 1, 1],
-          xyzt_units: [4, 1, 1, 1],
+          dim: [3, 1, 1, 1],
+          pixdim: [3, 1, 1, 1],
+          xyzt_units: [3, 1, 1, 1],
         },
       ],
       [
@@ -80,9 +80,9 @@ describe('headerFields', () => {
           relativePath: 'sub-01_magnitude2.nii',
         },
         {
-          dim: [4, 1, 1, 1],
-          pixdim: [4, 1, 1, 1],
-          xyzt_units: [4, 1, 1, 1],
+          dim: [3, 1, 1, 1],
+          pixdim: [3, 1, 1, 1],
+          xyzt_units: [3, 1, 1, 1],
         },
       ],
     ]
@@ -131,8 +131,8 @@ describe('headerFields', () => {
           relativePath: 'sub-01_T1w.nii',
         },
         {
-          dim: [4, 1, 1, 1],
-          pixdim: [4, 1, 1, 1],
+          dim: [3, 1, 1, 1],
+          pixdim: [3, 1, 1, 1],
           xyzt_units: [4, 1, 1, 1],
         },
       ],
