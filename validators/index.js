@@ -20,6 +20,7 @@ var validate = {
   bval: bval,
   bvec: bvec,
   reformat: utils.issues.reformat,
+  utils: utils,
 }
 
 // exports -----------------------------------------------------------
