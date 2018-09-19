@@ -1,17 +1,17 @@
 var async = require('async')
 var fs = require('fs')
 var path = require('path')
-var utils = require('../utils')
+var utils = require('../../utils')
 var Issue = utils.issues.Issue
-var TSV = require('./tsv')
-var json = require('./json')
-var NIFTI = require('./nii')
-var bval = require('./bval')
-var bvec = require('./bvec')
-var Events = require('./events')
-var session = require('./session')
-var checkAnyDataPresent = require('./checkAnyDataPresent')
-var headerFields = require('./headerFields')
+var TSV = require('../tsv')
+var json = require('../json')
+var NIFTI = require('../nii')
+var bval = require('../bval')
+var bvec = require('../bvec')
+var Events = require('../events')
+var session = require('../session')
+var checkAnyDataPresent = require('../checkAnyDataPresent')
+var headerFields = require('../headerFields')
 
 var BIDS
 
