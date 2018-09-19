@@ -19,30 +19,15 @@ const subSesMismatchTest = fileList => {
     const fileValues = values[1]
 
     if (fileValues.sub !== null || fileValues.ses !== null) {
-      if (fileValues.sub !== pathValues.sub) {
-        issues.push(
-          new Issue({
-            code: 64,
-            evidence:
-              'File: ' +
-              file.relativePath +
-              ' is saved in incorrect subject directory as per sub-id in filename.',
-            file: file,
-          }),
-        )
+      const subMismatch = fileValues.sub !== pathValues.sub
+      const sesMismatch = fileValues.ses !== pathValues.ses
+
+      if (subMismatch) {
+        issues.push(mismatchError('subject', file))
       }
 
-      if (fileValues.ses !== pathValues.ses) {
-        issues.push(
-          new Issue({
-            code: 65,
-            evidence:
-              'File: ' +
-              file.relativePath +
-              ' is saved in incorrect session directory as per ses-id in filename.',
-            file: file,
-          }),
-        )
+      if (sesMismatch) {
+        issues.push(mismatchError('session', file))
       }
     }
   })
@@ -52,39 +37,76 @@ const subSesMismatchTest = fileList => {
 /**
  * getPathandFileValues
  * Takes a file path and returns values
- * found following keys for both path and file keys.
- * sub-
- * ses-
+ * found related to subject and session keys for both path and file keys.
  *
- *
+ * @param {string} path the string to extract subject and session level values
  */
 const getPathandFileValues = path => {
-  let values = {},
-    match
-  let file_name = {},
-    unmat
+  let values = {}
+  let file_name = {}
 
   // capture subject
-  match = /^\/sub-([a-zA-Z0-9]+)/.exec(path)
-  values.sub = match && match[1] ? match[1] : null
+  values.sub = captureFromPath(path, /^\/sub-([a-zA-Z0-9]+)/)
 
   // capture session
-  match = /^\/sub-[a-zA-Z0-9]+\/ses-([a-zA-Z0-9]+)/.exec(path)
-  values.ses = match && match[1] ? match[1] : null
+  values.ses = captureFromPath(path, /^\/sub-[a-zA-Z0-9]+\/ses-([a-zA-Z0-9]+)/)
 
   //capture session and subject id from filename to find if files are in
   // correct sub/ses directory
   const filename = path.replace(/^.*[\\/]/, '')
 
   // capture sub from file name
-  unmat = /^sub-([a-zA-Z0-9]+)/.exec(filename)
-  file_name.sub = unmat && unmat[1] ? unmat[1] : null
+  file_name.sub = captureFromPath(filename, /^sub-([a-zA-Z0-9]+)/)
 
   // capture session from file name
-  unmat = /^sub-[a-zA-Z0-9]+_ses-([a-zA-Z0-9]+)/.exec(filename)
-  file_name.ses = unmat && unmat[1] ? unmat[1] : null
+  file_name.ses = captureFromPath(
+    filename,
+    /^sub-[a-zA-Z0-9]+_ses-([a-zA-Z0-9]+)/,
+  )
 
   return [values, file_name]
+}
+
+/**
+ * CaptureFromPath
+ *
+ * takes a file path and a regex and
+ * returns the matched value or null
+ *
+ * @param {string} path path to test regex against
+ * @param {regex} regex regex pattern we wish to test
+ */
+const captureFromPath = (path, regex) => {
+  const match = regex.exec(path)
+  return match && match[1] ? match[1] : null
+}
+
+/**
+ *
+ * Mismatch Error
+ *
+ * generates the Issue object for session / subject
+ * mismatch
+ *
+ * @param {string} type error type - session or subject
+ * @param {object} file file responsible for the error
+ */
+const mismatchError = (type, file) => {
+  let code, abbrv
+  if (type == 'session') {
+    code = 65
+    abbrv = 'ses'
+  } else {
+    code = 64
+    abbrv = 'sub'
+  }
+  return new Issue({
+    code: code,
+    evidence: `File: ${
+      file.relativePath
+    } is saved in incorrect ${type} directory as per ${abbrv}-id in filename.`,
+    file: file,
+  })
 }
 
 module.exports = subSesMismatchTest
