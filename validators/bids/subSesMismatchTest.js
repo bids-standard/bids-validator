@@ -1,4 +1,3 @@
-const async = require('async')
 const utils = require('../../utils')
 const Issue = utils.issues.Issue
 
@@ -9,7 +8,9 @@ const subSesMismatchTest = fileList => {
   let issues = []
 
   // validates if sub/ses-id in filename matches with ses/sub directory file is saved
-  async.eachOfLimit(fileList, 200, function(file) {
+  const fileKeys = Object.keys(fileList)
+  fileKeys.forEach(key => {
+    let file = fileList[key]
     if (utils.type.file.isStimuliData(file.relativePath)) {
       return
     }

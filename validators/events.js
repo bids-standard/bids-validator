@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-const async = require('async')
 const utils = require('../utils')
 const Issue = utils.issues.Issue
 
@@ -45,7 +44,7 @@ const checkDesignLength = function(events, headers, jsonContents, issues) {
   })
 
   // loop through headers with files that are tasks
-  async.eachOfLimit(taskHeaders, 200, taskHeader => {
+  taskHeaders.forEach(taskHeader => {
     // extract the fourth element of 'dim' field of header - this is the
     // number of volumes that were obtained during scan (numVols)
     const file = taskHeader[0]

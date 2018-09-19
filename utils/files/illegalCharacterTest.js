@@ -1,4 +1,3 @@
-const async = require('async')
 const Issue = require('../../utils/issues').Issue
 
 const re = {
@@ -16,7 +15,9 @@ const illegalchar_regex_list = [
 ]
 
 const illegalCharacterTest = (fileList, issues) => {
-  async.eachOfLimit(fileList, 200, function(file) {
+  const fileKeys = Object.keys(fileList)
+  fileKeys.forEach(key => {
+    let file = fileList[key]
     const completename = file.relativePath
     if (
       !(
