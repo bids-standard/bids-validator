@@ -30,15 +30,8 @@ const start = (dir, options, callback) => {
         } else {
           // Return an error immediately if quickTest fails
           const issue = quickTestError(dir)
-          let summary = {
-            sessions: [],
-            subjects: [],
-            tasks: [],
-            modalities: [],
-            totalFiles: Object.keys(files).length,
-            size: 0,
-          }
-          callback(utils.issues.format([issue], summary, options))
+          BIDS.summary.totalFiles = Object.keys(files).length
+          callback(utils.issues.format([issue], BIDS.summary, options))
         }
       })
     }
