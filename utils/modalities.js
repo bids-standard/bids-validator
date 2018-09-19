@@ -39,4 +39,34 @@ module.exports = {
 
     return modalities
   },
+
+  isCorrectModality: (path, options) => {
+    let isCorrectModality = false
+    // MRI
+    if (
+      path[0].includes('.nii') &&
+      ['anat', 'func', 'dwi'].indexOf(path[1]) != -1
+    ) {
+      isCorrectModality = true
+    } else if (path[0].includes('.json')) {
+      const testPath = path[1]
+      switch (testPath) {
+        case 'meg':
+          // MEG
+          isCorrectModality = true
+          break
+        case 'eeg':
+          // EEG
+          isCorrectModality = !!options.bep006
+          break
+        case 'ieeg':
+          // iEEG
+          isCorrectModality = !!options.bep010
+          break
+        default:
+          break
+      }
+    }
+    return isCorrectModality
+  },
 }
