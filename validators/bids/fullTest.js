@@ -13,6 +13,7 @@ const session = require('../session')
 const checkAnyDataPresent = require('../checkAnyDataPresent')
 const headerFields = require('../headerFields')
 const subSesMismatchTest = require('./subSesMismatchTest')
+
 /**
  * Full Test
  *
@@ -49,24 +50,9 @@ const fullTest = (fileList, callback) => {
     totalFiles: Object.keys(fileList).length,
     size: 0,
   }
-  // collect file directory statistics
-  async.eachOfLimit(fileList, 200, function(file) {
-    // collect file stats
-    if (typeof window !== 'undefined') {
-      if (file.size) {
-        summary.size += file.size
-      }
-    } else {
-      if (!file.stats) {
-        try {
-          file.stats = fs.statSync(file.path)
-        } catch (err) {
-          file.stats = { size: 0 }
-        }
-      }
-      summary.size += file.stats.size
-    }
-  })
+
+  //collect file directory statistics
+  utils.files.collectDirectoryStatistics(fileList, summary)
 
   // remove ignored files from list:
   Object.keys(fileList).forEach(function(key) {
@@ -78,50 +64,7 @@ const fullTest = (fileList, callback) => {
   BIDS.issues = BIDS.issues.concat(subSesMismatchTest(fileList))
 
   // check for illegal character in task name and acq name
-
-  const task_re = /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g
-  const acq_re = /sub-(.*?)(_task-\w+.\w+)?(_acq-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*)(?:_run-\d+)?_/g
-
-  const sub_re = /sub-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*_/g // illegal character in sub
-  const ses_re = /ses-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*?_(.*?)/g //illegal character in ses
-
-  const illegalchar_regex_list = [
-    [task_re, 58, 'task name contains illegal character:'],
-    [acq_re, 59, 'acq name contains illegal character:'],
-    [sub_re, 62, 'sub name contains illegal character:'],
-    [ses_re, 63, 'ses name contains illegal character:'],
-  ]
-
-  async.eachOfLimit(fileList, 200, function(file) {
-    const completename = file.relativePath
-    if (
-      !(
-        completename.startsWith('/derivatives') ||
-        completename.startsWith('/code') ||
-        completename.startsWith('/sourcedata')
-      )
-    ) {
-      for (
-        let re_index = 0;
-        re_index < illegalchar_regex_list.length;
-        re_index++
-      ) {
-        const err_regex = illegalchar_regex_list[re_index][0]
-        const err_code = illegalchar_regex_list[re_index][1]
-        const err_evidence = illegalchar_regex_list[re_index][2]
-
-        if (err_regex.exec(completename)) {
-          self.issues.push(
-            new Issue({
-              file: file,
-              code: err_code,
-              evidence: err_evidence + completename,
-            }),
-          )
-        }
-      }
-    }
-  })
+  utils.files.illegalCharacterTest(fileList, BIDS.issues)
 
   // validate individual files
   async.eachOfLimit(
