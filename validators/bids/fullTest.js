@@ -13,8 +13,9 @@ const headerFields = require('../headerFields')
 const subSesMismatchTest = require('./subSesMismatchTest')
 const groupFileTypes = require('./groupFileTypes')
 const collectModalities = require('./collectModalities')
-const collectSubjects = require('./collectSubjects')
 const collectSessions = require('./collectSessions')
+const subjects = require('./subjects')
+const checkDatasetDescription = require('./checkDatasetDescription')
 
 /**
  * Full Test
@@ -84,6 +85,15 @@ const fullTest = (fileList, options, callback) => {
   // collect modalities for summary
   collectModalities(fileList, summary)
 
+  // check if dataset contains T1w
+  if (summary.modalities.indexOf('T1w') < 0) {
+    self.issues.push(
+      new Issue({
+        code: 53,
+      }),
+    )
+  }
+
   // load json data for validation later
 
   tsv
@@ -102,27 +112,13 @@ const fullTest = (fileList, options, callback) => {
     .then(() => json.load(files.json, jsonFiles, jsonContentsDict, self.issues))
     .then(() => {
       // check for at least one subject
-      const hasSubjectDir = fileKeys.some(key => {
-        const file = fileList[key]
-        return file.relativePath && file.relativePath.startsWith('/sub-')
-      })
-      if (!hasSubjectDir) {
-        self.issues.push(new Issue({ code: 45 }))
-      }
+      subjects.atLeastOneSubject(fileList, self.issues)
 
       // check for datasetDescription file in the proper place
-      const hasDatasetDescription = fileKeys.some(key => {
-        const file = fileList[key]
-        return (
-          file.relativePath && file.relativePath == '/dataset_description.json'
-        )
-      })
-      if (!hasDatasetDescription) {
-        self.issues.push(new Issue({ code: 57 }))
-      }
+      checkDatasetDescription(fileList, self.issues)
 
       // collect subjects
-      collectSubjects(fileList, self.options, summary)
+      subjects.collectSubjects(fileList, self.options, summary)
 
       // collect sessions
       collectSessions(fileList, self.options, summary)
@@ -246,41 +242,12 @@ const fullTest = (fileList, options, callback) => {
             })
           })
           Promise.all(niftiPromises).then(function() {
-            // SECTION: PARTICIPANTS
-
             // check if participants file match found subjects
-            if (participants) {
-              const participantsFromFile = participants.list.sort()
-              const participantsFromFolders = summary.subjects.sort()
-              if (
-                !utils.array.equals(
-                  participantsFromFolders,
-                  participantsFromFile,
-                  true,
-                )
-              ) {
-                self.issues.push(
-                  new Issue({
-                    code: 49,
-                    evidence:
-                      'participants.tsv: ' +
-                      participantsFromFile.join(', ') +
-                      ' folder structure: ' +
-                      participantsFromFolders.join(', '),
-                    file: participants.file,
-                  }),
-                )
-              }
-            }
-
-            // check if dataset contains T1w
-            if (summary.modalities.indexOf('T1w') < 0) {
-              self.issues.push(
-                new Issue({
-                  code: 53,
-                }),
-              )
-            }
+            subjects.participantsInSubjects(
+              participants,
+              summary.subjects,
+              self.issues,
+            )
 
             //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
             tsv.checkPhenotype(phenotypeParticipants, summary, self.issues)
