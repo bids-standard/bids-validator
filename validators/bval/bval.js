@@ -1,5 +1,5 @@
-var Issue = require('../utils').issues.Issue
-var type = require('../utils').type
+var Issue = require('../../utils').issues.Issue
+var type = require('../../utils').type
 
 /**
  * bval
