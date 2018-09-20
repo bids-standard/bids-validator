@@ -13,7 +13,7 @@ var utils = require('../utils')
 
 var validate = {
   BIDS: BIDS,
-  JSON: JSON,
+  JSON: JSON.json,
   TSV: TSV,
   NIFTI: NIFTI,
   Events: Events,

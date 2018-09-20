@@ -1,4 +1,4 @@
-var utils = require('../utils')
+var utils = require('../../utils')
 var Ajv = require('ajv')
 var ajv = new Ajv({ allErrors: true })
 ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'))
@@ -31,9 +31,51 @@ module.exports = function(file, jsonContentsDict, callback) {
 // individual checks ---------------------------------------------------------------
 
 function checkUnits(file, sidecar) {
-  var issues = []
-  var schema = null
+  let issues = []
+  let schema = selectSchema(file)
+  issues = issues.concat(validateSchema(file, sidecar, schema))
 
+  issues = issues.concat(
+    checkSidecarUnits(file, sidecar, { field: 'RepetitionTime', min: 100 }, 2),
+  )
+
+  issues = issues.concat(
+    checkSidecarUnits(file, sidecar, { field: 'EchoTime', min: 1 }, 3),
+  )
+  issues = issues.concat(
+    checkSidecarUnits(file, sidecar, { field: 'EchoTime1', min: 1 }, 4),
+  )
+  issues = issues.concat(
+    checkSidecarUnits(file, sidecar, { field: 'EchoTime2', min: 1 }, 4),
+  )
+  issues = issues.concat(
+    checkSidecarUnits(file, sidecar, { field: 'TotalReadoutTime', min: 10 }, 5),
+  )
+
+  return issues
+}
+
+const compareSidecarProperties = (file, sidecar) => {
+  let issues = []
+
+  // check that EffectiveEchoSpacing < TotalReadoutTime
+  if (
+    sidecar.hasOwnProperty('TotalReadoutTime') &&
+    sidecar.hasOwnProperty('EffectiveEchoSpacing') &&
+    sidecar['TotalReadoutTime'] < sidecar['EffectiveEchoSpacing']
+  ) {
+    issues.push(
+      new Issue({
+        file: file,
+        code: 93,
+      }),
+    )
+  }
+  return issues
+}
+
+const selectSchema = file => {
+  let schema = null
   if (file.name) {
     if (file.name.endsWith('participants.json')) {
       schema = require('./schemas/data_dictionary.json')
@@ -48,8 +90,6 @@ function checkUnits(file, sidecar) {
       schema = require('./schemas/meg.json')
     } else if (file.name.endsWith('ieeg.json')) {
       schema = require('./schemas/ieeg.json')
-    } else if (file.name.endsWith('eeg.json')) {
-      schema = require('./schemas/eeg.json')
     } else if (
       file.relativePath.includes('/meg/') &&
       file.name.endsWith('coordsystem.json')
@@ -60,93 +100,42 @@ function checkUnits(file, sidecar) {
       file.name.endsWith('coordsystem.json')
     ) {
       schema = require('./schemas/coordsystem_ieeg.json')
-    } else if (
-      file.relativePath.includes('/eeg/') &&
-      file.name.endsWith('coordsystem.json')
-    ) {
-      schema = require('./schemas/coordsystem_eeg.json')
-    }
-    if (schema) {
-      var validate = ajv.compile(schema)
-      var valid = validate(sidecar)
-      if (!valid) {
-        for (var i = 0; i < validate.errors.length; i++) {
-          issues.push(
-            new Issue({
-              file: file,
-              code: 55,
-              evidence:
-                validate.errors[i].dataPath + ' ' + validate.errors[i].message,
-            }),
-          )
-        }
-      }
+    } else if (file.name.endsWith('eeg.json')) {
+      schema = require('./schemas/eeg.json')
     }
   }
+  return schema
+}
 
-  if (
-    sidecar.hasOwnProperty('RepetitionTime') &&
-    sidecar['RepetitionTime'] > 100
-  ) {
-    issues.push(
-      new Issue({
-        file: file,
-        code: 2,
-      }),
-    )
+const validateSchema = (file, sidecar, schema) => {
+  let issues = []
+  if (schema) {
+    var validate = ajv.compile(schema)
+    var valid = validate(sidecar)
+    if (!valid) {
+      validate.errors.map(error =>
+        issues.push(
+          new Issue({
+            file: file,
+            code: 55,
+            evidence: error.dataPath + ' ' + error.message,
+          }),
+        ),
+      )
+    }
   }
-  if (sidecar.hasOwnProperty('EchoTime') && sidecar['EchoTime'] > 1) {
-    issues.push(
-      new Issue({
-        file: file,
-        code: 3,
-      }),
-    )
-  }
-  if (sidecar.hasOwnProperty('EchoTime1') && sidecar['EchoTime1'] > 1) {
-    issues.push(
-      new Issue({
-        file: file,
-        code: 4,
-      }),
-    )
-  }
-  if (sidecar.hasOwnProperty('EchoTime2') && sidecar['EchoTime2'] > 1) {
-    issues.push(
-      new Issue({
-        file: file,
-        code: 4,
-      }),
-    )
-  }
-  if (
-    sidecar.hasOwnProperty('TotalReadoutTime') &&
-    sidecar['TotalReadoutTime'] > 10
-  ) {
-    issues.push(
-      new Issue({
-        file: file,
-        code: 5,
-      }),
-    )
-  }
-
   return issues
 }
 
-function compareSidecarProperties(file, sidecar) {
+const checkSidecarUnits = (file, sidecar, fieldObj, errCode) => {
   let issues = []
-
-  // check that EffectiveEchoSpacing < TotalReadoutTime
-  if (
-    sidecar.hasOwnProperty('TotalReadoutTime') &&
-    sidecar.hasOwnProperty('EffectiveEchoSpacing') &&
-    sidecar['TotalReadoutTime'] < sidecar['EffectiveEchoSpacing']
-  ) {
+  const field = fieldObj.field
+  const min = fieldObj.min
+  if (sidecar.hasOwnProperty(field) && sidecar[field] > min) {
     issues.push(
       new Issue({
+        code: errCode,
         file: file,
-        code: 93,
       }),
     )
   }
