@@ -26,7 +26,7 @@ const start = (dir, options, callback) => {
       utils.files.readDir(dir, function(files) {
         const couldBeBIDS = quickTest(files, BIDS.options)
         if (couldBeBIDS) {
-          fullTest(files, callback)
+          fullTest(files, BIDS.options, callback)
         } else {
           // Return an error immediately if quickTest fails
           const issue = quickTestError(dir)
