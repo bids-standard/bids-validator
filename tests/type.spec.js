@@ -13,6 +13,7 @@ var suiteAnat = describe('utils.type.file.isAnat', function() {
       '/sub-16/anat/sub-16_run-01_T1w.nii.gz',
       '/sub-16/anat/sub-16_acq-highres_T1w.nii.gz',
       '/sub-16/anat/sub-16_rec-mc_T1w.nii.gz',
+      '/sub-16/anat/sub-16_ce-contrastagent_T1w.nii.gz',
     ]
 
     goodFilenames.forEach(function(path) {
