@@ -84,25 +84,6 @@ const fullTest = (fileList, options, callback) => {
   // collect modalities for summary
   collectModalities(fileList, summary)
 
-  // validate bvec
-  const bvecPromises = files.bvec.map(function(file) {
-    return new Promise(resolve => {
-      utils.files
-        .readFile(file)
-        .then(contents => {
-          bContentsDict[file.relativePath] = contents
-          bvec(file, contents, function(issues) {
-            self.issues = self.issues.concat(issues)
-            resolve()
-          })
-        })
-        .catch(issue => {
-          self.issues.push(issue)
-          resolve()
-        })
-    })
-  })
-
   // validate bval
   const bvalPromises = files.bval.map(function(file) {
     return new Promise(resolve => {
@@ -135,7 +116,7 @@ const fullTest = (fileList, options, callback) => {
       stimuli,
       self.issues,
     )
-    .then(() => Promise.all(bvecPromises))
+    .then(() => bvec.validate(files.bvec, bContentsDict, self.issues))
     .then(() => Promise.all(bvalPromises))
     .then(() => json.load(files.json, jsonFiles, jsonContentsDict, self.issues))
     .then(() => {

@@ -1,5 +1,5 @@
-var Issue = require('../utils').issues.Issue
-var type = require('../utils').type
+const Issue = require('../../utils').issues.Issue
+const type = require('../../utils').type
 
 /**
  * bvec
