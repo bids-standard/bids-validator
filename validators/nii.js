@@ -113,9 +113,6 @@ module.exports = function NIFTI(
   }
 
   if (missingEvents(path, potentialEvents, events)) {
-    console.log('MISSING EVENTS')
-    console.log('potentialEvents:', potentialEvents)
-    console.log('events:', events)
     issues.push(
       new Issue({
         code: 25,
