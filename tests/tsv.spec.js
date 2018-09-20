@@ -205,7 +205,7 @@ describe('TSV', function() {
       size: 11845,
     }
     var issues = []
-    validate.TSV.checkphenotype(
+    validate.TSV.checkPhenotype(
       phenotypeParticipants,
       summary,
       issues,

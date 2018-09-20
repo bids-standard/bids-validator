@@ -1,7 +1,7 @@
 const BIDS = require('./obj')
 const utils = require('../../utils')
 const Issue = utils.issues.Issue
-const TSV = require('../tsv')
+const tsv = require('../tsv')
 const json = require('../json')
 const NIFTI = require('../nii')
 const bval = require('../bval')
@@ -84,57 +84,6 @@ const fullTest = (fileList, options, callback) => {
   // collect modalities for summary
   collectModalities(fileList, summary)
 
-  // validate tsv
-  const tsvPromises = files.tsv.map(function(file) {
-    return new Promise(resolve => {
-      utils.files
-        .readFile(file)
-        .then(contents => {
-          // Push TSV to list for custom column verification after all data dictionaries have been read
-          tsvs.push({
-            file: file,
-            contents: contents,
-          })
-          if (file.name.endsWith('_events.tsv')) {
-            events.push({
-              file: file,
-              path: file.relativePath,
-              contents: contents,
-            })
-          }
-          TSV.TSV(file, contents, fileList, function(
-            issues,
-            participantList,
-            stimFiles,
-          ) {
-            if (participantList) {
-              if (file.name.endsWith('participants.tsv')) {
-                participants = {
-                  list: participantList,
-                  file: file,
-                }
-              } else if (file.relativePath.includes('phenotype/')) {
-                phenotypeParticipants.push({
-                  list: participantList,
-                  file: file,
-                })
-              }
-            }
-            if (stimFiles && stimFiles.length) {
-              // add unique new events to the stimuli.events array
-              stimuli.events = [...new Set([...stimuli.events, ...stimFiles])]
-            }
-            self.issues = self.issues.concat(issues)
-            return resolve()
-          })
-        })
-        .catch(issue => {
-          self.issues.push(issue)
-          return resolve()
-        })
-    })
-  })
-
   // validate bvec
   const bvecPromises = files.bvec.map(function(file) {
     return new Promise(resolve => {
@@ -175,7 +124,17 @@ const fullTest = (fileList, options, callback) => {
 
   // load json data for validation later
 
-  Promise.all(tsvPromises)
+  tsv
+    .validate(
+      files.tsv,
+      fileList,
+      tsvs,
+      events,
+      participants,
+      phenotypeParticipants,
+      stimuli,
+      self.issues,
+    )
     .then(() => Promise.all(bvecPromises))
     .then(() => Promise.all(bvalPromises))
     .then(() => json.load(files.json, jsonFiles, jsonContentsDict, self.issues))
@@ -205,30 +164,6 @@ const fullTest = (fileList, options, callback) => {
 
       // collect sessions
       collectSessions(fileList, self.options, summary)
-
-      // SECTION: INDIVIDUAL FILES
-      // collect stimuli
-
-      // collect invalid bids files
-
-      // validate tsv
-
-      // validate bvec
-
-      // validate bval
-
-      // load json data for validation later
-
-      // check for subject directory presence
-
-      // check for dataset_description.json presence
-
-      // collect subjects
-
-      // collect sessions
-
-      // SECTION: JSON
-      // check json data
 
       json
         .validate(jsonFiles, fileList, jsonContentsDict, self.issues, summary)
@@ -386,7 +321,7 @@ const fullTest = (fileList, options, callback) => {
             }
 
             //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
-            TSV.checkphenotype(phenotypeParticipants, summary, self.issues)
+            tsv.checkPhenotype(phenotypeParticipants, summary, self.issues)
 
             // validate nii header fields
             self.issues = self.issues.concat(headerFields(headers))
@@ -405,7 +340,7 @@ const fullTest = (fileList, options, callback) => {
             // SECTION: TSV COLUMNS
             // validate custom fields in all TSVs and add any issues to the list
             self.issues = self.issues.concat(
-              TSV.validateTsvColumns(tsvs, jsonContentsDict),
+              tsv.validateTsvColumns(tsvs, jsonContentsDict),
             )
 
             // SECTION: SESSIONS

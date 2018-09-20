@@ -1,10 +1,8 @@
-/* eslint-disable no-unused-vars */
-var Issue = require('../utils').issues.Issue
-var files = require('../utils/files')
-var utils = require('../utils')
-var dateIsValid = require('date-fns/isValid')
-var parseDate = require('date-fns/parse')
-const nonCustomColumns = require('../bids_validator/tsv/non_custom_columns.json')
+const utils = require('../../utils')
+const Issue = utils.issues.Issue
+const checkAcqTimeFormat = require('./checkAcqTimeFormat')
+const checkAge89 = require('./checkAge89')
+
 /**
  * TSV
  *
@@ -13,7 +11,7 @@ const nonCustomColumns = require('../bids_validator/tsv/non_custom_columns.json'
  * it finds while validating against the BIDS
  * specification.
  */
-var TSV = function TSV(file, contents, fileList, callback) {
+const TSV = (file, contents, fileList, callback) => {
   var issues = []
   var stimPaths = []
   if (contents.includes('\r') && !contents.includes('\n')) {
@@ -273,7 +271,7 @@ var TSV = function TSV(file, contents, fileList, callback) {
   // check partcipants.tsv for age 89+
 
   if (file.name === 'participants.tsv') {
-    checkage89_plus(rows, file, issues)
+    checkAge89(rows, file, issues)
   }
 
   if (file.name.endsWith('_scans.tsv')) {
@@ -297,172 +295,5 @@ var TSV = function TSV(file, contents, fileList, callback) {
 
   callback(issues, participants, stimPaths)
 }
-var checkphenotype = function(phenotypeParticipants, summary, issues) {
-  for (var j = 0; j < phenotypeParticipants.length; j++) {
-    var fileParticpants = phenotypeParticipants[j]
-    if (
-      phenotypeParticipants &&
-      phenotypeParticipants.length > 0 &&
-      !utils.array.equals(fileParticpants.list, summary.subjects.sort(), true)
-    ) {
-      issues.push(
-        new Issue({
-          code: 51,
-          evidence:
-            fileParticpants.file +
-            '- ' +
-            fileParticpants.list +
-            '  Subjects -' +
-            fileParticpants,
-          file: fileParticpants.file,
-        }),
-      )
-    }
-  }
-}
 
-var checkage89_plus = function(rows, file, issues) {
-  var header = rows[0].trim().split('\t')
-  var ageIdColumn = header.indexOf('age')
-  for (var a = 0; a < rows.length; a++) {
-    var line = rows[a]
-    var line_values = line.trim().split('\t')
-    var age = line_values[ageIdColumn]
-    if (age >= 89) {
-      issues.push(
-        new Issue({
-          file: file,
-          evidence: line,
-          line: a + 1,
-          reason: 'age of partcipant is above 89 ',
-          code: 56,
-        }),
-      )
-    }
-  }
-}
-
-const checkAcqTimeFormat = function(rows, file, issues) {
-  const format = "YYYY-MM-DD'T'HH:mm:ss"
-  const header = rows[0].trim().split('\t')
-  const acqTimeColumn = header.indexOf('acq_time')
-  const testRows = rows.slice(1)
-  for (let i = 0; i < testRows.length; i++) {
-    const line = testRows[i]
-    const lineValues = line.trim().split('\t')
-    const acqTime = lineValues[acqTimeColumn]
-    var isValid = dateIsValid(parseDate(acqTime, format, new Date()))
-    if (acqTime === 'n/a') {
-      isValid = true
-    }
-    if (acqTime && !isValid) {
-      issues.push(
-        new Issue({
-          file: file,
-          evidence: acqTime,
-          line: i + 2,
-          reason: 'acq_time is not in the format YYYY-MM-DDTHH:mm:ss ',
-          code: 84,
-        }),
-      )
-    }
-  }
-}
-
-/**
- * @param {Object} file - BIDS file object
- * Accepts file object and returns a type based on file path
- */
-const getTsvType = function(file) {
-  let tsvType = 'misc'
-  if (file.relativePath.includes('phenotype/')) {
-    tsvType = 'phenotype'
-  } else if (file.name === 'participants.tsv') {
-    tsvType = 'participants'
-  } else if (
-    file.name.endsWith('_channels.tsv') ||
-    file.name.endsWith('_events.tsv') ||
-    file.name.endsWith('_scans.tsv') ||
-    file.name.endsWith('_sessions.tsv')
-  ) {
-    const split = file.name.split('_')
-    tsvType = split[split.length - 1].replace('.tsv', '')
-  }
-  return tsvType
-}
-
-/**
- *
- * @param {array} headers -Array of column names
- * @param {string} type - Type from getTsvType
- * Checks TSV column names to determine if they're core or custom
- * Returns array of custom column names
- */
-const getCustomColumns = function(headers, type) {
-  const customCols = []
-  // Iterate column headers
-  for (let col of headers) {
-    // If it's a custom column
-    if (!nonCustomColumns[type].includes(col)) {
-      customCols.push(col)
-    }
-  }
-  return customCols
-}
-
-/**
- *
- * @param {array} tsvs - Array of objects containing TSV file objects and contents
- * @param {Object} jsonContentsDict
- */
-const validateTsvColumns = function(tsvs, jsonContentsDict) {
-  let tsvIssues = []
-  tsvs.map(tsv => {
-    const customColumns = getCustomColumns(
-      tsv.contents.split('\n')[0].split('\t'),
-      getTsvType(tsv.file),
-    )
-    if (customColumns.length > 0) {
-      // Get merged data dictionary for this file
-      const potentialSidecars = utils.files.potentialLocations(
-        tsv.file.relativePath.replace('.tsv', '.json'),
-      )
-      const mergedDict = utils.files.generateMergedSidecarDict(
-        potentialSidecars,
-        jsonContentsDict,
-      )
-      const keys = Object.keys(mergedDict)
-      // Gather undefined columns for the file
-      let undefinedCols = customColumns.filter(col => !keys.includes(col))
-      // Create an issue for all undefined columns in this file
-      undefinedCols.length &&
-        tsvIssues.push(
-          customColumnIssue(
-            tsv.file,
-            undefinedCols.join(', '),
-            potentialSidecars,
-          ),
-        )
-    }
-  })
-  // Return array of all instances of undescribed custom columns
-  return tsvIssues
-}
-
-const customColumnIssue = function(file, col, locations) {
-  return new Issue({
-    code: 82,
-    file: file,
-    evidence:
-      'Columns: ' +
-      col +
-      ' not defined, please define in: ' +
-      locations.toString().replace(',', ', '),
-  })
-}
-
-module.exports = {
-  TSV: TSV,
-  checkphenotype: checkphenotype,
-  validateTsvColumns: validateTsvColumns,
-}
+module.exports = TSV

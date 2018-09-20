@@ -1,6 +1,6 @@
 // dependencies ------------------------------------------------------
 
-var TSV = require('./tsv')
+var tsv = require('./tsv')
 var JSON = require('./json')
 var NIFTI = require('./nii')
 var BIDS = require('./bids').start
@@ -14,7 +14,7 @@ var utils = require('../utils')
 var validate = {
   BIDS: BIDS,
   JSON: JSON.json,
-  TSV: TSV,
+  TSV: tsv,
   NIFTI: NIFTI,
   Events: Events,
   bval: bval,
