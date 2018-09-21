@@ -108,7 +108,7 @@ function getFiles(dir, files_, rootpath, ig) {
       fileObj.ignore = true
     }
 
-    if (isDirectory(fullPath) {
+    if (isDirectory(fullPath)) {
       getFiles(fullPath, files_, rootpath, ig)
     } else {
       files_.push(fileObj)
