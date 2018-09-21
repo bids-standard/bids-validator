@@ -50,6 +50,7 @@
       "@@@_eeg_top_ext_@@@": [
         "_eeg.json",
         "_channels.tsv",
+        "_electrodes.tsv",
         "_photo.jpg",
         "_coordsystem.json"
       ]
