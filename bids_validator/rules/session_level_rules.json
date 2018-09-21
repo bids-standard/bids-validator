@@ -68,6 +68,7 @@
       "@@@_anat_eeg_type_@@@": [
         "_events.tsv",
         "_channels.tsv",
+        "_electrodes.tsv",
         "_eeg.json",
         "_coordsystem.json",
         "_photo.jpg"
@@ -84,8 +85,7 @@
         "_electrodes.tsv",
         "_ieeg.json",
         "_coordsystem.json",
-        "_photo.jpg",
-        "_headshape.pos"
+        "_photo.jpg"
       ]
     }
   }
