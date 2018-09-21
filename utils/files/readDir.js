@@ -108,12 +108,18 @@ function getFiles(dir, files_, rootpath, ig) {
       fileObj.ignore = true
     }
 
-    if (fs.lstatSync(fullPath).isDirectory()) {
+    var isDirectory = fs.lstatSync(fullPath).isDirectory()
+    if (fs.lstatSync(fullPath).isSymbolicLink()) {
+      targetPath = fs.realpathSync(fullPath)
+      isDirectory = fs.lstatSync(targetPath).isDirectory()
+    }
+    if (isDirectory) {
       getFiles(fullPath, files_, rootpath, ig)
     } else {
       files_.push(fileObj)
     }
   })
+
   return files_
 }
 
