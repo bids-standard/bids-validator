@@ -108,12 +108,7 @@ function getFiles(dir, files_, rootpath, ig) {
       fileObj.ignore = true
     }
 
-    var isDirectory = fs.lstatSync(fullPath).isDirectory()
-    if (fs.lstatSync(fullPath).isSymbolicLink()) {
-      targetPath = fs.realpathSync(fullPath)
-      isDirectory = fs.lstatSync(targetPath).isDirectory()
-    }
-    if (isDirectory) {
+    if (isDirectory(fullPath) {
       getFiles(fullPath, files_, rootpath, ig)
     } else {
       files_.push(fileObj)
@@ -121,6 +116,18 @@ function getFiles(dir, files_, rootpath, ig) {
   })
 
   return files_
+}
+
+/**
+ * Leverage fs.isDirectory by following Symbolic Links
+ */
+function isDirectory(path) {
+  var isDir = fs.lstatSync(path).isDirectory()
+  if (fs.lstatSync(path).isSymbolicLink()) {
+    var targetPath = fs.realpathSync(path)
+    isDir = fs.lstatSync(targetPath).isDirectory()
+  }
+  return isDir
 }
 
 function getBIDSIgnore(dir, callback) {
