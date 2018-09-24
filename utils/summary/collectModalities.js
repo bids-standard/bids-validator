@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+const type = require('../type')
 
 const collectModalities = fileList => {
   let modalities = []
@@ -11,7 +11,7 @@ const collectModalities = fileList => {
 
     // check modality by data file extension ...
     // and capture data files for later sanity checks (when available)
-    if (utils.type.file.isModality(file.name)) {
+    if (type.file.isModality(file.name)) {
       // collect modality summary
       const modality = suffix.slice(0, suffix.indexOf('.'))
       if (modalities.indexOf(modality) === -1) {
