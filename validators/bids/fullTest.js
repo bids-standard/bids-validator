@@ -3,7 +3,7 @@ const utils = require('../../utils')
 const Issue = utils.issues.Issue
 const tsv = require('../tsv')
 const json = require('../json')
-const NIFTI = require('../nii')
+const NIFTI = require('../nifti')
 const bval = require('../bval')
 const bvec = require('../bvec')
 const Events = require('../events')
@@ -60,8 +60,6 @@ const fullTest = (fileList, options, callback) => {
       delete fileList[key]
     }
   })
-
-  const fileKeys = Object.keys(fileList)
 
   self.issues = self.issues.concat(subSesMismatchTest(fileList))
 
@@ -127,84 +125,19 @@ const fullTest = (fileList, options, callback) => {
         .validate(jsonFiles, fileList, jsonContentsDict, self.issues, summary)
         .then(function() {
           // SECTION: NIFTI
-          // check if same file with .nii and .nii.gz extensions is present
-          const niftiCounts = files.nifti
-            .map(function(val) {
-              return { count: 1, val: val.name.split('.')[0] }
-            })
-            .reduce(function(a, b) {
-              a[b.val] = (a[b.val] || 0) + b.count
-              return a
-            }, {})
+          // check for duplicate nifti files
+          NIFTI.duplicateFiles(files.nifti, self.issues)
 
-          const duplicates = Object.keys(niftiCounts).filter(function(a) {
-            return niftiCounts[a] > 1
-          })
-          if (duplicates.length !== 0) {
-            for (let key in duplicates) {
-              const duplicateFiles = files.nifti.filter(function(a) {
-                return a.name.split('.')[0] === duplicates[key]
-              })
-              for (let file in duplicateFiles) {
-                self.issues.push(
-                  new Issue({
-                    code: 74,
-                    file: duplicateFiles[file],
-                  }),
-                )
-              }
-            }
-          }
           // Check for _fieldmap nifti exists without corresponding _magnitude
-          // TODO: refactor into external function call
-          const niftiNames = files.nifti.map(nifti => nifti.name)
-          const fieldmaps = niftiNames.filter(
-            nifti => nifti.indexOf('_fieldmap') > -1,
-          )
-          const magnitudes = niftiNames.filter(
-            nifti => nifti.indexOf('_magnitude') > -1,
-          )
-          fieldmaps.map(nifti => {
-            const associatedMagnitudeFile = nifti.replace(
-              'fieldmap',
-              'magnitude',
-            )
-            if (magnitudes.indexOf(associatedMagnitudeFile) === -1) {
-              self.issues.push(
-                new Issue({
-                  code: 91,
-                  file: files.nifti.find(niftiFile => niftiFile.name == nifti),
-                }),
-              )
-            }
-          })
-          // End fieldmap check
+          NIFTI.fieldmapWithoutMagnitude(files.nifti, self.issues)
 
-          // check to see if each phasediff is associated with magnitude1
-          const phaseDiffNiftis = niftiNames.filter(
-            nifti => nifti.indexOf('phasediff') > -1,
-          )
-          const magnitude1Niftis = niftiNames.filter(
-            nifti => nifti.indexOf('magnitude1') > -1,
-          )
-          phaseDiffNiftis.map(nifti => {
-            const associatedMagnitudeFile = nifti.replace(
-              'phasediff',
-              'magnitude1',
-            )
-            if (magnitude1Niftis.indexOf(associatedMagnitudeFile) === -1) {
-              self.issues.push(
-                new Issue({
-                  code: 92,
-                  file: files.nifti.find(niftiFile => niftiFile.name == nifti),
-                }),
-              )
-            }
-          })
+          // Check for _phasediff nifti without associated _magnitude1 files
+          NIFTI.phasediffWithoutMagnitude(files.nifti, self.issues)
+
           const niftiPromises = files.nifti.map(function(file) {
             return new Promise(function(resolve) {
               if (self.options.ignoreNiftiHeaders) {
-                NIFTI(
+                NIFTI.nifti(
                   null,
                   file,
                   jsonContentsDict,
@@ -224,7 +157,7 @@ const fullTest = (fileList, options, callback) => {
                     resolve()
                   } else {
                     headers.push([file, header])
-                    NIFTI(
+                    NIFTI.nifti(
                       header,
                       file,
                       jsonContentsDict,

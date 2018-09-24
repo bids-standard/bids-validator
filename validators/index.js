@@ -2,7 +2,7 @@
 
 var tsv = require('./tsv')
 var JSON = require('./json').json
-var NIFTI = require('./nii')
+var NIFTI = require('./nifti').nifti
 var BIDS = require('./bids').start
 var Events = require('./events')
 var bval = require('./bval').bval
