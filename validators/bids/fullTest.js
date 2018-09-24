@@ -148,25 +148,6 @@ const fullTest = (fileList, options, callback) => {
                   self.issues = self.issues.concat(jsonIssues)
 
                   // SECTION: NIFTI
-
-                  // check for duplicate nifti files
-                  const duplicateNiftisIssues = NIFTI.duplicateFiles(
-                    files.nifti,
-                  )
-                  self.issues = self.issues.concat(duplicateNiftisIssues)
-
-                  // Check for _fieldmap nifti exists without corresponding _magnitude
-                  const magnitudeIssues = NIFTI.fieldmapWithoutMagnitude(
-                    files.nifti,
-                  )
-                  self.issues = self.issues.concat(magnitudeIssues)
-
-                  // Check for _phasediff nifti without associated _magnitude1 files
-                  const phaseDiffIssues = NIFTI.phasediffWithoutMagnitude(
-                    files.nifti,
-                  )
-                  self.issues = self.issues.concat(phaseDiffIssues)
-
                   // general nifti validation
                   NIFTI.validate(
                     files.nifti,

@@ -1,5 +1,8 @@
 const utils = require('../../utils')
 const nifti = require('./nii')
+const phaseDiffWithoutMagnitude = require('./phasediffWithoutMagnitude')
+const fieldmapWithoutMagnitude = require('./fieldmapWithoutMagnitude')
+const duplicateFiles = require('./duplicateFiles')
 
 const validate = (
   files,
@@ -53,7 +56,20 @@ const validate = (
       }
     })
   })
+
   return new Promise(resolve => {
+    // check for duplicate nifti files
+    const duplicateNiftisIssues = duplicateFiles(files)
+    issues = issues.concat(duplicateNiftisIssues)
+
+    // Check for _fieldmap nifti exists without corresponding _magnitude
+    const magnitudeIssues = fieldmapWithoutMagnitude(files)
+    issues = issues.concat(magnitudeIssues)
+
+    // phase diff without magnitude test
+    const phaseDiffWithoutMagnitudeIssues = phaseDiffWithoutMagnitude(files)
+    issues = issues.concat(phaseDiffWithoutMagnitudeIssues)
+
     Promise.all(niftiPromises).then(() => resolve(issues))
   })
 }
