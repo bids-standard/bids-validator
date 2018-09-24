@@ -1,7 +1,8 @@
 const utils = require('../../utils')
 const Issue = utils.issues.Issue
 
-const participantsInSubjects = (participants, subjects, issues) => {
+const participantsInSubjects = (participants, subjects) => {
+  let issues = []
   if (participants) {
     const participantsFromFile = participants.list.sort()
     const participantsFromFolders = subjects.sort()
@@ -21,9 +22,11 @@ const participantsInSubjects = (participants, subjects, issues) => {
       )
     }
   }
+  return issues
 }
 
-const atLeastOneSubject = (fileList, issues) => {
+const atLeastOneSubject = fileList => {
+  let issues = []
   const fileKeys = Object.keys(fileList)
   const hasSubjectDir = fileKeys.some(key => {
     const file = fileList[key]
@@ -32,9 +35,11 @@ const atLeastOneSubject = (fileList, issues) => {
   if (!hasSubjectDir) {
     issues.push(new Issue({ code: 45 }))
   }
+  return issues
 }
 
-const collectSubjects = (fileList, options, summary) => {
+const collectSubjects = (fileList, options) => {
+  let subjects = []
   const fileKeys = Object.keys(fileList)
   fileKeys.forEach(key => {
     const file = fileList[key]
@@ -47,13 +52,14 @@ const collectSubjects = (fileList, options, summary) => {
 
       if (
         pathValues.sub &&
-        summary.subjects.indexOf(pathValues.sub) === -1 &&
+        subjects.indexOf(pathValues.sub) === -1 &&
         !isEmptyRoom
       ) {
-        summary.subjects.push(pathValues.sub)
+        subjects.push(pathValues.sub)
       }
     }
   })
+  return subjects
 }
 
 module.exports = {

@@ -1,17 +1,19 @@
 const fs = require('fs')
 
-const collectDirectoryStatistics = (fileList, summary) => {
+const collectDirectoryStatistics = fileList => {
+  let size = 0
   const keys = Object.keys(fileList)
   keys.forEach(key => {
     let file = fileList[key]
     // collect file stats
     if (typeof window !== 'undefined' && file.size) {
-      summary.size += file.size
+      size += file.size
     } else {
       file.stats = getFileStats(file)
-      summary.size += file.stats.size
+      size += file.stats.size
     }
   })
+  return size
 }
 
 const getFileStats = file => {

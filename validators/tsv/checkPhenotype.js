@@ -1,9 +1,10 @@
 const utils = require('../../utils')
 const Issue = utils.issues.Issue
 
-const checkPhenotype = (phenotypeParticipants, summary, issues) => {
-  for (var j = 0; j < phenotypeParticipants.length; j++) {
-    var fileParticpants = phenotypeParticipants[j]
+const checkPhenotype = (phenotypeParticipants, summary) => {
+  let issues = []
+  for (let j = 0; j < phenotypeParticipants.length; j++) {
+    const fileParticpants = phenotypeParticipants[j]
     if (
       phenotypeParticipants &&
       phenotypeParticipants.length > 0 &&
@@ -23,6 +24,7 @@ const checkPhenotype = (phenotypeParticipants, summary, issues) => {
       )
     }
   }
+  return issues
 }
 
 module.exports = checkPhenotype

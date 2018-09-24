@@ -9,8 +9,8 @@ const validate = (
   participants,
   phenotypeParticipants,
   stimuli,
-  issues,
 ) => {
+  let issues = []
   // validate tsv
   const tsvPromises = files.map(function(file) {
     return new Promise(resolve => {
@@ -29,8 +29,8 @@ const validate = (
               contents: contents,
             })
           }
-          tsv.TSV(file, contents, fileList, function(
-            issues,
+          tsv(file, contents, fileList, function(
+            tsvIssues,
             participantList,
             stimFiles,
           ) {
@@ -51,7 +51,7 @@ const validate = (
               // add unique new events to the stimuli.events array
               stimuli.events = [...new Set([...stimuli.events, ...stimFiles])]
             }
-            issues = issues.concat(issues)
+            issues = issues.concat(tsvIssues)
             return resolve()
           })
         })
@@ -62,7 +62,9 @@ const validate = (
     })
   })
 
-  return Promise.all(tsvPromises)
+  return new Promise(resolve =>
+    Promise.all(tsvPromises).then(() => resolve(issues)),
+  )
 }
 
 module.exports = validate

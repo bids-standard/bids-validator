@@ -1,6 +1,7 @@
 const utils = require('../../utils')
 
-const collectSessions = (fileList, options, summary) => {
+const collectSessions = (fileList, options) => {
+  let sessions = []
   Object.keys(fileList).forEach(key => {
     const file = fileList[key]
     if (
@@ -12,13 +13,14 @@ const collectSessions = (fileList, options, summary) => {
 
       if (
         pathValues.ses &&
-        summary.sessions.indexOf(pathValues.ses) === -1 &&
+        sessions.indexOf(pathValues.ses) === -1 &&
         !isEmptyRoom
       ) {
-        summary.sessions.push(pathValues.ses)
+        sessions.push(pathValues.ses)
       }
     }
   })
+  return sessions
 }
 
 module.exports = collectSessions

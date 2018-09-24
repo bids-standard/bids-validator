@@ -1,7 +1,8 @@
 const Issue = require('../../utils').issues.Issue
 
-const fieldmapWithoutMagnitude = (files, issues) => {
+const fieldmapWithoutMagnitude = files => {
   // Check for _fieldmap nifti exists without corresponding _magnitude
+  let issues = []
   const niftiNames = files.map(nifti => nifti.name)
   const fieldmaps = niftiNames.filter(nifti => nifti.indexOf('_fieldmap') > -1)
   const magnitudes = niftiNames.filter(
@@ -18,6 +19,7 @@ const fieldmapWithoutMagnitude = (files, issues) => {
       )
     }
   })
+  return issues
 }
 
 module.exports = fieldmapWithoutMagnitude

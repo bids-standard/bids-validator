@@ -9,9 +9,9 @@ const validate = (
   bContentsDict,
   events,
   headers,
-  issues,
 ) => {
-  const niftiPromises = files.map(file => {
+  let issues = []
+  const niftiPromises = files.map(function(file) {
     return new Promise(resolve => {
       if (options.ignoreNiftiHeaders) {
         nifti(
@@ -22,6 +22,8 @@ const validate = (
           fileList,
           events,
           function(niftiIssues) {
+            // console.log('niftiIssues.length:', niftiIssues.length)
+            // console.log('squirt')
             issues = issues.concat(niftiIssues)
             resolve()
           },
@@ -51,8 +53,9 @@ const validate = (
       }
     })
   })
-
-  return Promise.all(niftiPromises)
+  return new Promise(resolve => {
+    Promise.all(niftiPromises).then(() => resolve(issues))
+  })
 }
 
 module.exports = validate

@@ -1,8 +1,9 @@
 const Issue = require('../../utils').issues.Issue
 
-const phasediffWithoutMagnitude = (files, issues) => {
+const phasediffWithoutMagnitude = files => {
+  // check to see if each phasediff is associated with magnitude
+  let issues = []
   const niftiNames = files.map(nifti => nifti.name)
-  // check to see if each phasediff is associated with magnitude1
   const phaseDiffNiftis = niftiNames.filter(
     nifti => nifti.indexOf('phasediff') > -1,
   )
@@ -20,6 +21,7 @@ const phasediffWithoutMagnitude = (files, issues) => {
       )
     }
   })
+  return issues
 }
 
 module.exports = phasediffWithoutMagnitude

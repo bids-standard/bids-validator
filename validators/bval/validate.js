@@ -1,7 +1,8 @@
 const utils = require('../../utils')
 const bval = require('./bval')
 
-const validate = (files, bContentsDict, issues) => {
+const validate = (files, bContentsDict) => {
+  let issues = []
   // validate bval
   const bvalPromises = files.map(function(file) {
     return new Promise(resolve => {
@@ -21,7 +22,9 @@ const validate = (files, bContentsDict, issues) => {
     })
   })
 
-  return Promise.all(bvalPromises)
+  return new Promise(resolve =>
+    Promise.all(bvalPromises).then(() => resolve(issues)),
+  )
 }
 
 module.exports = validate

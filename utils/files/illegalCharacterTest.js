@@ -14,7 +14,8 @@ const illegalchar_regex_list = [
   [re.ses_re, 63, 'ses name contains illegal character:'],
 ]
 
-const illegalCharacterTest = (fileList, issues) => {
+const illegalCharacterTest = fileList => {
+  let issues = []
   const fileKeys = Object.keys(fileList)
   fileKeys.forEach(key => {
     let file = fileList[key]
@@ -43,6 +44,7 @@ const illegalCharacterTest = (fileList, issues) => {
       })
     }
   })
+  return issues
 }
 
 module.exports = illegalCharacterTest

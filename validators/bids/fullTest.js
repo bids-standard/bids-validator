@@ -52,7 +52,7 @@ const fullTest = (fileList, options, callback) => {
   }
 
   //collect file directory statistics
-  utils.files.collectDirectoryStatistics(fileList, summary)
+  summary.size = utils.files.collectDirectoryStatistics(fileList)
 
   // remove ignored files from list:
   Object.keys(fileList).forEach(function(key) {
@@ -64,7 +64,7 @@ const fullTest = (fileList, options, callback) => {
   self.issues = self.issues.concat(subSesMismatchTest(fileList))
 
   // check for illegal character in task name and acq name
-  utils.files.illegalCharacterTest(fileList, self.issues)
+  self.issues = self.issues.concat(utils.files.illegalCharacterTest(fileList))
 
   const files = groupFileTypes(fileList, self.options)
 
@@ -81,7 +81,7 @@ const fullTest = (fileList, options, callback) => {
   })
 
   // collect modalities for summary
-  collectModalities(fileList, summary)
+  summary.modalities = collectModalities(fileList)
 
   // check if dataset contains T1w
   if (summary.modalities.indexOf('T1w') < 0) {
@@ -92,8 +92,8 @@ const fullTest = (fileList, options, callback) => {
     )
   }
 
-  // load json data for validation later
-
+  // SECTION: TSV
+  // collect tsv issues
   tsv
     .validate(
       files.tsv,
@@ -103,125 +103,142 @@ const fullTest = (fileList, options, callback) => {
       participants,
       phenotypeParticipants,
       stimuli,
-      self.issues,
     )
-    .then(() => bvec.validate(files.bvec, bContentsDict, self.issues))
-    .then(() => bval.validate(files.bval, bContentsDict, self.issues))
-    .then(() => json.load(files.json, jsonFiles, jsonContentsDict, self.issues))
-    .then(() => {
-      // check for at least one subject
-      subjects.atLeastOneSubject(fileList, self.issues)
+    .then(tsvIssues => {
+      self.issues = self.issues.concat(tsvIssues)
 
-      // check for datasetDescription file in the proper place
-      checkDatasetDescription(fileList, self.issues)
+      // SECTION: BVEC
+      // collect bvec issues
+      bvec.validate(files.bvec, bContentsDict).then(bvecIssues => {
+        self.issues = self.issues.concat(bvecIssues)
 
-      // collect subjects
-      subjects.collectSubjects(fileList, self.options, summary)
+        // SECTION: BVAL
+        // collect bval issues
+        bval.validate(files.bval, bContentsDict).then(bvalIssues => {
+          self.issues = self.issues.concat(bvalIssues)
 
-      // collect sessions
-      collectSessions(fileList, self.options, summary)
+          // SECTION: JSON
+          // load json files and construct a contents object with field, value pairs
+          json
+            .load(files.json, jsonFiles, jsonContentsDict)
+            .then(jsonLoadIssues => {
+              self.issues = self.issues.concat(jsonLoadIssues)
 
-      json
-        .validate(jsonFiles, fileList, jsonContentsDict, self.issues, summary)
-        .then(function() {
-          // SECTION: NIFTI
-          // check for duplicate nifti files
-          NIFTI.duplicateFiles(files.nifti, self.issues)
+              // check for at least one subject
+              const noSubjectIssues = subjects.atLeastOneSubject(fileList)
+              self.issues = self.issues.concat(noSubjectIssues)
 
-          // Check for _fieldmap nifti exists without corresponding _magnitude
-          NIFTI.fieldmapWithoutMagnitude(files.nifti, self.issues)
+              // check for datasetDescription file in the proper place
+              const datasetDescriptionIssues = checkDatasetDescription(fileList)
+              self.issues = self.issues.concat(datasetDescriptionIssues)
 
-          // Check for _phasediff nifti without associated _magnitude1 files
-          NIFTI.phasediffWithoutMagnitude(files.nifti, self.issues)
+              // collect subjects
+              summary.subjects = subjects.collectSubjects(
+                fileList,
+                self.options,
+              )
 
-          const niftiPromises = files.nifti.map(function(file) {
-            return new Promise(function(resolve) {
-              if (self.options.ignoreNiftiHeaders) {
-                NIFTI.nifti(
-                  null,
-                  file,
-                  jsonContentsDict,
-                  bContentsDict,
-                  fileList,
-                  events,
-                  function(issues) {
-                    self.issues = self.issues.concat(issues)
-                    resolve()
-                  },
-                )
-              } else {
-                utils.files.readNiftiHeader(file, function(header) {
-                  // check if header could be read
-                  if (header && header.hasOwnProperty('error')) {
-                    self.issues.push(header.error)
-                    resolve()
-                  } else {
-                    headers.push([file, header])
-                    NIFTI.nifti(
-                      header,
-                      file,
-                      jsonContentsDict,
-                      bContentsDict,
-                      fileList,
-                      events,
-                      function(issues) {
-                        self.issues = self.issues.concat(issues)
-                        resolve()
-                      },
+              // collect sessions
+              summary.sessions = collectSessions(fileList, self.options)
+
+              // validate json files and contents
+              json
+                .validate(jsonFiles, fileList, jsonContentsDict, summary)
+                .then(jsonIssues => {
+                  self.issues = self.issues.concat(jsonIssues)
+
+                  // SECTION: NIFTI
+
+                  // check for duplicate nifti files
+                  const duplicateNiftisIssues = NIFTI.duplicateFiles(
+                    files.nifti,
+                  )
+                  self.issues = self.issues.concat(duplicateNiftisIssues)
+
+                  // Check for _fieldmap nifti exists without corresponding _magnitude
+                  const magnitudeIssues = NIFTI.fieldmapWithoutMagnitude(
+                    files.nifti,
+                  )
+                  self.issues = self.issues.concat(magnitudeIssues)
+
+                  // Check for _phasediff nifti without associated _magnitude1 files
+                  const phaseDiffIssues = NIFTI.phasediffWithoutMagnitude(
+                    files.nifti,
+                  )
+                  self.issues = self.issues.concat(phaseDiffIssues)
+
+                  // general nifti validation
+                  NIFTI.validate(
+                    files.nifti,
+                    fileList,
+                    self.options,
+                    jsonContentsDict,
+                    bContentsDict,
+                    events,
+                    headers,
+                  ).then(niftiIssues => {
+                    self.issues = self.issues.concat(niftiIssues)
+
+                    // SECTION: PARTICIPANTS
+                    // issues related to participants not listed in the subjects list
+                    const participantsInSubjectsIssues = subjects.participantsInSubjects(
+                      participants,
+                      summary.subjects,
                     )
-                  }
+                    self.issues = self.issues.concat(
+                      participantsInSubjectsIssues,
+                    )
+
+                    //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
+                    const phenotypeIssues = tsv.checkPhenotype(
+                      phenotypeParticipants,
+                      summary,
+                    )
+                    self.issues = self.issues.concat(phenotypeIssues)
+
+                    // validate nii header fields
+                    self.issues = self.issues.concat(headerFields(headers))
+
+                    // SECTION: EVENTS
+                    // Events validation
+                    stimuli.directory = files.stimuli
+                    const eventsIssues = Events.validateEvents(
+                      events,
+                      stimuli,
+                      headers,
+                      jsonContentsDict,
+                      self.issues,
+                    )
+                    self.issues = self.issues.concat(eventsIssues)
+
+                    // SECTION: TSV COLUMNS
+                    // validate custom fields in all TSVs and add any issues to the list
+                    self.issues = self.issues.concat(
+                      tsv.validateTsvColumns(tsvs, jsonContentsDict),
+                    )
+
+                    // SECTION: SESSIONS
+                    // validation session files
+                    self.issues = self.issues.concat(session(fileList))
+
+                    // SECTION: SUBJECT DATA PRESENT
+                    self.issues = self.issues.concat(
+                      checkAnyDataPresent(fileList, summary.subjects),
+                    )
+                    summary.modalities = utils.modalities.group(
+                      summary.modalities,
+                    )
+                    const issues = utils.issues.format(
+                      self.issues,
+                      summary,
+                      self.options,
+                    )
+                    callback(issues, summary)
+                  })
                 })
-              }
             })
-          })
-          Promise.all(niftiPromises).then(function() {
-            // check if participants file match found subjects
-            subjects.participantsInSubjects(
-              participants,
-              summary.subjects,
-              self.issues,
-            )
-
-            //check for equal number of participants from ./phenotype/*.tsv and participants in dataset
-            tsv.checkPhenotype(phenotypeParticipants, summary, self.issues)
-
-            // validate nii header fields
-            self.issues = self.issues.concat(headerFields(headers))
-
-            // SECTION: EVENTS
-            // Events validation
-            stimuli.directory = files.stimuli
-            Events.validateEvents(
-              events,
-              stimuli,
-              headers,
-              jsonContentsDict,
-              self.issues,
-            )
-
-            // SECTION: TSV COLUMNS
-            // validate custom fields in all TSVs and add any issues to the list
-            self.issues = self.issues.concat(
-              tsv.validateTsvColumns(tsvs, jsonContentsDict),
-            )
-
-            // SECTION: SESSIONS
-            // validation session files
-            self.issues = self.issues.concat(session(fileList))
-
-            // SECTION: SUBJECT DATA PRESENT
-            self.issues = self.issues.concat(
-              checkAnyDataPresent(fileList, summary.subjects),
-            )
-            summary.modalities = utils.modalities.group(summary.modalities)
-            const issues = utils.issues.format(
-              self.issues,
-              summary,
-              self.options,
-            )
-            callback(issues, summary)
-          })
         })
+      })
     })
 }
 

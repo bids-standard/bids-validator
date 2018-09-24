@@ -2,19 +2,22 @@ const json = require('./json')
 const utils = require('../../utils')
 const Issue = utils.issues.Issue
 
-const validate = (jsonFiles, fileList, jsonContentsDict, issues, summary) => {
+const validate = (jsonFiles, fileList, jsonContentsDict, summary) => {
+  let issues = []
   const jsonValidationPromises = jsonFiles.map(function(file) {
     return new Promise(resolve => {
       checkForAccompanyingDataFile(file, fileList, issues)
-      json(file, jsonContentsDict, (issues, jsObj) => {
-        issues = issues.concat(issues)
+      json(file, jsonContentsDict, (jsonIssues, jsObj) => {
+        issues = issues.concat(jsonIssues)
         collectTaskSummary(file, jsObj, summary)
-        resolve()
+        return resolve()
       })
     })
   })
 
-  return Promise.all(jsonValidationPromises)
+  return new Promise(resolve =>
+    Promise.all(jsonValidationPromises).then(() => resolve(issues)),
+  )
 }
 
 const collectTaskSummary = (file, jsObj, summary) => {
@@ -23,7 +26,7 @@ const collectTaskSummary = (file, jsObj, summary) => {
     if (
       jsObj &&
       jsObj.TaskName &&
-      summary.tasks.indexOf(jsObj.taskName) === -1
+      summary.tasks.indexOf(jsObj.TaskName) === -1
     ) {
       summary.tasks.push(jsObj.TaskName)
     }

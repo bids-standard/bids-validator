@@ -1,6 +1,7 @@
 const Issue = require('../../utils').issues.Issue
 
-const checkDatasetDescription = (fileList, issues) => {
+const checkDatasetDescription = fileList => {
+  let issues = []
   const fileKeys = Object.keys(fileList)
   const hasDatasetDescription = fileKeys.some(key => {
     const file = fileList[key]
@@ -9,5 +10,6 @@ const checkDatasetDescription = (fileList, issues) => {
   if (!hasDatasetDescription) {
     issues.push(new Issue({ code: 57 }))
   }
+  return issues
 }
 module.exports = checkDatasetDescription

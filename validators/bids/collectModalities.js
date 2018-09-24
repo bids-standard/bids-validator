@@ -1,6 +1,7 @@
 const utils = require('../../utils')
 
-const collectModalities = (fileList, summary) => {
+const collectModalities = fileList => {
+  let modalities = []
   const keys = Object.keys(fileList)
   keys.forEach(key => {
     const file = fileList[key]
@@ -13,11 +14,12 @@ const collectModalities = (fileList, summary) => {
     if (utils.type.file.isModality(file.name)) {
       // collect modality summary
       const modality = suffix.slice(0, suffix.indexOf('.'))
-      if (summary.modalities.indexOf(modality) === -1) {
-        summary.modalities.push(modality)
+      if (modalities.indexOf(modality) === -1) {
+        modalities.push(modality)
       }
     }
   })
+  return modalities
 }
 
 module.exports = collectModalities

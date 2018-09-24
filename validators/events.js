@@ -2,21 +2,19 @@
 const utils = require('../utils')
 const Issue = utils.issues.Issue
 
-const validateEvents = function(
-  events,
-  stimuli,
-  headers,
-  jsonContents,
-  issues,
-) {
+const validateEvents = function(events, stimuli, headers, jsonContents) {
+  let issues = []
   // check that all stimuli files present in /stimuli are included in an _events.tsv file
-  checkStimuli(stimuli, issues)
+  const stimuliIssues = checkStimuli(stimuli)
 
   // check the events file for suspiciously long or short durations
-  checkDesignLength(events, headers, jsonContents, issues)
+  const designIssues = checkDesignLength(events, headers, jsonContents)
+
+  return issues.concat(stimuliIssues, designIssues)
 }
 
-const checkStimuli = function(stimuli, issues) {
+const checkStimuli = function(stimuli) {
+  let issues = []
   const stimuliFromEvents = stimuli.events
   const stimuliFromDirectory = stimuli.directory
   if (stimuliFromDirectory) {
@@ -33,10 +31,11 @@ const checkStimuli = function(stimuli, issues) {
       )
     }
   }
-  return
+  return issues
 }
 
-const checkDesignLength = function(events, headers, jsonContents, issues) {
+const checkDesignLength = function(events, headers, jsonContents) {
+  let issues = []
   // get all headers associated with task data
   var taskHeaders = headers.filter(header => {
     const file = header[0]
@@ -109,6 +108,7 @@ const checkDesignLength = function(events, headers, jsonContents, issues) {
       }
     }
   })
+  return issues
 }
 
 module.exports = {
