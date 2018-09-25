@@ -278,8 +278,19 @@ var suiteEEG = describe('utils.type.file.isEEG', function() {
   before(function(done) {
     var goodFilenames = [
       '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.json',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_events.tsv',
       '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_part-01_eeg.edf',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.eeg',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.vmrk',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.vhdr',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.bdf',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.cnt',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.set',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.fdt',
       '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_channels.tsv',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_electrodes.tsv',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_coordsystem.json',
+      '/sub-01/ses-001/eeg/sub-01_ses-001_photo.jpg',
     ]
 
     goodFilenames.forEach(function(path) {

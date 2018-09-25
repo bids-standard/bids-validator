@@ -206,7 +206,7 @@ var suite = describe('BIDS example datasets ', function() {
     )
   })
 
-  it('validates ieeg modalities', function(isdone) {
+  it('validates MRI modalities', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
       'tests/data/BIDS-examples-' + test_version + '/ds001',

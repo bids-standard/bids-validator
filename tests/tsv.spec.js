@@ -217,31 +217,74 @@ describe('TSV', function() {
 
   // channels checks -----------------------------------------------------------------
 
-  var channelsFile = {
+  var channelsFileMEG = {
     name: 'sub-01_ses-meg_task-facerecognition_run-01_channels.tsv',
     relativePath:
       '/sub-01/ses-meg/meg/sub-01_ses-meg_task-facerecognition_run-01_channels.tsv',
   }
 
-  it('should not allow channels.tsv files without name column', function() {
+  it('should not allow MEG channels.tsv files without name column', function() {
     var tsv = 'header-one\ttype\tunits\n' + 'value-one\tvalue-two\tvalue-three'
-    validate.TSV.TSV(channelsFile, tsv, [], function(issues) {
+    validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
   })
 
-  it('should not allow channels.tsv files without type column', function() {
+  it('should not allow MEG channels.tsv files without type column', function() {
     var tsv = 'name\theader-two\tunits\n' + 'value-one\tvalue-two\tvalue-three'
-    validate.TSV.TSV(channelsFile, tsv, [], function(issues) {
+    validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
   })
 
-  it('should allow channels.tsv files with name, type and units columns', function() {
+  it('should not allow MEG channels.tsv files without units column', function() {
+    var tsv = 'name\ttype\theader-three\n' + 'value-one\tvalue-two\tvalue-three'
+    validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 71)
+    })
+  })
+
+  it('should allow MEG channels.tsv files with name, type and units columns', function() {
     var tsv =
       'name\ttype\tunits\theader-four\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four'
-    validate.TSV.TSV(channelsFile, tsv, [], function(issues) {
+    validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  var channelsFileEEG = {
+    name: 'sub-01_ses-001_task-rest_run-01_channels.tsv',
+    relativePath:
+      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_channels.tsv',
+  }
+
+  it('should not allow EEG channels.tsv files without name column', function() {
+    var tsv = 'header-one\ttype\tunits\n' + 'value-one\tvalue-two\tvalue-three'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 71)
+    })
+  })
+
+  it('should not allow EEG channels.tsv files without type column', function() {
+    var tsv = 'name\theader-two\tunits\n' + 'value-one\tvalue-two\tvalue-three'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 71)
+    })
+  })
+
+  it('should not allow EEG channels.tsv files without units column', function() {
+    var tsv = 'name\ttype\theader-three\n' + 'value-one\tvalue-two\tvalue-three'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 71)
+    })
+  })
+
+  it('should allow EEG channels.tsv files with name, type and units columns', function() {
+    var tsv =
+      'name\ttype\tunits\theader-four\n' +
+      'value-one\tvalue-two\tvalue-three\tvalue-four'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
       assert(issues.length === 0)
     })
   })
@@ -252,7 +295,7 @@ describe('TSV', function() {
       '/sub-01/ses-ieeg/ieeg/sub-01_ses-meg_task-facerecognition_run-01_channels.tsv',
   }
 
-  it('should not allow channels.tsv files without sampling_frequency column', function() {
+  it('should not allow iEEG channels.tsv files without sampling_frequency column', function() {
     var tsv =
       'name\ttype\tunits\tcolumn_four\tlow_cutoff\thigh_cutoff\tnotch\treference\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
@@ -261,7 +304,7 @@ describe('TSV', function() {
     })
   })
 
-  it('should not allow channels.tsv files without low_cutoff column', function() {
+  it('should not allow iEEG channels.tsv files without low_cutoff column', function() {
     var tsv =
       'name\ttype\tunits\tsampling_frequency\tcolumn_five\thigh_cutoff\tnotch\treference\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
@@ -270,7 +313,7 @@ describe('TSV', function() {
     })
   })
 
-  it('should not allow channels.tsv files without high_cutoff column', function() {
+  it('should not allow iEEG channels.tsv files without high_cutoff column', function() {
     var tsv =
       'name\ttype\tunits\tsampling_frequency\tlow_cutoff\tcolumn_six\tnotch\treference\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
@@ -279,7 +322,7 @@ describe('TSV', function() {
     })
   })
 
-  it('should not allow channels.tsv files without notch column', function() {
+  it('should not allow iEEG channels.tsv files without notch column', function() {
     var tsv =
       'name\ttype\tunits\tsampling_frequency\tlow_cutoff\thigh_cutoff\tcolumn_seven\treference\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
@@ -288,7 +331,7 @@ describe('TSV', function() {
     })
   })
 
-  it('should not allow channels.tsv files without reference column', function() {
+  it('should not allow iEEG channels.tsv files without reference column', function() {
     var tsv =
       'name\ttype\tunits\tsampling_frequency\tlow_cutoff\thigh_cutoff\tnotch\tcolumn-eight\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
@@ -297,11 +340,63 @@ describe('TSV', function() {
     })
   })
 
-  it('correct columns should pass for ieeg', function() {
+  it('correct columns should pass for iEEG channels.tsv file', function() {
     var tsv =
       'name\ttype\tunits\tsampling_frequency\tlow_cutoff\thigh_cutoff\tnotch\treference\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  // electrodes checks ---------------------------------------------------------
+  var electrodesFileEEG = {
+    name: 'sub-01_ses-001_task-rest_run-01_electrodes.tsv',
+    relativePath:
+      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_electrodes.tsv',
+  }
+
+  it('should not allow EEG electrodes.tsv files without name column', function() {
+    var tsv =
+      'wrongcolumn\tx\ty\tz\ttype\tmaterial\timpedance\n' +
+      'valName\tvalX\tvalY\tvalZ\tvalType\tvalMaterial\tvalImpedance\n'
+    validate.TSV.TSV(electrodesFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 96)
+    })
+  })
+
+  it('should not allow EEG electrodes.tsv files without x column', function() {
+    var tsv =
+      'name\twrongcolumn\ty\tz\ttype\tmaterial\timpedance\n' +
+      'valName\tvalX\tvalY\tvalZ\tvalType\tvalMaterial\tvalImpedance\n'
+    validate.TSV.TSV(electrodesFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 96)
+    })
+  })
+
+  it('should not allow EEG electrodes.tsv files without y column', function() {
+    var tsv =
+      'name\tx\twrongcolumn\tz\ttype\tmaterial\timpedance\n' +
+      'valName\tvalX\tvalY\tvalZ\tvalType\tvalMaterial\tvalImpedance\n'
+    validate.TSV.TSV(electrodesFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 96)
+    })
+  })
+
+  it('should not allow EEG electrodes.tsv files without z column', function() {
+    var tsv =
+      'name\tx\ty\twrongcolumn\ttype\tmaterial\timpedance\n' +
+      'valName\tvalX\tvalY\tvalZ\tvalType\tvalMaterial\tvalImpedance\n'
+    validate.TSV.TSV(electrodesFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 96)
+    })
+  })
+
+  it('correct columns should pass for EEG electrodes file', function() {
+    var tsv =
+      'name\tx\ty\tz\ttype\tmaterial\timpedance\n' +
+      'valName\tvalX\tvalY\tvalZ\tvalType\tvalMaterial\tvalImpedance\n'
+    validate.TSV.TSV(electrodesFileEEG, tsv, [], function(issues) {
       assert(issues.length === 0)
     })
   })
@@ -312,7 +407,7 @@ describe('TSV', function() {
       '/sub-01/ses-ieeg/ieeg/sub-01_ses-ieeg_task-facerecognition_run-01_electrodes.tsv',
   }
 
-  it('should not allow electrodes.tsv files without name column', function() {
+  it('should not allow iEEG electrodes.tsv files without name column', function() {
     var tsv =
       'blah\tx\ty\tz\tsize\ttype\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n'
@@ -321,7 +416,7 @@ describe('TSV', function() {
     })
   })
 
-  it('should not allow electrodes.tsv files without x column', function() {
+  it('should not allow iEEG electrodes.tsv files without x column', function() {
     var tsv =
       'name\tblah\ty\tz\tsize\ttype\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n'
@@ -330,7 +425,7 @@ describe('TSV', function() {
     })
   })
 
-  it('should not allow electrodes.tsv files without y column', function() {
+  it('should not allow iEEG electrodes.tsv files without y column', function() {
     var tsv =
       'name\tx\tblah\tz\tsize\ttype\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n'
@@ -339,7 +434,7 @@ describe('TSV', function() {
     })
   })
 
-  it('should not allow electrodes.tsv files without z column', function() {
+  it('should not allow iEEG electrodes.tsv files without z column', function() {
     var tsv =
       'name\tx\ty\tblah\tsize\ttype\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n'
@@ -348,7 +443,7 @@ describe('TSV', function() {
     })
   })
 
-  it('should not allow electrodes.tsv files without size column', function() {
+  it('should not allow iEEG electrodes.tsv files without size column', function() {
     var tsv =
       'name\tx\ty\tz\tblah\ttype\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n'
@@ -357,7 +452,7 @@ describe('TSV', function() {
     })
   })
 
-  it('correct columns should pass for ieeg electrodes file', function() {
+  it('correct columns should pass for iEEG electrodes file', function() {
     var tsv =
       'name\tx\ty\tz\tsize\ttype\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\n'

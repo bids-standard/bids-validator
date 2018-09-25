@@ -71,6 +71,35 @@ describe('JSON', function() {
     })
   })
 
+  var eeg_file = {
+    name: 'sub-01_run-01_eeg.json',
+    relativePath: '/sub-01_run-01_eeg.json',
+  }
+
+  it('*_eeg.json sidecars should have required key/value pairs', function() {
+    var jsonObj = {
+      TaskName: 'rest',
+      SamplingFrequency: 1000,
+      EEGChannelCount: 1,
+      EOGChannelCount: 2,
+      ECGChannelCount: 3,
+      EMGChannelCount: 4,
+      EEGReference: 'Cz',
+      PowerLineFrequency: 50,
+    }
+    jsonDict[eeg_file.relativePath] = jsonObj
+    validate.JSON(eeg_file, jsonDict, function(issues) {
+      assert(issues.length === 0)
+    })
+
+    var jsonObjInval = jsonObj
+    jsonObjInval['SamplingFrequency'] = ''
+    jsonDict[eeg_file.relativePath] = jsonObjInval
+    validate.JSON(eeg_file, jsonDict, function(issues) {
+      assert(issues && issues[0].code == 55)
+    })
+  })
+
   var ieeg_file = {
     name: 'sub-01_run-01_ieeg.json',
     relativePath: '/sub-01_run-01_ieeg.json',
