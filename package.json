@@ -13,6 +13,8 @@
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./**/*.js",
     "test": "./node_modules/.bin/mocha tests/ tests/**/**.spec.js",
+    "coverage": "./node_modules/.bin/nyc yarn test",
+    "codecov": "./node_modules/.bin/codecov",
     "npmPublish": "publish"
   },
   "bin": {
@@ -43,11 +45,14 @@
   "devDependencies": {
     "adm-zip": "",
     "chai": "",
+    "codecov": "^3.1.0",
     "eslint": "^5.2.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.2",
     "husky": "^1.0.0-rc.13",
+    "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
+    "nyc": "^13.0.1",
     "prettier": "^1.14.2",
     "pretty-quick": "^1.6.0",
     "publish": "^0.6.0",

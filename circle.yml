@@ -19,7 +19,10 @@ jobs:
           command: npm run lint
       - run:
           name: Mocha tests
-          command: npm run test
+          command: npm run coverage
+      - run:
+          name: Upload to codecov
+          command: npm run codecov
       - run:
           name: Smoke tests
           command: bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders && bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders --json
