@@ -170,7 +170,7 @@ const fullTest = (fileList, callback) => {
                   })
                 }
               }
-              if (stimFiles.length) {
+              if (stimFiles && stimFiles.length) {
                 // add unique new events to the stimuli.events array
                 stimuli.events = [...new Set([...stimuli.events, ...stimFiles])]
               }
