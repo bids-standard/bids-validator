@@ -8,7 +8,7 @@ var json = require('./json')
 var modalities = require('./modalities')
 var options = require('./options')
 var type = require('./type')
-const collectSummary = require('./summary').collectSummary
+const collectSummary = require('./summary/collectSummary')
 
 module.exports = {
   array: array,
