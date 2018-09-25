@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const collectDirectoryStatistics = fileList => {
+const collectDirectorySize = fileList => {
   let size = 0
   const keys = Object.keys(fileList)
   keys.forEach(key => {
@@ -28,4 +28,4 @@ const getFileStats = file => {
   return stats
 }
 
-module.exports = collectDirectoryStatistics
+module.exports = collectDirectorySize

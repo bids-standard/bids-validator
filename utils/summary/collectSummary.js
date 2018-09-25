@@ -14,7 +14,7 @@ const collectSummary = (fileList, options) => {
   }
 
   //collect file directory statistics
-  summary.size = files.collectDirectoryStatistics(fileList)
+  summary.size = files.collectDirectorySize(fileList)
 
   // remove ignored files from list:
   Object.keys(fileList).forEach(function(key) {

@@ -8,7 +8,7 @@ const readDir = require('./readDir')
 const potentialLocations = require('./potentialLocations')
 const generateMergedSidecarDict = require('./generateMergedSidecarDict')
 const getBFileContent = require('./getBFileContent')
-const collectDirectoryStatistics = require('./collectDirectoryStatistics')
+const collectDirectorySize = require('./collectDirectorySize')
 const illegalCharacterTest = require('./illegalCharacterTest')
 
 // public API ---------------------------------------------------------------------
@@ -22,7 +22,7 @@ var fileUtils = {
   generateMergedSidecarDict: generateMergedSidecarDict,
   potentialLocations: potentialLocations,
   getBFileContent: getBFileContent,
-  collectDirectoryStatistics: collectDirectoryStatistics,
+  collectDirectorySize: collectDirectorySize,
   illegalCharacterTest: illegalCharacterTest,
 }
 
