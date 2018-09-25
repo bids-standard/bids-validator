@@ -386,7 +386,7 @@ module.exports = {
       "All TSV files must use Line Feed '\\n' characters to denote new lines. This files uses Carriage Return '\\r'.",
   },
   71: {
-    key: 'MISSING_TSV_COLUMN_MEG',
+    key: 'MISSING_TSV_COLUMN_CHANNELS',
     severity: 'error',
     reason:
       "The column names of the channels file must begin with ['name', 'type', 'units']",
@@ -526,5 +526,11 @@ module.exports = {
     key: 'T1W_FILE_WITH_TOO_MANY_DIMENSIONS',
     severity: 'error',
     reason: '_T1w.nii[.gz] files must have exactly three dimensions. ',
+  },
+  96: {
+    key: 'MISSING_TSV_COLUMN_EEG_ELECTRODES',
+    severity: 'error',
+    reason:
+      "The column names of the electrodes file must begin with ['name', 'x', 'y', 'z']",
   },
 }
