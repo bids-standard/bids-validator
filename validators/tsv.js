@@ -226,6 +226,15 @@ var TSV = function TSV(file, contents, fileList, callback) {
   }
 
   if (
+    file.relativePath.includes('/eeg/') &&
+    file.name.endsWith('_channels.tsv')
+  ) {
+    checkheader('name', 0, file, 71)
+    checkheader('type', 1, file, 71)
+    checkheader('units', 2, file, 71)
+  }
+
+  if (
     file.relativePath.includes('/ieeg/') &&
     file.name.endsWith('_channels.tsv')
   ) {
@@ -237,6 +246,17 @@ var TSV = function TSV(file, contents, fileList, callback) {
     checkheader('high_cutoff', 5, file, 72)
     checkheader('notch', 6, file, 72)
     checkheader('reference', 7, file, 72)
+  }
+
+  // electrodes.tsv
+  if (
+    file.relativePath.includes('/eeg/') &&
+    file.name.endsWith('_electrodes.tsv')
+  ) {
+    checkheader('name', 0, file, 96)
+    checkheader('x', 1, file, 96)
+    checkheader('y', 2, file, 96)
+    checkheader('z', 3, file, 96)
   }
 
   if (
