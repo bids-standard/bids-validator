@@ -2,7 +2,7 @@ const Issue = require('../../utils').issues.Issue
 
 const phasediffWithoutMagnitude = files => {
   // check to see if each phasediff is associated with magnitude
-  let issues = []
+  const issues = []
   const niftiNames = files.map(nifti => nifti.name)
   const phaseDiffNiftis = niftiNames.filter(
     nifti => nifti.indexOf('phasediff') > -1,

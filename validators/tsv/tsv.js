@@ -12,8 +12,8 @@ const checkAge89 = require('./checkAge89')
  * specification.
  */
 const TSV = (file, contents, fileList, callback) => {
-  var issues = []
-  var stimPaths = []
+  const issues = []
+  const stimPaths = []
   if (contents.includes('\r') && !contents.includes('\n')) {
     issues.push(
       new Issue({
@@ -26,17 +26,17 @@ const TSV = (file, contents, fileList, callback) => {
     return
   }
 
-  var rows = contents.split('\n')
-  var headers = rows[0].split('\t')
+  const rows = contents.split('\n')
+  const headers = rows[0].split('\t')
 
   // generic checks -----------------------------------------------------------
 
-  var columnMismatch = false
-  var emptyCells = false
-  var NACells = false
+  let columnMismatch = false
+  let emptyCells = false
+  let NACells = false
   // iterate rows
-  for (var i = 0; i < rows.length; i++) {
-    var row = rows[i]
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i]
     if (columnMismatch && emptyCells && NACells) {
       break
     }
@@ -46,7 +46,7 @@ const TSV = (file, contents, fileList, callback) => {
       continue
     }
 
-    var values = row.split('\t')
+    const values = row.split('\t')
 
     // check for different length rows
     if (values.length !== headers.length && !columnMismatch) {
@@ -62,8 +62,8 @@ const TSV = (file, contents, fileList, callback) => {
     }
 
     // iterate values
-    for (var j = 0; j < values.length; j++) {
-      var value = values[j]
+    for (let j = 0; j < values.length; j++) {
+      const value = values[j]
       if (columnMismatch && emptyCells && NACells) {
         break
       }
@@ -103,7 +103,7 @@ const TSV = (file, contents, fileList, callback) => {
   }
 
   // specific file checks -----------------------------------------------------
-  var checkheader = function checkheader(headername, idx, file, code) {
+  const checkheader = function checkheader(headername, idx, file, code) {
     if (headers[idx] !== headername) {
       issues.push(
         new Issue({
@@ -141,17 +141,17 @@ const TSV = (file, contents, fileList, callback) => {
     }
 
     // create full dataset path list
-    var pathList = []
-    for (var f in fileList) {
+    const pathList = []
+    for (let f in fileList) {
       pathList.push(fileList[f].relativePath)
     }
 
     // check for stimuli file
-    var stimFiles = []
+    const stimFiles = []
     if (headers.indexOf('stim_file') > -1) {
-      for (var k = 0; k < rows.length; k++) {
-        var stimFile = rows[k].split('\t')[headers.indexOf('stim_file')]
-        var stimPath = '/stimuli/' + stimFile
+      for (let k = 0; k < rows.length; k++) {
+        const stimFile = rows[k].split('\t')[headers.indexOf('stim_file')]
+        const stimPath = '/stimuli/' + stimFile
         if (
           stimFile &&
           stimFile !== 'n/a' &&
@@ -181,12 +181,12 @@ const TSV = (file, contents, fileList, callback) => {
   }
 
   // participants.tsv
-  var participants = null
+  let participants = null
   if (
     file.name === 'participants.tsv' ||
     file.relativePath.includes('phenotype/')
   ) {
-    var participantIdColumn = headers.indexOf('participant_id')
+    const participantIdColumn = headers.indexOf('participant_id')
     if (participantIdColumn === -1) {
       issues.push(
         new Issue({
@@ -198,8 +198,8 @@ const TSV = (file, contents, fileList, callback) => {
       )
     } else {
       participants = []
-      for (var l = 1; l < rows.length; l++) {
-        row = rows[l].split('\t')
+      for (let l = 1; l < rows.length; l++) {
+        const row = rows[l].split('\t')
         // skip empty rows
         if (!row || /^\s*$/.test(row)) {
           continue

@@ -1,7 +1,7 @@
 const type = require('../type')
 
 const collectSubjects = (fileList, options) => {
-  let subjects = []
+  const subjects = []
   const fileKeys = Object.keys(fileList)
   fileKeys.forEach(key => {
     const file = fileList[key]

@@ -1,8 +1,8 @@
-var utils = require('../../utils')
-var Ajv = require('ajv')
-var ajv = new Ajv({ allErrors: true })
+const utils = require('../../utils')
+const Ajv = require('ajv')
+const ajv = new Ajv({ allErrors: true })
 ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'))
-var Issue = utils.issues.Issue
+const Issue = utils.issues.Issue
 
 /**
  * JSON
@@ -15,9 +15,9 @@ var Issue = utils.issues.Issue
 module.exports = function(file, jsonContentsDict, callback) {
   // primary flow --------------------------------------------------------------------
 
-  var issues = []
-  var potentialSidecars = utils.files.potentialLocations(file.relativePath)
-  var mergedDictionary = utils.files.generateMergedSidecarDict(
+  let issues = []
+  const potentialSidecars = utils.files.potentialLocations(file.relativePath)
+  const mergedDictionary = utils.files.generateMergedSidecarDict(
     potentialSidecars,
     jsonContentsDict,
   )
@@ -32,7 +32,7 @@ module.exports = function(file, jsonContentsDict, callback) {
 
 function checkUnits(file, sidecar) {
   let issues = []
-  let schema = selectSchema(file)
+  const schema = selectSchema(file)
   issues = issues.concat(validateSchema(file, sidecar, schema))
 
   issues = issues.concat(
@@ -56,7 +56,7 @@ function checkUnits(file, sidecar) {
 }
 
 const compareSidecarProperties = (file, sidecar) => {
-  let issues = []
+  const issues = []
 
   // check that EffectiveEchoSpacing < TotalReadoutTime
   if (
@@ -108,10 +108,10 @@ const selectSchema = file => {
 }
 
 const validateSchema = (file, sidecar, schema) => {
-  let issues = []
+  const issues = []
   if (schema) {
-    var validate = ajv.compile(schema)
-    var valid = validate(sidecar)
+    const validate = ajv.compile(schema)
+    const valid = validate(sidecar)
     if (!valid) {
       validate.errors.map(error =>
         issues.push(
@@ -128,7 +128,7 @@ const validateSchema = (file, sidecar, schema) => {
 }
 
 const checkSidecarUnits = (file, sidecar, fieldObj, errCode) => {
-  let issues = []
+  const issues = []
   const field = fieldObj.field
   const min = fieldObj.min
   if (sidecar.hasOwnProperty(field) && sidecar[field] > min) {

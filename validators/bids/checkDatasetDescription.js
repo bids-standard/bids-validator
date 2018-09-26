@@ -1,7 +1,7 @@
 const Issue = require('../../utils').issues.Issue
 
 const checkDatasetDescription = fileList => {
-  let issues = []
+  const issues = []
   const fileKeys = Object.keys(fileList)
   const hasDatasetDescription = fileKeys.some(key => {
     const file = fileList[key]

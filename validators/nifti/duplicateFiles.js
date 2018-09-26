@@ -2,7 +2,7 @@ const Issue = require('../../utils').issues.Issue
 
 const duplicateNiftis = files => {
   // check if same file with .nii and .nii.gz extensions is present
-  let issues = []
+  const issues = []
   const niftiCounts = files
     .map(function(val) {
       return { count: 1, val: val.name.split('.')[0] }

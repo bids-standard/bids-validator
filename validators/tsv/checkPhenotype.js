@@ -2,7 +2,7 @@ const utils = require('../../utils')
 const Issue = utils.issues.Issue
 
 const checkPhenotype = (phenotypeParticipants, summary) => {
-  let issues = []
+  const issues = []
   for (let j = 0; j < phenotypeParticipants.length; j++) {
     const fileParticpants = phenotypeParticipants[j]
     if (

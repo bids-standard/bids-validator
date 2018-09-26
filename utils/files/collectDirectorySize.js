@@ -4,7 +4,7 @@ const collectDirectorySize = fileList => {
   let size = 0
   const keys = Object.keys(fileList)
   keys.forEach(key => {
-    let file = fileList[key]
+    const file = fileList[key]
     // collect file stats
     if (typeof window !== 'undefined' && file.size) {
       size += file.size

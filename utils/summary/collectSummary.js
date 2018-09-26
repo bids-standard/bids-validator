@@ -4,7 +4,7 @@ const collectSessions = require('./collectSessions')
 const collectSubjects = require('./collectSubjects')
 
 const collectSummary = (fileList, options) => {
-  let summary = {
+  const summary = {
     sessions: [],
     subjects: [],
     tasks: [],

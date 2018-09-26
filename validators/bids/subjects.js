@@ -2,7 +2,7 @@ const utils = require('../../utils')
 const Issue = utils.issues.Issue
 
 const participantsInSubjects = (participants, subjects) => {
-  let issues = []
+  const issues = []
   if (participants) {
     const participantsFromFile = participants.list.sort()
     const participantsFromFolders = subjects.sort()
@@ -26,7 +26,7 @@ const participantsInSubjects = (participants, subjects) => {
 }
 
 const atLeastOneSubject = fileList => {
-  let issues = []
+  const issues = []
   const fileKeys = Object.keys(fileList)
   const hasSubjectDir = fileKeys.some(key => {
     const file = fileList[key]

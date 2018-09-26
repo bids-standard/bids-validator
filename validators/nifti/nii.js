@@ -19,7 +19,7 @@ module.exports = function NIFTI(
   callback,
 ) {
   const path = file.relativePath
-  let issues = []
+  const issues = []
   const potentialSidecars = utils.files.potentialLocations(
     path.replace('.gz', '').replace('.nii', '.json'),
   )
@@ -124,10 +124,11 @@ module.exports = function NIFTI(
     )
   }
 
+  let repetitionTime, repetitionUnit
   if (header) {
     // Define repetition time from header and coerce to seconds.
-    var repetitionTime = header.pixdim[4]
-    var repetitionUnit =
+    repetitionTime = header.pixdim[4]
+    repetitionUnit =
       header.xyzt_units && header.xyzt_units[3] ? header.xyzt_units[3] : null
     if (repetitionUnit === 'ms') {
       repetitionTime = repetitionTime / 1000
@@ -429,7 +430,7 @@ module.exports = function NIFTI(
           ? [mergedDictionary['IntendedFor']]
           : mergedDictionary['IntendedFor']
 
-      for (var key = 0; key < intendedFor.length; key++) {
+      for (let key = 0; key < intendedFor.length; key++) {
         const intendedForFile = intendedFor[key]
         checkIfIntendedExists(intendedForFile, fileList, issues, file)
       }
@@ -453,8 +454,8 @@ function missingEvents(path, potentialEvents, events) {
   }
 
   // check for event file
-  for (var j = 0; j < potentialEvents.length; j++) {
-    var event = potentialEvents[j]
+  for (let j = 0; j < potentialEvents.length; j++) {
+    const event = potentialEvents[j]
     if (events.find(e => e.path == event)) {
       hasEvent = true
     }
@@ -469,7 +470,7 @@ function missingEvents(path, potentialEvents, events) {
  */
 
 function sliceTimingGreaterThanRepetitionTime(array, repetitionTime) {
-  let invalid_timesArray = []
+  const invalid_timesArray = []
   for (let t = 0; t < array.length; t++) {
     if (array[t] > repetitionTime) {
       invalid_timesArray.push(array[t])

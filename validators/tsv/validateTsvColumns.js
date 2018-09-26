@@ -49,7 +49,7 @@ const getCustomColumns = function(headers, type) {
  * @param {Object} jsonContentsDict
  */
 const validateTsvColumns = function(tsvs, jsonContentsDict) {
-  let tsvIssues = []
+  const tsvIssues = []
   tsvs.map(tsv => {
     const customColumns = getCustomColumns(
       tsv.contents.split('\n')[0].split('\t'),
@@ -66,7 +66,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict) {
       )
       const keys = Object.keys(mergedDict)
       // Gather undefined columns for the file
-      let undefinedCols = customColumns.filter(col => !keys.includes(col))
+      const undefinedCols = customColumns.filter(col => !keys.includes(col))
       // Create an issue for all undefined columns in this file
       undefinedCols.length &&
         tsvIssues.push(

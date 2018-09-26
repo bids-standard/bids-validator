@@ -1,7 +1,7 @@
 const type = require('../type')
 
 const collectModalities = fileList => {
-  let modalities = []
+  const modalities = []
   const keys = Object.keys(fileList)
   keys.forEach(key => {
     const file = fileList[key]

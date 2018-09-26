@@ -1,7 +1,7 @@
 const utils = require('../../utils')
 
 const groupFileTypes = (fileList, options) => {
-  let files = {
+  const files = {
     json: [],
     nifti: [],
     stimuli: [],
@@ -20,8 +20,8 @@ const groupFileTypes = (fileList, options) => {
 const sortFiles = (fileList, options, files) => {
   const keys = Object.keys(fileList)
   keys.forEach(key => {
-    let file = fileList[key]
-    let filename = file.name
+    const file = fileList[key]
+    const filename = file.name
     if (utils.type.file.isStimuliData(file.relativePath)) {
       // collect stimuli
       files.stimuli.push(file)
@@ -49,14 +49,6 @@ const sortFiles = (fileList, options, files) => {
       // collect ephys
       files.ephys.push(file)
     }
-  })
-}
-
-const reportFileTypeCounts = files => {
-  const types = Object.keys(files)
-  types.forEach(type => {
-    const count = files[type].length
-    console.log(`FILE TYPE: ${type} -- COUNT: ${count}`)
   })
 }
 

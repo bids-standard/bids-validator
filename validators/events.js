@@ -3,7 +3,7 @@ const utils = require('../utils')
 const Issue = utils.issues.Issue
 
 const validateEvents = function(events, stimuli, headers, jsonContents) {
-  let issues = []
+  const issues = []
   // check that all stimuli files present in /stimuli are included in an _events.tsv file
   const stimuliIssues = checkStimuli(stimuli)
 
@@ -14,7 +14,7 @@ const validateEvents = function(events, stimuli, headers, jsonContents) {
 }
 
 const checkStimuli = function(stimuli) {
-  let issues = []
+  const issues = []
   const stimuliFromEvents = stimuli.events
   const stimuliFromDirectory = stimuli.directory
   if (stimuliFromDirectory) {
@@ -35,9 +35,9 @@ const checkStimuli = function(stimuli) {
 }
 
 const checkDesignLength = function(events, headers, jsonContents) {
-  let issues = []
+  const issues = []
   // get all headers associated with task data
-  var taskHeaders = headers.filter(header => {
+  const taskHeaders = headers.filter(header => {
     const file = header[0]
     return file.relativePath.includes('_task-')
   })

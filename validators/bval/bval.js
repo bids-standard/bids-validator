@@ -1,5 +1,5 @@
-var Issue = require('../../utils').issues.Issue
-var type = require('../../utils').type
+const Issue = require('../../utils').issues.Issue
+const type = require('../../utils').type
 
 /**
  * bval
@@ -28,10 +28,10 @@ module.exports = function bval(file, contents, callback) {
 }
 
 function checkType(contents, file) {
-  let issues = []
+  const issues = []
   // throw error if contents are not string
   if (!type.checkType(contents, 'string')) {
-    let evidence =
+    const evidence =
       'The contents of this .bval file have type ' +
       typeof contents +
       ' but should be a string.'
@@ -47,7 +47,7 @@ function checkType(contents, file) {
 }
 
 function checkSeparatorAndValueType(contents, file) {
-  let issues = []
+  const issues = []
   const row = contents.replace(/^\s+|\s+$/g, '').split(' ')
   let invalidValue = false
   for (let j = 0; j < row.length; j++) {
@@ -68,7 +68,7 @@ function checkSeparatorAndValueType(contents, file) {
 }
 
 function checkNumberOfRows(contents, file) {
-  let issues = []
+  const issues = []
   const numberOfRows = contents.replace(/^\s+|\s+$/g, '').split('\n').length
   if (numberOfRows !== 1) {
     issues.push(

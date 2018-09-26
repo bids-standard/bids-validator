@@ -15,10 +15,10 @@ const illegalchar_regex_list = [
 ]
 
 const illegalCharacterTest = fileList => {
-  let issues = []
+  const issues = []
   const fileKeys = Object.keys(fileList)
   fileKeys.forEach(key => {
-    let file = fileList[key]
+    const file = fileList[key]
     const completename = file.relativePath
     if (
       !(

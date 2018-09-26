@@ -1,7 +1,7 @@
 const type = require('../type')
 
 const collectSessions = (fileList, options) => {
-  let sessions = []
+  const sessions = []
   Object.keys(fileList).forEach(key => {
     const file = fileList[key]
     if (
