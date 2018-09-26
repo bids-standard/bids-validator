@@ -122,8 +122,9 @@ function getFiles(dir, files_, rootpath, ig) {
  * Leverage fs.isDirectory by following Symbolic Links
  */
 function isDirectory(path) {
-  var isDir = fs.lstatSync(path).isDirectory()
-  if (fs.lstatSync(path).isSymbolicLink()) {
+  var pathStat = fs.lstatSync(path)
+  var isDir = pathStat.isDirectory()
+  if (pathStat.isSymbolicLink()) {
     var targetPath = fs.realpathSync(path)
     isDir = fs.lstatSync(targetPath).isDirectory()
   }
