@@ -1,4 +1,4 @@
-![](https://circleci.com/gh/INCF/bids-validator.svg?style=shield&circle-token=:circle-token)
+![](https://circleci.com/gh/bids-standard/bids-validator.svg?style=shield&circle-token=:circle-token)
 
 # BIDS-Validator
 
@@ -6,8 +6,8 @@
 
 1. Web version:
    1. Open [Google Chrome](https://www.google.com/chrome/) or [Mozilla Firefox](https://mozilla.org/firefox) (currently the only supported browsers)
-   1. Go to http://incf.github.io/bids-validator/ and select a folder with your BIDs dataset.
-If the validator seems to be working longer than couple of minutes please open [developer tools ](https://developer.chrome.com/devtools) and report the error at [https://github.com/INCF/bids-validator/issues](https://github.com/INCF/bids-validator/issues).
+   1. Go to http://bids-standard.github.io/bids-validator/ and select a folder with your BIDs dataset.
+If the validator seems to be working longer than couple of minutes please open [developer tools ](https://developer.chrome.com/devtools) and report the error at [https://github.com/bids-standard/bids-validator/issues](https://github.com/bids-standard/bids-validator/issues).
 1. Command line version:
    1. Install [Node.js](https://nodejs.org) (at least version 8.0)
    1. From a terminal run `npm install -g bids-validator`
@@ -74,7 +74,7 @@ The basic configuration format is outlined below. All configuration is optional.
 
 Note that adding two stars `**` in path makes validator recognize all files and sub-dir to be ignored.
 
-`ignore`, `warn`, and `error` take lists of issue codes or issue keys and change the severity of those issues so they are either ignored or reported as warnings or errors. You can find a list of all available issues at [utils/issues/list](https://github.com/INCF/bids-validator/tree/master/utils/issues/list.js).
+`ignore`, `warn`, and `error` take lists of issue codes or issue keys and change the severity of those issues so they are either ignored or reported as warnings or errors. You can find a list of all available issues at [utils/issues/list](https://github.com/bids-standard/bids-validator/tree/master/utils/issues/list.js).
 
 Some issues may be ignored by default, but can be elevated to warnings or errors. These provide a way to check for common things that are more specific than BIDS compatibility. An example is a check for the presence of a T1w modality. The following would raise an error if no T1W image was found in a dataset.
 
