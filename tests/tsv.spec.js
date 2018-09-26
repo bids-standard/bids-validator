@@ -295,18 +295,9 @@ describe('TSV', function() {
       '/sub-01/ses-ieeg/ieeg/sub-01_ses-meg_task-facerecognition_run-01_channels.tsv',
   }
 
-  it('should not allow iEEG channels.tsv files without sampling_frequency column', function() {
-    var tsv =
-      'name\ttype\tunits\tcolumn_four\tlow_cutoff\thigh_cutoff\tnotch\treference\n' +
-      'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
-    validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
-      assert(issues.length === 1 && issues[0].code === 72)
-    })
-  })
-
   it('should not allow iEEG channels.tsv files without low_cutoff column', function() {
     var tsv =
-      'name\ttype\tunits\tsampling_frequency\tcolumn_five\thigh_cutoff\tnotch\treference\n' +
+      'name\ttype\tunits\textra-column\thigh_cutoff\treference\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 72)
@@ -315,16 +306,7 @@ describe('TSV', function() {
 
   it('should not allow iEEG channels.tsv files without high_cutoff column', function() {
     var tsv =
-      'name\ttype\tunits\tsampling_frequency\tlow_cutoff\tcolumn_six\tnotch\treference\n' +
-      'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
-    validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
-      assert(issues.length === 1 && issues[0].code === 72)
-    })
-  })
-
-  it('should not allow iEEG channels.tsv files without notch column', function() {
-    var tsv =
-      'name\ttype\tunits\tsampling_frequency\tlow_cutoff\thigh_cutoff\tcolumn_seven\treference\n' +
+      'name\ttype\tunits\tlow_cutoff\textra-column\treference\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 72)
@@ -333,7 +315,7 @@ describe('TSV', function() {
 
   it('should not allow iEEG channels.tsv files without reference column', function() {
     var tsv =
-      'name\ttype\tunits\tsampling_frequency\tlow_cutoff\thigh_cutoff\tnotch\tcolumn-eight\n' +
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\textra-column\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 72)
@@ -342,8 +324,8 @@ describe('TSV', function() {
 
   it('correct columns should pass for iEEG channels.tsv file', function() {
     var tsv =
-      'name\ttype\tunits\tsampling_frequency\tlow_cutoff\thigh_cutoff\tnotch\treference\n' +
-      'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\treference\n' +
+      'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\t'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 0)
     })
