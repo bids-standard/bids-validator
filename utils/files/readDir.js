@@ -108,13 +108,27 @@ function getFiles(dir, files_, rootpath, ig) {
       fileObj.ignore = true
     }
 
-    if (fs.lstatSync(fullPath).isDirectory()) {
+    if (isDirectory(fullPath)) {
       getFiles(fullPath, files_, rootpath, ig)
     } else {
       files_.push(fileObj)
     }
   })
+
   return files_
+}
+
+/**
+ * Leverage fs.isDirectory by following Symbolic Links
+ */
+function isDirectory(path) {
+  var pathStat = fs.lstatSync(path)
+  var isDir = pathStat.isDirectory()
+  if (pathStat.isSymbolicLink()) {
+    var targetPath = fs.realpathSync(path)
+    isDir = fs.lstatSync(targetPath).isDirectory()
+  }
+  return isDir
 }
 
 function getBIDSIgnore(dir, callback) {
