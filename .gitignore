@@ -1,6 +1,6 @@
 node_modules/
 .DS_Store
-tests/data/BIDS-examples-*
+tests/data/bids-examples-*
 tests/data/examples.zip
 npm-debug.log
 .idea/
