@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/INCF/bids-validator.git"
+    "url": "https://github.com/bids-standard/bids-validator.git"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -23,9 +23,9 @@
   "author": "Squishymedia",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/INCF/bids-validator/issues"
+    "url": "https://github.com/bids-standard/bids-validator/issues"
   },
-  "homepage": "https://github.com/INCF/bids-validator",
+  "homepage": "https://github.com/bids-standard/bids-validator",
   "dependencies": {
     "ajv": "^6.5.2",
     "async": "^2.6.1",
