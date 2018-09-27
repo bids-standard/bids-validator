@@ -46,7 +46,9 @@ var suite = describe('BIDS example datasets ', function() {
       console.log('downloading test data')
       var response = request(
         'GET',
-        'http://github.com/bids-examples/bids-examples/archive/' + test_version + '.zip',
+        'http://github.com/bids-standard/bids-examples/archive/' +
+          test_version +
+          '.zip',
       )
       if (!fs.existsSync('tests/data')) {
         fs.mkdirSync('tests/data')
