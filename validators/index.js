@@ -1,20 +1,20 @@
 // dependencies ------------------------------------------------------
 
-var TSV = require('./tsv')
-var JSON = require('./json')
-var NIFTI = require('./nii')
-var BIDS = require('./bids').start
-var Events = require('./events')
-var bval = require('./bval')
-var bvec = require('./bvec')
-var utils = require('../utils')
+const tsv = require('./tsv')
+const JSON = require('./json').json
+const NIFTI = require('./nifti').nifti
+const BIDS = require('./bids').start
+const Events = require('./events')
+const bval = require('./bval').bval
+const bvec = require('./bvec').bvec
+const utils = require('../utils')
 
 // public api --------------------------------------------------------
 
-var validate = {
+const validate = {
   BIDS: BIDS,
   JSON: JSON,
-  TSV: TSV,
+  TSV: tsv,
   NIFTI: NIFTI,
   Events: Events,
   bval: bval,

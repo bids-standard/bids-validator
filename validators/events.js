@@ -1,23 +1,20 @@
 /* eslint-disable no-unused-vars */
-const async = require('async')
 const utils = require('../utils')
 const Issue = utils.issues.Issue
 
-const validateEvents = function(
-  events,
-  stimuli,
-  headers,
-  jsonContents,
-  issues,
-) {
+const validateEvents = function(events, stimuli, headers, jsonContents) {
+  const issues = []
   // check that all stimuli files present in /stimuli are included in an _events.tsv file
-  checkStimuli(stimuli, issues)
+  const stimuliIssues = checkStimuli(stimuli)
 
   // check the events file for suspiciously long or short durations
-  checkDesignLength(events, headers, jsonContents, issues)
+  const designIssues = checkDesignLength(events, headers, jsonContents)
+
+  return issues.concat(stimuliIssues, designIssues)
 }
 
-const checkStimuli = function(stimuli, issues) {
+const checkStimuli = function(stimuli) {
+  const issues = []
   const stimuliFromEvents = stimuli.events
   const stimuliFromDirectory = stimuli.directory
   if (stimuliFromDirectory) {
@@ -34,18 +31,19 @@ const checkStimuli = function(stimuli, issues) {
       )
     }
   }
-  return
+  return issues
 }
 
-const checkDesignLength = function(events, headers, jsonContents, issues) {
+const checkDesignLength = function(events, headers, jsonContents) {
+  const issues = []
   // get all headers associated with task data
-  var taskHeaders = headers.filter(header => {
+  const taskHeaders = headers.filter(header => {
     const file = header[0]
     return file.relativePath.includes('_task-')
   })
 
   // loop through headers with files that are tasks
-  async.eachOfLimit(taskHeaders, 200, taskHeader => {
+  taskHeaders.forEach(taskHeader => {
     // extract the fourth element of 'dim' field of header - this is the
     // number of volumes that were obtained during scan (numVols)
     const file = taskHeader[0]
@@ -110,6 +108,7 @@ const checkDesignLength = function(events, headers, jsonContents, issues) {
       }
     }
   })
+  return issues
 }
 
 module.exports = {

@@ -1,5 +1,5 @@
-var utils = require('../utils')
-var Issue = utils.issues.Issue
+const utils = require('../../utils')
+const Issue = utils.issues.Issue
 
 /**
  * NIFTI
@@ -18,38 +18,38 @@ module.exports = function NIFTI(
   events,
   callback,
 ) {
-  var path = file.relativePath
-  var issues = []
-  var potentialSidecars = utils.files.potentialLocations(
+  const path = file.relativePath
+  const issues = []
+  const potentialSidecars = utils.files.potentialLocations(
     path.replace('.gz', '').replace('.nii', '.json'),
   )
-  var potentialEvents = utils.files.potentialLocations(
+  const potentialEvents = utils.files.potentialLocations(
     path.replace('.gz', '').replace('bold.nii', 'events.tsv'),
   )
-  var mergedDictionary = utils.files.generateMergedSidecarDict(
+  const mergedDictionary = utils.files.generateMergedSidecarDict(
     potentialSidecars,
     jsonContentsDict,
   )
-  var sidecarMessage =
+  const sidecarMessage =
     'It can be included one of the following locations: ' +
     potentialSidecars.join(', ')
-  var eventsMessage =
+  const eventsMessage =
     'It can be included one of the following locations: ' +
     potentialEvents.join(', ')
 
   if (path.includes('_dwi.nii')) {
-    var potentialBvecs = utils.files.potentialLocations(
+    const potentialBvecs = utils.files.potentialLocations(
       path.replace('.gz', '').replace('.nii', '.bvec'),
     )
-    var potentialBvals = utils.files.potentialLocations(
+    const potentialBvals = utils.files.potentialLocations(
       path.replace('.gz', '').replace('.nii', '.bval'),
     )
-    var bvec = utils.files.getBFileContent(potentialBvecs, bContentsDict)
-    var bval = utils.files.getBFileContent(potentialBvals, bContentsDict)
-    var bvecMessage =
+    const bvec = utils.files.getBFileContent(potentialBvecs, bContentsDict)
+    const bval = utils.files.getBFileContent(potentialBvals, bContentsDict)
+    const bvecMessage =
       'It can be included in one of the following locations: ' +
       potentialBvecs.join(', ')
-    var bvalMessage =
+    const bvalMessage =
       'It can be included in one of the following locations: ' +
       potentialBvals.join(', ')
 
@@ -79,7 +79,7 @@ module.exports = function NIFTI(
         bvec length ==3 is checked at bvec.spec.js hence following if loop doesnot have else block
         */
       if (bvec.replace(/^\s+|\s+$/g, '').split('\n').length === 3) {
-        var volumes = [
+        const volumes = [
           bvec
             .split('\n')[0]
             .replace(/^\s+|\s+$/g, '')
@@ -124,10 +124,11 @@ module.exports = function NIFTI(
     )
   }
 
+  let repetitionTime, repetitionUnit
   if (header) {
     // Define repetition time from header and coerce to seconds.
-    var repetitionTime = header.pixdim[4]
-    var repetitionUnit =
+    repetitionTime = header.pixdim[4]
+    repetitionUnit =
       header.xyzt_units && header.xyzt_units[3] ? header.xyzt_units[3] : null
     if (repetitionUnit === 'ms') {
       repetitionTime = repetitionTime / 1000
@@ -264,8 +265,8 @@ module.exports = function NIFTI(
             }),
           )
         } else {
-          var niftiTR = Number(repetitionTime.toFixed(3))
-          var jsonTR = Number(mergedDictionary.RepetitionTime.toFixed(3))
+          const niftiTR = Number(repetitionTime.toFixed(3))
+          const jsonTR = Number(mergedDictionary.RepetitionTime.toFixed(3))
           if (niftiTR !== jsonTR) {
             issues.push(
               new Issue({
@@ -302,8 +303,8 @@ module.exports = function NIFTI(
         mergedDictionary.hasOwnProperty('SliceTiming') &&
         mergedDictionary['SliceTiming'].constructor === Array
       ) {
-        var sliceTimingArray = mergedDictionary['SliceTiming']
-        var kDim = header.dim[3]
+        const sliceTimingArray = mergedDictionary['SliceTiming']
+        const kDim = header.dim[3]
         if (sliceTimingArray.length !== kDim) {
           issues.push(
             new Issue({
@@ -325,8 +326,8 @@ module.exports = function NIFTI(
         mergedDictionary.hasOwnProperty('SliceTiming') &&
         mergedDictionary['SliceTiming'].constructor === Array
       ) {
-        var SliceTimingArray = mergedDictionary['SliceTiming']
-        var valuesGreaterThanRepetitionTime = sliceTimingGreaterThanRepetitionTime(
+        const SliceTimingArray = mergedDictionary['SliceTiming']
+        const valuesGreaterThanRepetitionTime = sliceTimingGreaterThanRepetitionTime(
           SliceTimingArray,
           mergedDictionary['RepetitionTime'],
         )
@@ -424,38 +425,37 @@ module.exports = function NIFTI(
       utils.type.file.isFieldMapMainNii(path) &&
       mergedDictionary.hasOwnProperty('IntendedFor')
     ) {
-      var intendedFor =
+      const intendedFor =
         typeof mergedDictionary['IntendedFor'] == 'string'
           ? [mergedDictionary['IntendedFor']]
           : mergedDictionary['IntendedFor']
 
-      for (var key = 0; key < intendedFor.length; key++) {
-        var intendedForFile = intendedFor[key]
+      for (let key = 0; key < intendedFor.length; key++) {
+        const intendedForFile = intendedFor[key]
         checkIfIntendedExists(intendedForFile, fileList, issues, file)
       }
     }
   }
-
   callback(issues)
 }
 
 function missingEvents(path, potentialEvents, events) {
-  var hasEvent = false,
+  let hasEvent = false,
     isRest = false
 
   // check if is a rest file
-  var pathParts = path.split('/')
-  var filenameParts = pathParts[pathParts.length - 1].split('_')
-  for (var i = 0; i < filenameParts.length; i++) {
-    var part = filenameParts[i]
+  const pathParts = path.split('/')
+  const filenameParts = pathParts[pathParts.length - 1].split('_')
+  for (let i = 0; i < filenameParts.length; i++) {
+    const part = filenameParts[i]
     if (part.toLowerCase().indexOf('task') === 0 && part.indexOf('rest') > -1) {
       isRest = true
     }
   }
 
   // check for event file
-  for (var j = 0; j < potentialEvents.length; j++) {
-    var event = potentialEvents[j]
+  for (let j = 0; j < potentialEvents.length; j++) {
+    const event = potentialEvents[j]
     if (events.find(e => e.path == event)) {
       hasEvent = true
     }
@@ -470,8 +470,8 @@ function missingEvents(path, potentialEvents, events) {
  */
 
 function sliceTimingGreaterThanRepetitionTime(array, repetitionTime) {
-  var invalid_timesArray = []
-  for (var t = 0; t < array.length; t++) {
+  const invalid_timesArray = []
+  for (let t = 0; t < array.length; t++) {
     if (array[t] > repetitionTime) {
       invalid_timesArray.push(array[t])
     }
@@ -480,12 +480,12 @@ function sliceTimingGreaterThanRepetitionTime(array, repetitionTime) {
 }
 
 function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
-  var intendedForFileFull =
+  const intendedForFileFull =
     '/' + file.relativePath.split('/')[1] + '/' + intendedForFile
-  var onTheList = false
+  let onTheList = false
 
-  for (var key2 in fileList) {
-    var filePath = fileList[key2].relativePath
+  for (let key2 in fileList) {
+    const filePath = fileList[key2].relativePath
     if (filePath === intendedForFileFull) {
       onTheList = true
     }

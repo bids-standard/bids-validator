@@ -1,5 +1,5 @@
-var Issue = require('../utils').issues.Issue
-var type = require('../utils').type
+const Issue = require('../../utils').issues.Issue
+const type = require('../../utils').type
 
 /**
  * bvec
@@ -30,10 +30,10 @@ module.exports = function bvec(file, contents, callback) {
 }
 
 function checkType(contents, file) {
-  let issues = []
+  const issues = []
   // throw error if contents are undefined or the wrong type
   if (!type.checkType(contents, 'string')) {
-    let evidence = contents
+    const evidence = contents
       ? 'The contents of this .bvec file have type ' +
         typeof contents +
         ' but should be a string.'
@@ -50,7 +50,7 @@ function checkType(contents, file) {
 }
 
 function checkNumberOfRows(contents, file) {
-  let issues = []
+  const issues = []
   if (contents.replace(/^\s+|\s+$/g, '').split('\n').length !== 3) {
     issues.push(
       new Issue({

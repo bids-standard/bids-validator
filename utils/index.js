@@ -8,6 +8,7 @@ var json = require('./json')
 var modalities = require('./modalities')
 var options = require('./options')
 var type = require('./type')
+const collectSummary = require('./summary/collectSummary')
 
 module.exports = {
   array: array,
@@ -19,4 +20,5 @@ module.exports = {
   modalities: modalities,
   options: options,
   type: type,
+  collectSummary: collectSummary,
 }

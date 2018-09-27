@@ -1,16 +1,19 @@
-const async = require('async')
 const fs = require('fs')
 
-const collectDirectoryStatistics = (fileList, summary) => {
-  async.eachOfLimit(fileList, 200, function(file) {
+const collectDirectorySize = fileList => {
+  let size = 0
+  const keys = Object.keys(fileList)
+  keys.forEach(key => {
+    const file = fileList[key]
     // collect file stats
     if (typeof window !== 'undefined' && file.size) {
-      summary.size += file.size
+      size += file.size
     } else {
       file.stats = getFileStats(file)
-      summary.size += file.stats.size
+      size += file.stats.size
     }
   })
+  return size
 }
 
 const getFileStats = file => {
@@ -25,4 +28,4 @@ const getFileStats = file => {
   return stats
 }
 
-module.exports = collectDirectoryStatistics
+module.exports = collectDirectorySize

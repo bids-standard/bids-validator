@@ -1,4 +1,3 @@
-const async = require('async')
 const Issue = require('../../utils/issues').Issue
 
 const re = {
@@ -15,8 +14,11 @@ const illegalchar_regex_list = [
   [re.ses_re, 63, 'ses name contains illegal character:'],
 ]
 
-const illegalCharacterTest = (fileList, issues) => {
-  async.eachOfLimit(fileList, 200, function(file) {
+const illegalCharacterTest = fileList => {
+  const issues = []
+  const fileKeys = Object.keys(fileList)
+  fileKeys.forEach(key => {
+    const file = fileList[key]
     const completename = file.relativePath
     if (
       !(
@@ -42,6 +44,7 @@ const illegalCharacterTest = (fileList, issues) => {
       })
     }
   })
+  return issues
 }
 
 module.exports = illegalCharacterTest
