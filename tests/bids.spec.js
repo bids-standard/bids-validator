@@ -42,11 +42,13 @@ var suite = describe('BIDS example datasets ', function() {
   this.timeout(100000)
 
   before(function(done) {
-    if (!fs.existsSync('tests/data/BIDS-examples-' + test_version + '/')) {
+    if (!fs.existsSync('tests/data/bids-examples-' + test_version + '/')) {
       console.log('downloading test data')
       var response = request(
         'GET',
-        'http://github.com/INCF/BIDS-examples/archive/' + test_version + '.zip',
+        'http://github.com/bids-standard/bids-examples/archive/' +
+          test_version +
+          '.zip',
       )
       if (!fs.existsSync('tests/data')) {
         fs.mkdirSync('tests/data')
@@ -58,7 +60,7 @@ var suite = describe('BIDS example datasets ', function() {
     }
 
     var datasetDirectories = getDirectories(
-      'tests/data/BIDS-examples-' + test_version + '/',
+      'tests/data/bids-examples-' + test_version + '/',
     )
 
     datasetDirectories.forEach(function testDataset(path) {
@@ -66,7 +68,7 @@ var suite = describe('BIDS example datasets ', function() {
         new Test(path, function(isdone) {
           var options = { ignoreNiftiHeaders: true }
           validate.BIDS(
-            'tests/data/BIDS-examples-' + test_version + '/' + path + '/',
+            'tests/data/bids-examples-' + test_version + '/' + path + '/',
             options,
             function(issues) {
               var errors = issues.errors
@@ -97,7 +99,7 @@ var suite = describe('BIDS example datasets ', function() {
   it('validates path without trailing backslash', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
-      'tests/data/BIDS-examples-' + test_version + '/ds001',
+      'tests/data/bids-examples-' + test_version + '/ds001',
       options,
       function(issues, summary) {
         var errors = issues.errors
@@ -196,7 +198,7 @@ var suite = describe('BIDS example datasets ', function() {
   it('checks for tabular files with custom columns not described in a data dictionary', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
-      'tests/data/BIDS-examples-' + test_version + '/ds001',
+      'tests/data/bids-examples-' + test_version + '/ds001',
       //'tests/data/ds001344-1.0.0',
       options,
       function(issues) {
@@ -209,7 +211,7 @@ var suite = describe('BIDS example datasets ', function() {
   it('validates MRI modalities', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
-      'tests/data/BIDS-examples-' + test_version + '/ds001',
+      'tests/data/bids-examples-' + test_version + '/ds001',
       options,
       function(issues, summary) {
         var errors = issues.errors
@@ -249,7 +251,7 @@ var suite = describe('BIDS example datasets ', function() {
   it('should not throw a warning if all _phasediff.nii are associated with _magnitude1.nii', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
-      'tests/data/BIDS-examples-' + test_version + '/hcp_example_bids',
+      'tests/data/bids-examples-' + test_version + '/hcp_example_bids',
       options,
       function(issues) {
         assert.deepEqual(issues.errors, [])

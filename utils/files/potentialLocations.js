@@ -15,8 +15,12 @@ const potentialLocations = path => {
   }
 
   // generate relevant paths and put into closest -> root order
-  let paths = [path].concat(potentialPaths(components)).reverse()
-  return paths
+  const potentials = potentialPaths(components)
+  if (potentials.indexOf(path) < 0) {
+    return [path].concat(potentials).reverse()
+  } else {
+    return potentials
+  }
 }
 
 const potentialPaths = components => {
