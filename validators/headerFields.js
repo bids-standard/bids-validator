@@ -34,6 +34,13 @@ const headerFields = headers => {
     }
   }
 
+  finalIssues = finalIssues.concat(collect39Issues(allIssues39Dict))
+
+  return finalIssues
+}
+
+const collect39Issues = allIssues39Dict => {
+  const finalIssues = []
   for (let file of Object.keys(allIssues39Dict)) {
     const firstIssue = allIssues39Dict[file][0]
     let evidence = ''
@@ -43,7 +50,6 @@ const headerFields = headers => {
     firstIssue.reason = evidence
     finalIssues.push(firstIssue)
   }
-
   return finalIssues
 }
 
