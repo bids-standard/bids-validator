@@ -12,7 +12,7 @@ var Issue = utils.issues.Issue
  * arrays more arguments will need to be added to headerField.
  */
 
-var headerFields = function headerFields(headers) {
+const headerFields = headers => {
   var finalIssues = []
   var allIssues39Dict = {}
   var fields = ['dim', 'pixdim']
@@ -56,7 +56,7 @@ var headerFields = function headerFields(headers) {
  * dimensionality of similar anatomy/functional/dwi headers are being compared.
  */
 
-var headerField = function headerField(headers, field) {
+const headerField = (headers, field) => {
   var nifti_types = {}
   var issues = {}
   for (var header_index = 0; header_index < headers.length; header_index++) {
@@ -247,7 +247,7 @@ var headerField = function headerField(headers, field) {
  * errors that cause resolutions to be slightly different. Returns true if
  * the two headers are signifigantly different
  */
-function headerFieldCompare(header1, header2) {
+const headerFieldCompare = (header1, header2) => {
   var hdr1 = header1.split(',')
   var hdr2 = header2.split(',')
   if (hdr1.length !== hdr2.length) {
