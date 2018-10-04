@@ -34,16 +34,14 @@ var headerFields = function headerFields(headers) {
     }
   }
 
-  for (let file in allIssues39Dict) {
-    if (allIssues39Dict.hasOwnProperty(file)) {
-      const firstIssue = allIssues39Dict[file][0]
-      let evidence = ''
-      for (var issue of allIssues39Dict[file]) {
-        evidence = evidence + ' ' + allIssues39Dict[file][issue].reason
-      }
-      firstIssue.reason = evidence
-      finalIssues.push(firstIssue)
+  for (let file of Object.keys(allIssues39Dict)) {
+    const firstIssue = allIssues39Dict[file][0]
+    let evidence = ''
+    for (var issue of allIssues39Dict[file]) {
+      evidence = evidence + ' ' + issue.reason
     }
+    firstIssue.reason = evidence
+    finalIssues.push(firstIssue)
   }
 
   return finalIssues
