@@ -16,7 +16,7 @@ describe('bids_files', () => {
         },
       }
       const match = checkSidecarForDatafiles(file, fileList)
-      assert(match == true)
+      assert.isTrue(match)
     })
 
     it('does not match invalid datafile formats', () => {
@@ -32,7 +32,7 @@ describe('bids_files', () => {
         },
       }
       const match = checkSidecarForDatafiles(file, fileList)
-      assert(match == false)
+      assert.isFalse(match)
     })
   })
 })
