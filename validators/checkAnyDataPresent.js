@@ -10,11 +10,13 @@ function addIfNotPresent(folderSubjects, subject) {
 function getFolderSubjects(fileList) {
   var folderSubjects = []
   for (var key in fileList) {
-    var file = fileList[key]
-    var match = file.relativePath.match(/sub-(.*?)(?=\/)/)
-    if (match) {
-      // console.log('match:', match)
-      addIfNotPresent(folderSubjects, match[1])
+    if (fileList.hasOwnProperty(key)) {
+      const file = fileList[key]
+      const match = file.relativePath.match(/sub-(.*?)(?=\/)/)
+      if (match) {
+        // console.log('match:', match)
+        addIfNotPresent(folderSubjects, match[1])
+      }
     }
   }
   return folderSubjects

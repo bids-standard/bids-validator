@@ -34,14 +34,16 @@ var headerFields = function headerFields(headers) {
     }
   }
 
-  for (file in allIssues39Dict) {
-    var firstIssue = allIssues39Dict[file][0]
-    var evidence = ''
-    for (var issue of allIssues39Dict[file]) {
-      evidence = evidence + ' ' + allIssues39Dict[file][issue].reason
+  for (let file in allIssues39Dict) {
+    if (allIssues39Dict.hasOwnProperty(file)) {
+      const firstIssue = allIssues39Dict[file][0]
+      let evidence = ''
+      for (var issue of allIssues39Dict[file]) {
+        evidence = evidence + ' ' + allIssues39Dict[file][issue].reason
+      }
+      firstIssue.reason = evidence
+      finalIssues.push(firstIssue)
     }
-    firstIssue.reason = evidence
-    finalIssues.push(firstIssue)
   }
 
   return finalIssues
@@ -190,48 +192,54 @@ var headerField = function headerField(headers, field) {
       }
     }
   }
-  for (var nifti_key in nifti_types) {
-    var nifti_type = nifti_types[nifti_key]
-    var max_field_value = Object.keys(nifti_type)[0]
-    for (var field_value_key in nifti_type) {
-      field_value = nifti_type[field_value_key]
-      if (field_value.count > nifti_type[max_field_value].count) {
-        max_field_value = field_value_key
-      }
-    }
-    for (field_value_key in nifti_type) {
-      field_value = nifti_type[field_value_key]
-      if (
-        max_field_value !== field_value_key &&
-        headerFieldCompare(max_field_value, field_value_key)
-      ) {
-        for (
-          var nifti_file_index = 0;
-          nifti_file_index < field_value.files.length;
-          nifti_file_index++
-        ) {
-          var nifti_file = field_value.files[nifti_file_index]
-          var evidence
-          if (field === 'dim') {
-            evidence =
-              'The most common set of dimensions is: ' +
-              max_field_value +
-              ' (voxels), This file has the dimensions: ' +
-              field_value_key +
-              ' (voxels).'
-          } else if (field === 'pixdim') {
-            evidence =
-              'The most common resolution is: ' +
-              max_field_value.replace(/,/g, ' x ') +
-              ', This file has the resolution: ' +
-              field_value_key.replace(/,/g, ' x ') +
-              '.'
+  for (let nifti_key in nifti_types) {
+    if (nifti_types.hasOwnProperty(nifti_key)) {
+      const nifti_type = nifti_types[nifti_key]
+      let max_field_value = Object.keys(nifti_type)[0]
+      for (let field_value_key in nifti_type) {
+        if (nifti_type.hasOwnProperty(field_value_key)) {
+          field_value = nifti_type[field_value_key]
+          if (field_value.count > nifti_type[max_field_value].count) {
+            max_field_value = field_value_key
           }
-          issues[nifti_file.relativePath] = new Issue({
-            file: nifti_file,
-            reason: evidence,
-            code: 39,
-          })
+        }
+      }
+      for (let field_value_key in nifti_type) {
+        if (nifti_type.hasOwnProperty(field_value_key)) {
+          field_value = nifti_type[field_value_key]
+          if (
+            max_field_value !== field_value_key &&
+            headerFieldCompare(max_field_value, field_value_key)
+          ) {
+            for (
+              var nifti_file_index = 0;
+              nifti_file_index < field_value.files.length;
+              nifti_file_index++
+            ) {
+              var nifti_file = field_value.files[nifti_file_index]
+              var evidence
+              if (field === 'dim') {
+                evidence =
+                  'The most common set of dimensions is: ' +
+                  max_field_value +
+                  ' (voxels), This file has the dimensions: ' +
+                  field_value_key +
+                  ' (voxels).'
+              } else if (field === 'pixdim') {
+                evidence =
+                  'The most common resolution is: ' +
+                  max_field_value.replace(/,/g, ' x ') +
+                  ', This file has the resolution: ' +
+                  field_value_key.replace(/,/g, ' x ') +
+                  '.'
+              }
+              issues[nifti_file.relativePath] = new Issue({
+                file: nifti_file,
+                reason: evidence,
+                code: 39,
+              })
+            }
+          }
         }
       }
     }
