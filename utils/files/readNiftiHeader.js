@@ -38,8 +38,8 @@ function nodeNiftiTest(file, callback) {
 }
 
 function extractNiftiFile(file, callback) {
-  var bytesRead = 500
-  var buffer = new Buffer(bytesRead)
+  const bytesRead = 500
+  const buffer = Buffer.alloc(bytesRead)
 
   var decompressStream = zlib
     .createGunzip()
