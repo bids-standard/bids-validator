@@ -10,7 +10,6 @@ const groupFileTypes = (fileList, options) => {
     bval: [],
     bvec: [],
     invalid: [],
-    modaility: [],
   }
   sortFiles(fileList, options, files)
   //   reportFileTypeCounts(files)
