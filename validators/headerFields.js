@@ -12,7 +12,7 @@ var Issue = utils.issues.Issue
  * arrays more arguments will need to be added to headerField.
  */
 
-var headerFields = function headerFields(headers) {
+const headerFields = headers => {
   var finalIssues = []
   var allIssues39Dict = {}
   var fields = ['dim', 'pixdim']
@@ -34,18 +34,22 @@ var headerFields = function headerFields(headers) {
     }
   }
 
-  for (let file in allIssues39Dict) {
-    if (allIssues39Dict.hasOwnProperty(file)) {
-      const firstIssue = allIssues39Dict[file][0]
-      let evidence = ''
-      for (var issue of allIssues39Dict[file]) {
-        evidence = evidence + ' ' + allIssues39Dict[file][issue].reason
-      }
-      firstIssue.reason = evidence
-      finalIssues.push(firstIssue)
-    }
-  }
+  finalIssues = finalIssues.concat(collect39Issues(allIssues39Dict))
 
+  return finalIssues
+}
+
+const collect39Issues = allIssues39Dict => {
+  const finalIssues = []
+  for (let file of Object.keys(allIssues39Dict)) {
+    const firstIssue = allIssues39Dict[file][0]
+    let evidence = ''
+    for (var issue of allIssues39Dict[file]) {
+      evidence = evidence + ' ' + issue.reason
+    }
+    firstIssue.reason = evidence
+    finalIssues.push(firstIssue)
+  }
   return finalIssues
 }
 
@@ -58,7 +62,7 @@ var headerFields = function headerFields(headers) {
  * dimensionality of similar anatomy/functional/dwi headers are being compared.
  */
 
-var headerField = function headerField(headers, field) {
+const headerField = (headers, field) => {
   var nifti_types = {}
   var issues = {}
   for (var header_index = 0; header_index < headers.length; header_index++) {
@@ -249,7 +253,7 @@ var headerField = function headerField(headers, field) {
  * errors that cause resolutions to be slightly different. Returns true if
  * the two headers are signifigantly different
  */
-function headerFieldCompare(header1, header2) {
+const headerFieldCompare = (header1, header2) => {
   var hdr1 = header1.split(',')
   var hdr2 = header2.split(',')
   if (hdr1.length !== hdr2.length) {
@@ -272,3 +276,4 @@ function headerFieldCompare(header1, header2) {
 }
 
 module.exports = headerFields
+module.exports.collect39Issues = collect39Issues
