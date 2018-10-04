@@ -105,10 +105,37 @@ module.exports = {
     },
 
     /**
+     * Check if file is a data file
+     */
+    isDatafile: function(path) {
+      return (
+        this.isAssociatedData(path) ||
+        this.isTSV(path) ||
+        this.isStimuliData(path) ||
+        this.isPhenotypic(path) ||
+        this.isModality(path) ||
+        this.isAnat(path) ||
+        this.isDWI(path) ||
+        this.isFieldMap(path) ||
+        this.isFieldMapMainNii(path) ||
+        this.isFunc(path) ||
+        this.isMeg(path) ||
+        this.isEeg(path) ||
+        this.isIEEG(path) ||
+        this.isBehavioral(path) ||
+        this.isFuncBold(path) ||
+        this.isCont(path)
+      )
+    },
+    /**
      * Check if file is appropriate associated data.
      */
     isAssociatedData: function(path) {
       return associatedData.test(path)
+    },
+
+    isTSV: function(path) {
+      return path.endsWith('.tsv')
     },
 
     isStimuliData: function(path) {
