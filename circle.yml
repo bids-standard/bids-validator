@@ -54,7 +54,7 @@ jobs:
       - run: apk --no-cache add git python build-base openssh
       # Publish to NPM
       - run: npm install
-      - run: ./node_modules/npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
+      - run: ./node_modules/.bin/npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
       - run: git checkout -f $CIRCLE_TAG
       # Set the version number
       - run: sed -i -E "s/0.0.0/$CIRCLE_TAG/" package.json
