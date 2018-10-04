@@ -12,7 +12,6 @@ const groupFileTypes = (fileList, options) => {
     invalid: [],
   }
   sortFiles(fileList, options, files)
-  //   reportFileTypeCounts(files)
   return files
 }
 
