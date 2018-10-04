@@ -64,9 +64,10 @@ function verifyDatafileMatch(sidecarPath, noExt, matchFile) {
   let megDs = false
   // Make sure it's not the data dictionary itself
   const isSelf = matchFile.relativePath === sidecarPath
-  if (!isSelf && type.file.isModality(matchFile.name)) {
+  if (!isSelf && type.file.isDatafile(matchFile.relativePath)) {
     match = true
   }
+
   // MEG datafiles may be a folder, therefore not contained in fileList, will need to look in paths
   if (
     !isSelf &&
