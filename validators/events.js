@@ -21,7 +21,7 @@ const checkStimuli = function(stimuli) {
     const unusedStimuli = stimuliFromDirectory.filter(function(stimuli) {
       return stimuliFromEvents.indexOf(stimuli.relativePath) < 0
     })
-    for (let key in unusedStimuli) {
+    for (let key of unusedStimuli) {
       const stimulus = unusedStimuli[key]
       issues.push(
         new Issue({
