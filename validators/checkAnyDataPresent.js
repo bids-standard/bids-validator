@@ -1,34 +1,29 @@
 var utils = require('../utils')
 var Issue = utils.issues.Issue
 
-function addIfNotPresent(folderSubjects, subject) {
-  if (folderSubjects.indexOf(subject) == -1 && subject !== 'emptyroom') {
-    folderSubjects.push(subject)
-  }
-}
+// Match sub-.../... files, except sub-emptyroom
+const matchSubjectPath = file =>
+  file.relativePath.match(/sub-((?!emptyroom).)*(?=\/)/)
 
-function getFolderSubjects(fileList) {
-  var folderSubjects = []
-  for (var key in fileList) {
-    var file = fileList[key]
-    var match = file.relativePath.match(/sub-(.*?)(?=\/)/)
-    if (match) {
-      // console.log('match:', match)
-      addIfNotPresent(folderSubjects, match[1])
-    }
-  }
-  return folderSubjects
-}
+// Helper for filtering unique values in an array
+const uniqueArray = (value, index, self) => self.indexOf(value) === index
+
+/**
+ * Find unique subjects from FileList
+ * @param {FileList} fileList Browser FileList or Node equivalent
+ */
+const getFolderSubjects = fileList =>
+  Array.from(fileList)
+    .filter(matchSubjectPath)
+    .map(f => matchSubjectPath(f)[1])
+    .filter(uniqueArray)
 
 /**
  * checkAnyDataPresent
  *
  * Takes a list of files and participants with valid data. Checks if they match.
  */
-var checkAnyDataPresent = function checkAnyDataPresent(
-  fileList,
-  summarySubjects,
-) {
+function checkAnyDataPresent(fileList, summarySubjects) {
   var issues = []
   var folderSubjects = getFolderSubjects(fileList)
   var subjectsWithoutAnyValidData = folderSubjects.filter(function(i) {
@@ -55,3 +50,4 @@ var checkAnyDataPresent = function checkAnyDataPresent(
 }
 
 module.exports = checkAnyDataPresent
+module.exports.getFolderSubjects = getFolderSubjects
