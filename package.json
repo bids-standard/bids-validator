@@ -12,7 +12,7 @@
   },
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./**/*.js",
-    "test": "./node_modules/.bin/mocha tests/ tests/**/**.spec.js",
+    "test": "./node_modules/.bin/mocha tests/ tests/**/**.spec.js '**/__tests__/*.js' --exclude 'node_modules/**/*'",
     "coverage": "./node_modules/.bin/nyc yarn test",
     "codecov": "./node_modules/.bin/codecov",
     "npmPublish": "publish"
