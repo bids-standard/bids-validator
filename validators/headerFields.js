@@ -276,3 +276,4 @@ const headerFieldCompare = (header1, header2) => {
 }
 
 module.exports = headerFields
+module.exports.collect39Issues = collect39Issues
