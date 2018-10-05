@@ -4,7 +4,7 @@ const { getFolderSubjects } = require('../checkAnyDataPresent.js')
 describe('checkAnyDataPresent', () => {
   describe('getFolderSubjects()', () => {
     it('returns only unique subjects', () => {
-      // Native FileList but an array simulates it
+      // Pseudo-FileList object but an array simulates it
       const fileList = [
         { relativePath: 'sub-01/files' },
         { relativePath: 'sub-01/another' },
@@ -26,6 +26,10 @@ describe('checkAnyDataPresent', () => {
         { relativePath: 'sub-02/data/test' },
       ]
       assert.lengthOf(getFolderSubjects(fileList), 2)
+    })
+    it('works with object arguments', () => {
+      const fileList = { 0: { relativePath: 'sub-01/anat/one.nii.gz' } }
+      assert.lengthOf(getFolderSubjects(fileList), 1)
     })
   })
 })
