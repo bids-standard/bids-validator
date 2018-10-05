@@ -10,10 +10,10 @@ const uniqueArray = (value, index, self) => self.indexOf(value) === index
 
 /**
  * Find unique subjects from FileList
- * @param {FileList} fileList Browser FileList or Node equivalent
+ * @param {object} fileList Browser FileList or Node equivalent
  */
 const getFolderSubjects = fileList =>
-  Array.from(fileList)
+  Object.values(fileList)
     .filter(matchSubjectPath)
     .map(f => matchSubjectPath(f)[1])
     .filter(uniqueArray)
