@@ -9,7 +9,7 @@
     "browser": true,
     "commonjs": true,
     "node": true,
-    "mocha": true
+    "jest": true
   },
   "globals": {
     "Uint8Array": false

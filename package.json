@@ -12,8 +12,8 @@
   },
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./**/*.js",
-    "test": "./node_modules/.bin/mocha tests/ tests/**/**.spec.js '**/__tests__/*.js' --exclude 'node_modules/**/*'",
-    "coverage": "./node_modules/.bin/nyc yarn test",
+    "test": "./node_modules/.bin/jest",
+    "coverage": "./node_modules/.bin/jest --coverage",
     "codecov": "./node_modules/.bin/codecov",
     "npmPublish": "publish"
   },
@@ -49,10 +49,8 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.2",
     "husky": "^1.0.0-rc.13",
-    "istanbul": "^0.4.5",
     "jest": "^23.6.0",
     "jest-environment-node": "^23.4.0",
-    "mocha": "^5.2.0",
     "npm-cli-login": "^0.0.10",
     "nyc": "^13.0.1",
     "prettier": "^1.14.2",
