@@ -1,5 +1,4 @@
 const assert = require('assert')
-const after = require('mocha').after
 const utils = require('../../utils')
 
 const setupMocks = () => {
@@ -33,8 +32,8 @@ describe('files utils in nodejs', () => {
 })
 
 describe('files utils in browsers', () => {
-  before(setupMocks)
-  after(cleanupMocks)
+  beforeAll(setupMocks)
+  afterAll(cleanupMocks)
   describe('newFile', () => {
     it('creates a new File API object', () => {
       const test_file = utils.files.newFile('test-file')
