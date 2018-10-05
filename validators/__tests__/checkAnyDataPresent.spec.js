@@ -10,14 +10,22 @@ describe('checkAnyDataPresent', () => {
         { relativePath: 'sub-01/another' },
         { relativePath: 'sub-02/data' },
       ]
-      assert.equal(2, getFolderSubjects(fileList).length)
+      assert.lengthOf(getFolderSubjects(fileList), 2)
     })
     it('filters out emptyroom subject', () => {
       const fileList = [
         { relativePath: 'sub-01/files' },
         { relativePath: 'sub-emptyroom/data' },
       ]
-      assert.equal(1, getFolderSubjects(fileList).length)
+      assert.lengthOf(getFolderSubjects(fileList), 1)
+    })
+    it('works for deeply nested files', () => {
+      const fileList = [
+        { relativePath: 'sub-01/files/a.nii.gz' },
+        { relativePath: 'sub-01/another/b.nii.gz' },
+        { relativePath: 'sub-02/data/test' },
+      ]
+      assert.lengthOf(getFolderSubjects(fileList), 2)
     })
   })
 })
