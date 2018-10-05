@@ -3,7 +3,7 @@ var Issue = utils.issues.Issue
 
 // Match sub-.../... files, except sub-emptyroom
 const matchSubjectPath = file =>
-  file.relativePath.match(/sub-((?!emptyroom).)*?(?=\/)/)
+  file.relativePath.match(/sub-((?!emptyroom).*?)(?=\/)/)
 
 // Helper for filtering unique values in an array
 const uniqueArray = (value, index, self) => self.indexOf(value) === index
