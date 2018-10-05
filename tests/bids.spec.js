@@ -35,7 +35,7 @@ function assertErrorCode(errors, expected_error_code) {
   var matchingErrors = errors.filter(function(error) {
     return error.code === expected_error_code
   })
-  assert(matchingErrors.length >= 0)
+  assert(matchingErrors.length > 0)
 }
 
 var suite = describe('BIDS example datasets ', function() {
@@ -190,6 +190,7 @@ var suite = describe('BIDS example datasets ', function() {
   it('checks for subjects with no valid data', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS('tests/data/no_valid_data', options, function(issues) {
+      console.log('issues:', issues)
       assertErrorCode(issues.errors, '67')
       isdone()
     })
