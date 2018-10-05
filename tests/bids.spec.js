@@ -190,7 +190,6 @@ var suite = describe('BIDS example datasets ', function() {
   it('checks for subjects with no valid data', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS('tests/data/no_valid_data', options, function(issues) {
-      console.log('issues:', issues)
       assertErrorCode(issues.errors, '67')
       isdone()
     })
