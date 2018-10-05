@@ -11,7 +11,7 @@ describe('checkAnyDataPresent', () => {
         { relativePath: 'sub-02/data' },
       ]
       const subjects = getFolderSubjects(fileList)
-      assert.lengthOf(subjects, 2)
+      assert.isArray(subjects)
       assert.deepEqual(subjects, ['01', '02'])
     })
     it('filters out emptyroom subject', () => {
@@ -20,7 +20,7 @@ describe('checkAnyDataPresent', () => {
         { relativePath: 'sub-emptyroom/data' },
       ]
       const subjects = getFolderSubjects(fileList)
-      assert.lengthOf(subjects, 1)
+      assert.isArray(subjects)
       assert.deepEqual(subjects, ['01'])
     })
     it('works for deeply nested files', () => {
@@ -30,13 +30,13 @@ describe('checkAnyDataPresent', () => {
         { relativePath: 'sub-02/data/test' },
       ]
       const subjects = getFolderSubjects(fileList)
-      assert.lengthOf(subjects, 2)
+      assert.isArray(subjects)
       assert.deepEqual(subjects, ['01', '02'])
     })
     it('works with object arguments', () => {
       const fileList = { 0: { relativePath: 'sub-01/anat/one.nii.gz' } }
       const subjects = getFolderSubjects(fileList)
-      assert.lengthOf(subjects, 1)
+      assert.isArray(subjects)
       assert.deepEqual(subjects, ['01'])
     })
   })
