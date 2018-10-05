@@ -35,7 +35,7 @@ function assertErrorCode(errors, expected_error_code) {
   var matchingErrors = errors.filter(function(error) {
     return error.code === expected_error_code
   })
-  assert(matchingErrors.length >= 0)
+  assert(matchingErrors.length > 0)
 }
 
 var suite = describe('BIDS example datasets ', function() {
