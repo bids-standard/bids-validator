@@ -3,17 +3,17 @@ var Issue = utils.issues.Issue
 
 // Match sub-.../... files, except sub-emptyroom
 const matchSubjectPath = file =>
-  file.relativePath.match(/sub-((?!emptyroom).)*(?=\/)/)
+  file.relativePath.match(/sub-((?!emptyroom).*?)(?=\/)/)
 
 // Helper for filtering unique values in an array
 const uniqueArray = (value, index, self) => self.indexOf(value) === index
 
 /**
  * Find unique subjects from FileList
- * @param {FileList} fileList Browser FileList or Node equivalent
+ * @param {object} fileList Browser FileList or Node equivalent
  */
 const getFolderSubjects = fileList =>
-  Array.from(fileList)
+  Object.values(fileList)
     .filter(matchSubjectPath)
     .map(f => matchSubjectPath(f)[1])
     .filter(uniqueArray)
