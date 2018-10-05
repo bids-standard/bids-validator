@@ -15,15 +15,16 @@ const duplicateNiftis = files => {
   const duplicates = Object.keys(niftiCounts).filter(function(a) {
     return niftiCounts[a] > 1
   })
+
   for (let key of duplicates) {
     const duplicateFiles = files.filter(function(a) {
-      return a.name.split('.')[0] === duplicates[key]
+      return a.name.split('.')[0] === key
     })
     for (let file of duplicateFiles) {
       issues.push(
         new Issue({
           code: 74,
-          file: duplicateFiles[file],
+          file: file,
         }),
       )
     }
