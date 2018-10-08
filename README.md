@@ -1,4 +1,5 @@
 ![](https://circleci.com/gh/bids-standard/bids-validator.svg?style=shield&circle-token=:circle-token)
+![](https://codecov.io/gh/bids-standard/bids-validator/branch/master/graph/badge.svg)
 
 # BIDS-Validator
 
