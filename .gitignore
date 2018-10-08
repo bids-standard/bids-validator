@@ -7,3 +7,4 @@ npm-debug.log
 .ipynb_checkpoints
 package-lock.json
 .nyc_output/
+coverage/

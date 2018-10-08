@@ -1,371 +1,274 @@
-var assert = require('chai').assert
-var utils = require('../utils')
-var Test = require('mocha/lib/test')
-var BIDS = require('../validators/bids')
+const { assert } = require('chai')
+const utils = require('../utils')
+const BIDS = require('../validators/bids')
 
-var suiteAnat = describe('utils.type.file.isAnat', function() {
-  before(function(done) {
-    var goodFilenames = [
-      '/sub-15/anat/sub-15_inplaneT2.nii.gz',
-      '/sub-15/ses-12/anat/sub-15_ses-12_inplaneT2.nii.gz',
-      '/sub-16/anat/sub-16_T1w.nii.gz',
-      '/sub-16/anat/sub-16_T1w.json',
-      '/sub-16/anat/sub-16_run-01_T1w.nii.gz',
-      '/sub-16/anat/sub-16_acq-highres_T1w.nii.gz',
-      '/sub-16/anat/sub-16_rec-mc_T1w.nii.gz',
-      '/sub-16/anat/sub-16_ce-contrastagent_T1w.nii.gz',
-    ]
+describe('utils.type.file.isAnat', function() {
+  const goodFilenames = [
+    '/sub-15/anat/sub-15_inplaneT2.nii.gz',
+    '/sub-15/ses-12/anat/sub-15_ses-12_inplaneT2.nii.gz',
+    '/sub-16/anat/sub-16_T1w.nii.gz',
+    '/sub-16/anat/sub-16_T1w.json',
+    '/sub-16/anat/sub-16_run-01_T1w.nii.gz',
+    '/sub-16/anat/sub-16_acq-highres_T1w.nii.gz',
+    '/sub-16/anat/sub-16_rec-mc_T1w.nii.gz',
+    '/sub-16/anat/sub-16_ce-contrastagent_T1w.nii.gz',
+  ]
 
-    goodFilenames.forEach(function(path) {
-      suiteAnat.addTest(
-        new Test("isAnat('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.file.isAnat(path), true)
-          isdone()
-        }),
-      )
+  goodFilenames.forEach(function(path) {
+    it("isAnat('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isAnat(path), true)
+      isdone()
     })
-
-    var badFilenames = [
-      '/sub-1/anat/sub-15_inplaneT2.nii.gz',
-      '/sub-15/ses-12/anat/sub-15_inplaneT2.nii.gz',
-      '/sub-16/anat/sub-16_T1.nii.gz',
-      'blaaa.nii.gz',
-      '/sub-16/anat/sub-16_run-second_T1w.nii.gz',
-      '/sub-16/anat/sub-16_run-01_rec-mc_T1w.nii.gz',
-    ]
-
-    badFilenames.forEach(function(path) {
-      suiteAnat.addTest(
-        new Test("isAnat('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.file.isAnat(path), false)
-          isdone()
-        }),
-      )
-    })
-    done()
   })
 
-  // we need to have at least one non-dynamic test
-  return it('dummy test', function() {
-    require('assert').ok(true)
+  const badFilenames = [
+    '/sub-1/anat/sub-15_inplaneT2.nii.gz',
+    '/sub-15/ses-12/anat/sub-15_inplaneT2.nii.gz',
+    '/sub-16/anat/sub-16_T1.nii.gz',
+    'blaaa.nii.gz',
+    '/sub-16/anat/sub-16_run-second_T1w.nii.gz',
+    '/sub-16/anat/sub-16_run-01_rec-mc_T1w.nii.gz',
+  ]
+
+  badFilenames.forEach(function(path) {
+    it("isAnat('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isAnat(path), false)
+      isdone()
+    })
   })
 })
 
-var suiteFunc = describe('utils.type.file.isFunc', function() {
-  before(function(done) {
-    var goodFilenames = [
-      '/sub-15/func/sub-15_task-0back_bold.nii.gz',
-      '/sub-15/ses-12/func/sub-15_ses-12_task-0back_bold.nii.gz',
-      '/sub-16/func/sub-16_task-0back_bold.json',
-      '/sub-16/func/sub-16_task-0back_run-01_bold.nii.gz',
-      '/sub-16/func/sub-16_task-0back_acq-highres_bold.nii.gz',
-      '/sub-16/func/sub-16_task-0back_rec-mc_bold.nii.gz',
-    ]
+describe('utils.type.file.isFunc', function() {
+  var goodFilenames = [
+    '/sub-15/func/sub-15_task-0back_bold.nii.gz',
+    '/sub-15/ses-12/func/sub-15_ses-12_task-0back_bold.nii.gz',
+    '/sub-16/func/sub-16_task-0back_bold.json',
+    '/sub-16/func/sub-16_task-0back_run-01_bold.nii.gz',
+    '/sub-16/func/sub-16_task-0back_acq-highres_bold.nii.gz',
+    '/sub-16/func/sub-16_task-0back_rec-mc_bold.nii.gz',
+  ]
 
-    goodFilenames.forEach(function(path) {
-      suiteFunc.addTest(
-        new Test("isFunc('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.file.isFunc(path), true)
-          isdone()
-        }),
-      )
+  goodFilenames.forEach(function(path) {
+    it("isFunc('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isFunc(path), true)
+      isdone()
     })
-
-    var badFilenames = [
-      '/sub-1/func/sub-15_inplaneT2.nii.gz',
-      '/sub-15/ses-12/func/sub-15_inplaneT2.nii.gz',
-      '/sub-16/func/sub-16_T1.nii.gz',
-      'blaaa.nii.gz',
-      '/sub-16/func/sub-16_run-second_T1w.nii.gz',
-      '/sub-16/func/sub-16_task-0-back_rec-mc_bold.nii.gz',
-      '/sub-16/func/sub-16_run-01_rec-mc_T1w.nii.gz',
-    ]
-
-    badFilenames.forEach(function(path) {
-      suiteFunc.addTest(
-        new Test("isFunc('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.file.isFunc(path), false)
-          isdone()
-        }),
-      )
-    })
-    done()
   })
 
-  // we need to have at least one non-dynamic test
-  return it('dummy test', function() {
-    require('assert').ok(true)
+  var badFilenames = [
+    '/sub-1/func/sub-15_inplaneT2.nii.gz',
+    '/sub-15/ses-12/func/sub-15_inplaneT2.nii.gz',
+    '/sub-16/func/sub-16_T1.nii.gz',
+    'blaaa.nii.gz',
+    '/sub-16/func/sub-16_run-second_T1w.nii.gz',
+    '/sub-16/func/sub-16_task-0-back_rec-mc_bold.nii.gz',
+    '/sub-16/func/sub-16_run-01_rec-mc_T1w.nii.gz',
+  ]
+
+  badFilenames.forEach(function(path) {
+    it("isFunc('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isFunc(path), false)
+      isdone()
+    })
   })
 })
 
-var suiteTop = describe('utils.type.file.isTopLevel', function() {
-  before(function(done) {
-    var goodFilenames = [
-      '/README',
-      '/CHANGES',
-      '/dataset_description.json',
-      '/ses-pre_task-rest_bold.json',
-      '/dwi.bval',
-      '/dwi.bvec',
-      '/T1w.json',
-      '/acq-test_dwi.json',
-      '/rec-test_physio.json',
-    ]
+describe('utils.type.file.isTopLevel', function() {
+  const goodFilenames = [
+    '/README',
+    '/CHANGES',
+    '/dataset_description.json',
+    '/ses-pre_task-rest_bold.json',
+    '/dwi.bval',
+    '/dwi.bvec',
+    '/T1w.json',
+    '/acq-test_dwi.json',
+    '/rec-test_physio.json',
+  ]
 
-    goodFilenames.forEach(function(path) {
-      suiteTop.addTest(
-        new Test("isTopLevel('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.file.isTopLevel(path), true)
-          isdone()
-        }),
-      )
+  goodFilenames.forEach(function(path) {
+    it("isTopLevel('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isTopLevel(path), true)
+      isdone()
     })
-
-    var badFilenames = [
-      '/readme.txt',
-      '/changelog',
-      '/dataset_description.yml',
-      '/ses.json',
-      '/_T1w.json',
-      '/_dwi.json',
-      '/_task-test_physio.json',
-    ]
-
-    badFilenames.forEach(function(path) {
-      suiteTop.addTest(
-        new Test("isTopLevel('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.file.isTopLevel(path), false)
-          isdone()
-        }),
-      )
-    })
-    done()
   })
 
-  // we need to have at least one non-dynamic test
-  return it('dummy test', function() {
-    require('assert').ok(true)
+  const badFilenames = [
+    '/readme.txt',
+    '/changelog',
+    '/dataset_description.yml',
+    '/ses.json',
+    '/_T1w.json',
+    '/_dwi.json',
+    '/_task-test_physio.json',
+  ]
+
+  badFilenames.forEach(function(path) {
+    it("isTopLevel('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isTopLevel(path), false)
+      isdone()
+    })
   })
 })
 
-var suiteSession = describe('utils.type.file.isSessionLevel', function() {
-  before(function(done) {
-    var goodFilenames = [
-      '/sub-12/sub-12_scans.tsv',
-      '/sub-12/ses-pre/sub-12_ses-pre_scans.tsv',
-    ]
+describe('utils.type.file.isSessionLevel', function() {
+  const goodFilenames = [
+    '/sub-12/sub-12_scans.tsv',
+    '/sub-12/ses-pre/sub-12_ses-pre_scans.tsv',
+  ]
 
-    goodFilenames.forEach(function(path) {
-      suiteSession.addTest(
-        new Test("isSessionLevel('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.file.isSessionLevel(path), true)
-          isdone()
-        }),
-      )
+  goodFilenames.forEach(function(path) {
+    it("isSessionLevel('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isSessionLevel(path), true)
+      isdone()
     })
-
-    var badFilenames = [
-      '/sub-12/sub-12.tsv',
-      '/sub-12/ses-pre/sub-12_ses-pre_scan.tsv',
-    ]
-
-    badFilenames.forEach(function(path) {
-      suiteSession.addTest(
-        new Test("isSessionLevel('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.file.isSessionLevel(path), false)
-          isdone()
-        }),
-      )
-    })
-    done()
   })
 
-  // we need to have at least one non-dynamic test
-  return it('dummy test', function() {
-    require('assert').ok(true)
+  const badFilenames = [
+    '/sub-12/sub-12.tsv',
+    '/sub-12/ses-pre/sub-12_ses-pre_scan.tsv',
+  ]
+
+  badFilenames.forEach(function(path) {
+    it("isSessionLevel('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isSessionLevel(path), false)
+      isdone()
+    })
   })
 })
 
-var suiteDWI = describe('utils.type.file.isDWI', function() {
-  before(function(done) {
-    var goodFilenames = [
-      '/sub-12/dwi/sub-12_dwi.nii.gz',
-      '/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.nii.gz',
-      '/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bvec',
-      '/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bval',
-    ]
+describe('utils.type.file.isDWI', function() {
+  const goodFilenames = [
+    '/sub-12/dwi/sub-12_dwi.nii.gz',
+    '/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.nii.gz',
+    '/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bvec',
+    '/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bval',
+  ]
 
-    goodFilenames.forEach(function(path) {
-      suiteDWI.addTest(
-        new Test("isDWI('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.file.isDWI(path), true)
-          isdone()
-        }),
-      )
+  goodFilenames.forEach(function(path) {
+    it("isDWI('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isDWI(path), true)
+      isdone()
     })
-
-    var badFilenames = [
-      '/sub-12/sub-12.tsv',
-      '/sub-12/ses-pre/sub-12_ses-pre_scan.tsv',
-      '/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bvecs',
-      '/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bvals',
-    ]
-
-    badFilenames.forEach(function(path) {
-      suiteDWI.addTest(
-        new Test("isDWI('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.file.isDWI(path), false)
-          isdone()
-        }),
-      )
-    })
-    done()
   })
 
-  // we need to have at least one non-dynamic test
-  return it('dummy test', function() {
-    require('assert').ok(true)
+  const badFilenames = [
+    '/sub-12/sub-12.tsv',
+    '/sub-12/ses-pre/sub-12_ses-pre_scan.tsv',
+    '/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bvecs',
+    '/sub-12/ses-pre/dwi/sub-12_ses-pre_dwi.bvals',
+  ]
+
+  badFilenames.forEach(function(path) {
+    it("isDWI('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isDWI(path), false)
+      isdone()
+    })
   })
 })
 
-var suiteMEG = describe('utils.type.file.isMEG', function() {
-  before(function(done) {
-    var goodFilenames = [
-      '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.sqd',
-      '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.raw.mhd',
-      '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/xyz', // for e.g., BTi files
-      '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_markers.sqd',
-      '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.json',
-      '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_part-01_meg.fif',
-      '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_channels.tsv',
-    ]
+describe('utils.type.file.isMEG', function() {
+  const goodFilenames = [
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.sqd',
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.raw.mhd',
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/xyz', // for e.g., BTi files
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_markers.sqd',
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.json',
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_part-01_meg.fif',
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_channels.tsv',
+  ]
 
-    goodFilenames.forEach(function(path) {
-      suiteMEG.addTest(
-        new Test("isMeg('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.file.isMeg(path), true)
-          isdone()
-        }),
-      )
+  goodFilenames.forEach(function(path) {
+    it("isMeg('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isMeg(path), true)
+      isdone()
     })
-
-    var badFilenames = [
-      // only parent directory name matters for KIT/BTi systems
-      '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_megggg/sub-01_ses-001_task-rest_run-01_meg.sqd',
-      '/sub-01/meg/sub-01_ses-001_task-rest_run-01_meg.json',
-      '/sub-01/ses-001/meg/sub-12_ses-001_task-rest_run-01_part-01_meg.fif',
-      '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.tsv',
-    ]
-
-    badFilenames.forEach(function(path) {
-      suiteMEG.addTest(
-        new Test("isMeg('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.file.isMeg(path), false)
-          isdone()
-        }),
-      )
-    })
-    done()
   })
 
-  // we need to have at least one non-dynamic test
-  return it('dummy test', function() {
-    require('assert').ok(true)
+  const badFilenames = [
+    // only parent directory name matters for KIT/BTi systems
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_megggg/sub-01_ses-001_task-rest_run-01_meg.sqd',
+    '/sub-01/meg/sub-01_ses-001_task-rest_run-01_meg.json',
+    '/sub-01/ses-001/meg/sub-12_ses-001_task-rest_run-01_part-01_meg.fif',
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.tsv',
+  ]
+
+  badFilenames.forEach(function(path) {
+    it("isMeg('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isMeg(path), false)
+      isdone()
+    })
   })
 })
 
-var suiteEEG = describe('utils.type.file.isEEG', function() {
-  before(function(done) {
-    var goodFilenames = [
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.json',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_events.tsv',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_part-01_eeg.edf',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.eeg',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.vmrk',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.vhdr',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.bdf',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.cnt',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.set',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.fdt',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_channels.tsv',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_electrodes.tsv',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_coordsystem.json',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_photo.jpg',
-    ]
+describe('utils.type.file.isEEG', function() {
+  const goodFilenames = [
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.json',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_events.tsv',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_part-01_eeg.edf',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.eeg',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.vmrk',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.vhdr',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.bdf',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.cnt',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.set',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.fdt',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_channels.tsv',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_electrodes.tsv',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_coordsystem.json',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_photo.jpg',
+  ]
 
-    goodFilenames.forEach(function(path) {
-      suiteEEG.addTest(
-        new Test("isEeg('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.file.isEeg(path), true)
-          isdone()
-        }),
-      )
+  goodFilenames.forEach(function(path) {
+    it("isEeg('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isEeg(path), true)
+      isdone()
     })
-
-    var badFilenames = [
-      '/sub-01/eeg/sub-01_ses-001_task-rest_run-01_eeg.json',
-      '/sub-01/ses-001/eeg/sub-12_ses-001_task-rest_run-01_part-01_eeg.edf',
-      '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.tsv',
-    ]
-
-    badFilenames.forEach(function(path) {
-      suiteEEG.addTest(
-        new Test("isEeg('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.file.isEeg(path), false)
-          isdone()
-        }),
-      )
-    })
-    done()
   })
 
-  // we need to have at least one non-dynamic test
-  return it('dummy test', function() {
-    require('assert').ok(true)
+  const badFilenames = [
+    '/sub-01/eeg/sub-01_ses-001_task-rest_run-01_eeg.json',
+    '/sub-01/ses-001/eeg/sub-12_ses-001_task-rest_run-01_part-01_eeg.edf',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.tsv',
+  ]
+
+  badFilenames.forEach(function(path) {
+    it("isEeg('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isEeg(path), false)
+      isdone()
+    })
   })
 })
 
-var suiteIEEG = describe('utils.type.file.isIEEG', function() {
-  before(function(done) {
-    var goodFilenames = [
-      '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json',
-      '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.edf',
-      '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.vhdr',
-      '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.vmrk',
-      '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.dat',
-      '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_channels.tsv',
-      '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_electrodes.tsv',
-    ]
+describe('utils.type.file.isIEEG', function() {
+  const goodFilenames = [
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.edf',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.vhdr',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.vmrk',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.dat',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_channels.tsv',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_electrodes.tsv',
+  ]
 
-    goodFilenames.forEach(function(path) {
-      suiteIEEG.addTest(
-        new Test("isIEEG('" + path + "') === true", function(isdone) {
-          assert.equal(utils.type.file.isIEEG(path), true)
-          isdone()
-        }),
-      )
+  goodFilenames.forEach(function(path) {
+    it("isIEEG('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isIEEG(path), true)
+      isdone()
     })
-
-    var badFilenames = [
-      '/sub-01/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json',
-      '/sub-01/ses-001/ieeg/sub-12_ses-001_task-rest_run-01_part-01_ieeg.fif',
-      '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.tsv',
-    ]
-
-    badFilenames.forEach(function(path) {
-      suiteIEEG.addTest(
-        new Test("isIEEG('" + path + "') === false", function(isdone) {
-          assert.equal(utils.type.file.isIEEG(path), false)
-          isdone()
-        }),
-      )
-    })
-    done()
   })
 
-  // we need to have at least one non-dynamic test
-  return it('dummy test', function() {
-    require('assert').ok(true)
+  const badFilenames = [
+    '/sub-01/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json',
+    '/sub-01/ses-001/ieeg/sub-12_ses-001_task-rest_run-01_part-01_ieeg.fif',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.tsv',
+  ]
+
+  badFilenames.forEach(function(path) {
+    it("isIEEG('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isIEEG(path), false)
+      isdone()
+    })
   })
 })
 
