@@ -147,19 +147,6 @@ describe('BIDS example datasets ', function() {
     })
   })
 
-  it('checks for tabular files with custom columns not described in a data dictionary', function(isdone) {
-    var options = { ignoreNiftiHeaders: true }
-    validate.BIDS(
-      'tests/data/bids-examples-' + global.test_version + '/ds001',
-      //'tests/data/ds001344-1.0.0',
-      options,
-      function(issues) {
-        assert(issues.warnings.length === 2 && issues.warnings[1].code === '82')
-        isdone()
-      },
-    )
-  })
-
   it('validates MRI modalities', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
