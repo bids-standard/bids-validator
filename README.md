@@ -173,6 +173,6 @@ A note about OS X, the dependencies for the browser require a npm package called
 
 #### Testing
 
-To start the test suite run `npm test` from the project root. `npm test --watch` is useful to run tests while making changes. A coverage report is available with `npm run coverage`.
+To start the test suite run `npm test` from the project root. `npm test -- --watch` is useful to run tests while making changes. A coverage report is available with `npm run coverage`.
 
 To run the linter which checks code conventions run `npm run lint`.
