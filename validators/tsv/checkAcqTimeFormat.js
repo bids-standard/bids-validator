@@ -3,7 +3,7 @@ const dateIsValid = require('date-fns/isValid')
 const parseDate = require('date-fns/parse')
 
 const checkAcqTimeFormat = function(rows, file, issues) {
-  const format = "YYYY-MM-DD'T'HH:mm:ss"
+  const format = "yyyy-MM-dd'T'HH:mm:ss"
   const header = rows[0].trim().split('\t')
   const acqTimeColumn = header.indexOf('acq_time')
   const testRows = rows.slice(1)
@@ -20,7 +20,7 @@ const checkAcqTimeFormat = function(rows, file, issues) {
           file: file,
           evidence: acqTime,
           line: i + 2,
-          reason: 'acq_time is not in the format YYYY-MM-DDTHH:mm:ss ',
+          reason: 'acq_time is not in the format yyyy-MM-ddTHH:mm:ss ',
           code: 84,
         }),
       )
