@@ -420,19 +420,20 @@ module.exports = function NIFTI(
         )
       }
     }
-
+    
     if (
       utils.type.file.isFieldMapMainNii(path) &&
       mergedDictionary.hasOwnProperty('IntendedFor')
     ) {
       const intendedFor =
-        typeof mergedDictionary['IntendedFor'] == 'string'
-          ? [mergedDictionary['IntendedFor']]
-          : mergedDictionary['IntendedFor']
-
+      typeof mergedDictionary['IntendedFor'] == 'string'
+      ? [mergedDictionary['IntendedFor']]
+      : mergedDictionary['IntendedFor']
+      
       for (let key = 0; key < intendedFor.length; key++) {
         const intendedForFile = intendedFor[key]
         checkIfIntendedExists(intendedForFile, fileList, issues, file)
+        checkIfValidFiletype(intendedForFile, issues, file)
       }
     }
   }
@@ -504,6 +505,22 @@ function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
           "('/" +
           file.relativePath.split('/')[1] +
           "/').",
+        evidence: intendedForFile,
+      }),
+    )
+  }
+}
+
+function checkIfValidFiletype(intendedForFile, issues, file) {
+  const validFiletype = new RegExp('.nii(.gz)?$')
+  const isValidFiletype = validFiletype.test(intendedForFile)
+  if (!isValidFiletype) {
+    issues.push(
+      new Issue({
+        file: file,
+        code: 37,
+        reason:
+          `Invalid filetype: IntendedFor should point to the .nii[.gz] files.`,
         evidence: intendedForFile,
       }),
     )
