@@ -433,6 +433,7 @@ module.exports = function NIFTI(
       for (let key = 0; key < intendedFor.length; key++) {
         const intendedForFile = intendedFor[key]
         checkIfIntendedExists(intendedForFile, fileList, issues, file)
+        checkIfValidFiletype(intendedForFile, issues, file)
       }
     }
   }
@@ -485,9 +486,11 @@ function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
   let onTheList = false
 
   for (let key2 in fileList) {
-    const filePath = fileList[key2].relativePath
-    if (filePath === intendedForFileFull) {
-      onTheList = true
+    if (key2) {
+      const filePath = fileList[key2].relativePath
+      if (filePath === intendedForFileFull) {
+        onTheList = true
+      }
     }
   }
   if (!onTheList) {
@@ -504,6 +507,21 @@ function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
           "('/" +
           file.relativePath.split('/')[1] +
           "/').",
+        evidence: intendedForFile,
+      }),
+    )
+  }
+}
+
+function checkIfValidFiletype(intendedForFile, issues, file) {
+  const validFiletype = new RegExp('.nii(.gz)?$')
+  const isValidFiletype = validFiletype.test(intendedForFile)
+  if (!isValidFiletype) {
+    issues.push(
+      new Issue({
+        file: file,
+        code: 37,
+        reason: `Invalid filetype: IntendedFor should point to the .nii[.gz] files.`,
         evidence: intendedForFile,
       }),
     )
