@@ -420,15 +420,15 @@ module.exports = function NIFTI(
         )
       }
     }
-    
+
     if (
       utils.type.file.isFieldMapMainNii(path) &&
       mergedDictionary.hasOwnProperty('IntendedFor')
     ) {
       const intendedFor =
-      typeof mergedDictionary['IntendedFor'] == 'string'
-      ? [mergedDictionary['IntendedFor']]
-      : mergedDictionary['IntendedFor']
+        typeof mergedDictionary['IntendedFor'] == 'string'
+          ? [mergedDictionary['IntendedFor']]
+          : mergedDictionary['IntendedFor']
       
       for (let key = 0; key < intendedFor.length; key++) {
         const intendedForFile = intendedFor[key]
