@@ -187,8 +187,7 @@ describe('NIFTI', function() {
     })
     validate.NIFTI(null, file, jsonContentsDict, {}, [], [], function(issues) {
       assert(
-        // TODO: DaNish808 - correct issues.length equality
-        (issues.length = 2 && issues[0].code == 17 && issues[1].code == 37), 
+        (issues.length === 3 && issues[0].code == 17 && issues[1].code == 37), 
       )
     })
   })
