@@ -152,14 +152,17 @@ describe('NIFTI', function() {
     })
     validate.NIFTI(null, file, jsonContentsDict, {}, [], [], function(issues) {
       assert(
-        issues.some(issue => (
-          issue.reason === 'Invalid filetype: IntendedFor should point to the .nii[.gz] files.' &&
-          issue.evidence === 'func/sub-15_task-mixedeventrelatedprobe_run-05_bold.json'
-        )),
+        issues.some(
+          issue =>
+            issue.reason ===
+              'Invalid filetype: IntendedFor should point to the .nii[.gz] files.' &&
+            issue.evidence ===
+              'func/sub-15_task-mixedeventrelatedprobe_run-05_bold.json',
+        ),
       )
     })
   })
-  
+
   it('should generate warning if files listed in IntendedFor of fieldmap json do not exist', function() {
     var file = {
       name: 'sub-09_ses-test_run-01_fieldmap.nii.gz',
@@ -187,7 +190,7 @@ describe('NIFTI', function() {
     })
     validate.NIFTI(null, file, jsonContentsDict, {}, [], [], function(issues) {
       assert(
-        (issues.length === 3 && issues[0].code == 17 && issues[1].code == 37), 
+        issues.length === 3 && issues[0].code == 17 && issues[1].code == 37,
       )
     })
   })

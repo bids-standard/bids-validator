@@ -429,7 +429,7 @@ module.exports = function NIFTI(
         typeof mergedDictionary['IntendedFor'] == 'string'
           ? [mergedDictionary['IntendedFor']]
           : mergedDictionary['IntendedFor']
-      
+
       for (let key = 0; key < intendedFor.length; key++) {
         const intendedForFile = intendedFor[key]
         checkIfIntendedExists(intendedForFile, fileList, issues, file)
@@ -486,9 +486,11 @@ function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
   let onTheList = false
 
   for (let key2 in fileList) {
-    const filePath = fileList[key2].relativePath
-    if (filePath === intendedForFileFull) {
-      onTheList = true
+    if (key2) {
+      const filePath = fileList[key2].relativePath
+      if (filePath === intendedForFileFull) {
+        onTheList = true
+      }
     }
   }
   if (!onTheList) {
@@ -519,8 +521,7 @@ function checkIfValidFiletype(intendedForFile, issues, file) {
       new Issue({
         file: file,
         code: 37,
-        reason:
-          `Invalid filetype: IntendedFor should point to the .nii[.gz] files.`,
+        reason: `Invalid filetype: IntendedFor should point to the .nii[.gz] files.`,
         evidence: intendedForFile,
       }),
     )
