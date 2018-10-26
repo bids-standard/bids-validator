@@ -132,7 +132,9 @@ var issues = {
     return new Issue({
       file: callStack,
       evidence: err.stack || '',
-      reason: `${err.message}; please help the BIDS team and community by opening an issue at (https://github.com/bids-standard/bids-validator/issues) with the evidence here.`,
+      reason: `${
+        err.message
+      }; please help the BIDS team and community by opening an issue at (https://github.com/bids-standard/bids-validator/issues) with the evidence here.`,
       code: 0,
     })
   },
@@ -172,7 +174,7 @@ var issues = {
   },
   /**
    * Exception Handler
-   * 
+   *
    * takes an error in fullTest.js catch
    * converts it to an Issue and pushes it to the total list of issues
    * formats issue list and returns it
@@ -184,7 +186,7 @@ var issues = {
     // Format issues
     const issues = this.format(issueList, summary, options)
     return issues
-  }
+  },
 }
 
 module.exports = issues

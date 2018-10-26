@@ -16,7 +16,7 @@ const validate = (files, bContentsDict) => {
           })
         })
         .catch(err => {
-          if(utils.issues.isAnIssue(err)) {
+          if (utils.issues.isAnIssue(err)) {
             issues.push(err)
             resolve()
           } else {
