@@ -6,6 +6,11 @@
  * agnostic to file specifics.
  */
 module.exports = {
+  0: {
+    key: 'INTERNAL ERROR',
+    severity: 'error',
+    reason: 'Internal error. SOME VALIDATION STEPS MAY NOT HAVE OCCURRED'
+  },
   1: {
     key: 'NOT_INCLUDED',
     severity: 'error',
