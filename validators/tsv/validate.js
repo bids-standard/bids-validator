@@ -61,7 +61,7 @@ const validate = (
 
   return new Promise((resolve, reject) =>
     Promise.all(tsvPromises)
-      .then(() => issues)
+      .then(() => resolve(issues))
       .catch(reject),
   )
 }

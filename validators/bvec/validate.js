@@ -26,7 +26,7 @@ const validate = (files, bContentsDict) => {
 
   return new Promise((resolve, reject) =>
     Promise.all(bvecPromises)
-      .then(() => issues)
+      .then(() => resolve(issues))
       .catch(reject),
   )
 }
