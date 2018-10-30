@@ -21,7 +21,7 @@ const checkDatasetDescription = require('./checkDatasetDescription')
  * Takes on an array of files, callback, and boolean inidicating if git-annex is used.
  * Starts the validation process for a BIDS package.
  */
-const fullTest = (fileList, options, callback, annexed, dir) => {
+const fullTest = (fileList, options, annexed, dir, callback) => {
   let self = BIDS
   self.options = options
 

@@ -17,30 +17,25 @@ const isNode = typeof window === 'undefined'
 function readFile(file, annexed, dir) {
   return new Promise((resolve, reject) => {
     if (isNode) {
-      testFile(
-        file,
-        function(issue, stats, remoteBuffer) {
-          if (issue) {
+      testFile(file, annexed, dir, function(issue, stats, remoteBuffer) {
+        if (issue) {
+          process.nextTick(function() {
+            return reject(issue)
+          })
+        }
+        if (!remoteBuffer) {
+          fs.readFile(file.path, 'utf8', function(err, data) {
             process.nextTick(function() {
-              return reject(issue)
+              return resolve(data)
             })
-          }
-          if (!remoteBuffer) {
-            fs.readFile(file.path, 'utf8', function(err, data) {
-              process.nextTick(function() {
-                return resolve(data)
-              })
-            })
-          }
-          if (remoteBuffer) {
-            process.nextTick(function() {
-              return resolve(remoteBuffer.toString('utf8'))
-            })
-          }
-        },
-        annexed,
-        dir,
-      )
+          })
+        }
+        if (remoteBuffer) {
+          process.nextTick(function() {
+            return resolve(remoteBuffer.toString('utf8'))
+          })
+        }
+      })
     } else {
       var reader = new FileReader()
       reader.onloadend = function(e) {

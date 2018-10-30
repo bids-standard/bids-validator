@@ -4,7 +4,6 @@ const fs = require('fs')
 const zlib = require('zlib')
 const testFile = require('./testFile')
 const Issue = require('../../utils/issues').Issue
-const remoteFiles = require('./remoteFiles')
 
 const isNode = typeof window == 'undefined'
 
@@ -14,38 +13,33 @@ const isNode = typeof window == 'undefined'
  * Takes a files and returns a json parsed nifti
  * header without reading any extra bytes.
  */
-function readNiftiHeader(file, callback, annexed, dir) {
+function readNiftiHeader(file, annexed, dir, callback) {
   if (isNode) {
-    nodeNiftiTest(file, callback, annexed, dir)
+    nodeNiftiTest(file, annexed, dir, callback)
   } else {
     browserNiftiTest(file, callback)
   }
 }
 
-function nodeNiftiTest(file, callback, annexed, dir) {
-  testFile(
-    file,
-    function(issue, stats, remoteBuffer) {
-      file.stats = stats
-      if (issue) {
-        callback({ error: issue })
+function nodeNiftiTest(file, annexed, dir, callback) {
+  testFile(file, annexed, dir, function(issue, stats, remoteBuffer) {
+    file.stats = stats
+    if (issue) {
+      callback({ error: issue })
+      return
+    }
+    if (stats) {
+      if (stats.size < 348) {
+        callback({ error: new Issue({ code: 36, file: file }) })
         return
       }
-      if (stats) {
-        if (stats.size < 348) {
-          callback({ error: new Issue({ code: 36, file: file }) })
-          return
-        }
-      }
-      if (remoteBuffer) {
-        callback(parseNIfTIHeader(remoteBuffer, file))
-      } else {
-        return extractNiftiFile(file, callback)
-      }
-    },
-    annexed,
-    dir,
-  )
+    }
+    if (remoteBuffer) {
+      callback(parseNIfTIHeader(remoteBuffer, file))
+    } else {
+      return extractNiftiFile(file, callback)
+    }
+  })
 }
 
 function extractNiftiFile(file, callback) {

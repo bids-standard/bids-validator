@@ -9,7 +9,7 @@ const remoteFiles = require('./remoteFiles')
  * reading. Calls back with an error and stats if it isn't
  * or null and stats if it is.
  */
-function testFile(file, callback, annexed, dir) {
+function testFile(file, annexed, dir, callback) {
   fs.stat(file.path, function(statErr, stats) {
     if (statErr) {
       fs.lstat(file.path, function(lstatErr, lstats) {
@@ -21,7 +21,7 @@ function testFile(file, callback, annexed, dir) {
             const limit = file.name.includes('.nii') ? 500 : false
             // Call process to get remote files
             // It will call callback with content or error
-            remoteFiles.getAnnexedFile(file, dir, callback, limit)
+            remoteFiles.getAnnexedFile(file, dir, limit, callback)
           } else {
             callback(new Issue({ code: 43, file: file }), stats)
           }
@@ -31,13 +31,13 @@ function testFile(file, callback, annexed, dir) {
       })
     } else {
       fs.access(file.path, function(accessErr) {
-        handleFsAccess(accessErr, callback, stats)
+        handleFsAccess(accessErr, file, stats, callback)
       })
     }
   })
 }
 
-function handleFsAccess(accessErr, callback, stats) {
+function handleFsAccess(accessErr, file, stats, callback) {
   if (!accessErr) {
     process.nextTick(function() {
       callback(null, stats)
