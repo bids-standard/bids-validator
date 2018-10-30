@@ -1,9 +1,10 @@
 const AWS = require('aws-sdk')
 var fs = require('fs')
-const { spawnSync } = require('child_process')
-const Issue = require('../../utils/issues').Issue
+const { execSync } = require('child_process')
+const Issue = require('../issues').Issue
 const zlib = require('zlib')
 const s3 = new AWS.S3()
+const isNode = typeof window === 'undefined'
 
 /**
  * Remote Files
@@ -16,88 +17,119 @@ const remoteFiles = {
   // Initiaties access of a remote file from git-annex remote
   // Get remotes info the call to try successive remotes
   // Called by testFile
-  getAnnexedFile: function(file, dir, callback, limit) {
+  getAnnexedFile: function(file, dir, limit, callback) {
     // Build config object
     const config = {
       file: file,
       dir: dir,
-      callback: callback,
     }
     if (limit) config.limit = limit
     config.remotesInfo = this.getRemotesInfo(dir, file)
-    config.remoteCount = config.remotesInfo.length
-    // Call recursive function to try remotes
-    this.tryRemotes(config)
+
+    // try all the special git-annex remotes, and exit if there is an issue (reading / fetching files)
+    // if all remotes fail, throw issue code 97
+    Promise.all(
+      config.remotesInfo.map((remote, idx) => {
+        return this.tryRemote(remote, config)
+          .then(data => callback(null, null, data))
+          .catch(err => {
+            if (err.code) {
+              return callback(err, null, null)
+            }
+            if (idx == config.remotesInfo.length) {
+              return callback(
+                new Issue({ code: 97, file: config.file }),
+                null,
+                null,
+              )
+            }
+          })
+      }),
+    )
   },
 
-  // Try successive remotes to access file
-  tryRemotes: function(config) {
-    // Keep track of iterations
-    if (!config.i) config.i = 0
-    // Increment last value of i if this isn't the first call
-    if (config.i != 0) config.i++
-    if (config.i == config.remoteCount - 1) config.last = true
+  // Try to access file from a remote
+  tryRemote: function(remote, config) {
     // Get current remote
-    config.remote = config.remotesInfo[config.i]
-    config.s3Params = this.getSingleRemoteInfo(
-      config.dir,
-      config.remote.remoteUuid,
-    )
+    config.s3Params = this.getSingleRemoteInfo(config.dir, remote.remoteUuid)
     const dir = config.dir.endsWith('/') ? config.dir.slice(0, -1) : config.dir
     const datasetName = dir.split('/')[dir.split('/').length - 1]
     const key = datasetName + config.file.relativePath
     // Add additonal parameters
     config.s3Params['Key'] = key
-    config.s3Params['VersionId'] = config.remote.versionId
-    this.accessRemoteFile(config)
-  },
-  // Function for calling local git-annex
-  callGitAnnex: function(cmd) {
-    const stream = spawnSync(cmd, {
-      shell: true,
-    })
-    return stream.stdout.toString()
+    config.s3Params['VersionId'] = remote.versionId
+    return this.accessRemoteFile(config)
   },
 
   // Download a remote file from its path
   accessRemoteFile: function(config) {
     if (config.limit) config.s3Params['Range'] = 'bytes=0-' + config.limit
-    s3.getObject(config.s3Params)
-      .promise()
-      .then(data => {
-        let buffer = data.Body
-        if (config.file.name.endsWith('.gz')) {
-          this.extractGzipBuffer(buffer, config.callback)
-        } else {
-          config.callback(null, null, buffer)
-        }
-      })
-      .catch(() => {
-        // Log an error if this is the last remote to try
-        if (config.last) {
-          config.callback(
-            new Issue({ code: 98, file: config.file }),
-            null,
-            null,
-          )
-        } else {
-          // Call to try next remote
-          this.tryRemotes(config)
-        }
-      })
+    return new Promise((resolve, reject) => {
+      this.constructAwsRequest(config)
+        .then(buffer => {
+          if (config.file.name.endsWith('.gz')) {
+            this.extractGzipBuffer(buffer, config)
+              .then(data => resolve(data))
+              .catch(err => reject(err))
+          } else {
+            resolve(buffer)
+          }
+        })
+        .catch(reject)
+    })
   },
 
-  extractGzipBuffer: function(buffer, callback) {
-    const decompressStream = zlib
-      .createGunzip()
-      .on('data', function(chunk) {
-        callback(null, null, chunk)
-        decompressStream.pause()
-      })
-      .on('error', function() {
-        callback(new Issue({ code: 28, file: config.file }), null, null)
-      })
-    decompressStream.write(buffer)
+  constructAwsRequest: function(config) {
+    const hasCreds = isNode
+      ? Object.keys(process.env).indexOf('AWS_ACCESS_KEY_ID') > -1
+      : false
+    if (hasCreds) {
+      return s3
+        .getObject(config.s3Params)
+        .promise()
+        .then(data => data.Body)
+    } else {
+      // bucket + key url
+      let url =
+        s3.getSignedUrl('getObject', config.s3Params) +
+        config.s3Params.Bucket +
+        '/' +
+        config.s3Params.Key
+
+      // add version to url, if exists
+      url = config.s3Params.VersionId
+        ? url + '?VersionId=' + config.s3Params.VersionId
+        : url
+
+      // add range to url, if exists
+      url = config.s3Params.Range
+        ? url + '?Range=' + config.s3Params.Range
+        : url
+      return fetch(url).then(resp => resp.buffer())
+    }
+  },
+
+  extractGzipBuffer: function(buffer, config) {
+    return new Promise((resolve, reject) => {
+      const decompressStream = zlib
+        .createGunzip()
+        .on('data', function(chunk) {
+          resolve(chunk)
+          decompressStream.pause()
+        })
+        .on('error', function() {
+          return reject(new Issue({ code: 28, file: config.file }))
+        })
+      decompressStream.write(buffer)
+    })
+  },
+
+  // Function for calling local git-annex
+  callGitAnnex: function(cmd) {
+    const stream = execSync(cmd, {
+      shell: true,
+    })
+    return stream.toString()
   },
 
   // Ask git-annex for more information about a file
@@ -109,44 +141,50 @@ const remoteFiles = {
     const getRemoteCmd = `cd ${dir}
     git show git-annex:$(git-annex examinekey --json $(git-annex lookupkey ${relativePath}) | jq -r .hashdirlower)$(git-annex lookupkey ${relativePath}).log.rmet`
     const resp = this.callGitAnnex(getRemoteCmd)
-    const remotesInfo = this.processGetRemoteResponse(resp)
+    const remotesInfo = this.processRemoteMetadata(resp)
     return remotesInfo
   },
 
   // Get info from a given git-annex remote
   getSingleRemoteInfo: function(dir, uuid) {
     const infoCmd = `cd ${dir}
-    git-annex info ${uuid}
-    `
+    git-annex info ${uuid}`
     const resp = this.callGitAnnex(infoCmd)
-    return this.processInfoQuery(resp)
+    return this.getRemoteBucket(resp)
   },
-  // Manipulate the response from git-annex info query
-  processInfoQuery: function(resp) {
+
+  // Obtain bucket field from git-annex info query
+  getRemoteBucket: function(resp) {
     const params = {
       Bucket: null,
     }
     for (let line of resp.split('\n')) {
-      if (line.includes('bucket:')) {
+      if (line.includes('bucket: ')) {
         params.Bucket = line.split(': ')[1]
       }
     }
     return params
   },
-  // Manipulate the response from git-annex whereis query
-  processGetRemoteResponse: function(resp) {
+
+  // Manipulate the response from git-annex lookupkey query
+  processRemoteMetadata: function(resp) {
     const remotesInfo = []
     const lines = resp.split('\n')
     for (let line of lines) {
       if (line != '') {
         const splitSpace = line.split(' ')
-        const remoteInfo = {
-          timestamp: splitSpace[0],
-          remoteUuid: splitSpace[1].split(':')[0],
-          fileName: splitSpace[2].split('#')[1],
-          versionId: splitSpace[2].split('#')[0].substring(1),
+        if (splitSpace.length == 3) {
+          const fileInfo = splitSpace[2].split('#')
+          const timestamp = splitSpace[0]
+          const annexInfo = splitSpace[1].split(':')
+          if (fileInfo.length == 2 && annexInfo.length == 2) {
+            const remoteUuid = annexInfo[0]
+            const fileName = fileInfo[1]
+            const versionId = fileInfo[0].substring(1)
+            const remoteInfo = { timestamp, remoteUuid, fileName, versionId }
+            remotesInfo.push(remoteInfo)
+          }
         }
-        remotesInfo.push(remoteInfo)
       }
     }
     return remotesInfo
