@@ -115,7 +115,7 @@ describe('remoteFiles', () => {
       child_process.execSync = jest.fn()
       child_process.execSync.mockReturnValue(new Buffer('test'))
       const resp = remoteFiles.callGitAnnex('echo test')
-      expect(resp).toBe('test')
+      expect(resp.trim()).toBe('test')
     })
   })
 
