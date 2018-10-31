@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk')
-var fs = require('fs')
+const fs = require('fs')
 const { execSync } = require('child_process')
 const Issue = require('../issues').Issue
 const zlib = require('zlib')
@@ -111,16 +111,20 @@ const remoteFiles = {
 
   extractGzipBuffer: function(buffer, config) {
     return new Promise((resolve, reject) => {
-      const decompressStream = zlib
-        .createGunzip()
-        .on('data', function(chunk) {
-          resolve(chunk)
-          decompressStream.pause()
-        })
-        .on('error', function() {
-          return reject(new Issue({ code: 28, file: config.file }))
-        })
-      decompressStream.write(buffer)
+      try {
+        const decompressStream = zlib
+          .createGunzip()
+          .on('data', function(chunk) {
+            resolve(chunk)
+            decompressStream.pause()
+          })
+          .on('error', function() {
+            return reject(new Issue({ code: 28, file: config.file }))
+          })
+        decompressStream.write(buffer)
+      } catch (e) {
+        return reject(new Issue({ code: 28, file: config.file }))
+      }
     })
   },
 
@@ -135,9 +139,10 @@ const remoteFiles = {
   // Ask git-annex for more information about a file
   getRemotesInfo: function(dir, file) {
     // Remove leading slash from  relativePath
-    const relativePath = file.relativePath.startsWith('/')
-      ? file.relativePath.substring(1)
-      : file.relativePath
+    const relativePath =
+      file.relativePath && file.relativePath.startsWith('/')
+        ? file.relativePath.substring(1)
+        : file.relativePath
     const getRemoteCmd = `cd ${dir}
     git show git-annex:$(git-annex examinekey --json $(git-annex lookupkey ${relativePath}) | jq -r .hashdirlower)$(git-annex lookupkey ${relativePath}).log.rmet`
     const resp = this.callGitAnnex(getRemoteCmd)
