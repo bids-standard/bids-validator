@@ -89,24 +89,27 @@ const remoteFiles = {
         .promise()
         .then(data => data.Body)
     } else {
-      // bucket + key url
-      let url =
-        s3.getSignedUrl('getObject', config.s3Params) +
-        config.s3Params.Bucket +
-        '/' +
-        config.s3Params.Key
-
-      // add version to url, if exists
-      url = config.s3Params.VersionId
-        ? url + '?VersionId=' + config.s3Params.VersionId
-        : url
-
-      // add range to url, if exists
-      url = config.s3Params.Range
-        ? url + '?Range=' + config.s3Params.Range
-        : url
+      let url = this.constructAwsUrl(config)
       return fetch(url).then(resp => resp.buffer())
     }
+  },
+
+  constructAwsUrl: function(config) {
+    // bucket + key url
+    let url =
+      s3.getSignedUrl('getObject', config.s3Params) +
+      config.s3Params.Bucket +
+      '/' +
+      config.s3Params.Key
+
+    // add version to url, if exists
+    url = config.s3Params.VersionId
+      ? url + '?VersionId=' + config.s3Params.VersionId
+      : url
+
+    // add range to url, if exists
+    url = config.s3Params.Range ? url + '?Range=' + config.s3Params.Range : url
+    return url
   },
 
   extractGzipBuffer: function(buffer, config) {
@@ -175,23 +178,21 @@ const remoteFiles = {
   processRemoteMetadata: function(resp) {
     const remotesInfo = []
     const lines = resp.split('\n')
-    for (let line of lines) {
-      if (line != '') {
-        const splitSpace = line.split(' ')
-        if (splitSpace.length == 3) {
-          const fileInfo = splitSpace[2].split('#')
-          const timestamp = splitSpace[0]
-          const annexInfo = splitSpace[1].split(':')
-          if (fileInfo.length == 2 && annexInfo.length == 2) {
-            const remoteUuid = annexInfo[0]
-            const fileName = fileInfo[1]
-            const versionId = fileInfo[0].substring(1)
-            const remoteInfo = { timestamp, remoteUuid, fileName, versionId }
-            remotesInfo.push(remoteInfo)
-          }
+    lines.map(line => {
+      const splitSpace = line.split(' ')
+      if (splitSpace.length == 3) {
+        const fileInfo = splitSpace[2].split('#')
+        const timestamp = splitSpace[0]
+        const annexInfo = splitSpace[1].split(':')
+        if (fileInfo.length == 2 && annexInfo.length == 2) {
+          const remoteUuid = annexInfo[0]
+          const fileName = fileInfo[1]
+          const versionId = fileInfo[0].substring(1)
+          const remoteInfo = { timestamp, remoteUuid, fileName, versionId }
+          remotesInfo.push(remoteInfo)
         }
       }
-    }
+    })
     return remotesInfo
   },
   // Check if a local directory is a git-annex repo
