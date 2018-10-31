@@ -4,13 +4,14 @@
     "TaskName": {"type": "string","minLength": 1},
     "SamplingFrequency": {"type": "integer"},
     "PowerLineFrequency": {"type": "number"},
-    "HardwareFilters": {
+    "SoftwareFilters": {
       "anyOf": [
         {"type": "object", "additionalProperties": {"type":"object"}},
         {"type": "string", "pattern": "^n/a$"}
       ]
     },
-    "SoftwareFilters": {
+    "DCOffsetCorrection": {"type": "string","minLength": 1},
+    "HardwareFilters": {
       "anyOf": [
         {"type": "object", "additionalProperties": {"type":"object"}},
         {"type": "string", "pattern": "^n/a$"}
@@ -51,7 +52,6 @@
     "TaskName",
     "SamplingFrequency",
     "PowerLineFrequency",
-    "HardwareFilters",
     "SoftwareFilters"
     "iEEGReference"
   ],
