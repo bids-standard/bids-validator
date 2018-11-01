@@ -140,9 +140,10 @@ const remoteFiles = {
   },
 
   // Function for calling local git-annex
-  callGitAnnex: function(cmd) {
+  callGitAnnex: function(cmd, cwd) {
     const stream = execSync(cmd, {
       shell: true,
+      cwd,
     })
     return stream.toString()
   },
@@ -154,11 +155,34 @@ const remoteFiles = {
       file.relativePath && file.relativePath.startsWith('/')
         ? file.relativePath.substring(1)
         : file.relativePath
-    const getRemoteCmd = `cd ${dir}
-    git show git-annex:$(git-annex examinekey --json $(git-annex lookupkey ${relativePath}) | jq -r .hashdirlower)$(git-annex lookupkey ${relativePath}).log.rmet`
-    const resp = this.callGitAnnex(getRemoteCmd)
-    const remotesInfo = this.processRemoteMetadata(resp)
+    const lookupkey = this.getLookupKey(relativePath, dir)
+    const hashDirLower = this.getHashDirLower(lookupkey, dir)
+    const metadata = this.getRemoteMetadata(hashDirLower, lookupkey, dir)
+    const remotesInfo = this.processRemoteMetadata(metadata)
     return remotesInfo
+  },
+
+  // get the key for a particular file's relative path
+  getLookupKey: function(relativePath, dir) {
+    const lookupKeyCmd = `git-annex lookupkey ${relativePath}`
+    return this.callGitAnnex(lookupKeyCmd, dir).trim()
+  },
+
+  // get hashdirlower property from the git-annex examinekey command
+  getHashDirLower: function(lookupkey, dir) {
+    try {
+      const examineKeyCmd = `git-annex examinekey --json ${lookupkey}`
+      const examineKey = JSON.parse(this.callGitAnnex(examineKeyCmd, dir))
+      return examineKey.hashdirlower
+    } catch (e) {
+      return null
+    }
+  },
+
+  // get the remote metadata log content from git show command
+  getRemoteMetadata: function(hashDirLower, lookupkey, dir) {
+    const gitShowCmd = `git show git-annex:${hashDirLower}${lookupkey}.log.rmet`
+    return this.callGitAnnex(gitShowCmd, dir)
   },
 
   // Get info from a given git-annex remote

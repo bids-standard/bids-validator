@@ -132,14 +132,15 @@ describe('remoteFiles', () => {
       })
       assert.lengthOf(remotesInfo, 0)
     })
-    it('should return an array of remote objects if callGitAnnex returns properly formatted remote metadata file', () => {
-      remoteFiles.callGitAnnex = jest.fn()
-      remoteFiles.callGitAnnex.mockReturnValue(
+    it('should return an array of remote objects if getRemoteData returns properly formatted remote metadata file', () => {
+      remoteFiles.getRemoteMetadata = jest.fn()
+      remoteFiles.getRemoteMetadata.mockReturnValue(
         'timestamp remoteuuid:commitinfo xversionId#fileName',
       )
       const remotesInfo = remoteFiles.getRemotesInfo('some_directory', {
         relativePath: 'some_file',
       })
+      remoteFiles.getRemoteMetadata.mockRestore()
       assert.lengthOf(remotesInfo, 1)
     })
   })
