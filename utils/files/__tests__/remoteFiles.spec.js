@@ -245,20 +245,6 @@ describe('remoteFiles', () => {
     })
   })
 
-  describe('safeParse', () => {
-    let json = { field: 'value' }
-    it('parses a json string', () => {
-      const jsonString = JSON.stringify(json)
-      const parse = remoteFiles.safeParse(jsonString)
-      expect(parse.field).toEqual('value')
-    })
-    it('returns false when the input is not proper json', () => {
-      const jsonString = 'this is not json'
-      const parse = remoteFiles.safeParse(jsonString)
-      expect(parse).toEqual(false)
-    })
-  })
-
   describe('tryRemote', () => {
     it('should resolve with the results of accessRemoteFile', done => {
       remoteFiles.getSingleRemoteInfo = jest.fn()

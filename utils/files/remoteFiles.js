@@ -199,14 +199,6 @@ const remoteFiles = {
   isGitAnnex: function(path) {
     return fs.existsSync(path + '/.git/annex')
   },
-  // Parse JSON from string if it's valid, else return false
-  safeParse: function(string) {
-    try {
-      return JSON.parse(string)
-    } catch (e) {
-      return false
-    }
-  },
 }
 
 module.exports = remoteFiles
