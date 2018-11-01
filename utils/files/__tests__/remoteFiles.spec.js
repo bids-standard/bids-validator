@@ -1,7 +1,6 @@
 const assert = require('chai').assert
 const remoteFiles = require('../remoteFiles')
 const fs = require('fs')
-const child_process = require('child_process')
 const zlib = require('zlib')
 const config = {
   s3Params: {
@@ -109,8 +108,6 @@ describe('remoteFiles', () => {
 
   describe('callGitAnnex', () => {
     it('should return the string result of execSync', () => {
-      child_process.execSync = jest.fn()
-      child_process.execSync.mockReturnValue(new Buffer('test'))
       const resp = remoteFiles.callGitAnnex('echo test')
       expect(resp.trim()).toBe('test')
     })
