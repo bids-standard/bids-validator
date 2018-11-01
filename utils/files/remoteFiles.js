@@ -90,7 +90,17 @@ const remoteFiles = {
         .then(data => data.Body)
     } else {
       let url = this.constructAwsUrl(config)
-      return fetch(url).then(resp => resp.buffer())
+      return fetch(url).then(resp => {
+        if (resp.ok) {
+          resp.buffer()
+        } else {
+          return Promise.reject(
+            new Error(
+              `HTTP response failed - ${resp.status} - ${resp.statusText}`,
+            ),
+          )
+        }
+      })
     }
   },
 
