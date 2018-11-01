@@ -28,24 +28,22 @@ const remoteFiles = {
 
     // try all the special git-annex remotes, and exit if there is an issue (reading / fetching files)
     // if all remotes fail, throw issue code 97
-    Promise.all(
-      config.remotesInfo.map((remote, idx) => {
-        return this.tryRemote(remote, config)
-          .then(data => callback(null, null, data))
-          .catch(err => {
-            if (err.code) {
-              return callback(err, null, null)
-            }
-            if (idx == config.remotesInfo.length) {
-              return callback(
-                new Issue({ code: 97, file: config.file }),
-                null,
-                null,
-              )
-            }
-          })
-      }),
-    )
+    config.remotesInfo.map((remote, idx) => {
+      return this.tryRemote(remote, config)
+        .then(data => callback(null, null, data))
+        .catch(err => {
+          if (err.code) {
+            return callback(err, null, null)
+          }
+          if (idx == config.remotesInfo.length) {
+            return callback(
+              new Issue({ code: 97, file: config.file }),
+              null,
+              null,
+            )
+          }
+        })
+    })
   },
 
   // Try to access file from a remote
@@ -92,7 +90,7 @@ const remoteFiles = {
       let url = this.constructAwsUrl(config)
       return fetch(url).then(resp => {
         if (resp.ok) {
-          resp.buffer()
+          return resp.buffer()
         } else {
           return Promise.reject(
             new Error(
