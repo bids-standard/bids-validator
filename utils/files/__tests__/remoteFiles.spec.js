@@ -3,7 +3,6 @@ const remoteFiles = require('../remoteFiles')
 const fs = require('fs')
 const child_process = require('child_process')
 const zlib = require('zlib')
-const env = Object.assign({}, process.env)
 const config = {
   s3Params: {
     Bucket: 'none',
@@ -19,11 +18,14 @@ describe('remoteFiles', () => {
     global.fetch = jest
       .fn()
       .mockImplementation(
-        () => new Promise(resolve => resolve({ buffer: () => 'buffer' })),
+        () =>
+          new Promise(resolve => resolve({ ok: true, buffer: () => 'buffer' })),
       )
   })
 
-  describe('getAnnexedFile', () => {})
+  beforeEach(() => {
+    delete process.env.AWS_ACCESS_KEY_ID
+  })
 
   describe('accessRemoteFile', () => {
     it('should return a promise', () => {
@@ -47,7 +49,6 @@ describe('remoteFiles', () => {
       process.env.AWS_ACCESS_KEY_ID = 12
       remoteFiles.accessRemoteFile(config).catch(err => {
         expect(err).toBeInstanceOf(Error)
-        process.env = env
         done()
       })
     })
@@ -75,7 +76,6 @@ describe('remoteFiles', () => {
       config.s3Params.Key = 'this_is_not_valid'
       const response = remoteFiles.constructAwsRequest(config).catch(e => {
         expect(e)
-        process.env = env
         done()
       })
       expect(response).toBeInstanceOf(Promise)
@@ -84,7 +84,6 @@ describe('remoteFiles', () => {
       process.env.AWS_ACCESS_KEY_ID = 12
       remoteFiles.constructAwsRequest(config).catch(e => {
         expect(e)
-        process.env = env
         done()
       })
     })
