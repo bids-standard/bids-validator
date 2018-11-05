@@ -10,8 +10,8 @@ const participantsInSubjects = (participants, subjects) => {
       !utils.array.equals(participantsFromFolders, participantsFromFile, true)
     ) {
       const evidence = constructMismatchEvidence(
-        participantsFromFolders,
         participantsFromFile,
+        participantsFromFolders,
       )
       issues.push(
         new Issue({
@@ -27,8 +27,8 @@ const participantsInSubjects = (participants, subjects) => {
 
 const constructMismatchEvidence = (participants, subjects) => {
   const diffs = utils.array.diff(participants, subjects)
-  const subjectsNotInParticipantsArray = diffs[0]
-  const subjectsNotInSubjectsArray = diffs[1]
+  const subjectsNotInSubjectsArray = diffs[0]
+  const subjectsNotInParticipantsArray = diffs[1]
   const evidenceOfMissingParticipants = subjectsNotInParticipantsArray.length
     ? 'Subjects ' +
       subjectsNotInParticipantsArray.join(', ') +
