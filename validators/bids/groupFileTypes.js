@@ -59,7 +59,9 @@ const ieegTest = filename => {
     'cnt',
     'bdf',
     'set',
+    'fdt',
     'nwb',
+    'mef',
   ].includes(filename.split('.').pop())
 }
 
