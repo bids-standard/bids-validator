@@ -306,7 +306,7 @@ describe('TSV', function() {
 
   it('should not allow iEEG channels.tsv files without high_cutoff column', function() {
     var tsv =
-      'name\ttype\tunits\tlow_cutoff\textra-column\treference\n' +
+      'name\ttype\tunits\tlow_cutoff\textra-column\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 72)
