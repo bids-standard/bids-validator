@@ -313,15 +313,6 @@ describe('TSV', function() {
     })
   })
 
-  it('should not allow iEEG channels.tsv files without reference column', function() {
-    var tsv =
-      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\textra-column\n' +
-      'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\tvalue-seven\tvalue-eight'
-    validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
-      assert(issues.length === 1 && issues[0].code === 72)
-    })
-  })
-
   it('correct columns should pass for iEEG channels.tsv file', function() {
     var tsv =
       'name\ttype\tunits\tlow_cutoff\thigh_cutoff\n' +

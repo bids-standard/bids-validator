@@ -55,14 +55,11 @@ const ieegTest = filename => {
     'edf',
     'vhdr',
     'vmrk',
-    'dat',
+    'eeg',
     'cnt',
     'bdf',
     'set',
     'nwb',
-    'tdat',
-    'tidx',
-    'tmet',
   ].includes(filename.split('.').pop())
 }
 
