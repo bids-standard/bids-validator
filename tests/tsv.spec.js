@@ -324,7 +324,7 @@ describe('TSV', function() {
 
   it('correct columns should pass for iEEG channels.tsv file', function() {
     var tsv =
-      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\treference\n' +
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\n' +
       'value-one\tvalue-two\tvalue-three\tvalue-four\tvalue-five\tvalue-six\t'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 0)
