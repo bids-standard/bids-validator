@@ -16,9 +16,8 @@ describe('remoteFiles', () => {
     // fetch mock
     global.fetch = jest
       .fn()
-      .mockImplementation(
-        () =>
-          new Promise(resolve => resolve({ ok: true, buffer: () => 'buffer' })),
+      .mockImplementation(() =>
+        Promise.resolve({ ok: true, buffer: () => 'buffer' }),
       )
   })
 
@@ -247,9 +246,7 @@ describe('remoteFiles', () => {
       remoteFiles.getSingleRemoteInfo = jest.fn()
       remoteFiles.getSingleRemoteInfo.mockReturnValue({ Bucket: 'wow' })
       remoteFiles.accessRemoteFile = jest.fn()
-      remoteFiles.accessRemoteFile.mockReturnValue(
-        new Promise(resolve => resolve('data')),
-      )
+      remoteFiles.accessRemoteFile.mockReturnValue(Promise.resolve('data'))
       remoteFiles
         .tryRemote(
           {},
