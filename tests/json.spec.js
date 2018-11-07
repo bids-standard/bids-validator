@@ -110,7 +110,7 @@ describe('JSON', function() {
       TaskName: 'Audiovis',
       SamplingFrequency: 10,
       PowerLineFrequency: 50,
-      SoftwareFilters: 'high-pass',
+      SoftwareFilters: {'HighPass': {'HalfAmplitudeCutOffHz': 1, 'RollOff: '6dB/Octave'}},
       iEEGReference: 'chan1',
     }
     jsonDict[ieeg_file.relativePath] = jsonObj
