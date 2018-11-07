@@ -37,7 +37,7 @@ const remoteFiles = {
           }
           if (idx == config.remotesInfo.length) {
             return callback(
-              new Issue({ code: 97, file: config.file }),
+              new Issue({ code: 98, file: config.file }),
               null,
               null,
             )
