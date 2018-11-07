@@ -541,6 +541,12 @@ module.exports = {
   97: {
     key: 'MISSING_SESSION',
     severity: 'warning',
-    reason: 'Not all subjects contain the same sessions.'
-  }
+    reason: 'Not all subjects contain the same sessions.',
+  },
+  98: {
+    key: 'INACCESSIBLE_REMOTE_FILE',
+    severity: 'error',
+    reason:
+      'This file appears to be a symlink to a remote annexed file but could not be accessed from any of the configured remotes.',
+  },
 }
