@@ -1,59 +1,59 @@
 {
   "type": "object",
   "properties": {
-    "TaskName": {"type": "string","minLength": 1},
-    "SamplingFrequency": {"type": "integer"},
-    "PowerLineFrequency": {"type": "number"},
+    "TaskName": { "type": "string", "minLength": 1 },
+    "SamplingFrequency": { "type": "integer" },
+    "PowerLineFrequency": { "type": "number" },
+    "DCOffsetCorrection": { "type": "string", "minLength": 1 },
     "SoftwareFilters": {
       "anyOf": [
-        {"type": "object", "additionalProperties": {"type":"object"}},
-        {"type": "string", "pattern": "^n/a$"}
+        { "type": "object", "additionalProperties": { "type": "object" } },
+        { "type": "string", "pattern": "^n/a$" }
       ]
     },
-    "DCOffsetCorrection": {"type": "string","minLength": 1},
     "HardwareFilters": {
       "anyOf": [
-        {"type": "object", "additionalProperties": {"type":"object"}},
-        {"type": "string", "pattern": "^n/a$"}
+        { "type": "object", "additionalProperties": { "type": "object" } },
+        { "type": "string", "pattern": "^n/a$" }
       ]
     },
-    "Manufacturer": {"type": "string","minLength": 1},
-    "ManufacturersModelName": {"type": "string"},
-    "TaskDescription": {"type": "string"},
-    "Instructions": {"type": "string"},
-    "CogAtlasID": {"type": "string"},
-    "CogPOID": {"type": "string"},
-    "InstitutionName": {"type": "string"},
-    "InstitutionAddress": {"type": "string"},
-    "DeviceSerialNumber": {"type": "string"},
-    "ECOGChannelCount": {"type" : "integer"},
-    "SEEGChannelCount": {"type" : "integer"},
-    "EEGChannelCount": {"type" : "integer"},
-    "EOGChannelCount": {"type" : "integer"},
-    "ECGChannelCount": {"type" : "integer"},
-    "EMGChannelCount": {"type" : "integer"},
-    "MiscChannelCount": {"type" : "integer"},
-    "TriggerChannelCount": {"type" : "integer"},
-    "RecordingDuration": {"type": "number"},
-    "RecordingType": {"type": "string"},
-    "EpochLength": {"type": "number"},
-    "SubjectArtefactDescription": {"type": "string"},
-    "SoftwareVersions": {"type": "string"},
-    "iEEGReference": {"type": "string"},
-    "ElectrodeManufacturer": {"type": "string"},
-    "ElectrodeManufacturersModelName": {"type": "string"},
-    "iEEGGround": {"type": "string"},
-    "iEEGPlacementScheme": {"type": "string"},
-    "iEEGElectrodeGroups": {"type": "string"},
-    "ElectricalStimulation": {"type": "boolean"},
-    "ElectricalStimulationParameters": {"type": "string"},
+    "Manufacturer": { "type": "string", "minLength": 1 },
+    "ManufacturersModelName": { "type": "string" },
+    "TaskDescription": { "type": "string" },
+    "Instructions": { "type": "string" },
+    "CogAtlasID": { "type": "string" },
+    "CogPOID": { "type": "string" },
+    "InstitutionName": { "type": "string" },
+    "InstitutionAddress": { "type": "string" },
+    "DeviceSerialNumber": { "type": "string" },
+    "ECOGChannelCount": { "type": "integer" },
+    "SEEGChannelCount": { "type": "integer" },
+    "EEGChannelCount": { "type": "integer" },
+    "EOGChannelCount": { "type": "integer" },
+    "ECGChannelCount": { "type": "integer" },
+    "EMGChannelCount": { "type": "integer" },
+    "MiscChannelCount": { "type": "integer" },
+    "TriggerChannelCount": { "type": "integer" },
+    "RecordingDuration": { "type": "number" },
+    "RecordingType": { "type": "string" },
+    "EpochLength": { "type": "number" },
+    "SubjectArtefactDescription": { "type": "string" },
+    "SoftwareVersions": { "type": "string" },
+    "iEEGReference": { "type": "string" },
+    "ElectrodeManufacturer": { "type": "string" },
+    "ElectrodeManufacturersModelName": { "type": "string" },
+    "iEEGGround": { "type": "string" },
+    "iEEGPlacementScheme": { "type": "string" },
+    "iEEGElectrodeGroups": { "type": "string" },
+    "ElectricalStimulation": { "type": "boolean" },
+    "ElectricalStimulationParameters": { "type": "string" }
   },
   "required": [
     "TaskName",
     "SamplingFrequency",
     "PowerLineFrequency",
-    "SoftwareFilters"
+    "SoftwareFilters",
     "iEEGReference"
   ],
- "additionalProperties": true
+  "additionalProperties": true
 }
