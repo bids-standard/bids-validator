@@ -6,7 +6,7 @@ const remoteFiles = require('./remoteFiles')
  * Test File
  *
  * Takes a file and callback and tests if it's viable for
- * reading. Calls back with an error and stats if it isn't
+ * reading and is larger than 0 kb. Calls back with an error and stats if it isn't
  * or null and stats if it is.
  */
 function testFile(file, annexed, dir, callback) {
@@ -40,6 +40,16 @@ function testFile(file, annexed, dir, callback) {
 function handleFsAccess(accessErr, file, stats, callback) {
   if (!accessErr) {
     process.nextTick(function() {
+      if (stats.size === 0) {
+        callback(
+          new Issue({
+            code: 97,
+            file: file,
+            reason: `Empty files (${file.path}) not allowed.`,
+          }),
+          stats,
+        )
+      }
       callback(null, stats)
     })
   } else {

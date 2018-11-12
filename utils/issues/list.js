@@ -549,4 +549,9 @@ module.exports = {
     reason:
       'This file appears to be a symlink to a remote annexed file but could not be accessed from any of the configured remotes.',
   },
+  99: {
+    key: 'EMPTY_FILE',
+    severity: 'error',
+    reason: 'Empty files not allowed.',
+  },
 }

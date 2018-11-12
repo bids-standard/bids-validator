@@ -14,6 +14,7 @@ const subSesMismatchTest = require('./subSesMismatchTest')
 const groupFileTypes = require('./groupFileTypes')
 const subjects = require('./subjects')
 const checkDatasetDescription = require('./checkDatasetDescription')
+const validateMisc = require('../../utils/files/validateMisc')
 
 /**
  * Full Test
@@ -76,17 +77,21 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     )
   }
 
-  // TSV validation
-  tsv
-    .validate(
-      files.tsv,
-      fileList,
-      tsvs,
-      events,
-      participants,
-      phenotypeParticipants,
-      stimuli,
-    )
+  validateMisc(files.misc)
+    .then(miscIssues => {
+      self.issues = self.issues.concat(miscIssues)
+
+      // TSV validation
+      return tsv.validate(
+        files.tsv,
+        fileList,
+        tsvs,
+        events,
+        participants,
+        phenotypeParticipants,
+        stimuli,
+      )
+    })
     .then(tsvIssues => {
       self.issues = self.issues.concat(tsvIssues)
 
