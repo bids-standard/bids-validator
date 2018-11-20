@@ -244,7 +244,7 @@ module.exports = {
     key: 'FILE_READ',
     severity: 'error',
     reason:
-      'We were unable to read this file. Make sure it is not corrupted, incorrectly named or incorrectly symlinked.',
+      'We were unable to read this file. Make sure it contains data (fileSize > 0 kB) and is not corrupted, incorrectly named, or incorrectly symlinked.',
   },
   45: {
     key: 'SUBJECT_FOLDERS',

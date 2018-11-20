@@ -1,4 +1,4 @@
-const testFile = require('./testFile')
+const readFile = require('./readFile')
 const Issue = require('../issues/issue')
 
 /**
@@ -8,22 +8,12 @@ const Issue = require('../issues/issue')
  */
 module.exports = function validateMisc(miscFiles) {
   const issuePromises = miscFiles.reduce(
-    (issues, file) => [...issues, testFile(file)],
-    [],
-  )
-  return Promise.all(issuePromises).then(res =>
-    res
-      // extract issue
-      .map(obj => obj.issue)
-      // remove non-issues
-      .filter(o => o instanceof Issue),
-  )
-}
-module.exports = function validateMisc(miscFiles) {
-  const issuePromises = miscFiles.reduce(
     (issues, file) => [
       ...issues,
-      new Promise(resolve => testFile(file, false, null, resolve)),
+      readFile(file, false, null).catch(err => {
+        if (err instanceof Issue) return err
+        throw err
+      }),
     ],
     [],
   )
