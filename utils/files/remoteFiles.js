@@ -229,7 +229,9 @@ const remoteFiles = {
   },
   // Check if a local directory is a git-annex repo
   isGitAnnex: function(path) {
-    return fs.existsSync(path + '/.git/annex')
+    if (typeof window === 'undefined')
+      return fs.existsSync(path + '/.git/annex')
+    return false
   },
 }
 
