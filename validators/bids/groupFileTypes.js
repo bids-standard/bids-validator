@@ -47,7 +47,7 @@ const sortFiles = (fileList, options, files) => {
     } else if (ofType(filename, 'bvec')) {
       // collect bvec
       files.bvec.push(file)
-    } else if (ieegTest(filename)) {
+    } else if (ephysTest(filename)) {
       // collect ephys
       files.ephys.push(file)
       files.misc.push(file)
@@ -57,13 +57,12 @@ const sortFiles = (fileList, options, files) => {
   })
 }
 
-const ieegTest = filename => {
+const ephysTest = filename => {
   return [
     'edf',
     'vhdr',
     'vmrk',
     'eeg',
-    'cnt',
     'bdf',
     'set',
     'fdt',
