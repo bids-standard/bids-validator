@@ -12,7 +12,6 @@
     "Manufacturer": { "type": "string", "minLength": 1 },
     "ManufacturersModelName": { "type": "string", "minLength": 1 },
     "DeviceSerialNumber": { "type": "string" },
-    "DeviceSoftwareVersion": { "type": "string" },
     "SoftwareVersions": { "type": "string" },
     "PowerLineFrequency": { "type": "number" },
     "SamplingFrequency": { "type": "number" },
@@ -27,6 +26,7 @@
     "EEGGround": { "type": "string" },
     "CapManufacturer": { "type": "string" },
     "CapManufacturersModelName": { "type": "string" },
+    "HeadCircumference": { "type": "number" },
     "HardwareFilters": {
       "anyOf": [
         { "type": "object", "additionalProperties": { "type": "object" } },
@@ -47,10 +47,8 @@
   "required": [
     "TaskName",
     "SamplingFrequency",
+    "SoftwareFilters",
     "EEGChannelCount",
-    "EOGChannelCount",
-    "ECGChannelCount",
-    "EMGChannelCount",
     "EEGReference",
     "PowerLineFrequency"
   ],
