@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk')
 const fs = require('fs')
-const { execSync } = require('child_process')
+const cp = require('child_process')
 const Issue = require('../issues').Issue
 const zlib = require('zlib')
 const s3 = new AWS.S3()
@@ -141,7 +141,7 @@ const remoteFiles = {
 
   // Function for calling local git-annex
   callGitAnnex: function(cmd, cwd) {
-    const stream = execSync(cmd, {
+    const stream = cp.execSync(cmd, {
       shell: true,
       cwd,
     })
