@@ -67,5 +67,9 @@
   },
   "jest": {
     "testEnvironment": "node"
+  },
+  "browser": {
+    "fs": false,
+    "child_process": false
   }
 }
