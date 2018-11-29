@@ -90,6 +90,7 @@
     "tokens": {
       "@@@_eeg_type_@@@": ["vhdr", "vmrk", "eeg", "edf", "bdf", "set", "fdt"],
       "@@@_eeg_ext_@@@": [
+        "_events.json",
         "_events.tsv",
         "_electrodes.tsv",
         "_channels.tsv",
@@ -178,6 +179,7 @@
         "mef"
       ],
       "@@@_ieeg_ext_@@@": [
+        "_events.json",
         "_events.tsv",
         "_electrodes.tsv",
         "_channels.tsv",
@@ -193,6 +195,7 @@
     "tokens": {
       "@@@_meg_type_@@@": [".fif", ".ds"],
       "@@@_meg_ext_@@@": [
+        "_events.json",
         "_events.tsv",
         "_channels.tsv",
         "_meg.json",
