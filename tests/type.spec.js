@@ -84,6 +84,9 @@ describe('utils.type.file.isTopLevel', function() {
     '/T1w.json',
     '/acq-test_dwi.json',
     '/rec-test_physio.json',
+    '/task-testing_eeg.json',
+    '/task-testing_ieeg.json',
+    '/task-testing_meg.json',
   ]
 
   goodFilenames.forEach(function(path) {

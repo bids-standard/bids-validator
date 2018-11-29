@@ -128,8 +128,8 @@ describe('JSON', function() {
   })
 
   var eeg_coordsystem_file = {
-    name: 'sub-01_task-testing_coordsystem.json',
-    relativePath: '/sub-01_task-testing_coordsystem.json',
+    name: 'sub-01/eeg/sub-01_task-testing_coordsystem.json',
+    relativePath: '/sub-01/eeg/sub-01_task-testing_coordsystem.json',
   }
 
   it('EEG *_coordsystem.json files should have required key/value pairs', function() {
@@ -150,6 +150,22 @@ describe('JSON', function() {
     }
     jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  var ieeg_coordsystem_file = {
+    name: 'sub-01/ieeg/sub-01_task-testing_coordsystem.json',
+    relativePath: '/sub-01/ieeg/sub-01_task-testing_coordsystem.json',
+  }
+
+  it('iEEG *_coordsystem.json files should have required key/value pairs', function() {
+    var jsonObj = {
+      iEEGCoordinateSystem: 'Other',
+      iEEGCoordinateUnits: 'mm',
+    }
+    jsonDict[ieeg_coordsystem_file.relativePath] = jsonObj
+    validate.JSON(ieeg_coordsystem_file, jsonDict, function(issues) {
       assert(issues.length === 0)
     })
   })
