@@ -90,6 +90,8 @@ const selectSchema = file => {
       schema = require('./schemas/meg.json')
     } else if (file.name.endsWith('ieeg.json')) {
       schema = require('./schemas/ieeg.json')
+    } else if (file.name.endsWith('eeg.json')) {
+      schema = require('./schemas/eeg.json')
     } else if (
       file.relativePath.includes('/meg/') &&
       file.name.endsWith('coordsystem.json')
@@ -100,8 +102,11 @@ const selectSchema = file => {
       file.name.endsWith('coordsystem.json')
     ) {
       schema = require('./schemas/coordsystem_ieeg.json')
-    } else if (file.name.endsWith('eeg.json')) {
-      schema = require('./schemas/eeg.json')
+    } else if (
+      file.relativePath.includes('/eeg/') &&
+      file.name.endsWith('coordsystem.json')
+    ) {
+      schema = require('./schemas/coordsystem_eeg.json')
     }
   }
   return schema
