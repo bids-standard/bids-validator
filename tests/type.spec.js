@@ -219,8 +219,8 @@ describe('utils.type.file.isEEG', function() {
   ]
 
   goodFilenames.forEach(function(path) {
-    it("isEeg('" + path + "') === true", function(isdone) {
-      assert.equal(utils.type.file.isEeg(path), true)
+    it("isEEG('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isEEG(path), true)
       isdone()
     })
   })
@@ -232,8 +232,8 @@ describe('utils.type.file.isEEG', function() {
   ]
 
   badFilenames.forEach(function(path) {
-    it("isEeg('" + path + "') === false", function(isdone) {
-      assert.equal(utils.type.file.isEeg(path), false)
+    it("isEEG('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isEEG(path), false)
       isdone()
     })
   })
