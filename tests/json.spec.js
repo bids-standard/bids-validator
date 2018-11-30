@@ -81,10 +81,10 @@ describe('JSON', function() {
       TaskName: 'rest',
       SamplingFrequency: 1000,
       EEGChannelCount: 1,
-      EOGChannelCount: 2,
-      ECGChannelCount: 3,
-      EMGChannelCount: 4,
       EEGReference: 'Cz',
+      SoftwareFilters: {
+        HighPass: { HalfAmplitudeCutOffHz: 1, RollOff: '6dB/Octave' },
+      },
       PowerLineFrequency: 50,
     }
     jsonDict[eeg_file.relativePath] = jsonObj
