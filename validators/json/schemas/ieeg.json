@@ -55,5 +55,5 @@
     "SoftwareFilters",
     "iEEGReference"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }
