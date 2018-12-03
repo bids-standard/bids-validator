@@ -69,7 +69,7 @@ The basic configuration format is outlined below. All configuration is optional.
     	"ignoredFiles": []
     }
 
-`ignoredFiles` takes a list of file paths or glob patterns you'd like to ignore. Lets say we want to ignore all files and sub-directory under `/derivatives/`.
+`ignoredFiles` takes a list of file paths or glob patterns you'd like to ignore. Lets say we want to ignore all files and sub-directory under `/derivatives/`. **This is not the same syntax as used in the .bidsignore file**
 
     {
     	"ignoredFiles": ["/derivatives/**"]
