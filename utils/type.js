@@ -75,7 +75,7 @@ module.exports = {
       this.file.isFunc(path) ||
       this.file.isMeg(path) ||
       (this.file.isIEEG(path) && bep010) ||
-      (this.file.isEeg(path) && bep006) ||
+      (this.file.isEEG(path) && bep006) ||
       this.file.isBehavioral(path) ||
       this.file.isCont(path) ||
       this.file.isFieldMap(path) ||
@@ -120,7 +120,7 @@ module.exports = {
         this.isFieldMapMainNii(path) ||
         this.isFunc(path) ||
         this.isMeg(path) ||
-        this.isEeg(path) ||
+        this.isEEG(path) ||
         this.isIEEG(path) ||
         this.isBehavioral(path) ||
         this.isFuncBold(path) ||
@@ -215,7 +215,7 @@ module.exports = {
       return conditionalMatch(megData, path)
     },
 
-    isEeg: function(path) {
+    isEEG: function(path) {
       return conditionalMatch(eegData, path)
     },
 

@@ -127,6 +127,49 @@ describe('JSON', function() {
     })
   })
 
+  var eeg_coordsystem_file = {
+    name: 'sub-01/eeg/sub-01_task-testing_coordsystem.json',
+    relativePath: '/sub-01/eeg/sub-01_task-testing_coordsystem.json',
+  }
+
+  it('EEG *_coordsystem.json files should have required key/value pairs', function() {
+    var jsonObj = {
+      IntendedFor: 'sub-01_task-testing_electrodes.tsv',
+      FiducialsDescription: 'Fiducials were digitized using  ... ',
+      EEGCoordinateSystem: 'Captrack',
+      EEGCoordinateUnits: 'mm',
+      EEGCoordinateSystemDescription: 'RAS orientation ...',
+      AnatomicalLandmarkCoordinates: {
+        LPA: [-1, 0, 0],
+        RPA: [1, 0, 0],
+        NAS: [0, 1, 0],
+      },
+      AnatomicalLandmarkCoordinateSystem: '...',
+      AnatomicalLandmarkCoordinateUnits: '...',
+      AnatomicalLandmarkCoordinateSystemDescription: '...',
+    }
+    jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
+    validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  var ieeg_coordsystem_file = {
+    name: 'sub-01/ieeg/sub-01_task-testing_coordsystem.json',
+    relativePath: '/sub-01/ieeg/sub-01_task-testing_coordsystem.json',
+  }
+
+  it('iEEG *_coordsystem.json files should have required key/value pairs', function() {
+    var jsonObj = {
+      iEEGCoordinateSystem: 'Other',
+      iEEGCoordinateUnits: 'mm',
+    }
+    jsonDict[ieeg_coordsystem_file.relativePath] = jsonObj
+    validate.JSON(ieeg_coordsystem_file, jsonDict, function(issues) {
+      assert(issues.length === 0)
+    })
+  })
+
   it('should use inherited sidecars to find missing fields', function() {
     const multiEntryJsonDict = {}
 

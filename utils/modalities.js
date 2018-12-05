@@ -48,7 +48,7 @@ module.exports = {
       ['anat', 'func', 'dwi'].indexOf(path[1]) != -1
     ) {
       isCorrectModality = true
-    } else if (path[0].includes('.json')) {
+    } else if (['.json', '.tsv'].some(v => path[0].includes(v))) {
       const testPath = path[1]
       switch (testPath) {
         case 'meg':

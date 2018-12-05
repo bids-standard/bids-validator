@@ -84,6 +84,9 @@ describe('utils.type.file.isTopLevel', function() {
     '/T1w.json',
     '/acq-test_dwi.json',
     '/rec-test_physio.json',
+    '/task-testing_eeg.json',
+    '/task-testing_ieeg.json',
+    '/task-testing_meg.json',
   ]
 
   goodFilenames.forEach(function(path) {
@@ -219,8 +222,8 @@ describe('utils.type.file.isEEG', function() {
   ]
 
   goodFilenames.forEach(function(path) {
-    it("isEeg('" + path + "') === true", function(isdone) {
-      assert.equal(utils.type.file.isEeg(path), true)
+    it("isEEG('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isEEG(path), true)
       isdone()
     })
   })
@@ -232,8 +235,8 @@ describe('utils.type.file.isEEG', function() {
   ]
 
   badFilenames.forEach(function(path) {
-    it("isEeg('" + path + "') === false", function(isdone) {
-      assert.equal(utils.type.file.isEeg(path), false)
+    it("isEEG('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isEEG(path), false)
       isdone()
     })
   })
