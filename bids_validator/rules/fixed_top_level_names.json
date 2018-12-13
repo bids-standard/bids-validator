@@ -8,6 +8,7 @@
     "/phasediff.json",
     "/phase1.json",
     "/phase2.json",
-    "/fieldmap.json"
+    "/fieldmap.json",
+    "/events.json"
   ]
 }
