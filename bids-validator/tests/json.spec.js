@@ -80,7 +80,6 @@ describe('JSON', function() {
     var jsonObj = {
       TaskName: 'rest',
       SamplingFrequency: 1000,
-      EEGChannelCount: 1,
       EEGReference: 'Cz',
       SoftwareFilters: {
         HighPass: { HalfAmplitudeCutOffHz: 1, RollOff: '6dB/Octave' },
