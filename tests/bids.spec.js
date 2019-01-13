@@ -46,7 +46,6 @@ describe('BIDS example datasets ', function() {
           'tests/data/bids-examples-' + global.test_version + '/' + path + '/',
           options,
           function(issues) {
-            var errors = issues.errors
             var warnings = issues.warnings
             var session_flag = false
             for (var warning in warnings) {
