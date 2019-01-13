@@ -74,6 +74,7 @@ const compareSidecarProperties = (file, sidecar) => {
   return issues
 }
 
+// TODO: add /events.json schema loading/validation
 const selectSchema = file => {
   let schema = null
   if (file.name) {
