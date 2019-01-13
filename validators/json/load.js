@@ -1,6 +1,13 @@
 const utils = require('../../utils')
 
-function validate(resolve, reject, file, jsonFiles, jsonContentsDict, issues) {
+function validate({
+  resolve,
+  reject,
+  file,
+  jsonFiles,
+  jsonContentsDict,
+  issues,
+}) {
   return function(parseIssues, jsObj) {
     issues = issues.concat(parseIssues)
 
@@ -27,14 +34,14 @@ const load = (files, jsonFiles, jsonContentsDict, annexed, dir) => {
               utils.json.parse(
                 file,
                 contents,
-                validate(
+                validate({
                   resolve,
                   reject,
                   file,
                   jsonFiles,
                   jsonContentsDict,
                   issues,
-                ),
+                }),
               )
             })
             .catch(issue => {
