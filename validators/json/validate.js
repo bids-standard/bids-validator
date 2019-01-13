@@ -5,14 +5,17 @@ const Issue = utils.issues.Issue
 const validate = (jsonFiles, fileList, jsonContentsDict, summary) => {
   let issues = []
   const jsonValidationPromises = jsonFiles.map(function(file) {
-    return new Promise(resolve => {
-      checkForAccompanyingDataFile(file, fileList, issues)
-      json(file, jsonContentsDict, (jsonIssues, jsObj) => {
-        issues = issues.concat(jsonIssues)
-        collectTaskSummary(file, jsObj, summary)
-        return resolve()
-      })
-    })
+    return utils.limit(
+      () =>
+        new Promise(resolve => {
+          checkForAccompanyingDataFile(file, fileList, issues)
+          json(file, jsonContentsDict, (jsonIssues, jsObj) => {
+            issues = issues.concat(jsonIssues)
+            collectTaskSummary(file, jsObj, summary)
+            return resolve()
+          })
+        }),
+    )
   })
 
   return new Promise(resolve =>
