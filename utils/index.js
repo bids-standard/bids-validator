@@ -9,6 +9,7 @@ var modalities = require('./modalities')
 var options = require('./options')
 var type = require('./type')
 const collectSummary = require('./summary/collectSummary')
+const limit = require('./promise_limiter')
 
 module.exports = {
   array: array,
@@ -21,4 +22,5 @@ module.exports = {
   options: options,
   type: type,
   collectSummary: collectSummary,
+  limit,
 }
