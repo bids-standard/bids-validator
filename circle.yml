@@ -121,10 +121,15 @@ workflows:
               only: /.*/
             tags:
               only: /.*/
+      - pypi_precheck:
+          filters:
+            tags:
+              only: /.*/
       - deployment:
           requires:
             - test
             - githubPagesTest
+            - pypi_precheck
           filters:
             branches:
               ignore: /.*/
