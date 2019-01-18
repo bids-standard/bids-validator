@@ -46,12 +46,7 @@ describe('BIDS example datasets ', function() {
           'tests/data/bids-examples-' + global.test_version + '/' + path + '/',
           options,
           function(issues) {
-            var errors = issues.errors
             var warnings = issues.warnings
-            assert.deepEqual(
-              errors.filter(issue => issue.key !== 'EMPTY_FILE'),
-              [],
-            )
             var session_flag = false
             for (var warning in warnings) {
               if (warnings[warning]['code'] === '38') {

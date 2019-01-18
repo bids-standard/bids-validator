@@ -58,6 +58,7 @@ describe('validateMisc', () => {
   })
   it('returns issues for empty files (0kb)', done => {
     const files = groupFileTypes(filelist, {})
+    utils.collectSummary(filelist, {})
 
     validateMisc(files.misc).then(issues => {
       assert.ok(issues.length > 0)

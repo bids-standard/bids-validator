@@ -52,17 +52,17 @@ module.exports = {
       if (issues) {
         callback(issues, null)
       } else {
-        json.parse(file, contents, function(issues, jsObj) {
+        json.parse(file, contents).then(({ issues, parsed: jsObj }) => {
           if (issues && issues.length > 0) {
             callback(issues, null)
           } else {
-            var parsed = {
+            const parsedConfig = {
               ignore: jsObj.ignore ? jsObj.ignore : [],
               warn: jsObj.warn ? jsObj.warn : [],
               error: jsObj.error ? jsObj.error : [],
               ignoredFiles: jsObj.ignoredFiles ? jsObj.ignoredFiles : [],
             }
-            callback(null, parsed)
+            callback(null, parsedConfig)
           }
         })
       }

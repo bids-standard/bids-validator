@@ -38,6 +38,7 @@
     "jshint": "^2.9.6",
     "minimatch": "3.0.4",
     "nifti-js": "^1.0.1",
+    "p-limit": "^2.1.0",
     "pako": "^1.0.6",
     "path": "^0.12.7",
     "pluralize": "^7.0.0",

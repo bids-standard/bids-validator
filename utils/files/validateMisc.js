@@ -1,5 +1,12 @@
-const readFile = require('./readFile')
 const Issue = require('../issues/issue')
+
+function createIssueForEmpty(file) {
+  const size = typeof window !== 'undefined' ? file.size : file.stats.size
+  return size <= 0 && new Issue({ code: 99, file: file })
+}
+function clearNonIssues(x) {
+  return x instanceof Issue
+}
 
 /**
  * validateMisc
@@ -7,19 +14,7 @@ const Issue = require('../issues/issue')
  * takes a list of files and returns an issue for each file
  */
 module.exports = function validateMisc(miscFiles) {
-  const issuePromises = miscFiles.reduce(
-    (issues, file) => [
-      ...issues,
-      readFile(file, false, null).catch(err => {
-        if (err instanceof Issue) return err
-        throw err
-      }),
-    ],
-    [],
-  )
-  return (
-    Promise.all(issuePromises)
-      // remove non-issues
-      .then(res => res.filter(o => o instanceof Issue))
+  return Promise.resolve(
+    miscFiles.map(createIssueForEmpty).filter(clearNonIssues),
   )
 }
