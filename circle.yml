@@ -42,6 +42,25 @@ jobs:
       - run: ./node_modules/.bin/gulp build && rsync -av --exclude=".*" --exclude="node_modules" --exclude="src" --exclude="tests" . ~/web_version/
       - store_artifacts:
           path: ~/web_version/
+  pypi_precheck:
+    docker:
+      - image: alpine:3.8
+    steps:
+      - checkout
+      - run:
+          name: Set up environment
+          command: |
+            apk --no-cache add ca-certificates git build-base
+      - run:
+          name: Install Python 3 and update setuptools
+          command: |
+            apk --no-cache add python3 python3-dev py3-cffi
+            python3 -m pip install --upgrade pip setuptools wheel twine readme_renderer[md]
+      - run:
+          name: Check build and readme rendering
+          command: |
+            python3 setup.py sdist bdist_wheel
+            twine check dist/*
   deployment:
     docker:
       - image: node:8.11.3-alpine
@@ -59,6 +78,17 @@ jobs:
       # Set the version number
       - run: sed -i -E "s/0.0.0/$CIRCLE_TAG/" package.json
       - run: ./node_modules/.bin/publish
+      # Publish to PyPI
+      - run:
+          name: Install Python 3 and update setuptools
+          command: |
+            apk --no-cache add python3 python3-dev py3-cffi
+            python3 -m pip install --upgrade pip setuptools wheel twine
+      - run:
+          name: Build and push to PyPI
+          command: |
+            python3 setup.py sdist bdist_wheel
+            twine upload dist/*
       # Update gh-pages demo site
       - run: git config --global user.email circleci@circleci
       - run: git config --global user.name CircleCI
@@ -91,10 +121,15 @@ workflows:
               only: /.*/
             tags:
               only: /.*/
+      - pypi_precheck:
+          filters:
+            tags:
+              only: /.*/
       - deployment:
           requires:
             - test
             - githubPagesTest
+            - pypi_precheck
           filters:
             branches:
               ignore: /.*/
