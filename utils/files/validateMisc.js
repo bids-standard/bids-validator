@@ -14,7 +14,7 @@ function clearNonIssues(x) {
  * takes a list of files and returns an issue for each file
  */
 module.exports = function validateMisc(miscFiles) {
-  return new Promise(resolve =>
-    resolve(miscFiles.map(createIssueForEmpty).filter(clearNonIssues)),
+  return Promise.resolve(
+    miscFiles.map(createIssueForEmpty).filter(clearNonIssues),
   )
 }
