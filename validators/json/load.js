@@ -1,5 +1,12 @@
 const utils = require('../../utils')
 
+class JSONParseError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'JSONParseError'
+  }
+}
+
 const load = (files, jsonFiles, jsonContentsDict, annexed, dir) => {
   let issues = []
 
@@ -15,11 +22,13 @@ const load = (files, jsonFiles, jsonContentsDict, annexed, dir) => {
         // Abort further tests if an error is found
         if (
           parseIssues &&
-          !parseIssues.some(issue => issue.severity === 'error')
+          parseIssues.some(issue => issue.severity === 'error')
         ) {
-          jsonContentsDict[file.relativePath] = parsed
-          jsonFiles.push(file)
+          throw new JSONParseError('Aborted due to parse error')
         }
+
+        jsonContentsDict[file.relativePath] = parsed
+        jsonFiles.push(file)
       })
 
   // Start concurrent read/parses
@@ -28,7 +37,16 @@ const load = (files, jsonFiles, jsonContentsDict, annexed, dir) => {
   )
 
   // After all reads/parses complete, return any found issues
-  return Promise.all(fileReads).then(() => issues)
+  return Promise.all(fileReads)
+    .then(() => issues)
+    .catch(err => {
+      // Handle early exit
+      if (err instanceof JSONParseError) {
+        return issues
+      } else {
+        throw err
+      }
+    })
 }
 
 module.exports = load
