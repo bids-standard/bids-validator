@@ -180,8 +180,12 @@ var issues = {
    * formats issue list and returns it
    */
   exceptionHandler: function(err, issueList, summary, options) {
-    const genericIssue = this.errorToIssue(err)
-    issueList.push(genericIssue)
+    // err here can be a validator Issue or an unknown exception
+    if (err.hasOwnProperty('key')) {
+      issueList.push(err)
+    } else {
+      issueList.push(this.errorToIssue(err))
+    }
 
     // Format issues
     const issues = this.format(issueList, summary, options)
