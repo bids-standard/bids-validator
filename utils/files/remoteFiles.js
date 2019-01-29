@@ -3,7 +3,6 @@ const fs = require('fs')
 const cp = require('child_process')
 const Issue = require('../issues').Issue
 const zlib = require('zlib')
-const s3 = new AWS.S3()
 const isNode = typeof window === 'undefined'
 
 /**
@@ -82,6 +81,7 @@ const remoteFiles = {
       ? Object.keys(process.env).indexOf('AWS_ACCESS_KEY_ID') > -1
       : false
     if (hasCreds) {
+      const s3 = new AWS.S3()
       return s3
         .getObject(config.s3Params)
         .promise()
@@ -104,11 +104,9 @@ const remoteFiles = {
 
   constructAwsUrl: function(config) {
     // bucket + key url
-    let url =
-      s3.getSignedUrl('getObject', config.s3Params) +
-      config.s3Params.Bucket +
-      '/' +
+    let url = `http://s3.amazonaws.com/${config.s3Params.Bucket}/${
       config.s3Params.Key
+    }`
 
     // add version to url, if exists
     url = config.s3Params.VersionId
