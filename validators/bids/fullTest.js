@@ -15,6 +15,7 @@ const groupFileTypes = require('./groupFileTypes')
 const subjects = require('./subjects')
 const checkDatasetDescription = require('./checkDatasetDescription')
 const validateMisc = require('../../utils/files/validateMisc')
+const validateBrainVision = require('brainvision-validator').validateBrainVision
 
 /**
  * Full Test
@@ -76,6 +77,15 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       }),
     )
   }
+
+  // Validate BrainVision EEG files (file triplets: .eeg, .vhdr, .vmrk)
+  var vhdrFiles = files.ephys.filter(file => file.name.endsWith('vhdr'))
+  var vhdrIssues = []
+  vhdrFiles.forEach(function(vhdrFile) {
+    var issues = validateBrainVision(vhdrFile.path)
+    vhdrIssues = vhdrIssues.concat(issues)
+  })
+  self.issues = self.issues.concat(vhdrIssues)
 
   validateMisc(files.misc)
     .then(miscIssues => {
