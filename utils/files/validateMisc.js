@@ -2,15 +2,15 @@ const Issue = require('../issues/issue')
 
 function createIssueForEmpty(file) {
   const size = typeof window !== 'undefined' ? file.size : file.stats.size
-  var failSizeRequirement = size <= 0
+  var failsSizeRequirement = size <= 0
   // Exception misc files that can be valid although size==0
   // E.g., BadChannels and bad.segments in CTF data format (MEG modality)
   const exceptionMiscs = ['BadChannels', 'bad.segments']
   if (exceptionMiscs.indexOf(file.name) > -1) {
-    failSizeRequirement = false
+    failsSizeRequirement = false
   }
 
-  return failSizeRequirement && new Issue({ code: 99, file: file })
+  return failsSizeRequirement && new Issue({ code: 99, file: file })
 }
 function clearNonIssues(x) {
   return x instanceof Issue
