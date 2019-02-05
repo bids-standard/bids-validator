@@ -190,14 +190,18 @@ because it would be functionally the same as this:
 }
 ```
 
-For passing a configuration during javascript language use on the command line,
-note that you **have to specify at least two configurations**, because an array
-is expected. For example, the following code will ignore empty file errors (99)
-and only warn about files that cannot be read (44):
+For passing a configuration while using the bids-validator on the command line,
+note that you **have to specify at least two configurations of a given type**,
+because an array is expected. For example, the following code will ignore empty
+file errors (99) and files that cannot be read (44):
 
 ```
-bids-validator --config.ignore=99 --config.warn=44 path/to/bids/dir
+bids-validator --config.ignore=99 --config.ignore=44 path/to/bids/dir
 ```
+
+This style of use puts limits on what configuration you can require, so for
+complex scenarios, we advise users to create a dedicated configuration file with
+contents as described above.
 
 #### In the Browser
 
