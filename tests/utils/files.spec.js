@@ -48,6 +48,9 @@ describe('validateMisc', () => {
   let filelist, dir
 
   beforeAll(() => {
+    // contains stripped down CTF format dataset: Both, BadChannels and
+    // bad.segments files can be empty and still valid. Everything else must
+    // not be empty.
     dir = `${process.cwd()}/tests/data/empty_files`
   })
 
@@ -56,14 +59,16 @@ describe('validateMisc', () => {
       filelist = files
     })
   })
-  it('returns issues for empty files (0kb)', done => {
+  it('returns issues for empty files (0kb), accepting a limited set of exceptions', done => {
     const files = groupFileTypes(filelist, {})
     utils.collectSummary(filelist, {})
 
     validateMisc(files.misc).then(issues => {
-      assert.ok(issues.length > 0)
+      // *.meg4 and BadChannels files are empty. But only *.meg4 is an issue
+      assert.ok(issues.length == 1)
       assert.ok(issues.every(issue => issue instanceof utils.issues.Issue))
       assert.notStrictEqual(issues.findIndex(issue => issue.code === 99), -1)
+      assert.ok(issues[0].file.name == 'sub-0001_task-AEF_run-01_meg.meg4')
       done()
     })
   })
