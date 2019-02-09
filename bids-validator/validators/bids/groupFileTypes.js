@@ -26,9 +26,7 @@ const sortFiles = (fileList, options, files) => {
       // collect stimuli
       files.stimuli.push(file)
       files.misc.push(file)
-    } else if (
-      !utils.type.isBIDS(file.relativePath, options.bep006, options.bep010)
-    ) {
+    } else if (!utils.type.isBIDS(file.relativePath)) {
       // invalid file type
       files.invalid.push(file)
       files.misc.push(file)
