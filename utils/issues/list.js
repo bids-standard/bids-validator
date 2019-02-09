@@ -554,4 +554,10 @@ module.exports = {
     severity: 'error',
     reason: 'Empty files not allowed.',
   },
+  100: {
+    key: 'BRAINVISION_LINKS_BROKEN',
+    severity: 'error',
+    reason:
+      'The internal file pointers between the present BrainVision file triplet (*.eeg, *.vhdr, and *.vmrk) appear to be broken or some files do not exist.',
+  },
 }
