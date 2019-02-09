@@ -83,10 +83,20 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
   var vhdrIssues = []
   vhdrFiles.forEach(function(vhdrFile) {
     var issues = validateBrainVision(vhdrFile.path)
+    // brainvision-validator returns an array of strings as issues
+    // if no issues: empty array
     // Currently only catching a problem of internal file links.
-    if (issues.includes(2)) {
+    if (issues.toString().includes('Internal links are broken')) {
       vhdrIssues = vhdrIssues.concat(
-        new Issue({ file: vhdrFile, evidence: vhdrFile.name, code: 100 }),
+        new Issue({
+          file: vhdrFile,
+          evidence: [
+            vhdrFile.name,
+            vhdrFile.name.substr(0, vhdrFile.name.lastIndexOf('.')) + '.eeg',
+            vhdrFile.name.substr(0, vhdrFile.name.lastIndexOf('.')) + '.vmrk',
+          ],
+          code: 100,
+        }),
       )
     }
   })

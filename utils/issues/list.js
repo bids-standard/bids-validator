@@ -558,6 +558,6 @@ module.exports = {
     key: 'BRAINVISION_LINKS_BROKEN',
     severity: 'error',
     reason:
-      'The internal file pointers between the present BrainVision file triplet (*.eeg, *.vhdr, and *.vmrk) appear to be broken or some files do not exist.',
+      'Internal file pointers in BrainVision file triplet (*.eeg, *.vhdr, and *.vmrk) broken or some files do not exist.',
   },
 }
