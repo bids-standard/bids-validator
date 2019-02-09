@@ -79,11 +79,16 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
   }
 
   // Validate BrainVision EEG files (file triplets: .eeg, .vhdr, .vmrk)
-  var vhdrFiles = files.ephys.filter(file => file.name.endsWith('vhdr'))
+  var vhdrFiles = files.ephys.filter(file => file.name.endsWith('.vhdr'))
   var vhdrIssues = []
   vhdrFiles.forEach(function(vhdrFile) {
     var issues = validateBrainVision(vhdrFile.path)
-    vhdrIssues = vhdrIssues.concat(issues)
+    // Currently only catching a problem of internal file links.
+    if (issues.includes(2)) {
+      vhdrIssues = vhdrIssues.concat(
+        new Issue({ file: vhdrFile, evidence: vhdrFile.name, code: 100 }),
+      )
+    }
   })
   self.issues = self.issues.concat(vhdrIssues)
 
