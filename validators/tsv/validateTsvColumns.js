@@ -14,6 +14,7 @@ const getTsvType = function(file) {
     tsvType = 'participants'
   } else if (
     file.name.endsWith('_channels.tsv') ||
+    file.name.endsWith('_electrodes.tsv') ||
     file.name.endsWith('_events.tsv') ||
     file.name.endsWith('_scans.tsv') ||
     file.name.endsWith('_sessions.tsv')

@@ -10,7 +10,23 @@
     "status",
     "status_description",
     "type",
-    "units"
+    "units",
+    "reference",
+    "group"
+  ],
+  "electrodes": [
+    "name",
+    "x",
+    "y",
+    "z",
+    "size",
+    "material",
+    "manufacturer",
+    "group",
+    "hemisphere",
+    "type",
+    "impedance",
+    "dimension"
   ],
   "events": [
     "duration",
