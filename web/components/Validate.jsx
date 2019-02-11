@@ -1,9 +1,8 @@
 import React from 'react'
 import Upload from './Upload.jsx'
 import Spinner from './Spinner.jsx'
-import validate from '../../index'
 
-class Select extends React.Component {
+class Validate extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -46,4 +45,4 @@ class Select extends React.Component {
   }
 }
 
-export default Select
+export default Validate

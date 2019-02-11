@@ -71,8 +71,10 @@ export default class App extends React.Component {
   }
 
   render() {
+    let browserUnsupported =
+      !bowser.chrome && !bowser.chromium && !bowser.firefox
     return (
-      <div>
+      <div id="root">
         <nav className="navbar navbar-dark bg-dark fixed-top">
           <div className="container">
             <div className="navbar-header">
@@ -83,14 +85,17 @@ export default class App extends React.Component {
           </div>
         </nav>
         <div className="container page-wrapper">
-          {!bowser.chrome && !bowser.chromium && !bowser.firefox ? (
-            <BrowserWarning />
-          ) : (
-            <Validate
-              loading={this.state.status === 'validating'}
-              onChange={this.validate}
-            />
-          )}
+          <div className="browser-warning">
+            {browserUnsupported ? <BrowserWarning /> : null}
+          </div>
+          <div className="validator">
+            {!browserUnsupported ? (
+              <Validate
+                loading={this.state.status === 'validating'}
+                onChange={this.validate}
+              />
+            ) : null}
+          </div>
           {this.state.status === 'validated' ? (
             <Issues reset={this.reset} {...this.state} />
           ) : null}
