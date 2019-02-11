@@ -15,7 +15,10 @@
     "test": "./node_modules/.bin/jest",
     "coverage": "./node_modules/.bin/jest --coverage",
     "codecov": "./node_modules/.bin/codecov",
-    "npmPublish": "publish"
+    "npmPublish": "publish",
+    "web-dev": "cd web && yarn dev",
+    "web-build": "cd web && yarn build",
+    "web-export": "yarn web-build && cd web && yarn next export"
   },
   "bin": {
     "bids-validator": "./bin/bids-validator"
