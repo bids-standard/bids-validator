@@ -11,3 +11,5 @@ coverage/
 __pycache__/
 dist/
 *.egg-info/
+web/.next/
+web/out/
