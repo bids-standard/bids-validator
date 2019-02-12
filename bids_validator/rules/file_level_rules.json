@@ -92,7 +92,9 @@
       "@@@_eeg_ext_@@@": [
         "_events\\.json",
         "_events\\.tsv",
+        "_electrodes\\.json",
         "_electrodes\\.tsv",
+        "_channels\\.json",
         "_channels\\.tsv",
         "_eeg\\.json",
         "_coordsystem\\.json",
@@ -181,7 +183,9 @@
       "@@@_ieeg_ext_@@@": [
         "_events\\.json",
         "_events\\.tsv",
+        "_electrodes\\.json",
         "_electrodes\\.tsv",
+        "_channels\\.json",
         "_channels\\.tsv",
         "_ieeg\\.json",
         "_coordsystem\\.json",
@@ -197,6 +201,7 @@
       "@@@_meg_ext_@@@": [
         "_events\\.json",
         "_events\\.tsv",
+        "_channels\\.json",
         "_channels\\.tsv",
         "_meg\\.json",
         "_coordsystem\\.json",
