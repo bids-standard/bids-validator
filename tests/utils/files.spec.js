@@ -1,6 +1,8 @@
 const assert = require('assert')
 const utils = require('../../utils')
 const groupFileTypes = require('../../validators/bids/groupFileTypes')
+const checkReadme = require('../../validators/bids/checkReadme.js')
+const checkDatasetDescription = require('../../validators/bids/checkDatasetDescription.js')
 const validateMisc = require('../../utils/files/validateMisc')
 
 const setupMocks = () => {
@@ -41,6 +43,28 @@ describe('files utils in browsers', () => {
       const test_file = utils.files.newFile('test-file')
       assert(File.prototype.isPrototypeOf(test_file))
     })
+  })
+})
+
+describe('dataset_description.json', () => {
+  it('throws warning if it does not exist in proper location', () => {
+    const fileList = {}
+    const issues = checkDatasetDescription(fileList)
+    assert(issues[0].key === 'DATASET_DESCRIPTION_JSON_MISSING')
+  })
+})
+
+describe('README', () => {
+  it('throws warning if it does not exist in proper location', () => {
+    const fileList = {
+      1: {
+        name: 'README',
+        path: 'tests/data/bids-examples-1.1.1u1/ds001/not-root-dir/README',
+        relativePath: '/not-root-dir/README',
+      },
+    }
+    const issues = checkReadme(fileList)
+    assert(issues[0].key === 'README_FILE_MISSING')
   })
 })
 
