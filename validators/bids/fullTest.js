@@ -14,6 +14,7 @@ const subSesMismatchTest = require('./subSesMismatchTest')
 const groupFileTypes = require('./groupFileTypes')
 const subjects = require('./subjects')
 const checkDatasetDescription = require('./checkDatasetDescription')
+const checkReadme = require('./checkReadme')
 const validateMisc = require('../../utils/files/validateMisc')
 const validateBrainVision = require('brainvision-validator').validateBrainVision
 
@@ -145,6 +146,10 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       // Check for datasetDescription file in the proper place
       const datasetDescriptionIssues = checkDatasetDescription(fileList)
       self.issues = self.issues.concat(datasetDescriptionIssues)
+
+      // Check for README file in the proper place
+      const readmeIssues = checkReadme(fileList)
+      self.issues = self.issues.concat(readmeIssues)
 
       // Validate json files and contents
       return json.validate(jsonFiles, fileList, jsonContentsDict, summary)

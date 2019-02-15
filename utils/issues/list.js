@@ -318,7 +318,7 @@ module.exports = {
     key: 'DATASET_DESCRIPTION_JSON_MISSING',
     severity: 'error',
     reason:
-      'The compulsory file /dataset_description.json is missing. See Section 8.1 of the BIDS specification.',
+      'The compulsory file /dataset_description.json is missing. See Section 03 (Modality agnostic files) of the BIDS specification.',
   },
   58: {
     key: 'TASK_NAME_CONTAIN_ILLEGAL_CHARACTER',
@@ -559,5 +559,11 @@ module.exports = {
     severity: 'error',
     reason:
       'Internal file pointers in BrainVision file triplet (*.eeg, *.vhdr, and *.vmrk) are broken or some files do not exist.',
+  },
+  101: {
+    key: 'README_FILE_MISSING',
+    severity: 'warning',
+    reason:
+      'The recommended file /README is missing. See Section 03 (Modality agnostic files) of the BIDS specification.',
   },
 }
