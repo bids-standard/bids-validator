@@ -10,6 +10,7 @@ var options = require('./options')
 var type = require('./type')
 const collectSummary = require('./summary/collectSummary')
 const limit = require('./promise_limiter')
+const prettifyOutput = require('./prettifyOutput')
 
 module.exports = {
   array: array,
@@ -23,4 +24,5 @@ module.exports = {
   type: type,
   collectSummary: collectSummary,
   limit,
+  prettifyOutput,
 }

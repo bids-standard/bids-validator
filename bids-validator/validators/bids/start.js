@@ -33,7 +33,10 @@ const start = (dir, options, callback) => {
           // Return an error immediately if quickTest fails
           const issue = quickTestError(dir)
           BIDS.summary.totalFiles = Object.keys(files).length
-          callback(utils.issues.format([issue], BIDS.summary, options))
+          const summary = {
+            consoleOutput: utils.prettifyOutput.summary(BIDS.summary),
+          }
+          callback(utils.issues.format([issue], BIDS.summary, options), summary)
         }
       })
     }

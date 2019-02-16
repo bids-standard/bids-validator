@@ -1,6 +1,7 @@
 var list = require('./list')
 var Issue = require('./issue')
 var config = require('../config')
+var prettifyOutput = require('../prettifyOutput')
 
 var issues = {
   /**
@@ -112,7 +113,9 @@ var issues = {
         }
       }
     }
-    return { errors: errors, warnings: warnings, ignored: ignored }
+    const issues = { errors: errors, warnings: warnings, ignored: ignored }
+    const consoleOutput = prettifyOutput.issues(issues, options)
+    return Object.assign(issues, { consoleOutput })
   },
 
   /**
