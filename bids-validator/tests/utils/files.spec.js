@@ -75,7 +75,7 @@ describe('validateMisc', () => {
     // contains stripped down CTF format dataset: Both, BadChannels and
     // bad.segments files can be empty and still valid. Everything else must
     // not be empty.
-    dir = `${process.cwd()}/tests/data/empty_files`
+    dir = `${process.cwd()}/bids-validator/tests/data/empty_files`
   })
 
   beforeEach(() => {

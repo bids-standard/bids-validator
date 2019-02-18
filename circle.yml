@@ -10,22 +10,22 @@ jobs:
       - restore_cache:
           keys:
             - npm-deps-{{ checksum "package.json" }}
-      - run: npm install
+      - run: yarn
       - save_cache:
           key: npm-deps-{{ checksum "package.json" }}
           paths: node_modules
       - run:
           name: Eslint
-          command: npm run lint
+          command: yarn lint
       - run:
           name: Mocha tests
-          command: npm run coverage
+          command: yarn coverage
       - run:
           name: Upload to codecov
-          command: npm run codecov
+          command: yarn codecov
       - run:
           name: Smoke tests
-          command: bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders && bin/bids-validator tests/data/valid_headers/ --ignoreNiftiHeaders --json
+          command: bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders && bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders --json
   githubPagesTest:
     docker:
       - image: node:8.11.3-alpine
@@ -36,12 +36,14 @@ jobs:
           keys:
             - npm-deps-{{ checksum "package.json" }}
       - run: apk --no-cache add rsync git python build-base openssh
-      - run: git checkout -f gh-pages
-      - run: npm install
-      - run: if [ -z ${CIRCLE_PR_USERNAME}]; then npm install git+${CIRCLE_REPOSITORY_URL/git@github.com:/https://github.com/}\#${CIRCLE_SHA1}; else npm install git+https://git@github.com/${CIRCLE_PR_USERNAME}/${CIRCLE_PR_REPONAME}\#${CIRCLE_SHA1}; fi
-      - run: ./node_modules/.bin/gulp build && rsync -av --exclude=".*" --exclude="node_modules" --exclude="src" --exclude="tests" . ~/web_version/
+      - run:
+          name: Install bids-validator and bids-validator-web dependencies
+          command: yarn 
+      - run:
+          name: Build and export web-validator
+          command: yarn web-export && rsync -av ./bids-validator-web/out/ ~/web_version
       - store_artifacts:
-          path: ~/web_version/
+          path: ~/web_version
   pypi_precheck:
     docker:
       - image: alpine:3.8
@@ -59,7 +61,7 @@ jobs:
       - run:
           name: Check build and readme rendering
           command: |
-            python3 setup.py sdist bdist_wheel
+            cd bids-validator && python3 setup.py sdist bdist_wheel
             twine check dist/*
   deployment:
     docker:
@@ -77,27 +79,47 @@ jobs:
             apk --no-cache add python3 python3-dev py3-cffi
             python3 -m pip install --upgrade pip setuptools wheel twine
       - run: git checkout -f $CIRCLE_TAG
-      - run: python3 setup.py sdist bdist_wheel
+      - run: cd bids-validator && python3 setup.py sdist bdist_wheel
       # Publish to NPM
-      - run: npm install
+      - run: yarn
       - run: ./node_modules/.bin/npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
       # Set the version number
-      - run: sed -i -E "s/0.0.0/$CIRCLE_TAG/" package.json
-      - run: ./node_modules/.bin/publish
+      - run: cd bids-validator && sed -i -E "s/0.0.0/$CIRCLE_TAG/" package.json
+      - run: cd bids-validator && ../node_modules/.bin/publish
       # Publish to PyPI
-      - run: twine upload dist/*
+      - run: cd bids-validator && twine upload dist/*
       # Update gh-pages demo site
       - run: git config --global user.email circleci@circleci
       - run: git config --global user.name CircleCI
-      - run: rm -rf node_modules/
-      - run: rm -rf tests/
-      - run: git checkout gh-pages -f
       - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - run: git pull
-      - run: npm install
-      - run: ./node_modules/.bin/gulp build
+      - run:
+          name: Delete old gh-pages branch
+          command: git branch -D gh-pages
+      - run:
+          name: Create new gh-pages branch without history
+          command: git checkout --orphan gh-pages
+      - run:
+          name: Install web demo dependencies
+          command: yarn
+      - run:
+          name: Build and export next project
+          command: yarn web-export
+      - run:
+          name: Clean and remove bids-validator files
+          command: git reset . && git clean --force -d --exclude bids-validator-web/out
+      - run:
+          name: Move build into root directory
+          command: mv bids-validator-web/out/* .
+      - run:
+          name: Remove files not related to build
+          command: rm -r bids-validator-web node_modules tests
+      - run:
+          name: Create a nojekyll file (gh-pages specific)
+          command: touch .nojekyll
       - run: git status
-      - run: git commit dist/ --allow-empty -m "Circle CI - validator demo update"
+      - run:
+          name: Commit updates
+          command: git add . && git commit --allow-empty --no-verify -m 'Circle CI - Generate validator demo with version $CIRCLE_TAG'
       - run: git push origin gh-pages
 
 workflows:

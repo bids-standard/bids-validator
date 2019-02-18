@@ -1,6 +1,6 @@
 /**
  * eslint no-console: ["error", { allow: ["log"] }]
- * @jest-environment ./tests/env/ExamplesEnvironment.js
+ * @jest-environment ./bids-validator/tests/env/ExamplesEnvironment.js
  */
 const { assert } = require('chai')
 const validate = require('../index.js')
@@ -28,6 +28,8 @@ var missing_session_files = [
   'ds000247',
 ]
 
+const dataDirectory = 'bids-validator/tests/data/'
+
 function assertErrorCode(errors, expected_error_code) {
   var matchingErrors = errors.filter(function(error) {
     return error.code === expected_error_code
@@ -38,12 +40,17 @@ function assertErrorCode(errors, expected_error_code) {
 describe('BIDS example datasets ', function() {
   describe('basic example dataset tests', () => {
     getDirectories(
-      'tests/data/bids-examples-' + global.test_version + '/',
+      dataDirectory + 'bids-examples-' + global.test_version + '/',
     ).forEach(function testDataset(path) {
       it(path, isdone => {
         const options = { ignoreNiftiHeaders: true }
         validate.BIDS(
-          'tests/data/bids-examples-' + global.test_version + '/' + path + '/',
+          dataDirectory +
+            'bids-examples-' +
+            global.test_version +
+            '/' +
+            path +
+            '/',
           options,
           function(issues) {
             var warnings = issues.warnings
@@ -70,7 +77,7 @@ describe('BIDS example datasets ', function() {
   it('validates path without trailing backslash', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
-      'tests/data/bids-examples-' + global.test_version + '/ds001',
+      dataDirectory + 'bids-examples-' + global.test_version + '/ds001',
       options,
       function(issues, summary) {
         var errors = issues.errors
@@ -92,7 +99,7 @@ describe('BIDS example datasets ', function() {
   // we need to have at least one non-dynamic test
   it('validates dataset with valid nifti headers', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
-    validate.BIDS('tests/data/valid_headers', options, function(
+    validate.BIDS(dataDirectory + 'valid_headers', options, function(
       issues,
       summary,
     ) {
@@ -113,7 +120,7 @@ describe('BIDS example datasets ', function() {
   // test for duplicate files present with both .nii and .nii.gz extension
   it('validates dataset for duplicate files present with both .nii and .nii.gz extension', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
-    validate.BIDS('tests/data/valid_filenames', options, function(issues) {
+    validate.BIDS(dataDirectory + 'valid_filenames', options, function(issues) {
       assertErrorCode(issues.errors, '74')
       isdone()
     })
@@ -122,7 +129,7 @@ describe('BIDS example datasets ', function() {
   // test for illegal characters used in acq and task name
   it('validates dataset with illegal characters in task name', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
-    validate.BIDS('tests/data/valid_filenames', options, function(issues) {
+    validate.BIDS(dataDirectory + 'valid_filenames', options, function(issues) {
       assertErrorCode(issues.errors, '58')
       isdone()
     })
@@ -131,7 +138,7 @@ describe('BIDS example datasets ', function() {
   // test for illegal characters used in sub name
   it('validates dataset with illegal characters in sub name', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
-    validate.BIDS('tests/data/valid_filenames', options, function(issues) {
+    validate.BIDS(dataDirectory + 'valid_filenames', options, function(issues) {
       assertErrorCode(issues.errors, '64')
       isdone()
     })
@@ -139,7 +146,7 @@ describe('BIDS example datasets ', function() {
 
   it('checks for subjects with no valid data', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
-    validate.BIDS('tests/data/no_valid_data', options, function(issues) {
+    validate.BIDS(dataDirectory + 'no_valid_data', options, function(issues) {
       assertErrorCode(issues.errors, '67')
       isdone()
     })
@@ -148,7 +155,7 @@ describe('BIDS example datasets ', function() {
   it('validates MRI modalities', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
-      'tests/data/bids-examples-' + global.test_version + '/ds001',
+      dataDirectory + 'bids-examples-' + global.test_version + '/ds001',
       options,
       function(issues, summary) {
         var errors = issues.errors
@@ -169,7 +176,9 @@ describe('BIDS example datasets ', function() {
 
   it('checks for data dictionaries without corresponding data files', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
-    validate.BIDS('tests/data/unused_data_dict', options, function(issues) {
+    validate.BIDS(dataDirectory + 'unused_data_dict', options, function(
+      issues,
+    ) {
       assert.notEqual(issues.errors.findIndex(issue => issue.code === '90'), -1)
       isdone()
     })
@@ -177,18 +186,26 @@ describe('BIDS example datasets ', function() {
 
   it('checks for fieldmaps with no _magnitude file', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
-    validate.BIDS('tests/data/fieldmap_without_magnitude', options, function(
-      issues,
-    ) {
-      assert.notEqual(issues.errors.findIndex(issue => issue.code === '91'), -1)
-      isdone()
-    })
+    validate.BIDS(
+      dataDirectory + 'fieldmap_without_magnitude',
+      options,
+      function(issues) {
+        assert.notEqual(
+          issues.errors.findIndex(issue => issue.code === '91'),
+          -1,
+        )
+        isdone()
+      },
+    )
   })
 
   it('should not throw a warning if all _phasediff.nii are associated with _magnitude1.nii', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
-      'tests/data/bids-examples-' + global.test_version + '/hcp_example_bids',
+      dataDirectory +
+        'bids-examples-' +
+        global.test_version +
+        '/hcp_example_bids',
       options,
       function(issues) {
         assert.deepEqual(issues.errors, [])
@@ -199,17 +216,19 @@ describe('BIDS example datasets ', function() {
 
   it('should throw a warning if there are _phasediff.nii without an associated _magnitude1.nii', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
-    validate.BIDS('tests/data/phasediff_without_magnitude1', options, function(
-      issues,
-    ) {
-      assert.notEqual(issues.warnings.findIndex(issue => issue.code === '92'))
-      isdone()
-    })
+    validate.BIDS(
+      dataDirectory + 'phasediff_without_magnitude1',
+      options,
+      function(issues) {
+        assert.notEqual(issues.warnings.findIndex(issue => issue.code === '92'))
+        isdone()
+      },
+    )
   })
 
   it('should throw an error is BrainVision triplets have broken internal links', function(isdone) {
     var options = { bep006: true }
-    validate.BIDS('tests/data/broken_brainvision_data', options, function(
+    validate.BIDS(dataDirectory + 'broken_brainvision_data', options, function(
       issues,
     ) {
       assertErrorCode(issues.errors, '100')

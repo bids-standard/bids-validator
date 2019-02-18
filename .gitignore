@@ -1,7 +1,7 @@
 node_modules/
 .DS_Store
-tests/data/bids-examples-*
-tests/data/examples.zip
+bids-validator/tests/data/bids-examples-*
+bids-validator/tests/data/examples.zip
 npm-debug.log
 .idea/
 .ipynb_checkpoints
@@ -11,3 +11,5 @@ coverage/
 __pycache__/
 dist/
 *.egg-info/
+bids-validator-web/out/
+bids-validator-web/.next/
