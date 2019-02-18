@@ -3,7 +3,7 @@ import bowser from 'bowser'
 import Issues from '../components/Issues'
 import BrowserWarning from './BrowserWarning'
 import Validate from '../components/Validate'
-import validate from '../../index'
+import validate from 'bids-validator'
 
 // component setup -----------------------------------------------------------
 

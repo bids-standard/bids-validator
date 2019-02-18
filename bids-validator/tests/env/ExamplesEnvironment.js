@@ -22,13 +22,13 @@ class ExamplesEnvironment extends NodeEnvironment {
           test_version +
           '.zip',
       )
-      if (!fs.existsSync('tests/data')) {
-        fs.mkdirSync('tests/data')
+      if (!fs.existsSync('bids-validator/tests/data')) {
+        fs.mkdirSync('bids-validator/tests/data')
       }
-      fs.writeFileSync('tests/data/examples.zip', response.body)
-      const zip = new AdmZip('tests/data/examples.zip')
+      fs.writeFileSync('bids-validator/tests/data/examples.zip', response.body)
+      const zip = new AdmZip('bids-validator/tests/data/examples.zip')
       console.log('unzipping test data')
-      zip.extractAllTo('tests/data/', true)
+      zip.extractAllTo('bids-validator/tests/data/', true)
     }
     this.global.test_version = test_version
   }

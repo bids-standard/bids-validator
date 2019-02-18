@@ -65,6 +65,11 @@ function preprocessBrowser(filesObj, ig) {
  */
 function harmonizeRelativePath(path) {
   // This hack uniforms relative paths for command line calls to 'BIDS-examples/ds001/' and 'BIDS-examples/ds001'
+  // try {
+  //   console.log(path[0] == '/')
+  // } catch(e) {
+  //   console.log('e:', e)
+  // }
   if (path[0] !== '/') {
     var pathParts = path.split('/')
     path = '/' + pathParts.slice(1).join('/')

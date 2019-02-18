@@ -12,7 +12,7 @@ const {
   checkMissingFile,
 } = require('../validators/session')
 const dir = process.cwd()
-const data_dir = dir + '/tests/data/'
+const data_dir = dir + '/bids-validator/tests/data/'
 const missing_session_data = data_dir + 'ds006_missing-session'
 
 describe('session', () => {

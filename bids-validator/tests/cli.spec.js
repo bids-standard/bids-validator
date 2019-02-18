@@ -1,8 +1,10 @@
 const assert = require('assert')
 const { spawn } = require('child_process')
 const dir = process.cwd()
-const data_dir = dir + '/tests/data/'
+const data_dir = dir + '/bids-validator/tests/data/'
 const test_data = data_dir + 'valid_headers/'
+
+const cli_path = './bids-validator/bin/bids-validator'
 
 describe('CLI', () => {
   it('should import the cli without issue', function() {
@@ -14,7 +16,7 @@ describe('CLI', () => {
   })
 
   it('should display usage hints when no arguments / options are provided', done => {
-    const command = spawn('./bin/bids-validator', [])
+    const command = spawn(cli_path, [])
     const usageHint = 'Usage: bids-validator <dataset_directory> [options]'
     let commandOutput = []
     command.stderr.on('data', data => {
@@ -28,7 +30,7 @@ describe('CLI', () => {
   })
 
   it('should accept a directory as the first argument without error', done => {
-    const command = spawn('./bin/bids-validator', [test_data])
+    const command = spawn(cli_path, [test_data])
     let commandOutput = []
     command.stderr.on('data', data => {
       const dataLines = data.toString().split('\n')
@@ -41,7 +43,7 @@ describe('CLI', () => {
   })
 
   it('should accept an array of options as the second argument without error', done => {
-    const command = spawn('./bin/bids-validator', [test_data, '--json'])
+    const command = spawn(cli_path, [test_data, '--json'])
     let commandOutput = []
     command.stderr.on('data', data => {
       const dataLines = data.toString().split('\n')
@@ -54,7 +56,7 @@ describe('CLI', () => {
   })
 
   it('should print valid json when the --json argument is provided', done => {
-    const command = spawn('./bin/bids-validator', [test_data, '--json'])
+    const command = spawn(cli_path, [test_data, '--json'])
     let commandOutput = ''
     command.stdout.on('data', data => {
       const dataLines = data.toString()
