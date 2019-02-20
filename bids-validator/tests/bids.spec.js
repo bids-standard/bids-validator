@@ -225,14 +225,4 @@ describe('BIDS example datasets ', function() {
       },
     )
   })
-
-  it('should throw an error is BrainVision triplets have broken internal links', function(isdone) {
-    var options = { bep006: true }
-    validate.BIDS(dataDirectory + 'broken_brainvision_data', options, function(
-      issues,
-    ) {
-      assertErrorCode(issues.errors, '100')
-      isdone()
-    })
-  })
 })
