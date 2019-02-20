@@ -16,7 +16,6 @@ const subjects = require('./subjects')
 const checkDatasetDescription = require('./checkDatasetDescription')
 const checkReadme = require('./checkReadme')
 const validateMisc = require('../../utils/files/validateMisc')
-const validateBrainVision = require('brainvision-validator').validateBrainVision
 
 /**
  * Full Test
@@ -78,30 +77,6 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       }),
     )
   }
-
-  // Validate BrainVision EEG files (file triplets: .eeg, .vhdr, .vmrk)
-  var vhdrFiles = files.ephys.filter(file => file.name.endsWith('.vhdr'))
-  var vhdrIssues = []
-  vhdrFiles.forEach(function(vhdrFile) {
-    var issues = validateBrainVision(vhdrFile.path)
-    // brainvision-validator returns an array of strings as issues
-    // if no issues: empty array
-    // Currently only catching a problem of internal file links.
-    if (issues.toString().includes('Internal links are broken')) {
-      vhdrIssues = vhdrIssues.concat(
-        new Issue({
-          file: vhdrFile,
-          evidence: [
-            vhdrFile.name,
-            vhdrFile.name.substr(0, vhdrFile.name.lastIndexOf('.')) + '.eeg',
-            vhdrFile.name.substr(0, vhdrFile.name.lastIndexOf('.')) + '.vmrk',
-          ],
-          code: 100,
-        }),
-      )
-    }
-  })
-  self.issues = self.issues.concat(vhdrIssues)
 
   validateMisc(files.misc)
     .then(miscIssues => {
