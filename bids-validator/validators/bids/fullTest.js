@@ -188,7 +188,6 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
 
       // Group summary modalities
       summary.modalities = utils.modalities.group(summary.modalities)
-      summary.consoleOutput = utils.prettifyOutput.summary(summary)
 
       // Format issues
       const issues = utils.issues.format(self.issues, summary, self.options)
@@ -197,7 +196,6 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     .catch(err => {
       // take internal exceptions and push to issues
       // note: exceptions caught here may have skipped subsequent validations
-      summary.consoleOutput = utils.prettifyOutput.summary(summary)
       const issues = utils.issues.exceptionHandler(
         err,
         self.issues,

@@ -12,7 +12,8 @@ module.exports = function(dir, options) {
       })
     } else {
       validate.BIDS(dir, options, function(issues, summary) {
-        console.log(issues.consoleOutput + '\n\n' + summary.consoleOutput)
+        console.log(validate.consoleFormat.issues(issues, options) + '\n')
+        console.log(validate.consoleFormat.summary(summary, options))
       })
     }
   } else {

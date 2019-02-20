@@ -4,33 +4,35 @@ var pluralize = require('pluralize')
 var bytes = require('bytes')
 
 module.exports = {
-  summary,
-  issues: (issues, options) => {
-    var errors = issues.errors
-    var warnings = issues.warnings
-    var output = []
-    if (issues.errors.length === 1 && issues.errors[0].code === '61') {
-      output.push(
-        colors.red(
-          '[ERR]  The given directory failed an initial Quick Test. This means the basic names and structure of the files and directories do not comply with BIDS specification. For more info go to http://bids.neuroimaging.io/',
-        ),
-      )
-    } else if (issues.config && issues.config.length >= 1) {
-      output.push(colors.red('[ERR]  Invalid Config File'))
-      for (var i = 0; i < issues.config.length; i++) {
-        var issue = issues.config[i]
-        issue.file.file = { relativePath: issue.file.path }
-        issue.files = [issue.file]
-      }
-      output = output.concat(logIssues(issues.config, 'red', options))
-    } else if (errors.length >= 1 || warnings.length >= 1) {
-      output = output.concat(logIssues(errors, 'red', options))
-      output = output.concat(logIssues(warnings, 'yellow', options))
-    } else {
-      output.push(colors.green('This dataset appears to be BIDS compatible.'))
+  issues: formatIssues,
+  summary: formatSummary,
+}
+
+function formatIssues(issues, options = {}) {
+  var errors = issues.errors
+  var warnings = issues.warnings
+  var output = []
+  if (issues.errors.length === 1 && issues.errors[0].code === '61') {
+    output.push(
+      colors.red(
+        '[ERR]  The given directory failed an initial Quick Test. This means the basic names and structure of the files and directories do not comply with BIDS specification. For more info go to http://bids.neuroimaging.io/',
+      ),
+    )
+  } else if (issues.config && issues.config.length >= 1) {
+    output.push(colors.red('[ERR]  Invalid Config File'))
+    for (var i = 0; i < issues.config.length; i++) {
+      var issue = issues.config[i]
+      issue.file.file = { relativePath: issue.file.path }
+      issue.files = [issue.file]
     }
-    return output.join('\n')
-  },
+    output = output.concat(logIssues(issues.config, 'red', options))
+  } else if (errors.length >= 1 || warnings.length >= 1) {
+    output = output.concat(logIssues(errors, 'red', options))
+    output = output.concat(logIssues(warnings, 'yellow', options))
+  } else {
+    output.push(colors.green('This dataset appears to be BIDS compatible.'))
+  }
+  return output.join('\n')
 }
 
 function logIssues(issues, color, options) {
@@ -88,7 +90,7 @@ function logIssues(issues, color, options) {
   return output
 }
 
-function summary(summary) {
+function formatSummary(summary) {
   const output = []
   if (summary) {
     var numSessions = summary.sessions.length > 0 ? summary.sessions.length : 1
