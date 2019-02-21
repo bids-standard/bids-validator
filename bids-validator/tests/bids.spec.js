@@ -110,7 +110,7 @@ describe('BIDS example datasets ', function() {
       assert.deepEqual(summary.tasks, ['rhyme judgment'])
       assert(summary.modalities.includes('T1w'))
       assert(summary.modalities.includes('bold'))
-      assert(summary.totalFiles === 10)
+      assert(summary.totalFiles === 8)
       assert(errors[0].code === '60')
       assert(warnings.length === 3 && warnings[0].code === '13')
       isdone()

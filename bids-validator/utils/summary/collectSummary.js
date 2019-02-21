@@ -4,6 +4,13 @@ const collectSessions = require('./collectSessions')
 const collectSubjects = require('./collectSubjects')
 
 const collectSummary = (fileList, options) => {
+  // remove ignored files from list:
+  Object.keys(fileList).forEach(function(key) {
+    if (fileList[key].ignore) {
+      delete fileList[key]
+    }
+  })
+
   const summary = {
     sessions: [],
     subjects: [],
@@ -15,13 +22,6 @@ const collectSummary = (fileList, options) => {
 
   //collect file directory statistics
   summary.size = files.collectDirectorySize(fileList)
-
-  // remove ignored files from list:
-  Object.keys(fileList).forEach(function(key) {
-    if (fileList[key].ignore) {
-      delete fileList[key]
-    }
-  })
 
   // collect modalities for summary
   summary.modalities = collectModalities(fileList)
