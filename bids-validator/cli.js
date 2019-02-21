@@ -3,6 +3,7 @@
 var validate = require('./index.js')
 var colors = require('colors/safe')
 var fs = require('fs')
+const remoteFiles = require('./utils/files/remoteFiles')
 
 module.exports = function(dir, options) {
   if (fs.existsSync(dir)) {
