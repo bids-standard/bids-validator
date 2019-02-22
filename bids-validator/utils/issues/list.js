@@ -578,4 +578,9 @@ module.exports = {
     reason:
       'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered based on the presence of multiple commas in a single author field. Please ensure your authors are properly formatted.',
   },
+  999: {
+    key: 'HED_ERROR',
+    severity: 'error',
+    reason: 'HED validation failed (temporary error code)',
+  },
 }
