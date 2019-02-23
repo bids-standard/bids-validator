@@ -1,5 +1,5 @@
 var colors = require('colors/safe')
-var cliff = require('cliff')
+var { table, getBorderCharacters } = require('table')
 var pluralize = require('pluralize')
 var bytes = require('bytes')
 
@@ -128,9 +128,20 @@ function formatSummary(summary) {
       val1 = column1[i] ? column1[i] + pad : ''
       val2 = column2[i] ? column2[i] + pad : ''
       val3 = column3[i] ? column3[i] : ''
-      rows.push(['       ', val1, val2, val3])
+      rows.push([pad, val1, val2, val3])
     }
-    output.push(cliff.stringifyRows(rows))
+    output.push(
+      table(rows, {
+        border: getBorderCharacters(`void`),
+        columnDefault: {
+          paddingLeft: 0,
+          paddingRight: 1,
+        },
+        drawHorizontalLine: () => {
+          return false
+        },
+      }),
+    )
 
     output.push('')
 
