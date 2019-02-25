@@ -6,6 +6,7 @@ var bytes = require('bytes')
 module.exports = {
   issues: formatIssues,
   summary: formatSummary,
+  logIssues,
 }
 
 function formatIssues(issues, options = {}) {
