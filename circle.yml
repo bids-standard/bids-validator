@@ -93,9 +93,6 @@ jobs:
       - run: git config --global user.name CircleCI
       - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run:
-          name: Delete old gh-pages branch
-          command: git branch -D gh-pages
-      - run:
           name: Create new gh-pages branch without history
           command: git checkout --orphan gh-pages
       - run:
