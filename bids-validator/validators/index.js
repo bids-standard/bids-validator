@@ -8,6 +8,7 @@ const Events = require('./events')
 const bval = require('./bval').bval
 const bvec = require('./bvec').bvec
 const utils = require('../utils')
+const consoleFormat = require('../utils/consoleFormat')
 
 // public api --------------------------------------------------------
 
@@ -21,6 +22,7 @@ const validate = {
   bvec: bvec,
   reformat: utils.issues.reformat,
   utils: utils,
+  consoleFormat,
 }
 
 // exports -----------------------------------------------------------

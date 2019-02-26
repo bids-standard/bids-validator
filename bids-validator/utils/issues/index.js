@@ -112,7 +112,7 @@ var issues = {
         }
       }
     }
-    return { errors: errors, warnings: warnings, ignored: ignored }
+    return { errors, warnings, ignored }
   },
 
   /**
