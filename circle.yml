@@ -117,7 +117,7 @@ jobs:
       - run:
           name: Commit updates
           command: git add . && git commit --allow-empty --no-verify -m 'Circle CI - Generate validator demo with version $CIRCLE_TAG'
-      - run: git push origin gh-pages
+      - run: git push origin gh-pages -f
 
 workflows:
   version: 2
