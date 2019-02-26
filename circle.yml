@@ -109,7 +109,7 @@ jobs:
           command: mv bids-validator-web/out/* .
       - run:
           name: Remove files not related to build
-          command: rm -r bids-validator-web node_modules tests
+          command: rm -r bids-validator bids-validator-web node_modules
       - run:
           name: Create a nojekyll file (gh-pages specific)
           command: touch .nojekyll
