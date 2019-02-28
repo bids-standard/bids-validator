@@ -48,7 +48,6 @@
     "TaskName",
     "SamplingFrequency",
     "SoftwareFilters",
-    "EEGChannelCount",
     "EEGReference",
     "PowerLineFrequency"
   ],
