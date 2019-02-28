@@ -34,7 +34,9 @@
     "onset",
     "trial_type",
     "response_time",
-    "stim_file"
+    "stim_file",
+    "sample",
+    "value"
   ],
   "misc": [],
   "participants": ["participant_id"],
