@@ -6,7 +6,7 @@ const collectSessions = (fileList, options) => {
     const file = fileList[key]
     if (
       !type.file.isStimuliData(file.relativePath) &&
-      type.isBIDS(file.relativePath, options.bep006, options.bep010)
+      type.isBIDS(file.relativePath)
     ) {
       const pathValues = type.getPathValues(file.relativePath)
       const isEmptyRoom = pathValues.sub && pathValues.sub == 'emptyroom'

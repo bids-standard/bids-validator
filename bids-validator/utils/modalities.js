@@ -40,7 +40,7 @@ module.exports = {
     return modalities
   },
 
-  isCorrectModality: (path, options) => {
+  isCorrectModality: path => {
     let isCorrectModality = false
     // MRI
     if (
@@ -57,11 +57,11 @@ module.exports = {
           break
         case 'eeg':
           // EEG
-          isCorrectModality = !!options.bep006
+          isCorrectModality = true
           break
         case 'ieeg':
           // iEEG
-          isCorrectModality = !!options.bep010
+          isCorrectModality = true
           break
         default:
           break

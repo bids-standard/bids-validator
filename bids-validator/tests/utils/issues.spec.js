@@ -20,8 +20,6 @@ describe('issues', () => {
         ignoreWarnings: false,
         ignoreNiftiHeaders: false,
         verbose: false,
-        bep006: false,
-        bep010: false,
         config: {},
       }
       formattedIssues = utils.issues.exceptionHandler(

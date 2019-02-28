@@ -8,7 +8,7 @@ const utils = require('../../utils')
  * otherwise it will throw a callback with a
  * generic error.
  */
-const quickTest = (fileList, options) => {
+const quickTest = fileList => {
   const keys = Object.keys(fileList)
   const couldBeBIDS = keys.some(key => {
     const file = fileList[key]
@@ -17,10 +17,7 @@ const quickTest = (fileList, options) => {
       path = path.split('/')
       path = path.reverse()
 
-      const isCorrectModality = utils.modalities.isCorrectModality(
-        path,
-        options,
-      )
+      const isCorrectModality = utils.modalities.isCorrectModality(path)
       let pathIsSesOrSub =
         path[2] &&
         (path[2].indexOf('ses-') == 0 || path[2].indexOf('sub-') == 0)

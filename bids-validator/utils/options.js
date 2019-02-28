@@ -11,8 +11,6 @@ module.exports = {
       ignoreWarnings: options.ignoreWarnings ? true : false,
       ignoreNiftiHeaders: options.ignoreNiftiHeaders ? true : false,
       verbose: options.verbose ? true : false,
-      bep006: options.bep006 ? true : false,
-      bep010: options.bep010 ? true : false,
       config: options.config ? options.config : {},
     }
     if (options.config && typeof options.config !== 'boolean') {
