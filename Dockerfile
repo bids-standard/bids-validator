@@ -1,6 +1,6 @@
 FROM node:8.11.3-alpine
 
-COPY . /src
+COPY ./bids-validator /src
 
 RUN npm install -g /src
 
