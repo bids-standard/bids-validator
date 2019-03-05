@@ -150,9 +150,9 @@ const checkHedStrings = function(events, headers) {
         continue
       }
 
-      for (let row of rows) {
+      for (let row of rows.slice(1)) {
         // get the 'HED' field
-        const hedString = row.trim().split('\t')[0]
+        const hedString = row.trim().split('\t')[hedColumn]
         const hedIssues = []
         const isHedStringValid = hedValidator.HED.validateHedString(
           hedString,
