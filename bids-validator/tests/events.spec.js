@@ -102,4 +102,34 @@ describe('Events', function() {
     )
     assert.deepEqual(issues, [])
   })
+
+  it('should throw an issue if the HED column contains invalid HED data', function() {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\n' +
+          '12\tsomething\tEvent/Category/Experimental stimulus,Event/Category/Experimental stimulus\n',
+      },
+    ]
+
+    const issues = validate.Events.validateEvents(events, [], headers, {})
+    assert(issues.length === 1 && issues[0].code === 999)
+  })
+
+  it('should not throw any issues if the HED column contains valid HED data', function() {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\n' +
+          '12\tsomething\tEvent/Category/Experimental stimulus\n',
+      },
+    ]
+
+    const issues = validate.Events.validateEvents(events, [], headers, {})
+    assert.deepEqual(issues, [])
+  })
 })
