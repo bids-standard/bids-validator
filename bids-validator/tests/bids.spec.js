@@ -190,10 +190,7 @@ describe('BIDS example datasets ', function() {
       dataDirectory + 'fieldmap_without_magnitude',
       options,
       function(issues) {
-        assert.notEqual(
-          issues.errors.findIndex(issue => issue.code === 91),
-          -1,
-        )
+        assert.notEqual(issues.errors.findIndex(issue => issue.code === 91), -1)
         isdone()
       },
     )
