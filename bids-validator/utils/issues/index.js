@@ -55,8 +55,8 @@ var issues = {
     })
 
     // organize by issue code
-    var categorized = {}
-    var codes = []
+    const categorized = {}
+    const codes = []
     for (var i = 0; i < issueList.length; i++) {
       var issue = issueList[i]
 
@@ -81,11 +81,13 @@ var issues = {
       }
     }
 
-    var severityMap = config.interpret(codes, options.config)
+    const severityMap = config.interpret(codes, options.config)
 
     // organize by severity
-    for (var code in categorized) {
-      if (code !== undefined) {
+    for (const codePropertyName in categorized) {
+      if (codePropertyName !== undefined) {
+        // Properties are always strings but error codes are always integers
+        const code = parseInt(codePropertyName)
         issue = categorized[code]
         issue.code = code
 

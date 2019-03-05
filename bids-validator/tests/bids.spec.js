@@ -56,7 +56,7 @@ describe('BIDS example datasets ', function() {
             var warnings = issues.warnings
             var session_flag = false
             for (var warning in warnings) {
-              if (warnings[warning]['code'] === '38') {
+              if (warnings[warning]['code'] === 38) {
                 session_flag = true
                 break
               }
@@ -90,7 +90,7 @@ describe('BIDS example datasets ', function() {
         assert(summary.modalities.includes('bold'))
         assert(summary.totalFiles === 133)
         assert.deepEqual(errors, [])
-        assert(warnings.length === 2 && warnings[0].code === '13')
+        assert(warnings.length === 2 && warnings[0].code === 13)
         isdone()
       },
     )
@@ -111,8 +111,8 @@ describe('BIDS example datasets ', function() {
       assert(summary.modalities.includes('T1w'))
       assert(summary.modalities.includes('bold'))
       assert(summary.totalFiles === 8)
-      assert(errors[0].code === '60')
-      assert(warnings.length === 3 && warnings[0].code === '13')
+      assert(errors[0].code === 60)
+      assert(warnings.length === 3 && warnings[0].code === 13)
       isdone()
     })
   })
@@ -121,7 +121,7 @@ describe('BIDS example datasets ', function() {
   it('validates dataset for duplicate files present with both .nii and .nii.gz extension', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
     validate.BIDS(dataDirectory + 'valid_filenames', options, function(issues) {
-      assertErrorCode(issues.errors, '74')
+      assertErrorCode(issues.errors, 74)
       isdone()
     })
   })
@@ -130,7 +130,7 @@ describe('BIDS example datasets ', function() {
   it('validates dataset with illegal characters in task name', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
     validate.BIDS(dataDirectory + 'valid_filenames', options, function(issues) {
-      assertErrorCode(issues.errors, '58')
+      assertErrorCode(issues.errors, 58)
       isdone()
     })
   })
@@ -139,7 +139,7 @@ describe('BIDS example datasets ', function() {
   it('validates dataset with illegal characters in sub name', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
     validate.BIDS(dataDirectory + 'valid_filenames', options, function(issues) {
-      assertErrorCode(issues.errors, '64')
+      assertErrorCode(issues.errors, 64)
       isdone()
     })
   })
@@ -147,7 +147,7 @@ describe('BIDS example datasets ', function() {
   it('checks for subjects with no valid data', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(dataDirectory + 'no_valid_data', options, function(issues) {
-      assertErrorCode(issues.errors, '67')
+      assertErrorCode(issues.errors, 67)
       isdone()
     })
   })
@@ -168,7 +168,7 @@ describe('BIDS example datasets ', function() {
         assert(summary.modalities.includes('bold'))
         assert(summary.totalFiles === 133)
         assert.deepEqual(errors, [])
-        assert(warnings.length === 2 && warnings[0].code === '13')
+        assert(warnings.length === 2 && warnings[0].code === 13)
         isdone()
       },
     )
@@ -179,7 +179,7 @@ describe('BIDS example datasets ', function() {
     validate.BIDS(dataDirectory + 'unused_data_dict', options, function(
       issues,
     ) {
-      assert.notEqual(issues.errors.findIndex(issue => issue.code === '90'), -1)
+      assert.notEqual(issues.errors.findIndex(issue => issue.code === 90), -1)
       isdone()
     })
   })
@@ -191,7 +191,7 @@ describe('BIDS example datasets ', function() {
       options,
       function(issues) {
         assert.notEqual(
-          issues.errors.findIndex(issue => issue.code === '91'),
+          issues.errors.findIndex(issue => issue.code === 91),
           -1,
         )
         isdone()
