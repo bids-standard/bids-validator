@@ -52,7 +52,16 @@ describe('dataset_description.json', () => {
     const issues = checkDatasetDescription(jsonFileContents)
     assert(issues[0].key === 'DATASET_DESCRIPTION_JSON_MISSING')
   })
-  it('throws a warning if the Authors field of the dataset description has too many commas', () => {
+  it('throws a warning if the Authors field of the dataset description has a single entry and less than two commas', () => {
+    const jsonFileContents = {
+      '/dataset_description.json': {
+        Authors: ['An, Author'],
+      },
+    }
+    const issues = checkDatasetDescription(jsonFileContents)
+    assert(issues[0].key === 'TOO_FEW_AUTHORS')
+  })
+  it('throws an error if the Authors field of the dataset description has a single field and multiple commas', () => {
     const jsonFileContents = {
       '/dataset_description.json': {
         Authors: [
@@ -61,7 +70,7 @@ describe('dataset_description.json', () => {
       },
     }
     const issues = checkDatasetDescription(jsonFileContents)
-    assert(issues[0].key === 'IMPROPERLY_FORMATTED_AUTHORS')
+    assert(issues[0].key === 'MULTIPLE_COMMAS_IN_AUTHOR_FIELD')
   })
 })
 
