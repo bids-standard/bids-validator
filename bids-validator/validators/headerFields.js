@@ -21,17 +21,17 @@ const headerFields = headers => {
   for (var i = 0; i < fields.length; i++) {
     var field = fields[i]
     var issues = headerField(headers, field)
-    for (var file in issues) {
-      if (issues[file].code == 39) {
-        if (allIssues39Dict.hasOwnProperty(file)) {
-          allIssues39Dict[file].push(issues[file])
+    issues.forEach(issue => {
+      if (issue.code == 39) {
+        if (allIssues39Dict.hasOwnProperty(issue.file.relativePath)) {
+          allIssues39Dict[issue.file.relativePath].push(issue)
         } else {
-          allIssues39Dict[file] = [issues[file]]
+          allIssues39Dict[issue.file.relativePath] = [issue]
         }
       } else {
-        finalIssues.push(issues[file])
+        finalIssues.push(issue)
       }
-    }
+    })
   }
 
   finalIssues = finalIssues.concat(collect39Issues(allIssues39Dict))
@@ -64,7 +64,7 @@ const collect39Issues = allIssues39Dict => {
 
 const headerField = (headers, field) => {
   var nifti_types = {}
-  var issues = {}
+  var issues = []
   for (var header_index = 0; header_index < headers.length; header_index++) {
     var badField = false
     var field_value
@@ -81,37 +81,46 @@ const headerField = (headers, field) => {
         header[field] === null ||
         header[field].length < header[field][0]
       ) {
-        issues[file.relativePath] = new Issue({
-          file: file,
-          code: 40,
-        })
+        issues.push(
+          new Issue({
+            file: file,
+            code: 40,
+          }),
+        )
         continue
       } else if (
         file.name.indexOf('_bold') > -1 &&
         (header[field][0] !== 4 || header[field].length !== 5)
       ) {
-        issues[file.relativePath] = new Issue({
-          file: file,
-          code: 54,
-          evidence: 'header field "dim" = ' + header[field],
-        })
+        issues.push(
+          new Issue({
+            file: file,
+            code: 54,
+            evidence: 'header field "dim" = ' + header[field],
+          }),
+        )
         continue
       } else if (
         (file.name.indexOf('magnitude1') > -1 ||
           file.name.indexOf('magnitude2') > -1) &&
         header[field].length !== 4
       ) {
-        issues[file.relativePath] = new Issue({
-          file: file,
-          code: 94,
-          evidence: 'this magnitude file has more than three dimensions. ',
-        })
+        issues.push(
+          new Issue({
+            file: file,
+            code: 94,
+            evidence: 'this magnitude file has more than three dimensions. ',
+          }),
+        )
+        continue
       } else if (file.name.indexOf('T1w') > -1 && header[field].length !== 4) {
-        issues[file.relativePath] = new Issue({
-          file: file,
-          code: 95,
-          evidence: 'this T1w file does not have exactly three dimensions. ',
-        })
+        issues.push(
+          new Issue({
+            file: file,
+            code: 95,
+            evidence: 'this T1w file does not have exactly three dimensions. ',
+          }),
+        )
       }
       field_value = header[field].slice(1, header[field][0] + 1).toString()
     } else if (field === 'pixdim') {
@@ -120,10 +129,12 @@ const headerField = (headers, field) => {
         header['xyzt_units'] === null ||
         header['xyzt_units'].length < 4
       ) {
-        issues[file.relativePath] = new Issue({
-          file: file,
-          code: 41,
-        })
+        issues.push(
+          new Issue({
+            file: file,
+            code: 41,
+          }),
+        )
         badField = true
       }
       if (
@@ -131,17 +142,21 @@ const headerField = (headers, field) => {
         header['pixdim'] === null ||
         header['pixdim'].length < 4
       ) {
-        issues[file.relativePath] = new Issue({
-          file: file,
-          code: 42,
-        })
+        issues.push(
+          new Issue({
+            file: file,
+            code: 42,
+          }),
+        )
         badField = true
       }
       if (header['qform_code'] === 0 && header['sform_code'] === 0) {
-        issues[file.relativePath] = new Issue({
-          file: file,
-          code: 60,
-        })
+        issues.push(
+          new Issue({
+            file: file,
+            code: 60,
+          }),
+        )
         badField = true
       }
       if (badField === true) {
@@ -235,11 +250,13 @@ const headerField = (headers, field) => {
               field_value_key.replace(/,/g, ' x ') +
               '.'
           }
-          issues[nifti_file.relativePath] = new Issue({
-            file: nifti_file,
-            reason: evidence,
-            code: 39,
-          })
+          issues.push(
+            new Issue({
+              file: nifti_file,
+              reason: evidence,
+              code: 39,
+            }),
+          )
         }
       }
     }
