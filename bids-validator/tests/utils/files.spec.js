@@ -48,9 +48,20 @@ describe('files utils in browsers', () => {
 
 describe('dataset_description.json', () => {
   it('throws warning if it does not exist in proper location', () => {
-    const fileList = {}
-    const issues = checkDatasetDescription(fileList)
+    const jsonFileContents = {}
+    const issues = checkDatasetDescription(jsonFileContents)
     assert(issues[0].key === 'DATASET_DESCRIPTION_JSON_MISSING')
+  })
+  it('throws a warning if the Authors field of the dataset description has too many commas', () => {
+    const jsonFileContents = {
+      '/dataset_description.json': {
+        Authors: [
+          'Too many, Commas, Indicate, That the user, May not have, Separated authors, Into an array',
+        ],
+      },
+    }
+    const issues = checkDatasetDescription(jsonFileContents)
+    assert(issues[0].key === 'IMPROPERLY_FORMATTED_AUTHORS')
   })
 })
 
