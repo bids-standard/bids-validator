@@ -119,7 +119,7 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       self.issues = self.issues.concat(noSubjectIssues)
 
       // Check for datasetDescription file in the proper place
-      const datasetDescriptionIssues = checkDatasetDescription(fileList)
+      const datasetDescriptionIssues = checkDatasetDescription(jsonContentsDict)
       self.issues = self.issues.concat(datasetDescriptionIssues)
 
       // Check for README file in the proper place

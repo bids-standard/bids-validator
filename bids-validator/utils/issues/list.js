@@ -566,4 +566,16 @@ module.exports = {
     reason:
       'The recommended file /README is missing. See Section 03 (Modality agnostic files) of the BIDS specification.',
   },
+  102: {
+    key: 'TOO_FEW_AUTHORS',
+    severity: 'warning',
+    reason:
+      'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered based on the presence of only one author field. Please ignore if all contributors are already properly listed.',
+  },
+  103: {
+    key: 'MULTIPLE_COMMAS_IN_AUTHOR_FIELD',
+    severity: 'error',
+    reason:
+      'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered based on the presence of multiple commas in a single author field. Please ensure your authors are properly formatted.',
+  },
 }
