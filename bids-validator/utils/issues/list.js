@@ -566,4 +566,10 @@ module.exports = {
     reason:
       'The recommended file /README is missing. See Section 03 (Modality agnostic files) of the BIDS specification.',
   },
+  102: {
+    key: 'IMPROPERLY_FORMATTED_AUTHORS',
+    severity: 'warning',
+    reason:
+      'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered based on the high number of commas in an authors field. Please ignore if your authors are already properly formatted.',
+  },
 }
