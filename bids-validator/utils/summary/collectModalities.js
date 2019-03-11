@@ -11,7 +11,7 @@ const collectModalities = fileList => {
 
     // check modality by data file extension ...
     // and capture data files for later sanity checks (when available)
-    if (type.file.isDatafile(file.relativePath)) {
+    if (type.file.hasModality(file.relativePath)) {
       // collect modality summary
       const modality = suffix.slice(0, suffix.indexOf('.'))
       if (modalities.indexOf(modality) === -1) {

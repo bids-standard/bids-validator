@@ -112,17 +112,7 @@ module.exports = {
         this.isTSV(path) ||
         this.isStimuliData(path) ||
         this.isPhenotypic(path) ||
-        this.isAnat(path) ||
-        this.isDWI(path) ||
-        this.isFieldMap(path) ||
-        this.isFieldMapMainNii(path) ||
-        this.isFunc(path) ||
-        this.isMeg(path) ||
-        this.isEEG(path) ||
-        this.isIEEG(path) ||
-        this.isBehavioral(path) ||
-        this.isFuncBold(path) ||
-        this.isCont(path)
+        this.hasModality(path)
       )
     },
     /**
@@ -225,6 +215,22 @@ module.exports = {
 
     isCont: function(path) {
       return conditionalMatch(contData, path)
+    },
+
+    hasModality: function(path) {
+      return (
+        this.isAnat(path) ||
+        this.isDWI(path) ||
+        this.isFieldMap(path) ||
+        this.isFieldMapMainNii(path) ||
+        this.isFunc(path) ||
+        this.isMeg(path) ||
+        this.isEEG(path) ||
+        this.isIEEG(path) ||
+        this.isBehavioral(path) ||
+        this.isFuncBold(path) ||
+        this.isCont(path)
+      )
     },
   },
 
