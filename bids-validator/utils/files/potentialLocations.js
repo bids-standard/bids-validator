@@ -48,7 +48,6 @@ const potentialPaths = components => {
     )
 
     const prefix = prefixComponents.join('_')
-
     // loop through the non path-specific file components and generate the filename
     // based on directory + appropriate combinations of filename components
     for (let j = nonPathSpecificFileComponents.length; j > -1; j--) {
@@ -63,6 +62,13 @@ const potentialPaths = components => {
     }
   })
 
+  // There is an exception to the inheritance principle when it comes
+  // to bold data .json sidecars - the potential locations *must* include
+  // the task-<taskname> keyword.
+  if (filenameComponents.indexOf('bold.json') > -1) {
+    paths = removePathsWithoutTasknames(paths)
+  }
+
   return paths
 }
 
@@ -71,6 +77,12 @@ const constructFileName = (directoryString, filename, prefix) => {
   const filePathString = prefix ? [prefix, filename].join('_') : filename
   const newPath = directoryString + '/' + filePathString
   return newPath
+}
+
+const removePathsWithoutTasknames = paths => {
+  return paths.filter(path => {
+    return path.indexOf('task') > -1
+  })
 }
 
 module.exports = potentialLocations
