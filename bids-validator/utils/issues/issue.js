@@ -34,5 +34,5 @@ module.exports = function(options) {
     ? options.severity
     : issue.severity
   this.reason = options.hasOwnProperty('reason') ? options.reason : issue.reason
-  this.help = constructHelpUrl(issue)
+  this.helpUrl = constructHelpUrl(issue)
 }

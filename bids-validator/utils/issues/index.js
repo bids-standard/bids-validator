@@ -73,7 +73,7 @@ var issues = {
         categorized[issue.code] = list[issue.code]
         categorized[issue.code].files = []
         categorized[issue.code].additionalFileCount = 0
-        categorized[issue.code].help = issue.help
+        categorized[issue.code].helpUrl = issue.helpUrl
       }
       if (options.verbose || categorized[issue.code].files.length < 10) {
         categorized[issue.code].files.push(issue)

@@ -87,12 +87,12 @@ function logIssues(issues, color, options) {
       )
     }
     output.push('')
-    if (issue.help) {
+    if (issue.helpUrl) {
       output.push(
         colors.cyan(
           '\t' +
             'Please visit ' +
-            issue.help +
+            issue.helpUrl +
             ' for existing conversations about this issue.',
         ),
       )

@@ -107,7 +107,7 @@ class Issues extends React.Component {
   _issueLink(issue) {
     return (
       <p>
-        <a target='_blank' href={issue.help}>Click here for more information about this issue</a>
+        <a target='_blank' href={issue.helpUrl}>Click here for more information about this issue</a>
       </p>
     )
   }
