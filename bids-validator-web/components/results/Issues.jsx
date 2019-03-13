@@ -97,9 +97,18 @@ class Issues extends React.Component {
             {type} {index + 1}: [Code {issue.code}] {issue.key}
           </strong>
         </h4>
+        {this._issueLink(issue)}
         {issue.reason}
         {fileCount}
       </span>
+    )
+  }
+
+  _issueLink(issue) {
+    return (
+      <p>
+        <a target='_blank' href={issue.help}>Click here for more information about this issue</a>
+      </p>
     )
   }
 
