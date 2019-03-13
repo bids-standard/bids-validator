@@ -1,4 +1,17 @@
-var issues = require('./list')
+const issues = require('./list')
+
+/**
+ * Help Url
+ *
+ * Construct a link to a helpful neurostars query, based on the
+ * issue key
+ */
+const constructHelpUrl = issue => {
+  const neurostarsPrefix = 'https://neurostars.org/'
+  const searchQuery = issue && issue.key ? 'search?q=' + issue.key : ''
+  const helpUrl = neurostarsPrefix + searchQuery
+  return helpUrl
+}
 
 /**
  * Issue
@@ -6,8 +19,8 @@ var issues = require('./list')
  * A constructor for BIDS issues.
  */
 module.exports = function(options) {
-  var code = options.hasOwnProperty('code') ? options.code : null
-  var issue = issues[code]
+  const code = options.hasOwnProperty('code') ? options.code : null
+  const issue = issues[code]
 
   this.key = issue.key
   this.code = code
@@ -21,4 +34,5 @@ module.exports = function(options) {
     ? options.severity
     : issue.severity
   this.reason = options.hasOwnProperty('reason') ? options.reason : issue.reason
+  this.help = constructHelpUrl(issue)
 }
