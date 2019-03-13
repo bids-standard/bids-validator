@@ -97,10 +97,23 @@ class Issues extends React.Component {
             {type} {index + 1}: [Code {issue.code}] {issue.key}
           </strong>
         </h4>
+        {this._issueLink(issue)}
         {issue.reason}
         {fileCount}
       </span>
     )
+  }
+
+  _issueLink(issue) {
+    if (issue && issue.helpUrl) {
+      return (
+        <p>
+          <a target='_blank' href={issue.helpUrl}>Click here for more information about this issue</a>
+        </p>
+      )
+    } else {
+      return null
+    }
   }
 
   _viewMore(files, index) {

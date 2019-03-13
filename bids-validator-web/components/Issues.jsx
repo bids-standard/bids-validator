@@ -11,7 +11,6 @@ import Summary from '../components/Summary'
 class Issues extends React.Component {
   constructor(props) {
     super(props)
-    console.log('props:', props)
     this._reset = this.props.reset.bind(this)
   }
   // life cycle events --------------------------------------------------

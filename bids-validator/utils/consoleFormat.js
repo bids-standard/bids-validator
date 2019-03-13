@@ -87,6 +87,17 @@ function logIssues(issues, color, options) {
       )
     }
     output.push('')
+    if (issue.helpUrl) {
+      output.push(
+        colors.cyan(
+          '\t' +
+            'Please visit ' +
+            issue.helpUrl +
+            ' for existing conversations about this issue.',
+        ),
+      )
+      output.push('')
+    }
   }
   return output
 }
@@ -148,8 +159,8 @@ function formatSummary(summary) {
 
     //Neurostars message
     output.push(
-      colors.white(
-        'If you have any questions please post on https://neurostars.org/tags/bids',
+      colors.cyan(
+        '\tIf you have any questions, please post on https://neurostars.org/tags/bids.',
       ),
     )
 

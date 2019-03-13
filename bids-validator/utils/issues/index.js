@@ -73,6 +73,7 @@ var issues = {
         categorized[issue.code] = list[issue.code]
         categorized[issue.code].files = []
         categorized[issue.code].additionalFileCount = 0
+        categorized[issue.code].helpUrl = issue.helpUrl
       }
       if (options.verbose || categorized[issue.code].files.length < 10) {
         categorized[issue.code].files.push(issue)
@@ -98,7 +99,6 @@ var issues = {
         if (severityMap.hasOwnProperty(issue.key)) {
           issue.severity = severityMap[issue.key]
         }
-
         if (issue.severity === 'error') {
           // Schema validation issues will yield the JSON file invalid, we should display them first to attract
           // user attention.
