@@ -105,11 +105,15 @@ class Issues extends React.Component {
   }
 
   _issueLink(issue) {
-    return (
-      <p>
-        <a target='_blank' href={issue.helpUrl}>Click here for more information about this issue</a>
-      </p>
-    )
+    if (issue && issue.helpUrl) {
+      return (
+        <p>
+          <a target='_blank' href={issue.helpUrl}>Click here for more information about this issue</a>
+        </p>
+      )
+    } else {
+      return null
+    }
   }
 
   _viewMore(files, index) {
