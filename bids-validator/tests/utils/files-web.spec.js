@@ -20,7 +20,7 @@ describe('files in browser', () => {
       })
     })
   })
-  
+
   describe('files utils in browsers', () => {
     describe('newFile', () => {
       it('creates a new File API object', () => {
@@ -30,7 +30,7 @@ describe('files in browser', () => {
       })
     })
   })
-  
+
   describe('dataset_description.json', () => {
     it('throws warning if it does not exist in proper location', () => {
       const fileList = {}
@@ -38,7 +38,7 @@ describe('files in browser', () => {
       assert(issues[0].key === 'DATASET_DESCRIPTION_JSON_MISSING')
     })
   })
-  
+
   describe('README', () => {
     it('throws warning if it does not exist in proper location', () => {
       const fileList = {
@@ -52,24 +52,26 @@ describe('files in browser', () => {
       assert(issues[0].key === 'README_FILE_MISSING')
     })
   })
-  
+
   describe('validateMisc', () => {
-    let filelist = [], 
-        dir
-  
+    let filelist = [],
+      dir
+
     beforeAll(() => {
       // contains stripped down CTF format dataset: Both, BadChannels and
       // bad.segments files can be empty and still valid. Everything else must
       // not be empty.
       dir = `${process.cwd()}/bids-validator/tests/data/empty_files`
     })
-    
+
     // generate an array of browser Files
-    beforeEach(() => { filelist = createFileList(dir) })
-  
+    beforeEach(() => {
+      filelist = createFileList(dir)
+    })
+
     it('returns issues for empty files (0kb), accepting a limited set of exceptions', done => {
       const files = groupFileTypes(filelist, {})
-  
+
       validateMisc(files.misc).then(issues => {
         // *.meg4 and BadChannels files are empty. But only *.meg4 is an issue
         assert.ok(issues.length == 1)
