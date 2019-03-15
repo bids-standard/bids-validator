@@ -1,9 +1,9 @@
 /*eslint no-console: ["error", { allow: ["log"] }] */
-const NodeEnvironment = require('jest-environment-node')
+const JsdomEnvironment = require('jest-environment-jsdom-global')
 const loadExamples = require('./load-examples.js')
 
 // Environment which includes the bids-examples datasets
-class ExamplesEnvironment extends NodeEnvironment {
+class ExamplesEnvironmentWeb extends JsdomEnvironment {
   async setup() {
     await super.setup()
     this.global.test_version = loadExamples()
@@ -18,4 +18,4 @@ class ExamplesEnvironment extends NodeEnvironment {
   }
 }
 
-module.exports = ExamplesEnvironment
+module.exports = ExamplesEnvironmentWeb

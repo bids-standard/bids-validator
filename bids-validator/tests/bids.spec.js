@@ -6,6 +6,7 @@ const { assert } = require('chai')
 const validate = require('../index.js')
 const fs = require('fs')
 const path = require('path')
+const { createFileList } = require('./env/FileList.js')
 
 function getDirectories(srcpath) {
   return fs.readdirSync(srcpath).filter(function(file) {
@@ -30,6 +31,17 @@ var missing_session_files = [
 
 const dataDirectory = 'bids-validator/tests/data/'
 
+// Generate validate.BIDS input for included minimal tests
+function createDatasetFileList(path) {
+  const testDatasetPath = `${dataDirectory}${path}`
+  return global.jsdom ? createFileList(testDatasetPath) : testDatasetPath
+}
+
+// Generate validate.BIDS input for bids-examples
+function createExampleFileList(path) {
+  return createDatasetFileList(`bids-examples-${global.test_version}/${path}/`)
+}
+
 function assertErrorCode(errors, expected_error_code) {
   var matchingErrors = errors.filter(function(error) {
     return error.code === expected_error_code
@@ -44,31 +56,22 @@ describe('BIDS example datasets ', function() {
     ).forEach(function testDataset(path) {
       it(path, isdone => {
         const options = { ignoreNiftiHeaders: true }
-        validate.BIDS(
-          dataDirectory +
-            'bids-examples-' +
-            global.test_version +
-            '/' +
-            path +
-            '/',
-          options,
-          function(issues) {
-            var warnings = issues.warnings
-            var session_flag = false
-            for (var warning in warnings) {
-              if (warnings[warning]['code'] === 38) {
-                session_flag = true
-                break
-              }
+        validate.BIDS(createExampleFileList(path), options, function(issues) {
+          var warnings = issues.warnings
+          var session_flag = false
+          for (var warning in warnings) {
+            if (warnings[warning]['code'] === 38) {
+              session_flag = true
+              break
             }
-            if (missing_session_files.indexOf(path) === -1) {
-              assert.deepEqual(session_flag, false)
-            } else {
-              assert.deepEqual(session_flag, true)
-            }
-            isdone()
-          },
-        )
+          }
+          if (missing_session_files.indexOf(path) === -1) {
+            assert.deepEqual(session_flag, false)
+          } else {
+            assert.deepEqual(session_flag, true)
+          }
+          isdone()
+        })
       })
     })
   })
@@ -76,30 +79,29 @@ describe('BIDS example datasets ', function() {
   // we need to have at least one non-dynamic test
   it('validates path without trailing backslash', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
-    validate.BIDS(
-      dataDirectory + 'bids-examples-' + global.test_version + '/ds001',
-      options,
-      function(issues, summary) {
-        var errors = issues.errors
-        var warnings = issues.warnings
-        assert(summary.sessions.length === 0)
-        assert(summary.subjects.length === 16)
-        assert.deepEqual(summary.tasks, ['balloon analog risk task'])
-        assert(summary.modalities.includes('T1w'))
-        assert(summary.modalities.includes('inplaneT2'))
-        assert(summary.modalities.includes('bold'))
-        assert(summary.totalFiles === 133)
-        assert.deepEqual(errors, [])
-        assert(warnings.length === 2 && warnings[0].code === 13)
-        isdone()
-      },
-    )
+    validate.BIDS(createExampleFileList('ds001'), options, function(
+      issues,
+      summary,
+    ) {
+      var errors = issues.errors
+      var warnings = issues.warnings
+      assert(summary.sessions.length === 0)
+      assert(summary.subjects.length === 16)
+      assert.deepEqual(summary.tasks, ['balloon analog risk task'])
+      assert(summary.modalities.includes('T1w'))
+      assert(summary.modalities.includes('inplaneT2'))
+      assert(summary.modalities.includes('bold'))
+      assert(summary.totalFiles === 133)
+      assert.deepEqual(errors, [])
+      assert(warnings.length === 2 && warnings[0].code === 13)
+      isdone()
+    })
   })
 
   // we need to have at least one non-dynamic test
   it('validates dataset with valid nifti headers', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
-    validate.BIDS(dataDirectory + 'valid_headers', options, function(
+    validate.BIDS(createDatasetFileList('valid_headers'), options, function(
       issues,
       summary,
     ) {
@@ -120,7 +122,9 @@ describe('BIDS example datasets ', function() {
   // test for duplicate files present with both .nii and .nii.gz extension
   it('validates dataset for duplicate files present with both .nii and .nii.gz extension', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
-    validate.BIDS(dataDirectory + 'valid_filenames', options, function(issues) {
+    validate.BIDS(createDatasetFileList('valid_filenames'), options, function(
+      issues,
+    ) {
       assertErrorCode(issues.errors, 74)
       isdone()
     })
@@ -129,7 +133,9 @@ describe('BIDS example datasets ', function() {
   // test for illegal characters used in acq and task name
   it('validates dataset with illegal characters in task name', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
-    validate.BIDS(dataDirectory + 'valid_filenames', options, function(issues) {
+    validate.BIDS(createDatasetFileList('valid_filenames'), options, function(
+      issues,
+    ) {
       assertErrorCode(issues.errors, 58)
       isdone()
     })
@@ -138,7 +144,9 @@ describe('BIDS example datasets ', function() {
   // test for illegal characters used in sub name
   it('validates dataset with illegal characters in sub name', function(isdone) {
     var options = { ignoreNiftiHeaders: false }
-    validate.BIDS(dataDirectory + 'valid_filenames', options, function(issues) {
+    validate.BIDS(createDatasetFileList('valid_filenames'), options, function(
+      issues,
+    ) {
       assertErrorCode(issues.errors, 64)
       isdone()
     })
@@ -146,7 +154,9 @@ describe('BIDS example datasets ', function() {
 
   it('checks for subjects with no valid data', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
-    validate.BIDS(dataDirectory + 'no_valid_data', options, function(issues) {
+    validate.BIDS(createDatasetFileList('no_valid_data'), options, function(
+      issues,
+    ) {
       assertErrorCode(issues.errors, 67)
       isdone()
     })
@@ -154,29 +164,28 @@ describe('BIDS example datasets ', function() {
 
   it('validates MRI modalities', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
-    validate.BIDS(
-      dataDirectory + 'bids-examples-' + global.test_version + '/ds001',
-      options,
-      function(issues, summary) {
-        var errors = issues.errors
-        var warnings = issues.warnings
-        assert(summary.sessions.length === 0)
-        assert(summary.subjects.length === 16)
-        assert.deepEqual(summary.tasks, ['balloon analog risk task'])
-        assert(summary.modalities.includes('T1w'))
-        assert(summary.modalities.includes('inplaneT2'))
-        assert(summary.modalities.includes('bold'))
-        assert(summary.totalFiles === 133)
-        assert.deepEqual(errors, [])
-        assert(warnings.length === 2 && warnings[0].code === 13)
-        isdone()
-      },
-    )
+    validate.BIDS(createExampleFileList('ds001'), options, function(
+      issues,
+      summary,
+    ) {
+      var errors = issues.errors
+      var warnings = issues.warnings
+      assert(summary.sessions.length === 0)
+      assert(summary.subjects.length === 16)
+      assert.deepEqual(summary.tasks, ['balloon analog risk task'])
+      assert(summary.modalities.includes('T1w'))
+      assert(summary.modalities.includes('inplaneT2'))
+      assert(summary.modalities.includes('bold'))
+      assert(summary.totalFiles === 133)
+      assert.deepEqual(errors, [])
+      assert(warnings.length === 2 && warnings[0].code === 13)
+      isdone()
+    })
   })
 
   it('checks for data dictionaries without corresponding data files', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
-    validate.BIDS(dataDirectory + 'unused_data_dict', options, function(
+    validate.BIDS(createDatasetFileList('unused_data_dict'), options, function(
       issues,
     ) {
       assert.notEqual(issues.errors.findIndex(issue => issue.code === 90), -1)
@@ -187,7 +196,7 @@ describe('BIDS example datasets ', function() {
   it('checks for fieldmaps with no _magnitude file', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
-      dataDirectory + 'fieldmap_without_magnitude',
+      createDatasetFileList('fieldmap_without_magnitude'),
       options,
       function(issues) {
         assert.notEqual(issues.errors.findIndex(issue => issue.code === 91), -1)
@@ -198,26 +207,21 @@ describe('BIDS example datasets ', function() {
 
   it('should not throw a warning if all _phasediff.nii are associated with _magnitude1.nii', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
-    validate.BIDS(
-      dataDirectory +
-        'bids-examples-' +
-        global.test_version +
-        '/hcp_example_bids',
-      options,
-      function(issues) {
-        assert.deepEqual(issues.errors, [])
-        isdone()
-      },
-    )
+    validate.BIDS(createExampleFileList('hcp_example_bids'), options, function(
+      issues,
+    ) {
+      assert.deepEqual(issues.errors, [])
+      isdone()
+    })
   })
 
   it('should throw a warning if there are _phasediff.nii without an associated _magnitude1.nii', function(isdone) {
     var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
-      dataDirectory + 'phasediff_without_magnitude1',
+      createDatasetFileList('phasediff_without_magnitude1'),
       options,
       function(issues) {
-        assert.notEqual(issues.warnings.findIndex(issue => issue.code === '92'))
+        assert.notEqual(issues.warnings.findIndex(issue => issue.code === 92))
         isdone()
       },
     )
