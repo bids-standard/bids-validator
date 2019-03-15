@@ -110,11 +110,21 @@ describe('Events', function() {
         path: '/sub01/sub01_task-test_events.tsv',
         contents:
           'onset\tduration\tHED\n' +
-          '12\tsomething\tEvent/Category/Experimental stimulus,Event/Category/Experimental stimulus\n',
+          '7\tsomething\tEvent/Category/Experimental stimulus,Event/Category/Experimental stimulus\n',
       },
     ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+      },
+    }
 
-    const issues = validate.Events.validateEvents(events, [], headers, {})
+    const issues = validate.Events.validateEvents(
+      events,
+      [],
+      headers,
+      jsonDictionary,
+    )
     assert(issues.length === 1 && issues[0].code === 999)
   })
 
@@ -125,11 +135,246 @@ describe('Events', function() {
         path: '/sub01/sub01_task-test_events.tsv',
         contents:
           'onset\tduration\tHED\n' +
-          '12\tsomething\tEvent/Category/Experimental stimulus\n',
+          '7\tsomething\tEvent/Category/Experimental stimulus\n',
       },
     ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+      },
+    }
 
-    const issues = validate.Events.validateEvents(events, [], headers, {})
+    const issues = validate.Events.validateEvents(
+      events,
+      [],
+      headers,
+      jsonDictionary,
+    )
     assert.deepEqual(issues, [])
+  })
+
+  it('should throw an issue if the HED columns, including sidecars, contain invalid HED data', function() {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\tmycodes\n' +
+          '7\tsomething\tEvent/Category/Experimental stimulus\tfirst\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+        mycodes: {
+          HED: {
+            first: 'Event/Category/Experimental stimulus',
+            second: '/Action/Reach/To touch',
+          },
+        },
+      },
+    }
+
+    const issues = validate.Events.validateEvents(
+      events,
+      [],
+      headers,
+      jsonDictionary,
+    )
+    assert(issues.length === 1 && issues[0].code === 999)
+  })
+
+  it('should not throw any issues if the HED columns, including sidecars, contain valid HED data', function() {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\tmycodes\n' +
+          '7\tsomething\tEvent/Category/Experimental stimulus\tsecond\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+        mycodes: {
+          HED: {
+            first: 'Event/Category/Experimental stimulus',
+            second: '/Action/Reach/To touch',
+          },
+        },
+      },
+    }
+
+    const issues = validate.Events.validateEvents(
+      events,
+      [],
+      headers,
+      jsonDictionary,
+    )
+    assert.deepEqual(issues, [])
+  })
+
+  it('should throw an issue if a single sidecar HED column contains invalid HED data', function() {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents: 'onset\tduration\tmycodes\n' + '7\tsomething\tfirst\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+        mycodes: {
+          HED: {
+            first:
+              'Event/Category/Experimental stimulus,Event/Category/Experimental stimulus',
+            second: '/Action/Reach/To touch',
+          },
+        },
+      },
+    }
+
+    const issues = validate.Events.validateEvents(
+      events,
+      [],
+      headers,
+      jsonDictionary,
+    )
+    assert(issues.length === 1 && issues[0].code === 999)
+  })
+
+  it('should not throw any issues if a single sidecar HED column contains valid HED data', function() {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents: 'onset\tduration\tmycodes\n' + '7\tsomething\tsecond\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+        mycodes: {
+          HED: {
+            first:
+              'Event/Category/Experimental stimulus,Event/Category/Experimental stimulus',
+            second: '/Action/Reach/To touch',
+          },
+        },
+      },
+    }
+
+    const issues = validate.Events.validateEvents(
+      events,
+      [],
+      headers,
+      jsonDictionary,
+    )
+    assert.deepEqual(issues, [])
+  })
+
+  it('should throw an issue if any sidecar HED columns contain invalid HED data', function() {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tmycodes\ttestingCodes\n' +
+          '7\tsomething\tfirst\tone\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+        mycodes: {
+          HED: {
+            first: 'Event/Category/Experimental stimulus',
+            second: '/Action/Reach/To touch',
+          },
+        },
+        testingCodes: {
+          HED: {
+            one: 'Event/Category/Experimental stimulus',
+            two: '/Action/Reach/To touch',
+          },
+        },
+      },
+    }
+
+    const issues = validate.Events.validateEvents(
+      events,
+      [],
+      headers,
+      jsonDictionary,
+    )
+    assert(issues.length === 1 && issues[0].code === 999)
+  })
+
+  it('should not throw an issue if all sidecar HED columns contain valid HED data', function() {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tmycodes\ttestingCodes\n' +
+          '7\tsomething\tfirst\ttwo\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+        mycodes: {
+          HED: {
+            first: 'Event/Category/Experimental stimulus',
+            second: '/Action/Reach/To touch',
+          },
+        },
+        testingCodes: {
+          HED: {
+            one: 'Event/Category/Experimental stimulus',
+            two: '/Action/Reach/To touch',
+          },
+        },
+      },
+    }
+
+    const issues = validate.Events.validateEvents(
+      events,
+      [],
+      headers,
+      jsonDictionary,
+    )
+    assert.deepEqual(issues, [])
+  })
+
+  it('should throw an issue if a sidecar HED column contains a non-existent key', function() {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents: 'onset\tduration\tmycodes\n' + '7\tsomething\tthird\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+        mycodes: {
+          HED: {
+            first: 'Event/Category/Experimental stimulus',
+            second: '/Action/Reach/To touch',
+          },
+        },
+      },
+    }
+
+    const issues = validate.Events.validateEvents(
+      events,
+      [],
+      headers,
+      jsonDictionary,
+    )
+    assert(issues.length === 1 && issues[0].code === 999)
   })
 })
