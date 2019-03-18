@@ -20,12 +20,24 @@
 1. Docker
    1. Install Docker
    1. From a terminal run `docker run -ti --rm -v /path/to/data:/data:ro bids/validator /data`
+1. Python Library:
+   1. Install [Python](https://www.python.org/) (works with python2 and python3)
+   1. Install [Pip](https://pip.pypa.io/en/stable/installing/) package manager for python, if
+   not already installed.
+   1. From a terminal run `pip install bids_validator` to acquire the
+      [BIDS Validator PyPi package](https://pypi.org/project/bids-validator/)
+   1. Open a Python terminal `python`
+   1. Import the BIDS Validator package `from bids_validator import BIDSValidator`
+   1. Check if a file is BIDS compatible `BIDSValidator().is_bids('path/to/a/bids/file')`
 
 ## Support
 
 The BIDS Validator is designed to work in both the browser and in Node.js. We
 target support for the latest long term stable (LTS) release of Node.js and the
 latest version of Chrome.
+
+There is also a library of helper functions written in Python, for use with BIDS
+compliant applications written in this language.
 
 Please report any issues you experience while using these support targets. If
 you experience issues outside of these supported environments and believe we
@@ -231,6 +243,26 @@ you will be able to use it as a command line tool. Once installed you should be
 able to run `bids-validator /path/to/your/bids/directory` and see any validation
 issues logged to the terminal. Run `bids-validator` without a directory path to
 see available options.
+
+## Python Library
+
+There are is a limited library of helper functions written in Python. The main function
+determines if a file extension is compliant with the BIDS specification. You can find
+the available functions in the library, as well as their descriptions, 
+[here](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/bids_validator/bids_validator.py).
+To install, run `pip install bids_validator` (requires python and pip). 
+
+#### Example
+
+```
+>>> from bids_validator import BIDSValidator
+>>> validator = BIDSValidator()
+>>> filepaths = ["/sub-01/anat/sub-01_rec-CSD_T1w.nii.gz", "/sub-01/anat/sub-01_acq-23_rec-CSD_T1w.exe"]
+>>> for filepath in filepaths:
+>>>     print( validator.is_bids(filepath) )
+True
+False
+```
 
 ## Development
 
