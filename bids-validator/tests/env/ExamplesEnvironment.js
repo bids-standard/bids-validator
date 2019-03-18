@@ -6,7 +6,7 @@ const loadExamples = require('./load-examples.js')
 class ExamplesEnvironment extends NodeEnvironment {
   async setup() {
     await super.setup()
-    this.global.test_version = loadExamples()
+    this.global.test_version = await loadExamples()
   }
 
   async teardown() {

@@ -6,7 +6,7 @@ const loadExamples = require('./load-examples.js')
 class ExamplesEnvironmentWeb extends JsdomEnvironment {
   async setup() {
     await super.setup()
-    this.global.test_version = loadExamples()
+    this.global.test_version = await loadExamples()
   }
 
   async teardown() {
