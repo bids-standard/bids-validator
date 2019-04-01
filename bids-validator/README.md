@@ -280,7 +280,7 @@ node-gyp which needs xcode to be installed in order to be compiled.
 	`/bids-validator-web`. It is a [React.js](https://reactjs.org/) application
 	that uses the [next.js](https://nextjs.org/) framework.
 2. To develop `bids-validator` and see how it will act in the browser, simply run
-	`yarn web-develop` in the project root and navigate to `localhost:3000`.
+	`yarn web-dev` in the project root and navigate to `localhost:3000`.
 3. In development mode, changes to the codebase will trigger rebuilds of the application
 	automatically.
 4. Changes to the `/bids-validator` in the codebase will also be reflected in the
