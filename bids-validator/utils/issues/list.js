@@ -345,13 +345,13 @@ module.exports = {
       'Quick validation failed - the general folder structure does not resemble a BIDS dataset. Have you chosen the right folder (with "sub-*/" subfolders)? Check for structural/naming issues and presence of at least one subject.',
   },
   62: {
-    key: 'SUBJECT_VALUE_CONTAINS_ILLEGAL_CHARECTER',
+    key: 'SUBJECT_VALUE_CONTAINS_ILLEGAL_CHARACTER',
     severity: 'error',
     reason:
       'Sub label contain an Illegal Character hyphen or underscore. Please edit the filename as per BIDS spec.',
   },
   63: {
-    key: 'SESSION_VALUE_CONTAINS_ILLEGAL_CHARECTER',
+    key: 'SESSION_VALUE_CONTAINS_ILLEGAL_CHARACTER',
     severity: 'error',
     reason:
       'Ses label contain an Illegal Character hyphen or underscore. Please edit the filename as per BIDS spec.',
