@@ -63,6 +63,16 @@ jobs:
           command: |
             cd bids-validator && python3 setup.py sdist bdist_wheel
             twine check dist/*
+      - run:
+          name: Check sdist installation
+          command: |
+            cd bids-validator
+            python3 -m pip install -U virtualenv
+            virtualenv venv
+            source venv/bin/activate
+            python --version
+            pip install -U pip setuptools>=27.0 wheel
+            pip install dist/*.tar.gz
   deployment:
     docker:
       - image: node:8.11.3-alpine
