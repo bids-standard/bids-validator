@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 const hedValidator = require('hed-validator')
-const utils = require('../utils')
+const utils = require('../../utils')
 const Issue = utils.issues.Issue
 
-const validateEvents = function(events, stimuli, headers, jsonContents) {
+module.exports = function(events, stimuli, headers, jsonContents) {
   const issues = []
   // check that all stimuli files present in /stimuli are included in an _events.tsv file
   const stimuliIssues = checkStimuli(stimuli)
@@ -201,8 +201,4 @@ const checkHedStrings = function(events, headers, jsonContents) {
     }
   })
   return issues
-}
-
-module.exports = {
-  validateEvents: validateEvents,
 }
