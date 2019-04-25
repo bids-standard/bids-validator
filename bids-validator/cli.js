@@ -15,6 +15,14 @@ module.exports = function(dir, options) {
       validate.BIDS(dir, options, function(issues, summary) {
         console.log(validate.consoleFormat.issues(issues, options) + '\n')
         console.log(validate.consoleFormat.summary(summary, options))
+
+        if (
+          issues === 'Invalid' ||
+          (issues.errors && issues.errors.length >= 1) ||
+          (issues.config && issues.config.length >= 1)
+        ) {
+          process.exit(1)
+        }
       })
     }
   } else {
