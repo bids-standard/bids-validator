@@ -578,6 +578,44 @@ module.exports = {
     reason:
       'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered based on the presence of multiple commas in a single author field. Please ensure your authors are properly formatted.',
   },
+  104: {
+    key: 'HED_ILLEGAL_CHARACTER',
+    severity: 'error',
+    reason: 'This HED string contains an illegal character.',
+  },
+  105: {
+    key: 'HED_PARENTHESES_MISMATCH',
+    severity: 'error',
+    reason: 'This HED string contains mismatched parentheses.',
+  },
+  106: {
+    key: 'HED_MISSING_COMMA_AFTER_TAG',
+    severity: 'error',
+    reason: 'This HED string is missing a required comma after a HED tag.',
+  },
+  107: {
+    key: 'HED_CAPITALIZATION',
+    severity: 'warning',
+    reason:
+      'This HED string is not properly capitalized. HED tags should start with a capital letter or be in CamelCase.',
+  },
+  108: {
+    key: 'HED_DUPLICATE_TAG_IN_SAME_GROUP_OR_TOP_LEVEL',
+    severity: 'error',
+    reason:
+      'This HED string contains duplicate HED tags in the same group or at the top level.',
+  },
+  109: {
+    key: 'HED_TOO_MANY_TILDES',
+    severity: 'error',
+    reason: 'This HED string has more than 2 tildes in the same tag group.',
+  },
+  110: {
+    key: 'HED_MISSING_VALUE_IN_SIDECAR',
+    severity: 'warning',
+    reason:
+      'The json sidecar does not contain this column value as a possible key to a HED string.',
+  },
   999: {
     key: 'HED_ERROR',
     severity: 'error',
