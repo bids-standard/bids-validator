@@ -14,6 +14,17 @@
     }
   },
 
+  "asl_top": {
+    "regexp": "^\\/(?:ses-[a-zA-Z0-9]+_)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(@@@_asl_top_ext_@@@)$",
+    "tokens": {
+      "@@@_asl_top_ext_@@@": [
+        "_asl\\.json",
+        "_MZeroScan\\.json",
+        "_MZeroScan\\.json"
+      ]
+    }
+  },
+
   "anat_top": {
     "regexp": "^\\/(?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(@@@_anat_suffixes_@@@)\\.json$",
     "tokens": {
