@@ -163,7 +163,8 @@ module.exports = function NIFTI(
     if (
       path.includes('_bold.nii') ||
       path.includes('_sbref.nii') ||
-      path.includes('_dwi.nii')
+      path.includes('_dwi.nii') ||
+      path.includes('_asl.nii')
     ) {
       if (!mergedDictionary.hasOwnProperty('EchoTime')) {
         issues.push(
@@ -214,7 +215,7 @@ module.exports = function NIFTI(
     }
 
     // we don't need slice timing or repetition time for SBref
-    if (path.includes('_bold.nii')) {
+    if (path.includes('_bold.nii') || path.includes('_asl.nii')) {
       if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
         issues.push(
           new Issue({
