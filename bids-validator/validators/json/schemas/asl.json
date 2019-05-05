@@ -1,0 +1,48 @@
+{
+  "type": "object",
+  "properties": {
+    "EchoTime": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "EffectiveEchoSpacing": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "PhaseEncodingDirection": {
+      "type": "string",
+      "enum": ["i", "j", "k", "i-", "j-", "k-"]
+    },
+    "RepetitionTime": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "SliceEncodingDirection": {
+      "type": "string",
+      "enum": ["i", "j", "k", "i-", "j-", "k-"]
+    },
+    "SliceTiming": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0
+      }
+    },
+    "ASLContext": {
+      "type": "string"
+    },
+    "LabelingType": {
+      "type": "string",
+      "enum": ["PASL", "CASL", "PCASL"]
+    },
+    "LabelingDuration": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "InitialPostLabelDelay": {
+        "type": "number",
+        "exclusiveMinimum": 0
+    }
+
+  }
+}
