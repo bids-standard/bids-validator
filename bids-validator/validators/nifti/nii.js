@@ -71,6 +71,28 @@ module.exports = function NIFTI(
         }),
       )
     }
+    if (!mergedDictionary.hasOwnProperty('BackgroundSuppression')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 107,
+          reason:
+            "You should define 'BackgroundSuppression' for this file. If you don't provide this information CBF quantification will be biased. " +
+            sidecarMessage,
+        }),
+      )
+    }
+    if (!mergedDictionary.hasOwnProperty('VascularCrushing')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 108,
+          reason:
+            "You should define 'VascularCrushing' for this file. If you don't provide this information CBF quantification will be biased. " +
+            sidecarMessage,
+        }),
+      )
+    }
   }
   if (path.includes('_dwi.nii')) {
     const potentialBvecs = utils.files.potentialLocations(
