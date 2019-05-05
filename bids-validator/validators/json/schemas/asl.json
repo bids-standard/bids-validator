@@ -42,6 +42,12 @@
     "InitialPostLabelDelay": {
         "type": "number",
         "exclusiveMinimum": 0
+    },
+    "BackgroundSuppression" : {
+        "type": "boolean" 
+    },
+    "VascularCrushing" : {
+        "type": "boolean" 
     }
 
   }
