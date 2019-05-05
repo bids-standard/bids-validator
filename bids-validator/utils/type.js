@@ -148,6 +148,7 @@ module.exports = {
       return (
         conditionalMatch(scansSes, path) ||
         conditionalMatch(funcSes, path) ||
+        conditionalMatch(aslSes, path) ||
         conditionalMatch(anatSes, path) ||
         conditionalMatch(dwiSes, path) ||
         conditionalMatch(megSes, path) ||
