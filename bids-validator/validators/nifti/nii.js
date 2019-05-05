@@ -37,6 +37,41 @@ module.exports = function NIFTI(
     'It can be included one of the following locations: ' +
     potentialEvents.join(', ')
 
+  if (path.includes('_asl.nii')) {
+    if (!mergedDictionary.hasOwnProperty('LabelingType')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 104,
+          reason:
+            "You should define 'LabelingType' for this file. If you don't provide this information CBF quantification will not be possible. " +
+            sidecarMessage,
+        }),
+      )
+    }
+    if (!mergedDictionary.hasOwnProperty('LabelingDuration')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 105,
+          reason:
+            "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible. " +
+            sidecarMessage,
+        }),
+      )
+    }
+    if (!mergedDictionary.hasOwnProperty('InitialPostLabelDelay')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 106,
+          reason:
+            "You should define 'InitialPostLabelDelay' for this file. If you don't provide this information CBF quantification will not be possible. " +
+            sidecarMessage,
+        }),
+      )
+    }
+  }
   if (path.includes('_dwi.nii')) {
     const potentialBvecs = utils.files.potentialLocations(
       path.replace('.gz', '').replace('.nii', '.bvec'),

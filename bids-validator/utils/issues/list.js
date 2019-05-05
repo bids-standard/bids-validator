@@ -578,4 +578,19 @@ module.exports = {
     reason:
       'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered based on the presence of multiple commas in a single author field. Please ensure your authors are properly formatted.',
   },
+  104: {
+    key: 'LABELING_TYPE_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'LabelingType' for this file.",
+  },
+  105: {
+    key: 'LABELING_DURATION_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'LabelingDuration' for this file.",
+  },
+  106: {
+    key: 'INITIAL_POST_LABEL_DELAY_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'InitialPostLabelDelay' for this file.",
+  },
 }
