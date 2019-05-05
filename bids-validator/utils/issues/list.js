@@ -593,4 +593,14 @@ module.exports = {
     severity: 'error',
     reason: "You have to define 'InitialPostLabelDelay' for this file.",
   },
+  107: {
+    key: 'BACKGROUND_SUPPRESSION_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'BackgroundSuppression' for this file.",
+  },
+  108: {
+    key: 'VASCULAR_CRUSHING_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'VascularCrushing' for this file.",
+  },
 }
