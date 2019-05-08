@@ -4,6 +4,7 @@ const dir = process.cwd()
 const data_dir = dir + '/bids-validator/tests/data/'
 const test_data = data_dir + 'valid_headers/'
 const data_with_errors = data_dir + 'empty_files'
+const data_without_errors = data_dir + 'bids-examples-1.1.1u1/synthetic'
 
 const cli_path = './bids-validator/bin/bids-validator'
 
@@ -56,7 +57,15 @@ describe('CLI', () => {
     })
   })
 
-  it('should not exit with code 0 with errors', done => {
+  it('without errors should exit with code 0', done => {
+    const command = spawn(cli_path, [data_without_errors, '--json'])
+    command.on('exit', code => {
+      assert.equal(code, 0)
+      done()
+    })
+  })
+
+  it('with errors should not exit with code 0', done => {
     const command = spawn(cli_path, [data_with_errors])
     command.on('exit', code => {
       assert.notEqual(code, 0)
@@ -64,7 +73,7 @@ describe('CLI', () => {
     })
   })
 
-  it('should not exit with code 0 with errors with --json argument', done => {
+  it('with errors should not exit with code 0 with --json argument', done => {
     const command = spawn(cli_path, [data_with_errors, '--json'])
     let commandOutput = []
     let output = {}
