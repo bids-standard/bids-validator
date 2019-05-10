@@ -77,7 +77,7 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
             } else {
               issues.push(
                 new Issue({
-                  code: 110,
+                  code: 112,
                   file: file,
                   evidence: sidecarHedKey,
                 }),
@@ -111,11 +111,11 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
 
 function convertHedIssuesToBidsIssues(hedIssues, file) {
   const hedIssuesToBidsCodes = {
-    'ERROR: Invalid character': 104,
-    'ERROR: Comma missing after': 106,
-    'WARNING: First word not capitalized or camel case': 107,
-    'ERROR: Duplicate tag': 108,
-    'ERROR: Too many tildes': 109,
+    'ERROR: Invalid character': 106,
+    'ERROR: Comma missing after': 108,
+    'WARNING: First word not capitalized or camel case': 109,
+    'ERROR: Duplicate tag': 110,
+    'ERROR: Too many tildes': 111,
   }
 
   const convertedIssues = []
@@ -127,7 +127,7 @@ function convertHedIssuesToBidsIssues(hedIssues, file) {
     ) {
       convertedIssues.push(
         new Issue({
-          code: 105,
+          code: 107,
           file: file,
         }),
       )
@@ -135,12 +135,23 @@ function convertHedIssuesToBidsIssues(hedIssues, file) {
       const issueParts = hedIssue.split(' - ')
       const bidsIssueCode = hedIssuesToBidsCodes[issueParts[0]]
       if (bidsIssueCode === undefined) {
-        convertedIssues.push(
-          new Issue({
-            code: 0,
-            file: file,
-          }),
-        )
+        if (hedIssue.startsWith('WARNING')) {
+          convertedIssues.push(
+            new Issue({
+              code: 105,
+              file: file,
+              evidence: issueParts[1],
+            }),
+          )
+        } else {
+          convertedIssues.push(
+            new Issue({
+              code: 104,
+              file: file,
+              evidence: issueParts[1],
+            }),
+          )
+        }
       } else {
         convertedIssues.push(
           new Issue({

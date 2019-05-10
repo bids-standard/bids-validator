@@ -126,7 +126,7 @@ describe('Events', function() {
       jsonDictionary,
     )
     assert.strictEqual(issues.length, 1)
-    assert.strictEqual(issues[0].code, 108)
+    assert.strictEqual(issues[0].code, 110)
   })
 
   it('should not throw any issues if the HED column in a single row contains valid HED data', function() {
@@ -234,7 +234,7 @@ describe('Events', function() {
       jsonDictionary,
     )
     assert.strictEqual(issues.length, 1)
-    assert.strictEqual(issues[0].code, 108)
+    assert.strictEqual(issues[0].code, 110)
   })
 
   it('should not throw any issues if the HED columns in a single row, including sidecars, contain valid HED data', function() {
@@ -328,7 +328,7 @@ describe('Events', function() {
       jsonDictionary,
     )
     assert.strictEqual(issues.length, 1)
-    assert.strictEqual(issues[0].code, 108)
+    assert.strictEqual(issues[0].code, 110)
   })
 
   it('should not throw any issues if a single sidecar HED column in a single row contains valid HED data', function() {
@@ -429,7 +429,7 @@ describe('Events', function() {
       jsonDictionary,
     )
     assert.strictEqual(issues.length, 1)
-    assert.strictEqual(issues[0].code, 108)
+    assert.strictEqual(issues[0].code, 110)
   })
 
   it('should not throw an issue if all sidecar HED columns in a single row contain valid HED data', function() {
@@ -534,7 +534,7 @@ describe('Events', function() {
       jsonDictionary,
     )
     assert.strictEqual(issues.length, 1)
-    assert.strictEqual(issues[0].code, 110)
+    assert.strictEqual(issues[0].code, 112)
   })
 
   it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an illegal character', function() {
@@ -560,7 +560,7 @@ describe('Events', function() {
       jsonDictionary,
     )
     assert.strictEqual(issues.length, 1)
-    assert.strictEqual(issues[0].code, 104)
+    assert.strictEqual(issues[0].code, 106)
   })
 
   it('should throw an issue if the HED column in a single row contains invalid HED data in the form of mismatched parentheses', function() {
@@ -586,7 +586,7 @@ describe('Events', function() {
       jsonDictionary,
     )
     assert.strictEqual(issues.length, 1)
-    assert.strictEqual(issues[0].code, 105)
+    assert.strictEqual(issues[0].code, 107)
   })
 
   it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a missing comma after a tag', function() {
@@ -612,7 +612,7 @@ describe('Events', function() {
       jsonDictionary,
     )
     assert.strictEqual(issues.length, 1)
-    assert.strictEqual(issues[0].code, 106)
+    assert.strictEqual(issues[0].code, 108)
   })
 
   it('should throw an issue if the HED column in a single row contains invalid HED data in the form of improper capitalization', function() {
@@ -636,7 +636,7 @@ describe('Events', function() {
       jsonDictionary,
     )
     assert.strictEqual(issues.length, 1)
-    assert.strictEqual(issues[0].code, 107)
+    assert.strictEqual(issues[0].code, 109)
   })
 
   it('should throw an issue if the HED column in a single row contains invalid HED data in the form of too many tildes in a single group', function() {
@@ -662,6 +662,6 @@ describe('Events', function() {
       jsonDictionary,
     )
     assert.strictEqual(issues.length, 1)
-    assert.strictEqual(issues[0].code, 109)
+    assert.strictEqual(issues[0].code, 111)
   })
 })
