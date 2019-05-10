@@ -62,7 +62,10 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
       for (let row of rows.slice(1)) {
         // get the 'HED' field
         const rowCells = row.trim().split('\t')
-        let hedString = rowCells[hedColumnIndex]
+        const hedStringParts = []
+        if (rowCells[hedColumnIndex]) {
+          hedStringParts.push(rowCells[hedColumnIndex])
+        }
         for (let sidecarHedColumn in sidecarHedColumnIndices) {
           const sidecarHedIndex = sidecarHedColumnIndices[sidecarHedColumn]
           const sidecarHedKey = rowCells[sidecarHedIndex]
@@ -70,11 +73,7 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
             const sidecarHedString =
               sidecarHedTags[sidecarHedColumn][sidecarHedKey]
             if (sidecarHedString !== undefined) {
-              if (!hedString) {
-                hedString = sidecarHedString
-              } else {
-                hedString += ',' + sidecarHedString
-              }
+              hedStringParts.push(sidecarHedString)
             } else {
               issues.push(
                 new Issue({
@@ -87,9 +86,10 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
           }
         }
 
-        if (!hedString) {
+        if (hedStringParts.length === 0) {
           continue
         }
+        const hedString = hedStringParts.join(',')
 
         const hedIssues = []
         const isHedStringValid = hedValidator.HED.validateHedString(
