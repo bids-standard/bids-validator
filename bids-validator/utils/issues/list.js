@@ -616,9 +616,4 @@ module.exports = {
     reason:
       'The json sidecar does not contain this column value as a possible key to a HED string.',
   },
-  999: {
-    key: 'HED_ERROR',
-    severity: 'error',
-    reason: 'HED validation failed (temporary error code)',
-  },
 }

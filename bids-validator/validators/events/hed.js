@@ -67,25 +67,91 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
           const sidecarHedIndex = sidecarHedColumnIndices[sidecarHedColumn]
           const sidecarHedKey = rowCells[sidecarHedIndex]
           if (sidecarHedKey) {
-            hedString += ',' + sidecarHedTags[sidecarHedColumn][sidecarHedKey]
+            const sidecarHedString =
+              sidecarHedTags[sidecarHedColumn][sidecarHedKey]
+            if (sidecarHedString !== undefined) {
+              if (!hedString) {
+                hedString = sidecarHedString
+              } else {
+                hedString += ',' + sidecarHedString
+              }
+            } else {
+              issues.push(
+                new Issue({
+                  code: 110,
+                  file: file,
+                  evidence: sidecarHedKey,
+                }),
+              )
+            }
           }
+        }
+
+        if (!hedString) {
+          continue
         }
 
         const hedIssues = []
         const isHedStringValid = hedValidator.HED.validateHedString(
           hedString,
           hedIssues,
+          true,
         )
         if (!isHedStringValid) {
-          issues.push(
-            new Issue({
-              file: event.file,
-              code: 999,
-            }),
-          )
+          const convertedIssues = convertHedIssuesToBidsIssues(hedIssues, file)
+          for (let convertedIssue of convertedIssues) {
+            issues.push(convertedIssue)
+          }
         }
       }
     }
   })
   return issues
+}
+
+function convertHedIssuesToBidsIssues(hedIssues, file) {
+  const hedIssuesToBidsCodes = {
+    'ERROR: Invalid character': 104,
+    'ERROR: Comma missing after': 106,
+    'WARNING: First word not capitalized or camel case': 107,
+    'ERROR: Duplicate tag': 108,
+    'ERROR: Too many tildes': 109,
+  }
+
+  const convertedIssues = []
+  for (let hedIssue of hedIssues) {
+    if (
+      hedIssue.startsWith(
+        'ERROR: Number of opening and closing parentheses are unequal.',
+      )
+    ) {
+      convertedIssues.push(
+        new Issue({
+          code: 105,
+          file: file,
+        }),
+      )
+    } else {
+      const issueParts = hedIssue.split(' - ')
+      const bidsIssueCode = hedIssuesToBidsCodes[issueParts[0]]
+      if (bidsIssueCode === undefined) {
+        convertedIssues.push(
+          new Issue({
+            code: 0,
+            file: file,
+          }),
+        )
+      } else {
+        convertedIssues.push(
+          new Issue({
+            code: bidsIssueCode,
+            file: file,
+            evidence: issueParts[1],
+          }),
+        )
+      }
+    }
+  }
+
+  return convertedIssues
 }
