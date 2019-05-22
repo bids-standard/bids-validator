@@ -6,7 +6,7 @@ const lockfile = require('lockfile')
 
 const lockPromise = promisify(lockfile.lock)
 
-const test_version = '1.1.1u1'
+const test_version = '1.2.0'
 const examples_lock = 'bids-validator/tests/data/examples.lockfile'
 // Wait for up to five minutes for examples to finish
 // downloading in another test worker
