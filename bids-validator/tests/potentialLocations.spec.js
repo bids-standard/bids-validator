@@ -1,6 +1,6 @@
 const assert = require('assert')
 const potentialLocations = require('../utils/files/potentialLocations')
-const test_version = '1.1.1u1'
+const test_version = '1.2.0'
 
 describe('potentialLocations', () => {
   it('should not return duplicate paths', () => {

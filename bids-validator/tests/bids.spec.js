@@ -27,6 +27,8 @@ var missing_session_files = [
   'ds113b',
   'ds000117',
   'ds000247',
+  'ieeg_motorMiller2007',
+  'ieeg_visual',
 ]
 
 const dataDirectory = 'bids-validator/tests/data/'
