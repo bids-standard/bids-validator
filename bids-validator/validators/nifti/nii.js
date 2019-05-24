@@ -104,7 +104,7 @@ module.exports = function NIFTI(
         }),
       )
     }
-    // check if 
+    // check if ASLContext lenght is compatible with 4th dimension of nifti file
     if (
       header &&
       mergedDictionary.hasOwnProperty('ASLContext') &&

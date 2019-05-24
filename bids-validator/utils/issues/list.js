@@ -603,4 +603,14 @@ module.exports = {
     severity: 'error',
     reason: "You have to define 'VascularCrushing' for this file.",
   },
+  109: {
+    key: 'ASLCONTEXT_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'ASLContext' for this file.",
+  },
+  110: {
+    key: 'ASLCONTEXT_BROKEN',
+    severity: 'error',
+    reason: "The 'ASLContext' field is not consistent with the 4th dimension in the nifti file.",
+  },
 }
