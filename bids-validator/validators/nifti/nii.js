@@ -49,6 +49,60 @@ module.exports = function NIFTI(
         }),
       )
     }
+    if (mergedDictionary.hasOwnProperty('LabelingType') &&
+        mergedDictionary['LabelingType'].constructor === String ) {
+      const LabelingTypeString = mergedDictionary['LabelingType']
+      if (LabelingTypeString == 'PCASL' || LabelingTypeString == 'CASL') {
+        if (!mergedDictionary.hasOwnProperty('AverageLabelingGradient')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 115,
+              reason:
+                "You should define 'AverageLabelingGradient' for this file." +
+                sidecarMessage,
+           }),
+          )
+        }
+      }
+      if (LabelingTypeString == 'PCASL') {
+        if (!mergedDictionary.hasOwnProperty('FlipAngleOfB1LabelingPulses')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 116,
+              reason:
+                "You should define 'FlipAngleOfB1LabelingPulses' for this file." +
+                sidecarMessage,
+           }),
+          )
+        }
+      }
+      if (LabelingTypeString == 'PASL') {
+        if (!mergedDictionary.hasOwnProperty('LabelingSlabThickness')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 117,
+              reason:
+                "You should define 'LabelingSlabThickness' for this file." +
+                sidecarMessage,
+           }),
+          )
+        }
+      } 
+    }
+    if (!mergedDictionary.hasOwnProperty('SliceSelectiveLabelingGradient')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 116,
+          reason:
+            "You should define 'SliceSelectiveLabelingGradient' for this file." +
+            sidecarMessage,
+        }),
+      )
+    }
     if (!mergedDictionary.hasOwnProperty('LabelingDuration')) {
       issues.push(
         new Issue({

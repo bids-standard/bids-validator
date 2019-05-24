@@ -48,7 +48,92 @@
     },
     "VascularCrushing" : {
         "type": "boolean" 
+    },
+    "MRSoftwareVersion" :{
+      "type": "string"
+    },
+    "LabelingSlabLocation" :{
+      "type": "string",
+      "_type_comment":"to be checked"
+    },
+    "LabelingOrientation" :{
+      "type": "string",
+      "_type_comment":"to be checked"
+    },
+    "LabelingDistance" :{
+      "type": "string",
+      "_type_comment":"to be checked",
+      "exclusiveMinimum": 0
+    },
+    "AverageLabelingGradient" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "SliceSelectiveLabelingGradient" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "FlipAngleOfB1LabelingPulses" :{
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "inclusiveMaximum": 360,
+      "_inclusiveMaximum_comment":"to be checked"
+    },
+    "LabelingSlabThickness" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "AcquisitionResolution" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "AcquisitionDuration" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "BackgroundSuppressionPulseTime" :{
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0
+      }
+    },
+    "VascularCrushingVenc" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "PCASLType" :{
+      "type": "string",
+      "enum": ["Balanced", "UnBalanced"]
+    },
+    "LookLocker" :{
+      "type": "boolean" 
+    },
+    "PulseDuration" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "InterPulseSpacing" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "LabelingEfficiency" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "BolusCutOffFlag" :{
+      "type": "boolean"
+    },
+    "BolusCutOffTimingSequence" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "BolusCutOffDelayTime" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "BolusCutOffTechnique" :{
+      "type": "string"
     }
-
   }
 }

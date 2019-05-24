@@ -633,5 +633,19 @@ module.exports = {
     severity: 'warning',
     reason: "The 'LabelingDistance' field is missing.",
   },
-  
+  115: {
+    key: 'AVERAGE_LABELING_GRADIENT',
+    severity: 'warning',
+    reason: "The 'AverageLabelingGradient' field is missing.",
+  },
+  116: {
+    key: 'FLIP_ANGLE_OF_B1_LABELING_PULSES',
+    severity: 'warning',
+    reason: "The 'FlipAngleOfB1LabelingPulses' field is missing.",
+  },
+  116: {
+    key: 'LABELING SLAB THICKNESS',
+    severity: 'warning',
+    reason: "The 'LabelingSlabThickness' field is missing.",
+  },
 }
