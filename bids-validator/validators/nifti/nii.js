@@ -93,6 +93,40 @@ module.exports = function NIFTI(
         }),
       )
     }
+    if (!mergedDictionary.hasOwnProperty('ASLContext')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 109,
+          reason:
+            "You should define 'ASLContext' for this file. If you don't provide this information CBF quantification is not possible since the order of Control/Label is not defined. " +
+            sidecarMessage,
+        }),
+      )
+    }
+    // check if 
+    if (
+      header &&
+      mergedDictionary.hasOwnProperty('ASLContext') &&
+      mergedDictionary['ASLContext'].constructor === String
+    ) {
+      const ASLContextString = mergedDictionary['ASLContext']
+      const kDim = header.dim[4]
+      if (ASLContextString.length !== kDim) {
+        issues.push(
+          new Issue({
+            file: file,
+            code: 110,
+            evidence:
+              'ASLContext string is of length ' +
+              ASLContextString.length +
+              " and the number of volumes is (4th dimension) " +
+              kDim +
+              ' for the corresponding nifti header.',
+          }),
+        )
+      }
+    }
   }
   if (path.includes('_dwi.nii')) {
     const potentialBvecs = utils.files.potentialLocations(
