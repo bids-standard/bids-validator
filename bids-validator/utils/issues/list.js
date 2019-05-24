@@ -643,8 +643,8 @@ module.exports = {
     severity: 'warning',
     reason: "The 'FlipAngleOfB1LabelingPulses' field is missing.",
   },
-  116: {
-    key: 'LABELING SLAB THICKNESS',
+  117: {
+    key: 'LABELING_SLAB_THICKNESS',
     severity: 'warning',
     reason: "The 'LabelingSlabThickness' field is missing.",
   },
