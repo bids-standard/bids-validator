@@ -127,6 +127,50 @@ module.exports = function NIFTI(
         )
       }
     }
+    if (!mergedDictionary.hasOwnProperty('MRSoftwareVersion')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 111,
+          reason:
+            "You should define 'MRSoftwareVersion' for this file.  " +
+            sidecarMessage,
+        }),
+      )
+    }
+    if (!mergedDictionary.hasOwnProperty('LabelingSlabLocation')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 112,
+          reason:
+            "You should define 'LabelingSlabLocation' for this file.  " +
+            sidecarMessage,
+        }),
+      )
+    }
+    if (!mergedDictionary.hasOwnProperty('LabelingOrientation')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 113,
+          reason:
+            "You should define 'LabelingOrientation' for this file.  " +
+            sidecarMessage,
+        }),
+      )
+    }
+    if (!mergedDictionary.hasOwnProperty('LabelingDistance')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 114,
+          reason:
+            "You should define 'LabelingDistance' for this file.  " +
+            sidecarMessage,
+        }),
+      )
+    }
   }
   if (path.includes('_dwi.nii')) {
     const potentialBvecs = utils.files.potentialLocations(

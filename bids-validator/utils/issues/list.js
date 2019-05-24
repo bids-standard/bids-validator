@@ -612,5 +612,26 @@ module.exports = {
     key: 'ASLCONTEXT_BROKEN',
     severity: 'error',
     reason: "The 'ASLContext' field is not consistent with the 4th dimension in the nifti file.",
+  },  
+  111: {
+    key: 'MRSOFTWAREVERSION_MISSING',
+    severity: 'warning',
+    reason: "The 'MRSoftwareVersion' field is missing.",
   },
+  112: {
+    key: 'LABELLING_SLAB_LOCATION_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingSlabLocation' field is missing.",
+  },
+  113: {
+    key: 'LABELING_ORIENTATION_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingOrientation' field is missing.",
+  },
+  114: {
+    key: 'LABELING_DISTANCE_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingDistance' field is missing.",
+  },
+  
 }
