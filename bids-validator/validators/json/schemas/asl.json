@@ -84,8 +84,11 @@
       "exclusiveMinimum": 0
     },
     "AcquisitionResolution" :{
-      "type": "number",
-      "exclusiveMinimum": 0
+      "type": "array",
+      "items": {
+          "type": "number",
+          "exclusiveMinimum": 0
+      }
     },
     "AcquisitionDuration" :{
       "type": "number",

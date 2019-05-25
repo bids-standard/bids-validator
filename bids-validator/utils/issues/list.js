@@ -634,18 +634,67 @@ module.exports = {
     reason: "The 'LabelingDistance' field is missing.",
   },
   115: {
-    key: 'AVERAGE_LABELING_GRADIENT',
+    key: 'AVERAGE_LABELING_GRADIENT_MISSING',
     severity: 'warning',
     reason: "The 'AverageLabelingGradient' field is missing.",
   },
   116: {
-    key: 'FLIP_ANGLE_OF_B1_LABELING_PULSES',
+    key: 'FLIP_ANGLE_OF_B1_LABELING_PULSES_MISSING',
     severity: 'warning',
     reason: "The 'FlipAngleOfB1LabelingPulses' field is missing.",
   },
   117: {
-    key: 'LABELING_SLAB_THICKNESS',
+    key: 'LABELING_SLAB_THICKNESS_MISSING',
     severity: 'warning',
     reason: "The 'LabelingSlabThickness' field is missing.",
   },
+  118: {
+    key: 'ACQUISITION_RESOLUTION_MISSING',
+    severity: 'warning',
+    reason: "The 'AcquisitionResolution' field is missing.",
+  },
+  119: {
+    key: 'ACQUISITION_DURATION_MISSING',
+    severity: 'warning',
+    reason: "The 'AcquisitionDuration' field is missing.",
+  },
+  120: {
+    key: 'BACKGROUND_SUPPRESSION_PULSE_TIME_MISSING',
+    severity: 'warning',
+    reason: "The 'BackgroundSuppressionPulseTime' field is missing.",
+  },
+  121: {
+    key: 'VASCULAR_CRUCHING_VENC_MISSING',
+    severity: 'warning',
+    reason: "The 'VascularCrushingVenc' field is missing.",
+  },
+  122: {
+    key: 'PCASL_TYPE_MISSING',
+    severity: 'warning',
+    reason: "The 'PCASLType' field is missing.",
+  },
+  123: {
+    key: 'PASL_BOLUS_CUT_OFF_FLAG',
+    severity: 'error',
+    reason: "You have to define the 'BolusCutOffFlag' for this file.",
+  },
+  124: 
+  {
+    key: 'PASL_BOLUS_CUT_OFF_TIMING_SEQUENCE',
+    severity: 'error',
+    reason: "You have to define the 'BolusCutOffTimingSequence' for this file.",
+  }, 
+  125: 
+  {
+    key: 'PASL_BOLUS_CUT_OFF_DELAY_TIME',
+    severity: 'error',
+    reason: "You have to define the 'BolusCutOffDelayTime' for this file.",
+  },
+  126:
+  {
+    key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
+    severity: 'error',
+    reason: "You have to define the 'BolusCutOffTechnique' for this file.",
+  }
+
 }

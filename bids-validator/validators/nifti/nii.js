@@ -77,6 +77,17 @@ module.exports = function NIFTI(
            }),
           )
         }
+        if (!mergedDictionary.hasOwnProperty('PCASLType')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 122,
+              reason:
+                "You should define 'PCASLType' for this file." +
+                sidecarMessage,
+           }),
+          )
+        }
       }
       if (LabelingTypeString == 'PASL') {
         if (!mergedDictionary.hasOwnProperty('LabelingSlabThickness')) {
@@ -89,6 +100,57 @@ module.exports = function NIFTI(
                 sidecarMessage,
            }),
           )
+        }
+        if (!mergedDictionary.hasOwnProperty('BolusCutOffFlag')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 123,
+              reason:
+                "You should define 'BolusCutOffFlag' for this file." +
+                sidecarMessage,
+           }),
+          )
+        }
+        if (mergedDictionary.hasOwnProperty('BolusCutOffFlag') &&
+            mergedDictionary['BolusCutOffFlag'].constructor === Boolean ) {
+          const BolusCutOffFlagBoolean = mergedDictionary['BolusCutOffFlag']
+          if (BolusCutOffFlagBoolean && 
+                !mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence')) {
+            issues.push(
+              new Issue({
+              file: file,
+              code: 124,
+              reason:
+                "You should define 'BolusCutOffTimingSequence' for this file." +
+                sidecarMessage,
+              }),
+            )
+          }
+          if (BolusCutOffFlagBoolean && 
+            !mergedDictionary.hasOwnProperty('BolusCutOffDelayTime')) {
+            issues.push(
+              new Issue({
+              file: file,
+              code: 125,
+              reason:
+                "You should define 'BolusCutOffDelayTime' for this file." +
+                sidecarMessage,
+              }),
+            )
+          }
+          if (BolusCutOffFlagBoolean && 
+            !mergedDictionary.hasOwnProperty('BolusCutOffTechnique')) {
+            issues.push(
+              new Issue({
+              file: file,
+              code: 126,
+              reason:
+                "You should define 'BolusCutOffTechnique' for this file." +
+                sidecarMessage,
+              }),
+            )
+          }
         }
       } 
     }
@@ -136,6 +198,18 @@ module.exports = function NIFTI(
         }),
       )
     }
+    if (mergedDictionary.hasOwnProperty('BackgroundSuppression') &&
+        !mergedDictionary.hasOwnProperty['BackgroundSuppressionPulseTime'] ) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 120,
+          reason:
+            "You should define 'BackgroundSuppressionPulseTime' for this file. " +
+            sidecarMessage,
+        }),
+      )
+    }
     if (!mergedDictionary.hasOwnProperty('VascularCrushing')) {
       issues.push(
         new Issue({
@@ -143,6 +217,18 @@ module.exports = function NIFTI(
           code: 108,
           reason:
             "You should define 'VascularCrushing' for this file. If you don't provide this information CBF quantification will be biased. " +
+            sidecarMessage,
+        }),
+      )
+    }
+    if (mergedDictionary.hasOwnProperty('VascularCrushing') &&
+        !mergedDictionary.hasOwnProperty['VascularCrushingVenc'] ) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 121,
+          reason:
+            "You should define 'VascularCrushingVenc' for this file. " +
             sidecarMessage,
         }),
       )
@@ -222,6 +308,28 @@ module.exports = function NIFTI(
           reason:
             "You should define 'LabelingDistance' for this file.  " +
             sidecarMessage,
+        }),
+      )
+    }
+    if (!mergedDictionary.hasOwnProperty('AcquisitionResolution')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 118,
+          reason:
+            "You should define 'AcquisitionResolution' for this file.  " +
+            sidecarMessage,
+        }),
+      )
+    }
+    if (!mergedDictionary.hasOwnProperty('AcquisitionResolution')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 119,
+          reason:
+          "You should define 'AcquisitionDuration' for this file.  " +
+          sidecarMessage,
         }),
       )
     }
