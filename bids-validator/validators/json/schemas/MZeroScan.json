@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "properties": {
+    "IntendedFor": { 
+        "type": "string", 
+        "minLength": 1 
+      },
+    "EchoTime": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "EffectiveEchoSpacing": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "PhaseEncodingDirection": {
+      "type": "string",
+      "enum": ["i", "j", "k", "i-", "j-", "k-"]
+    },
+    "RepetitionTime": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "SliceEncodingDirection": {
+      "type": "string",
+      "enum": ["i", "j", "k", "i-", "j-", "k-"]
+    },
+    "SliceTiming": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0
+      }
+    },
+    "ASLContext": {
+      "type": "string"
+    },
+    "MRSoftwareVersion" :{
+      "type": "string"
+    },
+    "AcquisitionResolution" :{
+      "type": "array",
+      "items": {
+          "type": "number",
+          "exclusiveMinimum": 0
+      }
+    }
+  }
+}

@@ -137,6 +137,13 @@
     },
     "BolusCutOffTechnique" :{
       "type": "string"
+    },
+    "MZero" :{
+      "anyOf": [
+        { "type": "string" },
+        { "type": "numerical", "exclusiveMinimum": 0 },
+        { "type": "boolean"}
+      ]
     }
   }
 }

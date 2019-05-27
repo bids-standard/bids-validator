@@ -254,14 +254,14 @@ module.exports = function NIFTI(
       const kDim = header.dim[4]
       const ASLContextStringArray = ASLContextString.split('_');
 
-      if (ASLContextString.length !== kDim) {
+      if (ASLContextStringArray.length !== kDim) {
         issues.push(
           new Issue({
             file: file,
             code: 110,
             evidence:
               'ASLContext string is of length ' +
-              ASLContextString.length +
+              ASLContextStringArray.length +
               " and the number of volumes is (4th dimension) " +
               kDim +
               ' for the corresponding nifti header.',
@@ -463,7 +463,8 @@ module.exports = function NIFTI(
       path.includes('_bold.nii') ||
       path.includes('_sbref.nii') ||
       path.includes('_dwi.nii') ||
-      path.includes('_asl.nii')
+      path.includes('_asl.nii') ||
+      path.includes('_MZeroScan.nii')
     ) {
       if (!mergedDictionary.hasOwnProperty('EchoTime')) {
         issues.push(
@@ -514,7 +515,7 @@ module.exports = function NIFTI(
     }
 
     // we don't need slice timing or repetition time for SBref
-    if (path.includes('_bold.nii') || path.includes('_asl.nii')) {
+    if (path.includes('_bold.nii') || path.includes('_asl.nii') || path.includes('_MZeroScan.nii')) {
       if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
         issues.push(
           new Issue({
@@ -720,7 +721,7 @@ module.exports = function NIFTI(
         )
       }
     }
-
+    
     if (
       utils.type.file.isFieldMapMainNii(path) &&
       mergedDictionary.hasOwnProperty('IntendedFor')
@@ -734,6 +735,30 @@ module.exports = function NIFTI(
         const intendedForFile = intendedFor[key]
         checkIfIntendedExists(intendedForFile, fileList, issues, file)
         checkIfValidFiletype(intendedForFile, issues, file)
+      }
+    }
+    if (path.includes('_MZeroScan.nii')) {
+      if (mergedDictionary.hasOwnProperty('IntendedFor')) {
+        const intendedFor =
+          typeof mergedDictionary['IntendedFor'] == 'string'
+            ? [mergedDictionary['IntendedFor']]
+            : mergedDictionary['IntendedFor']
+        for (let key = 0; key < intendedFor.length; key++) {
+          const intendedForFile = intendedFor[key]
+          checkIfIntendedExists(intendedForFile, fileList, issues, file)
+          checkIfValidFiletype(intendedForFile, issues, file)
+        }    
+      }
+      else {
+        issues.push(
+          new Issue({
+            file: file,
+            code: 128,
+            reason:
+              "You have to define 'IntendedFor' for this file. " +
+              sidecarMessage,
+          }),
+        )
       }
     }
   }
@@ -766,7 +791,7 @@ function missingEvents(path, potentialEvents, events) {
 }
 
 /**
- * Function to check each SoliceTime from SliceTiming Array
+ * Function to check each SliceTime from SliceTiming Array
  *
  */
 

@@ -701,6 +701,13 @@ module.exports = {
     key: 'SLICE_SELECTIVE_GRADIENT_LABELING_GRADIENT_MISSING',
     severity: 'warning',
     reason: "The 'SliceSelectiveLabelingGradient' filed is migging for this file.",
-  }
+  },
+  128:
+  {
+    key: 'INTENDED_FOR_NOT_SET',
+    severity: 'error',
+    reason: "You have to define the 'In (3D (tendedFor' for this file.",
+  },
+
   
 }
