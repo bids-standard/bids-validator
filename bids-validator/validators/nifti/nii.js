@@ -158,7 +158,7 @@ module.exports = function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 116,
+          code: 127,
           reason:
             "You should define 'SliceSelectiveLabelingGradient' for this file." +
             sidecarMessage,

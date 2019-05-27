@@ -695,6 +695,12 @@ module.exports = {
     key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
     severity: 'error',
     reason: "You have to define the 'BolusCutOffTechnique' for this file.",
+  },
+  127:
+  {
+    key: 'SLICE_SELECTIVE_GRADIENT_LABELING_GRADIENT_MISSING',
+    severity: 'error',
+    reason: "The 'SliceSelectiveLabelingGradient' filed is migging for this file.",
   }
-
+  
 }
