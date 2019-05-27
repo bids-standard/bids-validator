@@ -699,7 +699,7 @@ module.exports = {
   127:
   {
     key: 'SLICE_SELECTIVE_GRADIENT_LABELING_GRADIENT_MISSING',
-    severity: 'error',
+    severity: 'warning',
     reason: "The 'SliceSelectiveLabelingGradient' filed is migging for this file.",
   }
   
