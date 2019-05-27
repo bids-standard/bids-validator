@@ -252,6 +252,8 @@ module.exports = function NIFTI(
     ) {
       const ASLContextString = mergedDictionary['ASLContext']
       const kDim = header.dim[4]
+      const ASLContextStringArray = ASLContextString.split('_');
+
       if (ASLContextString.length !== kDim) {
         issues.push(
           new Issue({
