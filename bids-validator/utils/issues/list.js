@@ -611,8 +611,9 @@ module.exports = {
   110: {
     key: 'ASLCONTEXT_BROKEN',
     severity: 'error',
-    reason: "The 'ASLContext' field is not consistent with the 4th dimension in the nifti file.",
-  },  
+    reason:
+      "The 'ASLContext' field is not consistent with the 4th dimension in the nifti file.",
+  },
   111: {
     key: 'MRSOFTWAREVERSION_MISSING',
     severity: 'warning',
@@ -678,36 +679,35 @@ module.exports = {
     severity: 'error',
     reason: "You have to define the 'BolusCutOffFlag' for this file.",
   },
-  124: 
-  {
+  124: {
     key: 'PASL_BOLUS_CUT_OFF_TIMING_SEQUENCE',
     severity: 'error',
     reason: "You have to define the 'BolusCutOffTimingSequence' for this file.",
-  }, 
-  125: 
-  {
+  },
+  125: {
     key: 'PASL_BOLUS_CUT_OFF_DELAY_TIME',
     severity: 'error',
     reason: "You have to define the 'BolusCutOffDelayTime' for this file.",
   },
-  126:
-  {
+  126: {
     key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
     severity: 'error',
     reason: "You have to define the 'BolusCutOffTechnique' for this file.",
   },
-  127:
-  {
+  127: {
     key: 'SLICE_SELECTIVE_GRADIENT_LABELING_GRADIENT_MISSING',
     severity: 'warning',
-    reason: "The 'SliceSelectiveLabelingGradient' filed is migging for this file.",
+    reason:
+      "The 'SliceSelectiveLabelingGradient' filed is migging for this file.",
   },
-  128:
-  {
+  128: {
     key: 'INTENDED_FOR_NOT_SET',
     severity: 'error',
-    reason: "You have to define the 'In (3D (tendedFor' for this file.",
+    reason: "You have to define the 'IntendedFor' for this file.",
   },
-
-  
+  129: {
+    key: 'MZERO_NOT_SET',
+    severity: 'error',
+    reason: "You have to define the 'MZero' for this file.",
+  },
 }

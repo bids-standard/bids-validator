@@ -49,8 +49,10 @@ module.exports = function NIFTI(
         }),
       )
     }
-    if (mergedDictionary.hasOwnProperty('LabelingType') &&
-        mergedDictionary['LabelingType'].constructor === String ) {
+    if (
+      mergedDictionary.hasOwnProperty('LabelingType') &&
+      mergedDictionary['LabelingType'].constructor === String
+    ) {
       const LabelingTypeString = mergedDictionary['LabelingType']
       if (LabelingTypeString == 'PCASL' || LabelingTypeString == 'CASL') {
         if (!mergedDictionary.hasOwnProperty('AverageLabelingGradient')) {
@@ -61,7 +63,7 @@ module.exports = function NIFTI(
               reason:
                 "You should define 'AverageLabelingGradient' for this file." +
                 sidecarMessage,
-           }),
+            }),
           )
         }
       }
@@ -74,7 +76,7 @@ module.exports = function NIFTI(
               reason:
                 "You should define 'FlipAngleOfB1LabelingPulses' for this file." +
                 sidecarMessage,
-           }),
+            }),
           )
         }
         if (!mergedDictionary.hasOwnProperty('PCASLType')) {
@@ -83,9 +85,8 @@ module.exports = function NIFTI(
               file: file,
               code: 122,
               reason:
-                "You should define 'PCASLType' for this file." +
-                sidecarMessage,
-           }),
+                "You should define 'PCASLType' for this file." + sidecarMessage,
+            }),
           )
         }
       }
@@ -98,7 +99,7 @@ module.exports = function NIFTI(
               reason:
                 "You should define 'LabelingSlabThickness' for this file." +
                 sidecarMessage,
-           }),
+            }),
           )
         }
         if (!mergedDictionary.hasOwnProperty('BolusCutOffFlag')) {
@@ -109,50 +110,58 @@ module.exports = function NIFTI(
               reason:
                 "You should define 'BolusCutOffFlag' for this file." +
                 sidecarMessage,
-           }),
+            }),
           )
         }
-        if (mergedDictionary.hasOwnProperty('BolusCutOffFlag') &&
-            mergedDictionary['BolusCutOffFlag'].constructor === Boolean ) {
+        if (
+          mergedDictionary.hasOwnProperty('BolusCutOffFlag') &&
+          mergedDictionary['BolusCutOffFlag'].constructor === Boolean
+        ) {
           const BolusCutOffFlagBoolean = mergedDictionary['BolusCutOffFlag']
-          if (BolusCutOffFlagBoolean && 
-                !mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence')) {
+          if (
+            BolusCutOffFlagBoolean &&
+            !mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence')
+          ) {
             issues.push(
               new Issue({
-              file: file,
-              code: 124,
-              reason:
-                "You should define 'BolusCutOffTimingSequence' for this file." +
-                sidecarMessage,
+                file: file,
+                code: 124,
+                reason:
+                  "You should define 'BolusCutOffTimingSequence' for this file." +
+                  sidecarMessage,
               }),
             )
           }
-          if (BolusCutOffFlagBoolean && 
-            !mergedDictionary.hasOwnProperty('BolusCutOffDelayTime')) {
+          if (
+            BolusCutOffFlagBoolean &&
+            !mergedDictionary.hasOwnProperty('BolusCutOffDelayTime')
+          ) {
             issues.push(
               new Issue({
-              file: file,
-              code: 125,
-              reason:
-                "You should define 'BolusCutOffDelayTime' for this file." +
-                sidecarMessage,
+                file: file,
+                code: 125,
+                reason:
+                  "You should define 'BolusCutOffDelayTime' for this file." +
+                  sidecarMessage,
               }),
             )
           }
-          if (BolusCutOffFlagBoolean && 
-            !mergedDictionary.hasOwnProperty('BolusCutOffTechnique')) {
+          if (
+            BolusCutOffFlagBoolean &&
+            !mergedDictionary.hasOwnProperty('BolusCutOffTechnique')
+          ) {
             issues.push(
               new Issue({
-              file: file,
-              code: 126,
-              reason:
-                "You should define 'BolusCutOffTechnique' for this file." +
-                sidecarMessage,
+                file: file,
+                code: 126,
+                reason:
+                  "You should define 'BolusCutOffTechnique' for this file." +
+                  sidecarMessage,
               }),
             )
           }
         }
-      } 
+      }
     }
     if (!mergedDictionary.hasOwnProperty('SliceSelectiveLabelingGradient')) {
       issues.push(
@@ -198,8 +207,10 @@ module.exports = function NIFTI(
         }),
       )
     }
-    if (mergedDictionary.hasOwnProperty('BackgroundSuppression') &&
-        !mergedDictionary.hasOwnProperty['BackgroundSuppressionPulseTime'] ) {
+    if (
+      mergedDictionary.hasOwnProperty('BackgroundSuppression') &&
+      !mergedDictionary.hasOwnProperty['BackgroundSuppressionPulseTime']
+    ) {
       issues.push(
         new Issue({
           file: file,
@@ -221,8 +232,10 @@ module.exports = function NIFTI(
         }),
       )
     }
-    if (mergedDictionary.hasOwnProperty('VascularCrushing') &&
-        !mergedDictionary.hasOwnProperty['VascularCrushingVenc'] ) {
+    if (
+      mergedDictionary.hasOwnProperty('VascularCrushing') &&
+      !mergedDictionary.hasOwnProperty['VascularCrushingVenc']
+    ) {
       issues.push(
         new Issue({
           file: file,
@@ -252,7 +265,7 @@ module.exports = function NIFTI(
     ) {
       const ASLContextString = mergedDictionary['ASLContext']
       const kDim = header.dim[4]
-      const ASLContextStringArray = ASLContextString.split('_');
+      const ASLContextStringArray = ASLContextString.split('_')
 
       if (ASLContextStringArray.length !== kDim) {
         issues.push(
@@ -262,7 +275,7 @@ module.exports = function NIFTI(
             evidence:
               'ASLContext string is of length ' +
               ASLContextStringArray.length +
-              " and the number of volumes is (4th dimension) " +
+              ' and the number of volumes is (4th dimension) ' +
               kDim +
               ' for the corresponding nifti header.',
           }),
@@ -324,16 +337,54 @@ module.exports = function NIFTI(
         }),
       )
     }
-    if (!mergedDictionary.hasOwnProperty('AcquisitionResolution')) {
+    if (!mergedDictionary.hasOwnProperty('AcquisitionDuration')) {
       issues.push(
         new Issue({
           file: file,
           code: 119,
           reason:
-          "You should define 'AcquisitionDuration' for this file.  " +
-          sidecarMessage,
+            "You should define 'AcquisitionDuration' for this file.  " +
+            sidecarMessage,
         }),
       )
+    }
+    if (!mergedDictionary.hasOwnProperty('MZero')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 129,
+          reason: "You should define 'MZero' for this file.  " + sidecarMessage,
+        }),
+      )
+    } else if (
+      mergedDictionary.hasOwnProperty('MZero') &&
+      mergedDictionary['MZero'].constructor === String
+    ) {
+      const MZeroString = mergedDictionary['MZero']
+      if (MZeroString != 'Control') {
+        checkIfIntendedExists(MZeroString, fileList, issues, file)
+        checkIfValidFiletype(MZeroString, issues, file)
+      }
+    } else if (
+      mergedDictionary.hasOwnProperty('MZero') &&
+      mergedDictionary['MZero'].constructor === Boolean
+    ) {
+      if (
+        mergedDictionary.hasOwnProperty('MZero') &&
+        mergedDictionary['MZero'].constructor === String
+      ) {
+        const MZeroString = mergedDictionary['MZero']
+        if (!MZeroString.includes('MZeroScan')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 129,
+              reason:
+                "You should define 'MZero' for this file.  " + sidecarMessage,
+            }),
+          )
+        }
+      }
     }
   }
   if (path.includes('_dwi.nii')) {
@@ -515,7 +566,7 @@ module.exports = function NIFTI(
     }
 
     // we don't need slice timing or repetition time for SBref
-    if (path.includes('_bold.nii') || path.includes('_asl.nii') || path.includes('_MZeroScan.nii')) {
+    if (path.includes('_bold.nii') || path.includes('_asl.nii')) {
       if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
         issues.push(
           new Issue({
@@ -721,7 +772,7 @@ module.exports = function NIFTI(
         )
       }
     }
-    
+
     if (
       utils.type.file.isFieldMapMainNii(path) &&
       mergedDictionary.hasOwnProperty('IntendedFor')
@@ -747,9 +798,8 @@ module.exports = function NIFTI(
           const intendedForFile = intendedFor[key]
           checkIfIntendedExists(intendedForFile, fileList, issues, file)
           checkIfValidFiletype(intendedForFile, issues, file)
-        }    
-      }
-      else {
+        }
+      } else {
         issues.push(
           new Issue({
             file: file,
