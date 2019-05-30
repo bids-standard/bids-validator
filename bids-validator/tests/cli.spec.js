@@ -4,7 +4,7 @@ const dir = process.cwd()
 const data_dir = dir + '/bids-validator/tests/data/'
 const test_data = data_dir + 'valid_headers/'
 const data_with_errors = data_dir + 'empty_files'
-const data_without_errors = data_dir + 'bids-examples-1.1.1u1/synthetic'
+const data_without_errors = data_dir + 'valid_dataset'
 
 const cli_path = './bids-validator/bin/bids-validator'
 
