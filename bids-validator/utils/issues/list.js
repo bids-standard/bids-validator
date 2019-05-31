@@ -708,6 +708,6 @@ module.exports = {
   129: {
     key: 'MZERO_NOT_SET',
     severity: 'error',
-    reason: "You have to define the 'MZero' for this file.",
+    reason: "You have to define the 'MZero' for this file. Mzero can be either a boolean, a string or a number.",
   },
 }
