@@ -35,7 +35,7 @@ class Issues extends React.Component {
     let specLink = (
       <h5>
         Click to view details on{" "}
-        <a href="http://bids.neuroimaging.io" target="_blank">
+        <a href="https://bids-specification.readthedocs.io/en/stable/" target="_blank">
           BIDS specification
         </a>
       </h5>
@@ -63,7 +63,7 @@ class Issues extends React.Component {
       <h5>
         The source code for the validator can be found{" "}
         <a
-          href="https://github.com/bids-standard/bids-validator/tree/gh-pages"
+          href="https://github.com/bids-standard/bids-validator"
           target="_blank"
         >
           here
