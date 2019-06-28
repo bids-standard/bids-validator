@@ -710,4 +710,14 @@ module.exports = {
     severity: 'error',
     reason: "You have to define the 'MZero' for this file. Mzero can be either a boolean, a string or a number.",
   },
+  130: {
+    key: 'MZERO_SET_UNCORRECTLY',
+    severity: 'error',
+    reason: "MZeros was not defined.",
+  },
+  104: {
+    key: 'PULSE_SEQUENCE_TYPE_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'PulseSequenceType' for this file.",
+  },
 }

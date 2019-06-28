@@ -17,6 +17,10 @@
       "type": "number",
       "exclusiveMinimum": 0
     },
+    "PulseSequenceType": {
+      "type": "string",
+      "enum" : ["2D_EPI","3D_GRASE","3D_SPIRAL"]
+    },
     "SliceEncodingDirection": {
       "type": "string",
       "enum": ["i", "j", "k", "i-", "j-", "k-"]
@@ -28,6 +32,15 @@
         "minimum": 0
       }
     },
+    "FlipAngle": {
+      "anyOf": [
+        { "type": "number" },
+        {
+          "type": "array",
+          "items": { "type": "number" }
+        }
+      ]
+    }, 
     "ASLContext": {
       "type": "string"
     },
@@ -102,8 +115,13 @@
       }
     },
     "VascularCrushingVenc" :{
-      "type": "number",
-      "exclusiveMinimum": 0
+      "anyOf": [
+        { "type": "number" },
+        {
+          "type": "array",
+          "items": { "type": "number" }
+        }
+      ]
     },
     "PCASLType" :{
       "type": "string",

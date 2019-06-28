@@ -49,6 +49,17 @@ module.exports = function NIFTI(
         }),
       )
     }
+    if (!mergedDictionary.hasOwnProperty('PulseSequenceType')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 131,
+          reason:
+            "You should define 'PulseSequenceType' for this file. If you don't provide this information CBF quantification will not be possible. " +
+            sidecarMessage,
+        }),
+      )
+    }
     if (
       mergedDictionary.hasOwnProperty('LabelingType') &&
       mergedDictionary['LabelingType'].constructor === String
@@ -196,6 +207,7 @@ module.exports = function NIFTI(
         }),
       )
     }
+    
     if (!mergedDictionary.hasOwnProperty('BackgroundSuppression')) {
       issues.push(
         new Issue({
@@ -263,21 +275,25 @@ module.exports = function NIFTI(
       mergedDictionary.hasOwnProperty('ASLContext') &&
       mergedDictionary['ASLContext'].constructor === String
     ) {
-      const ASLContextString = mergedDictionary['ASLContext']
+      var ASLContextString = mergedDictionary['ASLContext']
       const kDim = header.dim[4]
-      const ASLContextStringArray = ASLContextString.split('_')
-
-      if (ASLContextStringArray.length !== kDim) {
+      ASLContextString=ASLContextString.split('Control').join('1')
+      ASLContextString=ASLContextString.split('Label').join('1')
+      ASLContextString=ASLContextString.split('MZeroScan').join('1')
+      ASLContextString=ASLContextString.split('_').join('+')
+      ASLContextString=ASLContextString.split('x').join('*')
+      const ASLContextStringVolumes = eval(ASLContextString)
+      if (ASLContextStringVolumes !== kDim) {
         issues.push(
           new Issue({
             file: file,
             code: 110,
             evidence:
-              'ASLContext string is of length ' +
-              ASLContextStringArray.length +
-              ' and the number of volumes is (4th dimension) ' +
+              'ASLContext string is ' + mergedDictionary['ASLContext'] +
+              'and provided ' + ASLContextStringVolumes + 
+              ' volumes however the number of volumes in the asl corresponding nifti header is (4th dimension) ' +
               kDim +
-              ' for the corresponding nifti header.',
+              '.',
           }),
         )
       }
@@ -369,24 +385,23 @@ module.exports = function NIFTI(
       mergedDictionary.hasOwnProperty('MZero') &&
       mergedDictionary['MZero'].constructor === Boolean
     ) {
-      if (
-        mergedDictionary.hasOwnProperty('MZero') &&
-        mergedDictionary['MZero'].constructor === String
+      if ( mergedDictionary['MZero'] &&
+        mergedDictionary.hasOwnProperty('ASLContext') &&
+        mergedDictionary['ASLContext'].constructor === String
       ) {
-        const MZeroString = mergedDictionary['MZero']
-        if (!MZeroString.includes('MZeroScan')) {
-          issues.push(
-            new Issue({
-              file: file,
-              code: 129,
-              reason:
-                "You should define 'MZero' for this file.  " + sidecarMessage,
-            }),
-          )
+          const ASLContextString = mergedDictionary['ASLContext']
+          if (!ASLContextString.includes('MZeroScan')) {
+            issues.push(
+              new Issue({
+                file: file,
+                code: 130,
+                reason: "ASLContext " + mergedDictionary['ASLContext'] + " does not contain any MZeroScan that is required, since you specified True in the MZero field.  " + sidecarMessage,
+              }),
+            )
+          }
         }
       }
     }
-  }
   if (path.includes('_dwi.nii')) {
     const potentialBvecs = utils.files.potentialLocations(
       path.replace('.gz', '').replace('.nii', '.bvec'),

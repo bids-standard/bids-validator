@@ -20,7 +20,8 @@
       "@@@_asl_top_ext_@@@": [
         "_asl\\.json",
         "_MZeroScan\\.json",
-        "_MZeroScan\\.json"
+        "_MZeroScan\\.json",
+        "_labeling.jpg"
       ]
     }
   },
