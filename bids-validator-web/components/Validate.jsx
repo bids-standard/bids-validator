@@ -1,12 +1,13 @@
 import React from 'react'
 import Upload from './Upload.jsx'
 import Spinner from './Spinner.jsx'
+import Options from './Options.jsx'
 
 class Validate extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      loading: false,
+      loading: false
     }
 
     this._clearInput = this.props.reset
@@ -17,6 +18,7 @@ class Validate extends React.Component {
   // life cycle events --------------------------------------------------
 
   render() {
+    let { options, handleOptionToggle } = this.props
     let loading = <Spinner text="validating" active={true} />
 
     let select = (
@@ -34,6 +36,7 @@ class Validate extends React.Component {
           setRefs={this._setRefs}
         />
         <hr />
+        <Options setOption={handleOptionToggle} options={options} />
         <small>
           Note: Selecting a dataset only performs validation. Files are never
           uploaded.

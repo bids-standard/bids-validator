@@ -21,6 +21,10 @@ export default class App extends React.Component {
       summary: null,
       status: '',
       uploadStatus: '',
+      options: {
+        ignoreWarnings: false,
+        ignoreNiftiHeaders: false,
+      }
     }
     this.validate = this._validate.bind(this)
     this.reset = this._reset.bind(this)
@@ -35,7 +39,7 @@ export default class App extends React.Component {
     })
     return validate.BIDS(
       selectedFiles.list,
-      { verbose: true },
+      { verbose: true, ...this.state.options },
       (issues, summary) => {
         if (issues === 'Invalid') {
           return this.setState({
@@ -67,7 +71,22 @@ export default class App extends React.Component {
       summary: null,
       status: '',
       uploadStatus: '',
+      options: {
+        ignoreWarnings: false,
+        ignoreNiftiHeaders: false,
+      }
     })
+  }
+
+  handleOptionToggle = e => {
+    const { name } = e.target
+    this.setState(prevState => ({
+      ...prevState,
+      options: {
+        ...prevState.options,
+        [name]: !prevState.options[name]
+      }
+    }))
   }
 
   render() {
@@ -92,7 +111,9 @@ export default class App extends React.Component {
             {!browserUnsupported ? (
               <Validate
                 loading={this.state.status === 'validating'}
+                options={this.state.options}
                 onChange={this.validate}
+                handleOptionToggle={this.handleOptionToggle}
               />
             ) : null}
           </div>
