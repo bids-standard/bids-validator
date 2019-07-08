@@ -7,25 +7,27 @@ import validate from 'bids-validator'
 
 // component setup -----------------------------------------------------------
 
+const initState = () => ({
+  dirName: '',
+  list: {},
+  nameError: null,
+  projectId: '',
+  refs: {},
+  errors: [],
+  warnings: [],
+  summary: null,
+  status: '',
+  uploadStatus: '',
+  options: {
+    ignoreWarnings: false,
+    ignoreNiftiHeaders: false,
+  }
+})
+
 export default class App extends React.Component {
   constructor() {
     super()
-    this.state = {
-      dirName: '',
-      list: {},
-      nameError: null,
-      projectId: '',
-      refs: {},
-      errors: [],
-      warnings: [],
-      summary: null,
-      status: '',
-      uploadStatus: '',
-      options: {
-        ignoreWarnings: false,
-        ignoreNiftiHeaders: false,
-      }
-    }
+    this.state = initState()
     this.validate = this._validate.bind(this)
     this.reset = this._reset.bind(this)
   }
@@ -60,22 +62,7 @@ export default class App extends React.Component {
   }
 
   _reset() {
-    this.setState({
-      dirName: '',
-      list: {},
-      nameError: null,
-      projectId: '',
-      refs: {},
-      errors: [],
-      warnings: [],
-      summary: null,
-      status: '',
-      uploadStatus: '',
-      options: {
-        ignoreWarnings: false,
-        ignoreNiftiHeaders: false,
-      }
-    })
+    this.setState(initState())
   }
 
   handleOptionToggle = e => {
