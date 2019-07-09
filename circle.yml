@@ -90,10 +90,6 @@ jobs:
             python3 -m pip install --upgrade pip setuptools wheel twine
       - run: git checkout -f $CIRCLE_TAG
       - run: cd bids-validator && python3 setup.py sdist bdist_wheel
-      # Publish to NPM
-      - run: yarn
-      - run: ./node_modules/.bin/npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL
-      - run: cd bids-validator && npm publish
       # Publish to PyPI
       - run: cd bids-validator && twine upload dist/*
       # Update gh-pages demo site
