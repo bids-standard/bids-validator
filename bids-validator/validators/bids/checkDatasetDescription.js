@@ -40,6 +40,11 @@ const checkAuthorField = authors => {
         issues.push(new Issue({ code: 102, evidence: author }))
       }
     }
+  } else {
+    // if there are no authors,
+    // warn user that errors could occur during doi minting
+    // and that snapshots on OpenNeuro will not be allowed
+    issues.push(new Issue({ code: 113, evidence: authors }))
   }
   return issues
 }
