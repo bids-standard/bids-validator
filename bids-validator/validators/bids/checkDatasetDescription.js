@@ -38,11 +38,6 @@ const checkAuthorField = authors => {
         // if there is one or less comma in the author field,
         // we suspect that the curator has not listed everyone involved
         issues.push(new Issue({ code: 102, evidence: author }))
-      } else if (author.split(',').length > 2) {
-        // if there are too many commas in the author field,
-        // we suspect that the curator has listed all authors in a single
-        // entry in the authors array... which is against bids spec
-        issues.push(new Issue({ code: 103, evidence: author }))
       }
     }
   }
