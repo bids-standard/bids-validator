@@ -630,6 +630,6 @@ module.exports = {
     key: 'NO_AUTHORS',
     severity: 'warning',
     reason:
-      'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered because there are no authors, which could lead to DOI minting failures and will prevent snapshot creation on OpenNeuro.',
+      'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered because there are no authors, which will make DOI registration from dataset metadata impossible.',
   },
 }
