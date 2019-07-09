@@ -18,7 +18,7 @@ const utils = require('../../utils')
  */
 const start = (dir, options, callback) => {
   // eslint-disable-next-line
-  console.log(`bids-validator@${version}\n`)
+  if(!options.json) console.log(`bids-validator@${version}\n`)
 
   utils.options.parse(options, function(issues, options) {
     if (issues && issues.length > 0) {
