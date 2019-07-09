@@ -626,4 +626,10 @@ module.exports = {
     reason:
       'The json sidecar does not contain this column value as a possible key to a HED string.',
   },
+  113: {
+    key: 'NO_AUTHORS',
+    severity: 'warning',
+    reason:
+      'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered because there are no authors, which could lead to DOI minting failures and will prevent snapshot creation on OpenNeuro.',
+  },
 }
