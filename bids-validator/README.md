@@ -297,3 +297,7 @@ is useful to run tests while making changes. A coverage report is available with
 `npm run coverage`.
 
 To run the linter which checks code conventions run `npm run lint`.
+
+#### Publishing
+
+Publishing is done with [Lerna](https://github.com/lerna/lerna). Use the command `yarn lerna publish` and follow instructions to set a new version.
