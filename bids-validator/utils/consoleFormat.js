@@ -7,6 +7,11 @@ module.exports = {
   issues: formatIssues,
   summary: formatSummary,
   logIssues,
+  unexpectedError,
+}
+
+function unexpectedError(message) {
+  return colors.red(message)
 }
 
 function formatIssues(issues, options = {}) {

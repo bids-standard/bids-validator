@@ -1,8 +1,9 @@
 /*eslint no-console: ["error", {allow: ["log"]}] */
 
-var validate = require('./index.js')
-var colors = require('colors/safe')
-var fs = require('fs')
+const validate = require('./index.js')
+const format = validate.consoleFormat
+const colors = require('colors/safe')
+const fs = require('fs')
 const remoteFiles = require('./utils/files/remoteFiles')
 
 const exitProcess = issues => {
@@ -18,6 +19,16 @@ const exitProcess = issues => {
 }
 
 module.exports = function(dir, options) {
+  process.on('unhandledRejection', err => {
+    console.log(
+      format.unexpectedError(
+        // eslint-disable-next-line
+        `Unhandled rejection (reason: ${JSON.stringify(err)}).`
+      ),
+    )
+    process.exit(3)
+  })
+
   if (fs.existsSync(dir)) {
     if (options.json) {
       validate.BIDS(dir, options, function(issues, summary) {
@@ -26,8 +37,8 @@ module.exports = function(dir, options) {
       })
     } else {
       validate.BIDS(dir, options, function(issues, summary) {
-        console.log(validate.consoleFormat.issues(issues, options) + '\n')
-        console.log(validate.consoleFormat.summary(summary, options))
+        console.log(format.issues(issues, options) + '\n')
+        console.log(format.summary(summary, options))
         exitProcess(issues)
       })
     }
