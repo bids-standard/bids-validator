@@ -266,6 +266,11 @@ False
 
 ## Development
 
+The development of `bids-validator` is currently supported by
+[squishymedia](https://squishymedia.com/), who are in turn financed by a grant
+to [Russel Poldrack](https://profiles.stanford.edu/russell-poldrack) for the
+further development of [BIDS](https://bids.neuroimaging.io).
+
 To develop locally, clone the project and run `yarn` from the project
 root. This will install external dependencies. If you wish to install
 `bids-validator` globally (so that you can run it in other folders), use the
