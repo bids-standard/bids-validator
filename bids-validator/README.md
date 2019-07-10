@@ -268,7 +268,7 @@ False
 
 The development of `bids-validator` is currently supported by
 [squishymedia](https://squishymedia.com/), who are in turn financed by a grant
-to [Russel Poldrack](https://profiles.stanford.edu/russell-poldrack) for the
+to [Russell Poldrack](https://profiles.stanford.edu/russell-poldrack) for the
 further development of [BIDS](https://bids.neuroimaging.io).
 
 To develop locally, clone the project and run `yarn` from the project
