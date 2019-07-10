@@ -39,8 +39,9 @@ latest version of Chrome.
 There is also a library of helper functions written in Python, for use with BIDS
 compliant applications written in this language.
 
-Please report any issues you experience while using these support targets. If
-you experience issues outside of these supported environments and believe we
+Please report any issues you experience while using these support targets via
+the [GitHub issue tracker](https://github.com/bids-standard/bids-validator/issues).
+If you experience issues outside of these supported environments and believe we
 should extend our targeted support feel free to open a new issue describing the
 issue, your support target and why you require extended support and we will
 address these issues on a case by case basis.
@@ -266,11 +267,6 @@ False
 
 ## Development
 
-The development of `bids-validator` is currently supported by
-[squishymedia](https://squishymedia.com/), who are in turn financed by a grant
-to [Russell Poldrack](https://profiles.stanford.edu/russell-poldrack) for the
-further development of [BIDS](https://bids.neuroimaging.io).
-
 To develop locally, clone the project and run `yarn` from the project
 root. This will install external dependencies. If you wish to install
 `bids-validator` globally (so that you can run it in other folders), use the
@@ -302,3 +298,13 @@ is useful to run tests while making changes. A coverage report is available with
 `npm run coverage`.
 
 To run the linter which checks code conventions run `npm run lint`.
+
+## Acknowledgments
+
+Many contributions to the `bids-validator` were done by members of the
+BIDS community. See the [list of contributors](https://github.com/bids-standard/bids-validator/graphs/contributors).
+
+A large part of the development of `bids-validator` is currently done by
+[Squishymedia](https://squishymedia.com/), who are in turn financed by a grant
+to [Russell Poldrack](https://profiles.stanford.edu/russell-poldrack) for the
+further development of [BIDS](https://bids.neuroimaging.io).
