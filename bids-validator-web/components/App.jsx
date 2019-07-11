@@ -4,6 +4,8 @@ import Issues from '../components/Issues'
 import BrowserWarning from './BrowserWarning'
 import Validate from '../components/Validate'
 import validate from 'bids-validator'
+import validatorPackageJson from 'bids-validator/package.json'
+const version = validatorPackageJson.version
 
 // component setup -----------------------------------------------------------
 
@@ -84,8 +86,8 @@ export default class App extends React.Component {
         <nav className="navbar navbar-dark bg-dark fixed-top">
           <div className="container">
             <div className="navbar-header">
-              <a className="navbar-brand" href="#">
-                BIDS Validator
+              <a className="navbar-brand" href="https://www.npmjs.com/package/bids-validator" target="_blank">
+                BIDS Validator v{version}
               </a>
             </div>
           </div>
