@@ -305,6 +305,11 @@ Many contributions to the `bids-validator` were done by members of the
 BIDS community. See the [list of contributors](https://github.com/bids-standard/bids-validator/graphs/contributors).
 
 A large part of the development of `bids-validator` is currently done by
-[Squishymedia](https://squishymedia.com/), who are in turn financed by a grant
-to [Russell Poldrack](https://profiles.stanford.edu/russell-poldrack) for the
-further development of [BIDS](https://bids.neuroimaging.io).
+[Squishymedia](https://squishymedia.com/), who are in turn financed through
+different grants offered for the general development of BIDS. See the list
+below:
+
+- BIDS R24,
+- OpenNeuro R24
+- NSF Spokes grant
+- WIP
