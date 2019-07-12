@@ -307,9 +307,11 @@ BIDS community. See the [list of contributors](https://github.com/bids-standard/
 A large part of the development of `bids-validator` is currently done by
 [Squishymedia](https://squishymedia.com/), who are in turn financed through
 different grants offered for the general development of BIDS. See the list
-below:
+below.
 
-- BIDS R24,
-- OpenNeuro R24
-- NSF Spokes grant
-- WIP
+Development and contributions were supported through the following federally
+funded projects/grants:
+- [BIDS Derivatives (NIMH: R24MH114705, PI: Poldrack)](http://grantome.com/grant/NIH/R24-MH114705-01)
+- [OpenNeuro (NIMH: R24MH117179, PI: Poldrack)](http://grantome.com/grant/NIH/R24-MH117179-01)
+- [Spokes: MEDIUM: WEST (NSF: 1760950, PI: Poldrack & Gorgolewski)](http://grantome.com/grant/NSF/IIS-1760950)
+- [ReproNim](http://repronim.org) [(NIH-NIBIB P41 EB019936, PI: Kennedy)](https://projectreporter.nih.gov/project_info_description.cfm?aid=8999833)
