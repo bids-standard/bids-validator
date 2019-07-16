@@ -39,8 +39,9 @@ latest version of Chrome.
 There is also a library of helper functions written in Python, for use with BIDS
 compliant applications written in this language.
 
-Please report any issues you experience while using these support targets. If
-you experience issues outside of these supported environments and believe we
+Please report any issues you experience while using these support targets via
+the [GitHub issue tracker](https://github.com/bids-standard/bids-validator/issues).
+If you experience issues outside of these supported environments and believe we
 should extend our targeted support feel free to open a new issue describing the
 issue, your support target and why you require extended support and we will
 address these issues on a case by case basis.
@@ -303,3 +304,20 @@ To run the linter which checks code conventions run `npm run lint`.
 Publishing is done with [Lerna](https://github.com/lerna/lerna). Use the command `yarn lerna publish` and follow instructions to set a new version.
 
 Using lerna publish will create a git commit with updated version information and create a version number tag for it, push the tag to GitHub, then publish to NPM and PyPI. The GitHub release is manual following that.
+
+## Acknowledgments
+
+Many contributions to the `bids-validator` were done by members of the
+BIDS community. See the [list of contributors](https://github.com/bids-standard/bids-validator/graphs/contributors).
+
+A large part of the development of `bids-validator` is currently done by
+[Squishymedia](https://squishymedia.com/), who are in turn financed through
+different grants offered for the general development of BIDS. See the list
+below.
+
+Development and contributions were supported through the following federally
+funded projects/grants:
+- [BIDS Derivatives (NIMH: R24MH114705, PI: Poldrack)](http://grantome.com/grant/NIH/R24-MH114705-01)
+- [OpenNeuro (NIMH: R24MH117179, PI: Poldrack)](http://grantome.com/grant/NIH/R24-MH117179-01)
+- [Spokes: MEDIUM: WEST (NSF: 1760950, PI: Poldrack & Gorgolewski)](http://grantome.com/grant/NSF/IIS-1760950)
+- [ReproNim](http://repronim.org) [(NIH-NIBIB P41 EB019936, PI: Kennedy)](https://projectreporter.nih.gov/project_info_description.cfm?aid=8999833)
