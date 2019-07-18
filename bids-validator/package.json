@@ -51,7 +51,6 @@
     "jest-environment-node": "^23.4.0",
     "lockfile": "^1.0.4",
     "npm-cli-login": "^0.0.10",
-    "nyc": "^13.0.1",
     "prettier": "^1.14.2",
     "pretty-quick": "^1.6.0",
     "sync-request": "6.0.0"
