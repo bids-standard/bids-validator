@@ -21,4 +21,5 @@
     "lerna": "^3.15.0"
   },
   "name": "bids-validator"
+
 }
