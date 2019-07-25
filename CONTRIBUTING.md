@@ -16,7 +16,7 @@ so that we can improve this guide.
 
 1) Knowledge that will help you along the way
 ---------------------------------------------
-1. **Familiarize yourself with [git](https://git-scm.com/)
+1. **Familiarize yourself with [git](https://git-scm.com/book/en/v2)
    and make sure that you know at least the following commands and concepts**
   - git clone
   - git branch
@@ -26,7 +26,7 @@ so that we can improve this guide.
   - git add
   - git commit
   - git push
-  - How to configure git for your user
+  - [How to configure git for your user](https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration)
 1. **Next, familiarize yourself with [GitHub](https://github.com) and how it
    works together with `git`. Make sure you know about the following concepts**
    - Fork
@@ -42,9 +42,9 @@ so that we can improve this guide.
 --------------------------------------------------
 1. Make a GitHub account
 1. Install the required software:
-  - git
-  - JavaScript
-  - yarn
+  - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+  - [JavaScript](https://nodejs.org/en/download/)
+  - [yarn](https://yarnpkg.com/lang/en/docs/install)
 1. In the GitHub interface, make a fork of https://github.com/bids-standard/bids-validator
    to your own user (called `USER` for the sake of the example)
   - you will now have your own copy of BIDS validator at https://github.com/USER/bids-validator
