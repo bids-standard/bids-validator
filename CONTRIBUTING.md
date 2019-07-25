@@ -36,6 +36,7 @@ so that we can improve this guide.
    - Basic knowledge about coding is helpful and familiarity with JavaScript
      is a big bonus, but you can contribute to the BIDS validator also without
      specific knowledge of JavaScript
+  - Some knowledge about software testing (why we are doing it) would be nice
 
 2) Using the development version of BIDS validator
 --------------------------------------------------
@@ -125,3 +126,18 @@ comply to the schema, or trigger an error by typing in a JSON to the right
 field.
 
 ###### Writing tests
+
+For every change you make it is important to include a test. That way, we can
+make sure that the behavior of BIDS validator is as expected, and furthermore
+we will be notified whenever a contributor makes a change in the code that
+breaks the expected behavior of the BIDS validator.
+
+A test usually provides some known data, and let's the software run over it ...
+just to check whether the output is as we know it should be (because we know
+the data, after all).
+
+You can get a good impression using the following links:
+
+- [How regular expressions are tested](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/tests/type.spec.js)
+- [How JSON schemas are tested](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/tests/json.spec.js)
+- [How TSV files are tested](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/tests/tsv.spec.js)
