@@ -109,6 +109,12 @@ async function getFiles(
       path.relative(rootPath, fullPath),
     )
     const ignore = ig.ignores(path.relative('/', relativePath))
+    const fileObj = {
+      name: file.name,
+      path: fullPath,
+      relativePath,
+      ignore,
+    }
     if (!ignore) {
       // Three cases to consider: directories, files, symlinks
       if (file.isDirectory()) {
@@ -121,21 +127,22 @@ async function getFiles(
           try {
             const targetPath = await fs.promises.realpath(fullPath)
             const targetStat = await fs.promises.stat(targetPath)
+            // Either add or recurse from the target depending
             if (targetStat.isDirectory()) {
               await recursiveMerge(targetPath)
+            } else {
+              filesAccumulator.push(fileObj)
             }
           } catch (err) {
             // Symlink points at an invalid target, skip it
             return
           }
+        } else {
+          // This branch assumes all symbolic links are not directories
+          filesAccumulator.push(fileObj)
         }
       } else {
-        filesAccumulator.push({
-          name: file.name,
-          path: fullPath,
-          relativePath,
-          ignore,
-        })
+        filesAccumulator.push(fileObj)
       }
     }
   }
