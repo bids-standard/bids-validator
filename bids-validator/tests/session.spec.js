@@ -20,10 +20,8 @@ describe('session', () => {
 
   describe('missingSessionFiles', () => {
     describe('handling missing sessions', () => {
-      beforeEach(() => {
-        utils.files.readDir(missing_session_data, files => {
-          filelist = files
-        })
+      beforeEach(async () => {
+        filelist = await utils.files.readDir(missing_session_data)
       })
 
       it('should produce a single MISSING_SESSION warning', () => {
@@ -44,9 +42,9 @@ describe('session', () => {
   })
 
   describe('getDataOrganization', () => {
-    it('should take a fileList of data with subjects and sessions and list and return them', () => {
+    it('should take a fileList of data with subjects and sessions and list and return them', async done => {
       let filelist
-      utils.files.readDir(missing_session_data, files => {
+      await utils.files.readDir(missing_session_data).then(files => {
         filelist = files
       })
 
@@ -57,6 +55,7 @@ describe('session', () => {
       assert.ok(subjKeys.length >= 1)
       assert.ok(subjKeys.every(key => subjects[key] instanceof Subject))
       assert.ok(sessions.length >= 1)
+      done()
     })
   })
 
@@ -82,9 +81,9 @@ describe('session', () => {
   })
 
   describe('missingSessionWarnings', () => {
-    it('should take a subjects dir and a sessions list and return a list of issues', () => {
+    it('should take a subjects dir and a sessions list and return a list of issues', async done => {
       let filelist
-      utils.files.readDir(missing_session_data, files => {
+      await utils.files.readDir(missing_session_data).then(files => {
         filelist = files
       })
       const { subjects, sessions } = getDataOrganization(filelist)
@@ -94,13 +93,14 @@ describe('session', () => {
       assert.ok(
         sessionWarnings.every(warning => warning instanceof utils.issues.Issue),
       )
+      done()
     })
   })
 
   describe('getSubjectFiles', () => {
-    it('should take a list of subjects and return a set containing each file', () => {
+    it('should take a list of subjects and return a set containing each file', async done => {
       let filelist
-      utils.files.readDir(missing_session_data, files => {
+      await utils.files.readDir(missing_session_data).then(files => {
         filelist = files
       })
       const { subjects } = getDataOrganization(filelist)
@@ -114,6 +114,7 @@ describe('session', () => {
         [],
       )
       assert.ok(allFiles.every(file => subjFiles.includes(file)))
+      done()
     })
   })
 
