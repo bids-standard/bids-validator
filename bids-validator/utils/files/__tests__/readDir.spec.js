@@ -1,3 +1,6 @@
+/**
+ * @jest-environment ./bids-validator/tests/env/ExamplesEnvironment.js
+ */
 const readDir = require('../readDir.js')
 
 describe('readDir.js', () => {
