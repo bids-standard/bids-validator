@@ -27,7 +27,7 @@ const start = (dir, options, callback) => {
     } else {
       BIDS.options = options
       reset(BIDS)
-      utils.files.readDir(dir, function(files) {
+      utils.files.readDir(dir).then(files => {
         const couldBeBIDS = quickTest(files)
         if (couldBeBIDS) {
           // Is the dir using git-annex?
