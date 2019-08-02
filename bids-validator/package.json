@@ -8,7 +8,7 @@
     "url": "https://github.com/bids-standard/bids-validator.git"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.10.0"
   },
   "bin": {
     "bids-validator": "./bin/bids-validator"
