@@ -14,7 +14,11 @@ const examples_lock_opts = { wait: 300000 }
 
 const loadExamples = async () => {
   await lockPromise(examples_lock, examples_lock_opts)
-  if (!fs.existsSync('tests/data/bids-examples-' + test_version + '/')) {
+  if (
+    !fs.existsSync(
+      'bids-validator/tests/data/bids-examples-' + test_version + '/',
+    )
+  ) {
     console.log('downloading test data')
     const response = request(
       'GET',
