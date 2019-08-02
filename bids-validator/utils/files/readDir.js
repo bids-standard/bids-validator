@@ -142,23 +142,6 @@ async function getFiles(
   return filesAccumulator
 }
 
-/**
- * Leverage fs.isDirectory by following Symbolic Links
- */
-function isDirectory(path) {
-  const pathStat = fs.lstatSync(path)
-  let isDir = pathStat.isDirectory()
-  if (pathStat.isSymbolicLink()) {
-    try {
-      var targetPath = fs.realpathSync(path)
-      isDir = fs.lstatSync(targetPath).isDirectory()
-    } catch (err) {
-      isDir = false
-    }
-  }
-  return isDir
-}
-
 async function getBIDSIgnore(dir) {
   const ig = ignore()
     .add('.*')
