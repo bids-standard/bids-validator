@@ -20,6 +20,11 @@ var argv = require('yargs')
   .describe('verbose', 'Log more extensive information about issues')
   .boolean('json')
   .describe('json', 'Output results as JSON')
+  .boolean('ignoreSymlinks')
+  .describe(
+    'ignoreSymlinks',
+    'Skip any symlinked directories when validating a dataset',
+  )
   .option('config', {
     alias: 'c',
     describe:

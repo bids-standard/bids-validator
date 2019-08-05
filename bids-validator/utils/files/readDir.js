@@ -14,7 +14,7 @@ const isNode = typeof window === 'undefined'
  * In the browser it simply passes the file dir
  * object to the callback.
  */
-async function readDir(dir) {
+async function readDir(dir, options = { followSymbolicDirectories: true }) {
   /**
    * If the current environment is server side
    * nodejs/iojs import fs.
@@ -22,7 +22,7 @@ async function readDir(dir) {
   const filesObj = {}
   const ig = await getBIDSIgnore(dir)
   const filesList = isNode
-    ? await preprocessNode(path.resolve(dir), ig)
+    ? await preprocessNode(path.resolve(dir), ig, options)
     : preprocessBrowser(dir, ig)
 
   // converting array to object
@@ -78,10 +78,10 @@ function harmonizeRelativePath(path) {
  * 2. Filters out ignored files and folder.
  * 3. Harmonizes the 'relativePath' field
  */
-function preprocessNode(dir, ig) {
+function preprocessNode(dir, ig, options) {
   var str = dir.substr(dir.lastIndexOf('/') + 1) + '$'
   var rootpath = dir.replace(new RegExp(str), '')
-  return getFiles(dir, rootpath, ig)
+  return getFiles(dir, rootpath, ig, options)
 }
 
 /**
