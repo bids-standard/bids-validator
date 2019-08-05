@@ -3,7 +3,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: node:8.11.3-alpine
+      - image: node:10.16.1-alpine
     steps:
       - checkout
       - run: apk --no-cache add ca-certificates
@@ -28,7 +28,7 @@ jobs:
           command: bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders && bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders --json
   githubPagesTest:
     docker:
-      - image: node:8.11.3-alpine
+      - image: node:10.16.1-alpine
     steps:
       - checkout
       - run: apk --no-cache add ca-certificates
@@ -75,7 +75,7 @@ jobs:
             pip install dist/*.tar.gz
   deployment:
     docker:
-      - image: node:8.11.3-alpine
+      - image: node:10.16.1-alpine
     steps:
       - add_ssh_keys:
           fingerprints:
