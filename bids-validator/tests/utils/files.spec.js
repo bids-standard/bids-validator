@@ -99,7 +99,7 @@ describe('validateMisc', () => {
   })
 
   beforeEach(() => {
-    utils.files.readDir(dir, files => {
+    return utils.files.readDir(dir).then(files => {
       filelist = files
     })
   })

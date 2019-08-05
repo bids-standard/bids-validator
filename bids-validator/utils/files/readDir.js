@@ -14,28 +14,22 @@ const isNode = typeof window === 'undefined'
  * In the browser it simply passes the file dir
  * object to the callback.
  */
-function readDir(dir, callback) {
+async function readDir(dir) {
   /**
    * If the current environment is server side
    * nodejs/iojs import fs.
    */
+  const filesObj = {}
+  const ig = await getBIDSIgnore(dir)
+  const filesList = isNode
+    ? await preprocessNode(path.resolve(dir), ig)
+    : preprocessBrowser(dir, ig)
 
-  var filesObj = {}
-  var filesList = []
-
-  function callbackWrapper(ig) {
-    if (isNode) {
-      filesList = preprocessNode(dir, ig)
-    } else {
-      filesList = preprocessBrowser(dir, ig)
-    }
-    // converting array to object
-    for (var j = 0; j < filesList.length; j++) {
-      filesObj[j] = filesList[j]
-    }
-    callback(filesObj)
+  // converting array to object
+  for (let j = 0; j < filesList.length; j++) {
+    filesObj[j] = filesList[j]
   }
-  getBIDSIgnore(dir, callbackWrapper)
+  return filesObj
 }
 
 /**
@@ -87,75 +81,88 @@ function harmonizeRelativePath(path) {
 function preprocessNode(dir, ig) {
   var str = dir.substr(dir.lastIndexOf('/') + 1) + '$'
   var rootpath = dir.replace(new RegExp(str), '')
-  return getFiles(dir, [], rootpath, ig)
+  return getFiles(dir, rootpath, ig)
 }
 
 /**
  * Recursive helper function for 'preprocessNode'
  */
-function getFiles(dir, files_, rootpath, ig) {
-  files_ = files_ || []
-  const files = fs.readdirSync(dir)
-  files.map(file => {
-    var fullPath = dir + '/' + file
-    var relativePath = fullPath.replace(rootpath, '')
-    relativePath = harmonizeRelativePath(relativePath)
-
-    var fileName = file
-
-    var fileObj = {
-      name: fileName,
+async function getFiles(
+  dir,
+  rootPath,
+  ig,
+  options = { followSymbolicDirectories: true },
+) {
+  let files
+  files = await fs.promises.readdir(dir, { withFileTypes: true })
+  const filesAccumulator = []
+  // Closure to merge the next file depth into this one
+  const recursiveMerge = async nextRoot => {
+    Array.prototype.push.apply(
+      filesAccumulator,
+      await getFiles(nextRoot, rootPath, ig, options),
+    )
+  }
+  for (const file of files) {
+    const fullPath = path.join(dir, file.name)
+    const relativePath = harmonizeRelativePath(
+      path.relative(rootPath, fullPath),
+    )
+    const ignore = ig.ignores(path.relative('/', relativePath))
+    const fileObj = {
+      name: file.name,
       path: fullPath,
-      relativePath: relativePath,
+      relativePath,
+      ignore,
     }
-
-    if (ig.ignores(path.relative('/', relativePath))) {
-      fileObj.ignore = true
-    }
-
-    if (isDirectory(fullPath)) {
-      getFiles(fullPath, files_, rootpath, ig)
-    } else {
-      files_.push(fileObj)
-    }
-  })
-
-  return files_
-}
-
-/**
- * Leverage fs.isDirectory by following Symbolic Links
- */
-function isDirectory(path) {
-  const pathStat = fs.lstatSync(path)
-  let isDir = pathStat.isDirectory()
-  if (pathStat.isSymbolicLink()) {
-    try {
-      var targetPath = fs.realpathSync(path)
-      isDir = fs.lstatSync(targetPath).isDirectory()
-    } catch (err) {
-      isDir = false
+    if (!ignore) {
+      // Three cases to consider: directories, files, symlinks
+      if (file.isDirectory()) {
+        await recursiveMerge(fullPath)
+      } else if (file.isSymbolicLink()) {
+        // Allow skipping symbolic links which lead to recursion
+        // Disabling this is a big performance advantage on high latency
+        // storage but it's a good default for versatility
+        if (options.followSymbolicDirectories) {
+          try {
+            const targetPath = await fs.promises.realpath(fullPath)
+            const targetStat = await fs.promises.stat(targetPath)
+            // Either add or recurse from the target depending
+            if (targetStat.isDirectory()) {
+              await recursiveMerge(targetPath)
+            } else {
+              filesAccumulator.push(fileObj)
+            }
+          } catch (err) {
+            // Symlink points at an invalid target, skip it
+            return
+          }
+        } else {
+          // This branch assumes all symbolic links are not directories
+          filesAccumulator.push(fileObj)
+        }
+      } else {
+        filesAccumulator.push(fileObj)
+      }
     }
   }
-  return isDir
+  return filesAccumulator
 }
 
-function getBIDSIgnore(dir, callback) {
-  var ig = ignore()
+async function getBIDSIgnore(dir) {
+  const ig = ignore()
     .add('.*')
     .add('!*.icloud')
     .add('/derivatives')
     .add('/sourcedata')
     .add('/code')
 
-  var bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir)
+  const bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir)
   if (bidsIgnoreFileObj) {
-    readFile(bidsIgnoreFileObj).then(content => {
-      ig = ig.add(content)
-      callback(ig)
+    return readFile(bidsIgnoreFileObj).then(content => {
+      ig.add(content)
+      return ig
     })
-  } else {
-    callback(ig)
   }
   return ig
 }
