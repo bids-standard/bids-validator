@@ -19,11 +19,6 @@ const isNode = typeof window === 'undefined'
  * @returns {Promise<Object>}
  */
 async function readDir(dir, options = { followSymbolicDirectories: true }) {
-  /**
-   * If the current environment is server side
-   * nodejs/iojs import fs.
-   */
-
   const ig = await getBIDSIgnore(dir)
   const fileArray = isNode
     ? await preprocessNode(path.resolve(dir), ig, options)
