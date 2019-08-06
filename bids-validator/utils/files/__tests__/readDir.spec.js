@@ -22,4 +22,19 @@ describe('readDir.js', () => {
       })
     })
   })
+  describe('harmonizeRelativePath', () => {
+    it('harmonizes a basic POSIX path', () => {
+      expect(readDir.harmonizeRelativePath('test/a/path')).toEqual('/a/path')
+    })
+    it('does not mangle absolute Windows paths', () => {
+      expect(readDir.harmonizeRelativePath('C:\\dataset\\directory')).toEqual(
+        '/dataset/directory',
+      )
+    })
+    it('does not mangle relative Windows paths', () => {
+      expect(readDir.harmonizeRelativePath('dataset\\directory')).toEqual(
+        '/directory',
+      )
+    })
+  })
 })

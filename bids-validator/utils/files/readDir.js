@@ -53,9 +53,9 @@ function fileArrayToObject(fileArray) {
  * 2. Adds 'relativePath' field of each file object.
  */
 function preprocessBrowser(filesObj, ig) {
-  var filesList = []
-  for (var i = 0; i < filesObj.length; i++) {
-    var fileObj = filesObj[i]
+  const filesList = []
+  for (let i = 0; i < filesObj.length; i++) {
+    const fileObj = filesObj[i]
     fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath)
     if (ig.ignores(path.relative('/', fileObj.relativePath))) {
       fileObj.ignore = true
@@ -66,18 +66,30 @@ function preprocessBrowser(filesObj, ig) {
 }
 
 /**
- * Relative Path
+ * Harmonize Relative Path
  *
- * Takes a file and returns the correct relative path property
+ * Takes a file and returns the browser style relative path
  * base on the environment.
+ *
+ * Since this may be called in the browser, do not call Node.js modules
+ *
+ * @param {String} path Relative path to normalize
+ * @returns {String}
  */
 function harmonizeRelativePath(path) {
   // This hack uniforms relative paths for command line calls to 'BIDS-examples/ds001/' and 'BIDS-examples/ds001'
-  if (path[0] !== '/') {
-    var pathParts = path.split('/')
-    path = '/' + pathParts.slice(1).join('/')
+  if (path.indexOf('\\') !== -1) {
+    // This is likely a Windows path - Node.js
+    const pathParts = path.split('\\')
+    return '/' + pathParts.slice(1).join('/')
+  } else if (path[0] !== '/') {
+    // Bad POSIX path - Node.js
+    const pathParts = path.split('/')
+    return '/' + pathParts.slice(1).join('/')
+  } else {
+    // Already correct POSIX path - Browsers (all platforms)
+    return path
   }
-  return path
 }
 
 /**
@@ -218,4 +230,5 @@ module.exports = {
   readDir,
   getFiles,
   fileArrayToObject,
+  harmonizeRelativePath,
 }
