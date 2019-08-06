@@ -19,15 +19,25 @@ async function readDir(dir, options = { followSymbolicDirectories: true }) {
    * If the current environment is server side
    * nodejs/iojs import fs.
    */
-  const filesObj = {}
+
   const ig = await getBIDSIgnore(dir)
-  const filesList = isNode
+  const fileArray = isNode
     ? await preprocessNode(path.resolve(dir), ig, options)
     : preprocessBrowser(dir, ig)
 
+  return fileArrayToObject(fileArray)
+}
+
+/**
+ * Transform array of file-like objects to one object with each file as a property
+ * @param {Array[Object]} fileArray
+ * @returns {Object}
+ */
+function fileArrayToObject(fileArray) {
+  const filesObj = {}
   // converting array to object
-  for (let j = 0; j < filesList.length; j++) {
-    filesObj[j] = filesList[j]
+  for (let j = 0; j < fileArray.length; j++) {
+    filesObj[j] = fileArray[j]
   }
   return filesObj
 }
@@ -59,11 +69,6 @@ function preprocessBrowser(filesObj, ig) {
  */
 function harmonizeRelativePath(path) {
   // This hack uniforms relative paths for command line calls to 'BIDS-examples/ds001/' and 'BIDS-examples/ds001'
-  // try {
-  //   console.log(path[0] == '/')
-  // } catch(e) {
-  //   console.log('e:', e)
-  // }
   if (path[0] !== '/') {
     var pathParts = path.split('/')
     path = '/' + pathParts.slice(1).join('/')
@@ -207,5 +212,6 @@ function getBIDSIgnoreFileObjBrowser(dir) {
 module.exports = {
   default: readDir,
   readDir,
-  getFiles
+  getFiles,
+  fileArrayToObject,
 }
