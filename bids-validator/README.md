@@ -14,7 +14,7 @@
       couple of minutes please open [developer tools ](https://developer.chrome.com/devtools)
       and report the error at [https://github.com/bids-standard/bids-validator/issues](https://github.com/bids-standard/bids-validator/issues).
 1. Command line version:
-   1. Install [Node.js](https://nodejs.org) (at least version 10.10)
+   1. Install [Node.js](https://nodejs.org) (at least version 10.11.0)
    1. From a terminal run `npm install -g bids-validator`
    1. Run `bids-validator` to start validating datasets.
 1. Docker
