@@ -3,8 +3,8 @@
  */
 const readDir = require('../readDir.js').default
 
-describe('readDir.js', () => {
-  describe('getFiles()', () => {
+describe('readDir.js - examples integration', () => {
+  describe('readDir()', () => {
     it('returns expected files', async done => {
       readDir('bids-validator/tests/data/bids-examples-1.2.0/ds002/').then(
         files => {
@@ -17,6 +17,44 @@ describe('readDir.js', () => {
           done()
         },
       )
+    })
+    it('correctly follows symlinks for subjects with followSymbolicLink: true', async done => {
+      readDir('bids-validator/tests/data/symlinked_subject', {
+        followSymbolicDirectories: true,
+      }).then(files => {
+        expect(Object.keys(files)).toHaveLength(12)
+        expect(Object.values(files).map(f => f.name)).toEqual([
+          'CHANGES',
+          'README',
+          'dataset_description.json',
+          'participants.tsv',
+          'sub-01_T1w.nii',
+          'sub-01_T1w.nii.gz',
+          'sub-0-1_task-rhymejudgment_bold.nii.gz',
+          'sub-01_task-rhyme-judgment_bold.nii.gz',
+          'sub-01_task-rhyme-judgment_events.tsv',
+          'sub-01_task-rhyme_judgment_bold.nii.gz',
+          'sub-01_task-rhyme_judgment_events.tsv',
+          'task-rhymejudgment_bold.json',
+        ])
+        done()
+      })
+    })
+    it('correctly does not follow symlinks for subjects with followSymbolicLink: false', async done => {
+      readDir('bids-validator/tests/data/symlinked_subject', {
+        followSymbolicDirectories: false,
+      }).then(files => {
+        expect(Object.keys(files)).toHaveLength(6)
+        expect(Object.values(files).map(f => f.name)).toEqual([
+          'CHANGES',
+          'README',
+          'dataset_description.json',
+          'participants.tsv',
+          'sub-01',
+          'task-rhymejudgment_bold.json',
+        ])
+        done()
+      })
     })
   })
 })
