@@ -51,13 +51,16 @@ function assertErrorCode(errors, expected_error_code) {
   assert(matchingErrors.length > 0)
 }
 
+// Default validate.BIDS options
+const options = { ignoreNiftiHeaders: true, json: true }
+const enableNiftiHeaders = { json: true }
+
 describe('BIDS example datasets ', function() {
   describe('basic example dataset tests', () => {
     getDirectories(
       dataDirectory + 'bids-examples-' + global.test_version + '/',
     ).forEach(function testDataset(path) {
       it(path, isdone => {
-        const options = { ignoreNiftiHeaders: true }
         validate.BIDS(createExampleFileList(path), options, function(issues) {
           var warnings = issues.warnings
           var session_flag = false
@@ -80,7 +83,6 @@ describe('BIDS example datasets ', function() {
 
   // we need to have at least one non-dynamic test
   it('validates path without trailing backslash', function(isdone) {
-    var options = { ignoreNiftiHeaders: true }
     validate.BIDS(createExampleFileList('ds001'), options, function(
       issues,
       summary,
@@ -106,8 +108,7 @@ describe('BIDS example datasets ', function() {
 
   // we need to have at least one non-dynamic test
   it('validates dataset with valid nifti headers', function(isdone) {
-    var options = { ignoreNiftiHeaders: false }
-    validate.BIDS(createDatasetFileList('valid_headers'), options, function(
+    validate.BIDS(createDatasetFileList('valid_headers'), enableNiftiHeaders, function(
       issues,
       summary,
     ) {
@@ -134,8 +135,7 @@ describe('BIDS example datasets ', function() {
 
   // test for duplicate files present with both .nii and .nii.gz extension
   it('validates dataset for duplicate files present with both .nii and .nii.gz extension', function(isdone) {
-    var options = { ignoreNiftiHeaders: false }
-    validate.BIDS(createDatasetFileList('valid_filenames'), options, function(
+    validate.BIDS(createDatasetFileList('valid_filenames'), enableNiftiHeaders, function(
       issues,
     ) {
       assertErrorCode(issues.errors, 74)
@@ -145,8 +145,7 @@ describe('BIDS example datasets ', function() {
 
   // test for illegal characters used in acq and task name
   it('validates dataset with illegal characters in task name', function(isdone) {
-    var options = { ignoreNiftiHeaders: false }
-    validate.BIDS(createDatasetFileList('valid_filenames'), options, function(
+    validate.BIDS(createDatasetFileList('valid_filenames'), enableNiftiHeaders, function(
       issues,
     ) {
       assertErrorCode(issues.errors, 58)
@@ -156,8 +155,7 @@ describe('BIDS example datasets ', function() {
 
   // test for illegal characters used in sub name
   it('validates dataset with illegal characters in sub name', function(isdone) {
-    var options = { ignoreNiftiHeaders: false }
-    validate.BIDS(createDatasetFileList('valid_filenames'), options, function(
+    validate.BIDS(createDatasetFileList('valid_filenames'), enableNiftiHeaders, function(
       issues,
     ) {
       assertErrorCode(issues.errors, 64)
@@ -166,7 +164,6 @@ describe('BIDS example datasets ', function() {
   })
 
   it('checks for subjects with no valid data', function(isdone) {
-    var options = { ignoreNiftiHeaders: true }
     validate.BIDS(createDatasetFileList('no_valid_data'), options, function(
       issues,
     ) {
@@ -176,7 +173,6 @@ describe('BIDS example datasets ', function() {
   })
 
   it('validates MRI modalities', function(isdone) {
-    var options = { ignoreNiftiHeaders: true }
     validate.BIDS(createExampleFileList('ds001'), options, function(
       issues,
       summary,
@@ -201,7 +197,6 @@ describe('BIDS example datasets ', function() {
   })
 
   it('checks for data dictionaries without corresponding data files', function(isdone) {
-    var options = { ignoreNiftiHeaders: true }
     validate.BIDS(createDatasetFileList('unused_data_dict'), options, function(
       issues,
     ) {
@@ -211,7 +206,6 @@ describe('BIDS example datasets ', function() {
   })
 
   it('checks for fieldmaps with no _magnitude file', function(isdone) {
-    var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
       createDatasetFileList('fieldmap_without_magnitude'),
       options,
@@ -223,7 +217,6 @@ describe('BIDS example datasets ', function() {
   })
 
   it('should not throw a warning if all _phasediff.nii are associated with _magnitude1.nii', function(isdone) {
-    var options = { ignoreNiftiHeaders: true }
     validate.BIDS(createExampleFileList('hcp_example_bids'), options, function(
       issues,
     ) {
@@ -233,7 +226,6 @@ describe('BIDS example datasets ', function() {
   })
 
   it('should throw a warning if there are _phasediff.nii without an associated _magnitude1.nii', function(isdone) {
-    var options = { ignoreNiftiHeaders: true }
     validate.BIDS(
       createDatasetFileList('phasediff_without_magnitude1'),
       options,
