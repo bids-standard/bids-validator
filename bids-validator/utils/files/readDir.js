@@ -204,4 +204,8 @@ function getBIDSIgnoreFileObjBrowser(dir) {
   return bidsIgnoreFileObj
 }
 
-module.exports = readDir
+module.exports = {
+  default: readDir,
+  readDir,
+  getFiles
+}
