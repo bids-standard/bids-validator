@@ -13,6 +13,10 @@ const isNode = typeof window === 'undefined'
  * similar structure to how chrome reads a directory.
  * In the browser it simply passes the file dir
  * object to the callback.
+ * @param {String} dir Path to read
+ * @param {Object} options
+ * @param {boolean} options.followSymbolicDirectories enable to recursively follow directory symlinks
+ * @returns {Promise<Object>}
  */
 async function readDir(dir, options = { followSymbolicDirectories: true }) {
   /**
