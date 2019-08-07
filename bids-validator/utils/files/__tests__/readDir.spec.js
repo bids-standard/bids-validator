@@ -36,5 +36,10 @@ describe('readDir.js', () => {
         '/directory',
       )
     })
+    it('does not mangle relative Windows paths with parent directories', () => {
+      expect(
+        readDir.harmonizeRelativePath('..\\..\\dataset\\directory'),
+      ).toEqual('/../dataset/directory')
+    })
   })
 })
