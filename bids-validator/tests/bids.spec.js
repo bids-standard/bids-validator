@@ -108,59 +108,66 @@ describe('BIDS example datasets ', function() {
 
   // we need to have at least one non-dynamic test
   it('validates dataset with valid nifti headers', function(isdone) {
-    validate.BIDS(createDatasetFileList('valid_headers'), enableNiftiHeaders, function(
-      issues,
-      summary,
-    ) {
-      var errors = issues.errors
-      var warnings = issues.warnings
-      assert(summary.sessions.length === 0)
-      assert(summary.subjects.length === 1)
-      assert.deepEqual(summary.tasks, ['rhyme judgment'])
-      assert(summary.modalities.includes('T1w'))
-      assert(summary.modalities.includes('bold'))
-      assert(summary.totalFiles === 8)
-      assert(
-        errors.findIndex(error => error.code === 60) > -1,
-        'errors do not contain a code 60',
-      )
-      assert.deepEqual(warnings.length, 4)
-      assert(
-        warnings.findIndex(warning => warning.code === 13) > -1,
-        'warnings do not contain a code 13',
-      )
-      isdone()
-    })
+    validate.BIDS(
+      createDatasetFileList('valid_headers'),
+      enableNiftiHeaders,
+      function(issues, summary) {
+        var errors = issues.errors
+        var warnings = issues.warnings
+        assert(summary.sessions.length === 0)
+        assert(summary.subjects.length === 1)
+        assert.deepEqual(summary.tasks, ['rhyme judgment'])
+        assert(summary.modalities.includes('T1w'))
+        assert(summary.modalities.includes('bold'))
+        assert(summary.totalFiles === 8)
+        assert(
+          errors.findIndex(error => error.code === 60) > -1,
+          'errors do not contain a code 60',
+        )
+        assert.deepEqual(warnings.length, 4)
+        assert(
+          warnings.findIndex(warning => warning.code === 13) > -1,
+          'warnings do not contain a code 13',
+        )
+        isdone()
+      },
+    )
   })
 
   // test for duplicate files present with both .nii and .nii.gz extension
   it('validates dataset for duplicate files present with both .nii and .nii.gz extension', function(isdone) {
-    validate.BIDS(createDatasetFileList('valid_filenames'), enableNiftiHeaders, function(
-      issues,
-    ) {
-      assertErrorCode(issues.errors, 74)
-      isdone()
-    })
+    validate.BIDS(
+      createDatasetFileList('valid_filenames'),
+      enableNiftiHeaders,
+      function(issues) {
+        assertErrorCode(issues.errors, 74)
+        isdone()
+      },
+    )
   })
 
   // test for illegal characters used in acq and task name
   it('validates dataset with illegal characters in task name', function(isdone) {
-    validate.BIDS(createDatasetFileList('valid_filenames'), enableNiftiHeaders, function(
-      issues,
-    ) {
-      assertErrorCode(issues.errors, 58)
-      isdone()
-    })
+    validate.BIDS(
+      createDatasetFileList('valid_filenames'),
+      enableNiftiHeaders,
+      function(issues) {
+        assertErrorCode(issues.errors, 58)
+        isdone()
+      },
+    )
   })
 
   // test for illegal characters used in sub name
   it('validates dataset with illegal characters in sub name', function(isdone) {
-    validate.BIDS(createDatasetFileList('valid_filenames'), enableNiftiHeaders, function(
-      issues,
-    ) {
-      assertErrorCode(issues.errors, 64)
-      isdone()
-    })
+    validate.BIDS(
+      createDatasetFileList('valid_filenames'),
+      enableNiftiHeaders,
+      function(issues) {
+        assertErrorCode(issues.errors, 64)
+        isdone()
+      },
+    )
   })
 
   it('checks for subjects with no valid data', function(isdone) {
