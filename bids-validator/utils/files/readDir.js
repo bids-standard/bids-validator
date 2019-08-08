@@ -95,7 +95,7 @@ function harmonizeRelativePath(path) {
  * 3. Harmonizes the 'relativePath' field
  */
 function preprocessNode(dir, ig, options) {
-  var str = dir.substr(dir.lastIndexOf('/') + 1) + '$'
+  var str = dir.substr(dir.lastIndexOf(path.sep) + 1) + '$'
   var rootpath = dir.replace(new RegExp(str), '')
   return getFiles(dir, rootpath, ig, options)
 }
