@@ -1,0 +1,10 @@
+stages:
+    - test
+
+tests:
+  stage: test
+  tags:
+    - windows
+  script:
+    - yarn
+    - yarn test
