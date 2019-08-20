@@ -8,7 +8,7 @@
     "lint": "./node_modules/eslint/bin/eslint.js ./bids-validator/**/*.js",
     "coverage": "NODE_OPTIONS=--no-warnings ./node_modules/.bin/jest --coverage",
     "codecov": "./node_modules/.bin/codecov",
-    "test": "NODE_OPTIONS=--no-warnings ./node_modules/.bin/jest",
+    "test": "jest",
     "npmPublish": "cd bids-validator && publish",
     "web-dev": "cd bids-validator-web && yarn dev",
     "web-build": "cd bids-validator-web && yarn build",

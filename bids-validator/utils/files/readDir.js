@@ -13,21 +13,30 @@ const isNode = typeof window === 'undefined'
  * similar structure to how chrome reads a directory.
  * In the browser it simply passes the file dir
  * object to the callback.
+ * @param {String} dir Path to read
+ * @param {Object} options
+ * @param {boolean} options.followSymbolicDirectories enable to recursively follow directory symlinks
+ * @returns {Promise<Object>}
  */
 async function readDir(dir, options = { followSymbolicDirectories: true }) {
-  /**
-   * If the current environment is server side
-   * nodejs/iojs import fs.
-   */
-  const filesObj = {}
   const ig = await getBIDSIgnore(dir)
-  const filesList = isNode
+  const fileArray = isNode
     ? await preprocessNode(path.resolve(dir), ig, options)
     : preprocessBrowser(dir, ig)
 
+  return fileArrayToObject(fileArray)
+}
+
+/**
+ * Transform array of file-like objects to one object with each file as a property
+ * @param {Array[Object]} fileArray
+ * @returns {Object}
+ */
+function fileArrayToObject(fileArray) {
+  const filesObj = {}
   // converting array to object
-  for (let j = 0; j < filesList.length; j++) {
-    filesObj[j] = filesList[j]
+  for (let j = 0; j < fileArray.length; j++) {
+    filesObj[j] = fileArray[j]
   }
   return filesObj
 }
@@ -39,9 +48,9 @@ async function readDir(dir, options = { followSymbolicDirectories: true }) {
  * 2. Adds 'relativePath' field of each file object.
  */
 function preprocessBrowser(filesObj, ig) {
-  var filesList = []
-  for (var i = 0; i < filesObj.length; i++) {
-    var fileObj = filesObj[i]
+  const filesList = []
+  for (let i = 0; i < filesObj.length; i++) {
+    const fileObj = filesObj[i]
     fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath)
     if (ig.ignores(path.relative('/', fileObj.relativePath))) {
       fileObj.ignore = true
@@ -52,23 +61,30 @@ function preprocessBrowser(filesObj, ig) {
 }
 
 /**
- * Relative Path
+ * Harmonize Relative Path
  *
- * Takes a file and returns the correct relative path property
+ * Takes a file and returns the browser style relative path
  * base on the environment.
+ *
+ * Since this may be called in the browser, do not call Node.js modules
+ *
+ * @param {String} path Relative path to normalize
+ * @returns {String}
  */
 function harmonizeRelativePath(path) {
   // This hack uniforms relative paths for command line calls to 'BIDS-examples/ds001/' and 'BIDS-examples/ds001'
-  // try {
-  //   console.log(path[0] == '/')
-  // } catch(e) {
-  //   console.log('e:', e)
-  // }
-  if (path[0] !== '/') {
-    var pathParts = path.split('/')
-    path = '/' + pathParts.slice(1).join('/')
+  if (path.indexOf('\\') !== -1) {
+    // This is likely a Windows path - Node.js
+    const pathParts = path.split('\\')
+    return '/' + pathParts.slice(1).join('/')
+  } else if (path[0] !== '/') {
+    // Bad POSIX path - Node.js
+    const pathParts = path.split('/')
+    return '/' + pathParts.slice(1).join('/')
+  } else {
+    // Already correct POSIX path - Browsers (all platforms)
+    return path
   }
-  return path
 }
 
 /**
@@ -79,8 +95,8 @@ function harmonizeRelativePath(path) {
  * 3. Harmonizes the 'relativePath' field
  */
 function preprocessNode(dir, ig, options) {
-  var str = dir.substr(dir.lastIndexOf('/') + 1) + '$'
-  var rootpath = dir.replace(new RegExp(str), '')
+  const str = dir.substr(dir.lastIndexOf(path.sep) + 1) + '$'
+  const rootpath = dir.replace(new RegExp(str), '')
   return getFiles(dir, rootpath, ig, options)
 }
 
@@ -204,4 +220,10 @@ function getBIDSIgnoreFileObjBrowser(dir) {
   return bidsIgnoreFileObj
 }
 
-module.exports = readDir
+module.exports = {
+  default: readDir,
+  readDir,
+  getFiles,
+  fileArrayToObject,
+  harmonizeRelativePath,
+}
