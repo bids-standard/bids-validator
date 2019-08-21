@@ -21,4 +21,35 @@ Metadata.prototype.add = function(key, value) {
   if (key && value) this[key] = value
 }
 
-module.exports = Metadata
+module.exports = new Metadata()
+/** METADATA **/
+/* openneuro specific */
+// datasetId: 'ID!',
+// datasetUrl: 'String',
+// firstSnapshotCreatedAt: 'DateTime',
+// latestSnapshotCreatedAt: 'DateTime',
+// adminUsers: null, //'String'
+//
+/* not intrinsic to data */
+// associatedPaperDOI: null, //'String'
+// ages: null, //'String'
+// species: null, //'String',
+// studyLongitudinal: null, //'String'
+// notes: null, //'String'
+//
+/* extractable from summary */
+// subjectCount: null, //'Int'
+// modalities: null, //'[String]'
+//
+/* extractable from description
+// datasetName: null, //'String'
+// seniorAuthor: null, //'PersonNameInput'
+// openneuroPaperDOI: null, //'String'
+//
+/* not sure if extractable */
+// dataProcessed: null, //'String'
+// trialCount: null, //'Int'
+// dxStatus: null, //'[String]'
+// tasksCompleted: null, //'Boolean'
+// studyDesign: null, //'String'
+// studyDomain: null, //'String'
