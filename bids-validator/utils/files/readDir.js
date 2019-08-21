@@ -125,13 +125,12 @@ async function getFiles(
       path.relative(rootPath, fullPath),
     )
     const ignore = ig.ignores(path.relative('/', relativePath))
-    const fileObj = {
-      name: file.name,
-      path: fullPath,
-      relativePath,
-      ignore,
-    }
     if (!ignore) {
+      const fileObj = {
+        name: file.name,
+        path: fullPath,
+        relativePath,
+      }
       // Three cases to consider: directories, files, symlinks
       if (file.isDirectory()) {
         await recursiveMerge(fullPath)
