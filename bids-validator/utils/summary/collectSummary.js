@@ -2,6 +2,7 @@ const files = require('../files')
 const collectModalities = require('./collectModalities')
 const collectSessions = require('./collectSessions')
 const collectSubjects = require('./collectSubjects')
+const Metadata = require('./metadata')
 
 const collectSummary = (fileList, options) => {
   // remove ignored files from list:
@@ -18,36 +19,38 @@ const collectSummary = (fileList, options) => {
     modalities: [],
     totalFiles: Object.keys(fileList).length,
     size: 0,
-    metadata: {
-      /* openneuro specific */
-      // datasetId: 'ID!',
-      // datasetUrl: 'String',
-      // firstSnapshotCreatedAt: 'DateTime',
-      // latestSnapshotCreatedAt: 'DateTime',
-      // adminUsers: null, //'String'
-      //
-      /* not intrinsic to data */
-      // associatedPaperDOI: null, //'String'
-      // openneuroPaperDOI: null, //'String'
-      // ages: null, //'String'
-      // notes: null, //'String'
-      //
-      /* extractable */
-      datasetName: null, //'String'
-      subjectCount: null, //'Int'
-      trialCount: null, //'Int'
-      dataProcessed: null, //'String'
-      seniorAuthor: null, //'PersonNameInput'
-      //
-      /* not sure if extractable */
-      // modalities: null, //'[String]'
-      // dxStatus: null, //'[String]'
-      // tasksCompleted: null, //'Boolean'
-      // studyDesign: null, //'String'
-      // studyDomain: null, //'String'
-      // studyLongitudinal: null, //'String'
-      // species: null, //'String'
-    },
+    metadata: new Metadata(),
+    /** METADATA **/
+    /* openneuro specific */
+    // datasetId: 'ID!',
+    // datasetUrl: 'String',
+    // firstSnapshotCreatedAt: 'DateTime',
+    // latestSnapshotCreatedAt: 'DateTime',
+    // adminUsers: null, //'String'
+    //
+    /* not intrinsic to data */
+    // associatedPaperDOI: null, //'String'
+    // ages: null, //'String'
+    // species: null, //'String',
+    // studyLongitudinal: null, //'String'
+    // notes: null, //'String'
+    //
+    /* extractable from summary */
+    // subjectCount: null, //'Int'
+    // modalities: null, //'[String]'
+    //
+    /* extractable from description
+    // datasetName: null, //'String'
+    // seniorAuthor: null, //'PersonNameInput'
+    // openneuroPaperDOI: null, //'String'
+    //
+    /* not sure if extractable */
+    // dataProcessed: null, //'String'
+    // trialCount: null, //'Int'
+    // dxStatus: null, //'[String]'
+    // tasksCompleted: null, //'Boolean'
+    // studyDesign: null, //'String'
+    // studyDomain: null, //'String'
   }
 
   //collect file directory statistics
@@ -61,6 +64,9 @@ const collectSummary = (fileList, options) => {
 
   // collect sessions
   summary.sessions = collectSessions(fileList, options)
+
+  // collect metadata in summary
+  summary.metadata.collectFromSummary(summary)
 
   return summary
 }

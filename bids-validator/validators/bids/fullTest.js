@@ -122,6 +122,11 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       const datasetDescriptionIssues = checkDatasetDescription(jsonContentsDict)
       self.issues = self.issues.concat(datasetDescriptionIssues)
 
+      // Extract metadata from description
+      summary.metadata.collectFromDescription(
+        jsonContentsDict['/dataset_description.json'],
+      )
+
       // Check for README file in the proper place
       const readmeIssues = checkReadme(fileList)
       self.issues = self.issues.concat(readmeIssues)
