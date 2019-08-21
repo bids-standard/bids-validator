@@ -53,4 +53,13 @@ describe('dataset metadata', () => {
     metadata.collectFromDescription(description)
     expect(metadata).toEqual({ datasetName: description.Name })
   })
+  it('captures metadata from files', done => {
+    const dir = createDatasetFileList(validDataset)
+    const options = {}
+    validate(dir, options).then(({ summary }) => {
+      // bids-validator/tests/data/valid_dataset/ does have derivatives
+      assert.strictEqual(summary.metadata.dataProcessed, true)
+      done()
+    })
+  })
 })
