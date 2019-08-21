@@ -18,6 +18,36 @@ const collectSummary = (fileList, options) => {
     modalities: [],
     totalFiles: Object.keys(fileList).length,
     size: 0,
+    metadata: {
+      /* openneuro specific */
+      // datasetId: 'ID!',
+      // datasetUrl: 'String',
+      // firstSnapshotCreatedAt: 'DateTime',
+      // latestSnapshotCreatedAt: 'DateTime',
+      // adminUsers: null, //'String'
+      //
+      /* not intrinsic to data */
+      // associatedPaperDOI: null, //'String'
+      // openneuroPaperDOI: null, //'String'
+      // ages: null, //'String'
+      // notes: null, //'String'
+      //
+      /* extractable */
+      datasetName: null, //'String'
+      subjectCount: null, //'Int'
+      trialCount: null, //'Int'
+      dataProcessed: null, //'String'
+      seniorAuthor: null, //'PersonNameInput'
+      //
+      /* not sure if extractable */
+      // modalities: null, //'[String]'
+      // dxStatus: null, //'[String]'
+      // tasksCompleted: null, //'Boolean'
+      // studyDesign: null, //'String'
+      // studyDomain: null, //'String'
+      // studyLongitudinal: null, //'String'
+      // species: null, //'String'
+    },
   }
 
   //collect file directory statistics

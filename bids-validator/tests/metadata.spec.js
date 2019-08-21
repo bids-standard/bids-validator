@@ -4,8 +4,6 @@
  */
 
 const { assert } = require('chai')
-const fs = require('fs')
-const path = require('path')
 const { createFileList } = require('./env/FileList.js')
 
 const validate = (dir, options) =>
