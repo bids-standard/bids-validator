@@ -58,4 +58,29 @@ describe('checkDatasetDescription', () => {
       )
     })
   })
+  describe('checkGeneticDatabaseField', () => {
+    it('returns code 114 when there is no GeneticDatabase with a genetic_info.json', () => {
+       const invalidJsonContentsDict = {
+        '/dataset_description.json': { },
+        '/genetic_info.json': { }
+      }
+      let issues = checkDatasetDescription(invalidJsonContentsDict)
+      assert(
+        issues.findIndex(issue => issue.code === 114) > -1,
+        'issues include a code 114',
+      )
+    })
+    it('does not return code 114 when GeneticDatabase field and genetic_info.json present', () => {
+       const validJsonContentsDict = {
+        '/dataset_description.json': { GeneticDatabase: ['GeneticDatabase'] },
+        '/genetic_info.json': { }
+      }
+      let issues = checkDatasetDescription(validJsonContentsDict)
+      assert(
+        issues.findIndex(issue => issue.code === 114) == -1,
+        'issues does not include a code 114',
+      )
+    })
+
+  })
 })

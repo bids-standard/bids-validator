@@ -632,4 +632,10 @@ module.exports = {
     reason:
       'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered because there are no authors, which will make DOI registration from dataset metadata impossible.',
   },
+  114: {
+    key: 'NO_GENETIC_DATABASE',
+    severity: 'error',
+    reason:
+      'A genetic_info.json file is present but no GeneticDatabase field present in dataset_description.json.',
+  },
 }

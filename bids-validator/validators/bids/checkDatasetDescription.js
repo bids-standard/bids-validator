@@ -6,6 +6,10 @@ const checkDatasetDescription = jsonContentsDict => {
   const hasDatasetDescription = jsonFilePaths.some(path => {
     return path == '/dataset_description.json'
   })
+  const hasGeneticInfo = jsonFilePaths.some(path => {
+    return path == '/genetic_info.json'
+  })
+
   if (!hasDatasetDescription) {
     issues.push(new Issue({ code: 57 }))
   } else {
@@ -14,6 +18,11 @@ const checkDatasetDescription = jsonContentsDict => {
     // check to ensure that the dataset description Authors are
     // properly formatted
     issues = issues.concat(checkAuthorField(datasetDescription.Authors))
+
+    // if genetic info json present ensure mandatory GeneticDataset present
+    if (hasGeneticInfo && !('GeneticsDataset' in datasetDescription)) {
+      issues = issues.push(new Issue({ code: 114 }));
+    }
   }
   return issues
 }

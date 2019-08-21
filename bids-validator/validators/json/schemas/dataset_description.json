@@ -43,7 +43,22 @@
     },
     "DatasetDOI": {
       "type": "string"
-    }
+    },
+    "GeneticDataBase": {
+      "items": {
+        "type": "string"
+      },
+      "type": ["array", "string"]
+    },
+    "GeneticDatabase": {
+      "type": "string"
+    },
+    "GeneticDescriptor": {
+      "items": {
+        "type": "string"
+      },
+      "type": ["array", "string"]
+    },
   },
   "required": ["Name", "BIDSVersion"],
   "type": "object"

@@ -1,7 +1,7 @@
 {
   "type": "object",
   "properties": {
-    "GeneticLevel":	{ 
+    "GeneticLevel":	{
       "type": "string",
       "enum": ["Genetic", "Genomic", "Epigenomic", "Transcriptomic", "Metabolomic", "Proteomic"]
     },
