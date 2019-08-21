@@ -3,10 +3,8 @@ function Metadata(defaultData = {}) {
 }
 
 Metadata.prototype.collectFromSummary = function(summary) {
-  if (typeof summary === 'object') {
-    this.add('subjectCount', summary.subjects.length)
-    this.add('modalities', summary.modalities)
-  }
+  this.add('subjectCount', summary.subjects.length)
+  this.add('modalities', summary.modalities)
 }
 
 Metadata.prototype.collectFromDescription = function(description) {
@@ -18,38 +16,39 @@ Metadata.prototype.collectFromDescription = function(description) {
 }
 
 Metadata.prototype.add = function(key, value) {
-  if (key && value) this[key] = value
+  if (key && exists(value)) this[key] = value
 }
 
-module.exports = new Metadata()
+module.exports = Metadata
 /** METADATA **/
-/* openneuro specific */
-// datasetId: 'ID!',
-// datasetUrl: 'String',
-// firstSnapshotCreatedAt: 'DateTime',
-// latestSnapshotCreatedAt: 'DateTime',
-// adminUsers: null, //'String'
-//
-/* not intrinsic to data */
-// associatedPaperDOI: null, //'String'
-// ages: null, //'String'
-// species: null, //'String',
-// studyLongitudinal: null, //'String'
-// notes: null, //'String'
-//
-/* extractable from summary */
-// subjectCount: null, //'Int'
-// modalities: null, //'[String]'
-//
-/* extractable from description
-// datasetName: null, //'String'
-// seniorAuthor: null, //'PersonNameInput'
-// openneuroPaperDOI: null, //'String'
-//
+
+/* not intrinsic to data; get from form */
+// associatedPaperDOI
+// ages
+// species
+// studyLongitudinal
+// notes
+
 /* not sure if extractable */
-// dataProcessed: null, //'String'
-// trialCount: null, //'Int'
-// dxStatus: null, //'[String]'
-// tasksCompleted: null, //'Boolean'
-// studyDesign: null, //'String'
-// studyDomain: null, //'String'
+// dataProcessed
+// dxStatus
+// trialCount // are trials equivalent to tasks?
+// tasksCompleted
+// studyDesign
+// studyDomain
+
+/* can get from openneuro */
+// datasetId
+// datasetUrl
+// firstSnapshotCreatedAt
+// latestSnapshotCreatedAt
+// adminUsers
+
+/* extractable from summary */
+// subjectCount
+// modalities
+
+/* extractable from description */
+// datasetName
+// seniorAuthor
+// openneuroPaperDOI

@@ -2,7 +2,7 @@ const files = require('../files')
 const collectModalities = require('./collectModalities')
 const collectSessions = require('./collectSessions')
 const collectSubjects = require('./collectSubjects')
-const metadata = require('./metadata')
+const Metadata = require('./metadata')
 
 const collectSummary = (fileList, options) => {
   // remove ignored files from list:
@@ -19,7 +19,7 @@ const collectSummary = (fileList, options) => {
     modalities: [],
     totalFiles: Object.keys(fileList).length,
     size: 0,
-    metadata,
+    metadata: new Metadata(),
   }
 
   //collect file directory statistics
