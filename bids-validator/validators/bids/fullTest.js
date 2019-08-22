@@ -141,7 +141,6 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     })
     .then(jsonIssues => {
       self.issues = self.issues.concat(jsonIssues)
-
       // Nifti validation
       return NIFTI.validate(
         files.nifti,

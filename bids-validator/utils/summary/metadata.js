@@ -2,9 +2,11 @@ function Metadata(defaultData = {}) {
   Object.entries(defaultData).forEach(([key, value]) => this.add(key, value))
 }
 
+const isEmptyArray = thing => Array.isArray(thing) && thing.length === 0
 Metadata.prototype.collectFromSummary = function(summary) {
-  this.add('subjectCount', summary.subjects.length)
+  this.add('subjectCount', summary.subjects && summary.subjects.length)
   this.add('modalities', summary.modalities)
+  this.add('tasksCompleted', isEmptyArray(summary.tasks) ? 'n/a' : null)
 }
 
 Metadata.prototype.collectFromDescription = function(description) {
@@ -124,8 +126,6 @@ module.exports = Metadata
 // adminUsers
 
 // /* still need to extract from validator */
-// age // participants tsv
-// tasksCompleted // if no tasks exist, n/a? // note: point users to docs
 
 // /* extractable from summary */
 // subjectCount
@@ -137,6 +137,10 @@ module.exports = Metadata
 
 // /* extractable from files */
 // dataProcessed
+
+// /* extractable from participants.tsv */
+// age // participants tsv
+// tasksCompleted // if no tasks exist, n/a? // note: point users to docs
 
 // /* ASK FRANKLIN */
 // studyDesign // anything to do with events

@@ -46,6 +46,24 @@ describe('dataset metadata', () => {
     assert.strictEqual(summary.metadata.subjectCount, summary.subjects.length)
   })
 
+  it("sets tasksCompleted to 'n/a' if validator finds no tasks", () => {
+    const summary = {
+      tasks: [],
+    }
+    const metadata = new Metadata()
+    metadata.collectFromSummary(summary)
+    assert.strictEqual(metadata.tasksCompleted, 'n/a')
+  })
+
+  it('does not save tasksCompleted field if tasks exist', () => {
+    const summary = {
+      tasks: ['a task', 'or two'],
+    }
+    const metadata = new Metadata()
+    metadata.collectFromSummary(summary)
+    expect(metadata).not.toHaveProperty('tasksCompleted')
+  })
+
   it('ignores nonexistant or missing data', () => {
     const metadata = new Metadata()
     const description = {
