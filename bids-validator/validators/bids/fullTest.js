@@ -93,8 +93,13 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
         stimuli,
       )
     })
-    .then(tsvIssues => {
+    .then(({ tsvIssues, participantsTsvContent }) => {
       self.issues = self.issues.concat(tsvIssues)
+
+      // extract metadata on participants to metadata.age and
+      // return metadata on each subject from participants.tsv
+      const participantsMetadata = summary.metadata.collectFromParticipants(participantsTsvContent)
+      summary.participantsMetadata = { ...participantsMetadata }
 
       // Bvec validation
       return bvec.validate(files.bvec, bContentsDict)

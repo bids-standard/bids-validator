@@ -8,6 +8,7 @@ const collectSummary = (fileList, options) => {
   const summary = {
     sessions: [],
     subjects: [],
+    participantsMetadata: {},
     tasks: [],
     modalities: [],
     totalFiles: -1,
