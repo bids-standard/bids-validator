@@ -5,21 +5,21 @@
       "type": "string",
       "enum": ["Genetic", "Genomic", "Epigenomic", "Transcriptomic", "Metabolomic", "Proteomic"]
     },
-    "AnalyticalApproach": { "type": "string" }
+    "AnalyticalApproach": { "type": "string" },
     "SampleOrigin": {
       "type": "string",
       "enum": ["blood", "saliva", "brain", "csf", "breast milk", "bile", "amniotic fluid", "other biospecimen"]
-    ,}
+    },
     "TissueOrigin": {
       "type": "string",
       "enum": ["gray matter", "white matter", "csf", "meninges", "macrovascular", "microvascular"]
     },
     "BrainLocation": { "type": "string" },
-    "CellType": { "type": "string" },
+    "CellType": { "type": "string" }
   },
-  "required: [
+  "required": [
     "GeneticLevel",
     "SampleOrigin"
-  ]
+  ],
   "additionalProperties": false
 }
