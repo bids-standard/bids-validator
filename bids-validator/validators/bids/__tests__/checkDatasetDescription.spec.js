@@ -72,13 +72,16 @@ describe('checkDatasetDescription', () => {
     })
     it('does not return code 114 when GeneticDatabase field and genetic_info.json present', () => {
        const validJsonContentsDict = {
-        '/dataset_description.json': { GeneticDatabase: ['GeneticDatabase'] },
+        '/dataset_description.json': {
+          Authors: ['Benny', 'the Jets'],
+          GeneticDatabase: ['GeneticDatabase'],
+        },
         '/genetic_info.json': { }
       }
       let issues = checkDatasetDescription(validJsonContentsDict)
       assert(
-        issues.findIndex(issue => issue.code === 114) == -1,
-        'issues does not include a code 114',
+        issues.findIndex(issue => issue.code === 114) === -1,
+        'issues does not include a code 114'
       )
     })
 

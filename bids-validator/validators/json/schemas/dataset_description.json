@@ -58,7 +58,7 @@
         "type": "string"
       },
       "type": ["array", "string"]
-    },
+    }
   },
   "required": ["Name", "BIDSVersion"],
   "type": "object"
