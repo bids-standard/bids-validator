@@ -56,5 +56,20 @@ describe('readDir.js - examples integration', () => {
         done()
       })
     })
+    it('returns file objects with the expected shape', async done => {
+      readDir('bids-validator/tests/data/symlinked_subject', {
+        followSymbolicDirectories: false,
+      }).then(files => {
+        expect(Object.keys(files)).toHaveLength(6)
+        Object.values(files).forEach(f => {
+          expect(Object.getOwnPropertyNames(f)).toEqual([
+            'name',
+            'path',
+            'relativePath',
+          ])
+        })
+        done()
+      })
+    })
   })
 })
