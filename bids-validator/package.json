@@ -29,6 +29,7 @@
     "hed-validator": "^0.3.0",
     "ignore": "^4.0.2",
     "jshint": "^2.9.6",
+    "lerna": "^3.15.0",
     "minimatch": "3.0.4",
     "nifti-js": "^1.0.1",
     "p-limit": "^2.1.0",
