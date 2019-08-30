@@ -176,13 +176,15 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
 
       // Events validation
       stimuli.directory = files.stimuli
-      const eventsIssues = Events.validateEvents(
+      return Events.validateEvents(
         events,
         stimuli,
         headers,
         jsonContentsDict,
         self.issues,
       )
+    })
+    .then(eventsIssues => {
       self.issues = self.issues.concat(eventsIssues)
 
       // Validate custom fields in all TSVs and add any issues to the list
