@@ -1,22 +1,22 @@
 const files = require('../files')
+const checkForDerivatives = require('./checkForDerivatives')
 const collectModalities = require('./collectModalities')
 const collectSessions = require('./collectSessions')
 const collectSubjects = require('./collectSubjects')
-const Metadata = require('./metadata')
 
 const collectSummary = (fileList, options) => {
   const summary = {
     sessions: [],
     subjects: [],
-    participantsMetadata: {},
+    subjectMetadata: {},
     tasks: [],
     modalities: [],
     totalFiles: -1,
     size: 0,
-    metadata: new Metadata(),
+    dataProcessed: false,
   }
 
-  summary.metadata.collectFromFiles(fileList)
+  summary.dataProcessed = checkForDerivatives(fileList)
 
   // remove ignored files from list:
   Object.keys(fileList).forEach(function(key) {
@@ -38,9 +38,6 @@ const collectSummary = (fileList, options) => {
 
   // collect sessions
   summary.sessions = collectSessions(fileList, options)
-
-  // collect metadata in summary
-  summary.metadata.collectFromSummary(summary)
 
   return summary
 }

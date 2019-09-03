@@ -4,7 +4,6 @@ function Metadata(defaultData = {}) {
 
 const isEmptyArray = thing => Array.isArray(thing) && thing.length === 0
 Metadata.prototype.collectFromSummary = function(summary) {
-  this.add('subjectCount', summary.subjects && summary.subjects.length)
   this.add('modalities', summary.modalities)
   this.add('tasksCompleted', isEmptyArray(summary.tasks) ? 'n/a' : null)
 }
@@ -39,11 +38,17 @@ Metadata.prototype.collectFromFiles = function(files) {
  * returns null if participant_id is not a header or file contents do not exist
  * @param {string} participantsTsvContent 
  */
-const generateParticipantsMetadata = (headers, subjectData) => {
+const generateSubjectMetadata = participantsTsvContent => {
+  if(participantsTsvContent) {
+    const contentTable = participantsTsvContent
+      .split('\n')
+      .filter(row => row !== '')
+      .map(row => row.split('\t'))
+    const [headers, ...subjectData] = contentTable
   const participant_idIndex = headers.findIndex(header => header === 'participant_id')
   if(participant_idIndex === -1) return null
-  else return subjectData.reduce((participantsMetadata, data) => ({
-    ...participantsMetadata,
+  else return subjectData.reduce((subjectMetadata, data) => ({
+    ...subjectMetadata,
     [data[participant_idIndex]]: data.reduce((subjectMetadata, datum, i) => (i === participant_idIndex
       ? subjectMetadata
       : {
@@ -56,22 +61,15 @@ const generateParticipantsMetadata = (headers, subjectData) => {
   
   /**
    * Generates string of form "[min]-[max]", eg. '21-42'
-   * @param {string} participantsMetadata 
+   * @param {string} subjectMetadata 
    */
-  const getAgeRange = (participantsMetadata) => {
-    let min, max
-    Object.values(participantsMetadata)
+  const getAgeRange = (subjectMetadata) => Object.values(subjectMetadata)
       .filter(participant => exists(participant.age))
-      .forEach(({ age }, i) => {
-        if(i === 0) min = max = age
-        else if(age > max) max = age
-        else if(age < min) min = age
-      })
-    return `${min}-${max}`
-  }
+      .map(({ age }) => age)
+      .sort((a, b) => a - b)
   
   Metadata.prototype.collectFromParticipants = function(participantsTsvContent) {
-    let participantsMetadata = null
+    let subjectMetadata = null
     if(participantsTsvContent) {
       const contentTable = participantsTsvContent
         .split('\n')
@@ -79,12 +77,12 @@ const generateParticipantsMetadata = (headers, subjectData) => {
         .map(row => row.split('\t'))
       const [headers, ...subjectData] = contentTable
       
-      participantsMetadata = generateParticipantsMetadata(headers, subjectData)
+      subjectMetadata = generateSubjectMetadata(headers, subjectData)
       
-      const ageRange = getAgeRange(participantsMetadata)
-      this.add('age', ageRange)
+      const ageRange = getAgeRange(subjectMetadata)
+      this.add('ages', ageRange)
     }
-    return participantsMetadata
+    return subjectMetadata
   }
 
 Metadata.prototype.add = function(key, value) {
@@ -116,6 +114,11 @@ module.exports = Metadata
 // trialCount // are trials equivalent to tasks?
 // notes
 
+// /* ASK FRANKLIN */
+// studyDesign // anything to do with events
+// openneuroPaperDOI
+// dxStatus // diagnosis?
+
 // /* not sure if extractable */
 
 // /* can get from openneuro */
@@ -126,6 +129,7 @@ module.exports = Metadata
 // adminUsers
 
 // /* still need to extract from validator */
+// none?
 
 // /* extractable from summary */
 // subjectCount
@@ -139,10 +143,5 @@ module.exports = Metadata
 // dataProcessed
 
 // /* extractable from participants.tsv */
-// age // participants tsv
+// ages // participants tsv
 // tasksCompleted // if no tasks exist, n/a? // note: point users to docs
-
-// /* ASK FRANKLIN */
-// studyDesign // anything to do with events
-// openneuroPaperDOI
-// dxStatus // diagnosis?

@@ -96,11 +96,32 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     .then(({ tsvIssues, participantsTsvContent }) => {
       self.issues = self.issues.concat(tsvIssues)
 
+
+      const generateSubjectMetadata = participantsTsvContent => {
+        if(participantsTsvContent) {
+          const contentTable = participantsTsvContent
+            .split('\n')
+            .filter(row => row !== '')
+            .map(row => row.split('\t'))
+          const [headers, ...subjectData] = contentTable
+        const participant_idIndex = headers.findIndex(header => header === 'participant_id')
+        if(participant_idIndex === -1) return null
+        else return subjectData.reduce((subjectMetadata, data) => ({
+          ...subjectMetadata,
+          [data[participant_idIndex]]: data.reduce((subjectMetadata, datum, i) => (i === participant_idIndex
+            ? subjectMetadata
+            : {
+              ...subjectMetadata,
+              [headers[i]]: headers[i] === 'age' ? parseInt(datum) : datum
+            }  
+            ), {})
+          }), {})
+        }
+      }
+
       // extract metadata on participants to metadata.age and
       // return metadata on each subject from participants.tsv
-      const participantsMetadata = summary.metadata.collectFromParticipants(participantsTsvContent)
-      summary.participantsMetadata = { ...participantsMetadata }
-
+      summary.subjectMetadata = generateSubjectMetadata(participantsTsvContent)
       // Bvec validation
       return bvec.validate(files.bvec, bContentsDict)
     })
@@ -126,11 +147,6 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       // Check for datasetDescription file in the proper place
       const datasetDescriptionIssues = checkDatasetDescription(jsonContentsDict)
       self.issues = self.issues.concat(datasetDescriptionIssues)
-
-      // Extract metadata from description
-      summary.metadata.collectFromDescription(
-        jsonContentsDict['/dataset_description.json'],
-      )
 
       // Check for README file in the proper place
       const readmeIssues = checkReadme(fileList)
