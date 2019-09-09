@@ -26,9 +26,6 @@ const loadExamples = async () => {
         test_version +
         '.zip',
     )
-    if (!fs.existsSync('bids-validator/tests/data')) {
-      fs.mkdirSync('bids-validator/tests/data')
-    }
     fs.writeFileSync('bids-validator/tests/data/examples.zip', response.body)
     const zip = new AdmZip('bids-validator/tests/data/examples.zip')
     console.log('unzipping test data')

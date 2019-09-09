@@ -3,7 +3,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: node:8.11.3-alpine
+      - image: node:10.16.1-alpine
     steps:
       - checkout
       - run: apk --no-cache add ca-certificates
@@ -26,9 +26,21 @@ jobs:
       - run:
           name: Smoke tests
           command: bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders && bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders --json
+  test_docker:
+    machine:
+      # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - run: docker build -t bids/validator:latest .
+      - run:
+          name: Smoke tests
+          command: |
+              docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders
+              docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
   githubPagesTest:
     docker:
-      - image: node:8.11.3-alpine
+      - image: node:10.16.1-alpine
     steps:
       - checkout
       - run: apk --no-cache add ca-certificates
@@ -75,7 +87,7 @@ jobs:
             pip install dist/*.tar.gz
   deployment:
     docker:
-      - image: node:8.11.3-alpine
+      - image: node:10.16.1-alpine
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -133,6 +145,10 @@ workflows:
               only: /.*/
             tags:
               only: /.*/
+      - test_docker:
+          filters:
+            tags:
+              only: /.*/
       - githubPagesTest:
           requires:
             - test
@@ -148,6 +164,7 @@ workflows:
       - deployment:
           requires:
             - test
+            - test_docker
             - githubPagesTest
             - pypi_precheck
           filters:

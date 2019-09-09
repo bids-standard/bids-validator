@@ -10,6 +10,7 @@ module.exports = {
     options = {
       ignoreWarnings: options.ignoreWarnings ? true : false,
       ignoreNiftiHeaders: options.ignoreNiftiHeaders ? true : false,
+      ignoreSymlinks: options.ignoreSymlinks ? true : false,
       verbose: options.verbose ? true : false,
       config: options.config ? options.config : {},
     }

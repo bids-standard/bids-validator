@@ -13,29 +13,32 @@ const isNode = typeof window === 'undefined'
  * similar structure to how chrome reads a directory.
  * In the browser it simply passes the file dir
  * object to the callback.
+ * @param {String} dir Path to read
+ * @param {Object} options
+ * @param {boolean} options.followSymbolicDirectories enable to recursively follow directory symlinks
+ * @returns {Promise<Object>}
  */
-function readDir(dir, callback) {
-  /**
-   * If the current environment is server side
-   * nodejs/iojs import fs.
-   */
+async function readDir(dir, options = { followSymbolicDirectories: true }) {
+  const ig = await getBIDSIgnore(dir)
+  const fileArray = isNode
+    ? await preprocessNode(path.resolve(dir), ig, options)
+    : preprocessBrowser(dir, ig)
 
-  var filesObj = {}
-  var filesList = []
+  return fileArrayToObject(fileArray)
+}
 
-  function callbackWrapper(ig) {
-    if (isNode) {
-      filesList = preprocessNode(dir, ig)
-    } else {
-      filesList = preprocessBrowser(dir, ig)
-    }
-    // converting array to object
-    for (var j = 0; j < filesList.length; j++) {
-      filesObj[j] = filesList[j]
-    }
-    callback(filesObj)
+/**
+ * Transform array of file-like objects to one object with each file as a property
+ * @param {Array[Object]} fileArray
+ * @returns {Object}
+ */
+function fileArrayToObject(fileArray) {
+  const filesObj = {}
+  // converting array to object
+  for (let j = 0; j < fileArray.length; j++) {
+    filesObj[j] = fileArray[j]
   }
-  getBIDSIgnore(dir, callbackWrapper)
+  return filesObj
 }
 
 /**
@@ -45,9 +48,9 @@ function readDir(dir, callback) {
  * 2. Adds 'relativePath' field of each file object.
  */
 function preprocessBrowser(filesObj, ig) {
-  var filesList = []
-  for (var i = 0; i < filesObj.length; i++) {
-    var fileObj = filesObj[i]
+  const filesList = []
+  for (let i = 0; i < filesObj.length; i++) {
+    const fileObj = filesObj[i]
     fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath)
     if (ig.ignores(path.relative('/', fileObj.relativePath))) {
       fileObj.ignore = true
@@ -58,23 +61,30 @@ function preprocessBrowser(filesObj, ig) {
 }
 
 /**
- * Relative Path
+ * Harmonize Relative Path
  *
- * Takes a file and returns the correct relative path property
+ * Takes a file and returns the browser style relative path
  * base on the environment.
+ *
+ * Since this may be called in the browser, do not call Node.js modules
+ *
+ * @param {String} path Relative path to normalize
+ * @returns {String}
  */
 function harmonizeRelativePath(path) {
   // This hack uniforms relative paths for command line calls to 'BIDS-examples/ds001/' and 'BIDS-examples/ds001'
-  // try {
-  //   console.log(path[0] == '/')
-  // } catch(e) {
-  //   console.log('e:', e)
-  // }
-  if (path[0] !== '/') {
-    var pathParts = path.split('/')
-    path = '/' + pathParts.slice(1).join('/')
+  if (path.indexOf('\\') !== -1) {
+    // This is likely a Windows path - Node.js
+    const pathParts = path.split('\\')
+    return '/' + pathParts.slice(1).join('/')
+  } else if (path[0] !== '/') {
+    // Bad POSIX path - Node.js
+    const pathParts = path.split('/')
+    return '/' + pathParts.slice(1).join('/')
+  } else {
+    // Already correct POSIX path - Browsers (all platforms)
+    return path
   }
-  return path
 }
 
 /**
@@ -84,78 +94,90 @@ function harmonizeRelativePath(path) {
  * 2. Filters out ignored files and folder.
  * 3. Harmonizes the 'relativePath' field
  */
-function preprocessNode(dir, ig) {
-  var str = dir.substr(dir.lastIndexOf('/') + 1) + '$'
-  var rootpath = dir.replace(new RegExp(str), '')
-  return getFiles(dir, [], rootpath, ig)
+function preprocessNode(dir, ig, options) {
+  const str = dir.substr(dir.lastIndexOf(path.sep) + 1) + '$'
+  const rootpath = dir.replace(new RegExp(str), '')
+  return getFiles(dir, rootpath, ig, options)
 }
 
 /**
  * Recursive helper function for 'preprocessNode'
  */
-function getFiles(dir, files_, rootpath, ig) {
-  files_ = files_ || []
-  const files = fs.readdirSync(dir)
-  files.map(file => {
-    var fullPath = dir + '/' + file
-    var relativePath = fullPath.replace(rootpath, '')
-    relativePath = harmonizeRelativePath(relativePath)
-
-    var fileName = file
-
-    var fileObj = {
-      name: fileName,
-      path: fullPath,
-      relativePath: relativePath,
-    }
-
-    if (ig.ignores(path.relative('/', relativePath))) {
-      fileObj.ignore = true
-    }
-
-    if (isDirectory(fullPath)) {
-      getFiles(fullPath, files_, rootpath, ig)
-    } else {
-      files_.push(fileObj)
-    }
-  })
-
-  return files_
-}
-
-/**
- * Leverage fs.isDirectory by following Symbolic Links
- */
-function isDirectory(path) {
-  const pathStat = fs.lstatSync(path)
-  let isDir = pathStat.isDirectory()
-  if (pathStat.isSymbolicLink()) {
-    try {
-      var targetPath = fs.realpathSync(path)
-      isDir = fs.lstatSync(targetPath).isDirectory()
-    } catch (err) {
-      isDir = false
+async function getFiles(
+  dir,
+  rootPath,
+  ig,
+  options = { followSymbolicDirectories: true },
+) {
+  let files
+  files = await fs.promises.readdir(dir, { withFileTypes: true })
+  const filesAccumulator = []
+  // Closure to merge the next file depth into this one
+  const recursiveMerge = async nextRoot => {
+    Array.prototype.push.apply(
+      filesAccumulator,
+      await getFiles(nextRoot, rootPath, ig, options),
+    )
+  }
+  for (const file of files) {
+    const fullPath = path.join(dir, file.name)
+    const relativePath = harmonizeRelativePath(
+      path.relative(rootPath, fullPath),
+    )
+    const ignore = ig.ignores(path.relative('/', relativePath))
+    if (!ignore) {
+      const fileObj = {
+        name: file.name,
+        path: fullPath,
+        relativePath,
+      }
+      // Three cases to consider: directories, files, symlinks
+      if (file.isDirectory()) {
+        await recursiveMerge(fullPath)
+      } else if (file.isSymbolicLink()) {
+        // Allow skipping symbolic links which lead to recursion
+        // Disabling this is a big performance advantage on high latency
+        // storage but it's a good default for versatility
+        if (options.followSymbolicDirectories) {
+          try {
+            const targetPath = await fs.promises.realpath(fullPath)
+            const targetStat = await fs.promises.stat(targetPath)
+            // Either add or recurse from the target depending
+            if (targetStat.isDirectory()) {
+              await recursiveMerge(targetPath)
+            } else {
+              filesAccumulator.push(fileObj)
+            }
+          } catch (err) {
+            // Symlink points at an invalid target, skip it
+            return
+          }
+        } else {
+          // This branch assumes all symbolic links are not directories
+          filesAccumulator.push(fileObj)
+        }
+      } else {
+        filesAccumulator.push(fileObj)
+      }
     }
   }
-  return isDir
+  return filesAccumulator
 }
 
-function getBIDSIgnore(dir, callback) {
-  var ig = ignore()
+async function getBIDSIgnore(dir) {
+  const ig = ignore()
     .add('.*')
     .add('!*.icloud')
     .add('/derivatives')
     .add('/sourcedata')
     .add('/code')
 
-  var bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir)
+  const bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir)
   if (bidsIgnoreFileObj) {
-    readFile(bidsIgnoreFileObj).then(content => {
-      ig = ig.add(content)
-      callback(ig)
+    return readFile(bidsIgnoreFileObj).then(content => {
+      ig.add(content)
+      return ig
     })
-  } else {
-    callback(ig)
   }
   return ig
 }
@@ -197,4 +219,10 @@ function getBIDSIgnoreFileObjBrowser(dir) {
   return bidsIgnoreFileObj
 }
 
-module.exports = readDir
+module.exports = {
+  default: readDir,
+  readDir,
+  getFiles,
+  fileArrayToObject,
+  harmonizeRelativePath,
+}
