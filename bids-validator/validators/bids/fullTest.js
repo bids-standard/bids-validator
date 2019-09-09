@@ -108,7 +108,7 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
         if(participant_idIndex === -1) return null
         else return subjectData.reduce((subjectMetadata, data) => ({
           ...subjectMetadata,
-          [data[participant_idIndex]]: data.reduce((subjectMetadata, datum, i) => (i === participant_idIndex
+          [data[participant_idIndex].replace(/^sub-/, '')]: data.reduce((subjectMetadata, datum, i) => (i === participant_idIndex
             ? subjectMetadata
             : {
               ...subjectMetadata,
