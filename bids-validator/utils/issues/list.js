@@ -715,7 +715,7 @@ module.exports = {
     severity: 'error',
     reason: "MZeros was not defined.",
   },
-  104: {
+  131: {
     key: 'PULSE_SEQUENCE_TYPE_MUST_DEFINE',
     severity: 'error',
     reason: "You have to define 'PulseSequenceType' for this file.",
