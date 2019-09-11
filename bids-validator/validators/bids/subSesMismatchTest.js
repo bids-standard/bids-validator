@@ -103,9 +103,7 @@ const mismatchError = (type, file) => {
   }
   return new Issue({
     code: code,
-    evidence: `File: ${
-      file.relativePath
-    } is saved in incorrect ${type} directory as per ${abbrv}-id in filename.`,
+    evidence: `File: ${file.relativePath} is saved in incorrect ${type} directory as per ${abbrv}-id in filename.`,
     file: file,
   })
 }

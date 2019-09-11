@@ -104,9 +104,7 @@ const remoteFiles = {
 
   constructAwsUrl: function(config) {
     // bucket + key url
-    let url = `http://s3.amazonaws.com/${config.s3Params.Bucket}/${
-      config.s3Params.Key
-    }`
+    let url = `http://s3.amazonaws.com/${config.s3Params.Bucket}/${config.s3Params.Key}`
 
     // add version to url, if exists
     url = config.s3Params.VersionId
