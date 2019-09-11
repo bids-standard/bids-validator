@@ -16,6 +16,7 @@ const subjects = require('./subjects')
 const checkDatasetDescription = require('./checkDatasetDescription')
 const checkReadme = require('./checkReadme')
 const validateMisc = require('../../utils/files/validateMisc')
+const collectSubjectMetadata = require('../../utils/summary/collectSubjectMetadata')
 
 /**
  * Full Test
@@ -96,32 +97,9 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     .then(({ tsvIssues, participantsTsvContent }) => {
       self.issues = self.issues.concat(tsvIssues)
 
-
-      const generateSubjectMetadata = participantsTsvContent => {
-        if(participantsTsvContent) {
-          const contentTable = participantsTsvContent
-            .split('\n')
-            .filter(row => row !== '')
-            .map(row => row.split('\t'))
-          const [headers, ...subjectData] = contentTable
-        const participant_idIndex = headers.findIndex(header => header === 'participant_id')
-        if(participant_idIndex === -1) return null
-        else return subjectData.reduce((subjectMetadata, data) => ({
-          ...subjectMetadata,
-          [data[participant_idIndex].replace(/^sub-/, '')]: data.reduce((subjectMetadata, datum, i) => (i === participant_idIndex
-            ? subjectMetadata
-            : {
-              ...subjectMetadata,
-              [headers[i]]: headers[i] === 'age' ? parseInt(datum) : datum
-            }  
-            ), {})
-          }), {})
-        }
-      }
-
       // extract metadata on participants to metadata.age and
       // return metadata on each subject from participants.tsv
-      summary.subjectMetadata = generateSubjectMetadata(participantsTsvContent)
+      summary.subjectMetadata = collectSubjectMetadata(participantsTsvContent)
       // Bvec validation
       return bvec.validate(files.bvec, bContentsDict)
     })
