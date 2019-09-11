@@ -43,9 +43,7 @@ describe('issues', () => {
       const exceptionIssue = formattedIssues.errors[0].files[0]
       assert.equal(
         exceptionIssue.reason,
-        `${
-          testErr.message
-        }; please help the BIDS team and community by opening an issue at (https://github.com/bids-standard/bids-validator/issues) with the evidence here.`,
+        `${testErr.message}; please help the BIDS team and community by opening an issue at (https://github.com/bids-standard/bids-validator/issues) with the evidence here.`,
       )
     })
   })

@@ -16,6 +16,7 @@ const subjects = require('./subjects')
 const checkDatasetDescription = require('./checkDatasetDescription')
 const checkReadme = require('./checkReadme')
 const validateMisc = require('../../utils/files/validateMisc')
+const collectSubjectMetadata = require('../../utils/summary/collectSubjectMetadata')
 
 /**
  * Full Test
@@ -93,9 +94,12 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
         stimuli,
       )
     })
-    .then(tsvIssues => {
+    .then(({ tsvIssues, participantsTsvContent }) => {
       self.issues = self.issues.concat(tsvIssues)
 
+      // extract metadata on participants to metadata.age and
+      // return metadata on each subject from participants.tsv
+      summary.subjectMetadata = collectSubjectMetadata(participantsTsvContent)
       // Bvec validation
       return bvec.validate(files.bvec, bContentsDict)
     })
@@ -131,7 +135,6 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     })
     .then(jsonIssues => {
       self.issues = self.issues.concat(jsonIssues)
-
       // Nifti validation
       return NIFTI.validate(
         files.nifti,

@@ -3,8 +3,8 @@ const utils = require('../../utils')
 const Issue = utils.issues.Issue
 
 /*
-     * Generates an error for quickTest failures
-     */
+ * Generates an error for quickTest failures
+ */
 const quickTestError = function(dir) {
   let filename
   if (typeof window === 'undefined') {

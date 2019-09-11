@@ -23,7 +23,7 @@ module.exports = function(dir, options) {
     console.log(
       format.unexpectedError(
         // eslint-disable-next-line
-        `Unhandled rejection (reason: ${JSON.stringify(err)}).`
+        `Unhandled rejection (reason: ${JSON.stringify(err)}).`,
       ),
     )
     process.exit(3)

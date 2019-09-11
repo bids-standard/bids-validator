@@ -13,6 +13,7 @@ const validate = (
   dir,
 ) => {
   let issues = []
+  let participantsTsvContent = ''
   // validate tsv
   const tsvPromises = files.map(function(file) {
     return utils.limit(
@@ -44,6 +45,8 @@ const validate = (
                       list: participantList,
                       file: file,
                     }
+                    // save content for metadata extraction
+                    participantsTsvContent = contents
                   } else if (file.relativePath.includes('phenotype/')) {
                     phenotypeParticipants.push({
                       list: participantList,
@@ -65,7 +68,10 @@ const validate = (
         }),
     )
   })
-  return Promise.all(tsvPromises).then(() => issues)
+  return Promise.all(tsvPromises).then(() => ({
+    tsvIssues: issues,
+    participantsTsvContent,
+  }))
 }
 
 module.exports = validate
