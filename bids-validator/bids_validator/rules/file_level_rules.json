@@ -135,7 +135,10 @@
         "_physio\\.json",
         "_stim\\.json",
         "_defacemask\\.nii\\.gz",
-        "_defacemask\\.nii"
+        "_defacemask\\.nii",
+        "_phase\\.nii\\.gz",
+        "_phase\\.nii",
+        "_phase\\.json"
       ]
     }
   },
