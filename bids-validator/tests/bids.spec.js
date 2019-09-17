@@ -108,30 +108,37 @@ describe('BIDS example datasets ', function() {
 
   // we need to have at least one non-dynamic test
   it('validates dataset with valid nifti headers', function(isdone) {
-    validate.BIDS(
-      createDatasetFileList('valid_headers'),
-      enableNiftiHeaders,
-      function(issues, summary) {
-        var errors = issues.errors
-        var warnings = issues.warnings
-        assert(summary.sessions.length === 0)
-        assert(summary.subjects.length === 1)
-        assert.deepEqual(summary.tasks, ['rhyme judgment'])
-        assert(summary.modalities.includes('T1w'))
-        assert(summary.modalities.includes('bold'))
-        assert(summary.totalFiles === 8)
-        assert(
-          errors.findIndex(error => error.code === 60) > -1,
-          'errors do not contain a code 60',
-        )
-        assert.deepEqual(warnings.length, 4)
-        assert(
-          warnings.findIndex(warning => warning.code === 13) > -1,
-          'warnings do not contain a code 13',
-        )
-        isdone()
-      },
-    )
+    var options = { ignoreNiftiHeaders: false }
+    validate.BIDS(createDatasetFileList('valid_headers'), options, function(
+      issues,
+      summary,
+    ) {
+      var errors = issues.errors
+      var warnings = issues.warnings
+      assert(summary.sessions.length === 0)
+      assert(summary.subjects.length === 1)
+      assert.deepEqual(summary.subjectMetadata, {
+        '01': {
+          sex: 'M',
+          age: 25,
+        },
+      })
+      assert.deepEqual(summary.tasks, ['rhyme judgment'])
+      assert.isFalse(summary.dataProcessed)
+      assert(summary.modalities.includes('T1w'))
+      assert(summary.modalities.includes('bold'))
+      assert(summary.totalFiles === 8)
+      assert(
+        errors.findIndex(error => error.code === 60) > -1,
+        'errors do not contain a code 60',
+      )
+      assert.deepEqual(warnings.length, 4)
+      assert(
+        warnings.findIndex(warning => warning.code === 13) > -1,
+        'warnings do not contain a code 13',
+      )
+      isdone()
+    })
   })
 
   // test for duplicate files present with both .nii and .nii.gz extension

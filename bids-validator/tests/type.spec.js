@@ -46,6 +46,8 @@ describe('utils.type.file.isFunc', function() {
     '/sub-16/func/sub-16_task-0back_run-01_bold.nii.gz',
     '/sub-16/func/sub-16_task-0back_acq-highres_bold.nii.gz',
     '/sub-16/func/sub-16_task-0back_rec-mc_bold.nii.gz',
+    '/sub-16/func/sub-16_task-0back_run-01_phase.nii.gz',
+    '/sub-16/func/sub-16_task-0back_echo-1_phase.nii.gz',
   ]
 
   goodFilenames.forEach(function(path) {

@@ -134,9 +134,7 @@ var issues = {
     return new Issue({
       file: callStack,
       evidence: err.stack || '',
-      reason: `${
-        err.message
-      }; please help the BIDS team and community by opening an issue at (https://github.com/bids-standard/bids-validator/issues) with the evidence here.`,
+      reason: `${err.message}; please help the BIDS team and community by opening an issue at (https://github.com/bids-standard/bids-validator/issues) with the evidence here.`,
       code: 0,
     })
   },
