@@ -8,11 +8,13 @@ module.exports = {
   parse: function(options, callback) {
     options = options ? options : {}
     options = {
-      ignoreWarnings: options.ignoreWarnings ? true : false,
-      ignoreNiftiHeaders: options.ignoreNiftiHeaders ? true : false,
-      ignoreSymlinks: options.ignoreSymlinks ? true : false,
-      verbose: options.verbose ? true : false,
-      config: options.config ? options.config : {},
+      ignoreWarnings: Boolean(options.ignoreWarnings),
+      ignoreNiftiHeaders: Boolean(options.ignoreNiftiHeaders),
+      ignoreSymlinks: Boolean(options.ignoreSymlinks),
+      verbose: Boolean(options.verbose),
+      gitTreeMode: Boolean(options.gitTreeMode),
+      gitRef: options.gitRef || 'HEAD',
+      config: options.config || {},
     }
     if (options.config && typeof options.config !== 'boolean') {
       this.parseConfig(options.config, function(issues, config) {

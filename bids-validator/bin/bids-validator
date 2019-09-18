@@ -25,10 +25,22 @@ var argv = require('yargs')
     'ignoreSymlinks',
     'Skip any symlinked directories when validating a dataset',
   )
+  .boolean('gitTreeMode')
+  .describe(
+    'gitTreeMode',
+    'Improve performance using git metadata. Does not capture changes not known to git.',
+  )
+  .option('gitRef', {
+    describe:
+      'Targets files at a given branch, tag, or commit hash. Use with --gitTreeMode.  [default: "HEAD"]',
+    type: 'string',
+  })
+  .implies('gitRef', 'gitTreeMode')
   .option('config', {
     alias: 'c',
     describe:
       'Optional configuration file. See https://github.com/bids-standard/bids-validator for more info',
+    default: {},
   })
   .epilogue(
     'This tool checks if a dataset in a given directory is \

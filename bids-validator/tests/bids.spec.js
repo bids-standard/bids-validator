@@ -51,11 +51,11 @@ function assertErrorCode(errors, expected_error_code) {
   assert(matchingErrors.length > 0)
 }
 
-// Default validate.BIDS options
-const options = { ignoreNiftiHeaders: true, json: true }
-const enableNiftiHeaders = { json: true }
-
 describe('BIDS example datasets ', function() {
+  // Default validate.BIDS options
+  const options = { ignoreNiftiHeaders: true, json: true }
+  const enableNiftiHeaders = { json: true }
+
   describe('basic example dataset tests', () => {
     getDirectories(
       dataDirectory + 'bids-examples-' + global.test_version + '/',

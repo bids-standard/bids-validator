@@ -20,7 +20,7 @@ describe('readDir.js - examples integration', () => {
     })
     it('correctly follows symlinks for subjects with followSymbolicLink: true', async done => {
       readDir('bids-validator/tests/data/symlinked_subject', {
-        followSymbolicDirectories: true,
+        ignoreSymlinks: false,
       }).then(files => {
         expect(Object.keys(files)).toHaveLength(12)
         expect(Object.values(files).map(f => f.name)).toEqual([
@@ -42,7 +42,7 @@ describe('readDir.js - examples integration', () => {
     })
     it('correctly does not follow symlinks for subjects with followSymbolicLink: false', async done => {
       readDir('bids-validator/tests/data/symlinked_subject', {
-        followSymbolicDirectories: false,
+        ignoreSymlinks: true,
       }).then(files => {
         expect(Object.keys(files)).toHaveLength(6)
         expect(Object.values(files).map(f => f.name)).toEqual([
@@ -58,7 +58,7 @@ describe('readDir.js - examples integration', () => {
     })
     it('returns file objects with the expected shape', async done => {
       readDir('bids-validator/tests/data/symlinked_subject', {
-        followSymbolicDirectories: false,
+        ignoreSymlinks: true,
       }).then(files => {
         expect(Object.keys(files)).toHaveLength(6)
         Object.values(files).forEach(f => {

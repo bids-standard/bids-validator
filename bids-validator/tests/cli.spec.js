@@ -1,4 +1,4 @@
-const assert = require('assert')
+const { assert } = require('chai')
 const { spawn } = require('child_process')
 const dir = process.cwd()
 const data_dir = dir + '/bids-validator/tests/data/'
