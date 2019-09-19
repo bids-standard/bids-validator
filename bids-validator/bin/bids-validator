@@ -25,6 +25,9 @@ var argv = require('yargs')
     'ignoreSymlinks',
     'Skip any symlinked directories when validating a dataset',
   )
+  .boolean('remoteFiles')
+  .describe('remoteFiles', 'Validate remote files.')
+  .default('remoteFiles', false)
   .boolean('gitTreeMode')
   .describe(
     'gitTreeMode',
