@@ -20,8 +20,6 @@ describe('gitTreeMode functions', () => {
       assert.isEmpty(output.symlinkObjects)
       assert.equal(output.files[0].path, 'file/path')
       assert.equal(output.files[0].size, 1000000)
-      assert.equal(output.files[1].key, 'anotherlongkeystring')
-      assert.isString(output.files[1].id)
     })
 
     it('will handle symlinked files', () => {
@@ -53,11 +51,6 @@ describe('gitTreeMode functions', () => {
       const output = readCatFileLines(catFileOutput, symlinkFilenames)
       assert.equal(output[0].path, symlinkFilenames[0])
       assert.equal(output[0].size, 54)
-      assert.equal(
-        output[1].key,
-        'SHA256E-s99--bbef536348750373727d3b5856398d7377e5d7e23875eed026b83d12cee6f885.json',
-      )
-      assert.isString(output[1].id)
     })
   })
 
@@ -70,72 +63,52 @@ describe('gitTreeMode functions', () => {
         {
           path: '.DS_Store',
           size: 1000000,
-          id: 'athousandthousand',
-          key: 'amillion',
         },
         {
           path: 'path/to/a',
           size: 100,
-          id: '4yhct827ty08q4uv507829',
-          key: 'oiweurykjsvmxcnvjqweir',
         },
         {
           path: 'path/to/b',
           size: 99,
-          id: 'q',
-          key: '213494759827349237492759493045982734982',
         },
       ]
       const filesB = [
         {
           path: 'path/to/c',
           size: 98,
-          id: 'ididid',
-          key: 'o',
         },
         {
           path: 'path/to/d',
           size: 1,
-          id: 'none',
-          key: 'hairpin',
         },
         {
           path: 'derivatives/to/derivative_file',
           size: 1,
-          id: 'gone',
-          key: 'with_the_wind',
         },
       ]
       const expected = [
         {
           path: '/path/to/dataset/path/to/a',
           size: 100,
-          id: '4yhct827ty08q4uv507829',
-          key: 'oiweurykjsvmxcnvjqweir',
           relativePath: '/path/to/a',
           name: 'a',
         },
         {
           path: '/path/to/dataset/path/to/b',
           size: 99,
-          id: 'q',
-          key: '213494759827349237492759493045982734982',
           relativePath: '/path/to/b',
           name: 'b',
         },
         {
           path: '/path/to/dataset/path/to/c',
           size: 98,
-          id: 'ididid',
-          key: 'o',
           relativePath: '/path/to/c',
           name: 'c',
         },
         {
           path: '/path/to/dataset/path/to/d',
           size: 1,
-          id: 'none',
-          key: 'hairpin',
           relativePath: '/path/to/d',
           name: 'd',
         },
