@@ -1,12 +1,14 @@
 var files = require('./files')
 var json = require('./json')
 
+let options
+
 module.exports = {
   /**
    * Parse
    */
-  parse: function(options, callback) {
-    options = options ? options : {}
+  parse: function(args, callback) {
+    options = args ? args : {}
     options = {
       ignoreWarnings: Boolean(options.ignoreWarnings),
       ignoreNiftiHeaders: Boolean(options.ignoreNiftiHeaders),
@@ -25,6 +27,11 @@ module.exports = {
     } else {
       callback(null, options)
     }
+  },
+
+  getOptions: () => {
+    const readonlyOptions = Object.freeze({ ...options })
+    return readonlyOptions
   },
 
   /**
