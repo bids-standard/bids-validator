@@ -1,18 +1,21 @@
 var files = require('./files')
 var json = require('./json')
 
+let options
+
 module.exports = {
   /**
    * Parse
    */
-  parse: function(options, callback) {
-    options = options ? options : {}
+  parse: function(args, callback) {
+    options = args ? args : {}
     options = {
       ignoreWarnings: Boolean(options.ignoreWarnings),
       ignoreNiftiHeaders: Boolean(options.ignoreNiftiHeaders),
       ignoreSymlinks: Boolean(options.ignoreSymlinks),
       verbose: Boolean(options.verbose),
       gitTreeMode: Boolean(options.gitTreeMode),
+      remoteFiles: Boolean(options.remoteFiles),
       gitRef: options.gitRef || 'HEAD',
       config: options.config || {},
     }
@@ -24,6 +27,11 @@ module.exports = {
     } else {
       callback(null, options)
     }
+  },
+
+  getOptions: () => {
+    const readonlyOptions = Object.freeze({ ...options })
+    return readonlyOptions
   },
 
   /**

@@ -632,4 +632,10 @@ module.exports = {
     reason:
       'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered because there are no authors, which will make DOI registration from dataset metadata impossible.',
   },
+  114: {
+    key: 'INCOMPLETE_DATASET',
+    severity: 'error',
+    reason:
+      'This dataset contains remote files. If you would like to validate with remote files, use the --remoteFiles option.',
+  },
 }
