@@ -357,7 +357,7 @@ function getBIDSIgnoreFileObjNode(dir) {
   var bidsIgnoreFileObj = null
   var path = dir + '/.bidsignore'
   if (fs.existsSync(path)) {
-    bidsIgnoreFileObj = { path: path }
+    bidsIgnoreFileObj = { path: path, stats: { size: null } }
   }
   return bidsIgnoreFileObj
 }
