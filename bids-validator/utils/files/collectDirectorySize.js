@@ -10,10 +10,7 @@ const collectDirectorySize = fileList => {
       // from File api in browser
       size += file.size
       // or from git-annex metadata when in gitTreeMode
-      if (typeof window === 'undefined') {
-        file.stats = { size: file.size }
-        delete file.size
-      }
+      if (typeof window === 'undefined') file.stats = { size: file.size }
     } else {
       file.stats = getFileStats(file)
       size += file.stats.size

@@ -44,6 +44,15 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
 
   let summary = utils.collectSummary(fileList, self.options)
 
+  // remove size redundancies
+  for (const key in fileList) {
+    if (fileList.hasOwnProperty(key)) {
+      const file = fileList[key]
+      if (typeof file.stats === 'object' && file.stats.hasOwnProperty('size'))
+        delete file.size
+    }
+  }
+
   // remove ignored files from list:
   Object.keys(fileList).forEach(function(key) {
     if (fileList[key].ignore) {

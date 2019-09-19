@@ -168,8 +168,6 @@ const readLsTreeLines = gitTreeLines =>
           files.push({
             path,
             size: parseInt(size),
-            id: computeFileHash(objHash, path),
-            key: objHash,
           })
         }
         return { files, symlinkFilenames, symlinkObjects }
@@ -184,7 +182,7 @@ const readLsTreeLines = gitTreeLines =>
  * @returns {string[]}
  */
 const getGitCatFile = (cwd, input) =>
-  new Promise((resolve, reject) => {
+  new Promise(resolve => {
     let output = ''
     const gitProcess = spawn('git', ['cat-file', '--batch', '--buffer'], {
       cwd,
@@ -214,12 +212,9 @@ const readCatFileLines = (gitCatFileLines, symlinkFilenames) =>
       const path = symlinkFilenames[i]
       const key = line.split('/').pop()
       const size = parseInt(key.match(/-s(\d+)/)[1])
-      const id = computeFileHash(key, path)
       return {
         path,
         size,
-        id,
-        key,
       }
     })
 
