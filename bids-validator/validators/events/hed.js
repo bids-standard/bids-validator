@@ -119,6 +119,14 @@ function convertHedIssuesToBidsIssues(hedIssues, file) {
     capitalization: 109,
     duplicateTag: 110,
     tooManyTildes: 111,
+    extraDelimiter: 115,
+    invalidTag: 116,
+    multipleUniqueTags: 117,
+    childRequired: 118,
+    requiredPrefixMissing: 119,
+    unitClassDefaultUsed: 120,
+    unitClassInvalidUnit: 121,
+    extraCommaOrInvalid: 122,
   }
 
   const convertedIssues = []
