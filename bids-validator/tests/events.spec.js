@@ -658,4 +658,204 @@ describe('Events', function() {
       },
     )
   })
+
+  it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an extra delimiter', async done => {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\n' +
+          '7\tsomething\tEvent/label/Test,Event/Category/Miscellaneous/Test~,Event/Description/Test\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+      },
+    }
+
+    validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+      issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 115)
+        done()
+      },
+    )
+  })
+
+  it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an invalid tag', async done => {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\n' +
+          '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Item/Object/Person/Driver,Event/Something\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+      },
+    }
+
+    validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+      issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 116)
+        done()
+      },
+    )
+  })
+
+  it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a duplicate unique tag', async done => {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\n' +
+          '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Description/Bad\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+      },
+    }
+
+    validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+      issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 117)
+        done()
+      },
+    )
+  })
+
+  it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a tag with a missing required child', async done => {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\n' +
+          '7\tsomething\tEvent/Label/Test,Event/Category,Event/Description/Test\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+      },
+    }
+
+    validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+      issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 118)
+        done()
+      },
+    )
+  })
+
+  it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a missing required prefix', async done => {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\n' +
+          '7\tsomething\tEvent/Category/Miscellaneous/Test,Event/Description/Test\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+      },
+    }
+
+    validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+      issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 119)
+        done()
+      },
+    )
+  })
+
+  it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a value tag with an implied default unit', async done => {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\n' +
+          '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Duration/3\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+      },
+    }
+
+    validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+      issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 120)
+        done()
+      },
+    )
+  })
+
+  it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a value tag with an invalid unit', async done => {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\n' +
+          '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Duration/3 cm\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+      },
+    }
+
+    validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+      issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 121)
+        done()
+      },
+    )
+  })
+
+  it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an invalid tag or an extra comma', async done => {
+    const events = [
+      {
+        file: { path: '/sub01/sub01_task-test_events.tsv' },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\tHED\n' +
+          '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,This/Is/A/Tag\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_bold.json': {
+        RepetitionTime: 1,
+      },
+    }
+
+    validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+      issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 122)
+        done()
+      },
+    )
+  })
 })
