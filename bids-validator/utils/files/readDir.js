@@ -4,7 +4,7 @@ const path = require('path')
 const crypto = require('crypto')
 const fs = require('fs')
 const { spawn } = require('child_process')
-const isNode = typeof window === 'undefined'
+const isNode = require('../isNode')
 
 /**
  * Read Directory
