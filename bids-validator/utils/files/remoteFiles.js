@@ -3,7 +3,7 @@ const fs = require('fs')
 const cp = require('child_process')
 const Issue = require('../issues').Issue
 const zlib = require('zlib')
-const isNode = typeof window === 'undefined'
+const isNode = require('../isNode')
 
 /**
  * Remote Files

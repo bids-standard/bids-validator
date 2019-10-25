@@ -1,7 +1,8 @@
 const testFile = require('./testFile')
 const Issue = require('../../utils/issues').Issue
 const fs = require('fs')
-const isNode = typeof window === 'undefined'
+const isNode = require('../isNode')
+
 /**
  * Read
  *

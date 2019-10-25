@@ -4,8 +4,7 @@ const fs = require('fs')
 const zlib = require('zlib')
 const testFile = require('./testFile')
 const Issue = require('../../utils/issues').Issue
-
-const isNode = typeof window == 'undefined'
+const isNode = require('../isNode')
 
 /**
  * Read Nifti Header
