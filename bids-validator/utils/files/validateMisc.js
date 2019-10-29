@@ -1,7 +1,8 @@
 const Issue = require('../issues/issue')
+const isNode = require('../isNode')
 
 function createIssueForEmpty(file) {
-  const size = typeof window !== 'undefined' ? file.size : file.stats.size
+  const size = !isNode ? file.size : file.stats.size
   var failsSizeRequirement = size <= 0
   // Exception misc files that can be valid although size==0
   // E.g., BadChannels and bad.segments in CTF data format (MEG modality)

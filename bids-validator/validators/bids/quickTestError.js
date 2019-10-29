@@ -1,13 +1,14 @@
 const path = require('path')
 const utils = require('../../utils')
 const Issue = utils.issues.Issue
+const isNode = require('../../utils/isNode')
 
 /*
  * Generates an error for quickTest failures
  */
 const quickTestError = function(dir) {
   let filename
-  if (typeof window === 'undefined') {
+  if (isNode) {
     // For Node, grab the path from the dir string
     filename = path.basename(dir)
   } else {

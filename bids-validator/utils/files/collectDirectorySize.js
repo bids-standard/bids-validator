@@ -1,4 +1,5 @@
 const fs = require('fs')
+const isNode = require('../isNode')
 
 const collectDirectorySize = fileList => {
   let size = 0
@@ -10,7 +11,7 @@ const collectDirectorySize = fileList => {
       // from File api in browser
       size += file.size
       // or from git-annex metadata when in gitTreeMode
-      if (typeof window === 'undefined') file.stats = { size: file.size }
+      if (isNode) file.stats = { size: file.size }
     } else {
       file.stats = getFileStats(file)
       size += file.stats.size
