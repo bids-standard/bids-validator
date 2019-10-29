@@ -35,8 +35,7 @@ function getDataOrganization(fileList) {
     if (fileList.hasOwnProperty(key)) {
       const file = fileList[key]
 
-      if (!file || (!isNode && !file.webkitRelativePath))
-        continue
+      if (!file || (!isNode && !file.webkitRelativePath)) continue
 
       const path = file.relativePath
       if (!utils.type.isBIDS(path) || utils.type.file.isStimuliData(path))
