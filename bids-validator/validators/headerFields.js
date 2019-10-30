@@ -1,5 +1,6 @@
 var utils = require('../utils')
 var Issue = utils.issues.Issue
+const isNode = require('../utils/isNode')
 
 /**
  * dimensions and resolution
@@ -176,7 +177,7 @@ const headerField = (headers, field) => {
       return
     }
 
-    if (!file || (typeof window != 'undefined' && !file.webkitRelativePath)) {
+    if (!file || (!isNode && !file.webkitRelativePath)) {
       continue
     }
 

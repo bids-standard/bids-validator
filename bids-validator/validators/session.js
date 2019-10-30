@@ -1,6 +1,7 @@
 var utils = require('../utils')
 const sesUtils = utils.files.sessions
 var Issue = utils.issues.Issue
+const isNode = require('../utils/isNode')
 
 /**
  * session
@@ -34,8 +35,7 @@ function getDataOrganization(fileList) {
     if (fileList.hasOwnProperty(key)) {
       const file = fileList[key]
 
-      if (!file || (typeof window != 'undefined' && !file.webkitRelativePath))
-        continue
+      if (!file || (!isNode && !file.webkitRelativePath)) continue
 
       const path = file.relativePath
       if (!utils.type.isBIDS(path) || utils.type.file.isStimuliData(path))
