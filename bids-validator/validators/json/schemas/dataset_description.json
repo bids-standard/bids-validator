@@ -21,19 +21,19 @@
       "items": {
         "type": "string"
       },
-      "type": ["string", "array"]
+      "type": "string"
     },
     "HowToAcknowledge": {
       "items": {
         "type": "string"
       },
-      "type": ["string", "array"]
+      "type": "string"
     },
     "Funding": {
       "items": {
         "type": "string"
       },
-      "type": ["array", "string"]
+      "type": "array"
     },
     "ReferencesAndLinks": {
       "items": {
