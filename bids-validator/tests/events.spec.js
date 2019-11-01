@@ -104,7 +104,7 @@ describe('Events', function() {
     )
   })
 
-  describe('HED event strings', function () {
+  describe('HED event strings', function() {
     let hedSchemaPromise
 
     beforeAll(() => {
@@ -115,11 +115,11 @@ describe('Events', function() {
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of duplicate tags', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
         },
       ]
       const jsonDictionary = {
@@ -128,23 +128,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 110)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 110)
+        done()
+      })
     })
 
     it('should not throw any issues if the HED column in a single row contains valid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
         },
       ]
       const jsonDictionary = {
@@ -153,22 +157,26 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.deepStrictEqual(issues, [])
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.deepStrictEqual(issues, [])
+        done()
+      })
     })
 
     it('should not throw any issues if the HED column in a single row contains valid HED data in multiple levels', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Item/Object/Vehicle/Train,(Item/Object/Vehicle/Train,Event/Category/Experimental stimulus)\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Item/Object/Vehicle/Train,(Item/Object/Vehicle/Train,Event/Category/Experimental stimulus)\n',
         },
       ]
       const jsonDictionary = {
@@ -177,23 +185,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.deepStrictEqual(issues, [])
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.deepStrictEqual(issues, [])
+        done()
+      })
     })
 
     it('should not throw any issues if the HED column in multiple rows contains valid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n' +
-              '8\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n' +
+            '8\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
         },
       ]
       const jsonDictionary = {
@@ -202,22 +214,26 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.deepStrictEqual(issues, [])
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.deepStrictEqual(issues, [])
+        done()
+      })
     })
 
     it('should throw an issue if the HED columns in a single row, including sidecars, contain invalid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\tmycodes\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\tfirst\n',
+            'onset\tduration\tHED\tmycodes\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\tfirst\n',
         },
       ]
       const jsonDictionary = {
@@ -232,23 +248,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 110)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 110)
+        done()
+      })
     })
 
     it('should not throw any issues if the HED columns in a single row, including sidecars, contain valid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\tmycodes\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\tsecond\n',
+            'onset\tduration\tHED\tmycodes\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\tsecond\n',
         },
       ]
       const jsonDictionary = {
@@ -263,23 +283,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.deepStrictEqual(issues, [])
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.deepStrictEqual(issues, [])
+        done()
+      })
     })
 
     it('should not throw any issues if the HED columns in multiple rows, including sidecars, contain valid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\tmycodes\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\tsecond\n' +
-              '7\tsomething\t/Action/Reach/To touch\tfirst\n',
+            'onset\tduration\tHED\tmycodes\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\tsecond\n' +
+            '7\tsomething\t/Action/Reach/To touch\tfirst\n',
         },
       ]
       const jsonDictionary = {
@@ -288,25 +312,29 @@ describe('Events', function() {
           mycodes: {
             HED: {
               first:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
               second: '/Action/Reach/To touch',
             },
           },
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.deepStrictEqual(issues, [])
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.deepStrictEqual(issues, [])
+        done()
+      })
     })
 
     it('should throw an issue if a single sidecar HED column in a single row contains invalid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents: 'onset\tduration\tmycodes\n' + '7\tsomething\tfirst\n',
         },
@@ -317,27 +345,31 @@ describe('Events', function() {
           mycodes: {
             HED: {
               first:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
               second:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
             },
           },
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 110)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 110)
+        done()
+      })
     })
 
     it('should not throw any issues if a single sidecar HED column in a single row contains valid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents: 'onset\tduration\tmycodes\n' + '7\tsomething\tsecond\n',
         },
@@ -348,31 +380,35 @@ describe('Events', function() {
           mycodes: {
             HED: {
               first:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
               second:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
             },
           },
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.deepStrictEqual(issues, [])
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.deepStrictEqual(issues, [])
+        done()
+      })
     })
 
     it('should not throw any issues if a single sidecar HED column in multiple rows contains valid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tmycodes\n' +
-              '7\tsomething\tsecond\n' +
-              '8\tsomething\tsecond',
+            'onset\tduration\tmycodes\n' +
+            '7\tsomething\tsecond\n' +
+            '8\tsomething\tsecond',
         },
       ]
       const jsonDictionary = {
@@ -381,30 +417,34 @@ describe('Events', function() {
           mycodes: {
             HED: {
               first:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
               second:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
             },
           },
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.deepStrictEqual(issues, [])
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.deepStrictEqual(issues, [])
+        done()
+      })
     })
 
     it('should throw an issue if any sidecar HED columns in a single row contain invalid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\ttestingCodes\tmyCodes\n' +
-              '7\tsomething\tfirst\tone\n',
+            'onset\tduration\ttestingCodes\tmyCodes\n' +
+            '7\tsomething\tfirst\tone\n',
         },
       ]
       const jsonDictionary = {
@@ -413,9 +453,9 @@ describe('Events', function() {
           testingCodes: {
             HED: {
               first:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
               second:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
             },
           },
           myCodes: {
@@ -427,23 +467,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 110)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 110)
+        done()
+      })
     })
 
     it('should not throw an issue if all sidecar HED columns in a single row contain valid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\ttestingCodes\tmyCodes\n' +
-              '7\tsomething\tfirst\ttwo\n',
+            'onset\tduration\ttestingCodes\tmyCodes\n' +
+            '7\tsomething\tfirst\ttwo\n',
         },
       ]
       const jsonDictionary = {
@@ -452,9 +496,9 @@ describe('Events', function() {
           testingCodes: {
             HED: {
               first:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
               second:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
             },
           },
           myCodes: {
@@ -466,23 +510,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.deepStrictEqual(issues, [])
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.deepStrictEqual(issues, [])
+        done()
+      })
     })
 
     it('should not throw an issue if all sidecar HED columns in multiple rows contain valid HED data', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\ttestingCodes\tmyCodes\n' +
-              '7\tsomething\tfirst\ttwo\n' +
-              '8\tsomething\tsecond\tone\n',
+            'onset\tduration\ttestingCodes\tmyCodes\n' +
+            '7\tsomething\tfirst\ttwo\n' +
+            '8\tsomething\tsecond\tone\n',
         },
       ]
       const jsonDictionary = {
@@ -491,9 +539,9 @@ describe('Events', function() {
           testingCodes: {
             HED: {
               first:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
               second:
-                  'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
+                'Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test',
             },
           },
           myCodes: {
@@ -505,18 +553,22 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.deepStrictEqual(issues, [])
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.deepStrictEqual(issues, [])
+        done()
+      })
     })
 
     it('should throw an issue if a sidecar HED column in a single row contains a non-existent key', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents: 'onset\tduration\tmycodes\n' + '7\tsomething\tthird\n',
         },
@@ -533,23 +585,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 112)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 112)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an illegal character', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test]\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test]\n',
         },
       ]
       const jsonDictionary = {
@@ -558,23 +614,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 106)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 106)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of mismatched parentheses', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\t(Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\t(Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
         },
       ]
       const jsonDictionary = {
@@ -583,23 +643,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 107)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 107)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a missing comma after a tag', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,/Action/Reach/To touch,(/Attribute/Object side/Left,/Participant/Effect/Body part/Arm)/Attribute/Location/Screen/Top/70 px,/Attribute/Location/Screen/Left/23 px\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,/Action/Reach/To touch,(/Attribute/Object side/Left,/Participant/Effect/Body part/Arm)/Attribute/Location/Screen/Top/70 px,/Attribute/Location/Screen/Left/23 px\n',
         },
       ]
       const jsonDictionary = {
@@ -608,23 +672,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 108)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 108)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of improper capitalization', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/label/test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/label/test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
         },
       ]
       const jsonDictionary = {
@@ -633,23 +701,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 109)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 109)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of too many tildes in a single group', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,(Participant/ID/1 ~ Participant/Effect/Visual ~ Item/Object/Vehicle/Car, Item/ID/RedCar, Attribute/Visual/Color/Red ~ Attribute/Object control/Perturb)\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,(Participant/ID/1 ~ Participant/Effect/Visual ~ Item/Object/Vehicle/Car, Item/ID/RedCar, Attribute/Visual/Color/Red ~ Attribute/Object control/Perturb)\n',
         },
       ]
       const jsonDictionary = {
@@ -658,23 +730,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 111)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 111)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an extra delimiter', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/label/Test,Event/Category/Miscellaneous/Test~,Event/Description/Test\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/label/Test,Event/Category/Miscellaneous/Test~,Event/Description/Test\n',
         },
       ]
       const jsonDictionary = {
@@ -683,23 +759,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 115)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 115)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an invalid tag', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Item/Object/Person/Driver,Event/Something\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Item/Object/Person/Driver,Event/Something\n',
         },
       ]
       const jsonDictionary = {
@@ -708,23 +788,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 116)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 116)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a duplicate unique tag', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Description/Bad\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Description/Bad\n',
         },
       ]
       const jsonDictionary = {
@@ -733,23 +817,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 117)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 117)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a tag with a missing required child', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category,Event/Description/Test\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category,Event/Description/Test\n',
         },
       ]
       const jsonDictionary = {
@@ -758,23 +846,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 118)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 118)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a missing required prefix', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Category/Miscellaneous/Test,Event/Description/Test\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Category/Miscellaneous/Test,Event/Description/Test\n',
         },
       ]
       const jsonDictionary = {
@@ -783,23 +875,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 119)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 119)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a value tag with an implied default unit', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Duration/3\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Duration/3\n',
         },
       ]
       const jsonDictionary = {
@@ -808,23 +904,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 120)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 120)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a value tag with an invalid unit', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Duration/3 cm\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Duration/3 cm\n',
         },
       ]
       const jsonDictionary = {
@@ -833,23 +933,27 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 121)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 121)
+        done()
+      })
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an invalid tag or an extra comma', async done => {
       const events = [
         {
-          file: {path: '/sub01/sub01_task-test_events.tsv'},
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
-              'onset\tduration\tHED\n' +
-              '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,This/Is/A/Tag\n',
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,This/Is/A/Tag\n',
         },
       ]
       const jsonDictionary = {
@@ -858,13 +962,17 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(events, [], headers, jsonDictionary, hedSchemaPromise).then(
-          issues => {
-            assert.strictEqual(issues.length, 1)
-            assert.strictEqual(issues[0].code, 122)
-            done()
-          },
-      )
+      validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        hedSchemaPromise,
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 122)
+        done()
+      })
     })
   })
 })
