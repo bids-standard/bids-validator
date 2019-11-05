@@ -30,6 +30,12 @@
     "CapManufacturer": { "type": "string" },
     "CapManufacturersModelName": { "type": "string" },
     "DewarPosition": { "type": "string" },
+    "HardwareFilters": {
+      "anyOf": [
+        { "type": "object", "additionalProperties": { "type": "object" } },
+        { "type": "string", "pattern": "^n/a$" }
+      ]
+    },
     "SoftwareFilters": {
       "anyOf": [
         {
