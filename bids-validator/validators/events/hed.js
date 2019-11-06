@@ -2,12 +2,7 @@ const hedValidator = require('hed-validator')
 const utils = require('../../utils')
 const Issue = utils.issues.Issue
 
-module.exports = function checkHedStrings(
-  events,
-  headers,
-  jsonContents,
-  schemaPromise,
-) {
+module.exports = function checkHedStrings(events, headers, jsonContents) {
   let issues = []
   // get all headers associated with task data
   const taskHeaders = headers.filter(header => {
@@ -104,10 +99,7 @@ module.exports = function checkHedStrings(
   if (hedStrings.length === 0) {
     return Promise.resolve(issues)
   } else {
-    if (schemaPromise === undefined) {
-      schemaPromise = hedValidator.buildSchema()
-    }
-    return schemaPromise.then(hedSchema => {
+    return hedValidator.buildSchema().then(hedSchema => {
       for (const [file, hedString] of hedStrings) {
         const [isHedStringValid, hedIssues] = hedValidator.validateHedString(
           hedString,

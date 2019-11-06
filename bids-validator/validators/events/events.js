@@ -3,13 +3,7 @@ const hed = require('./hed')
 const utils = require('../../utils')
 const Issue = utils.issues.Issue
 
-module.exports = function(
-  events,
-  stimuli,
-  headers,
-  jsonContents,
-  hedSchemaPromise,
-) {
+module.exports = function(events, stimuli, headers, jsonContents) {
   const issues = []
   // check that all stimuli files present in /stimuli are included in an _events.tsv file
   const stimuliIssues = checkStimuli(stimuli)
@@ -18,11 +12,9 @@ module.exports = function(
   const designIssues = checkDesignLength(events, headers, jsonContents)
 
   // check the HED strings
-  return hed(events, headers, jsonContents, hedSchemaPromise).then(
-    hedIssues => {
-      return issues.concat(stimuliIssues, designIssues, hedIssues)
-    },
-  )
+  return hed(events, headers, jsonContents).then(hedIssues => {
+    return issues.concat(stimuliIssues, designIssues, hedIssues)
+  })
 }
 
 const checkStimuli = function(stimuli) {

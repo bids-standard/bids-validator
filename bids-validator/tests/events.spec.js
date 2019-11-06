@@ -105,13 +105,6 @@ describe('Events', function() {
   })
 
   describe('HED event strings', function() {
-    let hedSchemaPromise
-
-    beforeAll(() => {
-      hedSchemaPromise = require('hed-validator').buildSchema()
-      return hedSchemaPromise
-    })
-
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of duplicate tags', async done => {
       const events = [
         {
@@ -128,17 +121,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 110)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 110)
+          done()
+        },
+      )
     })
 
     it('should not throw any issues if the HED column in a single row contains valid HED data', async done => {
@@ -157,16 +146,12 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.deepStrictEqual(issues, [])
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.deepStrictEqual(issues, [])
+          done()
+        },
+      )
     })
 
     it('should not throw any issues if the HED column in a single row contains valid HED data in multiple levels', async done => {
@@ -185,16 +170,12 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.deepStrictEqual(issues, [])
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.deepStrictEqual(issues, [])
+          done()
+        },
+      )
     })
 
     it('should not throw any issues if the HED column in multiple rows contains valid HED data', async done => {
@@ -214,16 +195,12 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.deepStrictEqual(issues, [])
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.deepStrictEqual(issues, [])
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED columns in a single row, including sidecars, contain invalid HED data', async done => {
@@ -248,17 +225,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 110)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 110)
+          done()
+        },
+      )
     })
 
     it('should not throw any issues if the HED columns in a single row, including sidecars, contain valid HED data', async done => {
@@ -283,16 +256,12 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.deepStrictEqual(issues, [])
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.deepStrictEqual(issues, [])
+          done()
+        },
+      )
     })
 
     it('should not throw any issues if the HED columns in multiple rows, including sidecars, contain valid HED data', async done => {
@@ -319,16 +288,12 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.deepStrictEqual(issues, [])
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.deepStrictEqual(issues, [])
+          done()
+        },
+      )
     })
 
     it('should throw an issue if a single sidecar HED column in a single row contains invalid HED data', async done => {
@@ -353,17 +318,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 110)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 110)
+          done()
+        },
+      )
     })
 
     it('should not throw any issues if a single sidecar HED column in a single row contains valid HED data', async done => {
@@ -388,16 +349,12 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.deepStrictEqual(issues, [])
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.deepStrictEqual(issues, [])
+          done()
+        },
+      )
     })
 
     it('should not throw any issues if a single sidecar HED column in multiple rows contains valid HED data', async done => {
@@ -425,16 +382,12 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.deepStrictEqual(issues, [])
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.deepStrictEqual(issues, [])
+          done()
+        },
+      )
     })
 
     it('should throw an issue if any sidecar HED columns in a single row contain invalid HED data', async done => {
@@ -467,17 +420,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 110)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 110)
+          done()
+        },
+      )
     })
 
     it('should not throw an issue if all sidecar HED columns in a single row contain valid HED data', async done => {
@@ -510,16 +459,12 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.deepStrictEqual(issues, [])
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.deepStrictEqual(issues, [])
+          done()
+        },
+      )
     })
 
     it('should not throw an issue if all sidecar HED columns in multiple rows contain valid HED data', async done => {
@@ -553,16 +498,12 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.deepStrictEqual(issues, [])
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.deepStrictEqual(issues, [])
+          done()
+        },
+      )
     })
 
     it('should throw an issue if a sidecar HED column in a single row contains a non-existent key', async done => {
@@ -585,17 +526,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 112)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 112)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an illegal character', async done => {
@@ -614,17 +551,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 106)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 106)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of mismatched parentheses', async done => {
@@ -643,17 +576,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 107)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 107)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a missing comma after a tag', async done => {
@@ -672,17 +601,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 108)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 108)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of improper capitalization', async done => {
@@ -701,17 +626,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 109)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 109)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of too many tildes in a single group', async done => {
@@ -730,17 +651,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 111)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 111)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an extra delimiter', async done => {
@@ -759,17 +676,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 115)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 115)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an invalid tag', async done => {
@@ -788,17 +701,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 116)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 116)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a duplicate unique tag', async done => {
@@ -817,17 +726,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 117)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 117)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a tag with a missing required child', async done => {
@@ -846,17 +751,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 118)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 118)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a missing required prefix', async done => {
@@ -875,17 +776,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 119)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 119)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a value tag with an implied default unit', async done => {
@@ -904,17 +801,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 120)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 120)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a value tag with an invalid unit', async done => {
@@ -933,17 +826,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 121)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 121)
+          done()
+        },
+      )
     })
 
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an invalid tag or an extra comma', async done => {
@@ -962,17 +851,13 @@ describe('Events', function() {
         },
       }
 
-      validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        hedSchemaPromise,
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 122)
-        done()
-      })
+      validate.Events.validateEvents(events, [], headers, jsonDictionary).then(
+        issues => {
+          assert.strictEqual(issues.length, 1)
+          assert.strictEqual(issues[0].code, 122)
+          done()
+        },
+      )
     })
   })
 })
