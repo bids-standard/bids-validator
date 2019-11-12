@@ -1,7 +1,7 @@
 import fs from 'fs'
 import Issue from '../../utils/issues'
 import remoteFiles from './remoteFiles'
-import { getOptions } from '../../utils/options'
+import options from '../../utils/options'
 
 /**
  * Test File
@@ -20,7 +20,7 @@ function testFile(file, annexed, dir, callback) {
       fs.lstat(file.path, function(lstatErr, lstats) {
         if (!lstatErr && lstats && lstats.isSymbolicLink()) {
           // symlink
-          if (getOptions().remoteFiles)
+          if (options.getOptions().remoteFiles)
             // only follow symlinks when --remoteFiles option is on
             handleRemoteAccess(file, annexed, dir, callback)
           else
