@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { Issue } from '../../utils/issues'
+import Issue from '../../utils/issues'
 import remoteFiles from './remoteFiles'
 import { getOptions } from '../../utils/options'
 

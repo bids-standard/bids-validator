@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk'
 import fs from 'fs'
 import cp from 'child_process'
-import { Issue } from '../issues'
+import Issue from '../issues'
 import zlib from 'zlib'
 import isNode from '../isNode'
 

@@ -1,5 +1,5 @@
 import testFile from './testFile'
-import { Issue } from '../../utils/issues'
+import Issue from '../../utils/issues'
 import fs from 'fs'
 import isNode from '../isNode'
 

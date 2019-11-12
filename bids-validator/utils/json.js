@@ -1,4 +1,4 @@
-import { Issue } from './issues'
+import Issue from './issues'
 import { JSHINT } from 'jshint'
 
 /**

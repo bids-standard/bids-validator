@@ -3,7 +3,7 @@ import pako from 'pako'
 import fs from 'fs'
 import zlib from 'zlib'
 import testFile from './testFile'
-import { Issue } from '../../utils/issues'
+import Issue from '../../utils/issues'
 import isNode from '../isNode'
 
 /**
