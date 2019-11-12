@@ -11,6 +11,8 @@ import type from './type'
 import collectSummary from './summary/collectSummary'
 import limit from './promise_limiter'
 
+export { type }
+
 export default {
   array: array,
   config: config,
