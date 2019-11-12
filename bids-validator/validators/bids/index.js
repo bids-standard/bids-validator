@@ -1,9 +1,9 @@
-import start from './start';
-import reset from './reset';
-import quickTest from './quickTest';
-import quickTestError from './quickTestError';
-import fullTest from './fullTest';
-import subIDsesIDmismatchTest from './subSesMismatchTest';
+import start from './start'
+import reset from './reset'
+import quickTest from './quickTest'
+import quickTestError from './quickTestError'
+import fullTest from './fullTest'
+import subIDsesIDmismatchTest from './subSesMismatchTest'
 
 export default {
   options: {},
@@ -14,4 +14,4 @@ export default {
   fullTest: fullTest,
   subIDsesIDmismatchtest: subIDsesIDmismatchTest,
   reset: reset,
-};
+}

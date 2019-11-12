@@ -1,4 +1,4 @@
-import type from '../type';
+import type from '../type'
 
 const collectModalities = fileList => {
   const modalities = []
@@ -22,4 +22,4 @@ const collectModalities = fileList => {
   return modalities
 }
 
-export default collectModalities;
+export default collectModalities

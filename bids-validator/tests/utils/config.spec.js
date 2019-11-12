@@ -1,5 +1,5 @@
-import utils from '../../utils';
-import assert from 'assert';
+import utils from '../../utils'
+import assert from 'assert'
 
 describe('utils.config', function() {
   var codes = [1, 3, 4, 7, 21, 33, 34]

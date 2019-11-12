@@ -60,4 +60,4 @@ var array = {
   },
 }
 
-export default array;
+export default array

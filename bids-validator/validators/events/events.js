@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import hed from './hed';
+import hed from './hed'
 
-import utils from '../../utils';
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 export default function(events, stimuli, headers, jsonContents) {
@@ -16,7 +16,7 @@ export default function(events, stimuli, headers, jsonContents) {
   const hedIssues = hed(events, headers, jsonContents)
 
   return issues.concat(stimuliIssues, designIssues, hedIssues)
-};
+}
 
 const checkStimuli = function(stimuli) {
   const issues = []

@@ -1,10 +1,10 @@
-import { version } from '../../package.json';
-import BIDS from './obj';
-import reset from './reset';
-import quickTest from './quickTest';
-import quickTestError from './quickTestError';
-import fullTest from './fullTest';
-import utils from '../../utils';
+import { version } from '../../package.json'
+import BIDS from './obj'
+import reset from './reset'
+import quickTest from './quickTest'
+import quickTestError from './quickTestError'
+import fullTest from './fullTest'
+import utils from '../../utils'
 
 /**
  * Start
@@ -44,4 +44,4 @@ const start = (dir, options, callback) => {
   })
 }
 
-export default start;
+export default start

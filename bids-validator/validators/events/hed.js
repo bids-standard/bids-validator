@@ -1,5 +1,5 @@
-import hedValidator from 'hed-validator';
-import utils from '../../utils';
+import hedValidator from 'hed-validator'
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 export default function checkHedStrings(events, headers, jsonContents) {
@@ -107,7 +107,7 @@ export default function checkHedStrings(events, headers, jsonContents) {
     }
   })
   return issues
-};
+}
 
 function convertHedIssuesToBidsIssues(hedIssues, file) {
   const hedIssuesToBidsCodes = {

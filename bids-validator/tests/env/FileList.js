@@ -2,10 +2,10 @@
  * for use in test suites using File & FileList browser APIs in jsdom environment
  */
 
-import fs from 'fs';
+import fs from 'fs'
 
-import path from 'path';
-import mime from 'mime-types';
+import path from 'path'
+import mime from 'mime-types'
 
 function createFileList(dir) {
   const str = dir.substr(dir.lastIndexOf('/') + 1) + '$'
@@ -77,4 +77,4 @@ export default {
   addFileList,
   createFile,
   createFileList,
-};
+}

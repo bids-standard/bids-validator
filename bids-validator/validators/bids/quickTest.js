@@ -1,4 +1,4 @@
-import utils from '../../utils';
+import utils from '../../utils'
 /**
  * Quick Test
  *
@@ -28,4 +28,4 @@ const quickTest = fileList => {
   return couldBeBIDS
 }
 
-export default quickTest;
+export default quickTest

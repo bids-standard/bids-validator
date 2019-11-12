@@ -1,6 +1,6 @@
-import utils from '../utils';
+import utils from '../utils'
 var Issue = utils.issues.Issue
-import isNode from '../utils/isNode';
+import isNode from '../utils/isNode'
 
 /**
  * dimensions and resolution
@@ -293,5 +293,5 @@ const headerFieldCompare = (header1, header2) => {
   return false
 }
 
-export default headerFields;
-export { collect39Issues };
+export default headerFields
+export { collect39Issues }

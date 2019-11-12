@@ -1,5 +1,5 @@
-import Issue from '../issues/issue';
-import isNode from '../isNode';
+import Issue from '../issues/issue'
+import isNode from '../isNode'
 
 function createIssueForEmpty(file) {
   const size = !isNode ? file.size : file.stats.size
@@ -26,4 +26,4 @@ export default function validateMisc(miscFiles) {
   return Promise.resolve(
     miscFiles.map(createIssueForEmpty).filter(clearNonIssues),
   )
-};
+}

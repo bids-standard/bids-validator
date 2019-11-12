@@ -22,4 +22,4 @@ const fieldmapWithoutMagnitude = files => {
   return issues
 }
 
-export default fieldmapWithoutMagnitude;
+export default fieldmapWithoutMagnitude

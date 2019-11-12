@@ -6,4 +6,4 @@ export default function checkForDerivatives(files) {
       derivativesFilePattern.test(file.relativePath),
     ) !== -1
   )
-};
+}

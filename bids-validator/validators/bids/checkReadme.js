@@ -12,4 +12,4 @@ const checkReadme = fileList => {
   }
   return issues
 }
-export default checkReadme;
+export default checkReadme

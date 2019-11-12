@@ -1,4 +1,4 @@
-import type from '../type.js';
+import type from '../type.js'
 
 describe('type.js', () => {
   describe('isBids()', () => {

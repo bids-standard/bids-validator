@@ -21,4 +21,4 @@ const checkAge89 = function(rows, file, issues) {
   }
 }
 
-export default checkAge89;
+export default checkAge89

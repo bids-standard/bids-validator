@@ -1,8 +1,8 @@
-import fs from 'fs';
-import { promisify } from 'util';
-import request from 'sync-request';
-import AdmZip from 'adm-zip';
-import lockfile from 'lockfile';
+import fs from 'fs'
+import { promisify } from 'util'
+import request from 'sync-request'
+import AdmZip from 'adm-zip'
+import lockfile from 'lockfile'
 
 const lockPromise = promisify(lockfile.lock)
 
@@ -35,4 +35,4 @@ const loadExamples = async () => {
   return test_version
 }
 
-export default loadExamples;
+export default loadExamples

@@ -1,4 +1,4 @@
-import issues from './list';
+import issues from './list'
 
 /**
  * Help Url
@@ -35,4 +35,4 @@ export default function(options) {
     : issue.severity
   this.reason = options.hasOwnProperty('reason') ? options.reason : issue.reason
   this.helpUrl = constructHelpUrl(issue)
-};
+}

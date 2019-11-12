@@ -1,7 +1,7 @@
-import path from 'path';
-import utils from '../../utils';
+import path from 'path'
+import utils from '../../utils'
 const Issue = utils.issues.Issue
-import isNode from '../../utils/isNode';
+import isNode from '../../utils/isNode'
 
 /*
  * Generates an error for quickTest failures
@@ -41,4 +41,4 @@ const constructFileName = dir => {
   return filename
 }
 
-export default quickTestError;
+export default quickTestError

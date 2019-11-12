@@ -1,4 +1,4 @@
-import utils from '../../utils';
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 /**
@@ -108,4 +108,4 @@ const mismatchError = (type, file) => {
   })
 }
 
-export default subSesMismatchTest;
+export default subSesMismatchTest

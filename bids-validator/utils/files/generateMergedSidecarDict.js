@@ -22,4 +22,4 @@ function generateMergedSidecarDict(potentialSidecars, jsonContents) {
   return mergedDictionary
 }
 
-export default generateMergedSidecarDict;
+export default generateMergedSidecarDict

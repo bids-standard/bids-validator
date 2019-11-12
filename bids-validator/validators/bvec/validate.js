@@ -1,5 +1,5 @@
-import utils from '../../utils';
-import bvec from './bvec';
+import utils from '../../utils'
+import bvec from './bvec'
 
 const validate = (files, bContentsDict, annexed, dir) => {
   // validate bvec
@@ -29,4 +29,4 @@ const validate = (files, bContentsDict, annexed, dir) => {
   return Promise.all(bvecPromises).then(() => issues)
 }
 
-export default validate;
+export default validate

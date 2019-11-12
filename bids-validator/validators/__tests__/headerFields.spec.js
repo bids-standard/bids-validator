@@ -1,5 +1,5 @@
-import { assert } from 'chai';
-import { collect39Issues } from '../headerFields';
+import { assert } from 'chai'
+import { collect39Issues } from '../headerFields'
 
 describe('headerFields', () => {
   describe('collect39Issues()', () => {

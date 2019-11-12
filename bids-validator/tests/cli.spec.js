@@ -1,5 +1,5 @@
-import { assert } from 'chai';
-import { spawn } from 'child_process';
+import { assert } from 'chai'
+import { spawn } from 'child_process'
 const dir = process.cwd()
 const data_dir = dir + '/bids-validator/tests/data/'
 const test_data = data_dir + 'valid_headers/'

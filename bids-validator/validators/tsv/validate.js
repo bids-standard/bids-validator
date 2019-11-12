@@ -1,5 +1,5 @@
-import utils from '../../utils';
-import tsv from './tsv';
+import utils from '../../utils'
+import tsv from './tsv'
 
 const validate = (
   files,
@@ -74,4 +74,4 @@ const validate = (
   }))
 }
 
-export default validate;
+export default validate

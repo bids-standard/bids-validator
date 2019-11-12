@@ -1,5 +1,5 @@
-import { Issue } from './issues';
-import { JSHINT } from 'jshint';
+import { Issue } from './issues'
+import { JSHINT } from 'jshint'
 
 /**
  * Similar to native JSON.parse but returns a promise and
@@ -58,4 +58,4 @@ function jshint(file, contents, callback) {
 export default {
   parse,
   jshint,
-};
+}

@@ -1,14 +1,14 @@
-import colors from 'colors/safe';
-import { table, getBorderCharacters } from 'table';
-import pluralize from 'pluralize';
-import bytes from 'bytes';
+import colors from 'colors/safe'
+import { table, getBorderCharacters } from 'table'
+import pluralize from 'pluralize'
+import bytes from 'bytes'
 
 export default {
   issues: formatIssues,
   summary: formatSummary,
   logIssues,
   unexpectedError,
-};
+}
 
 function unexpectedError(message) {
   return colors.red(message)

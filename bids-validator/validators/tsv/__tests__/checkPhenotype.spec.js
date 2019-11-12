@@ -1,5 +1,5 @@
-import { assert } from 'chai';
-import checkPhenotype from '../checkPhenotype';
+import { assert } from 'chai'
+import checkPhenotype from '../checkPhenotype'
 
 describe('checkPhenotype', () => {
   const summary = { subjects: ['01', '02'] }

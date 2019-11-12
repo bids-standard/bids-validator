@@ -3,4 +3,4 @@
  * @jest-environment ./bids-validator/tests/env/ExamplesEnvironmentWeb.js
  */
 
-import './bids.spec.js';
+import './bids.spec.js'

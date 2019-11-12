@@ -4,4 +4,4 @@ const isBrowserWorker = () =>
 
 const isNode = () => typeof window === 'undefined' && !isBrowserWorker()
 
-export default isNode();
+export default isNode()

@@ -1,7 +1,7 @@
-import testFile from './testFile';
-import { Issue } from '../../utils/issues';
-import fs from 'fs';
-import isNode from '../isNode';
+import testFile from './testFile'
+import { Issue } from '../../utils/issues'
+import fs from 'fs'
+import isNode from '../isNode'
 
 /**
  * Read
@@ -52,4 +52,4 @@ function readFile(file, annexed, dir) {
   })
 }
 
-export default readFile;
+export default readFile

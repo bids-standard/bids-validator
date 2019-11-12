@@ -1,5 +1,5 @@
-import fs from 'fs';
-import isNode from '../isNode';
+import fs from 'fs'
+import isNode from '../isNode'
 
 const collectDirectorySize = fileList => {
   let size = 0
@@ -32,4 +32,4 @@ const getFileStats = file => {
   return stats
 }
 
-export default collectDirectorySize;
+export default collectDirectorySize

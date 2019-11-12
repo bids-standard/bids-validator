@@ -1,7 +1,7 @@
-import fs from 'fs';
-import { Issue } from '../../utils/issues';
-import remoteFiles from './remoteFiles';
-import { getOptions } from '../../utils/options';
+import fs from 'fs'
+import { Issue } from '../../utils/issues'
+import remoteFiles from './remoteFiles'
+import { getOptions } from '../../utils/options'
 
 /**
  * Test File
@@ -68,4 +68,4 @@ function handleRemoteAccess(file, annexed, dir, callback) {
   }
 }
 
-export default testFile;
+export default testFile

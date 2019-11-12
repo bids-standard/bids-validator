@@ -1,5 +1,5 @@
-import { assert } from 'chai';
-import validateTsvColumns from '../validateTsvColumns';
+import { assert } from 'chai'
+import validateTsvColumns from '../validateTsvColumns'
 
 describe('validateTsvColumns', () => {
   const file = {

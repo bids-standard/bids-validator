@@ -1,4 +1,4 @@
-import type from '../type';
+import type from '../type'
 
 const collectSubjects = (fileList, options) => {
   const subjects = []
@@ -24,4 +24,4 @@ const collectSubjects = (fileList, options) => {
   return subjects
 }
 
-export default collectSubjects;
+export default collectSubjects

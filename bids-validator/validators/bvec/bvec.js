@@ -1,5 +1,5 @@
 const Issue = require('../../utils').issues.Issue
-import { type } from '../../utils';
+import { type } from '../../utils'
 
 /**
  * bvec
@@ -27,7 +27,7 @@ export default function bvec(file, contents, callback) {
   issues = issues.concat(checkValueValidity(contents, file))
 
   callback(issues)
-};
+}
 
 function checkType(contents, file) {
   const issues = []

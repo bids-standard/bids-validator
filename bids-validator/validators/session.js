@@ -1,7 +1,7 @@
-import utils from '../utils';
+import utils from '../utils'
 const sesUtils = utils.files.sessions
 var Issue = utils.issues.Issue
-import isNode from '../utils/isNode';
+import isNode from '../utils/isNode'
 
 /**
  * session
@@ -243,4 +243,4 @@ export default {
   missingFileWarnings,
   checkFileInMissingSession,
   checkMissingFile,
-};
+}

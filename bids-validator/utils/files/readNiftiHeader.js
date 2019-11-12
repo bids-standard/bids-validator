@@ -1,10 +1,10 @@
-import nifti from 'nifti-js';
-import pako from 'pako';
-import fs from 'fs';
-import zlib from 'zlib';
-import testFile from './testFile';
-import { Issue } from '../../utils/issues';
-import isNode from '../isNode';
+import nifti from 'nifti-js'
+import pako from 'pako'
+import fs from 'fs'
+import zlib from 'zlib'
+import testFile from './testFile'
+import { Issue } from '../../utils/issues'
+import isNode from '../isNode'
 
 /**
  * Read Nifti Header
@@ -148,4 +148,4 @@ function handleGunzipError(buffer, file) {
   return { error: new Issue({ code: 28, file: file }) }
 }
 
-export default readNiftiHeader;
+export default readNiftiHeader

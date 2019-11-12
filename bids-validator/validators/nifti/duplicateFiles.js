@@ -33,4 +33,4 @@ const duplicateNiftis = files => {
   return issues
 }
 
-export default duplicateNiftis;
+export default duplicateNiftis

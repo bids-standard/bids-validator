@@ -1,6 +1,6 @@
-import assert from 'assert';
-import { Issue } from '../utils/issues';
-import consoleFormat from '../utils/consoleFormat';
+import assert from 'assert'
+import { Issue } from '../utils/issues'
+import consoleFormat from '../utils/consoleFormat'
 
 describe('console format', () => {
   let issues

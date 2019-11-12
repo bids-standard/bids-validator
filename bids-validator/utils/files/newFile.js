@@ -1,4 +1,4 @@
-import FileAPI from './FileAPI';
+import FileAPI from './FileAPI'
 
 /**
  * New File
@@ -12,4 +12,4 @@ function newFile(filename) {
   return new File([''], filename)
 }
 
-export default newFile;
+export default newFile

@@ -1,5 +1,5 @@
-import { assert } from 'chai';
-import subjects from '../subjects';
+import { assert } from 'chai'
+import subjects from '../subjects'
 
 describe('subjects', () => {
   const subjectsArray = ['01', '02', '03']

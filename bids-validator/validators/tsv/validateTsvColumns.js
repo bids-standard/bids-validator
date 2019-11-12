@@ -1,6 +1,6 @@
-import utils from '../../utils';
+import utils from '../../utils'
 const Issue = utils.issues.Issue
-import nonCustomColumns from '../../bids_validator/tsv/non_custom_columns.json';
+import nonCustomColumns from '../../bids_validator/tsv/non_custom_columns.json'
 
 /**
  * @param {Object} file - BIDS file object
@@ -98,4 +98,4 @@ const customColumnIssue = function(file, col, locations) {
   })
 }
 
-export default validateTsvColumns;
+export default validateTsvColumns

@@ -1,8 +1,8 @@
-import utils from '../../utils';
-import nifti from './nii';
-import phaseDiffWithoutMagnitude from './phasediffWithoutMagnitude';
-import fieldmapWithoutMagnitude from './fieldmapWithoutMagnitude';
-import duplicateFiles from './duplicateFiles';
+import utils from '../../utils'
+import nifti from './nii'
+import phaseDiffWithoutMagnitude from './phasediffWithoutMagnitude'
+import fieldmapWithoutMagnitude from './fieldmapWithoutMagnitude'
+import duplicateFiles from './duplicateFiles'
 
 const validate = (
   files,
@@ -76,4 +76,4 @@ const validate = (
   })
 }
 
-export default validate;
+export default validate

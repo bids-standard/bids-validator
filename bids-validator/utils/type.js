@@ -9,14 +9,14 @@
 /**
  * Import RegExps from bids-validator-common
  */
-import associated_data_rules from '../bids_validator/rules/associated_data_rules.json';
+import associated_data_rules from '../bids_validator/rules/associated_data_rules.json'
 
-import file_level_rules from '../bids_validator/rules/file_level_rules.json';
-import fixed_top_level_names from '../bids_validator/rules/fixed_top_level_names.json';
-import phenotypic_rules from '../bids_validator/rules/phenotypic_rules.json';
-import session_level_rules from '../bids_validator/rules/session_level_rules.json';
-import subject_level_rules from '../bids_validator/rules/subject_level_rules.json';
-import top_level_rules from '../bids_validator/rules/top_level_rules.json';
+import file_level_rules from '../bids_validator/rules/file_level_rules.json'
+import fixed_top_level_names from '../bids_validator/rules/fixed_top_level_names.json'
+import phenotypic_rules from '../bids_validator/rules/phenotypic_rules.json'
+import session_level_rules from '../bids_validator/rules/session_level_rules.json'
+import subject_level_rules from '../bids_validator/rules/subject_level_rules.json'
+import top_level_rules from '../bids_validator/rules/top_level_rules.json'
 
 // Associated data
 const associatedData = buildRegExp(associated_data_rules.associated_data)
@@ -265,7 +265,7 @@ export default {
 
     return values
   },
-};
+}
 
 function conditionalMatch(expression, path) {
   var match = expression.exec(path)

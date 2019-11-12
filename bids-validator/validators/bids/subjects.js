@@ -1,4 +1,4 @@
-import utils from '../../utils';
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 const participantsInSubjects = (participants, subjects) => {
@@ -59,4 +59,4 @@ const atLeastOneSubject = fileList => {
 export default {
   participantsInSubjects,
   atLeastOneSubject,
-};
+}

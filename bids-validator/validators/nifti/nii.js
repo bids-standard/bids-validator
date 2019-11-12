@@ -1,4 +1,4 @@
-import utils from '../../utils';
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 /**
@@ -438,7 +438,7 @@ export default function NIFTI(
     }
   }
   callback(issues)
-};
+}
 
 function missingEvents(path, potentialEvents, events) {
   let hasEvent = false,

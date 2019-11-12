@@ -1,5 +1,5 @@
-import { assert } from 'chai';
-import duplicateNiftis from '../duplicateFiles';
+import { assert } from 'chai'
+import duplicateNiftis from '../duplicateFiles'
 
 describe('duplicateFiles', () => {
   describe('duplicateNiftis()', () => {

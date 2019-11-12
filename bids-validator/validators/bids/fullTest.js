@@ -1,22 +1,22 @@
-import BIDS from './obj';
-import utils from '../../utils';
+import BIDS from './obj'
+import utils from '../../utils'
 const Issue = utils.issues.Issue
-import tsv from '../tsv';
-import json from '../json';
-import NIFTI from '../nifti';
-import bval from '../bval';
-import bvec from '../bvec';
-import Events from '../events';
-import { session } from '../session';
-import checkAnyDataPresent from '../checkAnyDataPresent';
-import headerFields from '../headerFields';
-import subSesMismatchTest from './subSesMismatchTest';
-import groupFileTypes from './groupFileTypes';
-import subjects from './subjects';
-import checkDatasetDescription from './checkDatasetDescription';
-import checkReadme from './checkReadme';
-import validateMisc from '../../utils/files/validateMisc';
-import collectSubjectMetadata from '../../utils/summary/collectSubjectMetadata';
+import tsv from '../tsv'
+import json from '../json'
+import NIFTI from '../nifti'
+import bval from '../bval'
+import bvec from '../bvec'
+import Events from '../events'
+import { session } from '../session'
+import checkAnyDataPresent from '../checkAnyDataPresent'
+import headerFields from '../headerFields'
+import subSesMismatchTest from './subSesMismatchTest'
+import groupFileTypes from './groupFileTypes'
+import subjects from './subjects'
+import checkDatasetDescription from './checkDatasetDescription'
+import checkReadme from './checkReadme'
+import validateMisc from '../../utils/files/validateMisc'
+import collectSubjectMetadata from '../../utils/summary/collectSubjectMetadata'
 
 /**
  * Full Test
@@ -218,4 +218,4 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     })
 }
 
-export default fullTest;
+export default fullTest

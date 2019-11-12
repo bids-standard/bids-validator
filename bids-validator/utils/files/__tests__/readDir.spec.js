@@ -1,4 +1,4 @@
-import readDir from '../readDir.js';
+import readDir from '../readDir.js'
 
 describe('readDir.js', () => {
   describe('fileArrayToObject', () => {

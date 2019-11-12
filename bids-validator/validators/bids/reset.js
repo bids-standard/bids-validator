@@ -8,4 +8,4 @@ const reset = BIDS => {
   BIDS.issues = []
 }
 
-export default reset;
+export default reset

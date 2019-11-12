@@ -6,4 +6,4 @@ export default {
     this.sessions = []
     this.missingSessions = []
   },
-};
+}

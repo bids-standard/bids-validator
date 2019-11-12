@@ -14,4 +14,4 @@ function getBFileContent(potentialBFiles, bContentsDict) {
   }
 }
 
-export default getBFileContent;
+export default getBFileContent

@@ -1,5 +1,5 @@
 const Issue = require('../../utils').issues.Issue
-import df from 'date-fns';
+import df from 'date-fns'
 
 const checkAcqTimeFormat = function(rows, file, issues) {
   const format = "yyyy-MM-dd'T'HH:mm:ss"
@@ -27,4 +27,4 @@ const checkAcqTimeFormat = function(rows, file, issues) {
   })
 }
 
-export default checkAcqTimeFormat;
+export default checkAcqTimeFormat

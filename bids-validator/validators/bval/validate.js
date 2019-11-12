@@ -1,5 +1,5 @@
-import utils from '../../utils';
-import bval from './bval';
+import utils from '../../utils'
+import bval from './bval'
 
 const validate = (files, bContentsDict, annexed, dir) => {
   let issues = []
@@ -29,4 +29,4 @@ const validate = (files, bContentsDict, annexed, dir) => {
   return Promise.all(bvalPromises).then(() => issues)
 }
 
-export default validate;
+export default validate

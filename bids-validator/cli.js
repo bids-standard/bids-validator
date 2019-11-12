@@ -1,11 +1,11 @@
 /*eslint no-console: ["error", {allow: ["log"]}] */
 
-import validate from './index.js';
+import validate from './index.js'
 
 const format = validate.consoleFormat
-import colors from 'colors/safe';
-import fs from 'fs';
-import remoteFiles from './utils/files/remoteFiles';
+import colors from 'colors/safe'
+import fs from 'fs'
+import remoteFiles from './utils/files/remoteFiles'
 
 const exitProcess = issues => {
   if (
@@ -47,4 +47,4 @@ export default function(dir, options) {
     console.log(colors.red(dir + ' does not exist'))
     process.exit(2)
   }
-};
+}

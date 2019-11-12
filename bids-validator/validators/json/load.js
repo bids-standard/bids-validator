@@ -1,4 +1,4 @@
-import utils from '../../utils';
+import utils from '../../utils'
 
 class JSONParseError extends Error {
   constructor(message) {
@@ -49,4 +49,4 @@ const load = (files, jsonFiles, jsonContentsDict, annexed, dir) => {
     })
 }
 
-export default load;
+export default load

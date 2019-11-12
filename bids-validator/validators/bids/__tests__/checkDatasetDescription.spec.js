@@ -1,5 +1,5 @@
-import { assert } from 'chai';
-import checkDatasetDescription from '../checkDatasetDescription';
+import { assert } from 'chai'
+import checkDatasetDescription from '../checkDatasetDescription'
 
 describe('checkDatasetDescription', () => {
   describe('checkAuthorField', () => {

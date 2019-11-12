@@ -1,5 +1,5 @@
 const Issue = require('../../utils').issues.Issue
-import { type } from '../../utils';
+import { type } from '../../utils'
 
 /**
  * bval
@@ -25,7 +25,7 @@ export default function bval(file, contents, callback) {
   issues = issues.concat(checkSeparatorAndValueType(contents, file))
 
   callback(issues)
-};
+}
 
 function checkType(contents, file) {
   const issues = []

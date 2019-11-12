@@ -9,4 +9,4 @@ export default {
     totalFiles: [],
     size: 0,
   },
-};
+}

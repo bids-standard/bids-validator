@@ -1,9 +1,9 @@
-import AWS from 'aws-sdk';
-import fs from 'fs';
-import cp from 'child_process';
-import { Issue } from '../issues';
-import zlib from 'zlib';
-import isNode from '../isNode';
+import AWS from 'aws-sdk'
+import fs from 'fs'
+import cp from 'child_process'
+import { Issue } from '../issues'
+import zlib from 'zlib'
+import isNode from '../isNode'
 
 /**
  * Remote Files
@@ -230,4 +230,4 @@ const remoteFiles = {
   },
 }
 
-export default remoteFiles;
+export default remoteFiles

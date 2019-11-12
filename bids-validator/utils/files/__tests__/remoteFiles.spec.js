@@ -1,7 +1,7 @@
-import { assert } from 'chai';
-import remoteFiles from '../remoteFiles';
-import fs from 'fs';
-import zlib from 'zlib';
+import { assert } from 'chai'
+import remoteFiles from '../remoteFiles'
+import fs from 'fs'
+import zlib from 'zlib'
 const config = {
   s3Params: {
     Bucket: 'none',

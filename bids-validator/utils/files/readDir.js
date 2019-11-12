@@ -1,10 +1,10 @@
-import ignore from 'ignore';
-import readFile from './readFile';
-import path from 'path';
-import crypto from 'crypto';
-import fs from 'fs';
-import { spawn } from 'child_process';
-import isNode from '../isNode';
+import ignore from 'ignore'
+import readFile from './readFile'
+import path from 'path'
+import crypto from 'crypto'
+import fs from 'fs'
+import { spawn } from 'child_process'
+import isNode from '../isNode'
 
 /**
  * Read Directory
@@ -379,4 +379,4 @@ export default {
   readLsTreeLines,
   readCatFileLines,
   processFiles,
-};
+}

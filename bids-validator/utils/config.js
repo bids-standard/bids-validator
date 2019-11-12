@@ -1,4 +1,4 @@
-import minimatch from 'minimatch';
+import minimatch from 'minimatch'
 
 var config = {
   /**
@@ -147,4 +147,4 @@ var config = {
   },
 }
 
-export default config;
+export default config

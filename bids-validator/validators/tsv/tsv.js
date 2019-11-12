@@ -1,7 +1,7 @@
-import utils from '../../utils';
+import utils from '../../utils'
 const Issue = utils.issues.Issue
-import checkAcqTimeFormat from './checkAcqTimeFormat';
-import checkAge89 from './checkAge89';
+import checkAcqTimeFormat from './checkAcqTimeFormat'
+import checkAge89 from './checkAge89'
 
 /**
  * TSV
@@ -295,4 +295,4 @@ const TSV = (file, contents, fileList, callback) => {
   callback(issues, participants, stimPaths)
 }
 
-export default TSV;
+export default TSV

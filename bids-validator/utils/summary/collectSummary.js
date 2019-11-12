@@ -1,8 +1,8 @@
-import files from '../files';
-import checkForDerivatives from './checkForDerivatives';
-import collectModalities from './collectModalities';
-import collectSessions from './collectSessions';
-import collectSubjects from './collectSubjects';
+import files from '../files'
+import checkForDerivatives from './checkForDerivatives'
+import collectModalities from './collectModalities'
+import collectSessions from './collectSessions'
+import collectSubjects from './collectSubjects'
 
 const collectSummary = (fileList, options) => {
   const summary = {
@@ -42,4 +42,4 @@ const collectSummary = (fileList, options) => {
   return summary
 }
 
-export default collectSummary;
+export default collectSummary

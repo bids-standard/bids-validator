@@ -48,4 +48,4 @@ const checkAuthorField = authors => {
   }
   return issues
 }
-export default checkDatasetDescription;
+export default checkDatasetDescription

@@ -1,6 +1,6 @@
-import list from './list';
-import Issue from './issue';
-import config from '../config';
+import list from './list'
+import Issue from './issue'
+import config from '../config'
 
 var issues = {
   /**
@@ -206,4 +206,4 @@ var issues = {
   },
 }
 
-export default issues;
+export default issues

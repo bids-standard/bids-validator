@@ -1,5 +1,5 @@
-import assert from 'assert';
-import utils from '../../utils';
+import assert from 'assert'
+import utils from '../../utils'
 
 describe('issues', () => {
   describe('exceptionHandler', () => {

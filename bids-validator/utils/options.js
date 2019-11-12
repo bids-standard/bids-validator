@@ -1,5 +1,5 @@
-import files from './files';
-import json from './json';
+import files from './files'
+import json from './json'
 
 let options
 
@@ -77,4 +77,4 @@ export default {
       }
     })
   },
-};
+}

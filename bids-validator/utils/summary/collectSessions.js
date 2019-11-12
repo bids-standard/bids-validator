@@ -1,4 +1,4 @@
-import type from '../type';
+import type from '../type'
 
 const collectSessions = (fileList, options) => {
   const sessions = []
@@ -23,4 +23,4 @@ const collectSessions = (fileList, options) => {
   return sessions
 }
 
-export default collectSessions;
+export default collectSessions
