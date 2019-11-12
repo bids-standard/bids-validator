@@ -206,4 +206,4 @@ var issues = {
   },
 }
 
-export default issues
+export default Object.assign(Issue, issues)
