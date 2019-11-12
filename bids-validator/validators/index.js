@@ -2,7 +2,7 @@
 import 'cross-fetch/polyfill'
 
 import tsv from './tsv'
-import { json as JSON } from './json'
+import json from './json'
 import { nifti as NIFTI } from './nifti'
 import { start as BIDS } from './bids'
 import Events from './events'
@@ -15,7 +15,7 @@ import consoleFormat from '../utils/consoleFormat'
 
 const validate = {
   BIDS: BIDS,
-  JSON: JSON,
+  JSON: json.json,
   TSV: tsv,
   NIFTI: NIFTI,
   Events: Events,
