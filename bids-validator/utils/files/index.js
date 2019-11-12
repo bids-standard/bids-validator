@@ -16,7 +16,7 @@ import remoteFiles from './remoteFiles'
 
 // public API ---------------------------------------------------------------------
 
-var fileUtils = {
+export {
   FileAPI,
   newFile,
   readFile,
@@ -31,4 +31,17 @@ var fileUtils = {
   remoteFiles,
 }
 
-export default fileUtils
+export default {
+  FileAPI,
+  newFile,
+  readFile,
+  readDir,
+  readNiftiHeader,
+  generateMergedSidecarDict,
+  potentialLocations,
+  getBFileContent,
+  collectDirectorySize,
+  illegalCharacterTest,
+  sessions,
+  remoteFiles,
+}
