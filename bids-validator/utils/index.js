@@ -11,18 +11,30 @@ import type from './type'
 import collectSummary from './summary/collectSummary'
 import limit from './promise_limiter'
 
-export { type }
+export {
+  array,
+  config,
+  files,
+  bids_files,
+  issues,
+  json,
+  modalities,
+  options,
+  type,
+  collectSummary,
+  limit,
+}
 
 export default {
-  array: array,
-  config: config,
-  files: files,
-  bids_files: bids_files,
-  issues: issues,
-  json: json,
-  modalities: modalities,
-  options: options,
-  type: type,
-  collectSummary: collectSummary,
+  array,
+  config,
+  files,
+  bids_files,
+  issues,
+  json,
+  modalities,
+  options,
+  type,
+  collectSummary,
   limit,
 }
