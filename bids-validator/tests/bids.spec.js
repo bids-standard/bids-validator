@@ -2,11 +2,12 @@
  * eslint no-console: ["error", { allow: ["log"] }]
  * @jest-environment ./bids-validator/tests/env/ExamplesEnvironment.js
  */
-const { assert } = require('chai')
-const validate = require('../index.js')
-const fs = require('fs')
-const path = require('path')
-const { createFileList } = require('./env/FileList.js')
+import { assert } from 'chai';
+
+import validate from '../index.js';
+import fs from 'fs';
+import path from 'path';
+import { createFileList } from './env/FileList.js';
 
 function getDirectories(srcpath) {
   return fs.readdirSync(srcpath).filter(function(file) {

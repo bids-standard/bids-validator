@@ -1,9 +1,9 @@
-const events = require('./events')
-const hed = require('./hed')
-const validate = require('./validate')
+import events from './events';
+import hed from './hed';
+import validate from './validate';
 
-module.exports = {
+export default {
   events: events,
   hed: hed,
   validateEvents: validate,
-}
+};

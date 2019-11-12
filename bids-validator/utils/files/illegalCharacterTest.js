@@ -1,4 +1,4 @@
-const Issue = require('../../utils/issues').Issue
+import { Issue } from '../../utils/issues';
 
 const re = {
   task_re: /sub-(.*?)_task-[a-zA-Z0-9]*[_-][a-zA-Z0-9]*(?:_acq-[a-zA-Z0-9-]*)?(?:_run-\d+)?_/g,
@@ -47,4 +47,4 @@ const illegalCharacterTest = fileList => {
   return issues
 }
 
-module.exports = illegalCharacterTest
+export default illegalCharacterTest;

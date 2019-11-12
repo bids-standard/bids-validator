@@ -1,5 +1,5 @@
-const { assert } = require('chai')
-const collectSubjectMetadata = require('../summary/collectSubjectMetadata')
+import { assert } from 'chai';
+import collectSubjectMetadata from '../summary/collectSubjectMetadata';
 
 describe('collectSubjectMetadata', () => {
   it('extracts tsv string to subjectMetadata object', () => {

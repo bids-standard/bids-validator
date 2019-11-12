@@ -1,6 +1,7 @@
 /*eslint no-console: ["error", { allow: ["log"] }] */
-const JsdomEnvironment = require('jest-environment-jsdom-global')
-const loadExamples = require('./load-examples.js')
+import JsdomEnvironment from 'jest-environment-jsdom-global';
+
+import loadExamples from './load-examples.js';
 
 // Environment which includes the bids-examples datasets
 class ExamplesEnvironmentWeb extends JsdomEnvironment {
@@ -18,4 +19,4 @@ class ExamplesEnvironmentWeb extends JsdomEnvironment {
   }
 }
 
-module.exports = ExamplesEnvironmentWeb
+export default ExamplesEnvironmentWeb;

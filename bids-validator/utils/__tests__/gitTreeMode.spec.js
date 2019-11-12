@@ -1,10 +1,6 @@
-const { assert } = require('chai')
-const {
-  readLsTreeLines,
-  readCatFileLines,
-  processFiles,
-} = require('../files/readDir')
-const ignore = require('ignore')
+import { assert } from 'chai';
+import { readLsTreeLines, readCatFileLines, processFiles } from '../files/readDir';
+import ignore from 'ignore';
 
 describe('gitTreeMode functions', () => {
   describe('readLsTreeLines', () => {

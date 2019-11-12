@@ -1,6 +1,6 @@
-var list = require('./list')
-var Issue = require('./issue')
-var config = require('../config')
+import list from './list';
+import Issue from './issue';
+import config from '../config';
 
 var issues = {
   /**
@@ -206,4 +206,4 @@ var issues = {
   },
 }
 
-module.exports = issues
+export default issues;

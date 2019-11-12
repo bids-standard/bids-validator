@@ -1,5 +1,5 @@
-var assert = require('assert')
-const bvec = require('../validators/bvec/bvec')
+import assert from 'assert';
+import bvec from '../validators/bvec/bvec';
 
 describe('bvec', function() {
   it('should allow valid bvec contents', function() {

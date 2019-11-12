@@ -1,10 +1,11 @@
 /*eslint no-console: ["error", {allow: ["log"]}] */
 
-const validate = require('./index.js')
+import validate from './index.js';
+
 const format = validate.consoleFormat
-const colors = require('colors/safe')
-const fs = require('fs')
-const remoteFiles = require('./utils/files/remoteFiles')
+import colors from 'colors/safe';
+import fs from 'fs';
+import remoteFiles from './utils/files/remoteFiles';
 
 const exitProcess = issues => {
   if (
@@ -18,7 +19,7 @@ const exitProcess = issues => {
   }
 }
 
-module.exports = function(dir, options) {
+export default function(dir, options) {
   process.on('unhandledRejection', err => {
     console.log(
       format.unexpectedError(
@@ -46,4 +47,4 @@ module.exports = function(dir, options) {
     console.log(colors.red(dir + ' does not exist'))
     process.exit(2)
   }
-}
+};

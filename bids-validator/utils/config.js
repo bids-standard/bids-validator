@@ -1,4 +1,4 @@
-var minimatch = require('minimatch')
+import minimatch from 'minimatch';
 
 var config = {
   /**
@@ -147,4 +147,4 @@ var config = {
   },
 }
 
-module.exports = config
+export default config;

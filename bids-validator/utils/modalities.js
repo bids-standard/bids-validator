@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   /**
    * Group
    *
@@ -69,4 +69,4 @@ module.exports = {
     }
     return isCorrectModality
   },
-}
+};

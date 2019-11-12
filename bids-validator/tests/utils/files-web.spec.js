@@ -3,13 +3,14 @@
  * @jest-environment jsdom
  */
 
-const assert = require('assert')
-const utils = require('../../../bids-validator/utils')
-const groupFileTypes = require('../../../bids-validator/validators/bids/groupFileTypes')
-const checkReadme = require('../../../bids-validator/validators/bids/checkReadme.js')
-const checkDatasetDescription = require('../../../bids-validator/validators/bids/checkDatasetDescription.js')
-const validateMisc = require('../../../bids-validator/utils/files/validateMisc')
-const { createFileList } = require('../env/FileList')
+import assert from 'assert';
+
+import utils from '../../../bids-validator/utils';
+import groupFileTypes from '../../../bids-validator/validators/bids/groupFileTypes';
+import checkReadme from '../../../bids-validator/validators/bids/checkReadme.js';
+import checkDatasetDescription from '../../../bids-validator/validators/bids/checkDatasetDescription.js';
+import validateMisc from '../../../bids-validator/utils/files/validateMisc';
+import { createFileList } from '../env/FileList';
 
 describe('files in browser', () => {
   describe('files utils in nodejs', () => {

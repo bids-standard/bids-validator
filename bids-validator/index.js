@@ -1,5 +1,5 @@
 // import validations
-var validate = require('./validators')
+import validate from './validators';
 
 // export validations for use in other applications
-module.exports = validate
+export default validate;

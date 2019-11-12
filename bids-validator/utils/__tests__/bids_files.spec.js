@@ -1,5 +1,5 @@
-const assert = require('chai').assert
-const { checkSidecarForDatafiles } = require('../bids_files.js')
+import { assert } from 'chai';
+import { checkSidecarForDatafiles } from '../bids_files.js';
 
 describe('bids_files', () => {
   describe('checkSidecarForDatafiles()', () => {

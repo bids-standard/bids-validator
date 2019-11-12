@@ -1,14 +1,14 @@
-var colors = require('colors/safe')
-var { table, getBorderCharacters } = require('table')
-var pluralize = require('pluralize')
-var bytes = require('bytes')
+import colors from 'colors/safe';
+import { table, getBorderCharacters } from 'table';
+import pluralize from 'pluralize';
+import bytes from 'bytes';
 
-module.exports = {
+export default {
   issues: formatIssues,
   summary: formatSummary,
   logIssues,
   unexpectedError,
-}
+};
 
 function unexpectedError(message) {
   return colors.red(message)

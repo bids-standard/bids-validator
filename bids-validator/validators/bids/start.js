@@ -1,10 +1,10 @@
-const version = require('../../package.json').version
-const BIDS = require('./obj')
-const reset = require('./reset')
-const quickTest = require('./quickTest')
-const quickTestError = require('./quickTestError')
-const fullTest = require('./fullTest')
-const utils = require('../../utils')
+import { version } from '../../package.json';
+import BIDS from './obj';
+import reset from './reset';
+import quickTest from './quickTest';
+import quickTestError from './quickTestError';
+import fullTest from './fullTest';
+import utils from '../../utils';
 
 /**
  * Start
@@ -44,4 +44,4 @@ const start = (dir, options, callback) => {
   })
 }
 
-module.exports = start
+export default start;

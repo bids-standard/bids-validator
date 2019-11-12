@@ -1,6 +1,6 @@
-const assert = require('assert')
-const { Issue } = require('../utils/issues')
-const consoleFormat = require('../utils/consoleFormat')
+import assert from 'assert';
+import { Issue } from '../utils/issues';
+import consoleFormat from '../utils/consoleFormat';
 
 describe('console format', () => {
   let issues

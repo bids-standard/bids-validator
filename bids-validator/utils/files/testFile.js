@@ -1,7 +1,7 @@
-const fs = require('fs')
-const Issue = require('../../utils/issues').Issue
-const remoteFiles = require('./remoteFiles')
-const { getOptions } = require('../../utils/options')
+import fs from 'fs';
+import { Issue } from '../../utils/issues';
+import remoteFiles from './remoteFiles';
+import { getOptions } from '../../utils/options';
 
 /**
  * Test File
@@ -68,4 +68,4 @@ function handleRemoteAccess(file, annexed, dir, callback) {
   }
 }
 
-module.exports = testFile
+export default testFile;

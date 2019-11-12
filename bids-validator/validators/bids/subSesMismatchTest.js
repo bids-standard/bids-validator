@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+import utils from '../../utils';
 const Issue = utils.issues.Issue
 
 /**
@@ -108,4 +108,4 @@ const mismatchError = (type, file) => {
   })
 }
 
-module.exports = subSesMismatchTest
+export default subSesMismatchTest;

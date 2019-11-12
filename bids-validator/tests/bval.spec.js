@@ -1,5 +1,5 @@
-const assert = require('assert')
-const bval = require('../validators/bval/bval')
+import assert from 'assert';
+import bval from '../validators/bval/bval';
 
 describe('bval', function() {
   it('should allow proper bval contents', function() {

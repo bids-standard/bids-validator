@@ -1,5 +1,5 @@
-const Issue = require('./issues').Issue
-const { JSHINT } = require('jshint')
+import { Issue } from './issues';
+import { JSHINT } from 'jshint';
 
 /**
  * Similar to native JSON.parse but returns a promise and
@@ -55,7 +55,7 @@ function jshint(file, contents, callback) {
   callback(issues)
 }
 
-module.exports = {
+export default {
   parse,
   jshint,
-}
+};

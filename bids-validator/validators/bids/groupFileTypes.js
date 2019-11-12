@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+import utils from '../../utils';
 
 const groupFileTypes = (fileList, options) => {
   const files = {
@@ -74,4 +74,4 @@ const ofType = (filename, extension) => {
   return filename && filename.endsWith(ending)
 }
 
-module.exports = groupFileTypes
+export default groupFileTypes;

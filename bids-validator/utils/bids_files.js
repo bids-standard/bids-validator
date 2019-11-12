@@ -3,7 +3,7 @@
  * eg. corresponding files
  */
 // dependencies -------------------------------------------------------------------
-const type = require('./type.js')
+import type from './type.js';
 
 // public API ---------------------------------------------------------------------
 const bidsFileUtils = {
@@ -82,4 +82,4 @@ function verifyDatafileMatch(sidecarPath, noExt, matchFile) {
   return match
 }
 
-module.exports = bidsFileUtils
+export default bidsFileUtils;

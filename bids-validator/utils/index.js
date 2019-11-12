@@ -1,17 +1,17 @@
-require('./prototype')
-var array = require('./array')
-var config = require('./config')
-var files = require('./files')
-var bids_files = require('./bids_files')
-var issues = require('./issues')
-var json = require('./json')
-var modalities = require('./modalities')
-var options = require('./options')
-var type = require('./type')
-const collectSummary = require('./summary/collectSummary')
-const limit = require('./promise_limiter')
+import './prototype';
+import array from './array';
+import config from './config';
+import files from './files';
+import bids_files from './bids_files';
+import issues from './issues';
+import json from './json';
+import modalities from './modalities';
+import options from './options';
+import type from './type';
+import collectSummary from './summary/collectSummary';
+import limit from './promise_limiter';
 
-module.exports = {
+export default {
   array: array,
   config: config,
   files: files,
@@ -23,4 +23,4 @@ module.exports = {
   type: type,
   collectSummary: collectSummary,
   limit,
-}
+};

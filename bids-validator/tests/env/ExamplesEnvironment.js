@@ -1,6 +1,7 @@
 /*eslint no-console: ["error", { allow: ["log"] }] */
-const NodeEnvironment = require('jest-environment-node')
-const loadExamples = require('./load-examples.js')
+import NodeEnvironment from 'jest-environment-node';
+
+import loadExamples from './load-examples.js';
 
 // Environment which includes the bids-examples datasets
 class ExamplesEnvironment extends NodeEnvironment {
@@ -18,4 +19,4 @@ class ExamplesEnvironment extends NodeEnvironment {
   }
 }
 
-module.exports = ExamplesEnvironment
+export default ExamplesEnvironment;

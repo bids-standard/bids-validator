@@ -1,5 +1,5 @@
-const assert = require('assert')
-const validate = require('../index')
+import assert from 'assert';
+import validate from '../index';
 
 describe('Events', function() {
   const headers = [

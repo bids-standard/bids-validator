@@ -1,14 +1,15 @@
 // dependencies ------------------------------------------------------
-require('cross-fetch/polyfill')
-const tsv = require('./tsv')
-const JSON = require('./json').json
-const NIFTI = require('./nifti').nifti
-const BIDS = require('./bids').start
-const Events = require('./events')
-const bval = require('./bval').bval
-const bvec = require('./bvec').bvec
-const utils = require('../utils')
-const consoleFormat = require('../utils/consoleFormat')
+import 'cross-fetch/polyfill';
+
+import tsv from './tsv';
+import { json as JSON } from './json';
+import { nifti as NIFTI } from './nifti';
+import { start as BIDS } from './bids';
+import Events from './events';
+import { bval } from './bval';
+import { bvec } from './bvec';
+import utils from '../utils';
+import consoleFormat from '../utils/consoleFormat';
 
 // public api --------------------------------------------------------
 
@@ -27,4 +28,4 @@ const validate = {
 
 // exports -----------------------------------------------------------
 
-module.exports = validate
+export default validate;

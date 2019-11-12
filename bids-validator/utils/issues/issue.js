@@ -1,4 +1,4 @@
-const issues = require('./list')
+import issues from './list';
 
 /**
  * Help Url
@@ -18,7 +18,7 @@ const constructHelpUrl = issue => {
  *
  * A constructor for BIDS issues.
  */
-module.exports = function(options) {
+export default function(options) {
   const code = options.hasOwnProperty('code') ? options.code : null
   const issue = issues[code]
 
@@ -35,4 +35,4 @@ module.exports = function(options) {
     : issue.severity
   this.reason = options.hasOwnProperty('reason') ? options.reason : issue.reason
   this.helpUrl = constructHelpUrl(issue)
-}
+};

@@ -8,4 +8,4 @@ const reset = BIDS => {
   BIDS.issues = []
 }
 
-module.exports = reset
+export default reset;

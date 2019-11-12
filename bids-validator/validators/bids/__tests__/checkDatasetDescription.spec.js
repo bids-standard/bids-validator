@@ -1,5 +1,5 @@
-const assert = require('chai').assert
-const checkDatasetDescription = require('../checkDatasetDescription')
+import { assert } from 'chai';
+import checkDatasetDescription from '../checkDatasetDescription';
 
 describe('checkDatasetDescription', () => {
   describe('checkAuthorField', () => {

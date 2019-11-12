@@ -1,13 +1,13 @@
-const nifti = require('./nii')
-const duplicateFiles = require('./duplicateFiles')
-const fieldmapWithoutMagnitude = require('./fieldmapWithoutMagnitude')
-const phasediffWithoutMagnitude = require('./phasediffWithoutMagnitude')
-const validate = require('./validate')
+import nifti from './nii';
+import duplicateFiles from './duplicateFiles';
+import fieldmapWithoutMagnitude from './fieldmapWithoutMagnitude';
+import phasediffWithoutMagnitude from './phasediffWithoutMagnitude';
+import validate from './validate';
 
-module.exports = {
+export default {
   nifti,
   duplicateFiles,
   fieldmapWithoutMagnitude,
   phasediffWithoutMagnitude,
   validate,
-}
+};

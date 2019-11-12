@@ -5,7 +5,7 @@
  * issue code and including severity and reason
  * agnostic to file specifics.
  */
-module.exports = {
+export default {
   0: {
     key: 'INTERNAL ERROR',
     severity: 'error',
@@ -638,4 +638,4 @@ module.exports = {
     reason:
       'This dataset contains remote files. If you would like to validate with remote files, use the --remoteFiles option.',
   },
-}
+};

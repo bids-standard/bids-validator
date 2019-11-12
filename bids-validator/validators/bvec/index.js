@@ -1,7 +1,7 @@
-const bvec = require('./bvec')
-const validate = require('./validate')
+import bvec from './bvec';
+import validate from './validate';
 
-module.exports = {
+export default {
   bvec: bvec,
   validate: validate,
-}
+};

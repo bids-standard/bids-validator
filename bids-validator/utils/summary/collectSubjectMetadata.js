@@ -66,4 +66,4 @@ const collectSubjectMetadata = participantsTsvContent => {
   }
 }
 
-module.exports = collectSubjectMetadata
+export default collectSubjectMetadata;

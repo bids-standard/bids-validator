@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   sessionMatcher: new RegExp('(ses-.*?)/'),
 
   Subject: function() {
@@ -6,4 +6,4 @@ module.exports = {
     this.sessions = []
     this.missingSessions = []
   },
-}
+};

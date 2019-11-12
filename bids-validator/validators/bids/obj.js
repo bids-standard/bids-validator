@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   options: {},
   issues: [],
   summary: {
@@ -9,4 +9,4 @@ module.exports = {
     totalFiles: [],
     size: 0,
   },
-}
+};
