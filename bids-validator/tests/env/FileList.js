@@ -73,6 +73,8 @@ function createFile(file_path, relativePath) {
   return browserFile
 }
 
+export { addFileList, createFile, createFileList }
+
 export default {
   addFileList,
   createFile,

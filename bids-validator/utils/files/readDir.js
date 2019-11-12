@@ -370,6 +370,16 @@ function getBIDSIgnoreFileObjBrowser(dir) {
   return bidsIgnoreFileObj
 }
 
+export {
+  readDir,
+  getFilesFromFs,
+  fileArrayToObject,
+  harmonizeRelativePath,
+  readLsTreeLines,
+  readCatFileLines,
+  processFiles,
+}
+
 export default Object.assign(readDir, {
   readDir,
   getFilesFromFs,
