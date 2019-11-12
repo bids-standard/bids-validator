@@ -5,13 +5,28 @@ import quickTestError from './quickTestError'
 import fullTest from './fullTest'
 import subIDsesIDmismatchTest from './subSesMismatchTest'
 
+const options = {}
+const issues = []
+const subIDsesIDmismatchtest = subIDsesIDmismatchTest
+
+export {
+  options,
+  issues,
+  start,
+  quickTestError,
+  quickTest,
+  fullTest,
+  subIDsesIDmismatchtest,
+  reset,
+}
+
 export default {
-  options: {},
-  issues: [],
-  start: start,
-  quickTestError: quickTestError,
-  quickTest: quickTest,
-  fullTest: fullTest,
-  subIDsesIDmismatchtest: subIDsesIDmismatchTest,
-  reset: reset,
+  options,
+  issues,
+  start,
+  quickTestError,
+  quickTest,
+  fullTest,
+  subIDsesIDmismatchtest,
+  reset,
 }
