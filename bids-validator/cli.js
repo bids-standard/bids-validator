@@ -19,12 +19,18 @@ const exitProcess = issues => {
   }
 }
 
+const errorToString = err => {
+  if (err instanceof Error) return err.stack
+  else if (typeof err === 'object') return JSON.parse(err)
+  else return err
+}
+
 export default function(dir, options) {
   process.on('unhandledRejection', err => {
     console.log(
       format.unexpectedError(
         // eslint-disable-next-line
-        `Unhandled rejection (reason: ${JSON.stringify(err)}).`,
+        `Unhandled rejection (\n  reason: ${errorToString(err)}\n).\n`,
       ),
     )
     process.exit(3)
