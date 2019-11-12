@@ -5,11 +5,6 @@
 // dependencies -------------------------------------------------------------------
 import type from './type.js'
 
-// public API ---------------------------------------------------------------------
-const bidsFileUtils = {
-  checkSidecarForDatafiles: checkSidecarForDatafiles,
-}
-
 // implementations ----------------------------------------------------------------
 /**
  * Verify that JSON sidecars have corresponding data files
@@ -82,4 +77,8 @@ function verifyDatafileMatch(sidecarPath, noExt, matchFile) {
   return match
 }
 
-export default bidsFileUtils
+export { checkSidecarForDatafiles }
+
+export default {
+  checkSidecarForDatafiles,
+}
