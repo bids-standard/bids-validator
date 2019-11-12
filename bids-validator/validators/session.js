@@ -10,7 +10,7 @@ import isNode from '../utils/isNode'
  * directories. Then generates a warning if a given subject is missing any
  * files from the set.
  */
-const session = function missingSessionFiles(fileList) {
+export const session = function missingSessionFiles(fileList) {
   const issues = []
   const { subjects, sessions } = getDataOrganization(fileList)
 
