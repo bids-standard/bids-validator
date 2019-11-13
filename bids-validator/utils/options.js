@@ -1,4 +1,3 @@
-var files = require('./files')
 var json = require('./json')
 
 let options
@@ -40,7 +39,7 @@ module.exports = {
   loadConfig: function(config, callback) {
     var files = require('./files')
     if (typeof config === 'string') {
-      var configFile = { path: config };
+      var configFile = { path: config }
       configFile.stats = files.getFileStats(configFile)
       files
         .readFile(configFile)
