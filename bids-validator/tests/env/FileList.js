@@ -6,6 +6,7 @@ import fs from 'fs'
 
 import path from 'path'
 import mime from 'mime-types'
+import { browser } from 'jshint/src/vars'
 
 function createFileList(dir) {
   const str = dir.substr(dir.lastIndexOf('/') + 1) + '$'
@@ -66,10 +67,13 @@ function createFile(file_path, relativePath) {
   const browserFile = new File(
     [new fs.readFileSync(file_path)],
     path.basename(file_path),
-    { lastModified: file.mtimeMs },
+    {
+      type: mime.lookup(file_path) || '',
+      lastModified: file.mtimeMs,
+    },
   )
   browserFile.webkitRelativePath = relativePath || file_path
-  browserFile.type = mime.lookup(file_path) || ''
+
   return browserFile
 }
 
