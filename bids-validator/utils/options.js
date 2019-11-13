@@ -38,10 +38,12 @@ module.exports = {
    * Load Config
    */
   loadConfig: function(config, callback) {
+    var files = require('./files')
     if (typeof config === 'string') {
-      // load file
+      var configFile = { path: config };
+      configFile.stats = files.getFileStats(configFile)
       files
-        .readFile({ path: config })
+        .readFile(configFile)
         .then(contents => {
           callback(null, { path: config }, contents)
         })
