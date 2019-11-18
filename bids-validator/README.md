@@ -293,6 +293,8 @@ node-gyp which needs xcode to be installed in order to be compiled.
 
 #### Testing
 
+If it's your first time running tests, first use the command `git submodule update --init` to pull the test example data. This repo contains the [bids-examples github repository](https://github.com/bids-standard/bids-examples) as a [submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+
 To start the test suite run `npm test` from the project root. `npm test -- --watch`
 is useful to run tests while making changes. A coverage report is available with
 `npm run coverage`.

@@ -27,7 +27,7 @@ const main = () => {
     console.error(err)
   }
   if (!testDataExists) {
-    console.error("\nError: It looks like you're missing the bids-examples test files. Please run `git submodule update --init`.\n")
+    console.error("\nError: It looks like you're missing the bids-examples test files. Please run `git submodule update --init`.\n  See project README for more information.\n")
     process.exit(1)
   }
 }
