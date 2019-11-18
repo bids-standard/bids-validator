@@ -1,8 +1,6 @@
 yarn-error.log
 node_modules/
 .DS_Store
-bids-validator/tests/data/bids-examples-*
-bids-validator/tests/data/examples.zip
 npm-debug.log
 .idea/
 .ipynb_checkpoints

@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+const config = require('../tests/env/config')
+const { spawn } = require('child_process')
+
+const runProcess = async (command, args) =>
+  new Promise((resolve, reject) => {
+    const output = []
+    const process = spawn(command, args)
+    process.stdout.on('data', data => output.push(data.toString('utf8')))
+    process.stderr.on('data', data => reject(data.toString('utf8')))
+    process.on('close', (code, signal) => resolve({ code, signal, output }))
+  })
+
+const checkSubmoduleExists = async path => {
+  const processOutput = await runProcess('git', ['submodule', 'status'])
+  const { code, output } = processOutput
+  return !code && output.filter(line => line.includes(path)).length
+}
+
+const main = async () => {
+  try {
+    const testSubmoduleExists = await checkSubmoduleExists(config.SUBMODULE_PATH)
+    console.log(testSubmoduleExists)
+  } catch (err) {
+    console.error('=======')
+    console.error(err)
+    console.error('=======')
+  }
+}
+
+main()

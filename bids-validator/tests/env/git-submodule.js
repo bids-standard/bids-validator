@@ -17,14 +17,10 @@ const add = async (url, path) => {
     url,
     path,
   ])
-  console.log({code, output})
   return { code, output }
 }
 
-const status = async () => {
-  const { code, output } = await runProcess('git', ['submodule', 'status'])
-  console.log({code, output})
-}
+
 
 module.exports = {
   add,
