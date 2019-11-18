@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 #!/usr/bin/env node
 
 const config = require('../tests/env/config')
@@ -35,16 +36,24 @@ const runProcess = async (command, args) =>
 const includes = (arr, str) =>
   Boolean(arr.filter(line => line.includes(str)).length)
 
+const isEmptyDir = path =>
+  new Promise((resolve, reject) =>
+    fs.readdir(path, function(err, files) {
+      if (err) reject(err)
+      resolve(!files.length)
+    }),
+  )
+
 /**
  * checks git submodule status and submodule directory path
  * @param {string} path
  * @returns {boolean}
  */
-const checkSubmoduleExists = async path => {
+const checkTestData = async path => {
   const processOutput = await runProcess('git', ['submodule', 'status'])
   const { code, output } = processOutput
   const submoduleInGitmodules = !code && includes(output, path)
-  const submoduleDirExists = fs.existsSync(path)
+  const submoduleDirExists = fs.existsSync(path) && !(await isEmptyDir(path))
   return submoduleInGitmodules && submoduleDirExists
 }
 
@@ -53,17 +62,16 @@ const checkSubmoduleExists = async path => {
  * prompt user to update submodule
  */
 const main = async () => {
-  let testSubmoduleExists
+  let testDataExists
   try {
-    testSubmoduleExists = await checkSubmoduleExists(config.SUBMODULE_PATH)
+    testDataExists = await checkTestData(config.SUBMODULE_PATH)
   } catch (err) {
-    testSubmoduleExists = false
+    testDataExists = false
     console.error(err)
-  } finally {
-    if (!testSubmoduleExists) {
-      console.log('It looks like you\'re missing the bids-examples test files. Please run `git submodule update --init`.')
-    }
+  }
+  if (!testDataExists) {
+    throw "\nError: It looks like you're missing the bids-examples test files. Please run `git submodule update --init`.\n"
   }
 }
 
-main()
+main().catch(console.error)
