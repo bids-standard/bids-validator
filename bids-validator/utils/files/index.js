@@ -45,4 +45,5 @@ export default {
   illegalCharacterTest,
   sessions,
   remoteFiles,
+  getFileStats,
 }

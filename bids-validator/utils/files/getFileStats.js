@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const getFileStats = file => {
+function getFileStats(file) {
   let stats
   if (!file.stats) {
     try {

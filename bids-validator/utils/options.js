@@ -38,7 +38,6 @@ export default {
    * Load Config
    */
   loadConfig: function(config, callback) {
-    // var files = require('./files')
     if (typeof config === 'string') {
       var configFile = { path: config }
       configFile.stats = files.getFileStats(configFile)

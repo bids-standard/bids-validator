@@ -21,7 +21,6 @@ const collectDirectorySize = fileList => {
 }
 
 module.exports = collectDirectorySize
-=======
 const getFileStats = file => {
   let stats
   if (!file.stats) {
