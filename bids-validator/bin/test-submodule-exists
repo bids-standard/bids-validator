@@ -2,7 +2,22 @@
 
 const config = require('../tests/env/config')
 const { spawn } = require('child_process')
+const fs = require('fs')
 
+/**
+ * @typedef {Object} ProcessOutput
+ * @property {number} code
+ * @property {string} signal
+ * @property {string[]} output
+ */
+
+/**
+ * spawns a process on the given command+args
+ * resolves with code signal and output, or rejects with error string
+ * @param {string} command
+ * @param {string[]} args
+ * @returns {Promise<ProcessOutput|string>}
+ */
 const runProcess = async (command, args) =>
   new Promise((resolve, reject) => {
     const output = []
@@ -12,20 +27,42 @@ const runProcess = async (command, args) =>
     process.on('close', (code, signal) => resolve({ code, signal, output }))
   })
 
+/**
+ * checks if arr contains given str
+ * @param {string[]} arr
+ * @param {string} str
+ */
+const includes = (arr, str) =>
+  Boolean(arr.filter(line => line.includes(str)).length)
+
+/**
+ * checks git submodule status and submodule directory path
+ * @param {string} path
+ * @returns {boolean}
+ */
 const checkSubmoduleExists = async path => {
   const processOutput = await runProcess('git', ['submodule', 'status'])
   const { code, output } = processOutput
-  return !code && output.filter(line => line.includes(path)).length
+  const submoduleInGitmodules = !code && includes(output, path)
+  const submoduleDirExists = fs.existsSync(path)
+  return submoduleInGitmodules && submoduleDirExists
 }
 
+/**
+ * if submodule at current test version does not exist,
+ * prompt user to update submodule
+ */
 const main = async () => {
+  let testSubmoduleExists
   try {
-    const testSubmoduleExists = await checkSubmoduleExists(config.SUBMODULE_PATH)
-    console.log(testSubmoduleExists)
+    testSubmoduleExists = await checkSubmoduleExists(config.SUBMODULE_PATH)
   } catch (err) {
-    console.error('=======')
+    testSubmoduleExists = false
     console.error(err)
-    console.error('=======')
+  } finally {
+    if (!testSubmoduleExists) {
+      console.log('It looks like you\'re missing the bids-examples test files. Please run `git submodule update --init`.')
+    }
   }
 }
 
