@@ -1,7 +1,7 @@
-const fs = require('fs')
-const Issue = require('../../utils/issues').Issue
-const remoteFiles = require('./remoteFiles')
-const { getOptions } = require('../../utils/options')
+import fs from 'fs'
+import Issue from '../../utils/issues'
+import remoteFiles from './remoteFiles'
+import options from '../../utils/options'
 
 /**
  * Test File
@@ -20,7 +20,7 @@ function testFile(file, annexed, dir, callback) {
       fs.lstat(file.path, function(lstatErr, lstats) {
         if (!lstatErr && lstats && lstats.isSymbolicLink()) {
           // symlink
-          if (getOptions().remoteFiles)
+          if (options.getOptions().remoteFiles)
             // only follow symlinks when --remoteFiles option is on
             handleRemoteAccess(file, annexed, dir, callback)
           else
@@ -68,4 +68,4 @@ function handleRemoteAccess(file, annexed, dir, callback) {
   }
 }
 
-module.exports = testFile
+export default testFile

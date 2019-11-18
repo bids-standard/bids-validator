@@ -5,7 +5,7 @@
  * issue code and including severity and reason
  * agnostic to file specifics.
  */
-module.exports = {
+export default {
   0: {
     key: 'INTERNAL ERROR',
     severity: 'error',

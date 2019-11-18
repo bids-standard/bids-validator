@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
-const hed = require('./hed')
-const utils = require('../../utils')
+import hed from './hed'
+
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
-module.exports = function(events, stimuli, headers, jsonContents) {
+export default function(events, stimuli, headers, jsonContents) {
   const issues = []
   // check that all stimuli files present in /stimuli are included in an _events.tsv file
   const stimuliIssues = checkStimuli(stimuli)

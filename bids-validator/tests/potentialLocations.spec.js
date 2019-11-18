@@ -1,5 +1,5 @@
-const assert = require('assert')
-const potentialLocations = require('../utils/files/potentialLocations')
+import assert from 'assert'
+import potentialLocations from '../utils/files/potentialLocations'
 const test_version = '1.2.0'
 
 describe('potentialLocations', () => {

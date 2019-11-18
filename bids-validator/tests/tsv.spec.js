@@ -1,5 +1,5 @@
-var assert = require('assert')
-var validate = require('../index')
+import assert from 'assert'
+import validate from '../index'
 
 describe('TSV', function() {
   // general tsv checks ------------------------------------------------------------------

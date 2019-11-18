@@ -1,7 +1,7 @@
-const testFile = require('./testFile')
-const Issue = require('../../utils/issues').Issue
-const fs = require('fs')
-const isNode = require('../isNode')
+import testFile from './testFile'
+import Issue from '../../utils/issues'
+import fs from 'fs'
+import isNode from '../isNode'
 
 /**
  * Read
@@ -52,4 +52,4 @@ function readFile(file, annexed, dir) {
   })
 }
 
-module.exports = readFile
+export default readFile

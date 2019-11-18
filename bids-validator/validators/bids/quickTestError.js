@@ -1,7 +1,7 @@
-const path = require('path')
-const utils = require('../../utils')
+import path from 'path'
+import utils from '../../utils'
 const Issue = utils.issues.Issue
-const isNode = require('../../utils/isNode')
+import isNode from '../../utils/isNode'
 
 /*
  * Generates an error for quickTest failures
@@ -41,4 +41,4 @@ const constructFileName = dir => {
   return filename
 }
 
-module.exports = quickTestError
+export default quickTestError

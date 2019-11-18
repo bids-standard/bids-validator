@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+import utils from '../../utils'
 /**
  * Quick Test
  *
@@ -28,4 +28,4 @@ const quickTest = fileList => {
   return couldBeBIDS
 }
 
-module.exports = quickTest
+export default quickTest

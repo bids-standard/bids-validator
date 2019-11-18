@@ -1,9 +1,9 @@
-const assert = require('assert')
-const utils = require('../../utils')
-const groupFileTypes = require('../../validators/bids/groupFileTypes')
-const checkReadme = require('../../validators/bids/checkReadme.js')
-const checkDatasetDescription = require('../../validators/bids/checkDatasetDescription.js')
-const validateMisc = require('../../utils/files/validateMisc')
+import assert from 'assert'
+import utils from '../../utils'
+import groupFileTypes from '../../validators/bids/groupFileTypes'
+import checkReadme from '../../validators/bids/checkReadme.js'
+import checkDatasetDescription from '../../validators/bids/checkDatasetDescription.js'
+import validateMisc from '../../utils/files/validateMisc'
 
 const setupMocks = () => {
   // Mock version of the File API for tests

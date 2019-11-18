@@ -52,4 +52,5 @@ more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
   ).argv
 
 // import and init command line interface
-require('../cli')(argv._[0], argv)
+const esmRequire = require('esm')(module)
+esmRequire('../cli.js').default(argv._[0], argv)

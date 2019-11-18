@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 /**
@@ -9,7 +9,7 @@ const Issue = utils.issues.Issue
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function NIFTI(
+export default function NIFTI(
   header,
   file,
   jsonContentsDict,

@@ -1,7 +1,7 @@
 /**
  * @jest-environment ./bids-validator/tests/env/ExamplesEnvironment.js
  */
-const readDir = require('../readDir.js').default
+import readDir from '../readDir.js'
 
 describe('readDir.js - examples integration', () => {
   describe('readDir()', () => {

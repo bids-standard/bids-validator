@@ -1,5 +1,5 @@
 const Issue = require('../../utils').issues.Issue
-const type = require('../../utils').type
+import { type } from '../../utils'
 
 /**
  * bval
@@ -9,7 +9,7 @@ const type = require('../../utils').type
  * with any issues it finds while validating
  * against the BIDS specification.
  */
-module.exports = function bval(file, contents, callback) {
+export default function bval(file, contents, callback) {
   let issues = []
 
   // break val if type of contents is not string

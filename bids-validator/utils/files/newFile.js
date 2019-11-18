@@ -1,4 +1,4 @@
-const FileAPI = require('./FileAPI')
+import FileAPI from './FileAPI'
 
 /**
  * New File
@@ -12,4 +12,4 @@ function newFile(filename) {
   return new File([''], filename)
 }
 
-module.exports = newFile
+export default newFile

@@ -25,4 +25,4 @@ function FileAPI() {
   return typeof File === 'undefined' ? NodeFile : File
 }
 
-module.exports = FileAPI
+export default FileAPI

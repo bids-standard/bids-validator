@@ -1,7 +1,7 @@
-var utils = require('../utils')
+import utils from '../utils'
 const sesUtils = utils.files.sessions
 var Issue = utils.issues.Issue
-const isNode = require('../utils/isNode')
+import isNode from '../utils/isNode'
 
 /**
  * session
@@ -234,7 +234,17 @@ function checkMissingFile(subject, subjKey, filename) {
   }
 }
 
-module.exports = {
+export {
+  session,
+  getDataOrganization,
+  getFilename,
+  missingSessionWarnings,
+  getSubjectFiles,
+  missingFileWarnings,
+  checkFileInMissingSession,
+  checkMissingFile,
+}
+export default {
   session,
   getDataOrganization,
   getFilename,

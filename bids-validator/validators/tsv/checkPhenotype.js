@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 const checkPhenotype = (phenotypeParticipants, summary) => {
@@ -42,4 +42,4 @@ const constructMissingPhenotypeEvidence = (fileParticipants, subjects) => {
   return evidence
 }
 
-module.exports = checkPhenotype
+export default checkPhenotype

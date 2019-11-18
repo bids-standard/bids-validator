@@ -19,7 +19,7 @@ jobs:
           command: yarn lint
       - run:
           name: Mocha tests
-          command: yarn coverage
+          command: yarn coverage --runInBand
       - run:
           name: Upload to codecov
           command: yarn codecov
