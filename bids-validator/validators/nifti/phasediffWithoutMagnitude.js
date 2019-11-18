@@ -24,4 +24,4 @@ const phasediffWithoutMagnitude = files => {
   return issues
 }
 
-module.exports = phasediffWithoutMagnitude
+export default phasediffWithoutMagnitude

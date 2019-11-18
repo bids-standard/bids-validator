@@ -1,7 +1,7 @@
-const utils = require('../../utils')
+import utils from '../../utils'
 const Issue = utils.issues.Issue
-const checkAcqTimeFormat = require('./checkAcqTimeFormat')
-const checkAge89 = require('./checkAge89')
+import checkAcqTimeFormat from './checkAcqTimeFormat'
+import checkAge89 from './checkAge89'
 
 /**
  * TSV
@@ -295,4 +295,4 @@ const TSV = (file, contents, fileList, callback) => {
   callback(issues, participants, stimPaths)
 }
 
-module.exports = TSV
+export default TSV

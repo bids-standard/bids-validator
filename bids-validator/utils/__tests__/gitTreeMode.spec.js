@@ -1,10 +1,10 @@
-const { assert } = require('chai')
-const {
+import { assert } from 'chai'
+import {
   readLsTreeLines,
   readCatFileLines,
   processFiles,
-} = require('../files/readDir')
-const ignore = require('ignore')
+} from '../files/readDir'
+import ignore from 'ignore'
 
 describe('gitTreeMode functions', () => {
   describe('readLsTreeLines', () => {
@@ -116,7 +116,7 @@ describe('gitTreeMode functions', () => {
       const output = processFiles('/path/to/dataset', ig, filesA, filesB)
       const fileNames = output.map(file => file.name)
       assert(!fileNames.includes('.DS_Store'), 'filters out ignored files')
-      assert(!fileNames.includes('derivative_file'), 'filters out ignored directories')
+      assert(!fileNames.includes('derivative_file'), 'filters out ignored directories',)
       assert.deepEqual(fileNames, ['a', 'b', 'c', 'd'], 'aggregates files')
       assert.isString(output[0].relativePath, 'adds relativePath to files')
       assert.isString(output[1].relativePath, 'adds name to files')

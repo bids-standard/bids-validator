@@ -1,6 +1,6 @@
-var utils = require('../utils')
+import utils from '../utils'
 var Issue = utils.issues.Issue
-const isNode = require('../utils/isNode')
+import isNode from '../utils/isNode'
 
 /**
  * dimensions and resolution
@@ -293,5 +293,5 @@ const headerFieldCompare = (header1, header2) => {
   return false
 }
 
-module.exports = headerFields
-module.exports.collect39Issues = collect39Issues
+export default headerFields
+export { collect39Issues }

@@ -1,9 +1,9 @@
-const AWS = require('aws-sdk')
-const fs = require('fs')
-const cp = require('child_process')
-const Issue = require('../issues').Issue
-const zlib = require('zlib')
-const isNode = require('../isNode')
+import AWS from 'aws-sdk'
+import fs from 'fs'
+import cp from 'child_process'
+import Issue from '../issues'
+import zlib from 'zlib'
+import isNode from '../isNode'
 
 /**
  * Remote Files
@@ -230,4 +230,4 @@ const remoteFiles = {
   },
 }
 
-module.exports = remoteFiles
+export default remoteFiles

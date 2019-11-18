@@ -1,5 +1,5 @@
-const getFileStats = require('./getFileStats')
-const isNode = require('../isNode')
+import fs from 'fs'
+import isNode from '../isNode'
 
 const collectDirectorySize = fileList => {
   let size = 0
@@ -21,3 +21,17 @@ const collectDirectorySize = fileList => {
 }
 
 module.exports = collectDirectorySize
+=======
+const getFileStats = file => {
+  let stats
+  if (!file.stats) {
+    try {
+      stats = fs.statSync(file.path)
+    } catch (err) {
+      stats = { size: 0 }
+    }
+  }
+  return stats
+}
+
+export default collectDirectorySize

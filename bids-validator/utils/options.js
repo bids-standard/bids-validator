@@ -1,8 +1,9 @@
-var json = require('./json')
+import files from './files'
+import json from './json'
 
 let options
 
-module.exports = {
+export default {
   /**
    * Parse
    */
@@ -37,7 +38,7 @@ module.exports = {
    * Load Config
    */
   loadConfig: function(config, callback) {
-    var files = require('./files')
+    // var files = require('./files')
     if (typeof config === 'string') {
       var configFile = { path: config }
       configFile.stats = files.getFileStats(configFile)

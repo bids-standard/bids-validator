@@ -1,5 +1,5 @@
-const json = require('./json')
-const utils = require('../../utils')
+import json from './json'
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 const validate = (jsonFiles, fileList, jsonContentsDict, summary) => {
@@ -56,4 +56,4 @@ const checkForAccompanyingDataFile = (file, fileList, issues) => {
   }
 }
 
-module.exports = validate
+export default validate
