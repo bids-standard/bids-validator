@@ -1,77 +1,38 @@
-/* eslint-disable no-console */
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 const config = require('../tests/env/config')
-const { spawn } = require('child_process')
 const fs = require('fs')
-
-/**
- * @typedef {Object} ProcessOutput
- * @property {number} code
- * @property {string} signal
- * @property {string[]} output
- */
-
-/**
- * spawns a process on the given command+args
- * resolves with code signal and output, or rejects with error string
- * @param {string} command
- * @param {string[]} args
- * @returns {Promise<ProcessOutput|string>}
- */
-const runProcess = async (command, args) =>
-  new Promise((resolve, reject) => {
-    const output = []
-    const process = spawn(command, args)
-    process.stdout.on('data', data => output.push(data.toString('utf8')))
-    process.stderr.on('data', data => reject(data.toString('utf8')))
-    process.on('close', (code, signal) => resolve({ code, signal, output }))
-  })
-
-/**
- * checks if arr contains given str
- * @param {string[]} arr
- * @param {string} str
- */
-const includes = (arr, str) =>
-  Boolean(arr.filter(line => line.includes(str)).length)
-
-const isEmptyDir = path =>
-  new Promise((resolve, reject) =>
-    fs.readdir(path, function(err, files) {
-      if (err) reject(err)
-      resolve(!files.length)
-    }),
-  )
 
 /**
  * checks git submodule status and submodule directory path
  * @param {string} path
  * @returns {boolean}
  */
-const checkTestData = async path => {
-  const processOutput = await runProcess('git', ['submodule', 'status'])
-  const { code, output } = processOutput
-  const submoduleInGitmodules = !code && includes(output, path)
-  const submoduleDirExists = fs.existsSync(path) && !(await isEmptyDir(path))
-  return submoduleInGitmodules && submoduleDirExists
+const checkTestData = path => {
+  // const processOutput = await runProcess('git', ['submodule', 'status'])
+  // const { code, output } = processOutput
+  // const submoduleInGitmodules = !code && includes(output, path)
+  const submoduleDirExists = fs.existsSync(path) && fs.readdirSync(path).length
+  return submoduleDirExists
 }
 
 /**
  * if submodule at current test version does not exist,
  * prompt user to update submodule
  */
-const main = async () => {
+const main = () => {
   let testDataExists
   try {
-    testDataExists = await checkTestData(config.SUBMODULE_PATH)
+    testDataExists = checkTestData(config.SUBMODULE_PATH)
   } catch (err) {
     testDataExists = false
     console.error(err)
   }
   if (!testDataExists) {
-    throw "\nError: It looks like you're missing the bids-examples test files. Please run `git submodule update --init`.\n"
+    console.error("\nError: It looks like you're missing the bids-examples test files. Please run `git submodule update --init`.\n")
+    process.exit(1)
   }
 }
 
-main().catch(console.error)
+main()
