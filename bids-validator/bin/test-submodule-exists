@@ -5,14 +5,11 @@ const config = require('../tests/env/config')
 const fs = require('fs')
 
 /**
- * checks git submodule status and submodule directory path
+ * checks that submodule directory exists and is not empty
  * @param {string} path
  * @returns {boolean}
  */
 const checkTestData = path => {
-  // const processOutput = await runProcess('git', ['submodule', 'status'])
-  // const { code, output } = processOutput
-  // const submoduleInGitmodules = !code && includes(output, path)
   const submoduleDirExists = fs.existsSync(path) && fs.readdirSync(path).length
   return submoduleDirExists
 }
