@@ -66,13 +66,16 @@ jobs:
       - checkout
       - run:
           name: Set up environment
-          command: |
-            apk --no-cache add ca-certificates git build-base
+          command: apk --no-cache add ca-certificates git build-base libffi-dev libressl-dev
       - run:
-          name: Install Python 3 and update setuptools
-          command: |
-            apk --no-cache add python3 python3-dev py3-cffi
-            python3 -m pip install --upgrade pip setuptools wheel twine readme_renderer[md]
+          name: Install Python 3 and build tools
+          command: apk --no-cache add python3 python3-dev
+      - run:
+          name: Update Python install tools
+          command: python3 -m pip install --upgrade pip setuptools wheel
+      - run:
+          name: Install twine, readme renderer
+          command: python3 -m pip install twine readme_renderer[md]
       - run:
           name: Check build and readme rendering
           command: |
