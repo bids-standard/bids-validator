@@ -45,7 +45,7 @@ describe('files in browser', () => {
       const fileList = {
         1: {
           name: 'README',
-          path: 'tests/data/bids-examples-1.2.0/ds001/not-root-dir/README',
+          path: 'tests/data/bids-examples/ds001/not-root-dir/README',
           relativePath: '/not-root-dir/README',
         },
       }

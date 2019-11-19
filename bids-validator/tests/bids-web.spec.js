@@ -1,6 +1,6 @@
 /**
  * eslint no-console: ["error", { allow: ["log"] }]
- * @jest-environment ./bids-validator/tests/env/ExamplesEnvironmentWeb.js
+ * @jest-environment jsdom
  */
 
 import './bids.spec.js'

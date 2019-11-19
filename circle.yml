@@ -19,10 +19,10 @@ jobs:
           command: yarn lint
       - run:
           name: Test Data
-          command: git submodule update --init 
+          command: git submodule update --init --depth 1
       - run:
-          name: Mocha tests
-          command: yarn coverage --runInBand
+          name: Jest tests
+          command: yarn coverage
       - run:
           name: Upload to codecov
           command: yarn codecov
@@ -39,8 +39,8 @@ jobs:
       - run:
           name: Smoke tests
           command: |
-              docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders
-              docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
+            docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders
+            docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
   githubPagesTest:
     docker:
       - image: node:10.16.1-alpine
@@ -53,7 +53,7 @@ jobs:
       - run: apk --no-cache add rsync git python build-base openssh
       - run:
           name: Install bids-validator and bids-validator-web dependencies
-          command: yarn 
+          command: yarn
       - run:
           name: Build and export web-validator
           command: yarn web-export && rsync -av ./bids-validator-web/out/ ~/web_version
