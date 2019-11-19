@@ -66,10 +66,10 @@ jobs:
       - checkout
       - run:
           name: Set up environment
-          command: apk --no-cache add ca-certificates git build-base
+          command: apk --no-cache add ca-certificates git build-base libffi-dev libressl-dev
       - run:
           name: Install Python 3 and build tools
-          command: apk --no-cache add python3 python3-dev py3-cffi libffi-dev
+          command: apk --no-cache add python3 python3-dev
       - run:
           name: Update Python install tools
           command: python3 -m pip install --upgrade pip setuptools wheel
