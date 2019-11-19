@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+/* eslint-disable no-console */
+
+const config = require('../tests/env/config')
+const fs = require('fs')
+
+/**
+ * checks that submodule directory exists and is not empty
+ * @param {string} path
+ * @returns {boolean}
+ */
+const checkTestData = path => {
+  const submoduleDirExists = fs.existsSync(path) && fs.readdirSync(path).length
+  return submoduleDirExists
+}
+
+/**
+ * if submodule at current test version does not exist,
+ * prompt user to update submodule
+ */
+const main = () => {
+  let testDataExists
+  try {
+    testDataExists = checkTestData(config.SUBMODULE_PATH)
+  } catch (err) {
+    testDataExists = false
+    console.error(err)
+  }
+  if (!testDataExists) {
+    console.error("\nError: It looks like you're missing the bids-examples test files. Please run `git submodule update --init`.\n  See project README for more information.\n")
+    process.exit(1)
+  }
+}
+
+main()

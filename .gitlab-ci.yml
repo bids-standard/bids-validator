@@ -7,4 +7,5 @@ tests:
     - windows
   script:
     - yarn
-    - yarn test
+    - git submodule update --init
+    - yarn jest

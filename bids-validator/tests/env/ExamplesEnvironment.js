@@ -1,13 +1,13 @@
 /*eslint no-console: ["error", { allow: ["log"] }] */
 const NodeEnvironment = require('jest-environment-node')
 
-const loadExamples = require('./load-examples.js')
+const config = require('./config')
 
 // Environment which includes the bids-examples datasets
 class ExamplesEnvironment extends NodeEnvironment {
   async setup() {
     await super.setup()
-    this.global.test_version = await loadExamples()
+    this.global.test_version = config.TEST_VERSION
   }
 
   async teardown() {
