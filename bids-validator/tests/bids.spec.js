@@ -1,6 +1,5 @@
 /**
  * eslint no-console: ["error", { allow: ["log"] }]
- * @jest-environment ./bids-validator/tests/env/ExamplesEnvironment.js
  */
 import { assert } from 'chai'
 
@@ -8,10 +7,13 @@ import validate from '../index.js'
 import fs from 'fs'
 import path from 'path'
 import { createFileList } from './env/FileList.js'
+import isNode from '../utils/isNode.js'
 
 function getDirectories(srcpath) {
   return fs.readdirSync(srcpath).filter(function(file) {
-    return fs.statSync(path.join(srcpath, file)).isDirectory()
+    return (
+      file !== '.git' && fs.statSync(path.join(srcpath, file)).isDirectory()
+    )
   })
 }
 
@@ -37,12 +39,16 @@ const dataDirectory = 'bids-validator/tests/data/'
 // Generate validate.BIDS input for included minimal tests
 function createDatasetFileList(path) {
   const testDatasetPath = `${dataDirectory}${path}`
-  return global.jsdom ? createFileList(testDatasetPath) : testDatasetPath
+  if (!isNode) {
+    return createFileList(testDatasetPath)
+  } else {
+    return testDatasetPath
+  }
 }
 
 // Generate validate.BIDS input for bids-examples
 function createExampleFileList(path) {
-  return createDatasetFileList(`bids-examples-${global.test_version}/${path}/`)
+  return createDatasetFileList(`bids-examples/${path}/`)
 }
 
 function assertErrorCode(errors, expected_error_code) {
@@ -58,28 +64,28 @@ describe('BIDS example datasets ', function() {
   const enableNiftiHeaders = { json: true }
 
   describe('basic example dataset tests', () => {
-    getDirectories(
-      dataDirectory + 'bids-examples-' + global.test_version + '/',
-    ).forEach(function testDataset(path) {
-      it(path, isdone => {
-        validate.BIDS(createExampleFileList(path), options, function(issues) {
-          var warnings = issues.warnings
-          var session_flag = false
-          for (var warning in warnings) {
-            if (warnings[warning]['code'] === 38) {
-              session_flag = true
-              break
+    getDirectories(dataDirectory + 'bids-examples/').forEach(
+      function testDataset(path) {
+        it(path, isdone => {
+          validate.BIDS(createExampleFileList(path), options, function(issues) {
+            var warnings = issues.warnings
+            var session_flag = false
+            for (var warning in warnings) {
+              if (warnings[warning]['code'] === 38) {
+                session_flag = true
+                break
+              }
             }
-          }
-          if (missing_session_files.indexOf(path) === -1) {
-            assert.deepEqual(session_flag, false)
-          } else {
-            assert.deepEqual(session_flag, true)
-          }
-          isdone()
+            if (missing_session_files.indexOf(path) === -1) {
+              assert.deepEqual(session_flag, false)
+            } else {
+              assert.deepEqual(session_flag, true)
+            }
+            isdone()
+          })
         })
-      })
-    })
+      },
+    )
   })
 
   // we need to have at least one non-dynamic test
