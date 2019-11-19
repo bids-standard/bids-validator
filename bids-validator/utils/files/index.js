@@ -16,22 +16,6 @@ import getFileStats from './getFileStats'
 
 // public API ---------------------------------------------------------------------
 
-export {
-  FileAPI,
-  newFile,
-  readFile,
-  readDir,
-  readNiftiHeader,
-  generateMergedSidecarDict,
-  potentialLocations,
-  getBFileContent,
-  collectDirectorySize,
-  illegalCharacterTest,
-  sessions,
-  remoteFiles,
-  getFileStats,
-}
-
 export default {
   FileAPI,
   newFile,

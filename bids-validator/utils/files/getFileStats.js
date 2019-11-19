@@ -12,4 +12,4 @@ function getFileStats(file) {
   return stats
 }
 
-module.exports = getFileStats
+export default getFileStats
