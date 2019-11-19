@@ -6,7 +6,6 @@ import fs from 'fs'
 
 import path from 'path'
 import mime from 'mime-types'
-import { browser } from 'jshint/src/vars'
 
 function createFileList(dir) {
   const str = dir.substr(dir.lastIndexOf('/') + 1) + '$'

@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-
-const config = require('../tests/env/config')
 const fs = require('fs')
 
 /**
@@ -21,13 +19,15 @@ const checkTestData = path => {
 const main = () => {
   let testDataExists
   try {
-    testDataExists = checkTestData(config.SUBMODULE_PATH)
+    testDataExists = checkTestData('bids-validator/tests/data/bids-examples')
   } catch (err) {
     testDataExists = false
     console.error(err)
   }
   if (!testDataExists) {
-    console.error("\nError: It looks like you're missing the bids-examples test files. Please run `git submodule update --init`.\n  See project README for more information.\n")
+    console.error(
+      "\nError: It looks like you're missing the bids-examples test files. Please run `git submodule update --init --depth 1`.\n  See project README for more information.\n",
+    )
     process.exit(1)
   }
 }
