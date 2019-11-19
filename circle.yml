@@ -18,11 +18,8 @@ jobs:
           name: Eslint
           command: yarn lint
       - run:
-          name: Test Data
-          command: git submodule update --init
-      - run:
           name: Mocha tests
-          command: yarn coverage
+          command: git submodule update --init && yarn coverage
       - run:
           name: Upload to codecov
           command: yarn codecov
