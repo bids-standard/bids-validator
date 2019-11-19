@@ -18,6 +18,9 @@ jobs:
           name: Eslint
           command: yarn lint
       - run:
+          name: Test Data
+          command: git submodule update --init
+      - run:
           name: Mocha tests
           command: yarn coverage
       - run:
