@@ -1,5 +1,6 @@
 import fs from 'fs'
 import isNode from '../isNode'
+import getFileStats from './getFileStats'
 
 const collectDirectorySize = fileList => {
   let size = 0
@@ -20,16 +21,6 @@ const collectDirectorySize = fileList => {
   return size
 }
 
-const getFileStats = file => {
-  let stats
-  if (!file.stats) {
-    try {
-      stats = fs.statSync(file.path)
-    } catch (err) {
-      stats = { size: 0 }
-    }
-  }
-  return stats
-}
+module.exports = collectDirectorySize
 
 export default collectDirectorySize

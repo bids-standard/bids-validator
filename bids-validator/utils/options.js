@@ -39,9 +39,10 @@ export default {
    */
   loadConfig: function(config, callback) {
     if (typeof config === 'string') {
-      // load file
+      var configFile = { path: config }
+      configFile.stats = files.getFileStats(configFile)
       files
-        .readFile({ path: config })
+        .readFile(configFile)
         .then(contents => {
           callback(null, { path: config }, contents)
         })

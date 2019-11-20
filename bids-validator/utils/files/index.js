@@ -1,5 +1,4 @@
 // dependencies -------------------------------------------------------------------
-
 import FileAPI from './FileAPI'
 
 import newFile from './newFile'
@@ -13,23 +12,9 @@ import collectDirectorySize from './collectDirectorySize'
 import illegalCharacterTest from './illegalCharacterTest'
 import sessions from './sessions'
 import remoteFiles from './remoteFiles'
+import getFileStats from './getFileStats'
 
 // public API ---------------------------------------------------------------------
-
-export {
-  FileAPI,
-  newFile,
-  readFile,
-  readDir,
-  readNiftiHeader,
-  generateMergedSidecarDict,
-  potentialLocations,
-  getBFileContent,
-  collectDirectorySize,
-  illegalCharacterTest,
-  sessions,
-  remoteFiles,
-}
 
 export default {
   FileAPI,
@@ -44,4 +29,5 @@ export default {
   illegalCharacterTest,
   sessions,
   remoteFiles,
+  getFileStats,
 }
