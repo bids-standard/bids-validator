@@ -21,6 +21,4 @@ const collectDirectorySize = fileList => {
   return size
 }
 
-module.exports = collectDirectorySize
-
 export default collectDirectorySize
