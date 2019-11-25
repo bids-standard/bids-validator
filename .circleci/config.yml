@@ -1,23 +1,12 @@
 version: 2
 
-run: &precheckout 
-  |
-  if [ -n "$CIRCLE_TAG" ]
-  then
-    mkdir -p ~/.ssh
-    echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
-    ' >> ~/.ssh/known_hosts
-    git clone --branch "${CIRCLE_TAG}" --depth 1 "${CIRCLE_REPOSITORY_URL}"
-  fi
-
 jobs:
   test:
     docker:
       - image: node:10.16.1-alpine
     steps:
-      - run: apk --no-cache add ca-certificates git
-      - run: *precheckout
       - checkout
+      - run: apk --no-cache add ca-certificates git
       - restore_cache:
           keys:
             - npm-deps-{{ checksum "package.json" }}
@@ -45,7 +34,6 @@ jobs:
       # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
       image: ubuntu-1604:201903-01
     steps:
-      - run: *precheckout
       - checkout
       - run: docker build -t bids/validator:latest .
       - run:
@@ -57,9 +45,8 @@ jobs:
     docker:
       - image: node:10.16.1-alpine
     steps:
-      - run: apk --no-cache add ca-certificates git
-      - run: *precheckout
       - checkout
+      - run: apk --no-cache add ca-certificates
       - restore_cache:
           keys:
             - npm-deps-{{ checksum "package.json" }}
@@ -76,8 +63,6 @@ jobs:
     docker:
       - image: alpine:3.8
     steps:
-      - run: apk --no-cache add ca-certificates
-      - run: *precheckout
       - checkout
       - run:
           name: Set up environment
@@ -110,11 +95,9 @@ jobs:
     docker:
       - image: node:10.16.1-alpine
     steps:
-      - run: apk --no-cache add ca-certificates
       - add_ssh_keys:
           fingerprints:
             - '44:93:5a:f4:2b:2d:c1:8a:f2:8e:8b:e9:27:5f:93:25'
-      - run: *precheckout
       - checkout
       - run: apk --no-cache add ca-certificates
       - run: apk --no-cache add git python build-base openssh
