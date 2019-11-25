@@ -15,7 +15,7 @@ jobs:
     docker:
       - image: node:10.16.1-alpine
     steps:
-      - *precheckout
+      - run: *precheckout
       - checkout
       - run: apk --no-cache add ca-certificates git
       - restore_cache:
@@ -45,7 +45,7 @@ jobs:
       # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
       image: ubuntu-1604:201903-01
     steps:
-      - *precheckout
+      - run: *precheckout
       - checkout
       - run: docker build -t bids/validator:latest .
       - run:
@@ -57,7 +57,7 @@ jobs:
     docker:
       - image: node:10.16.1-alpine
     steps:
-      - *precheckout
+      - run: *precheckout
       - checkout
       - run: apk --no-cache add ca-certificates
       - restore_cache:
@@ -76,7 +76,7 @@ jobs:
     docker:
       - image: alpine:3.8
     steps:
-      - *precheckout
+      - run: *precheckout
       - checkout
       - run:
           name: Set up environment
@@ -112,7 +112,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - '44:93:5a:f4:2b:2d:c1:8a:f2:8e:8b:e9:27:5f:93:25'
-      - *precheckout
+      - run: *precheckout
       - checkout
       - run: apk --no-cache add ca-certificates
       - run: apk --no-cache add git python build-base openssh
