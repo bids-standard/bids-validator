@@ -45,6 +45,7 @@ jobs:
     docker:
       - image: node:10.16.1-alpine
     steps:
+      - run: apk --no-cache add ca-certificates git openssh-client
       - checkout
       - run: apk --no-cache add ca-certificates
       - restore_cache:
@@ -63,6 +64,7 @@ jobs:
     docker:
       - image: alpine:3.8
     steps:
+      - run: apk --no-cache add ca-certificates git openssh-client
       - checkout
       - run:
           name: Set up environment
@@ -95,6 +97,7 @@ jobs:
     docker:
       - image: node:10.16.1-alpine
     steps:
+      - run: apk --no-cache add ca-certificates git openssh-client
       - add_ssh_keys:
           fingerprints:
             - '44:93:5a:f4:2b:2d:c1:8a:f2:8e:8b:e9:27:5f:93:25'
