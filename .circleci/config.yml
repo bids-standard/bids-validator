@@ -102,8 +102,7 @@ jobs:
           fingerprints:
             - '44:93:5a:f4:2b:2d:c1:8a:f2:8e:8b:e9:27:5f:93:25'
       - checkout
-      - run: apk --no-cache add ca-certificates
-      - run: apk --no-cache add git python build-base openssh
+      - run: apk --no-cache add python build-base openssh libffi-dev libressl-dev
       - run:
           name: Install Python 3 and update setuptools
           command: |
