@@ -276,14 +276,22 @@ module.exports = function NIFTI(
       mergedDictionary['ASLContext'].constructor === String
     ) {
       var ASLContextString = mergedDictionary['ASLContext']
+      var ASLContextStringVolumes = 0
       const kDim = header.dim[4]
-      ASLContextString=ASLContextString.split('Control').join('1')
-      ASLContextString=ASLContextString.split('Label').join('1')
-      ASLContextString=ASLContextString.split('MZeroScan').join('1')
-      ASLContextString=ASLContextString.split('_').join('+')
-      ASLContextString=ASLContextString.split('x').join('*')
-      const ASLContextStringVolumes = eval(ASLContextString)
-      if (ASLContextStringVolumes !== kDim) {
+      var ASLContextString_error_message=false
+      try {
+        ASLContextString=ASLContextString.split('Control').join('1')
+        ASLContextString=ASLContextString.split('Label').join('1')
+        ASLContextString=ASLContextString.split('MZeroScan').join('1')
+        ASLContextString=ASLContextString.split('_').join('+')
+        //ASLContextString=ASLContextString.split('x').join('*')
+        ASLContextStringVolumes = eval(ASLContextString)
+      }
+      catch (error) {
+        ASLContextString_error_message=true
+        console.error(error)
+      }
+      if (ASLContextStringVolumes !== kDim || ASLContextString_error_message) {
         issues.push(
           new Issue({
             file: file,
@@ -293,7 +301,7 @@ module.exports = function NIFTI(
               'and provided ' + ASLContextStringVolumes + 
               ' volumes however the number of volumes in the asl corresponding nifti header is (4th dimension) ' +
               kDim +
-              '.',
+              '. Please check also the sintax of the ASLContext field.',
           }),
         )
       }
