@@ -54,6 +54,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict) {
   tsvs.map(tsv => {
     const customColumns = getCustomColumns(
       tsv.contents
+        .replace(/^\uefff/, '')
         .split('\n')[0]
         .trim()
         .split('\t'),
