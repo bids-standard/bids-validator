@@ -1,6 +1,6 @@
 {
   "path": {
-    "sub": "/^/sub-([a-zA-Z0-9]+)/)",
+    "sub": "/^/sub-([a-zA-Z0-9]+)/",
     "ses": "/^/sub-[a-zA-Z0-9]+/ses-([a-zA-Z0-9]+)/"
   }
 }
