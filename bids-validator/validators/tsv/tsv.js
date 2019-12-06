@@ -267,6 +267,34 @@ const TSV = (file, contents, fileList, callback) => {
     checkheader('size', 4, file, 73)
   }
 
+  // check for valid SI units
+  if (headers.includes('units')) {
+    const unitIndex = headers.indexOf('units')
+    rows
+      // discard headers
+      .slice(1)
+      // extract unit values
+      .map((row, i) => ({
+        unit: row.split('\t')[unitIndex],
+        line: i + 2, 
+      }))
+      .forEach(({ unit, line }) => {
+        const { isValid, validPrefix, validRoot } = utils.unit.validate(unit)
+        const evidence = `Unit ${unit} has an invalid ${
+          validPrefix ? '' : 'prefix'
+        }${validPrefix && validRoot ? ' and ' : ''}${validRoot ? '' : 'root'}.`
+        if (!isValid)
+          issues.push(
+            new Issue({
+              line,
+              file,
+              code: 116,
+              evidence,
+            }),
+          )
+      })
+  }
+
   // check partcipants.tsv for age 89+
 
   if (file.name === 'participants.tsv') {
