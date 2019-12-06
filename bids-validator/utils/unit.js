@@ -103,7 +103,7 @@ const prefixes = [
   'y',
 ]
 
-const prefix = `^(${prefixes.join('|')})`
+const prefix = `^(${prefixes.join('|')})?`
 const prefixPattern = new RegExp(prefix)
 const root = `(${roots.join('|')})$`
 const rootPattern = new RegExp(root)
