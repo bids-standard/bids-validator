@@ -2,6 +2,21 @@ import testFile from './testFile'
 import Issue from '../../utils/issues'
 import fs from 'fs'
 import isNode from '../isNode'
+import checkIfUtf8 from 'is-utf8'
+
+const JSONFilePattern = /.json$/
+const isJSONFile = file =>
+  JSONFilePattern.test(isNode ? file.name : file.relativePath)
+
+/**
+ * checkEncoding
+ * @param {object | File} file - nodeJS fs file or browser File
+ * @param {buffer | Uint8Array} data - file content buffer
+ * @param {function} cb - returns { isUtf8 }
+ */
+const checkEncoding = (file, data, cb) => {
+  if (isJSONFile(file)) cb({ isUtf8: checkIfUtf8(data) })
+}
 
 /**
  * Read
@@ -25,9 +40,12 @@ function readFile(file, annexed, dir) {
           })
         }
         if (!remoteBuffer) {
-          fs.readFile(file.path, 'utf8', function(err, data) {
+          fs.readFile(file.path, function(err, data) {
             process.nextTick(function() {
-              return resolve(data)
+              checkEncoding(file, data, ({ isUtf8 }) => {
+                if (!isUtf8) reject(new Issue({ code: 115, file }))
+              })
+              return resolve(data.toString('utf8'))
             })
           })
         }
@@ -38,16 +56,21 @@ function readFile(file, annexed, dir) {
         }
       })
     } else {
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.onloadend = function(e) {
         if (e.target.readyState == FileReader.DONE) {
           if (!e.target.result) {
             return reject(new Issue({ code: 44, file: file }))
           }
-          return resolve(e.target.result)
+          const buffer = new Uint8Array(e.target.result)
+          checkEncoding(file, buffer, ({ isUtf8 }) => {
+            if (!isUtf8) reject(new Issue({ code: 115, file }))
+          })
+          const utf8Data = String.fromCharCode.apply(null, buffer)
+          return resolve(utf8Data)
         }
       }
-      reader.readAsBinaryString(file)
+      reader.readAsArrayBuffer(file)
     }
   })
 }

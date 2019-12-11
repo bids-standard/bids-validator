@@ -14,7 +14,6 @@ const Issue = utils.issues.Issue
  */
 export default function(file, jsonContentsDict, callback) {
   // primary flow --------------------------------------------------------------------
-
   let issues = []
   const potentialSidecars = utils.files.potentialLocations(file.relativePath)
   const mergedDictionary = utils.files.generateMergedSidecarDict(
