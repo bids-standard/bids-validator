@@ -53,8 +53,16 @@
       "exclusiveMinimum": 0
     },
     "InitialPostLabelDelay": {
-        "type": "number",
-        "exclusiveMinimum": 0
+      "anyOf": [
+        { "type": "number",
+          "exclusiveMinimum": 0 
+        },
+        {
+          "type": "array",
+          "items": { "type": "number" },
+          "exclusiveMinimum": 0
+        }
+      ]
     },
     "BackgroundSuppression" : {
         "type": "boolean" 
