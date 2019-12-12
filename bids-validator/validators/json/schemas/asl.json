@@ -82,9 +82,7 @@
       "_type_comment":"to be checked"
     },
     "LabelingDistance" :{
-      "type": "string",
-      "_type_comment":"to be checked",
-      "exclusiveMinimum": 0
+      "type": "number"
     },
     "AverageLabelingGradient" :{
       "type": "number",
