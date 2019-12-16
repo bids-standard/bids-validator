@@ -8,7 +8,7 @@ import path from 'path'
 import mime from 'mime-types'
 
 function createFileList(dir) {
-  const str = dir.substr(dir.lastIndexOf('/') + 1) + '$'
+  const str = dir.substr(dir.lastIndexOf(path.sep) + 1) + '$'
   const rootpath = dir.replace(new RegExp(str), '')
   const paths = getFilepaths(dir, [], rootpath)
   return paths.map(path => {
@@ -20,7 +20,7 @@ function getFilepaths(dir, files_) {
   files_ = files_ || []
   const files = fs.readdirSync(dir)
   files
-    .map(file => `${dir}/${file}`)
+    .map(file => path.join(dir, file))
     .map(path =>
       isDirectory(path) ? getFilepaths(path, files_) : files_.push(path),
     )
