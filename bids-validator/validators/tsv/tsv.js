@@ -2,6 +2,7 @@ import utils from '../../utils'
 const Issue = utils.issues.Issue
 import checkAcqTimeFormat from './checkAcqTimeFormat'
 import checkAge89 from './checkAge89'
+import parseTSV from './tsvParser'
 
 /**
  * TSV
@@ -11,6 +12,7 @@ import checkAge89 from './checkAge89'
  * it finds while validating against the BIDS
  * specification.
  */
+
 const TSV = (file, contents, fileList, callback) => {
   const issues = []
   const stimPaths = []
@@ -26,55 +28,42 @@ const TSV = (file, contents, fileList, callback) => {
     return
   }
 
-  const rows = contents.split('\n')
-  const headers = rows[0].trim().split('\t')
+  // TSV Parser -----------------------------------------------------------
+  const { headers, rows } = parseTSV(contents)
 
   // generic checks -----------------------------------------------------------
-
   let columnMismatch = false
   let emptyCells = false
   let NACells = false
-  // iterate rows
+
   for (let i = 0; i < rows.length; i++) {
-    const row = rows[i]
-    if (columnMismatch && emptyCells && NACells) {
-      break
-    }
-
-    // skip empty rows
-    if (!row || /^\s*$/.test(row)) {
-      continue
-    }
-
-    const values = row.trim().split('\t')
-
+    const values = rows[i]
+    const evidence = `row ${i}: ${values.join('\t')}`
+    if (values.length === 1 && /^\s*$/.test(values[0])) continue
+    if (columnMismatch && emptyCells && NACells) break
     // check for different length rows
     if (values.length !== headers.length && !columnMismatch) {
       columnMismatch = true
       issues.push(
         new Issue({
           file: file,
-          evidence: row,
+          evidence,
           line: i + 1,
           code: 22,
         }),
       )
     }
-
     // iterate values
     for (let j = 0; j < values.length; j++) {
       const value = values[j]
-      if (columnMismatch && emptyCells && NACells) {
-        break
-      }
-
+      if (columnMismatch && emptyCells && NACells) break
       if (value === '' && !emptyCells) {
         emptyCells = true
         // empty cell should raise an error
         issues.push(
           new Issue({
             file: file,
-            evidence: row,
+            evidence,
             line: i + 1,
             reason: 'Missing value at column # ' + (j + 1),
             code: 23,
@@ -92,7 +81,7 @@ const TSV = (file, contents, fileList, callback) => {
         issues.push(
           new Issue({
             file: file,
-            evidence: row,
+            evidence,
             line: i + 1,
             reason: 'Missing value at column # ' + (j + 1),
             code: 24,
@@ -150,9 +139,7 @@ const TSV = (file, contents, fileList, callback) => {
     const stimFiles = []
     if (headers.indexOf('stim_file') > -1) {
       for (let k = 0; k < rows.length; k++) {
-        const stimFile = rows[k].trim().split('\t')[
-          headers.indexOf('stim_file')
-        ]
+        const stimFile = rows[k][headers.indexOf('stim_file')]
         const stimPath = '/stimuli/' + stimFile
         if (
           stimFile &&
@@ -201,7 +188,7 @@ const TSV = (file, contents, fileList, callback) => {
     } else {
       participants = []
       for (let l = 1; l < rows.length; l++) {
-        const row = rows[l].trim().split('\t')
+        const row = rows[l]
         // skip empty rows
         if (!row || /^\s*$/.test(row)) {
           continue

@@ -25,24 +25,24 @@ import collectSubjectMetadata from '../../utils/summary/collectSubjectMetadata'
  * Starts the validation process for a BIDS package.
  */
 const fullTest = (fileList, options, annexed, dir, callback) => {
-  let self = BIDS
+  const self = BIDS
   self.options = options
 
-  let jsonContentsDict = {},
-    bContentsDict = {},
-    events = [],
-    stimuli = {
-      events: [],
-      directory: [],
-    },
-    jsonFiles = [],
-    headers = [],
-    participants = null,
-    phenotypeParticipants = []
+  const jsonContentsDict = {}
+  const bContentsDict = {}
+  const events = []
+  const stimuli = {
+    events: [],
+    directory: [],
+  }
+  const jsonFiles = []
+  const headers = []
+  const participants = null
+  const phenotypeParticipants = []
 
-  let tsvs = []
+  const tsvs = []
 
-  let summary = utils.collectSummary(fileList, self.options)
+  const summary = utils.collectSummary(fileList, self.options)
 
   // remove size redundancies
   for (const key in fileList) {

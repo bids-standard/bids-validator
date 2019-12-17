@@ -1,11 +1,11 @@
 const Issue = require('../../utils').issues.Issue
 
 const checkAge89 = function(rows, file, issues) {
-  const header = rows[0].trim().split('\t')
+  const header = rows[0]
   const ageIdColumn = header.indexOf('age')
   for (let a = 0; a < rows.length; a++) {
     const line = rows[a]
-    const line_values = line.trim().split('\t')
+    const line_values = line
     const age = line_values[ageIdColumn]
     if (age >= 89) {
       issues.push(
@@ -13,7 +13,7 @@ const checkAge89 = function(rows, file, issues) {
           file: file,
           evidence: line,
           line: a + 1,
-          reason: 'age of partcipant is above 89 ',
+          reason: 'age of participant is above 89 ',
           code: 56,
         }),
       )
