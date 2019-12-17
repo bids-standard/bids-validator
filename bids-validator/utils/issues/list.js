@@ -643,4 +643,10 @@ export default {
     severity: 'error',
     reason: 'JSON files must be valid utf-8.',
   },
+  116: {
+    key: 'INVALID_TSV_UNITS',
+    severity: 'error',
+    reason:
+      'Units in .tsv files must be valid SI units as described in the BIDS spec Appendix V (https://bids-specification.readthedocs.io/en/stable/99-appendices/05-units.html).'
+  },
 }

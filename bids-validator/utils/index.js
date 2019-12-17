@@ -10,6 +10,7 @@ import options from './options'
 import type from './type'
 import collectSummary from './summary/collectSummary'
 import limit from './promise_limiter'
+import unit from './unit'
 
 export {
   array,
@@ -23,6 +24,7 @@ export {
   type,
   collectSummary,
   limit,
+  unit,
 }
 
 export default {
@@ -37,4 +39,5 @@ export default {
   type,
   collectSummary,
   limit,
+  unit,
 }
