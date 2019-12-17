@@ -262,8 +262,8 @@ const TSV = (file, contents, fileList, callback) => {
       .slice(1)
       // extract unit values
       .map((row, i) => ({
-        unit: row.split('\t')[unitIndex],
-        line: i + 2, 
+        unit: row[unitIndex],
+        line: i + 2,
       }))
       .forEach(({ unit, line }) => {
         const { isValid, validPrefix, validRoot } = utils.unit.validate(unit)
