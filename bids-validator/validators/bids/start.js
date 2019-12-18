@@ -20,7 +20,7 @@ const start = (dir, options, callback) => {
   // eslint-disable-next-line
   if (!options.json) console.log(`bids-validator@${version}\n`)
 
-  utils.options.parse(options, function(issues, options) {
+  utils.options.parse(dir, options, function(issues, options) {
     if (issues && issues.length > 0) {
       // option parsing issues
       callback({ config: issues })

@@ -43,7 +43,7 @@ var argv = require('yargs')
     alias: 'c',
     describe:
       'Optional configuration file. See https://github.com/bids-standard/bids-validator for more info',
-    default: {},
+    default: '.bids-validator-config.json',
   })
   .epilogue(
     'This tool checks if a dataset in a given directory is \
