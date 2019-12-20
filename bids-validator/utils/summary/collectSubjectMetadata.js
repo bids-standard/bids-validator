@@ -21,7 +21,7 @@ const PARTICIPANT_ID = 'participantId'
 const collectSubjectMetadata = participantsTsvContent => {
   if (participantsTsvContent) {
     const contentTable = participantsTsvContent
-      .split('\n')
+      .split(/\r?\n/)
       .filter(row => row !== '')
       .map(row => row.split('\t'))
     const [snakeCaseHeaders, ...subjectData] = contentTable
