@@ -140,10 +140,10 @@ describe('BIDS example datasets ', function() {
         'warnings do not contain a code 13',
       )
       assert.deepEqual(summary.subjectMetadata[0], {
-          age: 25,
-          participantId: '01',
-          sex: 'M',
-        })
+        age: 25,
+        participantId: '01',
+        sex: 'M',
+      })
       isdone()
     })
   })
