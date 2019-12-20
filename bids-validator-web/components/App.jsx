@@ -23,7 +23,7 @@ const initState = () => ({
   options: {
     ignoreWarnings: false,
     ignoreNiftiHeaders: false,
-  }
+  },
 })
 
 export default class App extends React.Component {
@@ -35,15 +35,21 @@ export default class App extends React.Component {
   }
 
   _validate(selectedFiles) {
+    const dirName = selectedFiles.list[0].webkitRelativePath.split('/')[0]
+    const defaultConfig = `${dirName}/.bids-validator-config.json`
     this.setState({
       status: 'validating',
       showIssues: true,
       activeKey: 3,
-      dirName: selectedFiles.list[0].webkitRelativePath.split('/')[0],
+      dirName,
     })
     return validate.BIDS(
       selectedFiles.list,
-      { verbose: true, ...this.state.options },
+      {
+        verbose: true,
+        ...this.state.options,
+        config: defaultConfig,
+      },
       (issues, summary) => {
         if (issues === 'Invalid') {
           return this.setState({
@@ -73,8 +79,8 @@ export default class App extends React.Component {
       ...prevState,
       options: {
         ...prevState.options,
-        [name]: !prevState.options[name]
-      }
+        [name]: !prevState.options[name],
+      },
     }))
   }
 
@@ -86,7 +92,10 @@ export default class App extends React.Component {
         <nav className="navbar navbar-dark bg-dark fixed-top">
           <div className="container">
             <div className="navbar-header">
-              <a className="navbar-brand" href="https://www.npmjs.com/package/bids-validator" target="_blank">
+              <a
+                className="navbar-brand"
+                href="https://www.npmjs.com/package/bids-validator"
+                target="_blank">
                 BIDS Validator v{version}
               </a>
             </div>

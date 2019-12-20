@@ -35,9 +35,7 @@ function readFile(file, annexed, dir) {
     if (isNode) {
       testFile(file, annexed, dir, function(issue, stats, remoteBuffer) {
         if (issue) {
-          process.nextTick(function() {
-            return reject(issue)
-          })
+          return reject(issue)
         }
         if (!remoteBuffer) {
           fs.readFile(file.path, function(err, data) {

@@ -100,6 +100,8 @@ You can configure the severity of errors by passing a json configuration file
 with a `-c` or `--config` flag to the command line interface or by defining a
 config object on the options object passed during javascript usage.
 
+If no path is specified a default path of `.bids-validator-config.json` will be used. You can add this file to your dataset to share dataset specific validation configuration. To disable this behavior use `--no-config` and the default configuration will be used.
+
 The basic configuration format is outlined below. All configuration is optional.
 
 ```JSON
