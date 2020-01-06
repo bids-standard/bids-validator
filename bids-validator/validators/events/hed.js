@@ -3,7 +3,7 @@ import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 export default function checkHedStrings(events, headers, jsonContents) {
-  const issues = []
+  let issues = []
   // get all headers associated with task data
   const taskHeaders = headers.filter(header => {
     const file = header[0]
