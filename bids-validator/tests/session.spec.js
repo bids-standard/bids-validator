@@ -1,8 +1,8 @@
-const assert = require('assert')
-const utils = require('../utils')
+import assert from 'assert'
+import utils from '../utils'
 const Subject = utils.files.sessions.Subject
-const {
-  session: missingSessionFiles,
+import {
+  session as missingSessionFiles,
   getDataOrganization,
   getFilename,
   missingSessionWarnings,
@@ -10,7 +10,7 @@ const {
   missingFileWarnings,
   checkFileInMissingSession,
   checkMissingFile,
-} = require('../validators/session')
+} from '../validators/session'
 const dir = process.cwd()
 const data_dir = dir + '/bids-validator/tests/data/'
 const missing_session_data = data_dir + 'ds006_missing-session'

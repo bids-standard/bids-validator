@@ -1,8 +1,8 @@
-const files = require('../files')
-const checkForDerivatives = require('./checkForDerivatives')
-const collectModalities = require('./collectModalities')
-const collectSessions = require('./collectSessions')
-const collectSubjects = require('./collectSubjects')
+import files from '../files'
+import checkForDerivatives from './checkForDerivatives'
+import collectModalities from './collectModalities'
+import collectSessions from './collectSessions'
+import collectSubjects from './collectSubjects'
 
 const collectSummary = (fileList, options) => {
   const summary = {
@@ -42,4 +42,4 @@ const collectSummary = (fileList, options) => {
   return summary
 }
 
-module.exports = collectSummary
+export default collectSummary

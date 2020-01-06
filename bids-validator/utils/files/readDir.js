@@ -1,10 +1,10 @@
-const ignore = require('ignore')
-const readFile = require('./readFile')
-const path = require('path')
-const crypto = require('crypto')
-const fs = require('fs')
-const { spawn } = require('child_process')
-const isNode = require('../isNode')
+import ignore from 'ignore'
+import readFile from './readFile'
+import path from 'path'
+import crypto from 'crypto'
+import fs from 'fs'
+import { spawn } from 'child_process'
+import isNode from '../isNode'
 
 /**
  * Read Directory
@@ -370,8 +370,7 @@ function getBIDSIgnoreFileObjBrowser(dir) {
   return bidsIgnoreFileObj
 }
 
-module.exports = {
-  default: readDir,
+export {
   readDir,
   getFilesFromFs,
   fileArrayToObject,
@@ -380,3 +379,13 @@ module.exports = {
   readCatFileLines,
   processFiles,
 }
+
+export default Object.assign(readDir, {
+  readDir,
+  getFilesFromFs,
+  fileArrayToObject,
+  harmonizeRelativePath,
+  readLsTreeLines,
+  readCatFileLines,
+  processFiles,
+})

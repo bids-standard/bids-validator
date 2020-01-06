@@ -1,22 +1,22 @@
-const BIDS = require('./obj')
-const utils = require('../../utils')
+import BIDS from './obj'
+import utils from '../../utils'
 const Issue = utils.issues.Issue
-const tsv = require('../tsv')
-const json = require('../json')
-const NIFTI = require('../nifti')
-const bval = require('../bval')
-const bvec = require('../bvec')
-const Events = require('../events')
-const { session } = require('../session')
-const checkAnyDataPresent = require('../checkAnyDataPresent')
-const headerFields = require('../headerFields')
-const subSesMismatchTest = require('./subSesMismatchTest')
-const groupFileTypes = require('./groupFileTypes')
-const subjects = require('./subjects')
-const checkDatasetDescription = require('./checkDatasetDescription')
-const checkReadme = require('./checkReadme')
-const validateMisc = require('../../utils/files/validateMisc')
-const collectSubjectMetadata = require('../../utils/summary/collectSubjectMetadata')
+import tsv from '../tsv'
+import json from '../json'
+import NIFTI from '../nifti'
+import bval from '../bval'
+import bvec from '../bvec'
+import Events from '../events'
+import { session } from '../session'
+import checkAnyDataPresent from '../checkAnyDataPresent'
+import headerFields from '../headerFields'
+import subSesMismatchTest from './subSesMismatchTest'
+import groupFileTypes from './groupFileTypes'
+import subjects from './subjects'
+import checkDatasetDescription from './checkDatasetDescription'
+import checkReadme from './checkReadme'
+import validateMisc from '../../utils/files/validateMisc'
+import collectSubjectMetadata from '../../utils/summary/collectSubjectMetadata'
 
 /**
  * Full Test
@@ -25,24 +25,24 @@ const collectSubjectMetadata = require('../../utils/summary/collectSubjectMetada
  * Starts the validation process for a BIDS package.
  */
 const fullTest = (fileList, options, annexed, dir, callback) => {
-  let self = BIDS
+  const self = BIDS
   self.options = options
 
-  let jsonContentsDict = {},
-    bContentsDict = {},
-    events = [],
-    stimuli = {
-      events: [],
-      directory: [],
-    },
-    jsonFiles = [],
-    headers = [],
-    participants = null,
-    phenotypeParticipants = []
+  const jsonContentsDict = {}
+  const bContentsDict = {}
+  const events = []
+  const stimuli = {
+    events: [],
+    directory: [],
+  }
+  const jsonFiles = []
+  const headers = []
+  const participants = null
+  const phenotypeParticipants = []
 
-  let tsvs = []
+  const tsvs = []
 
-  let summary = utils.collectSummary(fileList, self.options)
+  const summary = utils.collectSummary(fileList, self.options)
 
   // remove size redundancies
   for (const key in fileList) {
@@ -220,4 +220,4 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     })
 }
 
-module.exports = fullTest
+export default fullTest

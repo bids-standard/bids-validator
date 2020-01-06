@@ -1,6 +1,7 @@
 /* limits promises to LIMIT to prevent memory overuse */
 
-const pLimit = require('p-limit')
+import pLimit from 'p-limit'
+
 const LIMIT = 200
 
-module.exports = pLimit(LIMIT)
+export default pLimit(LIMIT)

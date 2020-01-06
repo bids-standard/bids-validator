@@ -1,12 +1,12 @@
-const utils = require('../../utils')
+import utils from '../../utils'
 const Issue = utils.issues.Issue
-const nonCustomColumns = require('../../bids_validator/tsv/non_custom_columns.json')
+import nonCustomColumns from '../../bids_validator/tsv/non_custom_columns.json'
 
 /**
  * @param {Object} file - BIDS file object
  * Accepts file object and returns a type based on file path
  */
-const getTsvType = function(file) {
+export const getTsvType = function(file) {
   let tsvType = 'misc'
   if (file.relativePath.includes('phenotype/')) {
     tsvType = 'phenotype'
@@ -54,6 +54,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict) {
   tsvs.map(tsv => {
     const customColumns = getCustomColumns(
       tsv.contents
+        .replace(/^\uefff/, '')
         .split('\n')[0]
         .trim()
         .split('\t'),
@@ -98,4 +99,4 @@ const customColumnIssue = function(file, col, locations) {
   })
 }
 
-module.exports = validateTsvColumns
+export default validateTsvColumns

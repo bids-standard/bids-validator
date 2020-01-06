@@ -1,4 +1,4 @@
-const type = require('../type')
+import type from '../type'
 
 const collectSubjects = (fileList, options) => {
   const subjects = []
@@ -24,4 +24,4 @@ const collectSubjects = (fileList, options) => {
   return subjects
 }
 
-module.exports = collectSubjects
+export default collectSubjects

@@ -1,8 +1,8 @@
-const json = require('./json')
-const validate = require('./validate')
-const load = require('./load')
+import json from './json'
+import validate from './validate'
+import load from './load'
 
-module.exports = {
+export default {
   json: json,
   validate: validate,
   load: load,

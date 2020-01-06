@@ -1,6 +1,6 @@
-const { assert } = require('chai')
-const utils = require('../utils')
-const BIDS = require('../validators/bids')
+import { assert } from 'chai'
+import utils from '../utils'
+import BIDS from '../validators/bids'
 
 describe('utils.type.file.isAnat', function() {
   const goodFilenames = [

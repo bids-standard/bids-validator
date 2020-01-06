@@ -1,5 +1,5 @@
-const assert = require('chai').assert
-const { getFolderSubjects } = require('../checkAnyDataPresent.js')
+import { assert } from 'chai'
+import { getFolderSubjects } from '../checkAnyDataPresent.js'
 
 describe('checkAnyDataPresent', () => {
   describe('getFolderSubjects()', () => {

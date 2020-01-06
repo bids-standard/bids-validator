@@ -1,5 +1,5 @@
-const Issue = require('../issues/issue')
-const isNode = require('../isNode')
+import Issue from '../issues/issue'
+import isNode from '../isNode'
 
 function createIssueForEmpty(file) {
   const size = !isNode ? file.size : file.stats.size
@@ -22,7 +22,7 @@ function clearNonIssues(x) {
  *
  * takes a list of files and returns an issue for each file
  */
-module.exports = function validateMisc(miscFiles) {
+export default function validateMisc(miscFiles) {
   return Promise.resolve(
     miscFiles.map(createIssueForEmpty).filter(clearNonIssues),
   )

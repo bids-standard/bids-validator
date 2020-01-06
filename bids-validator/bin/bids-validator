@@ -43,7 +43,7 @@ var argv = require('yargs')
     alias: 'c',
     describe:
       'Optional configuration file. See https://github.com/bids-standard/bids-validator for more info',
-    default: {},
+    default: '.bids-validator-config.json',
   })
   .epilogue(
     'This tool checks if a dataset in a given directory is \
@@ -52,4 +52,5 @@ more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
   ).argv
 
 // import and init command line interface
-require('../cli')(argv._[0], argv)
+const esmRequire = require('esm')(module)
+esmRequire('../cli.js').default(argv._[0], argv)

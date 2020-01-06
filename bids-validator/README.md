@@ -100,6 +100,8 @@ You can configure the severity of errors by passing a json configuration file
 with a `-c` or `--config` flag to the command line interface or by defining a
 config object on the options object passed during javascript usage.
 
+If no path is specified a default path of `.bids-validator-config.json` will be used. You can add this file to your dataset to share dataset specific validation configuration. To disable this behavior use `--no-config` and the default configuration will be used.
+
 The basic configuration format is outlined below. All configuration is optional.
 
 ```JSON
@@ -292,6 +294,8 @@ node-gyp which needs xcode to be installed in order to be compiled.
 6. To ensure that the web application compiles successfully in production, run `yarn web-export`
 
 #### Testing
+
+If it's your first time running tests, first use the command `git submodule update --init --depth 1` to pull the test example data. This repo contains the [bids-examples github repository](https://github.com/bids-standard/bids-examples) as a [submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
 To start the test suite run `npm test` from the project root. `npm test -- --watch`
 is useful to run tests while making changes. A coverage report is available with

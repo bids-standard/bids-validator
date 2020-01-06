@@ -85,4 +85,4 @@ const removePathsWithoutTasknames = paths => {
   })
 }
 
-module.exports = potentialLocations
+export default potentialLocations

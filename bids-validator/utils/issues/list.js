@@ -5,7 +5,7 @@
  * issue code and including severity and reason
  * agnostic to file specifics.
  */
-module.exports = {
+export default {
   0: {
     key: 'INTERNAL ERROR',
     severity: 'error',
@@ -685,5 +685,16 @@ module.exports = {
     severity: 'error',
     reason:
       'This HED string contains either a tag with an extra comma or an invalid tag.',
+  },
+  123: {
+    key: 'INVALID JSON ENCODING',
+    severity: 'error',
+    reason: 'JSON files must be valid utf-8.',
+  },
+  124: {
+    key: 'INVALID_TSV_UNITS',
+    severity: 'error',
+    reason:
+      'Units in .tsv files must be valid SI units as described in the BIDS spec Appendix V (https://bids-specification.readthedocs.io/en/stable/99-appendices/05-units.html).'
   },
 }

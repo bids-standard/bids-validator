@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+import utils from '../../utils'
 
 class JSONParseError extends Error {
   constructor(message) {
@@ -49,4 +49,4 @@ const load = (files, jsonFiles, jsonContentsDict, annexed, dir) => {
     })
 }
 
-module.exports = load
+export default load

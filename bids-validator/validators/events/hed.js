@@ -1,9 +1,9 @@
-const hedValidator = require('hed-validator')
-const utils = require('../../utils')
+import hedValidator from 'hed-validator'
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
-module.exports = function checkHedStrings(events, headers, jsonContents) {
-  let issues = []
+export default function checkHedStrings(events, headers, jsonContents) {
+  const issues = []
   // get all headers associated with task data
   const taskHeaders = headers.filter(header => {
     const file = header[0]
