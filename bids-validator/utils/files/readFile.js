@@ -41,7 +41,7 @@ function readFile(file, annexed, dir) {
           fs.readFile(file.path, function(err, data) {
             process.nextTick(function() {
               checkEncoding(file, data, ({ isUtf8 }) => {
-                if (!isUtf8) reject(new Issue({ code: 115, file }))
+                if (!isUtf8) reject(new Issue({ code: 123, file }))
               })
               return resolve(data.toString('utf8'))
             })
@@ -62,7 +62,7 @@ function readFile(file, annexed, dir) {
           }
           const buffer = new Uint8Array(e.target.result)
           checkEncoding(file, buffer, ({ isUtf8 }) => {
-            if (!isUtf8) reject(new Issue({ code: 115, file }))
+            if (!isUtf8) reject(new Issue({ code: 123, file }))
           })
           const utf8Data = String.fromCharCode.apply(null, buffer)
           return resolve(utf8Data)

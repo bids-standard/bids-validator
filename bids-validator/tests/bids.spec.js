@@ -262,7 +262,7 @@ describe('BIDS example datasets ', function() {
     validate.BIDS(createDatasetFileList('valid_dataset'), options, function(
       issues,
     ) {
-      assert.equal(issues.errors.findIndex(issue => issue.code === 115), -1)
+      assert.equal(issues.errors.findIndex(issue => issue.code === 123), -1)
       isdone()
     })
   })
@@ -271,7 +271,7 @@ describe('BIDS example datasets ', function() {
       createDatasetFileList('latin-1_description'),
       options,
       function(issues) {
-        assertErrorCode(issues.errors, 115)
+        assertErrorCode(issues.errors, 123)
         isdone()
       },
     )

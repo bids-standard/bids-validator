@@ -275,7 +275,7 @@ const TSV = (file, contents, fileList, callback) => {
             new Issue({
               line,
               file,
-              code: 116,
+              code: 124,
               evidence,
             }),
           )
