@@ -22,7 +22,7 @@ describe('unit validator', () => {
     expect(badOutput.isValid).toBe(false)
   })
 
-  const validExponents = ['^2', '^543', '¹²³', ...unit.superscriptNumbers.slice(0, 3)]
+  const validExponents = ['^2', '^543', '¹²³', ...unit.superscriptNumbers.slice(0, 3), '^-2', '⁻³']
   it('handles simple units with exponents', () => {
     validExponents.forEach(exp => {
       const goodOutput = unit.validate(validRoot + exp)
@@ -55,7 +55,7 @@ describe('unit validator', () => {
       `${validRoot}**${validRoot}`,
       `${validRoot}***${validRoot}`,
       `${roots.slice(0, 3).join('')}`,
-      ...validExponents.slice(0, 3).map(exp => `${exp}${validRoot}`),
+      ...validExponents.map(exp => `${exp}${validRoot}`),
     ]
     invalidUnits.forEach(derivedUnit => {
       const badOutput = unit.validate(derivedUnit)

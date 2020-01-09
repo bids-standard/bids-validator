@@ -119,13 +119,14 @@ const superscriptNumbers = [
   '\u2078',
   '\u2079',
 ]
+const superscriptNegative = '\u207B'
 
 const start = '^'
 const end = '$'
 const prefix = `(${prefixes.join('|')})?`
 const root = `(${roots.join('|')})`
-const superscriptExp = `[${superscriptNumbers}]*`
-const operatorExp = `(\\^[0-9]+)?`
+const superscriptExp = `(${superscriptNegative}?[${superscriptNumbers}]+)?`
+const operatorExp = `(\\^-?[0-9]+)?`
 const unitWithExponentPattern = new RegExp(
   `${start}${prefix}${root}(${superscriptExp}|${operatorExp})${end}`,
 )
