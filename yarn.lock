@@ -4042,6 +4042,11 @@ data-urls@^1.0.0:
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
 
+date-and-time@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/date-and-time/-/date-and-time-0.9.0.tgz#1524579e56dc07675c640b41735a7665c0659240"
+  integrity sha512-4JybB6PbR+EebpFx/KyR5Ybl+TcdXMLIJkyYsCx3P4M4CWGMuDyFF19yh6TyasMAIF5lrsgIxiSHBXh2FFc7Fg==
+
 date-fns@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.7.0.tgz#8271d943cc4636a1f27698f1b8d6a9f1ceb74026"
@@ -5421,10 +5426,14 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
 
-hed-validator@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/hed-validator/-/hed-validator-0.3.0.tgz#53e80420c3e24209e5fbcd45156b29be429b6a99"
-  integrity sha512-yQLR+S2HPtb9dMQQISBamdcYa+0ShJl2vf/0D5xDqjFM6QrAmtXZYBsBwnPRy1HR0RCiBubRoBUG92veqRl54w==
+hed-validator@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/hed-validator/-/hed-validator-1.1.2.tgz#22dcd87e1c85aa31b2b5e385ba106fec242248ef"
+  integrity sha512-RoLqtSlCtaYnDxpSRA5sqwcOO7dg5nhtGIUrc5OTZDD4JIJ77gDlKIbRhiNtEYCpBvfjq6T/5hdGYvZwykcSVg==
+  dependencies:
+    date-and-time "^0.9.0"
+    then-request "^6.0.2"
+    xml2js "^0.4.23"
 
 hmac-drbg@^1.0.0:
   version "1.0.1"
@@ -10045,7 +10054,7 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-then-request@^6.0.0:
+then-request@^6.0.0, then-request@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/then-request/-/then-request-6.0.2.tgz#ec18dd8b5ca43aaee5cb92f7e4c1630e950d4f0c"
   integrity sha512-3ZBiG7JvP3wbDzA9iNY5zJQcHL4jn/0BWtXIkagfz7QgOL/LqjCEOBQuJNZfu0XYnv5JhKh+cDxCPM4ILrqruA==
@@ -10787,6 +10796,19 @@ xml2js@0.4.19:
   dependencies:
     sax ">=0.6.0"
     xmlbuilder "~9.0.1"
+
+xml2js@^0.4.23:
+  version "0.4.23"
+  resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.4.23.tgz#a0c69516752421eb2ac758ee4d4ccf58843eac66"
+  integrity sha512-ySPiMjM0+pLDftHgXY4By0uswI3SPKLDw/i3UXbnO8M/p28zqexCUoPmQFrYD+/1BzhGJSs2i1ERWKJAtiLrug==
+  dependencies:
+    sax ">=0.6.0"
+    xmlbuilder "~11.0.0"
+
+xmlbuilder@~11.0.0:
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-11.0.1.tgz#be9bae1c8a046e76b31127726347d0ad7002beb3"
+  integrity sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==
 
 xmlbuilder@~9.0.1:
   version "9.0.7"
