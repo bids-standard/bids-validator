@@ -102,7 +102,7 @@ const prefixes = [
   'yocto',
   'y',
 ]
-const unitOperators = ['/', '*']
+const unitOperators = ['/', '*', '⋅']
 const exponentOperator = '^'
 const operators = [...unitOperators, exponentOperator]
 
