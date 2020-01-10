@@ -34,11 +34,11 @@ var missing_session_files = [
   'ieeg_visual',
 ]
 
-const dataDirectory = 'bids-validator/tests/data/'
+const dataDirectory = path.join('bids-validator', 'tests', 'data')
 
 // Generate validate.BIDS input for included minimal tests
-function createDatasetFileList(path) {
-  const testDatasetPath = `${dataDirectory}${path}`
+function createDatasetFileList(inputPath) {
+  const testDatasetPath = path.join(dataDirectory, inputPath)
   if (!isNode) {
     return createFileList(testDatasetPath)
   } else {
@@ -47,8 +47,8 @@ function createDatasetFileList(path) {
 }
 
 // Generate validate.BIDS input for bids-examples
-function createExampleFileList(path) {
-  return createDatasetFileList(`bids-examples/${path}/`)
+function createExampleFileList(inputPath) {
+  return createDatasetFileList(path.join('bids-examples', inputPath))
 }
 
 function assertErrorCode(errors, expected_error_code) {
@@ -64,28 +64,29 @@ describe('BIDS example datasets ', function() {
   const enableNiftiHeaders = { json: true }
 
   describe('basic example dataset tests', () => {
-    getDirectories(dataDirectory + 'bids-examples/').forEach(
-      function testDataset(path) {
-        it(path, isdone => {
-          validate.BIDS(createExampleFileList(path), options, function(issues) {
-            var warnings = issues.warnings
-            var session_flag = false
-            for (var warning in warnings) {
-              if (warnings[warning]['code'] === 38) {
-                session_flag = true
-                break
-              }
+    const bidsExamplePath = path.join(dataDirectory, 'bids-examples')
+    getDirectories(bidsExamplePath).forEach(function testDataset(inputPath) {
+      it(inputPath, isdone => {
+        validate.BIDS(createExampleFileList(inputPath), options, function(
+          issues,
+        ) {
+          var warnings = issues.warnings
+          var session_flag = false
+          for (var warning in warnings) {
+            if (warnings[warning]['code'] === 38) {
+              session_flag = true
+              break
             }
-            if (missing_session_files.indexOf(path) === -1) {
-              assert.deepEqual(session_flag, false)
-            } else {
-              assert.deepEqual(session_flag, true)
-            }
-            isdone()
-          })
+          }
+          if (missing_session_files.indexOf(inputPath) === -1) {
+            assert.deepEqual(session_flag, false)
+          } else {
+            assert.deepEqual(session_flag, true)
+          }
+          isdone()
         })
-      },
-    )
+      })
+    })
   })
 
   // we need to have at least one non-dynamic test
@@ -124,13 +125,6 @@ describe('BIDS example datasets ', function() {
       var warnings = issues.warnings
       assert(summary.sessions.length === 0)
       assert(summary.subjects.length === 1)
-      assert.deepEqual(summary.subjectMetadata, [
-        {
-          participantId: '01',
-          age: 25,
-          sex: 'M',
-        },
-      ])
       assert.deepEqual(summary.tasks, ['rhyme judgment'])
       assert.isFalse(summary.dataProcessed)
       assert(summary.modalities.includes('T1w'))
@@ -145,6 +139,11 @@ describe('BIDS example datasets ', function() {
         warnings.findIndex(warning => warning.code === 13) > -1,
         'warnings do not contain a code 13',
       )
+      assert.deepEqual(summary.subjectMetadata[0], {
+        age: 25,
+        participantId: '01',
+        sex: 'M',
+      })
       isdone()
     })
   })

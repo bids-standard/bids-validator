@@ -1,3 +1,7 @@
+variables:
+  GIT_STRATEGY: fetch
+  GIT_SUBMODULE_STRATEGY: normal
+  NODE_OPTIONS: --no-warnings
 stages:
   - test
 
@@ -7,5 +11,4 @@ tests:
     - windows
   script:
     - yarn
-    - git submodule update --init --depth 1
     - yarn jest
