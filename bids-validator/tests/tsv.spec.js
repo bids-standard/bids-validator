@@ -333,6 +333,15 @@ describe('TSV', function() {
     })
   })
 
+  // it('status column values must be good/bad for iEEG channels.tsv file', function() {
+  //   var tsv =
+  //     'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+  //     'value-name\tvalue-type\tmV\tvalue-lowcut\tvalue-highcut\value-good'
+  //   validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
+  //     assert(issues.length === 0)
+  //   })
+  // })
+
   // electrodes checks ---------------------------------------------------------
   var electrodesFileEEG = {
     name: 'sub-01_ses-001_task-rest_run-01_electrodes.tsv',
