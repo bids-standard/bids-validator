@@ -203,16 +203,6 @@ const TSV = (file, contents, fileList, callback) => {
     }
   }
 
-  // channels.tsv
-
-  // check _channels.tsv for status column values
-  // if (
-  //   file.relativePath.includes('/meg/' || '/eeg/' || '/ieeg/') &&
-  //   file.name.endsWith('_channels.tsv')
-  // ) {
-  //   checkStatusCol(rows, file, issues)
-  // }
-
   if (
     file.relativePath.includes('/meg/') &&
     file.name.endsWith('_channels.tsv')
@@ -220,7 +210,7 @@ const TSV = (file, contents, fileList, callback) => {
     checkheader('name', 0, file, 71)
     checkheader('type', 1, file, 71)
     checkheader('units', 2, file, 71)
-    // checkStatusCol(rows, file, issues)
+    checkStatusCol(rows, file, issues)
   }
 
   if (
@@ -230,7 +220,7 @@ const TSV = (file, contents, fileList, callback) => {
     checkheader('name', 0, file, 71)
     checkheader('type', 1, file, 71)
     checkheader('units', 2, file, 71)
-    // checkStatusCol(rows, file, issues)
+    checkStatusCol(rows, file, issues)
   }
 
   if (
@@ -242,7 +232,7 @@ const TSV = (file, contents, fileList, callback) => {
     checkheader('units', 2, file, 72)
     checkheader('low_cutoff', 3, file, 72)
     checkheader('high_cutoff', 4, file, 72)
-    // checkStatusCol(rows, file, issues)
+    checkStatusCol(rows, file, issues)
   }
 
   // electrodes.tsv
