@@ -9,8 +9,11 @@ describe('unit validator', () => {
       const goodOutput = unit.validate(validRoot)
       expect(goodOutput.isValid).toBe(true)
     })
-    const badOutput = unit.validate('definitielynotavalidroot')
-    expect(badOutput.isValid).toBe(false)
+    const invalidRoots = ['definitielynotavalidroot', `%/${validRoot}`, `n/a*${validRoot}`]
+    invalidRoots.forEach(invalidRoot => {
+      const badOutput = unit.validate(invalidRoot)
+      expect(badOutput.isValid).toBe(false)
+    })
   })
 
   it('handles simple units with prefixes', () => {
@@ -60,6 +63,19 @@ describe('unit validator', () => {
     invalidUnits.forEach(derivedUnit => {
       const badOutput = unit.validate(derivedUnit)
       expect(badOutput.isValid).toBe(false)
+    })
+  })
+
+  describe('edge cases', () => {
+    it('handles unavailable units', () => {
+      const unavaliableUnit = 'n/a'
+      const goodOutput = unit.validate(unavaliableUnit)
+      expect(goodOutput.isValid).toBe(true)
+    })
+    it('handles percentages', () => {
+      const unavaliableUnit = '%'
+      const goodOutput = unit.validate(unavaliableUnit)
+      expect(goodOutput.isValid).toBe(true)
     })
   })
 })
