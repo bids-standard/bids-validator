@@ -266,10 +266,7 @@ const TSV = (file, contents, fileList, callback) => {
         line: i + 2,
       }))
       .forEach(({ unit, line }) => {
-        const { isValid, validPrefix, validRoot } = utils.unit.validate(unit)
-        const evidence = `Unit ${unit} has an invalid ${
-          validPrefix ? '' : 'prefix'
-        }${validPrefix && validRoot ? ' and ' : ''}${validRoot ? '' : 'root'}.`
+        const { isValid, evidence } = utils.unit.validate(unit)
         if (!isValid)
           issues.push(
             new Issue({

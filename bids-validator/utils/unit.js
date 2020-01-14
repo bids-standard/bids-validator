@@ -102,25 +102,76 @@ const prefixes = [
   'yocto',
   'y',
 ]
+const unitOperators = ['/', '*', '⋅']
+const exponentOperator = '^'
+const operators = [...unitOperators, exponentOperator]
 
-const prefix = `^(${prefixes.join('|')})?`
-const prefixPattern = new RegExp(prefix)
-const root = `(${roots.join('|')})$`
-const rootPattern = new RegExp(root)
-const validSIPattern = new RegExp(prefix + root)
+// from 0-9
+const superscriptNumbers = [
+  '\u2070',
+  '\u00B9',
+  '\u00B2',
+  '\u00B3',
+  '\u2074',
+  '\u2075',
+  '\u2076',
+  '\u2077',
+  '\u2078',
+  '\u2079',
+]
+const superscriptNegative = '\u207B'
 
-const validate = unit => {
-  const isValid = validSIPattern.test(unit)
-  return {
-    isValid,
-    validPrefix: isValid || prefixPattern.test(unit),
-    validRoot: isValid || rootPattern.test(unit),
-  }
+const start = '^'
+const end = '$'
+const prefix = `(${prefixes.join('|')})?`
+const root = `(${roots.join('|')})`
+const superscriptExp = `(${superscriptNegative}?[${superscriptNumbers}]+)?`
+const operatorExp = `(\\^-?[0-9]+)?`
+const unitWithExponentPattern = new RegExp(
+  `${start}${prefix}${root}(${superscriptExp}|${operatorExp})${end}`,
+)
+
+const unitOperatorPattern = new RegExp(`[${unitOperators.join('')}]`)
+
+/**
+ * validate
+ *
+ * Checks that the SI unit given is valid.
+ * Whitespace characters are not supported.
+ * Unit must include at least one root unit of measuremnt.
+ * Multiple root units must be separated by one of the operators '/' (division) or '*' (multiplication).
+ * Each root unit may or may not pre preceded by a multiplier prefix,
+ *   and may or may not be followed by an exponent.
+ * Exponents may only be to integer powers,
+ *   and may be formatted as either unicode superscript numbers,
+ *   or as integers following the '^' operator.
+ *
+ * @param {string} derivedUnit - a simple or complex SI unit
+ * @returns {object} - { isValid, evidence }
+ */
+const validate = derivedUnit => {
+  const separatedUnits = derivedUnit
+    .split(unitOperatorPattern)
+    .map(str => str.trim())
+  const invalidUnits = separatedUnits.filter(
+    unit => !unitWithExponentPattern.test(unit),
+  )
+
+  const isValid = invalidUnits.length === 0
+  const evidence = isValid
+    ? ''
+    : `Subunit${invalidUnits.length === 1 ? '' : 's'} (${invalidUnits.join(
+        ', ',
+      )}) of unit ${derivedUnit} is invalid. `
+
+  return { isValid, evidence }
 }
 
-export { roots, prefixes, validate }
+export { roots, prefixes, superscriptNumbers, operators, validate }
 export default {
   roots,
   prefixes,
+  superscriptNumbers,
+  operators,
   validate,
 }
