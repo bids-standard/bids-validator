@@ -22,7 +22,7 @@ jobs:
           command: git submodule update --init --depth 1
       - run:
           name: Jest tests
-          command: yarn coverage
+          command: yarn coverage --maxWorkers=2
       - run:
           name: Upload to codecov
           command: yarn codecov
