@@ -4,16 +4,16 @@ const checkStatusCol = function(rows, file, issues) {
   const header = rows[0]
   const statusColumn = header.indexOf('status')
   if (statusColumn !== -1) {
-    for (let a = 0; a < rows.length; a++) {
-      const line = rows[a]
+    for (let i = 1; i < rows.length; i++) {
+      const line = rows[i]
       const status = line[statusColumn]
-      if (status !== 'good' || status !== 'bad') {
+      if (status !== 'good' && status !== 'bad') {
         issues.push(
           new Issue({
             file: file,
             evidence: line,
-            line: a + 1,
-            reason: 'the status column should have only one of two values each row: good or bad ',
+            line: i + 1,
+            reason: 'the status column values should either be good or bad ',
             code: 125,
           }),
         )
