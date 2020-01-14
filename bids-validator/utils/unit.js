@@ -45,6 +45,7 @@ const roots = [
   'H',
   'degree',
   'Celsius',
+  '°C',
   'lumen',
   'lm',
   'lux',
@@ -133,7 +134,8 @@ const unitWithExponentPattern = new RegExp(
 
 const unitOperatorPattern = new RegExp(`[${unitOperators.join('')}]`)
 
-const isUnavailable = unit => typeof unit === 'string' && unit.trim().toLowerCase() === 'n/a'
+const isUnavailable = unit => unit.trim().toLowerCase() === 'n/a'
+const isPercent = unit => unit.trim() === '%'
 
 /**
  * validate
@@ -152,7 +154,7 @@ const isUnavailable = unit => typeof unit === 'string' && unit.trim().toLowerCas
  * @returns {object} - { isValid, evidence }
  */
 const validate = derivedUnit => {
-  if (isUnavailable(derivedUnit)) {
+  if (isUnavailable(derivedUnit) || isPercent(derivedUnit)) {
     return { isValid: true, evidence: '' }
   } else {
     const separatedUnits = derivedUnit
