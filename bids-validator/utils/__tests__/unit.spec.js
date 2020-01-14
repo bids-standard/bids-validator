@@ -62,4 +62,10 @@ describe('unit validator', () => {
       expect(badOutput.isValid).toBe(false)
     })
   })
+
+  it('handles unavailable units', () => {
+    const unavaliableUnit = 'n/a'
+    const goodOutput = unit.validate(unavaliableUnit)
+    expect(goodOutput.isValid).toBe(true)
+  })
 })

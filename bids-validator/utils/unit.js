@@ -133,6 +133,8 @@ const unitWithExponentPattern = new RegExp(
 
 const unitOperatorPattern = new RegExp(`[${unitOperators.join('')}]`)
 
+const isUnavailable = unit => typeof unit === 'string' && unit.trim().toLowerCase() === 'n/a'
+
 /**
  * validate
  *
@@ -150,21 +152,25 @@ const unitOperatorPattern = new RegExp(`[${unitOperators.join('')}]`)
  * @returns {object} - { isValid, evidence }
  */
 const validate = derivedUnit => {
-  const separatedUnits = derivedUnit
-    .split(unitOperatorPattern)
-    .map(str => str.trim())
-  const invalidUnits = separatedUnits.filter(
-    unit => !unitWithExponentPattern.test(unit),
-  )
+  if (isUnavailable(derivedUnit)) {
+    return { isValid: true, evidence: '' }
+  } else {
+    const separatedUnits = derivedUnit
+      .split(unitOperatorPattern)
+      .map(str => str.trim())
+    const invalidUnits = separatedUnits.filter(
+      unit => !unitWithExponentPattern.test(unit),
+    )
 
-  const isValid = invalidUnits.length === 0
-  const evidence = isValid
-    ? ''
-    : `Subunit${invalidUnits.length === 1 ? '' : 's'} (${invalidUnits.join(
-        ', ',
-      )}) of unit ${derivedUnit} is invalid. `
+    const isValid = invalidUnits.length === 0
+    const evidence = isValid
+      ? ''
+      : `Subunit${invalidUnits.length === 1 ? '' : 's'} (${invalidUnits.join(
+          ', ',
+        )}) of unit ${derivedUnit} is invalid. `
 
-  return { isValid, evidence }
+    return { isValid, evidence }
+  }
 }
 
 export { roots, prefixes, superscriptNumbers, operators, validate }
