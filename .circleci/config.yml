@@ -3,7 +3,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: node:10.16.1-alpine
+      - image: node:12.14.1-alpine
     steps:
       - run: apk --no-cache add ca-certificates git openssh-client
       - checkout
@@ -43,7 +43,7 @@ jobs:
             docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
   githubPagesTest:
     docker:
-      - image: node:10.16.1-alpine
+      - image: node:12.14.1-alpine
     steps:
       - run: apk --no-cache add ca-certificates git openssh-client
       - checkout
@@ -94,7 +94,7 @@ jobs:
             pip install dist/*.tar.gz
   deployment:
     docker:
-      - image: node:10.16.1-alpine
+      - image: node:12.14.1-alpine
     steps:
       - run: apk --no-cache add ca-certificates git openssh-client
       - add_ssh_keys:
