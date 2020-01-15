@@ -11,4 +11,4 @@ tests:
     - windows
   script:
     - yarn
-    - yarn jest
+    - yarn jest --testTimeout 30000
