@@ -20,7 +20,7 @@ const checkDatasetDescription = jsonContentsDict => {
     issues = issues.concat(checkAuthorField(datasetDescription.Authors))
 
     // if genetic info json present ensure mandatory GeneticDataset present
-    if (hasGeneticInfo && !('GeneticDataset' in datasetDescription)) {
+    if (hasGeneticInfo && !('Genetics' in datasetDescription) && !('Dataset' in datasetDescription.Genetics) {
       issues.push(new Issue({ code: 114 }));
     }
   }
