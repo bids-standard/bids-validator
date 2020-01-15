@@ -279,12 +279,12 @@ describe('JSON', function() {
 
   it('sample genetic_info.json should parse', function() {
     var jsonObj = {
-      "GeneticLevel": "Genetic",
-      "AnalyticalApproach": "SNP Genotypes",
-      "SampleOrigin": "brain",
-      "TissueOrigin": "gray matter",
-      "CellType":  "neuron",
-      "BrainLocation": "[-30 -15 10]"
+      GeneticLevel: 'Genetic',
+      AnalyticalApproach: 'SNP Genotypes',
+      SampleOrigin: 'brain',
+      TissueOrigin: 'gray matter',
+      CellType: 'neuron',
+      BrainLocation: '[-30 -15 10]',
     }
     jsonDict[genetic_info_file.relativePath] = jsonObj
     validate.JSON(genetic_info_file, jsonDict, function(issues) {
@@ -294,12 +294,12 @@ describe('JSON', function() {
 
   it('genetic_info.json should use limited vocabulary for sample origin', function() {
     var jsonObj = {
-      "GeneticLevel": "Genetic",
-      "AnalyticalApproach": "SNP Genotypes",
-      "SampleOrigin": "not_from_around_here",
-      "TissueOrigin": "gray matter",
-      "CellType":  "neuron",
-      "BrainLocation": "[-30 -15 10]"
+      GeneticLevel: 'Genetic',
+      AnalyticalApproach: 'SNP Genotypes',
+      SampleOrigin: 'not_from_around_here',
+      TissueOrigin: 'gray matter',
+      CellType: 'neuron',
+      BrainLocation: '[-30 -15 10]',
     }
     jsonDict[genetic_info_file.relativePath] = jsonObj
     validate.JSON(genetic_info_file, jsonDict, function(issues) {
