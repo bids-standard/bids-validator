@@ -342,7 +342,6 @@ describe('TSV', function() {
     })
   })
 
-
   // electrodes checks ---------------------------------------------------------
   var electrodesFileEEG = {
     name: 'sub-01_ses-001_task-rest_run-01_electrodes.tsv',
