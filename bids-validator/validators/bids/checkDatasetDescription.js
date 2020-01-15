@@ -57,4 +57,4 @@ const checkAuthorField = authors => {
   }
   return issues
 }
-module.exports = checkDatasetDescription
+export default checkDatasetDescription

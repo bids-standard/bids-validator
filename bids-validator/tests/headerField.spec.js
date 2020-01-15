@@ -1,5 +1,5 @@
-const assert = require('assert')
-const headerFields = require('../validators/headerFields')
+import assert from 'assert'
+import headerFields from '../validators/headerFields'
 
 describe('headerFields', () => {
   it('should throw an error if _magnitude1 or _magnitude2 files do not have exactly 3 dimensions.', () => {

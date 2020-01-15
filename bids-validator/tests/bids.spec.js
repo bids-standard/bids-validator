@@ -1,16 +1,19 @@
 /**
  * eslint no-console: ["error", { allow: ["log"] }]
- * @jest-environment ./bids-validator/tests/env/ExamplesEnvironment.js
  */
-const { assert } = require('chai')
-const validate = require('../index.js')
-const fs = require('fs')
-const path = require('path')
-const { createFileList } = require('./env/FileList.js')
+import { assert } from 'chai'
+
+import validate from '../index.js'
+import fs from 'fs'
+import path from 'path'
+import { createFileList } from './env/FileList.js'
+import isNode from '../utils/isNode.js'
 
 function getDirectories(srcpath) {
   return fs.readdirSync(srcpath).filter(function(file) {
-    return fs.statSync(path.join(srcpath, file)).isDirectory()
+    return (
+      file !== '.git' && fs.statSync(path.join(srcpath, file)).isDirectory()
+    )
   })
 }
 
@@ -31,17 +34,21 @@ var missing_session_files = [
   'ieeg_visual',
 ]
 
-const dataDirectory = 'bids-validator/tests/data/'
+const dataDirectory = path.join('bids-validator', 'tests', 'data')
 
 // Generate validate.BIDS input for included minimal tests
-function createDatasetFileList(path) {
-  const testDatasetPath = `${dataDirectory}${path}`
-  return global.jsdom ? createFileList(testDatasetPath) : testDatasetPath
+function createDatasetFileList(inputPath) {
+  const testDatasetPath = path.join(dataDirectory, inputPath)
+  if (!isNode) {
+    return createFileList(testDatasetPath)
+  } else {
+    return testDatasetPath
+  }
 }
 
 // Generate validate.BIDS input for bids-examples
-function createExampleFileList(path) {
-  return createDatasetFileList(`bids-examples-${global.test_version}/${path}/`)
+function createExampleFileList(inputPath) {
+  return createDatasetFileList(path.join('bids-examples', inputPath))
 }
 
 function assertErrorCode(errors, expected_error_code) {
@@ -51,17 +58,18 @@ function assertErrorCode(errors, expected_error_code) {
   assert(matchingErrors.length > 0)
 }
 
-// Default validate.BIDS options
-const options = { ignoreNiftiHeaders: true, json: true }
-const enableNiftiHeaders = { json: true }
-
 describe('BIDS example datasets ', function() {
+  // Default validate.BIDS options
+  const options = { ignoreNiftiHeaders: true, json: true }
+  const enableNiftiHeaders = { json: true }
+
   describe('basic example dataset tests', () => {
-    getDirectories(
-      dataDirectory + 'bids-examples-' + global.test_version + '/',
-    ).forEach(function testDataset(path) {
-      it(path, isdone => {
-        validate.BIDS(createExampleFileList(path), options, function(issues) {
+    const bidsExamplePath = path.join(dataDirectory, 'bids-examples')
+    getDirectories(bidsExamplePath).forEach(function testDataset(inputPath) {
+      it(inputPath, isdone => {
+        validate.BIDS(createExampleFileList(inputPath), options, function(
+          issues,
+        ) {
           var warnings = issues.warnings
           var session_flag = false
           for (var warning in warnings) {
@@ -70,7 +78,7 @@ describe('BIDS example datasets ', function() {
               break
             }
           }
-          if (missing_session_files.indexOf(path) === -1) {
+          if (missing_session_files.indexOf(inputPath) === -1) {
             assert.deepEqual(session_flag, false)
           } else {
             assert.deepEqual(session_flag, true)
@@ -117,12 +125,6 @@ describe('BIDS example datasets ', function() {
       var warnings = issues.warnings
       assert(summary.sessions.length === 0)
       assert(summary.subjects.length === 1)
-      assert.deepEqual(summary.subjectMetadata, {
-        '01': {
-          sex: 'M',
-          age: 25,
-        },
-      })
       assert.deepEqual(summary.tasks, ['rhyme judgment'])
       assert.isFalse(summary.dataProcessed)
       assert(summary.modalities.includes('T1w'))
@@ -137,6 +139,11 @@ describe('BIDS example datasets ', function() {
         warnings.findIndex(warning => warning.code === 13) > -1,
         'warnings do not contain a code 13',
       )
+      assert.deepEqual(summary.subjectMetadata[0], {
+        age: 25,
+        participantId: '01',
+        sex: 'M',
+      })
       isdone()
     })
   })
@@ -245,6 +252,25 @@ describe('BIDS example datasets ', function() {
       options,
       function(issues) {
         assert.notEqual(issues.warnings.findIndex(issue => issue.code === 92))
+        isdone()
+      },
+    )
+  })
+
+  it('should not throw an error if it encounters no non-utf-8 files', function(isdone) {
+    validate.BIDS(createDatasetFileList('valid_dataset'), options, function(
+      issues,
+    ) {
+      assert.equal(issues.errors.findIndex(issue => issue.code === 123), -1)
+      isdone()
+    })
+  })
+  it('should throw an error if it encounters a non-utf-8 file', function(isdone) {
+    validate.BIDS(
+      createDatasetFileList('latin-1_description'),
+      options,
+      function(issues) {
+        assertErrorCode(issues.errors, 123)
         isdone()
       },
     )

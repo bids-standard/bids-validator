@@ -1,5 +1,5 @@
-const assert = require('chai').assert
-const validateTsvColumns = require('../validateTsvColumns')
+import { assert } from 'chai'
+import validateTsvColumns from '../validateTsvColumns'
 
 describe('validateTsvColumns', () => {
   const file = {

@@ -1,36 +1,35 @@
-/**
- * @jest-environment ./bids-validator/tests/env/ExamplesEnvironment.js
- */
-const readDir = require('../readDir.js').default
+import readDir from '../readDir.js'
 
 describe('readDir.js - examples integration', () => {
   describe('readDir()', () => {
     it('returns expected files', async done => {
-      readDir('bids-validator/tests/data/bids-examples-1.2.0/ds002/').then(
-        files => {
-          expect(Object.keys(files)).toHaveLength(245)
-          expect(files[0].name).toBe('CHANGES')
-          expect(files[25].name).toBe(
-            'sub-02_task-mixedeventrelatedprobe_run-01_events.tsv',
-          )
-          expect(files[200].name).toBe('sub-15_T1w.nii.gz')
-          done()
-        },
-      )
+      readDir('bids-validator/tests/data/bids-examples/ds002/').then(files => {
+        const filenames = Object.values(files).map(f => f.name)
+        filenames.sort()
+        expect(filenames).toHaveLength(245)
+        expect(filenames[0]).toBe('CHANGES')
+        expect(filenames[25]).toBe(
+          'sub-02_task-mixedeventrelatedprobe_run-01_events.tsv',
+        )
+        expect(filenames[200]).toBe('sub-15_T1w.nii.gz')
+        done()
+      })
     })
     it('correctly follows symlinks for subjects with followSymbolicLink: true', async done => {
       readDir('bids-validator/tests/data/symlinked_subject', {
-        followSymbolicDirectories: true,
+        ignoreSymlinks: false,
       }).then(files => {
         expect(Object.keys(files)).toHaveLength(12)
-        expect(Object.values(files).map(f => f.name)).toEqual([
+        const filenames = Object.values(files).map(f => f.name)
+        filenames.sort()
+        expect(filenames).toEqual([
           'CHANGES',
           'README',
           'dataset_description.json',
           'participants.tsv',
+          'sub-0-1_task-rhymejudgment_bold.nii.gz',
           'sub-01_T1w.nii',
           'sub-01_T1w.nii.gz',
-          'sub-0-1_task-rhymejudgment_bold.nii.gz',
           'sub-01_task-rhyme-judgment_bold.nii.gz',
           'sub-01_task-rhyme-judgment_events.tsv',
           'sub-01_task-rhyme_judgment_bold.nii.gz',
@@ -42,10 +41,12 @@ describe('readDir.js - examples integration', () => {
     })
     it('correctly does not follow symlinks for subjects with followSymbolicLink: false', async done => {
       readDir('bids-validator/tests/data/symlinked_subject', {
-        followSymbolicDirectories: false,
+        ignoreSymlinks: true,
       }).then(files => {
         expect(Object.keys(files)).toHaveLength(6)
-        expect(Object.values(files).map(f => f.name)).toEqual([
+        const filenames = Object.values(files).map(f => f.name)
+        filenames.sort()
+        expect(filenames).toEqual([
           'CHANGES',
           'README',
           'dataset_description.json',
@@ -58,7 +59,7 @@ describe('readDir.js - examples integration', () => {
     })
     it('returns file objects with the expected shape', async done => {
       readDir('bids-validator/tests/data/symlinked_subject', {
-        followSymbolicDirectories: false,
+        ignoreSymlinks: true,
       }).then(files => {
         expect(Object.keys(files)).toHaveLength(6)
         Object.values(files).forEach(f => {

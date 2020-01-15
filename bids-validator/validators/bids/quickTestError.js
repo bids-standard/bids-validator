@@ -1,13 +1,14 @@
-const path = require('path')
-const utils = require('../../utils')
+import path from 'path'
+import utils from '../../utils'
 const Issue = utils.issues.Issue
+import isNode from '../../utils/isNode'
 
 /*
  * Generates an error for quickTest failures
  */
 const quickTestError = function(dir) {
   let filename
-  if (typeof window === 'undefined') {
+  if (isNode) {
     // For Node, grab the path from the dir string
     filename = path.basename(dir)
   } else {
@@ -40,4 +41,4 @@ const constructFileName = dir => {
   return filename
 }
 
-module.exports = quickTestError
+export default quickTestError

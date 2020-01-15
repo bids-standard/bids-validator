@@ -5,7 +5,7 @@
  * issue code and including severity and reason
  * agnostic to file specifics.
  */
-module.exports = {
+export default {
   0: {
     key: 'INTERNAL ERROR',
     severity: 'error',
@@ -633,9 +633,74 @@ module.exports = {
       'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered because there are no authors, which will make DOI registration from dataset metadata impossible.',
   },
   114: {
+    key: 'INCOMPLETE_DATASET',
+    severity: 'error',
+    reason:
+      'This dataset contains remote files. If you would like to validate with remote files, use the --remoteFiles option.',
+  },
+  115: {
+    key: 'HED_EXTRA_DELIMITER',
+    severity: 'error',
+    reason:
+      'This HED string contains an extra delimiter. There should be no consecutive delimiters or any delimiters at the start or end of the string.',
+  },
+  116: {
+    key: 'HED_INVALID_TAG',
+    severity: 'error',
+    reason:
+      "This HED string contains a tag that doesn't exist in the HED schema and isn't a legal extension of a valid tag.",
+  },
+  117: {
+    key: 'HED_MULTIPLE_UNIQUE_TAGS',
+    severity: 'error',
+    reason:
+      'This HED string contains multiple tags with a prefix defined as unique by the HED schema.',
+  },
+  118: {
+    key: 'HED_CHILD_REQUIRED',
+    severity: 'error',
+    reason:
+      "This HED string contains a tag which doesn't have a child, but is required to have one by the HED schema.",
+  },
+  119: {
+    key: 'HED_REQUIRED_PREFIX_MISSING',
+    severity: 'warning',
+    reason:
+      'This HED string is missing a tag with a prefix required by the HED schema.',
+  },
+  120: {
+    key: 'HED_UNIT_CLASS_DEFAULT_USED',
+    severity: 'warning',
+    reason:
+      "This HED string contains a tag with a missing unit. The default unit for that tag's unit class was used.",
+  },
+  121: {
+    key: 'HED_UNIT_CLASS_INVALID_UNIT',
+    severity: 'error',
+    reason:
+      'This HED string contains a tag with a unit that is not valid for its unit class.',
+  },
+  122: {
+    key: 'HED_EXTRA_COMMA_OR_INVALID',
+    severity: 'error',
+    reason:
+      'This HED string contains either a tag with an extra comma or an invalid tag.',
+  },
+  123: {
+    key: 'INVALID JSON ENCODING',
+    severity: 'error',
+    reason: 'JSON files must be valid utf-8.',
+  },
+  124: {
+    key: 'INVALID_TSV_UNITS',
+    severity: 'error',
+    reason:
+      'Units in .tsv files must be valid SI units as described in the BIDS spec Appendix V (https://bids-specification.readthedocs.io/en/stable/99-appendices/05-units.html).'
+  },
+  128: {
     key: 'NO_GENETIC_DATABASE',
     severity: 'error',
     reason:
-      'A genetic_info.json file is present but no GeneticDatabase field present in dataset_description.json.',
+      'A genetic_info.json file is present but no Database field present in Genetics object in dataset_description.json.',
   },
 }

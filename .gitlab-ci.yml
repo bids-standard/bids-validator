@@ -1,5 +1,9 @@
+variables:
+  GIT_STRATEGY: fetch
+  GIT_SUBMODULE_STRATEGY: normal
+  NODE_OPTIONS: --no-warnings
 stages:
-    - test
+  - test
 
 tests:
   stage: test
@@ -7,4 +11,4 @@ tests:
     - windows
   script:
     - yarn
-    - yarn test
+    - yarn jest --testTimeout 30000

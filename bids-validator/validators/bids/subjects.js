@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 const participantsInSubjects = (participants, subjects) => {
@@ -56,7 +56,7 @@ const atLeastOneSubject = fileList => {
   return issues
 }
 
-module.exports = {
+export default {
   participantsInSubjects,
   atLeastOneSubject,
 }

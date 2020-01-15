@@ -1,5 +1,5 @@
-const assert = require('chai').assert
-const subjects = require('../subjects')
+import { assert } from 'chai'
+import subjects from '../subjects'
 
 describe('subjects', () => {
   const subjectsArray = ['01', '02', '03']

@@ -8,16 +8,23 @@
     "lint": "./node_modules/eslint/bin/eslint.js ./bids-validator/**/*.js",
     "coverage": "NODE_OPTIONS=--no-warnings ./node_modules/.bin/jest --coverage",
     "codecov": "./node_modules/.bin/codecov",
-    "test": "jest",
+    "test": "bids-validator/bin/test-submodule-exists && jest",
     "npmPublish": "cd bids-validator && publish",
     "web-dev": "cd bids-validator-web && yarn dev",
     "web-build": "cd bids-validator-web && yarn build",
     "web-export": "yarn web-build && cd bids-validator-web && yarn next export"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
   },
   "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "jest": "^24.9.0",
+    "jest-environment-node": "^24.9.0",
     "lerna": "^3.15.0"
   }
 }

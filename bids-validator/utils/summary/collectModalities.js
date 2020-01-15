@@ -1,4 +1,4 @@
-const type = require('../type')
+import type from '../type'
 
 const collectModalities = fileList => {
   const modalities = []
@@ -22,4 +22,4 @@ const collectModalities = fileList => {
   return modalities
 }
 
-module.exports = collectModalities
+export default collectModalities

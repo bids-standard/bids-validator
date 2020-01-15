@@ -1,10 +1,9 @@
-const assert = require('assert')
-const potentialLocations = require('../utils/files/potentialLocations')
-const test_version = '1.2.0'
+import assert from 'assert'
+import potentialLocations from '../utils/files/potentialLocations'
 
 describe('potentialLocations', () => {
   it('should not return duplicate paths', () => {
-    const path = 'data/BIDS-examples-' + test_version + '/ds001'
+    const path = 'data/BIDS-examples/ds001'
     const pLs = potentialLocations(path)
     assert.deepEqual(pLs.length, new Set(pLs).size)
   })

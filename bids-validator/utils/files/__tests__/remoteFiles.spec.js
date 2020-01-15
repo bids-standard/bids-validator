@@ -1,7 +1,7 @@
-const assert = require('chai').assert
-const remoteFiles = require('../remoteFiles')
-const fs = require('fs')
-const zlib = require('zlib')
+import { assert } from 'chai'
+import remoteFiles from '../remoteFiles'
+import fs from 'fs'
+import zlib from 'zlib'
 const config = {
   s3Params: {
     Bucket: 'none',

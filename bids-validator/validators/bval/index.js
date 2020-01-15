@@ -1,7 +1,9 @@
-const bval = require('./bval')
-const validate = require('./validate')
+import bval from './bval'
+import validate from './validate'
 
-module.exports = {
-  bval: bval,
-  validate: validate,
+export { bval, validate }
+
+export default {
+  bval,
+  validate,
 }

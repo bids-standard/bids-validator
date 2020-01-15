@@ -1,14 +1,16 @@
-const hedValidator = require('hed-validator')
-const utils = require('../../utils')
+import hedValidator from 'hed-validator'
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
-module.exports = function checkHedStrings(events, headers, jsonContents) {
-  const issues = []
+export default function checkHedStrings(events, headers, jsonContents) {
+  let issues = []
   // get all headers associated with task data
   const taskHeaders = headers.filter(header => {
     const file = header[0]
     return file.relativePath.includes('_task-')
   })
+
+  const hedStrings = []
 
   // loop through headers with files that are tasks
   taskHeaders.forEach(taskHeader => {
@@ -24,7 +26,7 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
     )
     const sidecarHedTags = {}
 
-    for (let sidecarKey in mergedDictionary) {
+    for (const sidecarKey in mergedDictionary) {
       const sidecarValue = mergedDictionary[sidecarKey]
       if (sidecarValue.HED !== undefined) {
         sidecarHedTags[sidecarKey] = sidecarValue.HED
@@ -40,7 +42,7 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
     )
 
     // loop through all events associated with this task scan
-    for (let event of associatedEvents) {
+    for (const event of associatedEvents) {
       // get all non-empty rows
       const rows = event.contents
         .split('\n')
@@ -49,7 +51,7 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
       const columnHeaders = rows[0].trim().split('\t')
       const hedColumnIndex = columnHeaders.indexOf('HED')
       const sidecarHedColumnIndices = {}
-      for (let sidecarHedColumn in sidecarHedTags) {
+      for (const sidecarHedColumn in sidecarHedTags) {
         const sidecarHedColumnHeader = columnHeaders.indexOf(sidecarHedColumn)
         if (sidecarHedColumnHeader > -1) {
           sidecarHedColumnIndices[sidecarHedColumn] = sidecarHedColumnHeader
@@ -59,14 +61,14 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
         continue
       }
 
-      for (let row of rows.slice(1)) {
+      for (const row of rows.slice(1)) {
         // get the 'HED' field
         const rowCells = row.trim().split('\t')
         const hedStringParts = []
         if (rowCells[hedColumnIndex]) {
           hedStringParts.push(rowCells[hedColumnIndex])
         }
-        for (let sidecarHedColumn in sidecarHedColumnIndices) {
+        for (const sidecarHedColumn in sidecarHedColumnIndices) {
           const sidecarHedIndex = sidecarHedColumnIndices[sidecarHedColumn]
           const sidecarHedKey = rowCells[sidecarHedIndex]
           if (sidecarHedKey) {
@@ -89,78 +91,78 @@ module.exports = function checkHedStrings(events, headers, jsonContents) {
         if (hedStringParts.length === 0) {
           continue
         }
-        const hedString = hedStringParts.join(',')
+        hedStrings.push([file, hedStringParts.join(',')])
+      }
+    }
+  })
 
-        const hedIssues = []
-        const isHedStringValid = hedValidator.HED.validateHedString(
+  if (hedStrings.length === 0) {
+    return Promise.resolve(issues)
+  } else {
+    return hedValidator.buildSchema().then(hedSchema => {
+      for (const [file, hedString] of hedStrings) {
+        const [isHedStringValid, hedIssues] = hedValidator.validateHedString(
           hedString,
-          hedIssues,
+          hedSchema,
           true,
         )
         if (!isHedStringValid) {
           const convertedIssues = convertHedIssuesToBidsIssues(hedIssues, file)
-          for (let convertedIssue of convertedIssues) {
-            issues.push(convertedIssue)
-          }
+          issues = issues.concat(convertedIssues)
         }
       }
-    }
-  })
-  return issues
+      return issues
+    })
+  }
 }
 
 function convertHedIssuesToBidsIssues(hedIssues, file) {
   const hedIssuesToBidsCodes = {
-    'ERROR: Invalid character': 106,
-    'ERROR: Comma missing after': 108,
-    'WARNING: First word not capitalized or camel case': 109,
-    'ERROR: Duplicate tag': 110,
-    'ERROR: Too many tildes': 111,
+    invalidCharacter: 106,
+    parentheses: 107,
+    commaMissing: 108,
+    capitalization: 109,
+    duplicateTag: 110,
+    tooManyTildes: 111,
+    extraDelimiter: 115,
+    invalidTag: 116,
+    multipleUniqueTags: 117,
+    childRequired: 118,
+    requiredPrefixMissing: 119,
+    unitClassDefaultUsed: 120,
+    unitClassInvalidUnit: 121,
+    extraCommaOrInvalid: 122,
   }
 
   const convertedIssues = []
-  for (let hedIssue of hedIssues) {
-    if (
-      hedIssue.startsWith(
-        'ERROR: Number of opening and closing parentheses are unequal.',
-      )
-    ) {
-      convertedIssues.push(
-        new Issue({
-          code: 107,
-          file: file,
-        }),
-      )
-    } else {
-      const issueParts = hedIssue.split(' - ')
-      const bidsIssueCode = hedIssuesToBidsCodes[issueParts[0]]
-      if (bidsIssueCode === undefined) {
-        if (hedIssue.startsWith('WARNING')) {
-          convertedIssues.push(
-            new Issue({
-              code: 105,
-              file: file,
-              evidence: issueParts[1],
-            }),
-          )
-        } else {
-          convertedIssues.push(
-            new Issue({
-              code: 104,
-              file: file,
-              evidence: issueParts[1],
-            }),
-          )
-        }
+  for (const hedIssue of hedIssues) {
+    const bidsIssueCode = hedIssuesToBidsCodes[hedIssue.code]
+    if (bidsIssueCode === undefined) {
+      if (hedIssue.message.startsWith('WARNING')) {
+        convertedIssues.push(
+          new Issue({
+            code: 105,
+            file: file,
+            evidence: hedIssue.message,
+          }),
+        )
       } else {
         convertedIssues.push(
           new Issue({
-            code: bidsIssueCode,
+            code: 104,
             file: file,
-            evidence: issueParts[1],
+            evidence: hedIssue.message,
           }),
         )
       }
+    } else {
+      convertedIssues.push(
+        new Issue({
+          code: bidsIssueCode,
+          file: file,
+          evidence: hedIssue.message,
+        }),
+      )
     }
   }
 

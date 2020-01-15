@@ -3,12 +3,7 @@
  * eg. corresponding files
  */
 // dependencies -------------------------------------------------------------------
-const type = require('./type.js')
-
-// public API ---------------------------------------------------------------------
-const bidsFileUtils = {
-  checkSidecarForDatafiles: checkSidecarForDatafiles,
-}
+import type from './type.js'
 
 // implementations ----------------------------------------------------------------
 /**
@@ -82,4 +77,8 @@ function verifyDatafileMatch(sidecarPath, noExt, matchFile) {
   return match
 }
 
-module.exports = bidsFileUtils
+export { checkSidecarForDatafiles }
+
+export default {
+  checkSidecarForDatafiles,
+}

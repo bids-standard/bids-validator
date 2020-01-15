@@ -1,5 +1,5 @@
-const utils = require('../../utils')
-const tsv = require('./tsv')
+import utils from '../../utils'
+import tsv from './tsv'
 
 const validate = (
   files,
@@ -74,4 +74,4 @@ const validate = (
   }))
 }
 
-module.exports = validate
+export default validate

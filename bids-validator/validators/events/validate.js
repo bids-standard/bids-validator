@@ -1,7 +1,7 @@
-const eventsTest = require('./events')
+import eventsTest from './events'
 
 const validate = (events, stimuli, headers, jsonContents) => {
   return eventsTest(events, stimuli, headers, jsonContents)
 }
 
-module.exports = validate
+export default validate

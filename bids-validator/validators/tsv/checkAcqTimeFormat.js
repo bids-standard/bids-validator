@@ -1,15 +1,15 @@
 const Issue = require('../../utils').issues.Issue
-const df = require('date-fns')
+import { isValid as dateIsValid, parse } from 'date-fns'
 
 const checkAcqTimeFormat = function(rows, file, issues) {
   const format = "yyyy-MM-dd'T'HH:mm:ss"
-  const header = rows[0].trim().split('\t')
+  const header = rows[0]
   const acqTimeColumn = header.indexOf('acq_time')
   const testRows = rows.slice(1)
   testRows.map((line, i) => {
-    const lineValues = line.trim().split('\t')
+    const lineValues = line
     const acqTime = lineValues[acqTimeColumn]
-    let isValid = df.isValid(df.parse(acqTime, format, new Date()))
+    let isValid = dateIsValid(parse(acqTime, format, new Date()))
     if (acqTime === 'n/a') {
       isValid = true
     }
@@ -27,4 +27,4 @@ const checkAcqTimeFormat = function(rows, file, issues) {
   })
 }
 
-module.exports = checkAcqTimeFormat
+export default checkAcqTimeFormat

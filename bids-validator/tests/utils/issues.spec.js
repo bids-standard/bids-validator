@@ -1,5 +1,5 @@
-const assert = require('assert')
-const utils = require('../../utils')
+import assert from 'assert'
+import utils from '../../utils'
 
 describe('issues', () => {
   describe('exceptionHandler', () => {

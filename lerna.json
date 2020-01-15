@@ -3,5 +3,5 @@
     "bids-validator",
     "bids-validator-web"
   ],
-  "version": "independent"
+  "version": "1.3.12"
 }

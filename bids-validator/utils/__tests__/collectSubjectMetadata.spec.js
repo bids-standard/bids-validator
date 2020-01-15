@@ -1,5 +1,5 @@
-const { assert } = require('chai')
-const collectSubjectMetadata = require('../summary/collectSubjectMetadata')
+import { assert } from 'chai'
+import collectSubjectMetadata from '../summary/collectSubjectMetadata'
 
 describe('collectSubjectMetadata', () => {
   it('extracts tsv string to subjectMetadata object', () => {
@@ -8,15 +8,11 @@ sub-01	34	F
 sub-02	38	M
 `
     const subjectMetadata = collectSubjectMetadata(tsvFile)
-    assert.deepEqual(subjectMetadata, {
-      '01': {
-        age: 34,
-        sex: 'F',
-      },
-      '02': {
-        age: 38,
-        sex: 'M',
-      },
+    assert.lengthOf(subjectMetadata, 2)
+    assert.deepEqual(subjectMetadata[0], {
+      participantId: '01',
+      age: 34,
+      sex: 'F',
     })
   })
   it('extracts tsv string to subjectMetadata object', () => {
