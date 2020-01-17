@@ -401,12 +401,12 @@ module.exports = function NIFTI(
         mergedDictionary['ASLContext'].constructor === String
       ) {
           const ASLContextString = mergedDictionary['ASLContext']
-          if (!ASLContextString.includes('MZeroScan')) {
+          if (!ASLContextString.includes('M0')) {
             issues.push(
               new Issue({
                 file: file,
                 code: 130,
-                reason: "ASLContext " + mergedDictionary['ASLContext'] + " does not contain any MZeroScan that is required, since you specified True in the MZero field.  " + sidecarMessage,
+                reason: "ASLContext " + mergedDictionary['ASLContext'] + " does not contain any M0 (MZeroScan) that is required, since you specified True in the MZero field.  " + sidecarMessage,
               }),
             )
           }
