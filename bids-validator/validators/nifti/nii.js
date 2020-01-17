@@ -221,7 +221,7 @@ module.exports = function NIFTI(
     }
     if (
       mergedDictionary.hasOwnProperty('BackgroundSuppression') &&
-      !mergedDictionary.hasOwnProperty['BackgroundSuppressionPulseTime']
+      !mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseTime')
     ) {
       issues.push(
         new Issue({
@@ -282,7 +282,10 @@ module.exports = function NIFTI(
       try {
         ASLContextString=ASLContextString.split('Control').join('1')
         ASLContextString=ASLContextString.split('Label').join('1')
+        ASLContextString=ASLContextString.split('L').join('1')
+        ASLContextString=ASLContextString.split('C').join('1')
         ASLContextString=ASLContextString.split('MZeroScan').join('1')
+        ASLContextString=ASLContextString.split('M0').join('1')
         ASLContextString=ASLContextString.split('_').join('+')
         //ASLContextString=ASLContextString.split('x').join('*')
         ASLContextStringVolumes = eval(ASLContextString)
