@@ -134,7 +134,7 @@ describe('BIDS example datasets ', function() {
         errors.findIndex(error => error.code === 60) > -1,
         'errors do not contain a code 60',
       )
-      assert.deepEqual(warnings.length, 4)
+      assert.deepEqual(warnings.length, 3)
       assert(
         warnings.findIndex(warning => warning.code === 13) > -1,
         'warnings do not contain a code 13',
