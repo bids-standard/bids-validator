@@ -324,10 +324,19 @@ describe('TSV', function() {
     })
   })
 
+  it('should not allow iEEG channels.tsv files with value other than good/bad in status column', function() {
+    var tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tvalue-type\tmV\tvalue-lowcut\tvalue-highcut\tnot-good'
+    validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 125)
+    })
+  })
+
   it('correct columns should pass for iEEG channels.tsv file', function() {
     var tsv =
-      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\n' +
-      'value-name\tvalue-type\tmV\tvalue-lowcut\tvalue-highcut'
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tvalue-type\tmV\tvalue-lowcut\tvalue-highcut\tgood'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 0)
     })

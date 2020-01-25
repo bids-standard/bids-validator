@@ -697,6 +697,12 @@ export default {
     reason:
       'Units in .tsv files must be valid SI units as described in the BIDS spec Appendix V (https://bids-specification.readthedocs.io/en/stable/99-appendices/05-units.html).'
   },
+  125: {
+    key: 'CHANNELS_COLUMN_STATUS',
+    severity: 'error',
+    reason:
+      'Status column in channels.tsv files must contain only one of two values: good or bad. Per the BIDS spec: (https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/04-intracranial-electroencephalography.html#channels-description-_channelstsv).'
+  },
   128: {
     key: 'NO_GENETIC_DATABASE',
     severity: 'error',
