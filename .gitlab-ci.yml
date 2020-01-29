@@ -9,6 +9,10 @@ tests:
   stage: test
   tags:
     - windows
+  before_script:
+    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    - choco install -y yarn
+    - refreshenv
   script:
     - yarn
     - yarn jest --testTimeout 30000
