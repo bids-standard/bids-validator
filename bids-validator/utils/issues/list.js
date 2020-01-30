@@ -720,4 +720,9 @@ module.exports = {
     severity: 'error',
     reason: "You have to define 'PulseSequenceType' for this file.",
   },
+  132: {
+    key: 'ACQUISITION_RESOLUTION_WRONG',
+    severity: 'error',
+    reason: "The 'AcquisitionResolution' field length is not 3. AcquisitionResolution must be defined as a vector of length 3.",
+  },
 }

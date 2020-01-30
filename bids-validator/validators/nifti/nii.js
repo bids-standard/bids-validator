@@ -363,6 +363,19 @@ module.exports = function NIFTI(
             sidecarMessage,
         }),
       )
+    } else {
+      var AcquisitionResolution = mergedDictionary['AcquisitionResolution']
+      if (AcquisitionResolution.length != 3) {
+        issues.push(
+          new Issue({
+            file: file,
+            code: 118,
+            reason:
+              "The 'AcquisitionResolution' field length is not 3. AcquisitionResolution must be defined as a vector of length 3.  " +
+              sidecarMessage,
+          }),
+        )
+      }
     }
     if (!mergedDictionary.hasOwnProperty('AcquisitionDuration')) {
       issues.push(
