@@ -703,4 +703,16 @@ export default {
     reason:
       'Status column in channels.tsv files must contain only one of two values: good or bad. Per the BIDS spec: (https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/04-intracranial-electroencephalography.html#channels-description-_channelstsv).'
   },
+  126: {
+    key: 'MISSING_SUB_PREFIX',
+    severity: 'error',
+    reason:
+      'All subject IDs in the participant_id column must be prefixed `sub-`, as follows: `sub-<label>`. More Info: (https://bids-specification.readthedocs.io/en/stable/03-modality-agnostic-files.html#participants-file).'
+  },
+  127: {
+    key: 'DUPLICATE_PARTICIPANT_ID',
+    severity: 'error',
+    reason:
+      'Each participant needs to be described by one and only one row. If the dataset includes multiple sets of participant level measurements (e.g. responses from multiple questionnaires), they can be split into individual files separate from participants.tsv. More Info: (https://bids-specification.readthedocs.io/en/stable/03-modality-agnostic-files.html#participants-file).'
+  },
 }

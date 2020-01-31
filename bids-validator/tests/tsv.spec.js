@@ -127,7 +127,7 @@ describe('TSV', function() {
   it('should not allow participants.tsv files without participant_id columns', function() {
     var tsv =
       'subject_id\theader-two\theader-three\n' +
-      'value-one\tvalue-two\tvalue-three'
+      'sub-one\tvalue-two\tvalue-three'
     validate.TSV.TSV(participantsFile, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 48)
     })
@@ -136,7 +136,7 @@ describe('TSV', function() {
   it('should allow a valid participants.tsv file', function() {
     var tsv =
       'participant_id\theader-two\theader-three\n' +
-      'value-one\tvalue-two\tvalue-three'
+      'sub-one\tvalue-two\tvalue-three'
     validate.TSV.TSV(participantsFile, tsv, [], function(issues) {
       assert.deepEqual(issues, [])
     })
@@ -146,6 +146,26 @@ describe('TSV', function() {
     var tsv = 'participant_id\theader-two\tage\n' + 'sub-01\tvalue-two\t89'
     validate.TSV.TSV(participantsFile, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 56)
+    })
+  })
+
+  it('should ensure all subjects in the participant_id column include prefix `sub-`', function() {
+    var tsv =
+      'participant_id\theader-two\tage\n' +
+      'sub-01\tvalue-two\t7\n' +
+      '02\tvalue-three\t8'
+    validate.TSV.TSV(participantsFile, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 126)
+    })
+  })
+
+  it('should not allow duplicate participant_ids in participants.tsv file', function() {
+    var tsv =
+      'participant_id\theader-two\tage\n' +
+      'sub-01\tvalue-two\t7\n' +
+      'sub-01\tvalue-three\t8'
+    validate.TSV.TSV(participantsFile, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 127)
     })
   })
 
