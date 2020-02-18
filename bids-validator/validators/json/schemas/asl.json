@@ -162,7 +162,7 @@
     "BolusCutOffTechnique" :{
       "type": "string"
     },
-    "MZero": { 
+    "M0": { 
       "type": ["number", "string", "boolean"] 
     }
   }

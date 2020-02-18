@@ -282,12 +282,11 @@ module.exports = function NIFTI(
       try {
         ASLContextString=ASLContextString.split('Control').join('1')
         ASLContextString=ASLContextString.split('Label').join('1')
-        ASLContextString=ASLContextString.split('L').join('1')
-        ASLContextString=ASLContextString.split('C').join('1')
-        ASLContextString=ASLContextString.split('MZeroScan').join('1')
+        ASLContextString=ASLContextString.split('M0Scan').join('1')
         ASLContextString=ASLContextString.split('M0').join('1')
-        ASLContextString=ASLContextString.split('_').join('+')
+        //ASLContextString=ASLContextString.split('_').join('+')
         //ASLContextString=ASLContextString.split('x').join('*')
+        // we need to add check for other undesiderated characters
         ASLContextStringVolumes = eval(ASLContextString)
       }
       catch (error) {
@@ -388,28 +387,28 @@ module.exports = function NIFTI(
         }),
       )
     }
-    if (!mergedDictionary.hasOwnProperty('MZero')) {
+    if (!mergedDictionary.hasOwnProperty('M0')) {
       issues.push(
         new Issue({
           file: file,
           code: 129,
-          reason: "You should define 'MZero' for this file.  " + sidecarMessage,
+          reason: "You should define 'M0' for this file.  " + sidecarMessage,
         }),
       )
     } else if (
-      mergedDictionary.hasOwnProperty('MZero') &&
-      mergedDictionary['MZero'].constructor === String
+      mergedDictionary.hasOwnProperty('M0') &&
+      mergedDictionary['M0'].constructor === String
     ) {
-      const MZeroString = mergedDictionary['MZero']
-      if (MZeroString != 'Control') {
-        checkIfIntendedExists(MZeroString, fileList, issues, file)
-        checkIfValidFiletype(MZeroString, issues, file)
+      const M0String = mergedDictionary['M0']
+      if (M0String != 'Control') {
+        checkIfIntendedExists(M0String, fileList, issues, file)
+        checkIfValidFiletype(M0String, issues, file)
       }
     } else if (
-      mergedDictionary.hasOwnProperty('MZero') &&
-      mergedDictionary['MZero'].constructor === Boolean
+      mergedDictionary.hasOwnProperty('M0') &&
+      mergedDictionary['M0'].constructor === Boolean
     ) {
-      if ( mergedDictionary['MZero'] &&
+      if ( mergedDictionary['M0'] &&
         mergedDictionary.hasOwnProperty('ASLContext') &&
         mergedDictionary['ASLContext'].constructor === String
       ) {
@@ -419,7 +418,7 @@ module.exports = function NIFTI(
               new Issue({
                 file: file,
                 code: 130,
-                reason: "ASLContext " + mergedDictionary['ASLContext'] + " does not contain any M0 (MZeroScan) that is required, since you specified True in the MZero field.  " + sidecarMessage,
+                reason: "ASLContext " + mergedDictionary['ASLContext'] + " does not contain any M0 (M0Scan) that is required, since you specified True in the M0 field.  " + sidecarMessage,
               }),
             )
           }
@@ -554,7 +553,7 @@ module.exports = function NIFTI(
       path.includes('_sbref.nii') ||
       path.includes('_dwi.nii') ||
       path.includes('_asl.nii') ||
-      path.includes('_MZeroScan.nii')
+      path.includes('_M0Scan.nii')
     ) {
       if (!mergedDictionary.hasOwnProperty('EchoTime')) {
         issues.push(
@@ -827,7 +826,7 @@ module.exports = function NIFTI(
         checkIfValidFiletype(intendedForFile, issues, file)
       }
     }
-    if (path.includes('_MZeroScan.nii')) {
+    if (path.includes('_M0Scan.nii')) {
       if (mergedDictionary.hasOwnProperty('IntendedFor')) {
         const intendedFor =
           typeof mergedDictionary['IntendedFor'] == 'string'

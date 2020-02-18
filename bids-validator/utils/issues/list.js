@@ -706,14 +706,14 @@ module.exports = {
     reason: "You have to define the 'IntendedFor' for this file.",
   },
   129: {
-    key: 'MZERO_NOT_SET',
+    key: 'M0_NOT_SET',
     severity: 'error',
-    reason: "You have to define the 'MZero' for this file. Mzero can be either a boolean, a string or a number.",
+    reason: "You have to define the 'M0' for this file. M0 can be either a boolean, a string or a number.",
   },
   130: {
-    key: 'MZERO_SET_UNCORRECTLY',
+    key: 'M0_SET_UNCORRECTLY',
     severity: 'error',
-    reason: "MZeros was not defined.",
+    reason: "M0s was not defined.",
   },
   131: {
     key: 'PULSE_SEQUENCE_TYPE_MUST_DEFINE',

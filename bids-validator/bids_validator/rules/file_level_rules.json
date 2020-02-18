@@ -175,9 +175,9 @@
     "tokens": {
       "@@@_asl_type_@@@": [
         "asl",
-        "MZeroScan",
-        "MzeroScan",
-        "MzeroScanR"
+        "M0Scan",
+        "M0Scan",
+        "M0ScanR"
       ],
       "@@@_asl_ext_@@@": [
         "nii\\.gz",

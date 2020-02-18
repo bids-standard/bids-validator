@@ -19,8 +19,8 @@
     "tokens": {
       "@@@_asl_top_ext_@@@": [
         "_asl\\.json",
-        "_MZeroScan\\.json",
-        "_MZeroScan\\.json",
+        "_M0Scan\\.json",
+        "_M0Scan\\.json",
         "_labeling.jpg"
       ]
     }

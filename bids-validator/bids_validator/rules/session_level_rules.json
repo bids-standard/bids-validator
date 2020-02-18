@@ -25,8 +25,8 @@
     "tokens": {
       "@@@_asl_ses_ext_@@@": [
         "_asl.json",
-        "_MZeroScan.json",
-        "_MZeroScanR.json",
+        "_M0Scan.json",
+        "_M0ScanR.json",
         "_labeling.jpg"
       ]
     }
