@@ -6,7 +6,126 @@
     "brain imaging data structure",
     "neuroscience",
     "neuroimaging",
-    "neuroinformatics",
+    "neuroinformatics"
+  ],
+  "creators": [
+    {
+      "name": "Blair, Ross"
+    },
+    {
+      "name": "Michael, Zack"
+    },
+    {
+      "name": "Gorgolewski, Krzysztof J."
+    },
+    {
+      "name": "Hardcastle, Nell"
+    },
+    {
+      "name": "Hobson-Lowther, Teal"
+    },
+    {
+      "name": "Nishikawa, David"
+    },
+    {
+      "name": "Bhogawar, Suyash"
+    },
+    {
+      "name": "Appelhoff, Stefan"
+    },
+    {
+      "name": "Jas, Mainak"
+    },
+    {
+      "name": "Grass, Brian"
+    },
+    {
+      "name": "Holdgraf, Chris"
+    },
+    {
+      "name": "Jones, Alexander"
+    },
+    {
+      "name": "Goyal, Rohan"
+    },
+    {
+      "name": "Markiewicz, Christopher J."
+    },
+    {
+      "name": "Oostenveld, Robert"
+    },
+    {
+      "name": "Noack, Gregory"
+    },
+    {
+      "name": "Triplett, William"
+    },
+    {
+      "name": "Naveau, Mika\u00ebl"
+    },
+    {
+      "name": "Zito, Matthew"
+    },
+    {
+      "name": "Durnez, Joke"
+    },
+    {
+      "name": "Traut, Nicolas"
+    },
+    {
+      "name": "Sethi, Parul"
+    },
+    {
+      "name": "Halchenko, Yaroslav O."
+    },
+    {
+      "name": "Wexler, Joseph"
+    },
+    {
+      "name": "Salo, Taylor"
+    },
+    {
+      "name": "Thomas, Adam"
+    },
+    {
+      "name": "Papadopoulos, Dimitri"
+    },
+    {
+      "name": "Hanke, Michael"
+    },
+    {
+      "name": "Warren, David E."
+    },
+    {
+      "name": "Patterson, Dianne"
+    },
+    {
+      "name": "Macleod, Duncan"
+    },
+    {
+      "name": "Ort, Eduard"
+    },
+    {
+      "name": "Feingold, Franklin"
+    },
+    {
+      "name": "Christian, Horea"
+    },
+    {
+      "name": "Kaczmarzyk, Jakub"
+    },
+    {
+      "name": "Poldrack, Russ"
+    },
+    {
+      "name": "Hayashi, Soichi"
+    },
+    {
+      "name": "Riddle, Travis"
+    },
+    {
+      "name": "Zulfikar, Wazeer"
+    }
   ],
   "license": "mit-license",
   "upload_type": "software"
