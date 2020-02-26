@@ -336,7 +336,7 @@ export default function NIFTI(
             new Issue({
               file: file,
               code: 66,
-              evidence: valuesGreaterThanRepetitionTime,
+              evidence: valuesGreaterThanRepetitionTime.join(', '),
             }),
           )
         }
