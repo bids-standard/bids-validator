@@ -1,5 +1,7 @@
-![](https://circleci.com/gh/bids-standard/bids-validator.svg?style=shield&circle-token=:circle-token)
-![](https://codecov.io/gh/bids-standard/bids-validator/branch/master/graph/badge.svg)
+![Tests](https://circleci.com/gh/bids-standard/bids-validator.svg?style=shield&circle-token=:circle-token)
+![Coverage](https://codecov.io/gh/bids-standard/bids-validator/branch/master/graph/badge.svg)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3688707.svg)](https://doi.org/10.5281/zenodo.3688707)
+
 
 # BIDS-Validator
 
