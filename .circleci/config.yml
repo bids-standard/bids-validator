@@ -19,7 +19,7 @@ jobs:
           command: yarn lint
       - run:
           name: Test Data
-          command: git submodule update --init --depth 1
+          command: git submodule update --init
       - run:
           name: Jest tests
           command: yarn coverage --maxWorkers=2
