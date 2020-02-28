@@ -39,18 +39,17 @@ function readFile(file, annexed, dir) {
         }
         if (!remoteBuffer) {
           fs.readFile(file.path, function(err, data) {
-            process.nextTick(function() {
-              checkEncoding(file, data, ({ isUtf8 }) => {
-                if (!isUtf8) reject(new Issue({ code: 123, file }))
-              })
-              return resolve(data.toString('utf8'))
+            if (err) {
+              return reject(err)
+            }
+            checkEncoding(file, data, ({ isUtf8 }) => {
+              if (!isUtf8) reject(new Issue({ code: 123, file }))
             })
+            return resolve(data.toString('utf8'))
           })
         }
         if (remoteBuffer) {
-          process.nextTick(function() {
-            return resolve(remoteBuffer.toString('utf8'))
-          })
+          return resolve(remoteBuffer.toString('utf8'))
         }
       })
     } else {
