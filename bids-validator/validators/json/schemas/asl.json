@@ -19,7 +19,7 @@
     },
     "PulseSequenceType": {
       "type": "string",
-      "enum" : ["2D_EPI","3D_GRASE","3D_SPIRAL"]
+      "enum" : ["2D_EPI","3D_GRASE","3D_spiral"]
     },
     "SliceEncodingDirection": {
       "type": "string",
@@ -131,7 +131,7 @@
     },
     "PCASLType" :{
       "type": "string",
-      "enum": ["Balanced", "UnBalanced"]
+      "enum": ["balanced", "unbalanced"]
     },
     "LookLocker" :{
       "type": "boolean" 
