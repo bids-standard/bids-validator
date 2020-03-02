@@ -604,7 +604,7 @@ module.exports = function NIFTI(
     }
 
     // we don't need slice timing or repetition time for SBref
-    if (path.includes('_bold.nii') || path.includes('_asl.nii')) {
+    if (path.includes('_bold.nii') || path.includes('_asl.nii') || path.includes('_M0Scan.nii')) {
       if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
         issues.push(
           new Issue({
