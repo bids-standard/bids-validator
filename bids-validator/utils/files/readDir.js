@@ -260,8 +260,7 @@ async function getFilesFromGitTree(dir, ig, options) {
  * Recursive helper function for 'preprocessNode'
  */
 async function getFilesFromFs(dir, rootPath, ig, options) {
-  let files
-  files = await fs.promises.readdir(dir, { withFileTypes: true })
+  const files = await fs.promises.readdir(dir, { withFileTypes: true })
   const filesAccumulator = []
   // Closure to merge the next file depth into this one
   const recursiveMerge = async nextRoot => {
@@ -325,10 +324,8 @@ async function getBIDSIgnore(dir) {
 
   const bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir)
   if (bidsIgnoreFileObj) {
-    return readFile(bidsIgnoreFileObj).then(content => {
-      ig.add(content)
-      return ig
-    })
+    const content = await readFile(bidsIgnoreFileObj)
+    ig.add(content)
   }
   return ig
 }
@@ -339,35 +336,31 @@ async function getBIDSIgnore(dir) {
  * @returns File object or null if not found
  */
 function getBIDSIgnoreFileObj(dir) {
-  var bidsIgnoreFileObj = null
   if (isNode) {
-    bidsIgnoreFileObj = getBIDSIgnoreFileObjNode(dir)
+    return getBIDSIgnoreFileObjNode(dir)
   } else {
-    bidsIgnoreFileObj = getBIDSIgnoreFileObjBrowser(dir)
+    return getBIDSIgnoreFileObjBrowser(dir)
   }
-  return bidsIgnoreFileObj
 }
 
 function getBIDSIgnoreFileObjNode(dir) {
-  var bidsIgnoreFileObj = null
-  var path = dir + '/.bidsignore'
-  if (fs.existsSync(path)) {
-    bidsIgnoreFileObj = { path: path, stats: { size: null } }
+  const path = dir + '/.bidsignore'
+  try {
+    fs.accessSync(path)
+    return { path: path, stats: { size: null } }
+  } catch (err) {
+    return null
   }
-  return bidsIgnoreFileObj
 }
 
 function getBIDSIgnoreFileObjBrowser(dir) {
-  var bidsIgnoreFileObj = null
   for (var i = 0; i < dir.length; i++) {
-    var fileObj = dir[i]
-    var relativePath = harmonizeRelativePath(fileObj.webkitRelativePath)
+    const fileObj = dir[i]
+    const relativePath = harmonizeRelativePath(fileObj.webkitRelativePath)
     if (relativePath === '/.bidsignore') {
-      bidsIgnoreFileObj = fileObj
-      break
+      return fileObj
     }
   }
-  return bidsIgnoreFileObj
 }
 
 export {

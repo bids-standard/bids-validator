@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./bids-validator/**/*.js",
-    "coverage": "NODE_OPTIONS=--no-warnings ./node_modules/.bin/jest --coverage",
+    "coverage": "./node_modules/.bin/jest --coverage",
     "codecov": "./node_modules/.bin/codecov",
     "test": "bids-validator/bin/test-submodule-exists && jest",
     "npmPublish": "cd bids-validator && publish",
