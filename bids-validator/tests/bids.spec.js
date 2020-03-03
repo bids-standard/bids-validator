@@ -25,7 +25,6 @@ var missing_session_files = [
   'ds051',
   'ds052',
   'ds105',
-  'ds108',
   'ds109',
   'ds113b',
   'ds000117',
@@ -70,8 +69,8 @@ describe('BIDS example datasets ', function() {
         validate.BIDS(createExampleFileList(inputPath), options, function(
           issues,
         ) {
-          var warnings = issues.warnings
-          var session_flag = false
+          let warnings = issues.warnings
+          let session_flag = false
           for (var warning in warnings) {
             if (warnings[warning]['code'] === 38) {
               session_flag = true
