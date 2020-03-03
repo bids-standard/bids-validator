@@ -10,7 +10,9 @@
   ],
   "creators": [
     {
-      "name": "Blair, Ross"
+      "affiliation": "Stanford University",
+      "name": "Blair, Ross",
+      "orcid": "0000-0003-3007-1056"
     },
     {
       "name": "Michael, Zack"
@@ -30,10 +32,13 @@
       "name": "Nishikawa, David"
     },
     {
-      "name": "Bhogawar, Suyash"
+      "name": "Bhogawar, Suyash",
+      "affiliation": "Northern California Institute for Research and Education, San Francisco CA"
     },
     {
-      "name": "Appelhoff, Stefan"
+      "affiliation": "Center for Adaptive Rationality, Max Planck Institute for Human Development, Berlin, Germany",
+      "name": "Appelhoff, Stefan",
+      "orcid": "0000-0001-8002-0877"
     },
     {
       "name": "Jas, Mainak"
@@ -45,16 +50,22 @@
       "name": "Holdgraf, Chris"
     },
     {
-      "name": "Jones, Alexander"
+      "name": "Jones, Alexander",
+      "affiliation": "University of Texas at San Antonio",
+      "orcid": "0000-0003-2067-3862"
     },
     {
       "name": "Goyal, Rohan"
     },
     {
-      "name": "Markiewicz, Christopher J."
+    "affiliation": "Stanford University",
+    "name": "Markiewicz, Christopher J.",
+    "orcid": "0000-0002-6533-164X"
     },
     {
-      "name": "Oostenveld, Robert"
+      "name": "Oostenveld, Robert",
+      "affiliation": "Radboud University",
+      "orcid": "0000-0002-1974-1293"
     },
     {
       "name": "Noack, Gregory"
@@ -63,7 +74,9 @@
       "name": "Triplett, William"
     },
     {
-      "name": "Naveau, Mika\u00ebl"
+      "name": "Naveau, Mika\u00ebl",
+      "affiliation": "CYCERON imaging plateform, Caen, France",
+      "orcid": "https://orcid.org/0000-0002-4685-0057"
     },
     {
       "name": "Zito, Matthew"
@@ -78,7 +91,9 @@
       "name": "Sethi, Parul"
     },
     {
-      "name": "Halchenko, Yaroslav O."
+      "affiliation": "Dartmouth College",
+      "name": "Halchenko, Yaroslav O.",
+      "orcid": "0000-0003-3456-2493"
     },
     {
       "name": "Wexler, Joseph"
@@ -105,7 +120,9 @@
       "name": "Macleod, Duncan"
     },
     {
-      "name": "Ort, Eduard"
+      "affiliation": "Heinrich-Heine University Düsseldorf",
+      "name": "Ort, Eduard",
+      "orcid": "0000-0001-5546-3561"
     },
     {
       "name": "Feingold, Franklin"
