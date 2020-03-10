@@ -107,6 +107,10 @@ const selectSchema = file => {
       file.name.endsWith('coordsystem.json')
     ) {
       schema = require('./schemas/coordsystem_eeg.json')
+    } else if (
+        file.name.endsWith('genetic_info.json')
+    ) {
+      schema = require('./schemas/genetic_info.json')
     }
   }
   return schema

@@ -3,6 +3,7 @@
     "/README",
     "/CHANGES",
     "/dataset_description.json",
+    "/genetic_info.json",
     "/participants.tsv",
     "/participants.json",
     "/phasediff.json",

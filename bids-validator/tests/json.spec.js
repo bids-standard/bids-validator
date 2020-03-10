@@ -271,4 +271,39 @@ describe('JSON', function() {
       assert.deepEqual(issues, [])
     })
   })
+
+  var genetic_info_file = {
+    name: 'genetic_info.json',
+    relativePath: '/genetic_info.json',
+  }
+
+  it('sample genetic_info.json should parse', function() {
+    var jsonObj = {
+      GeneticLevel: 'Genetic',
+      AnalyticalApproach: ['SNP Genotypes'],
+      SampleOrigin: 'brain',
+      TissueOrigin: 'gray matter',
+      CellType: 'neuron',
+      BrainLocation: '[-30 -15 10]',
+    }
+    jsonDict[genetic_info_file.relativePath] = jsonObj
+    validate.JSON(genetic_info_file, jsonDict, function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
+  it('genetic_info.json should use limited vocabulary for sample origin', function() {
+    var jsonObj = {
+      GeneticLevel: 'Genetic',
+      AnalyticalApproach: ['SNP Genotypes'],
+      SampleOrigin: 'not_from_around_here',
+      TissueOrigin: 'gray matter',
+      CellType: 'neuron',
+      BrainLocation: '[-30 -15 10]',
+    }
+    jsonDict[genetic_info_file.relativePath] = jsonObj
+    validate.JSON(genetic_info_file, jsonDict, function(issues) {
+      assert(issues.length === 1 && issues[0].code == 55)
+    })
+  })
 })
