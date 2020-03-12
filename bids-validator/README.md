@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/bids-standard/bids-validator.svg?style=svg)](https://circleci.com/gh/bids-standard/bids-validator)
+[![CircleCI](https://circleci.com/gh/bids-standard/bids-validator.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/bids-standard/bids-validator)
 [![Codecov](https://codecov.io/gh/bids-standard/bids-validator/branch/master/graph/badge.svg)](https://codecov.io/gh/bids-standard/bids-validator)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3688707.svg)](https://doi.org/10.5281/zenodo.3688707)
 
