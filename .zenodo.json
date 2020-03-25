@@ -41,7 +41,9 @@
       "orcid": "0000-0001-8002-0877"
     },
     {
-      "name": "Jas, Mainak"
+      "affiliation": "AA Martinos Center for Biomedical Imaging, USA",
+      "name": "Jas, Mainak",
+      "orcid": "0000-0002-3199-9027"
     },
     {
       "name": "Grass, Brian"
@@ -81,7 +83,8 @@
       "orcid": "https://orcid.org/0000-0002-4685-0057"
     },
     {
-      "name": "Zito, Matthew"
+      "name": "Zito, Matthew",
+      "orcid": "0000-0003-2704-0742"
     },
     {
       "name": "Durnez, Joke"
@@ -101,7 +104,9 @@
       "name": "Wexler, Joseph"
     },
     {
-      "name": "Salo, Taylor"
+      "affiliation": "Florida International University",
+      "name": "Salo, Taylor",
+      "orcid": "0000-0001-9813-3167"
     },
     {
       "name": "Thomas, Adam"
@@ -136,7 +141,9 @@
       "name": "Kaczmarzyk, Jakub"
     },
     {
-      "name": "Poldrack, Russ"
+      "affiliation": "Stanford University",
+      "name": "Poldrack, Russell",
+      "orcid": "0000-0001-6755-0259"
     },
     {
       "affiliation": "Indiana University",
@@ -144,7 +151,9 @@
       "orcid": "0000-0003-3641-3491"
     },
     {
+      "affiliation": "National Institutes of Health"
       "name": "Riddle, Travis"
+      "orcid": "0000-0001-8160-3986"
     },
     {
       "name": "Zulfikar, Wazeer"
