@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout
       - run: pip install --user pytest flake8 pydocstyle
+      - run: pwd
+      - run: ls bids-validator
+      - run: ls bids-validator/bids-validator
       - run: pytest bids-validator/bids-validator/test_bids_validator.py
       - run: flake8 bids-validator/bids-validator/bids-validator.py
       - run: pydocstyle bids-validator/bids-validator/bids-validator.py
