@@ -1,6 +1,18 @@
 version: 2
 
 jobs:
+  test_python:
+    docker:
+      - image: python3
+    steps:
+      - checkout
+      - run:
+        name: Test Python package
+        command: |
+          pip install pytest flake8 pydocstyle
+          pytest bids-validator/bids-validator
+          flake8 bids-validator/bids-validator/bids-validator.py
+          pydocstyle bids-validator/bids-validator/bids-validator.py
   test:
     docker:
       - image: node:12.16.1
@@ -145,6 +157,12 @@ workflows:
   version: 2
   build-deploy:
     jobs:
+      - test_python:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
       - test:
           filters:
             branches:
@@ -169,6 +187,7 @@ workflows:
               only: /.*/
       - deployment:
           requires:
+            - test_python
             - test
             - test_docker
             - githubPagesTest
