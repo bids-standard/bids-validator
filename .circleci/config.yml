@@ -3,16 +3,13 @@ version: 2
 jobs:
   test_python:
     docker:
-      - image: python3
+      - image: circleci/python:stretch
     steps:
       - checkout
-      - run:
-        name: Test Python package
-        command: |
-          pip install pytest flake8 pydocstyle
-          pytest bids-validator/bids-validator
-          flake8 bids-validator/bids-validator/bids-validator.py
-          pydocstyle bids-validator/bids-validator/bids-validator.py
+      - run: pip install --user pytest flake8 pydocstyle
+      - run: pytest bids-validator/bids-validator
+      - run: flake8 bids-validator/bids-validator/bids-validator.py
+      - run: pydocstyle bids-validator/bids-validator/bids-validator.py
   test:
     docker:
       - image: node:12.16.1
