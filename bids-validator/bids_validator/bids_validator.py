@@ -142,11 +142,11 @@ class BIDSValidator():
 
         return (any(conditions))
 
-    def get_regular_expressions(self, fileName):
-        """Tmp."""
+    def get_regular_expressions(self, file_name):
+        """Read regular expressions from a file."""
         regexps = []
 
-        with open(fileName, 'r') as fin:
+        with open(file_name, 'r') as fin:
             rules = json.load(fin)
 
         for key in list(rules.keys()):
