@@ -1,6 +1,6 @@
 {
   "name": "bids-validator",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "",
   "main": "index.js",
   "repository": {
@@ -31,6 +31,7 @@
     "ignore": "^4.0.2",
     "is-utf8": "^0.2.1",
     "jshint": "^2.9.6",
+    "lerna": "^3.15.0",
     "minimatch": "3.0.4",
     "nifti-js": "^1.0.1",
     "p-limit": "^2.1.0",
