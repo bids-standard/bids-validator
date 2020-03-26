@@ -23,7 +23,9 @@
       "orcid": "0000-0003-3321-7583"
     },
     {
-      "name": "Hardcastle, Nell"
+      "affiliation": "Squishymedia",
+      "name": "Hardcastle, Nell",
+      "orcid": "0000-0002-3837-0707"
     },
     {
       "name": "Hobson-Lowther, Teal"
@@ -115,7 +117,9 @@
       "name": "Papadopoulos, Dimitri"
     },
     {
-      "name": "Hanke, Michael"
+      "affiliation": "Research Center Jülich; Heinrich-Heine University Düsseldorf",
+      "name": "Hanke, Michael",
+      "orcid": "0000-0001-6398-6370"
     },
     {
       "name": "Warren, David E."
@@ -132,10 +136,14 @@
       "orcid": "0000-0001-5546-3561"
     },
     {
-      "name": "Feingold, Franklin"
+      "name": "Feingold, Franklin",
+      "affiliation": "Department of Psychology, Stanford University",
+      "orcid": "0000-0002-6533-2909"
     },
     {
-      "name": "Christian, Horea"
+      "affiliation": "MIT",
+      "name": "Christian, Horea",
+      "orcid": "0000-0001-7037-2449"
     },
     {
       "name": "Kaczmarzyk, Jakub"
