@@ -18,7 +18,7 @@
       "name": "Michael, Zack"
     },
     {
-     "affiliation": "Google",
+      "affiliation": "Google",
       "name": "Gorgolewski, Krzysztof J.",
       "orcid": "0000-0003-3321-7583"
     },
@@ -51,6 +51,11 @@
       "name": "Grass, Brian"
     },
     {
+      "affiliation": "Stanford University",
+      "name": "Markiewicz, Christopher J.",
+      "orcid": "0000-0002-6533-164X"
+    },
+    {
       "affiliation": "Berkeley Institute for Data Science; University of California at Berkeley",
       "name": "Holdgraf, Chris",
       "orcid": "0000-0002-2391-0678"
@@ -64,11 +69,6 @@
       "name": "Goyal, Rohan"
     },
     {
-    "affiliation": "Stanford University",
-    "name": "Markiewicz, Christopher J.",
-    "orcid": "0000-0002-6533-164X"
-    },
-    {
       "name": "Oostenveld, Robert",
       "affiliation": "Radboud University",
       "orcid": "0000-0002-1974-1293"
@@ -80,7 +80,7 @@
       "name": "Triplett, William"
     },
     {
-      "name": "Naveau, Mika\u00ebl",
+      "name": "Naveau, Mikaël",
       "affiliation": "CYCERON imaging plateform, Caen, France",
       "orcid": "https://orcid.org/0000-0002-4685-0057"
     },
@@ -122,6 +122,11 @@
       "orcid": "0000-0001-6398-6370"
     },
     {
+      "affiliation": "Indiana University",
+      "name": "Hayashi, Soichi",
+      "orcid": "0000-0003-3641-3491"
+    },
+    {
       "name": "Warren, David E."
     },
     {
@@ -152,11 +157,6 @@
       "affiliation": "Stanford University",
       "name": "Poldrack, Russell",
       "orcid": "0000-0001-6755-0259"
-    },
-    {
-      "affiliation": "Indiana University",
-      "name": "Hayashi, Soichi",
-      "orcid": "0000-0003-3641-3491"
     },
     {
       "affiliation": "National Institutes of Health",
