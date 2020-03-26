@@ -1,4 +1,5 @@
 [![CircleCI](https://circleci.com/gh/bids-standard/bids-validator.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/bids-standard/bids-validator)
+[![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/bids-standard/bids-validator?logo=GitLab)](https://gitlab.com/bids-standard/bids-validator/pipelines)
 [![Codecov](https://codecov.io/gh/bids-standard/bids-validator/branch/master/graph/badge.svg)](https://codecov.io/gh/bids-standard/bids-validator)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3688707.svg)](https://doi.org/10.5281/zenodo.3688707)
 
