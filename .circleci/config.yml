@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - run: pip install --user pytest flake8 pydocstyle
-      - run: pytest bids-validator/bids_validator
+      - run: pytest --doctest-modules bids-validator/bids_validator
       - run: flake8 bids-validator/bids_validator
       - run: pydocstyle bids-validator/bids_validator/bids_validator.py
   test:
