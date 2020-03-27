@@ -279,7 +279,7 @@ describe('JSON', function() {
 
   it('sample genetic_info.json should parse', function() {
     var jsonObj = {
-      GeneticLevel: 'Genetic',
+      GeneticLevel: ['Genetic'],
       AnalyticalApproach: ['SNP Genotypes'],
       SampleOrigin: 'brain',
       TissueOrigin: 'gray matter',
@@ -294,7 +294,7 @@ describe('JSON', function() {
 
   it('genetic_info.json should use limited vocabulary for sample origin', function() {
     var jsonObj = {
-      GeneticLevel: 'Genetic',
+      GeneticLevel: ['Genetic'],
       AnalyticalApproach: ['SNP Genotypes'],
       SampleOrigin: 'not_from_around_here',
       TissueOrigin: 'gray matter',
