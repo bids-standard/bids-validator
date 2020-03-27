@@ -2,15 +2,18 @@
   "type": "object",
   "properties": {
     "GeneticLevel": {
-      "type": "string",
-      "enum": [
-        "Genetic",
-        "Genomic",
-        "Epigenomic",
-        "Transcriptomic",
-        "Metabolomic",
-        "Proteomic"
-      ]
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Genetic",
+          "Genomic",
+          "Epigenomic",
+          "Transcriptomic",
+          "Metabolomic",
+          "Proteomic"
+        ]
+      }
     },
     "AnalyticalApproach": {
       "items": {
