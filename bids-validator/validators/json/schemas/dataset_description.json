@@ -48,10 +48,7 @@
       "type": "object",
       "properties": {
         "Database": {
-          "items": {
-            "type": "string"
-          },
-          "type": ["array", "string"]
+          "type": "string"
         },
         "Dataset": {
           "type": "string"
