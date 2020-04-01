@@ -1,5 +1,9 @@
 const Issue = require('../../utils').issues.Issue
 
+/**
+ * Checks status column in a electroencephalography _channels.tsv file to
+ * ensure its values are only * 'good', 'bad', or 'n/a'
+ */
 const checkStatusCol = function(rows, file, issues) {
   const header = rows[0]
   const statusColumn = header.indexOf('status')
@@ -7,13 +11,14 @@ const checkStatusCol = function(rows, file, issues) {
     for (let i = 1; i < rows.length; i++) {
       const line = rows[i]
       const status = line[statusColumn]
-      if (status !== 'good' && status !== 'bad') {
+      if (status !== 'good' && status !== 'bad' && status != 'n/a') {
         issues.push(
           new Issue({
             file: file,
             evidence: line,
             line: i + 1,
-            reason: 'the status column values should either be good or bad ',
+            reason:
+              'the status column values should either be good, bad, or n/a',
             code: 125,
           }),
         )
