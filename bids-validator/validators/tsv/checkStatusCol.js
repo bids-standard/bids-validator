@@ -4,10 +4,11 @@ const Issue = require('../../utils').issues.Issue
  * Checks status column in a electroencephalography _channels.tsv file to
  * ensure its values are only * 'good', 'bad', or 'n/a'
  * @param {string[]} rows - Each row of a tsv file to be checked.
- * @param file - File of rows being checked, used for error message if
+ * @param {Object} file - File of rows being checked, used for error message if
  *     problem is found.
  * @param {Object[]} issues - Array of issue objects to add to if problem is
  *     found.
+ * @returns {null} Results of this function are stored in issues.
  */
 const checkStatusCol = function(rows, file, issues) {
   const header = rows[0]
