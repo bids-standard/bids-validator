@@ -17,6 +17,7 @@
       * [In the Browser](#in-the-browser)
       * [On the Server](#on-the-server)
       * [Through Command Line](#through-command-line)
+   * [Docker image](#docker-image)
    * [Python Library](#python-library)
       * [Example](#example)
    * [Development](#development)
@@ -270,24 +271,56 @@ able to run `bids-validator /path/to/your/bids/directory` and see any validation
 issues logged to the terminal. Run `bids-validator` without a directory path to
 see available options.
 
+## Docker image
+
+[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/bids/validator?label=docker)](https://hub.docker.com/r/bids/validator)
+
+To use bids validator with [docker](https://www.docker.com/), you simply need to
+[install docker](https://docs.docker.com/install/) on your system.
+
+And then from a terminal run:
+- `docker run -ti --rm  bids/validator --version` to print the version of the
+  docker image
+- `docker run -ti --rm  bids/validator --help` to print the help
+- `docker run -ti --rm -v /path/to/data:/data:ro bids/validator /data`
+   to validate the dataset `/path/to/data` on your host machine
+
+See here for a brief explanation of the commands:
+
+- `docker run` is the command to tell docker to run a certain docker image,
+  usually taking the form `docker run <IMAGENAME> <COMMAND>`
+- the `--ti` flag means the inputs are accepted and outputs are printed to the
+  terminal
+- the `--rm` flag means that the state of the docker container is not saved
+  after it has run
+- the `-v` flag is adding your local data to the docker container
+  ([bind-mounts](https://docs.docker.com/storage/bind-mounts/)). Importantly,
+  the input after the `-v` flag consists of three fields separated colons: `:`
+    - the first field is the path to the directory on the host machine:
+      `/path/to/data`
+    - the second field is the path where the directory is mounted in the
+      container
+    - the third field is optional. In our case, we use `ro` to specify that the
+      mounted data is *read only*
+
 ## Python Library
+
+[![PyPI version](https://badge.fury.io/py/bids-validator.svg)](https://badge.fury.io/py/bids-validator)
 
 There are is a limited library of helper functions written in Python. The main function
 determines if a file extension is compliant with the BIDS specification. You can find
 the available functions in the library, as well as their descriptions,
 [here](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/bids_validator/bids_validator.py).
-To install, run `pip install bids_validator` (requires python and pip).
+To install, run `pip install -U bids_validator` (requires python and pip).
 
 ### Example
 
-```
->>> from bids_validator import BIDSValidator
->>> validator = BIDSValidator()
->>> filepaths = ["/sub-01/anat/sub-01_rec-CSD_T1w.nii.gz", "/sub-01/anat/sub-01_acq-23_rec-CSD_T1w.exe"]
->>> for filepath in filepaths:
->>>     print(validator.is_bids(filepath))
-True
-False
+```Python
+from bids_validator import BIDSValidator
+validator = BIDSValidator()
+filepaths = ["/sub-01/anat/sub-01_rec-CSD_T1w.nii.gz", "/sub-01/anat/sub-01_acq-23_rec-CSD_T1w.exe"]
+for filepath in filepaths:
+    print(validator.is_bids(filepath))  # will print True, and then False
 ```
 
 ## Development
