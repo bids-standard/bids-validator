@@ -6,6 +6,25 @@
 
 # BIDS-Validator
 
+* [BIDS-Validator](#bids-validator)
+   * [Quickstart](#quickstart)
+   * [Support](#support)
+   * [Maintainers and Contributors](#maintainers-and-contributors)
+   * [Use](#use)
+      * [API](#api)
+      * [.bidsignore](#bidsignore)
+      * [Configuration](#configuration)
+      * [In the Browser](#in-the-browser)
+      * [On the Server](#on-the-server)
+      * [Through Command Line](#through-command-line)
+   * [Python Library](#python-library)
+      * [Example](#example)
+   * [Development](#development)
+      * [Running Locally in a Browser](#running-locally-in-a-browser)
+      * [Testing](#testing)
+      * [Publishing](#publishing)
+   * [Acknowledgments](#acknowledgments)
+
 ## Quickstart
 
 1. Web version:
@@ -23,6 +42,7 @@
 1. Docker
    1. Install Docker
    1. From a terminal run `docker run -ti --rm -v /path/to/data:/data:ro bids/validator /data`
+      but replace the `/path/to/data` part of the command with your own path on your machine.
 1. Python Library:
    1. Install [Python](https://www.python.org/) (works with python2 and python3)
    1. Install [Pip](https://pip.pypa.io/en/stable/installing/) package manager for python, if
@@ -59,7 +79,7 @@ Some of our awesome contributors include:
 
 ## Use
 
-#### API
+### API
 
 The BIDS Validator has one primary method that takes a directory as either a
 path to the directory (node) or the object given by selecting a directory with a
@@ -84,7 +104,7 @@ that we expose.
 
 Additionally you can reformat stored errors against a new config using `validate.reformat()`
 
-#### .bidsignore
+### .bidsignore
 
 Optionally one can include a `.bidsignore` file in the root of the dataset. This
 file lists patterns (compatible with the [.gitignore syntax](https://git-scm.com/docs/gitignore))
@@ -97,7 +117,7 @@ specification.
 extra_data/
 ```
 
-#### Configuration
+### Configuration
 
 You can configure the severity of errors by passing a json configuration file
 with a `-c` or `--config` flag to the command line interface or by defining a
@@ -229,7 +249,7 @@ This style of use puts limits on what configuration you can require, so for
 complex scenarios, we advise users to create a dedicated configuration file with
 contents as described above.
 
-#### In the Browser
+### In the Browser
 
 The BIDS Validator currently works in the browser with [browserify](http://browserify.org/)
 or [webpack](https://webpack.js.org/). You can add it to a project by cloning
@@ -237,12 +257,12 @@ the validator and requiring it with browserify syntax
 `var validate = require('bids-validator');` or an ES2015 webpack import
 `import validate from 'bids-validator'`.
 
-#### On the Server
+### On the Server
 
 The BIDS validator works like most npm packages. You can install it by running
 `npm install bids-validator`.
 
-#### Through Command Line
+### Through Command Line
 
 If you install the bids validator globally by using `npm install -g bids-validator`
 you will be able to use it as a command line tool. Once installed you should be
@@ -258,14 +278,14 @@ the available functions in the library, as well as their descriptions,
 [here](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/bids_validator/bids_validator.py).
 To install, run `pip install bids_validator` (requires python and pip).
 
-#### Example
+### Example
 
 ```
 >>> from bids_validator import BIDSValidator
 >>> validator = BIDSValidator()
 >>> filepaths = ["/sub-01/anat/sub-01_rec-CSD_T1w.nii.gz", "/sub-01/anat/sub-01_acq-23_rec-CSD_T1w.exe"]
 >>> for filepath in filepaths:
->>>     print( validator.is_bids(filepath) )
+>>>     print(validator.is_bids(filepath))
 True
 False
 ```
@@ -277,7 +297,10 @@ root. This will install external dependencies. If you wish to install
 `bids-validator` globally (so that you can run it in other folders), use the
 following command to install it globally: `cd bids-validator && npm install -g`
 
-#### Running Locally in a Browser
+Please see the [CONTRIBUTING.md](../CONTRIBUTING.md)
+for additional details.
+
+### Running Locally in a Browser
 
 A note about OS X, the dependencies for the browser require a npm package called
 node-gyp which needs xcode to be installed in order to be compiled.
@@ -296,7 +319,7 @@ node-gyp which needs xcode to be installed in order to be compiled.
 	of any bugs you fix!
 6. To ensure that the web application compiles successfully in production, run `yarn web-export`
 
-#### Testing
+### Testing
 
 If it's your first time running tests, first use the command `git submodule update --init --depth 1` to pull the test example data. This repo contains the [bids-examples github repository](https://github.com/bids-standard/bids-examples) as a [submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
@@ -306,7 +329,7 @@ is useful to run tests while making changes. A coverage report is available with
 
 To run the linter which checks code conventions run `npm run lint`.
 
-#### Publishing
+### Publishing
 
 Publishing is done with [Lerna](https://github.com/lerna/lerna). Use the command `yarn lerna publish` and follow instructions to set a new version.
 
