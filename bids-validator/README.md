@@ -289,7 +289,7 @@ See here for a brief explanation of the commands:
 
 - `docker run` is the command to tell docker to run a certain docker image,
   usually taking the form `docker run <IMAGENAME> <COMMAND>`
-- the `--ti` flag means the inputs are accepted and outputs are printed to the
+- the `-ti` flag means the inputs are accepted and outputs are printed to the
   terminal
 - the `--rm` flag means that the state of the docker container is not saved
   after it has run
