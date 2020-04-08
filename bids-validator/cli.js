@@ -25,6 +25,21 @@ const errorToString = err => {
   else return err
 }
 
+/**
+ * Write a large string or buffer to stdout and wait for the drain event
+ *
+ * This is needed to avoid truncating buffered output when piped
+ * @param {string} data
+ * @param {function} cb
+ */
+const writeStdout = (data, cb) => {
+  if (!process.stdout.write(data)) {
+    process.stdout.once('drain', cb)
+  } else {
+    process.nextTick(cb)
+  }
+}
+
 export default function(dir, options) {
   process.on('unhandledRejection', err => {
     console.log(
@@ -39,8 +54,9 @@ export default function(dir, options) {
   if (fs.existsSync(dir)) {
     if (options.json) {
       validate.BIDS(dir, options, function(issues, summary) {
-        console.log(JSON.stringify({ issues, summary }))
-        exitProcess(issues)
+        writeStdout(JSON.stringify({ issues, summary }), () =>
+          exitProcess(issues),
+        )
       })
     } else {
       validate.BIDS(dir, options, function(issues, summary) {
