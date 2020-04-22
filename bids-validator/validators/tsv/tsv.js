@@ -1,9 +1,16 @@
 import utils from '../../utils'
-const Issue = utils.issues.Issue
+import Issue from '../../utils/issues/issue'
 import checkAcqTimeFormat from './checkAcqTimeFormat'
 import checkAge89 from './checkAge89'
 import checkStatusCol from './checkStatusCol'
 import parseTSV from './tsvParser'
+
+/**
+ * Format TSV headers for evidence string
+ * @param {Array[string]} headers
+ * @returns {string}
+ */
+const headersEvidence = headers => `Column headers: ${headers.join(', ')}`
 
 /**
  * TSV
@@ -98,7 +105,7 @@ const TSV = (file, contents, fileList, callback) => {
       issues.push(
         new Issue({
           file: file,
-          evidence: headers,
+          evidence: headersEvidence(headers),
           line: 1,
           character: rows[0].indexOf(headers[idx]),
           code: code,
@@ -113,7 +120,7 @@ const TSV = (file, contents, fileList, callback) => {
       issues.push(
         new Issue({
           file: file,
-          evidence: headers,
+          evidence: headersEvidence(headers),
           line: 1,
           code: 20,
         }),
@@ -123,7 +130,7 @@ const TSV = (file, contents, fileList, callback) => {
       issues.push(
         new Issue({
           file: file,
-          evidence: headers,
+          evidence: headersEvidence(headers),
           line: 1,
           code: 21,
         }),
@@ -181,7 +188,7 @@ const TSV = (file, contents, fileList, callback) => {
       issues.push(
         new Issue({
           file: file,
-          evidence: headers.join('\t'),
+          evidence: headersEvidence(headers),
           line: 1,
           code: 48,
         }),
@@ -287,7 +294,6 @@ const TSV = (file, contents, fileList, callback) => {
   if (file.name === 'participants.tsv') {
     checkAge89(rows, file, issues)
   }
- 
 
   if (file.name.endsWith('_scans.tsv')) {
     // check _scans.tsv for column filename
@@ -296,7 +302,7 @@ const TSV = (file, contents, fileList, callback) => {
         new Issue({
           line: 1,
           file: file,
-          evidence: headers.join('\t'),
+          evidence: headersEvidence(headers),
           code: 68,
         }),
       )
