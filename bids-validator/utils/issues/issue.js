@@ -17,8 +17,20 @@ const constructHelpUrl = issue => {
  * Issue
  *
  * A constructor for BIDS issues.
+ *
+ * @param {Object} options
+ * @param {string} options.key The descriptive string matching the issue code
+ * @param {number} options.code Issue code - see 'list.js' for definitions
+ * @param {string} [options.file] The relative path of the affected file
+ * @param {string} [options.evidence] The value throwing this issue
+ * @param {number} [options.line] The line of the affected file (if within a file)
+ * @param {number} [options.character] The character offset in the affected line
+ * @param {string} [options.severity] Is this an error or warning?
+ * @param {string} [options.reason] A descriptive
+ * @param {string} [options.helpUrl] A URL providing documentation to help solve this error
+ * @returns {Object} Issue object
  */
-export default function(options) {
+function Issue(options) {
   const code = options.hasOwnProperty('code') ? options.code : null
   const issue = issues[code]
 
@@ -36,3 +48,5 @@ export default function(options) {
   this.reason = options.hasOwnProperty('reason') ? options.reason : issue.reason
   this.helpUrl = constructHelpUrl(issue)
 }
+
+export default Issue
