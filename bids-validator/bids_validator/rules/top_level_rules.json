@@ -20,7 +20,7 @@
       "@@@_asl_top_ext_@@@": [
         "_asl\\.json",
         "_M0Scan\\.json",
-        "_aslcontext\\.tsv",
+        "_aslContext\\.tsv",
         "_labeling.jpg"
       ]
     }

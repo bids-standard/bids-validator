@@ -220,34 +220,36 @@ module.exports = function NIFTI(
       )
     }
     if (
-      mergedDictionary.hasOwnProperty('BackgroundSuppression') &&
-      !mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseTime')
-    ) {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 120,
-          reason:
-            "You should define 'BackgroundSuppressionPulseTime' for this file. " +
-            sidecarMessage,
-        }),
-      )
-    }
-    if (
-      mergedDictionary.hasOwnProperty('BackgroundSuppression') &&
-      !mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseNumber')
-    ) {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 133,
-          reason:
-            "You should define 'BackgroundSuppressionPulseNumber' for this file. " +
-            sidecarMessage,
-        }),
-      )
-    }
-    else {
+      mergedDictionary.hasOwnProperty('BackgroundSuppression')
+    )
+    {
+      if (mergedDictionary['BackgroundSuppression']==true) {
+        if (!mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseTime')
+        ) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 120,
+              reason:
+                "You should define 'BackgroundSuppressionPulseTime' for this file. " +
+                sidecarMessage,
+            }),
+          )
+        }
+        if (!mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseNumber'))
+        {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 133,
+              reason:
+                "You should define 'BackgroundSuppressionPulseNumber' for this file. " +
+                sidecarMessage,
+            }),
+          )
+        }
+      }
+    
       var BackgroundSuppressionPulseNumber = mergedDictionary['BackgroundSuppressionPulseNumber']
       var BackgroundSuppressionPulseTime = mergedDictionary['BackgroundSuppressionPulseTime']
       const kDim = BackgroundSuppressionPulseTime.length
@@ -258,7 +260,7 @@ module.exports = function NIFTI(
             code: 134,
             reason:
               "The BackgroundSuppressionPulseNumber is " + BackgroundSuppressionPulseNumber + 
-              " however the array BackgroundSuppressionPulseTime array has " + kDim + "values. Please check the discrepancy between this two values that must coincides." +
+              " however the array BackgroundSuppressionPulseTime array has " + kDim + " values. Please check the discrepancy between this two values that must coincides." +
               sidecarMessage,
           }),
         )

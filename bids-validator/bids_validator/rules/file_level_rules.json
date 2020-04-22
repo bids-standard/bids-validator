@@ -171,18 +171,19 @@
   },
 
   "asl": {
-    "regexp": "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?asl\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:@@@_asl_type_@@@)\\.(@@@_asl_ext_@@@)$",
+    "regexp": "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?perf\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:@@@_asl_type_@@@)$",
     "tokens": {
       "@@@_asl_type_@@@": [
-        "asl",
-        "M0Scan",
-        "M0Scan",
-        "M0ScanR"
-      ],
-      "@@@_asl_ext_@@@": [
-        "nii\\.gz",
-        "nii",
-        "json"
+        "asl\\.nii\\.gz",
+        "asl\\.nii",
+        "asl\\.json",
+        "M0Scan\\.nii\\.gz",
+        "M0Scan\\.nii",
+        "M0Scan\\.json",
+        "M0ScanR\\.nii\\.gz",
+        "M0ScanR\\.nii",
+        "M0ScanR\\.json",
+        "aslContext\\.tsv"
       ]
     }
   },
