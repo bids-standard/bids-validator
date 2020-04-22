@@ -50,7 +50,7 @@
     },
     "LabelingDuration": {
       "type": "number",
-      "exclusiveMinimum": 0
+      "Minimum": 0
     },
     "InitialPostLabelDelay": {
       "anyOf": [
@@ -73,7 +73,7 @@
     "MRSoftwareVersion" :{
       "type": "string"
     },
-    "LabelingSlabLocation" :{
+    "LabelingLocation" :{
       "type": "string",
       "_type_comment":"to be checked"
     },
@@ -102,16 +102,16 @@
       "type": "number",
       "exclusiveMinimum": 0
     },
-    "AcquisitionResolution" :{
+    "AcquisitionVoxelSize" :{
       "type": "array",
       "items": {
           "type": "number",
           "exclusiveMinimum": 0
       }
     },
-    "AcquisitionDuration" :{
+    "BackgroundSuppressionPulseNumber" :{
       "type": "number",
-      "exclusiveMinimum": 0
+      "minimum": 0
     },
     "BackgroundSuppressionPulseTime" :{
       "type": "array",
@@ -153,11 +153,11 @@
     },
     "BolusCutOffTimingSequence" :{
       "type": "number",
-      "exclusiveMinimum": 0
+      "Minimum": 0
     },
     "BolusCutOffDelayTime" :{
       "type": "number",
-      "exclusiveMinimum": 0
+      "Minimum": 0
     },
     "BolusCutOffTechnique" :{
       "type": "string"

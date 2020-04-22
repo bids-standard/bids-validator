@@ -38,7 +38,7 @@
     "MRSoftwareVersion" :{
       "type": "string"
     },
-    "AcquisitionResolution" :{
+    "AcquisitionVoxelSize" :{
       "type": "array",
       "items": {
           "type": "number",

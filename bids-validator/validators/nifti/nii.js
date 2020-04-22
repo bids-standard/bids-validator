@@ -233,6 +233,37 @@ module.exports = function NIFTI(
         }),
       )
     }
+    if (
+      mergedDictionary.hasOwnProperty('BackgroundSuppression') &&
+      !mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseNumber')
+    ) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 133,
+          reason:
+            "You should define 'BackgroundSuppressionPulseNumber' for this file. " +
+            sidecarMessage,
+        }),
+      )
+    }
+    else {
+      var BackgroundSuppressionPulseNumber = mergedDictionary['BackgroundSuppressionPulseNumber']
+      var BackgroundSuppressionPulseTime = mergedDictionary['BackgroundSuppressionPulseTime']
+      const kDim = BackgroundSuppressionPulseTime.length
+      if (BackgroundSuppressionPulseNumber !== kDim ) {
+        issues.push(
+          new Issue({
+            file: file,
+            code: 134,
+            reason:
+              "The BackgroundSuppressionPulseNumber is " + BackgroundSuppressionPulseNumber + 
+              " however the array BackgroundSuppressionPulseTime array has " + kDim + "values. Please check the discrepancy between this two values that must coincides." +
+              sidecarMessage,
+          }),
+        )
+      }
+    }
     if (!mergedDictionary.hasOwnProperty('VascularCrushing')) {
       issues.push(
         new Issue({
@@ -319,13 +350,13 @@ module.exports = function NIFTI(
         }),
       )
     }
-    if (!mergedDictionary.hasOwnProperty('LabelingSlabLocation')) {
+    if (!mergedDictionary.hasOwnProperty('LabelingLocation')) {
       issues.push(
         new Issue({
           file: file,
           code: 112,
           reason:
-            "You should define 'LabelingSlabLocation' for this file.  " +
+            "You should define 'LabelingLocation' for this file.  " +
             sidecarMessage,
         }),
       )
@@ -352,40 +383,29 @@ module.exports = function NIFTI(
         }),
       )
     }
-    if (!mergedDictionary.hasOwnProperty('AcquisitionResolution')) {
+    if (!mergedDictionary.hasOwnProperty('AcquisitionVoxelSize')) {
       issues.push(
         new Issue({
           file: file,
           code: 118,
           reason:
-            "You should define 'AcquisitionResolution' for this file.  " +
+            "You should define 'AcquisitionVoxelSize' for this file.  " +
             sidecarMessage,
         }),
       )
     } else {
-      var AcquisitionResolution = mergedDictionary['AcquisitionResolution']
-      if (AcquisitionResolution.length != 3) {
+      var AcquisitionVoxelSize = mergedDictionary['AcquisitionVoxelSize']
+      if (AcquisitionVoxelSize.length != 3) {
         issues.push(
           new Issue({
             file: file,
             code: 118,
             reason:
-              "The 'AcquisitionResolution' field length is not 3. AcquisitionResolution must be defined as a vector of length 3.  " +
+              "The 'AcquisitionVoxelSize' field length is not 3. AcquisitionVoxelSize must be defined as a vector of length 3.  " +
               sidecarMessage,
           }),
         )
       }
-    }
-    if (!mergedDictionary.hasOwnProperty('AcquisitionDuration')) {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 119,
-          reason:
-            "You should define 'AcquisitionDuration' for this file.  " +
-            sidecarMessage,
-        }),
-      )
     }
     if (!mergedDictionary.hasOwnProperty('M0')) {
       issues.push(

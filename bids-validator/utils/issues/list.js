@@ -620,9 +620,9 @@ module.exports = {
     reason: "The 'MRSoftwareVersion' field is missing.",
   },
   112: {
-    key: 'LABELLING_SLAB_LOCATION_MISSING',
+    key: 'LABELLING_LOCATION_MISSING',
     severity: 'warning',
-    reason: "The 'LabelingSlabLocation' field is missing.",
+    reason: "The 'LabelingLocation' field is missing.",
   },
   113: {
     key: 'LABELING_ORIENTATION_MISSING',
@@ -650,14 +650,9 @@ module.exports = {
     reason: "The 'LabelingSlabThickness' field is missing.",
   },
   118: {
-    key: 'ACQUISITION_RESOLUTION_MISSING',
+    key: 'ACQUISITION_VOXELSIZE_MISSING',
     severity: 'warning',
-    reason: "The 'AcquisitionResolution' field is missing.",
-  },
-  119: {
-    key: 'ACQUISITION_DURATION_MISSING',
-    severity: 'warning',
-    reason: "The 'AcquisitionDuration' field is missing.",
+    reason: "The 'AcquisitionVoxelSize' field is missing.",
   },
   120: {
     key: 'BACKGROUND_SUPPRESSION_PULSE_TIME_MISSING',
@@ -721,8 +716,18 @@ module.exports = {
     reason: "You have to define 'PulseSequenceType' for this file.",
   },
   132: {
-    key: 'ACQUISITION_RESOLUTION_WRONG',
+    key: 'ACQUISITION_VOXELSIZE_WRONG',
     severity: 'error',
-    reason: "The 'AcquisitionResolution' field length is not 3. AcquisitionResolution must be defined as a vector of length 3.",
+    reason: "The 'AcquisitionVoxelSize' field length is not 3. AcquisitionVoxelSize must be defined as a vector of length 3.",
+  },
+  133: {
+    key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_MISSING',
+    severity: 'error',
+    reason: "The 'BackgroundSuppressionPulseNumber' field is missing.",
+  },
+  134: {
+    key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_NOT_CONSISTENT',
+    severity: 'error',
+    reason: "The 'BackgroundSuppressionPulseNumber' field is not consisten with the lenght of 'BackgroundSuppressionPulseTime'.",
   },
 }
