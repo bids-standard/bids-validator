@@ -109,7 +109,7 @@
           "exclusiveMinimum": 0
       }
     },
-    "BackgroundSuppressionPulseNumber" :{
+    "BackgroundSuppressionNumberPulses" :{
       "type": "number",
       "minimum": 0
     },

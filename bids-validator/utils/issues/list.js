@@ -723,11 +723,11 @@ module.exports = {
   133: {
     key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_MISSING',
     severity: 'error',
-    reason: "The 'BackgroundSuppressionPulseNumber' field is missing.",
+    reason: "The 'BackgroundSuppressionNumberPulses' field is missing.",
   },
   134: {
     key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_NOT_CONSISTENT',
     severity: 'error',
-    reason: "The 'BackgroundSuppressionPulseNumber' field is not consisten with the lenght of 'BackgroundSuppressionPulseTime'.",
+    reason: "The 'BackgroundSuppressionNumberPulses' field is not consisten with the lenght of 'BackgroundSuppressionPulseTime'.",
   },
 }

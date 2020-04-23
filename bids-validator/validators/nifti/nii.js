@@ -236,30 +236,30 @@ module.exports = function NIFTI(
             }),
           )
         }
-        if (!mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseNumber'))
+        if (!mergedDictionary.hasOwnProperty('BackgroundSuppressionNumberPulses'))
         {
           issues.push(
             new Issue({
               file: file,
               code: 133,
               reason:
-                "You should define 'BackgroundSuppressionPulseNumber' for this file. " +
+                "You should define 'BackgroundSuppressionNumberPulses' for this file. " +
                 sidecarMessage,
             }),
           )
         }
       }
     
-      var BackgroundSuppressionPulseNumber = mergedDictionary['BackgroundSuppressionPulseNumber']
+      var BackgroundSuppressionNumberPulses = mergedDictionary['BackgroundSuppressionNumberPulses']
       var BackgroundSuppressionPulseTime = mergedDictionary['BackgroundSuppressionPulseTime']
       const kDim = BackgroundSuppressionPulseTime.length
-      if (BackgroundSuppressionPulseNumber !== kDim ) {
+      if (BackgroundSuppressionNumberPulses !== kDim ) {
         issues.push(
           new Issue({
             file: file,
             code: 134,
             reason:
-              "The BackgroundSuppressionPulseNumber is " + BackgroundSuppressionPulseNumber + 
+              "The BackgroundSuppressionNumberPulses is " + BackgroundSuppressionNumberPulses + 
               " however the array BackgroundSuppressionPulseTime array has " + kDim + " values. Please check the discrepancy between this two values that must coincides." +
               sidecarMessage,
           }),
