@@ -1,6 +1,6 @@
 {
   "name": "bids-validator-web",
-  "version": "1.5.0",
+  "version": "1.5.3",
   "description": "web client for bids-validator",
   "main": "index.js",
   "license": "MIT",
