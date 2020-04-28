@@ -8,6 +8,12 @@ const JSONFilePattern = /.json$/
 const isJSONFile = file =>
   JSONFilePattern.test(isNode ? file.name : file.relativePath)
 
+// Work around JSDom not providing TextDecoder yet
+if (typeof TextDecoder === 'undefined') {
+  const { TextDecoder } = require('util')
+  global.TextDecoder = TextDecoder
+}
+
 /**
  * checkEncoding
  * @param {object | File} file - nodeJS fs file or browser File
@@ -33,12 +39,12 @@ const checkEncoding = (file, data, cb) => {
 function readFile(file, annexed, dir) {
   return new Promise((resolve, reject) => {
     if (isNode) {
-      testFile(file, annexed, dir, function(issue, stats, remoteBuffer) {
+      testFile(file, annexed, dir, function (issue, stats, remoteBuffer) {
         if (issue) {
           return reject(issue)
         }
         if (!remoteBuffer) {
-          fs.readFile(file.path, function(err, data) {
+          fs.readFile(file.path, function (err, data) {
             if (err) {
               return reject(err)
             }
@@ -54,7 +60,7 @@ function readFile(file, annexed, dir) {
       })
     } else {
       const reader = new FileReader()
-      reader.onloadend = function(e) {
+      reader.onloadend = e => {
         if (e.target.readyState == FileReader.DONE) {
           if (!e.target.result) {
             return reject(new Issue({ code: 44, file: file }))
@@ -63,8 +69,7 @@ function readFile(file, annexed, dir) {
           checkEncoding(file, buffer, ({ isUtf8 }) => {
             if (!isUtf8) reject(new Issue({ code: 123, file }))
           })
-          const utf8Data = String.fromCharCode.apply(null, buffer)
-          return resolve(utf8Data)
+          return resolve(new TextDecoder().decode(buffer))
         }
       }
       reader.readAsArrayBuffer(file)
