@@ -52,7 +52,7 @@
       "type": "number",
       "Minimum": 0
     },
-    "InitialPostLabelDelay": {
+    "PostLabelingDelay": {
       "anyOf": [
         { "type": "number",
           "exclusiveMinimum": 0 
@@ -136,11 +136,11 @@
     "LookLocker" :{
       "type": "boolean" 
     },
-    "PulseDuration" :{
+    "LabelingPulseDuration" :{
       "type": "number",
       "exclusiveMinimum": 0
     },
-    "InterPulseSpacing" :{
+    "InterPulseInterval" :{
       "type": "number",
       "exclusiveMinimum": 0
     },
@@ -164,6 +164,10 @@
     },
     "M0": { 
       "type": ["number", "string", "boolean"] 
+    },
+    "TotalNumberControlLabelPairs" : {
+      "type": "number",
+      "Minimum": 0
     }
   }
 }

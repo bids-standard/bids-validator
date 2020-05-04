@@ -196,13 +196,13 @@ module.exports = function NIFTI(
         }),
       )
     }
-    if (!mergedDictionary.hasOwnProperty('InitialPostLabelDelay')) {
+    if (!mergedDictionary.hasOwnProperty('PostLabelingDelay')) {
       issues.push(
         new Issue({
           file: file,
           code: 106,
           reason:
-            "You should define 'InitialPostLabelDelay' for this file. If you don't provide this information CBF quantification will not be possible. " +
+            "You should define 'PostLabelingDelay' for this file. If you don't provide this information CBF quantification will not be possible. " +
             sidecarMessage,
         }),
       )

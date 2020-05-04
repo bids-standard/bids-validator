@@ -589,9 +589,9 @@ module.exports = {
     reason: "You have to define 'LabelingDuration' for this file.",
   },
   106: {
-    key: 'INITIAL_POST_LABEL_DELAY_MUST_DEFINE',
+    key: 'POST_LABELING_DELAY_MUST_DEFINE',
     severity: 'error',
-    reason: "You have to define 'InitialPostLabelDelay' for this file.",
+    reason: "You have to define 'PostLabelingDelay' for this file.",
   },
   107: {
     key: 'BACKGROUND_SUPPRESSION_MUST_DEFINE',
