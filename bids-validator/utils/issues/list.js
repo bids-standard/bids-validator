@@ -620,9 +620,9 @@ module.exports = {
     reason: "The 'MRSoftwareVersion' field is missing.",
   },
   112: {
-    key: 'LABELLING_LOCATION_MISSING',
+    key: 'LABELLING_LOCATION_DESCRIPTION_MISSING',
     severity: 'warning',
-    reason: "The 'LabelingLocation' field is missing.",
+    reason: "The 'LabelingLocationDescription' field is missing.",
   },
   113: {
     key: 'LABELING_ORIENTATION_MISSING',
@@ -640,9 +640,9 @@ module.exports = {
     reason: "The 'AverageLabelingGradient' field is missing.",
   },
   116: {
-    key: 'FLIP_ANGLE_OF_B1_LABELING_PULSES_MISSING',
+    key: 'LABELING_PULSE_FLIP_ANGLE_MISSING',
     severity: 'warning',
-    reason: "The 'FlipAngleOfB1LabelingPulses' field is missing.",
+    reason: "The 'LabelingPulseFlipAngle' field is missing.",
   },
   117: {
     key: 'LABELING_SLAB_THICKNESS_MISSING',
@@ -690,10 +690,10 @@ module.exports = {
     reason: "You have to define the 'BolusCutOffTechnique' for this file.",
   },
   127: {
-    key: 'SLICE_SELECTIVE_GRADIENT_LABELING_GRADIENT_MISSING',
+    key: 'LABELING_PULSE_MAXIMUM_GRADIENT_MISSING',
     severity: 'warning',
     reason:
-      "The 'SliceSelectiveLabelingGradient' filed is migging for this file.",
+      "The 'LabelingPulseMaximumGradient' filed is migging for this file.",
   },
   128: {
     key: 'INTENDED_FOR_NOT_SET',

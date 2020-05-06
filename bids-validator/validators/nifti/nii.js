@@ -79,13 +79,13 @@ module.exports = function NIFTI(
         }
       }
       if (LabelingTypeString == 'PCASL') {
-        if (!mergedDictionary.hasOwnProperty('FlipAngleOfB1LabelingPulses')) {
+        if (!mergedDictionary.hasOwnProperty('LabelingPulseFlipAngle')) {
           issues.push(
             new Issue({
               file: file,
               code: 116,
               reason:
-                "You should define 'FlipAngleOfB1LabelingPulses' for this file." +
+                "You should define 'LabelingPulseFlipAngle' for this file." +
                 sidecarMessage,
             }),
           )
@@ -174,13 +174,13 @@ module.exports = function NIFTI(
         }
       }
     }
-    if (!mergedDictionary.hasOwnProperty('SliceSelectiveLabelingGradient')) {
+    if (!mergedDictionary.hasOwnProperty('LabelingPulseMaximumGradient')) {
       issues.push(
         new Issue({
           file: file,
           code: 127,
           reason:
-            "You should define 'SliceSelectiveLabelingGradient' for this file." +
+            "You should define 'LabelingPulseMaximumGradient' for this file." +
             sidecarMessage,
         }),
       )
@@ -352,13 +352,13 @@ module.exports = function NIFTI(
         }),
       )
     }
-    if (!mergedDictionary.hasOwnProperty('LabelingLocation')) {
+    if (!mergedDictionary.hasOwnProperty('LabelingLocationDescription')) {
       issues.push(
         new Issue({
           file: file,
           code: 112,
           reason:
-            "You should define 'LabelingLocation' for this file.  " +
+            "You should define 'LabelingLocationDescription' for this file.  " +
             sidecarMessage,
         }),
       )

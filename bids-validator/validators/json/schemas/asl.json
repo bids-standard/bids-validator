@@ -73,7 +73,7 @@
     "MRSoftwareVersion" :{
       "type": "string"
     },
-    "LabelingLocation" :{
+    "LabelingLocationDescription" :{
       "type": "string",
       "_type_comment":"to be checked"
     },
@@ -88,11 +88,11 @@
       "type": "number",
       "exclusiveMinimum": 0
     },
-    "SliceSelectiveLabelingGradient" :{
+    "LabelingPulseMaximumGradient" :{
       "type": "number",
       "exclusiveMinimum": 0
     },
-    "FlipAngleOfB1LabelingPulses" :{
+    "LabelingPulseFlipAngle" :{
       "type": "number",
       "exclusiveMinimum": 0,
       "inclusiveMaximum": 360,
@@ -140,7 +140,15 @@
       "type": "number",
       "exclusiveMinimum": 0
     },
-    "InterPulseInterval" :{
+    "LabelingPulseInterval" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "LabelingPulseAverageB1" :{
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "LabelingPulseAverageGradient" :{
       "type": "number",
       "exclusiveMinimum": 0
     },
