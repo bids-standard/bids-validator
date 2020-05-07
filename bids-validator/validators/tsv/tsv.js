@@ -438,6 +438,20 @@ const TSV = (file, contents, fileList, callback) => {
     checkTypecol(rows, file, issues)
   }
 
+  if (
+    file.relativePath.includes('/nirs/') &&
+    file.name.endsWith('_channels.tsv')
+  ) {
+    checkheader('name', 0, file, 9991)
+    checkheader('type', 1, file, 9991)
+    checkheader('source', 2, file, 9991)
+    checkheader('detector', 3, file, 9991)
+    checkheader('wavelength_nominal', 4, file, 9991)
+    checkheader('units', 5, file, 9991)
+    checkStatusCol(rows, file, issues)
+    checkTypecol(rows, file, issues)
+  }
+
   // electrodes.tsv
   if (
     file.relativePath.includes('/eeg/') &&
@@ -460,8 +474,22 @@ const TSV = (file, contents, fileList, callback) => {
     checkheader('size', 4, file, 73)
   }
 
+  if (
+    file.relativePath.includes('/nirs/') &&
+    file.name.endsWith('_optodes.tsv')
+  ) {
+    checkheader('name', 0, file, 9992)
+    checkheader('type', 1, file, 9992)
+    checkheader('x', 2, file, 9992)
+    checkheader('y', 3, file, 9992)
+    checkheader('z', 4, file, 9992)
+  }
+
   // blood.tsv
-  if (file.relativePath.includes('/pet/') && file.name.endsWith('_blood.tsv')) {
+  if (
+    file.relativePath.includes('/pet/') &&
+    file.name.endsWith('_blood.tsv')
+  ) {
     // Validate fields here
     checkheader('time', 0, file, 126)
   }
