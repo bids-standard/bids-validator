@@ -185,7 +185,7 @@
         "set",
         "fdt",
         "nwb",
-        "mef"
+        "mefd"
       ],
       "@@@_ieeg_ext_@@@": [
         "_events\\.json",
