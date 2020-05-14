@@ -55,41 +55,33 @@ function checkFileListForMatch(i) {
  * Returns boolean indicating if file evaluates as valid datafile
  */
 function verifyDatafileMatch(sidecarPath, noExt, matchFile) {
-  let match = false
-  let megDs = false
-  let ieegMEF3 = false
 
   // Make sure it's not the data dictionary itself
   const isSelf = matchFile.relativePath === sidecarPath
   if (!isSelf && type.file.isDatafile(matchFile.relativePath)) {
-    match = true
+    return true
   }
 
   // MEG datafiles may be a folder, therefore not contained in fileList, will need to look in paths
   if (
-    !isSelf &&
-    !match &&
-    (noExt.endsWith('_meg') || noExt.endsWith('_coordsystem'))
+    !isSelf && !match &&
+    (noExt.endsWith('_meg') || noExt.endsWith('_coordsystem')) &&
+    matchFile.relativePath.includes('_meg.ds')
   ) {
-    megDs = matchFile.relativePath.includes('_meg.ds')
-  }
-  if (megDs) {
-    match = true
+    return true
   }
 
   // IEEG datafiles may be a folder, therefore not contained in fileList, will need to look in paths
   if (
-    !isSelf &&
-    !match &&
-    (noExt.endsWith('_ieeg') || noExt.endsWith('_coordsystem'))
+    !isSelf && !match &&
+    (noExt.endsWith('_ieeg') || noExt.endsWith('_coordsystem')) &&
+    matchFile.relativePath.includes('_ieeg.mefd')
   ) {
-    ieegMEF3 = matchFile.relativePath.includes('_ieeg.mefd')
-  }
-  if (ieegMEF3) {
-    match = true
+    return true
   }
 
-  return match
+
+  return false
 }
 
 export { checkSidecarForDatafiles }
