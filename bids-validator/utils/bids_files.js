@@ -65,9 +65,7 @@ function verifyDatafileMatch(sidecarPath, noExt, matchFile) {
   }
 
   // IEEG and MEG datafiles may be a folder, therefore not contained in fileList, will need to look in paths
-  if (
-    !isSelf &&
-    !match) {
+  if (!isSelf &&!match) {
     if (noExt.endsWith('_meg') || noExt.endsWith('_coordsystem')) {
       folderMatch = matchFile.relativePath.includes('_meg.ds')
     }
