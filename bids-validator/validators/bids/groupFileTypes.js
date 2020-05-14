@@ -65,7 +65,13 @@ const ephysTest = filename => {
     'set',
     'fdt',
     'nwb',
-    'mef',
+    'rdat',
+    'ridx',
+    'tdat',
+    'tidx',
+    'tmet',
+    'vidx',
+    'vmet',
   ].includes(filename.split('.').pop())
 }
 
