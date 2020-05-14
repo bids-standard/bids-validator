@@ -295,8 +295,8 @@ describe('utils.type.file.isIEEG', function() {
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/sub-01_ses-001_task-rest_run-01_ieeg.rdat',
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/sub-01_ses-001_task-rest_run-01_ieeg.ridx',
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.tdat',
-	'/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.idx',
-	'/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.tmet',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.idx',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.tmet',
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_channels.tsv',
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_electrodes.tsv',
   ]
