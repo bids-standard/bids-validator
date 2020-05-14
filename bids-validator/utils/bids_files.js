@@ -80,7 +80,6 @@ function verifyDatafileMatch(sidecarPath, noExt, matchFile) {
     return true
   }
 
-
   return false
 }
 
