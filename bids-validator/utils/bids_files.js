@@ -68,14 +68,12 @@ function verifyDatafileMatch(sidecarPath, noExt, matchFile) {
   if (
     !isSelf &&
     !match) {
-
     if (noExt.endsWith('_meg') || noExt.endsWith('_coordsystem')) {
       folderMatch = matchFile.relativePath.includes('_meg.ds')
     }
     if (noExt.endsWith('_ieeg') || noExt.endsWith('_coordsystem')) {
       folderMatch = matchFile.relativePath.includes('_ieeg.mefd')
     }
-	
   }
   if (folderMatch) {
     match = true
