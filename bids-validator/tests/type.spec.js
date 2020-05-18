@@ -200,7 +200,7 @@ describe('utils.type.file.isMEG', function() {
     '/sub-control01/ses-001/meg/sub-control01_ses-001_task-rest_run-01_meg.raw',
     '/sub-control01/ses-001/meg/sub-control01_ses-001_task-rest_run-01_meg.raw.mhd',
     // NO father dir: fif data
-    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_part-01_meg.fif',
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_split-01_meg.fif',
   ]
 
   goodFilenames.forEach(function(path) {
@@ -214,7 +214,7 @@ describe('utils.type.file.isMEG', function() {
     // missing session directory
     '/sub-01/meg/sub-01_ses-001_task-rest_run-01_meg.json',
     // subject not matching
-    '/sub-01/ses-001/meg/sub-12_ses-001_task-rest_run-01_part-01_meg.fif',
+    '/sub-01/ses-001/meg/sub-12_ses-001_task-rest_run-01_split-01_meg.fif',
     // invalid file endings
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.tsv',
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.bogus',
@@ -248,7 +248,7 @@ describe('utils.type.file.isEEG', function() {
   const goodFilenames = [
     '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.json',
     '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_events.tsv',
-    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_part-01_eeg.edf',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_split-01_eeg.edf',
     '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.eeg',
     '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.vmrk',
     '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.vhdr',
@@ -270,7 +270,7 @@ describe('utils.type.file.isEEG', function() {
 
   const badFilenames = [
     '/sub-01/eeg/sub-01_ses-001_task-rest_run-01_eeg.json',
-    '/sub-01/ses-001/eeg/sub-12_ses-001_task-rest_run-01_part-01_eeg.edf',
+    '/sub-01/ses-001/eeg/sub-12_ses-001_task-rest_run-01_split-01_eeg.edf',
     '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.tsv',
   ]
 
@@ -285,18 +285,18 @@ describe('utils.type.file.isEEG', function() {
 describe('utils.type.file.isIEEG', function() {
   const goodFilenames = [
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.edf',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.vhdr',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.vmrk',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.eeg',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.set',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.fdt',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.nwb',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/sub-01_ses-001_task-rest_run-01_ieeg.rdat',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/sub-01_ses-001_task-rest_run-01_ieeg.ridx',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.tdat',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.idx',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_part-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.tmet',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.edf',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.vhdr',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.vmrk',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.eeg',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.set',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.fdt',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.nwb',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.mefd/sub-01_ses-001_task-rest_run-01_ieeg.rdat',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.mefd/sub-01_ses-001_task-rest_run-01_ieeg.ridx',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.tdat',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.idx',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.tmet',
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_channels.tsv',
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_electrodes.tsv',
   ]
@@ -310,7 +310,7 @@ describe('utils.type.file.isIEEG', function() {
 
   const badFilenames = [
     '/sub-01/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json',
-    '/sub-01/ses-001/ieeg/sub-12_ses-001_task-rest_run-01_part-01_ieeg.fif',
+    '/sub-01/ses-001/ieeg/sub-12_ses-001_task-rest_run-01_split-01_ieeg.fif',
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.tsv',
   ]
 
