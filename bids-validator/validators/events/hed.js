@@ -28,7 +28,11 @@ export default function checkHedStrings(events, headers, jsonContents) {
 
     for (const sidecarKey in mergedDictionary) {
       const sidecarValue = mergedDictionary[sidecarKey]
-      if (sidecarValue.HED !== undefined) {
+      if (
+        sidecarValue !== null &&
+        typeof sidecarValue === 'object' &&
+        sidecarValue.HED !== undefined
+      ) {
         sidecarHedTags[sidecarKey] = sidecarValue.HED
       }
     }
