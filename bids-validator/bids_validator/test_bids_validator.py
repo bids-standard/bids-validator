@@ -16,7 +16,7 @@ def test_is_bids():
     HOME = os.path.expanduser('~')
     dspath = os.path.join(HOME, 'eeg_matchingpennies_git_annex')
     url = 'https://github.com/sappelhoff/eeg_matchingpennies'
-    datalad.api.install(dataset=dspath, source=url)
+    datalad.api.install(dspath, url)
 
     def _exclude_this(fname):
         """Help to skip certain files from being validated."""
