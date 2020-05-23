@@ -1,15 +1,6 @@
 version: 2
 
 jobs:
-  test_python:
-    docker:
-      - image: circleci/python:stretch
-    steps:
-      - checkout
-      - run: pip install --user pytest flake8 pydocstyle
-      - run: pytest --doctest-modules bids-validator/bids_validator
-      - run: flake8 bids-validator/bids_validator
-      - run: pydocstyle bids-validator/bids_validator/bids_validator.py
   test:
     docker:
       - image: node:12.16.1
@@ -154,12 +145,6 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - test_python:
-          filters:
-            branches:
-              only: /.*/
-            tags:
-              only: /.*/
       - test:
           filters:
             branches:
@@ -184,7 +169,6 @@ workflows:
               only: /.*/
       - deployment:
           requires:
-            - test_python
             - test
             - test_docker
             - githubPagesTest
