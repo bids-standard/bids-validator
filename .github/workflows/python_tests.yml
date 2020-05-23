@@ -29,7 +29,7 @@ jobs:
         which python
         conda install -c conda-forge git-annex
         pip install datalad
-        pip install pytest flake8 pydocstyle
+        pip install pytest pytest-sugar flake8 pydocstyle
         pip install -e ./bids-validator
     - name: Check formatting
       shell: bash -l {0}
