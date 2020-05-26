@@ -3,13 +3,29 @@ version: 2
 jobs:
   test_python:
     docker:
-      - image: circleci/python:stretch
+      - image: continuumio/miniconda3
+    environment:
+      BASH_ENV: "/root/.bashrc"
     steps:
       - checkout
-      - run: pip install --user pytest flake8 pydocstyle
-      - run: pytest --doctest-modules bids-validator/bids_validator
-      - run: flake8 bids-validator/bids_validator
-      - run: pydocstyle bids-validator/bids_validator/bids_validator.py
+      - run:
+          name: setup conda
+          command: |
+            conda create -n testenv Python=3.7
+            conda init
+      - run:
+          name: install datalad
+          command: |
+            conda activate testenv
+            conda install -c conda-forge git-annex
+            pip install pytest flake8 pydocstyle datalad
+      - run:
+          name: test python
+          command: |
+            conda activate testenv
+            pytest --doctest-modules bids-validator/bids_validator
+            flake8 bids-validator/bids_validator
+            pydocstyle bids-validator/bids_validator/bids_validator.py
   test:
     docker:
       - image: node:12.16.1
