@@ -32,12 +32,6 @@
         "minimum": 0
       }
     },
-    "ASLContext": {
-      "type": "string"
-    },
-    "MRSoftwareVersion" :{
-      "type": "string"
-    },
     "AcquisitionVoxelSize" :{
       "type": "array",
       "items": {

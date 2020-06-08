@@ -615,14 +615,9 @@ module.exports = {
       "The 'ASLContext' field is not consistent with the 4th dimension in the nifti file.",
   },
   111: {
-    key: 'MRSOFTWAREVERSION_MISSING',
+    key: 'PULSE_SEQUENCE_DETAILS_MISSING',
     severity: 'warning',
-    reason: "The 'MRSoftwareVersion' field is missing.",
-  },
-  112: {
-    key: 'LABELLING_LOCATION_DESCRIPTION_MISSING',
-    severity: 'warning',
-    reason: "The 'LabelingLocationDescription' field is missing.",
+    reason: "The 'PulseSequenceDetails' field is missing.",
   },
   113: {
     key: 'LABELING_ORIENTATION_MISSING',
@@ -633,11 +628,6 @@ module.exports = {
     key: 'LABELING_DISTANCE_MISSING',
     severity: 'warning',
     reason: "The 'LabelingDistance' field is missing.",
-  },
-  115: {
-    key: 'AVERAGE_LABELING_GRADIENT_MISSING',
-    severity: 'warning',
-    reason: "The 'AverageLabelingGradient' field is missing.",
   },
   116: {
     key: 'LABELING_PULSE_FLIP_ANGLE_MISSING',
@@ -681,7 +671,7 @@ module.exports = {
   },
   125: {
     key: 'PASL_BOLUS_CUT_OFF_DELAY_TIME',
-    severity: 'error',
+    severity: 'warning',
     reason: "You have to define the 'BolusCutOffDelayTime' for this file.",
   },
   126: {
@@ -693,7 +683,7 @@ module.exports = {
     key: 'LABELING_PULSE_MAXIMUM_GRADIENT_MISSING',
     severity: 'warning',
     reason:
-      "The 'LabelingPulseMaximumGradient' filed is migging for this file.",
+      "The 'LabelingPulseMaximumGradient' filed is missing for this file.",
   },
   128: {
     key: 'INTENDED_FOR_NOT_SET',
@@ -722,12 +712,55 @@ module.exports = {
   },
   133: {
     key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_MISSING',
-    severity: 'error',
+    severity: 'warning',
     reason: "The 'BackgroundSuppressionNumberPulses' field is missing.",
   },
   134: {
     key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_NOT_CONSISTENT',
-    severity: 'error',
+    severity: 'warning',
     reason: "The 'BackgroundSuppressionNumberPulses' field is not consisten with the lenght of 'BackgroundSuppressionPulseTime'.",
   },
+  135: {
+    key: 'LABELLING_DURATION_LENGTH_NOT_CONSISTENT',
+    severity: 'error',
+    reason: "'LabelingDuration' for this file do not match the 4th dimension of the NIFTI header. ",
+  },
+  136: {
+    key: 'CASL_TYPE_MISSING',
+    severity: 'warning',
+    reason: "The 'CASLType' field is missing.",
+  },
+  137: {
+    key: 'LABELING_PULSE_AVERAGE_GRADIENT_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingPulseAverageGradient' field is missing.",
+  },
+  138: {
+    key: 'LABELING_PULSE_AVERAGE_B1_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingPulseAverageB1' field is missing.",
+  },
+  139: {
+    key: 'LABELING_PULSE_DURATION_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingPulseDuration' field is missing.",
+  },
+  140: {
+    key: 'LABELING_PULSE_INTERVAL_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingPulseInterval' field is missing.",
+  },
+  141: {
+    key: 'PASL_TYPE_MISSING',
+    severity: 'warning',
+    reason: "The 'PASLType' field is missing.",
+  },
+  142: {
+    key: 'ASL_MANUFACTURER_MISSING',
+    severity: 'warning',
+    reason: "The 'Manufacturer' field is missing.",
+  },
+
+  
+  
 }

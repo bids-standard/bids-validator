@@ -38,6 +38,17 @@ module.exports = function NIFTI(
     potentialEvents.join(', ')
 
   if (path.includes('_asl.nii')) {
+    if (!mergedDictionary.hasOwnProperty('Manufacturer')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 142,
+          reason:
+            "You should define 'Manufacturer' for this file. " +
+            sidecarMessage,
+        }),
+      )
+    }
     if (!mergedDictionary.hasOwnProperty('LabelingType')) {
       issues.push(
         new Issue({
@@ -66,13 +77,24 @@ module.exports = function NIFTI(
     ) {
       const LabelingTypeString = mergedDictionary['LabelingType']
       if (LabelingTypeString == 'PCASL' || LabelingTypeString == 'CASL') {
-        if (!mergedDictionary.hasOwnProperty('AverageLabelingGradient')) {
+        if (!mergedDictionary.hasOwnProperty('LabelingPulseMaximumGradient')) {
           issues.push(
             new Issue({
               file: file,
-              code: 115,
+              code: 127,
               reason:
-                "You should define 'AverageLabelingGradient' for this file." +
+                "You should define 'LabelingPulseMaximumGradient' for this file." +
+                sidecarMessage,
+            }),
+          )
+        }
+        if (!mergedDictionary.hasOwnProperty('LabelingPulseAverageB1')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 138,
+              reason:
+                "You should define 'LabelingPulseAverageB1' for this file." +
                 sidecarMessage,
             }),
           )
@@ -100,8 +122,62 @@ module.exports = function NIFTI(
             }),
           )
         }
+        if (!mergedDictionary.hasOwnProperty('LabelingPulseAverageGradient')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 137,
+              reason:
+                "You should define 'LabelingPulseAverageGradient' for this file." + sidecarMessage,
+            }),
+          )
+        }
+        if (!mergedDictionary.hasOwnProperty('LabelingPulseDuration')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 139,
+              reason:
+                "You should define 'LabelingPulseDuration' for this file." + sidecarMessage,
+            }),
+          )
+        }
+        if (!mergedDictionary.hasOwnProperty('LabelingPulseInterval')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 139,
+              reason:
+                "You should define 'LabelingPulseInterval' for this file." + sidecarMessage,
+            }),
+          )
+        }
       }
+      if (LabelingTypeString == 'CASL') {
+        if (!mergedDictionary.hasOwnProperty('CASLType')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 136,
+              reason:
+                "You should define 'CASLType' for this file." + sidecarMessage,
+            }),
+          )
+        }
+      }
+
       if (LabelingTypeString == 'PASL') {
+        if (!mergedDictionary.hasOwnProperty('PASLType')) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 141,
+              reason:
+                "You should define 'PASLType' for this file." +
+                sidecarMessage,
+            }),
+          )
+        }
         if (!mergedDictionary.hasOwnProperty('LabelingSlabThickness')) {
           issues.push(
             new Issue({
@@ -174,17 +250,6 @@ module.exports = function NIFTI(
         }
       }
     }
-    if (!mergedDictionary.hasOwnProperty('LabelingPulseMaximumGradient')) {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 127,
-          reason:
-            "You should define 'LabelingPulseMaximumGradient' for this file." +
-            sidecarMessage,
-        }),
-      )
-    }
     if (!mergedDictionary.hasOwnProperty('LabelingDuration')) {
       issues.push(
         new Issue({
@@ -195,6 +260,27 @@ module.exports = function NIFTI(
             sidecarMessage,
         }),
       )
+    }
+    else { 
+      if (
+          header && 
+          mergedDictionary['LabelingDuration'].constructor === Array
+         ) { 
+        var LabelingDuration = mergedDictionary['LabelingDuration']
+        const LabelingDurationLength = LabelingDuration.length
+        const kDim = header.dim[4]
+        if (LabelingDurationLength !== kDim ) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 135,
+              reason:
+                "'LabelingDuration' for this file do not match the 4th dimension of the NIFTI header. " +
+                sidecarMessage,
+            }),
+          )
+        }
+      }
     }
     if (!mergedDictionary.hasOwnProperty('PostLabelingDelay')) {
       issues.push(
@@ -341,24 +427,13 @@ module.exports = function NIFTI(
         )
       }
     }
-    if (!mergedDictionary.hasOwnProperty('MRSoftwareVersion')) {
+    if (!mergedDictionary.hasOwnProperty('PulseSequenceDetails')) {
       issues.push(
         new Issue({
           file: file,
           code: 111,
           reason:
-            "You should define 'MRSoftwareVersion' for this file.  " +
-            sidecarMessage,
-        }),
-      )
-    }
-    if (!mergedDictionary.hasOwnProperty('LabelingLocationDescription')) {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 112,
-          reason:
-            "You should define 'LabelingLocationDescription' for this file.  " +
+            "You should define 'PulseSequenceDetails' for this file.  " +
             sidecarMessage,
         }),
       )
@@ -446,7 +521,55 @@ module.exports = function NIFTI(
           }
         }
       }
+    if (!mergedDictionary.hasOwnProperty('FlipAngle')) {
+      if (
+        mergedDictionary.hasOwnProperty('LookLocker') &&
+        mergedDictionary['LookLocker']
+      ) {
+        issues.push(
+          new Issue({
+            file: file,
+            code: 144,
+            reason: "In case of a LookLocker acquisition you must define 'FlipAngle' for this file.  " + sidecarMessage,
+          }),
+        )  
+      }
+      else { 
+        issues.push(
+          new Issue({
+            file: file,
+            code: 143,
+            reason: "You should define 'FlipAngle' for this file.  " + sidecarMessage,
+          }),
+        )  
+      }
     }
+    else {
+      if (
+        header && 
+        mergedDictionary.hasOwnProperty('LookLocker') &&
+        mergedDictionary['FlipAngle'].constructor === Array
+       ) { 
+          var FlipAngles = mergedDictionary['FlipAngle']
+          const FlipAngleLength = FlipAngle.length
+          const kDim = header.dim[4]
+          if (FlipAngleLength !== kDim ) {
+            issues.push(
+              new Issue({
+                file: file,
+                code: 145,
+                reason:
+                  "'FlipAngle' for this file do not match the 4th dimension of the NIFTI header. " +
+                  sidecarMessage,
+              }),
+            )
+          }
+      }
+    }
+    }
+
+    }
+  
   if (path.includes('_dwi.nii')) {
     const potentialBvecs = utils.files.potentialLocations(
       path.replace('.gz', '').replace('.nii', '.bvec'),

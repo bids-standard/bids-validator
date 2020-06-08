@@ -14,9 +14,16 @@
       "enum": ["i", "j", "k", "i-", "j-", "k-"]
     },
     "RepetitionTime": {
-      "type": "number",
-      "exclusiveMinimum": 0
-    },
+      "anyOf": [
+        { "type": "number",
+          "exclusiveMinimum": 0 },
+        {
+          "type": "array",
+          "exclusiveMinimum": 0,
+          "items": { "type": "number" }
+        }
+      ]
+    }, 
     "PulseSequenceType": {
       "type": "string",
       "enum" : ["2D_EPI","3D_GRASE","3D_spiral"]
@@ -49,18 +56,26 @@
       "enum": ["PASL", "CASL", "PCASL"]
     },
     "LabelingDuration": {
-      "type": "number",
-      "Minimum": 0
-    },
-    "PostLabelingDelay": {
       "anyOf": [
         { "type": "number",
-          "exclusiveMinimum": 0 
+          "Minimum": 0 
         },
         {
           "type": "array",
           "items": { "type": "number" },
-          "exclusiveMinimum": 0
+          "Minimum": 0
+        }
+      ]
+    },
+    "PostLabelingDelay": {
+      "anyOf": [
+        { "type": "number",
+          "Minimum": 0 
+        },
+        {
+          "type": "array",
+          "items": { "type": "number" },
+          "Minimum": 0
         }
       ]
     },
@@ -69,9 +84,6 @@
     },
     "VascularCrushing" : {
         "type": "boolean" 
-    },
-    "MRSoftwareVersion" :{
-      "type": "string"
     },
     "LabelingLocationDescription" :{
       "type": "string",
@@ -83,10 +95,6 @@
     },
     "LabelingDistance" :{
       "type": "number"
-    },
-    "AverageLabelingGradient" :{
-      "type": "number",
-      "exclusiveMinimum": 0
     },
     "LabelingPulseMaximumGradient" :{
       "type": "number",
@@ -133,6 +141,13 @@
       "type": "string",
       "enum": ["balanced", "unbalanced"]
     },
+    "CASLType" :{
+      "type": "string",
+      "enum": ["single-coil", "double-coil"]
+    },
+    "PASLType" :{
+      "type": "string"
+    },
     "LookLocker" :{
       "type": "boolean" 
     },
@@ -173,9 +188,20 @@
     "M0": { 
       "type": ["number", "string", "boolean"] 
     },
-    "TotalNumberControlLabelPairs" : {
-      "type": "number",
-      "Minimum": 0
+    "TotalAcquiredVolumes" :{
+      "anyOf": [
+        { "type": "number" },
+        {
+          "type": "array",
+          "items": { "type": "number" }
+        }
+      ]
+    },
+    "PulseSequenceDetails" : {
+      "type" : "string"
+    },
+    "Manufacturer" : {
+      "type" : "string"
     }
   }
 }
