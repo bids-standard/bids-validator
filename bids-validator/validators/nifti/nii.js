@@ -568,7 +568,7 @@ module.exports = function NIFTI(
     }
     }
 
-    }
+    
   
   if (path.includes('_dwi.nii')) {
     const potentialBvecs = utils.files.potentialLocations(
