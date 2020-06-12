@@ -312,6 +312,22 @@ const TSV = (file, contents, fileList, callback) => {
     if (headers.indexOf('acq_time') > -1) {
       checkAcqTimeFormat(rows, file, issues)
     }
+
+    // check filename match fileList
+    var idx = 0;
+    for (file in headers('filename')) {
+      if (!(file in fileList)) {
+        issues.push(
+          new Issue({
+            line: idx,
+            file: file,
+            code: 129,
+            evidence,
+          })
+        )
+      }
+      idx += 1;
+    }
   }
 
   callback(issues, participants, stimPaths)
