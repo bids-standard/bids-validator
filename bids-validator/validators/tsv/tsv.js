@@ -315,8 +315,8 @@ const TSV = (file, contents, fileList, callback) => {
 
     // check filename match fileList
     var idx = 0;
-    for (file in headers('filename')) {
-      if (!(file in fileList)) {
+    for (let relative_fpath in headers('filename')) {
+      if (!(relative_fpath in fileList)) {
         issues.push(
           new Issue({
             line: idx,
