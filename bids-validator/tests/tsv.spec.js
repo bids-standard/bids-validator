@@ -154,7 +154,24 @@ describe('TSV', function() {
   var scansFile = {
     name: 'sub-08_ses-test_task-linebisection_scans.tsv',
     relativePath:
-      '/sub-08/ses-test/func/sub-08_ses-test_task-linebisection_scans.tsv',
+      '/sub-08/ses-test/sub-08_ses-test_task-linebisection_scans.tsv',
+  }
+
+  var niftiFile = {
+    name: 'sub-08_ses-test_task-linebisection_run-01_bold.nii.gz',
+    relativePath:
+      '/sub-08/ses-test/func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz',
+  }
+
+  var eegFile = {
+    name: 'sub-08_ses-test_task-linebisection_run-01_eeg.fif',
+    relativePath:
+      '/sub-08/ses-test/eeg/sub-08_ses-test_task-linebisection_run-01_eeg.fif',
+  }
+  var ieegFile = {
+    name: 'sub-08_ses-test_task-linebisection_run-01_ieeg.edf',
+    relativePath:
+      '/sub-08/ses-test/eeg/sub-08_ses-test_task-linebisection_run-01_ieeg.edf',
   }
 
   it('should not allow _scans.tsv files without filename column', function() {
@@ -169,29 +186,57 @@ describe('TSV', function() {
   it('should allow _scans.tsv files with filename column', function() {
     var tsv =
       'header-one\tfilename\theader-three\n' +
-      'value-one\tvalue-two\tvalue-three'
-    validate.TSV.TSV(scansFile, tsv, [], function(issues) {
+      'value-one\tfunc/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\tvalue-three'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
       assert.deepEqual(issues, [])
     })
   })
 
   it('should not allow improperly formatted acq_time column entries', function() {
-    const tsv = 'filename\tacq_time\n' + 'value-one\t000001'
-    validate.TSV.TSV(scansFile, tsv, [], function(issues) {
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t000001'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
       assert(issues.length === 1 && issues[0].code === 84)
     })
   })
 
   it('should allow n/a as acq_time column entries', function() {
-    const tsv = 'filename\tacq_time\n' + 'value-one\tn/a'
-    validate.TSV.TSV(scansFile, tsv, [], function(issues) {
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\tn/a'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
       assert.deepEqual(issues, [])
     })
   })
 
   it('should allow properly formatted acq_time column entries', function() {
-    const tsv = 'filename\tacq_time\n' + 'value-one\t2017-05-03T06:45:45'
-    validate.TSV.TSV(scansFile, tsv, [], function(issues) {
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
+  it('should not allow mismatched filename entries', function() {
+    const fileList = [niftiFile, eegFile, ieegFile]
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45'
+    validate.TSV.TSV(scansFile, tsv, fileList, function(issues) {
+      assert(issues.length === 2 && issues[0].code === 129)
+    })
+  })
+
+  it('should allow matching filename entries', function() {
+    const fileList = [niftiFile, eegFile, ieegFile]
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45' +
+      'eeg/sub-08_ses-test_task-linebisection_run-01_eeg.fif\t2017-05-03T06:45:45' +
+      'ieeg/sub-08_ses-test_task-linebisection_run-01_ieeg.edf\t2017-05-03T06:45:45' +
+    validate.TSV.TSV(scansFile, tsv, fileList, function(issues) {
       assert.deepEqual(issues, [])
     })
   })

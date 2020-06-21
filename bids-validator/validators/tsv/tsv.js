@@ -4,6 +4,7 @@ import checkAcqTimeFormat from './checkAcqTimeFormat'
 import checkAge89 from './checkAge89'
 import checkStatusCol from './checkStatusCol'
 import parseTSV from './tsvParser'
+var path = require('path');
 
 /**
  * Format TSV headers for evidence string
@@ -11,6 +12,14 @@ import parseTSV from './tsvParser'
  * @returns {string}
  */
 const headersEvidence = headers => `Column headers: ${headers.join(', ')}`
+
+/**
+ * Format TSV filename for evidence string
+ * @param {Array[string]} filename
+ * @returns {string}
+ */
+const filenameEvidence = filename => `Filename: ${filename}`
+
 
 /**
  * TSV
@@ -296,6 +305,12 @@ const TSV = (file, contents, fileList, callback) => {
   }
 
   if (file.name.endsWith('_scans.tsv')) {
+    // create full dataset path list
+    const pathList = []
+    for (let f in fileList) {
+      pathList.push(fileList[f].relativePath)
+    }
+
     // check _scans.tsv for column filename
     if (!(headers.indexOf('filename') > -1)) {
       issues.push(
@@ -306,30 +321,34 @@ const TSV = (file, contents, fileList, callback) => {
           code: 68,
         }),
       )
+    } else {  
+      // check scans filenames match pathList
+      const sesPath = file.relativePath.split('/').slice(0, -1).join('/')
+      const filenameColumn = headers.indexOf('filename')
+      for (let l = 1; l < rows.length; l++) {
+        const row = rows[l]
+        const scanRelativePath = row[filenameColumn]
+        const scanFullPath = sesPath + '/' + scanRelativePath
+
+        // check if scan matches full dataset path list
+        if (!(scanFullPath in pathList)) {
+          issues.push(
+            new Issue({
+              line: l,
+              file: file,
+              code: 129,
+              evidence: filenameEvidence(scanFullPath),
+            })
+          )
+        }
+      }
     }
 
     // if _scans.tsv has the acq_time header, check datetime format
     if (headers.indexOf('acq_time') > -1) {
       checkAcqTimeFormat(rows, file, issues)
     }
-
-    // check filename match fileList
-    var idx = 0;
-    for (let relative_fpath in headers('filename')) {
-      if (!(relative_fpath in fileList)) {
-        issues.push(
-          new Issue({
-            line: idx,
-            file: file,
-            code: 129,
-            evidence,
-          })
-        )
-      }
-      idx += 1;
-    }
   }
-
   callback(issues, participants, stimPaths)
 }
 
