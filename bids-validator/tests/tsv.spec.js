@@ -34,6 +34,7 @@ describe('TSV', function() {
     })
   })
 
+  /* See utils.unit.validate for comment
   it('should not allow non-SI units', function() {
     var tsv =
       'header-one\tunits\theader-three\n' +
@@ -44,6 +45,7 @@ describe('TSV', function() {
       assert(issues.length === 1 && issues[0].key === 'INVALID_TSV_UNITS')
     })
   })
+  */
 
   // events checks -----------------------------------------------------------------------
 
