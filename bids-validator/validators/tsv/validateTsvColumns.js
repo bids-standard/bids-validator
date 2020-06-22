@@ -17,7 +17,8 @@ const getTsvType = function(file) {
     file.name.endsWith('_electrodes.tsv') ||
     file.name.endsWith('_events.tsv') ||
     file.name.endsWith('_scans.tsv') ||
-    file.name.endsWith('_sessions.tsv')
+    file.name.endsWith('_sessions.tsv') ||
+    file.name.endsWith('_aslContext.tsv')
   ) {
     const split = file.name.split('_')
     tsvType = split[split.length - 1].replace('.tsv', '')
@@ -49,7 +50,7 @@ const getCustomColumns = function(headers, type) {
  * @param {array} tsvs - Array of objects containing TSV file objects and contents
  * @param {Object} jsonContentsDict
  */
-const validateTsvColumns = function(tsvs, jsonContentsDict) {
+const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
   const tsvIssues = []
   tsvs.map(tsv => {
     const customColumns = getCustomColumns(
@@ -83,8 +84,60 @@ const validateTsvColumns = function(tsvs, jsonContentsDict) {
     }
   })
   // Return array of all instances of undescribed custom columns
+
+  // Manage custom instances made from asl_context 
+  
+  // Manage custom instances from asl_context tsv files
+  // get all headers associated with asl_context data
+  tsvs.map(tsv => {
+    const aslHeaders = headers.filter(header => {
+      const file = header[0]
+      return file.relativePath.includes('_asl')
+    })
+    
+    aslHeaders.forEach(aslHeader => {
+      // extract the fourth element of 'dim' field of header - this is the
+      // number of volumes that were obtained during scan (numVols)
+      const file = aslHeader[0]
+      const header = aslHeader[1]
+      const dim = header.dim
+      const numVols = dim[4]
+
+      // get the json sidecar dictionary associated with that nifti scan
+      const potentialSidecars = utils.files.potentialLocations(
+        file.relativePath.replace('.gz', '').replace('.nii', '.json'),
+      )
+    
+      // get the _asl_context.tsv associated with this asl scan
+      const potentialAslContext = utils.files.potentialLocations(
+        file.relativePath.replace('.gz', '').replace('asl.nii', 'aslContext.tsv'),
+      )
+      const associatedAslContext = potentialAslContext.indexOf(tsv.file.relativePath)
+      
+      
+      if (associatedAslContext > -1)
+      {
+        const rows = tsv.contents
+        .split('\n')
+        .filter(row => !(!row || /^\s*$/.test(row)))
+        
+        if (rows.length == numVols) {
+          tsvIssues.push(
+            new Issue({
+              code: 142,
+              file: file,
+            })
+          )
+        }
+      }
+    })
+
+  })
+
   return tsvIssues
 }
+
+
 
 const customColumnIssue = function(file, col, locations) {
   return new Issue({
@@ -97,5 +150,7 @@ const customColumnIssue = function(file, col, locations) {
       locations.toString().replace(',', ', '),
   })
 }
+
+
 
 module.exports = validateTsvColumns

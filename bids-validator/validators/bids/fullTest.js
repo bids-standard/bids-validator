@@ -175,7 +175,7 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
 
       // Validate custom fields in all TSVs and add any issues to the list
       self.issues = self.issues.concat(
-        tsv.validateTsvColumns(tsvs, jsonContentsDict),
+        tsv.validateTsvColumns(tsvs, jsonContentsDict, headers),
       )
 
       // Validate session files

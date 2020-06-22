@@ -335,21 +335,26 @@ module.exports = function NIFTI(
           )
         }
       }
-    
-      var BackgroundSuppressionNumberPulses = mergedDictionary['BackgroundSuppressionNumberPulses']
-      var BackgroundSuppressionPulseTime = mergedDictionary['BackgroundSuppressionPulseTime']
-      const kDim = BackgroundSuppressionPulseTime.length
-      if (BackgroundSuppressionNumberPulses !== kDim ) {
-        issues.push(
-          new Issue({
-            file: file,
-            code: 134,
-            reason:
-              "The BackgroundSuppressionNumberPulses is " + BackgroundSuppressionNumberPulses + 
-              " however the array BackgroundSuppressionPulseTime array has " + kDim + " values. Please check the discrepancy between this two values that must coincides." +
-              sidecarMessage,
-          }),
-        )
+      if (
+        mergedDictionary.hasOwnProperty('BackgroundSuppressionNumberPulses') &&
+        mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseTime')
+      )
+      {
+        var BackgroundSuppressionNumberPulses = mergedDictionary['BackgroundSuppressionNumberPulses']
+        var BackgroundSuppressionPulseTime = mergedDictionary['BackgroundSuppressionPulseTime']
+        const kDim = BackgroundSuppressionPulseTime.length
+        if (BackgroundSuppressionNumberPulses !== kDim ) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 134,
+              reason:
+                "The BackgroundSuppressionNumberPulses is " + BackgroundSuppressionNumberPulses + 
+                " however the array BackgroundSuppressionPulseTime array has " + kDim + " values. Please check the discrepancy between this two values that must coincides." +
+                sidecarMessage,
+            }),
+          )
+        }
       }
     }
     if (!mergedDictionary.hasOwnProperty('VascularCrushing')) {
@@ -376,56 +381,6 @@ module.exports = function NIFTI(
             sidecarMessage,
         }),
       )
-    }
-    if (!mergedDictionary.hasOwnProperty('ASLContext')) {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 109,
-          reason:
-            "You should define 'ASLContext' for this file. If you don't provide this information CBF quantification is not possible since the order of Control/Label is not defined. " +
-            sidecarMessage,
-        }),
-      )
-    }
-    // check if ASLContext lenght is compatible with 4th dimension of nifti file
-    if (
-      header &&
-      mergedDictionary.hasOwnProperty('ASLContext') &&
-      mergedDictionary['ASLContext'].constructor === String
-    ) {
-      var ASLContextString = mergedDictionary['ASLContext']
-      var ASLContextStringVolumes = 0
-      const kDim = header.dim[4]
-      var ASLContextString_error_message=false
-      try {
-        ASLContextString=ASLContextString.split('Control').join('1')
-        ASLContextString=ASLContextString.split('Label').join('1')
-        ASLContextString=ASLContextString.split('M0Scan').join('1')
-        ASLContextString=ASLContextString.split('M0').join('1')
-        //ASLContextString=ASLContextString.split('_').join('+')
-        //ASLContextString=ASLContextString.split('x').join('*')
-        // we need to add check for other undesiderated characters
-        ASLContextStringVolumes = eval(ASLContextString)
-      }
-      catch (error) {
-        ASLContextString_error_message=true
-        console.error(error)
-      }
-      if (ASLContextStringVolumes !== kDim || ASLContextString_error_message) {
-        issues.push(
-          new Issue({
-            file: file,
-            code: 110,
-            evidence:
-              'ASLContext string is ' + mergedDictionary['ASLContext'] +
-              'and provided ' + ASLContextStringVolumes + 
-              ' volumes however the number of volumes in the asl corresponding nifti header is (4th dimension) ' +
-              kDim +
-              '. Please check also the sintax of the ASLContext field.',
-          }),
-        )
-      }
     }
     if (!mergedDictionary.hasOwnProperty('PulseSequenceDetails')) {
       issues.push(
@@ -501,7 +456,7 @@ module.exports = function NIFTI(
         checkIfIntendedExists(M0String, fileList, issues, file)
         checkIfValidFiletype(M0String, issues, file)
       }
-    } else if (
+    } /*else if (
       mergedDictionary.hasOwnProperty('M0') &&
       mergedDictionary['M0'].constructor === Boolean
     ) {
@@ -520,7 +475,7 @@ module.exports = function NIFTI(
             )
           }
         }
-      }
+      }*/
     if (!mergedDictionary.hasOwnProperty('FlipAngle')) {
       if (
         mergedDictionary.hasOwnProperty('LookLocker') &&

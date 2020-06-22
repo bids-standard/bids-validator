@@ -48,9 +48,6 @@
         }
       ]
     }, 
-    "ASLContext": {
-      "type": "string"
-    },
     "LabelingType": {
       "type": "string",
       "enum": ["PASL", "CASL", "PCASL"]
