@@ -76,17 +76,11 @@ class BIDSValidator():
 
     def is_top_level(self, path):
         """Check if the file has appropriate name for a top-level file."""
-        with open(self.dir_rules + 'fixed_top_level_names.json', 'r') as fin:
-            fixed_top_level_json = json.load(fin)
-            fixed_top_level_names = fixed_top_level_json['fixed_top_level_names']  # noqa: E501
-
         regexps = self.get_regular_expressions(self.dir_rules +
                                                'top_level_rules.json')
 
         conditions = [False if re.compile(x).search(path) is None else True for
                       x in regexps]
-
-        conditions.append(path in fixed_top_level_names)
 
         return (any(conditions))
 
