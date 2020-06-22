@@ -91,7 +91,7 @@ export default {
      */
     isTopLevel: function(path) {
       return (
-	rootTop.test(path) ||
+        rootTop.test(path) ||
         funcTop.test(path) ||
         dwiTop.test(path) ||
         anatTop.test(path) ||
