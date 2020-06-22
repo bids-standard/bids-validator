@@ -1,5 +1,6 @@
 variables:
   GIT_STRATEGY: fetch
+  GIT_CHECKOUT: "false"
   GIT_SUBMODULE_STRATEGY: normal
   NODE_OPTIONS: --no-warnings
 stages:
@@ -14,5 +15,8 @@ tests:
     - choco install -y yarn
     - refreshenv
   script:
+    - git config core.symlinks true
+    - git checkout $CI_COMMIT_REF_NAME
+    - git submodule update --init --depth 1
     - yarn
     - yarn jest --testTimeout 30000
