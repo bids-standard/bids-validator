@@ -5,14 +5,14 @@
       "@@@_root_files_@@@": [
         "README",
         "CHANGES",
-		"LICENSE",
-		"dataset_description.json",
-		"genetic_info.json",
-		"participants.tsv",
-		"participants.json",
-		"phasediff.json",
-		"phase1.json",
-		"phase2.json",
+        "LICENSE",
+        "dataset_description.json",
+        "genetic_info.json",
+        "participants.tsv",
+        "participants.json",
+        "phasediff.json",
+        "phase1.json",
+        "phase2.json",
         "fieldmap.json"
       ]
     }
