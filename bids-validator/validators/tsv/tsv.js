@@ -329,9 +329,9 @@ const TSV = (file, contents, fileList, callback) => {
         const row = rows[l]
         const scanRelativePath = row[filenameColumn]
         const scanFullPath = sesPath + '/' + scanRelativePath
-
+        
         // check if scan matches full dataset path list
-        if (!(scanFullPath in pathList)) {
+        if (!(pathList.includes(scanFullPath))) {
           issues.push(
             new Issue({
               line: l,
