@@ -709,4 +709,9 @@ export default {
     reason:
       'A genetic_info.json file is present but no Database field present in Genetics object in dataset_description.json.',
   },
+  129: {
+    key: 'SCANS_FILENAME_NOT_MATCH_DATASET',
+    severity: 'error',
+    reason: 'The filename in scans.tsv file does not match what is present in the BIDS dataset.'
+  }
 }
