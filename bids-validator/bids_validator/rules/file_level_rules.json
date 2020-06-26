@@ -177,13 +177,13 @@
         "asl\\.nii\\.gz",
         "asl\\.nii",
         "asl\\.json",
-        "M0Scan\\.nii\\.gz",
-        "M0Scan\\.nii",
-        "M0Scan\\.json",
-        "M0ScanR\\.nii\\.gz",
-        "M0ScanR\\.nii",
-        "M0ScanR\\.json",
-        "aslContext\\.tsv"
+        "m0scan\\.nii\\.gz",
+        "m0scan\\.nii",
+        "m0scan\\.json",
+        "m0scanR\\.nii\\.gz",
+        "m0scanR\\.nii",
+        "m0scanR\\.json",
+        "aslcontext\\.tsv"
       ]
     }
   },

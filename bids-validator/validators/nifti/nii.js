@@ -653,7 +653,7 @@ module.exports = function NIFTI(
       path.includes('_sbref.nii') ||
       path.includes('_dwi.nii') ||
       path.includes('_asl.nii') ||
-      path.includes('_M0Scan.nii')
+      path.includes('_m0scan.nii')
     ) {
       if (!mergedDictionary.hasOwnProperty('EchoTime')) {
         issues.push(
@@ -704,7 +704,7 @@ module.exports = function NIFTI(
     }
 
     // we don't need slice timing or repetition time for SBref
-    if (path.includes('_bold.nii') || path.includes('_asl.nii') || path.includes('_M0Scan.nii')) {
+    if (path.includes('_bold.nii') || path.includes('_asl.nii') || path.includes('_m0scan.nii')) {
       if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
         issues.push(
           new Issue({
@@ -926,7 +926,7 @@ module.exports = function NIFTI(
         checkIfValidFiletype(intendedForFile, issues, file)
       }
     }
-    if (path.includes('_M0Scan.nii')) {
+    if (path.includes('_m0scan.nii')) {
       if (mergedDictionary.hasOwnProperty('IntendedFor')) {
         const intendedFor =
           typeof mergedDictionary['IntendedFor'] == 'string'

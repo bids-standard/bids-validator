@@ -18,7 +18,7 @@ const getTsvType = function(file) {
     file.name.endsWith('_events.tsv') ||
     file.name.endsWith('_scans.tsv') ||
     file.name.endsWith('_sessions.tsv') ||
-    file.name.endsWith('_aslContext.tsv')
+    file.name.endsWith('_aslcontext.tsv')
   ) {
     const split = file.name.split('_')
     tsvType = split[split.length - 1].replace('.tsv', '')
@@ -110,7 +110,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
     
       // get the _asl_context.tsv associated with this asl scan
       const potentialAslContext = utils.files.potentialLocations(
-        file.relativePath.replace('.gz', '').replace('asl.nii', 'aslContext.tsv'),
+        file.relativePath.replace('.gz', '').replace('asl.nii', 'aslcontext.tsv'),
       )
       const associatedAslContext = potentialAslContext.indexOf(tsv.file.relativePath)
       

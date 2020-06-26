@@ -43,5 +43,5 @@
   "phenotype": ["participant_id"],
   "scans": ["acq_time", "filename"],
   "sessions": ["acq_time", "session_id"],
-  "aslContext": ["volume_type"]
+  "aslcontext": ["volume_type"]
 }
