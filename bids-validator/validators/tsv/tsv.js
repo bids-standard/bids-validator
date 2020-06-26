@@ -305,14 +305,14 @@ const TSV = (file, contents, fileList, callback) => {
   }
 
   if (file.name.endsWith('_scans.tsv')) {
-    // get the directory path for this session
-    const sesPath = path.dirname(file.relativePath)
+    // get the directory path for the scans.tsv
+    const scanDirPath = path.dirname(file.relativePath)
 
     // get the subject and session for this scans.tsv file
-    const [subject, session, _] = file.name.split('_')
+    const subject = file.name.split('_').slice(0, 1)
     
-    // get the relative session path
-    const sesRelativePath = '/' + subject + '/' + session
+    // get the relative subject path
+    const subRelativePath = '/' + subject
 
     // get list of file paths for this subject and session
     const pathList = []
@@ -322,10 +322,10 @@ const TSV = (file, contents, fileList, callback) => {
       // XXX: needs to be improved, since this currently allows arbitrary directory nesting
       // dataset file needs to be within the subject
       // and session directory
-      if (fPath.startsWith(sesRelativePath)) {
-        if (fPath.includes('.ds') || fPath.includes('.bti')) {
+      if (fPath.startsWith(subRelativePath)) {
+        if (fPath.includes('.ds/') || fPath.includes('_meg/')) {
           // CTF or BTI data
-          const fDir = path.dirname(fPath)
+          var fDir = String(path.dirname(fPath))
           pathList.push(fDir)
         } else {
           // all other data kinds
@@ -350,7 +350,7 @@ const TSV = (file, contents, fileList, callback) => {
       for (let l = 1; l < rows.length; l++) {
         const row = rows[l]
         const scanRelativePath = row[filenameColumn]
-        const scanFullPath = sesPath + '/' + scanRelativePath
+        const scanFullPath = scanDirPath + '/' + scanRelativePath
         
         // check if scan matches full dataset path list
         if (!(pathList.includes(scanFullPath))) {

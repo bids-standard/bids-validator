@@ -178,17 +178,17 @@ describe('TSV', function() {
     {
       name: 'c,rf0.1Hz',
       relativePath:
-        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.bti/c,rf0.1Hz',
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg/c,rf0.1Hz',
     },
     {
       name: 'config',
       relativePath:
-        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.bti/config',
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg/config',
     },
     {
       name: 'hs_file',
       relativePath:
-        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.bti/hs_file',
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg/hs_file',
     },
   ]
 
@@ -295,6 +295,25 @@ describe('TSV', function() {
     })
   })
 
+  it('should allow session missing', function() {
+    var niftiNoSesFile = {
+      name: 'sub-08_task-linebisection_run-01_bold.nii.gz',
+      relativePath:
+        '/sub-08/func/sub-08_task-linebisection_run-01_bold.nii.gz',
+    }
+    var scansNoSesFile = {
+      name: 'sub-08_task-linebisection_scans.tsv',
+      relativePath:
+        '/sub-08/sub-08_task-linebisection_scans.tsv',
+    }
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45'
+    validate.TSV.TSV(scansNoSesFile, tsv, [niftiNoSesFile], function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
   it('should not allow mismatched filename entries', function() {
     const fileList = [eegFile]
     const tsv =
@@ -321,7 +340,7 @@ describe('TSV', function() {
     const fileList = btiFiles.concat(ctfFiles)
     const tsv =
       'filename\tacq_time\n' +
-      'meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.bti\t2017-05-03T06:45:45\n' +
+      'meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg\t2017-05-03T06:45:45\n' +
       'meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds\t2017-05-03T06:45:45'
     validate.TSV.TSV(scansFile, tsv, fileList, function(issues) {
       assert.deepEqual(issues, [])
