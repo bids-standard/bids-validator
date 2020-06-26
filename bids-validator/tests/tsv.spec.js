@@ -298,13 +298,11 @@ describe('TSV', function() {
   it('should allow session missing', function() {
     var niftiNoSesFile = {
       name: 'sub-08_task-linebisection_run-01_bold.nii.gz',
-      relativePath:
-        '/sub-08/func/sub-08_task-linebisection_run-01_bold.nii.gz',
+      relativePath: '/sub-08/func/sub-08_task-linebisection_run-01_bold.nii.gz',
     }
     var scansNoSesFile = {
       name: 'sub-08_task-linebisection_scans.tsv',
-      relativePath:
-        '/sub-08/sub-08_task-linebisection_scans.tsv',
+      relativePath: '/sub-08/sub-08_task-linebisection_scans.tsv',
     }
     const tsv =
       'filename\tacq_time\n' +
