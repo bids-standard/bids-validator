@@ -316,8 +316,8 @@ const TSV = (file, contents, fileList, callback) => {
 
     // get list of file paths for this subject and session
     const pathList = []
-    for (let f in fileList) {
-      const fPath = fileList[f].relativePath
+    for (let file of Array.from(fileList)) {
+      const fPath = file.relativePath
       
       // XXX: needs to be improved, since this currently allows arbitrary directory nesting
       // dataset file needs to be within the subject
@@ -325,7 +325,7 @@ const TSV = (file, contents, fileList, callback) => {
       if (fPath.startsWith(subRelativePath)) {
         if (fPath.includes('.ds/') || fPath.includes('_meg/')) {
           // CTF or BTI data
-          var fDir = String(path.dirname(fPath))
+          const fDir = path.dirname(fPath)
           pathList.push(fDir)
         } else {
           // all other data kinds
