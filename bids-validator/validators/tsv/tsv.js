@@ -316,7 +316,7 @@ const TSV = (file, contents, fileList, callback) => {
 
     // get list of file paths for this subject and session
     const pathList = []
-    for (let file of Array.from(fileList)) {
+    for (let file of Object.values(fileList)) {
       const fPath = file.relativePath
       
       // XXX: needs to be improved, since this currently allows arbitrary directory nesting
