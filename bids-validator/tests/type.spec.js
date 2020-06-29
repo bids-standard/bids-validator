@@ -203,6 +203,7 @@ describe('utils.type.file.isMEG', function() {
     '/sub-control01/ses-001/meg/sub-control01_ses-001_task-rest_run-01_meg.raw.mhd',
     // NO father dir: fif data
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_split-01_meg.fif',
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_acq-TEST_run-01_split-01_meg.fif',
   ]
 
   goodFilenames.forEach(function(path) {
@@ -220,6 +221,8 @@ describe('utils.type.file.isMEG', function() {
     // invalid file endings
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.tsv',
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.bogus',
+    // wrong order of entities: https://github.com/bids-standard/bids-validator/issues/767
+    '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_acq-TEST_split-01_meg.fif',
     // only parent directory name matters for BTi and CTF systems
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meggg/config',
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg.dd/xyz',

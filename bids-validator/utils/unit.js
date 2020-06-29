@@ -137,6 +137,11 @@ const unitOperatorPattern = new RegExp(`[${unitOperators.join('')}]`)
 const isUnavailable = unit => unit.trim().toLowerCase() === 'n/a'
 const isPercent = unit => unit.trim() === '%'
 
+/* Validate currently not used, out of line with specification:
+ * https://github.com/bids-standard/bids-specification/pull/411
+ * Once updated to use cmixf uncomment section in tsv validator that
+ * calls this function, remove this comment, and uncomment test in tests/tsv.spec.js
+ */
 /**
  * validate
  *

@@ -274,6 +274,9 @@ const TSV = (file, contents, fileList, callback) => {
   }
 
   // check for valid SI units
+  /* 
+   * Commenting out call to validation until it is inline with spec:
+   * https://github.com/bids-standard/bids-specification/pull/411
   if (headers.includes('units')) {
     const unitIndex = headers.indexOf('units')
     rows
@@ -297,6 +300,7 @@ const TSV = (file, contents, fileList, callback) => {
           )
       })
   }
+  */
 
   // check partcipants.tsv for age 89+
 
