@@ -176,6 +176,82 @@ describe('TSV', function() {
       '/sub-08/ses-test/ieeg/sub-08_ses-test_task-linebisection_run-01_ieeg.edf',
   }
 
+  var btiFiles = [
+    {
+      name: 'c,rf0.1Hz',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg/c,rf0.1Hz',
+    },
+    {
+      name: 'config',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg/config',
+    },
+    {
+      name: 'hs_file',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg/hs_file',
+    },
+  ]
+
+  var ctfFiles = [
+    {
+      name: 'BadChannels',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/BadChannels',
+    },
+    {
+      name: 'bad.segments',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/bad.segments',
+    },
+    {
+      name: 'params.dsc',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/params.dsc',
+    },
+    {
+      name: 'ClassFile.cls',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/ClassFile.cls',
+    },
+    {
+      name: 'processing.cfg',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/processing.cfg',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.res4',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.res4',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.hc',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.hc',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.infods',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.infods',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.acq',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.acq',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.newds',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.newds',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.meg4',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.meg4',
+    },
+  ]
+
   it('should not allow _scans.tsv files without filename column', function() {
     var tsv =
       'header-one\theader-two\theader-three\n' +
@@ -221,6 +297,23 @@ describe('TSV', function() {
     })
   })
 
+  it('should allow session missing', function() {
+    var niftiNoSesFile = {
+      name: 'sub-08_task-linebisection_run-01_bold.nii.gz',
+      relativePath: '/sub-08/func/sub-08_task-linebisection_run-01_bold.nii.gz',
+    }
+    var scansNoSesFile = {
+      name: 'sub-08_task-linebisection_scans.tsv',
+      relativePath: '/sub-08/sub-08_task-linebisection_scans.tsv',
+    }
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45'
+    validate.TSV.TSV(scansNoSesFile, tsv, [niftiNoSesFile], function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
   it('should not allow mismatched filename entries', function() {
     const fileList = [eegFile]
     const tsv =
@@ -238,6 +331,17 @@ describe('TSV', function() {
       'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45\n' +
       'eeg/sub-08_ses-test_task-linebisection_run-01_eeg.fif\t2017-05-03T06:45:45\n' +
       'ieeg/sub-08_ses-test_task-linebisection_run-01_ieeg.edf\t2017-05-03T06:45:45'
+    validate.TSV.TSV(scansFile, tsv, fileList, function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
+  it('should allow matching filename entries for CTF and BTI data', function() {
+    const fileList = btiFiles.concat(ctfFiles)
+    const tsv =
+      'filename\tacq_time\n' +
+      'meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg\t2017-05-03T06:45:45\n' +
+      'meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds\t2017-05-03T06:45:45'
     validate.TSV.TSV(scansFile, tsv, fileList, function(issues) {
       assert.deepEqual(issues, [])
     })
