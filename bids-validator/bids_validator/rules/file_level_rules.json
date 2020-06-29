@@ -1,6 +1,6 @@
 {
   "anat": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?anat[\\/\\\\]\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_ce-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:@@@_anat_suffixes_@@@)\\.(@@@_anat_ext_@@@)$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?anat[\\/\\\\]\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_ce-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(_(?:@@@_anat_suffixes_@@@)\\.(@@@_anat_ext_@@@)|(?:@@@_cont_ext_@@@))$",
     "tokens": {
       "@@@_anat_suffixes_@@@": [
         "T1w",
@@ -20,7 +20,13 @@
         "PDmap",
         "photo"
       ],
-      "@@@_anat_ext_@@@": ["nii\\.gz", "nii", "json"]
+      "@@@_anat_ext_@@@": ["nii\\.gz", "nii", "json"],
+      "@@@_cont_ext_@@@": [
+        "_physio\\.tsv\\.gz",
+        "_stim\\.tsv\\.gz",
+        "_physio\\.json",
+        "_stim\\.json"
+      ]
     }
   },
 
@@ -78,10 +84,16 @@
   },
 
   "dwi": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?dwi[\\/\\\\]\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:@@@_dwi_type_@@@)\\.(@@@_dwi_ext_@@@)$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?dwi[\\/\\\\]\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(_(?:@@@_dwi_type_@@@)\\.(@@@_dwi_ext_@@@)|(?:@@@_cont_ext_@@@))$",
     "tokens": {
       "@@@_dwi_ext_@@@": ["nii\\.gz", "nii", "json", "bvec", "bval"],
-      "@@@_dwi_type_@@@": ["dwi", "sbref"]
+      "@@@_dwi_type_@@@": ["dwi", "sbref"],
+      "@@@_cont_ext_@@@": [
+        "_physio\\.tsv\\.gz",
+        "_stim\\.tsv\\.gz",
+        "_physio\\.json",
+        "_stim\\.json"
+      ]
     }
   },
 
