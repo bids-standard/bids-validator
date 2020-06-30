@@ -306,4 +306,33 @@ describe('JSON', function() {
       assert(issues.length === 1 && issues[0].code == 55)
     })
   })
+
+  var dataset_description_file = {
+    name: 'dataset_description.json',
+    relativePath: '/dataset_description.json',
+  }
+
+  it('dataset_description.json should validate with enum of DatasetType', function() {
+    var jsonObj = {
+      Name: 'Example Name',
+      BidsVersion: '1.4.0',
+      DatasetType: 'raw',
+    }
+    jsonDict[genetic_info_file.relativePath] = jsonObj
+    validate.JSON(genetic_info_file, jsonDict, function(issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  it('dataset_description.json should NOT validate with wrong enum of DatasetType', function() {
+    var jsonObj = {
+      Name: 'Example Name',
+      BidsVersion: '1.4.0',
+      DatasetType: 'badenum',
+    }
+    jsonDict[genetic_info_file.relativePath] = jsonObj
+    validate.JSON(genetic_info_file, jsonDict, function(issues) {
+      assert(issues.length === 1 && issues[0].code == 55)
+    })
+  })
 })
