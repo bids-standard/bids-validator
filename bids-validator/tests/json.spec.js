@@ -318,8 +318,8 @@ describe('JSON', function() {
       BidsVersion: '1.4.0',
       DatasetType: 'raw',
     }
-    jsonDict[genetic_info_file.relativePath] = jsonObj
-    validate.JSON(genetic_info_file, jsonDict, function(issues) {
+    jsonDict[dataset_description_file.relativePath] = jsonObj
+    validate.JSON(dataset_description_file, jsonDict, function(issues) {
       assert(issues.length === 0)
     })
   })
@@ -330,8 +330,8 @@ describe('JSON', function() {
       BidsVersion: '1.4.0',
       DatasetType: 'badenum',
     }
-    jsonDict[genetic_info_file.relativePath] = jsonObj
-    validate.JSON(genetic_info_file, jsonDict, function(issues) {
+    jsonDict[dataset_description_file.relativePath] = jsonObj
+    validate.JSON(dataset_description_file, jsonDict, function(issues) {
       assert(issues.length === 1 && issues[0].code == 55)
     })
   })
