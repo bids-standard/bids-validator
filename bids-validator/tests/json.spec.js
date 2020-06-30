@@ -315,7 +315,8 @@ describe('JSON', function() {
   it('dataset_description.json should validate with enum of DatasetType', function() {
     var jsonObj = {
       Name: 'Example Name',
-      BidsVersion: '1.4.0',
+      BIDSVersion: '1.4.0',
+      Authors: ['example author'],
       DatasetType: 'raw',
     }
     jsonDict[dataset_description_file.relativePath] = jsonObj
@@ -327,7 +328,8 @@ describe('JSON', function() {
   it('dataset_description.json should NOT validate with wrong enum of DatasetType', function() {
     var jsonObj = {
       Name: 'Example Name',
-      BidsVersion: '1.4.0',
+      BIDSVersion: '1.4.0',
+      Authors: ['example author'],
       DatasetType: 'badenum',
     }
     jsonDict[dataset_description_file.relativePath] = jsonObj
