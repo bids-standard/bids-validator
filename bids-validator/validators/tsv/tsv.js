@@ -4,7 +4,7 @@ import checkAcqTimeFormat from './checkAcqTimeFormat'
 import checkAge89 from './checkAge89'
 import checkStatusCol from './checkStatusCol'
 import parseTSV from './tsvParser'
-var path = require('path');
+var path = require('path')
 
 /**
  * Format TSV headers for evidence string
@@ -19,7 +19,6 @@ const headersEvidence = headers => `Column headers: ${headers.join(', ')}`
  * @returns {string}
  */
 const filenameEvidence = filename => `Filename: ${filename}`
-
 
 /**
  * TSV
@@ -135,7 +134,7 @@ const TSV = (file, contents, fileList, callback) => {
         }),
       )
     }
-    if (headers.length == 1 || headers[1].trim() !== 'duration') {
+    if (headers.length < 2 || headers[1].trim() !== 'duration') {
       issues.push(
         new Issue({
           file: file,
@@ -314,7 +313,7 @@ const TSV = (file, contents, fileList, callback) => {
 
     // get the subject and session for this scans.tsv file
     const subject = file.name.split('_').slice(0, 1)
-    
+
     // get the relative subject path
     const subRelativePath = '/' + subject
 
@@ -322,7 +321,7 @@ const TSV = (file, contents, fileList, callback) => {
     const pathList = []
     for (let file of Object.values(fileList)) {
       const fPath = file.relativePath
-      
+
       // XXX: needs to be improved, since this currently allows arbitrary directory nesting
       // dataset file needs to be within the subject
       // and session directory
@@ -336,7 +335,7 @@ const TSV = (file, contents, fileList, callback) => {
           pathList.push(fPath)
         }
       }
-    } 
+    }
 
     // check _scans.tsv for column filename
     if (!(headers.indexOf('filename') > -1)) {
@@ -348,23 +347,23 @@ const TSV = (file, contents, fileList, callback) => {
           code: 68,
         }),
       )
-    } else {  
+    } else {
       // check scans filenames match pathList
       const filenameColumn = headers.indexOf('filename')
       for (let l = 1; l < rows.length; l++) {
         const row = rows[l]
         const scanRelativePath = row[filenameColumn]
         const scanFullPath = scanDirPath + '/' + scanRelativePath
-        
+
         // check if scan matches full dataset path list
-        if (!(pathList.includes(scanFullPath))) {
+        if (!pathList.includes(scanFullPath)) {
           issues.push(
             new Issue({
               line: l,
               file: file,
               code: 129,
               evidence: filenameEvidence(scanFullPath),
-            })
+            }),
           )
         }
       }
