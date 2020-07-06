@@ -4,28 +4,21 @@ const Issue = utils.issues.Issue
 
 export default function checkHedStrings(events, headers, jsonContents) {
   let issues = []
-  // get all headers associated with task data
-  const taskHeaders = headers.filter(header => {
-    const file = header[0]
-    return file.relativePath.includes('_task-')
-  })
 
   const hedStrings = []
 
-  // loop through headers with files that are tasks
-  taskHeaders.forEach(taskHeader => {
-    const file = taskHeader[0]
-
-    // get the json sidecar dictionary associated with that nifti scan
+  // loop through event data files
+  events.forEach(eventFile => {
+    // get the json sidecar dictionary associated with the event data
     const potentialSidecars = utils.files.potentialLocations(
-      file.relativePath.replace('.gz', '').replace('.nii', '.json'),
+      eventFile.path.replace('.tsv', '.json'),
     )
     const mergedDictionary = utils.files.generateMergedSidecarDict(
       potentialSidecars,
       jsonContents,
     )
-    const sidecarHedTags = {}
 
+    const sidecarHedTags = {}
     for (const sidecarKey in mergedDictionary) {
       const sidecarValue = mergedDictionary[sidecarKey]
       if (
@@ -37,66 +30,55 @@ export default function checkHedStrings(events, headers, jsonContents) {
       }
     }
 
-    // get the _events.tsv associated with this task scan
-    const potentialEvents = utils.files.potentialLocations(
-      file.relativePath.replace('.gz', '').replace('bold.nii', 'events.tsv'),
-    )
-    const associatedEvents = events.filter(
-      event => potentialEvents.indexOf(event.path) > -1,
-    )
+    // get all non-empty rows
+    const rows = eventFile.contents
+      .split('\n')
+      .filter(row => !(!row || /^\s*$/.test(row)))
 
-    // loop through all events associated with this task scan
-    for (const event of associatedEvents) {
-      // get all non-empty rows
-      const rows = event.contents
-        .split('\n')
-        .filter(row => !(!row || /^\s*$/.test(row)))
-
-      const columnHeaders = rows[0].trim().split('\t')
-      const hedColumnIndex = columnHeaders.indexOf('HED')
-      const sidecarHedColumnIndices = {}
-      for (const sidecarHedColumn in sidecarHedTags) {
-        const sidecarHedColumnHeader = columnHeaders.indexOf(sidecarHedColumn)
-        if (sidecarHedColumnHeader > -1) {
-          sidecarHedColumnIndices[sidecarHedColumn] = sidecarHedColumnHeader
-        }
+    const columnHeaders = rows[0].trim().split('\t')
+    const hedColumnIndex = columnHeaders.indexOf('HED')
+    const sidecarHedColumnIndices = {}
+    for (const sidecarHedColumn in sidecarHedTags) {
+      const sidecarHedColumnHeader = columnHeaders.indexOf(sidecarHedColumn)
+      if (sidecarHedColumnHeader > -1) {
+        sidecarHedColumnIndices[sidecarHedColumn] = sidecarHedColumnHeader
       }
-      if (hedColumnIndex === -1 && sidecarHedColumnIndices.length === 0) {
-        continue
-      }
+    }
+    if (hedColumnIndex === -1 && sidecarHedColumnIndices.length === 0) {
+      return
+    }
 
-      for (const row of rows.slice(1)) {
-        // get the 'HED' field
-        const rowCells = row.trim().split('\t')
-        const hedStringParts = []
-        if (rowCells[hedColumnIndex]) {
-          hedStringParts.push(rowCells[hedColumnIndex])
-        }
-        for (const sidecarHedColumn in sidecarHedColumnIndices) {
-          const sidecarHedIndex = sidecarHedColumnIndices[sidecarHedColumn]
-          const sidecarHedKey = rowCells[sidecarHedIndex]
-          if (sidecarHedKey) {
-            const sidecarHedString =
-              sidecarHedTags[sidecarHedColumn][sidecarHedKey]
-            if (sidecarHedString !== undefined) {
-              hedStringParts.push(sidecarHedString)
-            } else {
-              issues.push(
-                new Issue({
-                  code: 112,
-                  file: file,
-                  evidence: sidecarHedKey,
-                }),
-              )
-            }
+    for (const row of rows.slice(1)) {
+      // get the 'HED' field
+      const rowCells = row.trim().split('\t')
+      const hedStringParts = []
+      if (rowCells[hedColumnIndex]) {
+        hedStringParts.push(rowCells[hedColumnIndex])
+      }
+      for (const sidecarHedColumn in sidecarHedColumnIndices) {
+        const sidecarHedIndex = sidecarHedColumnIndices[sidecarHedColumn]
+        const sidecarHedKey = rowCells[sidecarHedIndex]
+        if (sidecarHedKey) {
+          const sidecarHedString =
+            sidecarHedTags[sidecarHedColumn][sidecarHedKey]
+          if (sidecarHedString !== undefined) {
+            hedStringParts.push(sidecarHedString)
+          } else {
+            issues.push(
+              new Issue({
+                code: 112,
+                file: eventFile.file,
+                evidence: sidecarHedKey,
+              }),
+            )
           }
         }
-
-        if (hedStringParts.length === 0) {
-          continue
-        }
-        hedStrings.push([file, hedStringParts.join(',')])
       }
+
+      if (hedStringParts.length === 0) {
+        continue
+      }
+      hedStrings.push([eventFile.file, hedStringParts.join(',')])
     }
   })
 
