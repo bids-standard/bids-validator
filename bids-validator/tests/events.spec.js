@@ -918,7 +918,8 @@ describe('Events', function() {
         },
       ]
       const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': { HEDSchemaVersion: '7.0.5' },
+        '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.0.5' },
       }
 
       return validate.Events.validateEvents(

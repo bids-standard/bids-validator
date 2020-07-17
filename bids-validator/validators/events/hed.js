@@ -91,7 +91,7 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
     const schemaDefinition = {}
     const datasetDescription = jsonContents['/dataset_description.json']
 
-    if (datasetDescription.HEDVersion) {
+    if (datasetDescription && datasetDescription.HEDVersion) {
       if (semver.valid(datasetDescription.HEDVersion)) {
         schemaDefinition.version = datasetDescription.HEDVersion
       } else {
