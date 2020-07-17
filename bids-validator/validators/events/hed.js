@@ -1,5 +1,6 @@
 import hedValidator from 'hed-validator'
 import path from 'path'
+import semver from 'semver'
 import utils from '../../utils'
 const Issue = utils.issues.Issue
 
@@ -7,10 +8,6 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
   let issues = []
 
   const hedStrings = []
-
-  // schema file/version spec
-  const schemaDefinition = {}
-  let schemaDefined = false
 
   // loop through event data files
   events.forEach(eventFile => {
@@ -33,20 +30,6 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
       ) {
         sidecarHedTags[sidecarKey] = sidecarValue.HED
       }
-    }
-
-    // find specified version in sidecar
-    if (!schemaDefined) {
-      if (mergedDictionary.HEDSchemaFile) {
-        schemaDefinition.path = path.join(
-          path.resolve(dir),
-          'sourcedata',
-          mergedDictionary.HEDSchemaFile,
-        )
-      } else if (mergedDictionary.HEDSchemaVersion) {
-        schemaDefinition.version = mergedDictionary.HEDSchemaVersion
-      }
-      schemaDefined = true
     }
 
     // get all non-empty rows
@@ -104,6 +87,23 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
   if (hedStrings.length === 0) {
     return Promise.resolve(issues)
   } else {
+    // find specified version in sidecar
+    const schemaDefinition = {}
+    const datasetDescription = jsonContents['/dataset_description.json']
+
+    if (datasetDescription.HEDVersion) {
+      if (semver.valid(datasetDescription.HEDVersion)) {
+        schemaDefinition.version = datasetDescription.HEDVersion
+      } else {
+        schemaDefinition.path = path.join(
+          path.resolve(dir),
+          'sourcedata',
+          datasetDescription.HEDVersion,
+        )
+      }
+    }
+
+    // run HED validator
     return hedValidator.buildSchema(schemaDefinition).then(hedSchema => {
       for (const [file, hedString] of hedStrings) {
         const [isHedStringValid, hedIssues] = hedValidator.validateHedString(
