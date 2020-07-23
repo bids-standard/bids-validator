@@ -395,21 +395,21 @@ describe('TSV', function() {
   }
 
   it('should not allow MEG channels.tsv files without name column', function() {
-    var tsv = 'header-one\ttype\tunits\n' + 'value-one\tvalue-two\tmV'
+    var tsv = 'header-one\ttype\tunits\n' + 'value-one\tEEG\tmV'
     validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
   })
 
   it('should not allow MEG channels.tsv files without type column', function() {
-    var tsv = 'name\theader-two\tunits\n' + 'value-one\tvalue-two\tmV'
+    var tsv = 'name\theader-two\tunits\n' + 'value-one\tEEG\tmV'
     validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
   })
 
   it('should not allow MEG channels.tsv files without units column', function() {
-    var tsv = 'name\ttype\theader-three\n' + 'value-one\tvalue-two\tvalue-three'
+    var tsv = 'name\ttype\theader-three\n' + 'value-one\tEEG\tvalue-three'
     validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
@@ -417,8 +417,7 @@ describe('TSV', function() {
 
   it('should allow MEG channels.tsv files with name, type and units columns', function() {
     var tsv =
-      'name\ttype\tunits\theader-four\n' +
-      'value-one\tvalue-two\tmV\tvalue-four'
+      'name\ttype\tunits\theader-four\n' + 'value-one\tEEG\tmV\tvalue-four'
     validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
       assert(issues.length === 0)
     })
@@ -431,21 +430,21 @@ describe('TSV', function() {
   }
 
   it('should not allow EEG channels.tsv files without name column', function() {
-    var tsv = 'header-one\ttype\tunits\n' + 'value-one\tvalue-two\tmV'
+    var tsv = 'header-one\ttype\tunits\n' + 'value-one\tEEG\tmV'
     validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
   })
 
   it('should not allow EEG channels.tsv files without type column', function() {
-    var tsv = 'name\theader-two\tunits\n' + 'value-one\tvalue-two\tmV'
+    var tsv = 'name\theader-two\tunits\n' + 'value-one\tEEG\tmV'
     validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
   })
 
   it('should not allow EEG channels.tsv files without units column', function() {
-    var tsv = 'name\ttype\theader-three\n' + 'value-one\tvalue-two\tvalue-three'
+    var tsv = 'name\ttype\theader-three\n' + 'value-one\tEEG\tvalue-three'
     validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
@@ -453,8 +452,7 @@ describe('TSV', function() {
 
   it('should allow EEG channels.tsv files with name, type and units columns', function() {
     var tsv =
-      'name\ttype\tunits\theader-four\n' +
-      'value-one\tvalue-two\tmV\tvalue-four'
+      'name\ttype\tunits\theader-four\n' + 'value-one\tEEG\tmV\tvalue-four'
     validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
       assert(issues.length === 0)
     })
@@ -469,7 +467,7 @@ describe('TSV', function() {
   it('should not allow iEEG channels.tsv files without low_cutoff column', function() {
     var tsv =
       'name\ttype\tunits\textra-column\thigh_cutoff\n' +
-      'value-name\tvalue-type\tmV\tvalue-fake\tvalue-highcut'
+      'value-name\tECOG\tmV\tvalue-fake\tvalue-highcut'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 72)
     })
@@ -478,7 +476,7 @@ describe('TSV', function() {
   it('should not allow iEEG channels.tsv files without high_cutoff column', function() {
     var tsv =
       'name\ttype\tunits\tlow_cutoff\textra-column\n' +
-      'value-name\tvalue-type\tmV\tvalue-lowcut\tvalue-fake'
+      'value-name\tECOG\tmV\tvalue-lowcut\tvalue-fake'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 72)
     })
@@ -487,7 +485,7 @@ describe('TSV', function() {
   it('should not allow iEEG channels.tsv files with value other than good/bad in status column', function() {
     var tsv =
       'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
-      'value-name\tvalue-type\tmV\tvalue-lowcut\tvalue-highcut\tnot-good'
+      'value-name\tECOG\tmV\tvalue-lowcut\tvalue-highcut\tnot-good'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 125)
     })
@@ -496,9 +494,36 @@ describe('TSV', function() {
   it('correct columns should pass for iEEG channels.tsv file', function() {
     var tsv =
       'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
-      'value-name\tvalue-type\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+      'value-name\tECOG\tmV\tvalue-lowcut\tvalue-highcut\tgood'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 0)
+    })
+  })
+
+  it('should not allow iEEG channels.tsv files with value other than accepted values in type column', function() {
+    var tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tmeeg\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+    validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 131)
+    })
+  })
+
+  it('should not allow EEG channels.tsv files with value other than accepted values in type column', function() {
+    var tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tmeeg\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 131)
+    })
+  })
+
+  it('should not allow MEG channels.tsv files with value other than accepted values in type column', function() {
+    var tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tmeeg\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 131)
     })
   })
 
