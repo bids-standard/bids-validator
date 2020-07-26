@@ -240,6 +240,7 @@ describe('Events', function() {
             },
           },
         },
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -273,6 +274,7 @@ describe('Events', function() {
             },
           },
         },
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -307,6 +309,7 @@ describe('Events', function() {
             },
           },
         },
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -339,6 +342,7 @@ describe('Events', function() {
             },
           },
         },
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -372,6 +376,7 @@ describe('Events', function() {
             },
           },
         },
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -407,6 +412,7 @@ describe('Events', function() {
             },
           },
         },
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -447,6 +453,7 @@ describe('Events', function() {
             },
           },
         },
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -488,6 +495,7 @@ describe('Events', function() {
             },
           },
         },
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -529,6 +537,7 @@ describe('Events', function() {
             },
           },
         },
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -559,6 +568,7 @@ describe('Events', function() {
             },
           },
         },
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
