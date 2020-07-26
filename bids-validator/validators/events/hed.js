@@ -101,6 +101,8 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
           datasetDescription.HEDVersion,
         )
       }
+    } else {
+      issues.push(new Issue({ code: 130 }))
     }
 
     // run HED validator

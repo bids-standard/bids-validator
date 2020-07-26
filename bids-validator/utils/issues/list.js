@@ -695,13 +695,13 @@ export default {
     key: 'INVALID_TSV_UNITS',
     severity: 'error',
     reason:
-      'Units in .tsv files must be valid SI units as described in the BIDS spec Appendix V (https://bids-specification.readthedocs.io/en/stable/99-appendices/05-units.html).'
+      'Units in .tsv files must be valid SI units as described in the BIDS spec Appendix V (https://bids-specification.readthedocs.io/en/stable/99-appendices/05-units.html).',
   },
   125: {
     key: 'CHANNELS_COLUMN_STATUS',
     severity: 'error',
     reason:
-      'Status column in channels.tsv files must contain only one of two values: good or bad. Per the BIDS spec: (https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/04-intracranial-electroencephalography.html#channels-description-_channelstsv).'
+      'Status column in channels.tsv files must contain only one of two values: good or bad. Per the BIDS spec: (https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/04-intracranial-electroencephalography.html#channels-description-_channelstsv).',
   },
   128: {
     key: 'NO_GENETIC_DATABASE',
@@ -712,6 +712,13 @@ export default {
   129: {
     key: 'SCANS_FILENAME_NOT_MATCH_DATASET',
     severity: 'error',
-    reason: 'The filename in scans.tsv file does not match what is present in the BIDS dataset.'
-  }
+    reason:
+      'The filename in scans.tsv file does not match what is present in the BIDS dataset.',
+  },
+  130: {
+    key: 'HED_VERSION_NOT_DEFINED',
+    severity: 'warning',
+    reason:
+      "You should define 'HEDVersion' for this file. If you don't provide this information, the HED validation will use the latest version available.",
+  },
 }

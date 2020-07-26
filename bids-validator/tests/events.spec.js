@@ -127,6 +127,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -153,6 +154,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -178,6 +180,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -204,6 +207,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -581,6 +585,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -607,6 +612,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -633,6 +639,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -659,6 +666,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -685,6 +693,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -711,6 +720,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -737,6 +747,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -763,6 +774,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -789,6 +801,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -815,6 +828,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -841,6 +855,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -867,6 +882,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
@@ -893,6 +909,7 @@ describe('Events', function() {
       ]
       const jsonDictionary = {
         '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
 
       return validate.Events.validateEvents(
