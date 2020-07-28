@@ -297,6 +297,15 @@ describe('TSV', function() {
     })
   })
 
+  it('should allow acq_time column entries with optional fractional seconds', function() {
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45.88288'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
   it('should allow session missing', function() {
     var niftiNoSesFile = {
       name: 'sub-08_task-linebisection_run-01_bold.nii.gz',
