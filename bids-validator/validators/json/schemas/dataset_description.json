@@ -8,6 +8,9 @@
     "BIDSVersion": {
       "type": "string"
     },
+    "HEDVersion": {
+      "type": "string"
+    },
     "License": {
       "type": "string"
     },

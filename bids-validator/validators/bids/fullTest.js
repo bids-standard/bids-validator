@@ -176,7 +176,13 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
 
       // Events validation
       stimuli.directory = files.stimuli
-      return Events.validateEvents(events, stimuli, headers, jsonContentsDict)
+      return Events.validateEvents(
+        events,
+        stimuli,
+        headers,
+        jsonContentsDict,
+        dir,
+      )
     })
     .then(eventsIssues => {
       self.issues = self.issues.concat(eventsIssues)

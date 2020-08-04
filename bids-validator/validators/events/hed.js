@@ -1,8 +1,10 @@
 import hedValidator from 'hed-validator'
+import path from 'path'
+import semver from 'semver'
 import utils from '../../utils'
 const Issue = utils.issues.Issue
 
-export default function checkHedStrings(events, headers, jsonContents) {
+export default function checkHedStrings(events, headers, jsonContents, dir) {
   let issues = []
 
   const hedStrings = []
@@ -85,7 +87,26 @@ export default function checkHedStrings(events, headers, jsonContents) {
   if (hedStrings.length === 0) {
     return Promise.resolve(issues)
   } else {
-    return hedValidator.buildSchema().then(hedSchema => {
+    // find specified version in sidecar
+    const schemaDefinition = {}
+    const datasetDescription = jsonContents['/dataset_description.json']
+
+    if (datasetDescription && datasetDescription.HEDVersion) {
+      if (semver.valid(datasetDescription.HEDVersion)) {
+        schemaDefinition.version = datasetDescription.HEDVersion
+      } else {
+        schemaDefinition.path = path.join(
+          path.resolve(dir),
+          'sourcedata',
+          datasetDescription.HEDVersion,
+        )
+      }
+    } else {
+      issues.push(new Issue({ code: 132 }))
+    }
+
+    // run HED validator
+    return hedValidator.buildSchema(schemaDefinition).then(hedSchema => {
       for (const [file, hedString] of hedStrings) {
         const [isHedStringValid, hedIssues] = hedValidator.validateHedString(
           hedString,
