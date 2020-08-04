@@ -9,5 +9,13 @@ describe('type.js', () => {
         ),
       ).toBe(true)
     })
+
+    it('does not throw an error for recording entity in physio data', () => {
+      expect(
+        type.isBIDS(
+          '/sub-05/eeg/sub-05_task-matchingpennies_recording-eyetracking_physio.tsv.gz',
+        ),
+      ).toBe(true)
+    })
   })
 })

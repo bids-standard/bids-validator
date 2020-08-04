@@ -466,7 +466,7 @@ export default {
     key: 'ACQTIME_FMT',
     severity: 'error',
     reason:
-      'Entries in the "acq_time" column of _scans.tsv should be expressed in the following format YYYY-MM-DDTHH:mm:ss (year, month, day, hour (24h), minute, second; this is equivalent to the RFC3339 “date-time” format. ',
+      'Entries in the "acq_time" column of _scans.tsv should be expressed in the following format YYYY-MM-DDTHH:mm:ss[.000000] (year, month, day, hour (24h), minute, second, and optionally fractional second; this is equivalent to the RFC3339 "date-time" format.',
   },
   85: {
     key: 'SUSPICIOUSLY_LONG_EVENT_DESIGN',
@@ -716,9 +716,19 @@ export default {
       'The filename in scans.tsv file does not match what is present in the BIDS dataset.',
   },
   130: {
+    key: 'CHANNELS_COLUMN_TYPE_UPPER_CASE',
+    severity: 'error',
+    reason: 'Type column in channels.tsv files should consist of upper-case characters.'
+  },
+  131: {
+    key: 'CHANNELS_COLUMN_TYPE',
+    severity: 'error',
+    reason: 'Type column in channels.tsv files should only consist of values allowed in the specification for MEG/EEG/iEEG data.'
+  },
+  132: {
     key: 'HED_VERSION_NOT_DEFINED',
     severity: 'warning',
     reason:
       "You should define 'HEDVersion' for this file. If you don't provide this information, the HED validation will use the latest version available.",
-  },
+  }
 }

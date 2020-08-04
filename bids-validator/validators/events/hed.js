@@ -102,7 +102,7 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
         )
       }
     } else {
-      issues.push(new Issue({ code: 130 }))
+      issues.push(new Issue({ code: 132 }))
     }
 
     // run HED validator
