@@ -23,7 +23,6 @@ const associatedData = buildRegExp(associated_data_rules.associated_data)
 const anatData = buildRegExp(file_level_rules.anat)
 const anatDefacemaskData = buildRegExp(file_level_rules.anat_defacemask)
 const behavioralData = buildRegExp(file_level_rules.behavioral)
-const contData = buildRegExp(file_level_rules.cont)
 const dwiData = buildRegExp(file_level_rules.dwi)
 const eegData = buildRegExp(file_level_rules.eeg)
 const fieldmapData = buildRegExp(file_level_rules.field_map)
@@ -76,7 +75,6 @@ export default {
       this.file.isIEEG(path) ||
       this.file.isEEG(path) ||
       this.file.isBehavioral(path) ||
-      this.file.isCont(path) ||
       this.file.isFieldMap(path) ||
       this.file.isPhenotypic(path)
     )
@@ -217,10 +215,6 @@ export default {
       return conditionalMatch(funcBoldData, path)
     },
 
-    isCont: function(path) {
-      return conditionalMatch(contData, path)
-    },
-
     hasModality: function(path) {
       return (
         this.isAnat(path) ||
@@ -232,8 +226,7 @@ export default {
         this.isEEG(path) ||
         this.isIEEG(path) ||
         this.isBehavioral(path) ||
-        this.isFuncBold(path) ||
-        this.isCont(path)
+        this.isFuncBold(path)
       )
     },
   },
