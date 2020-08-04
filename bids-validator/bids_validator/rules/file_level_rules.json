@@ -62,7 +62,7 @@
         "_beh\\.json",
         "_beh\\.tsv",
         "_events\\.json",
-        "_events\\.tsv",
+        "_events\\.tsv"
       ],
       "@@@_cont_ext_@@@": [
         "_physio\\.tsv\\.gz",
