@@ -10,6 +10,7 @@ const Issue = utils.issues.Issue
  *
  * @param {Object[]} contRecordings - Array of continous recording file
  * objects.
+ * @param {Object[]} jsonContentsDict - content of all json files found.
  * @returns {Object[]} Array of issues generated during validation.
  */
 const validateContRec = function(contRecordings, jsonContentsDict) {
