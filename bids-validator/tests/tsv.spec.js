@@ -660,7 +660,7 @@ describe('TSV', function() {
   var physio_file = {
     name: 'sub-20_ses-1_task-rest_acq-prefrontal_physio.tsv.gz',
     relativePath:
-      '/sub-20/ses-1/func/sub-20_ses-1_task-rest_acq-prefrontal_physio.tsv.gz'
+      '/sub-20/ses-1/func/sub-20_ses-1_task-rest_acq-prefrontal_physio.tsv.gz',
   }
 
   it('should not allow physio.tsv.gz file without some associated json', function() {
