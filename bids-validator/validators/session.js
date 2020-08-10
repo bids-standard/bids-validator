@@ -1,6 +1,7 @@
-var utils = require('../utils')
+import utils from '../utils'
 const sesUtils = utils.files.sessions
 var Issue = utils.issues.Issue
+import isNode from '../utils/isNode'
 
 /**
  * session
@@ -34,8 +35,7 @@ function getDataOrganization(fileList) {
     if (fileList.hasOwnProperty(key)) {
       const file = fileList[key]
 
-      if (!file || (typeof window != 'undefined' && !file.webkitRelativePath))
-        continue
+      if (!file || (!isNode && !file.webkitRelativePath)) continue
 
       const path = file.relativePath
       if (!utils.type.isBIDS(path) || utils.type.file.isStimuliData(path))
@@ -234,7 +234,17 @@ function checkMissingFile(subject, subjKey, filename) {
   }
 }
 
-module.exports = {
+export {
+  session,
+  getDataOrganization,
+  getFilename,
+  missingSessionWarnings,
+  getSubjectFiles,
+  missingFileWarnings,
+  checkFileInMissingSession,
+  checkMissingFile,
+}
+export default {
   session,
   getDataOrganization,
   getFilename,

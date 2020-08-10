@@ -1,8 +1,10 @@
-const ignore = require('ignore')
-const readFile = require('./readFile')
-const path = require('path')
-const fs = require('fs')
-const isNode = typeof window === 'undefined'
+import ignore from 'ignore'
+import readFile from './readFile'
+import path from 'path'
+import crypto from 'crypto'
+import fs from 'fs'
+import { spawn } from 'child_process'
+import isNode from '../isNode'
 
 /**
  * Read Directory
@@ -13,29 +15,32 @@ const isNode = typeof window === 'undefined'
  * similar structure to how chrome reads a directory.
  * In the browser it simply passes the file dir
  * object to the callback.
+ * @param {String} dir Path to read
+ * @param {Object} options
+ * @param {boolean} options.ignoreSymlinks enable to prevent recursively following directory symlinks
+ * @returns {Promise<Object>}
  */
-function readDir(dir, callback) {
-  /**
-   * If the current environment is server side
-   * nodejs/iojs import fs.
-   */
+async function readDir(dir, options = {}) {
+  const ig = await getBIDSIgnore(dir)
+  const fileArray = isNode
+    ? await preprocessNode(path.resolve(dir), ig, options)
+    : preprocessBrowser(dir, ig)
+  const files = fileArrayToObject(fileArray)
+  return files
+}
 
-  var filesObj = {}
-  var filesList = []
-
-  function callbackWrapper(ig) {
-    if (isNode) {
-      filesList = preprocessNode(dir, ig)
-    } else {
-      filesList = preprocessBrowser(dir, ig)
-    }
-    // converting array to object
-    for (var j = 0; j < filesList.length; j++) {
-      filesObj[j] = filesList[j]
-    }
-    callback(filesObj)
+/**
+ * Transform array of file-like objects to one object with each file as a property
+ * @param {Array[Object]} fileArray
+ * @returns {Object}
+ */
+function fileArrayToObject(fileArray) {
+  const filesObj = {}
+  // converting array to object
+  for (let j = 0; j < fileArray.length; j++) {
+    filesObj[j] = fileArray[j]
   }
-  getBIDSIgnore(dir, callbackWrapper)
+  return filesObj
 }
 
 /**
@@ -45,9 +50,9 @@ function readDir(dir, callback) {
  * 2. Adds 'relativePath' field of each file object.
  */
 function preprocessBrowser(filesObj, ig) {
-  var filesList = []
-  for (var i = 0; i < filesObj.length; i++) {
-    var fileObj = filesObj[i]
+  const filesList = []
+  for (let i = 0; i < filesObj.length; i++) {
+    const fileObj = filesObj[i]
     fileObj.relativePath = harmonizeRelativePath(fileObj.webkitRelativePath)
     if (ig.ignores(path.relative('/', fileObj.relativePath))) {
       fileObj.ignore = true
@@ -58,23 +63,30 @@ function preprocessBrowser(filesObj, ig) {
 }
 
 /**
- * Relative Path
+ * Harmonize Relative Path
  *
- * Takes a file and returns the correct relative path property
+ * Takes a file and returns the browser style relative path
  * base on the environment.
+ *
+ * Since this may be called in the browser, do not call Node.js modules
+ *
+ * @param {String} path Relative path to normalize
+ * @returns {String}
  */
 function harmonizeRelativePath(path) {
   // This hack uniforms relative paths for command line calls to 'BIDS-examples/ds001/' and 'BIDS-examples/ds001'
-  // try {
-  //   console.log(path[0] == '/')
-  // } catch(e) {
-  //   console.log('e:', e)
-  // }
-  if (path[0] !== '/') {
-    var pathParts = path.split('/')
-    path = '/' + pathParts.slice(1).join('/')
+  if (path.indexOf('\\') !== -1) {
+    // This is likely a Windows path - Node.js
+    const pathParts = path.split('\\')
+    return '/' + pathParts.slice(1).join('/')
+  } else if (path[0] !== '/') {
+    // Bad POSIX path - Node.js
+    const pathParts = path.split('/')
+    return '/' + pathParts.slice(1).join('/')
+  } else {
+    // Already correct POSIX path - Browsers (all platforms)
+    return path
   }
-  return path
 }
 
 /**
@@ -84,78 +96,236 @@ function harmonizeRelativePath(path) {
  * 2. Filters out ignored files and folder.
  * 3. Harmonizes the 'relativePath' field
  */
-function preprocessNode(dir, ig) {
-  var str = dir.substr(dir.lastIndexOf('/') + 1) + '$'
-  var rootpath = dir.replace(new RegExp(str), '')
-  return getFiles(dir, [], rootpath, ig)
+async function preprocessNode(dir, ig, options) {
+  const str = dir.substr(dir.lastIndexOf(path.sep) + 1) + '$'
+  const rootpath = dir.replace(new RegExp(str), '')
+  if (options.gitTreeMode) {
+    // if in gitTreeMode, attempt to get files from git-annex metadata
+    // before using fs
+    const files = await getFilesFromGitTree(dir, ig, options)
+    if (files !== null) return files
+  }
+  return await getFilesFromFs(dir, rootpath, ig, options)
+}
+
+/**
+ * runs command `git ls-tree -l -r <git-ref>` in given directory
+ * @param {string} cwd path to dataset directory
+ * @param {string} gitRef git ref (commit hash, ref, 'HEAD', etc)
+ * @returns {string[]}
+ */
+const getGitLsTree = (cwd, gitRef) =>
+  new Promise((resolve, reject) => {
+    let output = ''
+    const gitProcess = spawn('git', ['ls-tree', '-l', '-r', gitRef], {
+      cwd,
+      encoding: 'utf-8',
+    })
+    gitProcess.stdout.on('data', data => {
+      output += data.toString()
+    })
+    gitProcess.stderr.on('data', () => {
+      resolve(null)
+    })
+    gitProcess.on('close', () => {
+      resolve(output.trim().split('\n'))
+    })
+  })
+
+const computeFileHash = (gitHash, path) => {
+  const hash = crypto.createHash('sha1')
+  hash.update(`${gitHash}:${path}`)
+  return hash.digest('hex')
+}
+
+const readLsTreeLines = gitTreeLines =>
+  gitTreeLines
+    .map(line => {
+      const [metadata, path] = line.split('\t')
+      const [mode, objType, objHash, size] = metadata.split(/\s+/)
+      return { path, mode, objType, objHash, size }
+    })
+    .filter(
+      ({ path, mode }) =>
+        // skip git / datalad files and submodules
+        !/^\.git/.test(path) &&
+        !/^\.datalad/.test(path) &&
+        '.gitattributes' !== path &&
+        mode !== '160000',
+    )
+    .reduce(
+      (
+        // accumulator
+        { files, symlinkFilenames, symlinkObjects },
+        // git-tree line
+        { path, mode, objHash, size },
+      ) => {
+        // read ls-tree line
+        if (mode === '120000') {
+          symlinkFilenames.push(path)
+          symlinkObjects.push(objHash)
+        } else {
+          files.push({
+            path,
+            size: parseInt(size),
+          })
+        }
+        return { files, symlinkFilenames, symlinkObjects }
+      },
+      { files: [], symlinkFilenames: [], symlinkObjects: [] },
+    )
+
+/**
+ * runs `git cat-file --batch --buffer` in given directory
+ * @param {string} cwd
+ * @param {string} input
+ * @returns {string[]}
+ */
+const getGitCatFile = (cwd, input) =>
+  new Promise(resolve => {
+    let output = ''
+    const gitProcess = spawn('git', ['cat-file', '--batch', '--buffer'], {
+      cwd,
+      encoding: 'utf-8',
+    })
+
+    // pass in symlink objects
+    gitProcess.stdin.write(input)
+    gitProcess.stdin.end()
+
+    gitProcess.stdout.on('data', data => {
+      output += data.toString()
+    })
+    gitProcess.stderr.on('data', () => {
+      resolve(null)
+    })
+    gitProcess.on('close', () => {
+      resolve(output.trim().split('\n'))
+    })
+  })
+
+const readCatFileLines = (gitCatFileLines, symlinkFilenames) =>
+  gitCatFileLines
+    // even lines contain unneeded metadata
+    .filter((_, i) => i % 2 === 1)
+    .map((line, i) => {
+      const path = symlinkFilenames[i]
+      const key = line.split('/').pop()
+      const size = parseInt(key.match(/-s(\d+)/)[1])
+      return {
+        path,
+        size,
+      }
+    })
+
+const processFiles = (dir, ig, ...fileLists) =>
+  fileLists
+    .reduce((allFiles, files) => [...allFiles, ...files], [])
+    .map(file => {
+      file.relativePath = path.normalize(`${path.sep}${file.path}`)
+      return file
+    })
+    .filter(file => {
+      const ignore = ig.ignores(file.relativePath.slice(1))
+      return !ignore
+    })
+    .map(file => {
+      file.relativePath = harmonizeRelativePath(file.relativePath)
+      file.name = path.basename(file.path)
+      file.path = path.join(dir, file.relativePath)
+      return file
+    })
+
+async function getFilesFromGitTree(dir, ig, options) {
+  const gitTreeLines = await getGitLsTree(dir, options.gitRef)
+  if (
+    gitTreeLines === null ||
+    (gitTreeLines.length === 1 && gitTreeLines[0] === '')
+  )
+    return null
+  const { files, symlinkFilenames, symlinkObjects } = readLsTreeLines(
+    gitTreeLines,
+  )
+
+  const gitCatFileLines = await getGitCatFile(dir, symlinkObjects.join('\n'))
+  // example gitCatFile output:
+  //   .git/annex/objects/Mv/99/SHA256E-s54--42c98d14dbe3d066d35897a61154e39ced478cd1f0ec6159ba5f2361c4919878.json/SHA256E-s54--42c98d14dbe3d066d35897a61154e39ced478cd1f0ec6159ba5f2361c4919878.json
+  //   .git/annex/objects/QV/mW/SHA256E-s99--bbef536348750373727d3b5856398d7377e5d7e23875eed026b83d12cee6f885.json/SHA256E-s99--bbef536348750373727d3b5856398d7377e5d7e23875eed026b83d12cee6f885.json
+  const symlinkFiles = readCatFileLines(gitCatFileLines, symlinkFilenames)
+
+  return processFiles(dir, ig, files, symlinkFiles)
 }
 
 /**
  * Recursive helper function for 'preprocessNode'
  */
-function getFiles(dir, files_, rootpath, ig) {
-  files_ = files_ || []
-  const files = fs.readdirSync(dir)
-  files.map(file => {
-    var fullPath = dir + '/' + file
-    var relativePath = fullPath.replace(rootpath, '')
-    relativePath = harmonizeRelativePath(relativePath)
-
-    var fileName = file
-
-    var fileObj = {
-      name: fileName,
-      path: fullPath,
-      relativePath: relativePath,
-    }
-
-    if (ig.ignores(path.relative('/', relativePath))) {
-      fileObj.ignore = true
-    }
-
-    if (isDirectory(fullPath)) {
-      getFiles(fullPath, files_, rootpath, ig)
-    } else {
-      files_.push(fileObj)
-    }
-  })
-
-  return files_
-}
-
-/**
- * Leverage fs.isDirectory by following Symbolic Links
- */
-function isDirectory(path) {
-  const pathStat = fs.lstatSync(path)
-  let isDir = pathStat.isDirectory()
-  if (pathStat.isSymbolicLink()) {
-    try {
-      var targetPath = fs.realpathSync(path)
-      isDir = fs.lstatSync(targetPath).isDirectory()
-    } catch (err) {
-      isDir = false
+async function getFilesFromFs(dir, rootPath, ig, options) {
+  const files = await fs.promises.readdir(dir, { withFileTypes: true })
+  const filesAccumulator = []
+  // Closure to merge the next file depth into this one
+  const recursiveMerge = async nextRoot => {
+    Array.prototype.push.apply(
+      filesAccumulator,
+      await getFilesFromFs(nextRoot, rootPath, ig, options),
+    )
+  }
+  for (const file of files) {
+    const fullPath = path.join(dir, file.name)
+    const relativePath = harmonizeRelativePath(
+      path.relative(rootPath, fullPath),
+    )
+    const ignore = ig.ignores(path.relative('/', relativePath))
+    if (!ignore) {
+      const fileObj = {
+        name: file.name,
+        path: fullPath,
+        relativePath,
+      }
+      // Three cases to consider: directories, files, symlinks
+      if (file.isDirectory()) {
+        await recursiveMerge(fullPath)
+      } else if (file.isSymbolicLink()) {
+        // Allow skipping symbolic links which lead to recursion
+        // Disabling this is a big performance advantage on high latency
+        // storage but it's a good default for versatility
+        if (!options.ignoreSymlinks) {
+          try {
+            const targetPath = await fs.promises.realpath(fullPath)
+            const targetStat = await fs.promises.stat(targetPath)
+            // Either add or recurse from the target depending
+            if (targetStat.isDirectory()) {
+              await recursiveMerge(targetPath)
+            } else {
+              filesAccumulator.push(fileObj)
+            }
+          } catch (err) {
+            // Symlink points at an invalid target, skip it
+            return
+          }
+        } else {
+          // This branch assumes all symbolic links are not directories
+          filesAccumulator.push(fileObj)
+        }
+      } else {
+        filesAccumulator.push(fileObj)
+      }
     }
   }
-  return isDir
+  return filesAccumulator
 }
 
-function getBIDSIgnore(dir, callback) {
-  var ig = ignore()
+async function getBIDSIgnore(dir) {
+  const ig = ignore()
     .add('.*')
     .add('!*.icloud')
     .add('/derivatives')
     .add('/sourcedata')
     .add('/code')
 
-  var bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir)
+  const bidsIgnoreFileObj = getBIDSIgnoreFileObj(dir)
   if (bidsIgnoreFileObj) {
-    readFile(bidsIgnoreFileObj).then(content => {
-      ig = ig.add(content)
-      callback(ig)
-    })
-  } else {
-    callback(ig)
+    const content = await readFile(bidsIgnoreFileObj)
+    ig.add(content)
   }
   return ig
 }
@@ -166,35 +336,49 @@ function getBIDSIgnore(dir, callback) {
  * @returns File object or null if not found
  */
 function getBIDSIgnoreFileObj(dir) {
-  var bidsIgnoreFileObj = null
   if (isNode) {
-    bidsIgnoreFileObj = getBIDSIgnoreFileObjNode(dir)
+    return getBIDSIgnoreFileObjNode(dir)
   } else {
-    bidsIgnoreFileObj = getBIDSIgnoreFileObjBrowser(dir)
+    return getBIDSIgnoreFileObjBrowser(dir)
   }
-  return bidsIgnoreFileObj
 }
 
 function getBIDSIgnoreFileObjNode(dir) {
-  var bidsIgnoreFileObj = null
-  var path = dir + '/.bidsignore'
-  if (fs.existsSync(path)) {
-    bidsIgnoreFileObj = { path: path }
+  const path = dir + '/.bidsignore'
+  try {
+    fs.accessSync(path)
+    return { path: path, stats: { size: null } }
+  } catch (err) {
+    return null
   }
-  return bidsIgnoreFileObj
 }
 
 function getBIDSIgnoreFileObjBrowser(dir) {
-  var bidsIgnoreFileObj = null
   for (var i = 0; i < dir.length; i++) {
-    var fileObj = dir[i]
-    var relativePath = harmonizeRelativePath(fileObj.webkitRelativePath)
+    const fileObj = dir[i]
+    const relativePath = harmonizeRelativePath(fileObj.webkitRelativePath)
     if (relativePath === '/.bidsignore') {
-      bidsIgnoreFileObj = fileObj
-      break
+      return fileObj
     }
   }
-  return bidsIgnoreFileObj
 }
 
-module.exports = readDir
+export {
+  readDir,
+  getFilesFromFs,
+  fileArrayToObject,
+  harmonizeRelativePath,
+  readLsTreeLines,
+  readCatFileLines,
+  processFiles,
+}
+
+export default Object.assign(readDir, {
+  readDir,
+  getFilesFromFs,
+  fileArrayToObject,
+  harmonizeRelativePath,
+  readLsTreeLines,
+  readCatFileLines,
+  processFiles,
+})

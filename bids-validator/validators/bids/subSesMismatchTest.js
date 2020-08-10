@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 /**
@@ -103,11 +103,9 @@ const mismatchError = (type, file) => {
   }
   return new Issue({
     code: code,
-    evidence: `File: ${
-      file.relativePath
-    } is saved in incorrect ${type} directory as per ${abbrv}-id in filename.`,
+    evidence: `File: ${file.relativePath} is saved in incorrect ${type} directory as per ${abbrv}-id in filename.`,
     file: file,
   })
 }
 
-module.exports = subSesMismatchTest
+export default subSesMismatchTest

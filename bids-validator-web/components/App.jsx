@@ -4,38 +4,52 @@ import Issues from '../components/Issues'
 import BrowserWarning from './BrowserWarning'
 import Validate from '../components/Validate'
 import validate from 'bids-validator'
+import validatorPackageJson from 'bids-validator/package.json'
+const version = validatorPackageJson.version
 
 // component setup -----------------------------------------------------------
+
+const initState = () => ({
+  dirName: '',
+  list: {},
+  nameError: null,
+  projectId: '',
+  refs: {},
+  errors: [],
+  warnings: [],
+  summary: null,
+  status: '',
+  uploadStatus: '',
+  options: {
+    ignoreWarnings: false,
+    ignoreNiftiHeaders: false,
+  },
+})
 
 export default class App extends React.Component {
   constructor() {
     super()
-    this.state = {
-      dirName: '',
-      list: {},
-      nameError: null,
-      projectId: '',
-      refs: {},
-      errors: [],
-      warnings: [],
-      summary: null,
-      status: '',
-      uploadStatus: '',
-    }
+    this.state = initState()
     this.validate = this._validate.bind(this)
     this.reset = this._reset.bind(this)
   }
 
   _validate(selectedFiles) {
+    const dirName = selectedFiles.list[0].webkitRelativePath.split('/')[0]
+    const defaultConfig = `${dirName}/.bids-validator-config.json`
     this.setState({
       status: 'validating',
       showIssues: true,
       activeKey: 3,
-      dirName: selectedFiles.list[0].webkitRelativePath.split('/')[0],
+      dirName,
     })
     return validate.BIDS(
       selectedFiles.list,
-      { verbose: true },
+      {
+        verbose: true,
+        ...this.state.options,
+        config: defaultConfig,
+      },
       (issues, summary) => {
         if (issues === 'Invalid') {
           return this.setState({
@@ -56,18 +70,18 @@ export default class App extends React.Component {
   }
 
   _reset() {
-    this.setState({
-      dirName: '',
-      list: {},
-      nameError: null,
-      projectId: '',
-      refs: {},
-      errors: [],
-      warnings: [],
-      summary: null,
-      status: '',
-      uploadStatus: '',
-    })
+    this.setState(initState())
+  }
+
+  handleOptionToggle = e => {
+    const { name } = e.target
+    this.setState(prevState => ({
+      ...prevState,
+      options: {
+        ...prevState.options,
+        [name]: !prevState.options[name],
+      },
+    }))
   }
 
   render() {
@@ -78,8 +92,11 @@ export default class App extends React.Component {
         <nav className="navbar navbar-dark bg-dark fixed-top">
           <div className="container">
             <div className="navbar-header">
-              <a className="navbar-brand" href="#">
-                BIDS Validator
+              <a
+                className="navbar-brand"
+                href="https://www.npmjs.com/package/bids-validator"
+                target="_blank">
+                BIDS Validator v{version}
               </a>
             </div>
           </div>
@@ -92,7 +109,9 @@ export default class App extends React.Component {
             {!browserUnsupported ? (
               <Validate
                 loading={this.state.status === 'validating'}
+                options={this.state.options}
                 onChange={this.validate}
+                handleOptionToggle={this.handleOptionToggle}
               />
             ) : null}
           </div>

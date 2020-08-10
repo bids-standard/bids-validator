@@ -1,9 +1,9 @@
-const AWS = require('aws-sdk')
-const fs = require('fs')
-const cp = require('child_process')
-const Issue = require('../issues').Issue
-const zlib = require('zlib')
-const isNode = typeof window === 'undefined'
+import AWS from 'aws-sdk'
+import fs from 'fs'
+import cp from 'child_process'
+import Issue from '../issues'
+import zlib from 'zlib'
+import isNode from '../isNode'
 
 /**
  * Remote Files
@@ -104,9 +104,7 @@ const remoteFiles = {
 
   constructAwsUrl: function(config) {
     // bucket + key url
-    let url = `http://s3.amazonaws.com/${config.s3Params.Bucket}/${
-      config.s3Params.Key
-    }`
+    let url = `http://s3.amazonaws.com/${config.s3Params.Bucket}/${config.s3Params.Key}`
 
     // add version to url, if exists
     url = config.s3Params.VersionId
@@ -227,10 +225,9 @@ const remoteFiles = {
   },
   // Check if a local directory is a git-annex repo
   isGitAnnex: function(path) {
-    if (typeof window === 'undefined')
-      return fs.existsSync(path + '/.git/annex')
+    if (isNode) return fs.existsSync(path + '/.git/annex')
     return false
   },
 }
 
-module.exports = remoteFiles
+export default remoteFiles

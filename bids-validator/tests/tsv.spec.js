@@ -1,5 +1,5 @@
-var assert = require('assert')
-var validate = require('../index')
+import assert from 'assert'
+import validate from '../index'
 
 describe('TSV', function() {
   // general tsv checks ------------------------------------------------------------------
@@ -33,6 +33,19 @@ describe('TSV', function() {
       assert(issues.length === 1 && issues[0].code === 22)
     })
   })
+
+  /* See utils.unit.validate for comment
+  it('should not allow non-SI units', function() {
+    var tsv =
+      'header-one\tunits\theader-three\n' +
+      'value-one\tµV\tvalue-three\n' +
+      'value-one\tuV\tvalue-three'
+
+    validate.TSV.TSV(file, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].key === 'INVALID_TSV_UNITS')
+    })
+  })
+  */
 
   // events checks -----------------------------------------------------------------------
 
@@ -143,8 +156,101 @@ describe('TSV', function() {
   var scansFile = {
     name: 'sub-08_ses-test_task-linebisection_scans.tsv',
     relativePath:
-      '/sub-08/ses-test/func/sub-08_ses-test_task-linebisection_scans.tsv',
+      '/sub-08/ses-test/sub-08_ses-test_task-linebisection_scans.tsv',
   }
+
+  var niftiFile = {
+    name: 'sub-08_ses-test_task-linebisection_run-01_bold.nii.gz',
+    relativePath:
+      '/sub-08/ses-test/func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz',
+  }
+
+  var eegFile = {
+    name: 'sub-08_ses-test_task-linebisection_run-01_eeg.fif',
+    relativePath:
+      '/sub-08/ses-test/eeg/sub-08_ses-test_task-linebisection_run-01_eeg.fif',
+  }
+  var ieegFile = {
+    name: 'sub-08_ses-test_task-linebisection_run-01_ieeg.edf',
+    relativePath:
+      '/sub-08/ses-test/ieeg/sub-08_ses-test_task-linebisection_run-01_ieeg.edf',
+  }
+
+  var btiFiles = [
+    {
+      name: 'c,rf0.1Hz',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg/c,rf0.1Hz',
+    },
+    {
+      name: 'config',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg/config',
+    },
+    {
+      name: 'hs_file',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg/hs_file',
+    },
+  ]
+
+  var ctfFiles = [
+    {
+      name: 'BadChannels',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/BadChannels',
+    },
+    {
+      name: 'bad.segments',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/bad.segments',
+    },
+    {
+      name: 'params.dsc',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/params.dsc',
+    },
+    {
+      name: 'ClassFile.cls',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/ClassFile.cls',
+    },
+    {
+      name: 'processing.cfg',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/processing.cfg',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.res4',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.res4',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.hc',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.hc',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.infods',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.infods',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.acq',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.acq',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.newds',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.newds',
+    },
+    {
+      name: 'sub-08_ses-test_task-linebisection_acq-01_run-01_meg.meg4',
+      relativePath:
+        '/sub-08/ses-test/meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds/sub-01_ses-01_task-testing_acq-01_run-01_meg.meg4',
+    },
+  ]
 
   it('should not allow _scans.tsv files without filename column', function() {
     var tsv =
@@ -158,29 +264,103 @@ describe('TSV', function() {
   it('should allow _scans.tsv files with filename column', function() {
     var tsv =
       'header-one\tfilename\theader-three\n' +
-      'value-one\tvalue-two\tvalue-three'
-    validate.TSV.TSV(scansFile, tsv, [], function(issues) {
+      'value-one\tfunc/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\tvalue-three'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
       assert.deepEqual(issues, [])
     })
   })
 
   it('should not allow improperly formatted acq_time column entries', function() {
-    const tsv = 'filename\tacq_time\n' + 'value-one\t000001'
-    validate.TSV.TSV(scansFile, tsv, [], function(issues) {
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t000001'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
       assert(issues.length === 1 && issues[0].code === 84)
     })
   })
 
   it('should allow n/a as acq_time column entries', function() {
-    const tsv = 'filename\tacq_time\n' + 'value-one\tn/a'
-    validate.TSV.TSV(scansFile, tsv, [], function(issues) {
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\tn/a'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
       assert.deepEqual(issues, [])
     })
   })
 
   it('should allow properly formatted acq_time column entries', function() {
-    const tsv = 'filename\tacq_time\n' + 'value-one\t2017-05-03T06:45:45'
-    validate.TSV.TSV(scansFile, tsv, [], function(issues) {
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
+  it('should allow acq_time column entries with optional fractional seconds', function() {
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45.88288'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
+  it('should allow acq_time column entries with optional UTC specifier: "Z"', function() {
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45.88288Z'
+    validate.TSV.TSV(scansFile, tsv, [niftiFile], function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
+  it('should allow session missing', function() {
+    var niftiNoSesFile = {
+      name: 'sub-08_task-linebisection_run-01_bold.nii.gz',
+      relativePath: '/sub-08/func/sub-08_task-linebisection_run-01_bold.nii.gz',
+    }
+    var scansNoSesFile = {
+      name: 'sub-08_task-linebisection_scans.tsv',
+      relativePath: '/sub-08/sub-08_task-linebisection_scans.tsv',
+    }
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45'
+    validate.TSV.TSV(scansNoSesFile, tsv, [niftiNoSesFile], function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
+  it('should not allow mismatched filename entries', function() {
+    const fileList = [eegFile]
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45'
+    validate.TSV.TSV(scansFile, tsv, fileList, function(issues) {
+      assert(issues.length === 1 && issues[0].code === 129)
+    })
+  })
+
+  it('should allow matching filename entries', function() {
+    const fileList = [niftiFile, eegFile, ieegFile]
+    const tsv =
+      'filename\tacq_time\n' +
+      'func/sub-08_ses-test_task-linebisection_run-01_bold.nii.gz\t2017-05-03T06:45:45\n' +
+      'eeg/sub-08_ses-test_task-linebisection_run-01_eeg.fif\t2017-05-03T06:45:45\n' +
+      'ieeg/sub-08_ses-test_task-linebisection_run-01_ieeg.edf\t2017-05-03T06:45:45'
+    validate.TSV.TSV(scansFile, tsv, fileList, function(issues) {
+      assert.deepEqual(issues, [])
+    })
+  })
+
+  it('should allow matching filename entries for CTF and BTI data', function() {
+    const fileList = btiFiles.concat(ctfFiles)
+    const tsv =
+      'filename\tacq_time\n' +
+      'meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg\t2017-05-03T06:45:45\n' +
+      'meg/sub-08_ses-test_task-linebisection_acq-01_run-01_meg.ds\t2017-05-03T06:45:45'
+    validate.TSV.TSV(scansFile, tsv, fileList, function(issues) {
       assert.deepEqual(issues, [])
     })
   })
@@ -224,21 +404,21 @@ describe('TSV', function() {
   }
 
   it('should not allow MEG channels.tsv files without name column', function() {
-    var tsv = 'header-one\ttype\tunits\n' + 'value-one\tvalue-two\tvalue-three'
+    var tsv = 'header-one\ttype\tunits\n' + 'value-one\tEEG\tmV'
     validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
   })
 
   it('should not allow MEG channels.tsv files without type column', function() {
-    var tsv = 'name\theader-two\tunits\n' + 'value-one\tvalue-two\tvalue-three'
+    var tsv = 'name\theader-two\tunits\n' + 'value-one\tEEG\tmV'
     validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
   })
 
   it('should not allow MEG channels.tsv files without units column', function() {
-    var tsv = 'name\ttype\theader-three\n' + 'value-one\tvalue-two\tvalue-three'
+    var tsv = 'name\ttype\theader-three\n' + 'value-one\tEEG\tvalue-three'
     validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
@@ -246,8 +426,7 @@ describe('TSV', function() {
 
   it('should allow MEG channels.tsv files with name, type and units columns', function() {
     var tsv =
-      'name\ttype\tunits\theader-four\n' +
-      'value-one\tvalue-two\tvalue-three\tvalue-four'
+      'name\ttype\tunits\theader-four\n' + 'value-one\tEEG\tmV\tvalue-four'
     validate.TSV.TSV(channelsFileMEG, tsv, [], function(issues) {
       assert(issues.length === 0)
     })
@@ -260,21 +439,21 @@ describe('TSV', function() {
   }
 
   it('should not allow EEG channels.tsv files without name column', function() {
-    var tsv = 'header-one\ttype\tunits\n' + 'value-one\tvalue-two\tvalue-three'
+    var tsv = 'header-one\ttype\tunits\n' + 'value-one\tEEG\tmV'
     validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
   })
 
   it('should not allow EEG channels.tsv files without type column', function() {
-    var tsv = 'name\theader-two\tunits\n' + 'value-one\tvalue-two\tvalue-three'
+    var tsv = 'name\theader-two\tunits\n' + 'value-one\tEEG\tmV'
     validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
   })
 
   it('should not allow EEG channels.tsv files without units column', function() {
-    var tsv = 'name\ttype\theader-three\n' + 'value-one\tvalue-two\tvalue-three'
+    var tsv = 'name\ttype\theader-three\n' + 'value-one\tEEG\tvalue-three'
     validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 71)
     })
@@ -282,8 +461,7 @@ describe('TSV', function() {
 
   it('should allow EEG channels.tsv files with name, type and units columns', function() {
     var tsv =
-      'name\ttype\tunits\theader-four\n' +
-      'value-one\tvalue-two\tvalue-three\tvalue-four'
+      'name\ttype\tunits\theader-four\n' + 'value-one\tEEG\tmV\tvalue-four'
     validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
       assert(issues.length === 0)
     })
@@ -298,7 +476,7 @@ describe('TSV', function() {
   it('should not allow iEEG channels.tsv files without low_cutoff column', function() {
     var tsv =
       'name\ttype\tunits\textra-column\thigh_cutoff\n' +
-      'value-name\tvalue-type\tvalue-units\tvalue-fake\tvalue-highcut'
+      'value-name\tECOG\tmV\tvalue-fake\tvalue-highcut'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 72)
     })
@@ -307,17 +485,71 @@ describe('TSV', function() {
   it('should not allow iEEG channels.tsv files without high_cutoff column', function() {
     var tsv =
       'name\ttype\tunits\tlow_cutoff\textra-column\n' +
-      'value-name\tvalue-type\tvalue-units\tvalue-lowcut\tvalue-fake'
+      'value-name\tECOG\tmV\tvalue-lowcut\tvalue-fake'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 72)
     })
   })
 
+  it('should not allow iEEG channels.tsv files with value other than good/bad in status column', function() {
+    var tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tECOG\tmV\tvalue-lowcut\tvalue-highcut\tnot-good'
+    validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 125)
+    })
+  })
+
   it('correct columns should pass for iEEG channels.tsv file', function() {
     var tsv =
-      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\n' +
-      'value-name\tvalue-type\tvalue-units\tvalue-lowcut\tvalue-highcut'
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tECOG\tmV\tvalue-lowcut\tvalue-highcut\tgood'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  it('should not allow iEEG channels.tsv files with value other than accepted values in type column', function() {
+    var tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tMEEG\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+    validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 131)
+    })
+  })
+
+  it('should not allow EEG channels.tsv files with value other than accepted values in type column', function() {
+    var tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tMEEG\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 131)
+    })
+  })
+
+  it('should not allow MEG channels.tsv files with value other than accepted values in type column', function() {
+    var tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tMEEG\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 131)
+    })
+  })
+
+  it('should not allow channels.tsv files with lower-casing in type column', function() {
+    var tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\teeg\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 130)
+    })
+  })
+
+  it('should allow iEEG channels.tsv files with accepted values in type column', function() {
+    var tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tECOG\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
       assert(issues.length === 0)
     })
   })

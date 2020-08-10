@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+import utils from '../../utils'
 
 const groupFileTypes = (fileList, options) => {
   const files = {
@@ -65,7 +65,13 @@ const ephysTest = filename => {
     'set',
     'fdt',
     'nwb',
-    'mef',
+    'rdat',
+    'ridx',
+    'tdat',
+    'tidx',
+    'tmet',
+    'vidx',
+    'vmet',
   ].includes(filename.split('.').pop())
 }
 
@@ -74,4 +80,4 @@ const ofType = (filename, extension) => {
   return filename && filename.endsWith(ending)
 }
 
-module.exports = groupFileTypes
+export default groupFileTypes

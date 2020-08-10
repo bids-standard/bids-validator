@@ -1,5 +1,5 @@
 const Issue = require('../../utils').issues.Issue
-const type = require('../../utils').type
+import { type } from '../../utils'
 
 /**
  * bvec
@@ -9,7 +9,7 @@ const type = require('../../utils').type
  * with any issues it finds while validating
  * against the BIDS specification.
  */
-module.exports = function bvec(file, contents, callback) {
+export default function bvec(file, contents, callback) {
   let issues = []
 
   issues = issues.concat(checkType(contents, file))

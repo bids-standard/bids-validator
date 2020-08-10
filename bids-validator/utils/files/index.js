@@ -1,21 +1,22 @@
 // dependencies -------------------------------------------------------------------
+import FileAPI from './FileAPI'
 
-const FileAPI = require('./FileAPI')
-const newFile = require('./newFile')
-const readFile = require('./readFile')
-const readNiftiHeader = require('./readNiftiHeader')
-const readDir = require('./readDir')
-const potentialLocations = require('./potentialLocations')
-const generateMergedSidecarDict = require('./generateMergedSidecarDict')
-const getBFileContent = require('./getBFileContent')
-const collectDirectorySize = require('./collectDirectorySize')
-const illegalCharacterTest = require('./illegalCharacterTest')
-const sessions = require('./sessions')
-const remoteFiles = require('./remoteFiles')
+import newFile from './newFile'
+import readFile from './readFile'
+import readNiftiHeader from './readNiftiHeader'
+import readDir from './readDir'
+import potentialLocations from './potentialLocations'
+import generateMergedSidecarDict from './generateMergedSidecarDict'
+import getBFileContent from './getBFileContent'
+import collectDirectorySize from './collectDirectorySize'
+import illegalCharacterTest from './illegalCharacterTest'
+import sessions from './sessions'
+import remoteFiles from './remoteFiles'
+import getFileStats from './getFileStats'
 
 // public API ---------------------------------------------------------------------
 
-var fileUtils = {
+export default {
   FileAPI,
   newFile,
   readFile,
@@ -28,6 +29,5 @@ var fileUtils = {
   illegalCharacterTest,
   sessions,
   remoteFiles,
+  getFileStats,
 }
-
-module.exports = fileUtils

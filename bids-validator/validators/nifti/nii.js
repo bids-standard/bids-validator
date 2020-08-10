@@ -1,4 +1,4 @@
-const utils = require('../../utils')
+import utils from '../../utils'
 const Issue = utils.issues.Issue
 
 /**
@@ -9,7 +9,7 @@ const Issue = utils.issues.Issue
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function NIFTI(
+export default function NIFTI(
   header,
   file,
   jsonContentsDict,
@@ -760,8 +760,8 @@ module.exports = function NIFTI(
             }),
           )
         } else {
-          const niftiTR = Number(repetitionTime.toFixed(3))
-          const jsonTR = Number(mergedDictionary.RepetitionTime.toFixed(3))
+          const niftiTR = Number(repetitionTime).toFixed(3)
+          const jsonTR = Number(mergedDictionary.RepetitionTime).toFixed(3)
           if (niftiTR !== jsonTR) {
             issues.push(
               new Issue({
@@ -831,7 +831,7 @@ module.exports = function NIFTI(
             new Issue({
               file: file,
               code: 66,
-              evidence: valuesGreaterThanRepetitionTime,
+              evidence: valuesGreaterThanRepetitionTime.join(', '),
             }),
           )
         }

@@ -1,0 +1,176 @@
+{
+  "title": "bids-validator",
+  "description": "The bids-validator is a software tool to check neuroimaging datasets for adherence to the Brain Imaging Data Structure (BIDS) format. More information about BIDS can be found at <a href=\"https://bids.neuroimaging.io\">bids.neuroimaging.io</a>.",
+  "keywords": [
+    "BIDS",
+    "brain imaging data structure",
+    "neuroscience",
+    "neuroimaging",
+    "neuroinformatics"
+  ],
+  "creators": [
+    {
+      "affiliation": "Stanford University",
+      "name": "Blair, Ross",
+      "orcid": "0000-0003-3007-1056"
+    },
+    {
+      "name": "Michael, Zack"
+    },
+    {
+      "affiliation": "Google",
+      "name": "Gorgolewski, Krzysztof J.",
+      "orcid": "0000-0003-3321-7583"
+    },
+    {
+      "affiliation": "Squishymedia",
+      "name": "Hardcastle, Nell",
+      "orcid": "0000-0002-3837-0707"
+    },
+    {
+      "name": "Hobson-Lowther, Teal"
+    },
+    {
+      "name": "Nishikawa, David"
+    },
+    {
+      "name": "Bhogawar, Suyash",
+      "affiliation": "Northern California Institute for Research and Education, San Francisco CA"
+    },
+    {
+      "affiliation": "Center for Adaptive Rationality, Max Planck Institute for Human Development, Berlin, Germany",
+      "name": "Appelhoff, Stefan",
+      "orcid": "0000-0001-8002-0877"
+    },
+    {
+      "affiliation": "AA Martinos Center for Biomedical Imaging, USA",
+      "name": "Jas, Mainak",
+      "orcid": "0000-0002-3199-9027"
+    },
+    {
+      "name": "Grass, Brian"
+    },
+    {
+      "affiliation": "Stanford University",
+      "name": "Markiewicz, Christopher J.",
+      "orcid": "0000-0002-6533-164X"
+    },
+    {
+      "affiliation": "Berkeley Institute for Data Science; University of California at Berkeley",
+      "name": "Holdgraf, Chris",
+      "orcid": "0000-0002-2391-0678"
+    },
+    {
+      "name": "Jones, Alexander",
+      "affiliation": "University of Texas at San Antonio",
+      "orcid": "0000-0003-2067-3862"
+    },
+    {
+      "name": "Goyal, Rohan"
+    },
+    {
+      "name": "Oostenveld, Robert",
+      "affiliation": "Radboud University",
+      "orcid": "0000-0002-1974-1293"
+    },
+    {
+      "name": "Noack, Gregory"
+    },
+    {
+      "name": "Triplett, William"
+    },
+    {
+      "name": "Naveau, Mikaël",
+      "affiliation": "CYCERON imaging plateform, Caen, France",
+      "orcid": "https://orcid.org/0000-0002-4685-0057"
+    },
+    {
+      "name": "Zito, Matthew",
+      "orcid": "0000-0003-2704-0742"
+    },
+    {
+      "name": "Durnez, Joke"
+    },
+    {
+      "affiliation": "Pasteur Institute",
+      "name": "Traut, Nicolas",
+      "orcid": "0000-0003-3277-6316"
+    },
+    {
+      "name": "Sethi, Parul"
+    },
+    {
+      "affiliation": "Dartmouth College",
+      "name": "Halchenko, Yaroslav O.",
+      "orcid": "0000-0003-3456-2493"
+    },
+    {
+      "name": "Papadopoulos, Dimitri"
+    },
+    {
+      "name": "Wexler, Joseph"
+    },
+    {
+      "affiliation": "Florida International University",
+      "name": "Salo, Taylor",
+      "orcid": "0000-0001-9813-3167"
+    },
+    {
+      "name": "Thomas, Adam"
+    },
+    {
+      "affiliation": "Research Center Jülich; Heinrich-Heine University Düsseldorf",
+      "name": "Hanke, Michael",
+      "orcid": "0000-0001-6398-6370"
+    },
+    {
+      "affiliation": "Indiana University",
+      "name": "Hayashi, Soichi",
+      "orcid": "0000-0003-3641-3491"
+    },
+    {
+      "name": "Warren, David E."
+    },
+    {
+      "name": "Patterson, Dianne"
+    },
+    {
+      "name": "Macleod, Duncan"
+    },
+    {
+      "affiliation": "Heinrich-Heine University Düsseldorf",
+      "name": "Ort, Eduard",
+      "orcid": "0000-0001-5546-3561"
+    },
+    {
+      "name": "Feingold, Franklin",
+      "affiliation": "Department of Psychology, Stanford University",
+      "orcid": "0000-0002-6533-2909"
+    },
+    {
+      "affiliation": "MIT",
+      "name": "Christian, Horea",
+      "orcid": "0000-0001-7037-2449"
+    },
+    {
+      "affiliation": "Stony Brook University School of Medicine",
+      "name": "Kaczmarzyk, Jakub",
+      "orcid": "0000-0002-5544-7577"
+    },
+    {
+      "affiliation": "Stanford University",
+      "name": "Poldrack, Russell",
+      "orcid": "0000-0001-6755-0259"
+    },
+    {
+      "affiliation": "National Institutes of Health",
+      "name": "Riddle, Travis",
+      "orcid": "0000-0001-8160-3986"
+    },
+    {
+      "name": "Zulfikar, Wazeer"
+    }
+  ],
+  "license": "mit-license",
+  "upload_type": "software"
+}

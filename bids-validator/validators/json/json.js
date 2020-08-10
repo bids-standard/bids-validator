@@ -1,5 +1,5 @@
-const utils = require('../../utils')
-const Ajv = require('ajv')
+import utils from '../../utils'
+import Ajv from 'ajv'
 const ajv = new Ajv({ allErrors: true })
 ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'))
 const Issue = utils.issues.Issue
@@ -12,9 +12,8 @@ const Issue = utils.issues.Issue
  * it finds while validating against the BIDS
  * specification.
  */
-module.exports = function(file, jsonContentsDict, callback) {
+export default function(file, jsonContentsDict, callback) {
   // primary flow --------------------------------------------------------------------
-
   let issues = []
   const potentialSidecars = utils.files.potentialLocations(file.relativePath)
   const mergedDictionary = utils.files.generateMergedSidecarDict(
@@ -110,6 +109,10 @@ const selectSchema = file => {
       file.name.endsWith('coordsystem.json')
     ) {
       schema = require('./schemas/coordsystem_eeg.json')
+    } else if (
+        file.name.endsWith('genetic_info.json')
+    ) {
+      schema = require('./schemas/genetic_info.json')
     }
   }
   return schema

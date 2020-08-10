@@ -1,6 +1,6 @@
-var list = require('./list')
-var Issue = require('./issue')
-var config = require('../config')
+import list from './list'
+import Issue from './issue'
+import config from '../config'
 
 var issues = {
   /**
@@ -134,9 +134,7 @@ var issues = {
     return new Issue({
       file: callStack,
       evidence: err.stack || '',
-      reason: `${
-        err.message
-      }; please help the BIDS team and community by opening an issue at (https://github.com/bids-standard/bids-validator/issues) with the evidence here.`,
+      reason: `${err.message}; please help the BIDS team and community by opening an issue at (https://github.com/bids-standard/bids-validator/issues) with the evidence here.`,
       code: 0,
     })
   },
@@ -208,4 +206,4 @@ var issues = {
   },
 }
 
-module.exports = issues
+export default Object.assign(Issue, issues)

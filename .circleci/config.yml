@@ -1,0 +1,212 @@
+version: 2
+
+jobs:
+  test_python:
+    docker:
+      - image: continuumio/miniconda3
+    environment:
+      BASH_ENV: "/root/.bashrc"
+    steps:
+      - checkout
+      - run:
+          name: setup conda
+          command: |
+            conda create -n testenv Python=3.7
+            conda init
+      - run:
+          name: install datalad
+          command: |
+            conda activate testenv
+            conda install -c conda-forge git-annex
+            pip install pytest flake8 pydocstyle datalad
+      - run:
+          name: test python
+          command: |
+            conda activate testenv
+            pytest --doctest-modules bids-validator/bids_validator
+            flake8 bids-validator/bids_validator
+            pydocstyle bids-validator/bids_validator/bids_validator.py
+  test:
+    docker:
+      - image: node:12.16.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - npm-deps-{{ checksum "package.json" }}
+      - run: yarn
+      - save_cache:
+          key: npm-deps-{{ checksum "package.json" }}
+          paths: node_modules
+      - run:
+          name: Eslint
+          command: yarn lint
+      - run:
+          name: Test Data
+          command: git submodule update --init
+      - run:
+          name: Jest tests
+          command: yarn coverage --maxWorkers=2
+      - run:
+          name: Upload to codecov
+          command: yarn codecov
+      - run:
+          name: Smoke tests
+          command: bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders && bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders --json
+  test_docker:
+    machine:
+      # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - run: docker build -t bids/validator:latest .
+      - run:
+          name: Smoke tests
+          command: |
+            docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders
+            docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
+  githubPagesTest:
+    docker:
+      - image: node:12.14.1-alpine
+    steps:
+      - run: apk --no-cache add ca-certificates git openssh-client
+      - checkout
+      - restore_cache:
+          keys:
+            - npm-deps-{{ checksum "package.json" }}
+      - run: apk --no-cache add rsync git python build-base openssh
+      - run:
+          name: Install bids-validator and bids-validator-web dependencies
+          command: yarn
+      - run:
+          name: Build and export web-validator
+          command: yarn web-export && rsync -av ./bids-validator-web/out/ ~/web_version
+      - store_artifacts:
+          path: ~/web_version
+  pypi_precheck:
+    docker:
+      - image: alpine:3.8
+    steps:
+      - run: apk --no-cache add ca-certificates git openssh-client
+      - checkout
+      - run:
+          name: Set up environment
+          command: apk --no-cache add build-base libffi-dev libressl-dev
+      - run:
+          name: Install Python 3 and build tools
+          command: apk --no-cache add python3 python3-dev
+      - run:
+          name: Update Python install tools
+          command: python3 -m pip install --upgrade pip setuptools wheel
+      - run:
+          name: Install twine, readme renderer
+          command: python3 -m pip install twine readme_renderer[md]
+      - run:
+          name: Check build and readme rendering
+          command: |
+            cd bids-validator && python3 setup.py sdist bdist_wheel
+            twine check dist/*
+      - run:
+          name: Check sdist installation
+          command: |
+            cd bids-validator
+            python3 -m pip install -U virtualenv
+            virtualenv venv
+            source venv/bin/activate
+            python --version
+            pip install -U pip setuptools>=27.0 wheel
+            pip install dist/*.tar.gz
+  deployment:
+    docker:
+      - image: node:12.14.1-alpine
+    steps:
+      - run: apk --no-cache add ca-certificates git openssh-client
+      - add_ssh_keys:
+          fingerprints:
+            - '86:74:77:4c:90:02:f4:5d:b4:f8:3c:b4:37:c3:c0:25'
+      - checkout
+      - run: apk --no-cache add python build-base openssh libffi-dev libressl-dev
+      - run:
+          name: Install Python 3 and update setuptools
+          command: |
+            apk --no-cache add python3 python3-dev py3-cffi
+            python3 -m pip install --upgrade pip setuptools wheel twine
+      - run: git checkout -f $CIRCLE_TAG
+      - run: cd bids-validator && python3 setup.py sdist bdist_wheel
+      # Publish to PyPI
+      - run: cd bids-validator && twine upload dist/*
+      # Update gh-pages demo site
+      - run: git config --global user.email "bids.maintenance@gmail.com"
+      - run: git config --global user.name "bids-maintenance"
+      - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - run:
+          name: Create new gh-pages branch without history
+          command: git checkout --orphan gh-pages
+      - run:
+          name: Install web demo dependencies
+          command: yarn
+      - run:
+          name: Build and export next project
+          command: yarn web-export
+      - run:
+          name: Clean and remove bids-validator files
+          command: git reset . && git clean --force -d --exclude bids-validator-web/out
+      - run:
+          name: Move build into root directory
+          command: mv bids-validator-web/out/* .
+      - run:
+          name: Remove files not related to build
+          command: rm -r bids-validator bids-validator-web node_modules
+      - run:
+          name: Create a nojekyll file (gh-pages specific)
+          command: touch .nojekyll
+      - run: git status
+      - run:
+          name: Commit updates
+          command: git add . && git commit --allow-empty --no-verify -m "Circle CI - Generate validator demo with version $CIRCLE_TAG"
+      - run: git push origin gh-pages -f
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - test_python:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+      - test:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+      - test_docker:
+          filters:
+            tags:
+              only: /.*/
+      - githubPagesTest:
+          requires:
+            - test
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+      - pypi_precheck:
+          filters:
+            tags:
+              only: /.*/
+      - deployment:
+          requires:
+            - test_python
+            - test
+            - test_docker
+            - githubPagesTest
+            - pypi_precheck
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/

@@ -1,7 +1,29 @@
-const testFile = require('./testFile')
-const Issue = require('../../utils/issues').Issue
-const fs = require('fs')
-const isNode = typeof window === 'undefined'
+import testFile from './testFile'
+import Issue from '../../utils/issues'
+import fs from 'fs'
+import isNode from '../isNode'
+import checkIfUtf8 from 'is-utf8'
+
+const JSONFilePattern = /.json$/
+const isJSONFile = file =>
+  JSONFilePattern.test(isNode ? file.name : file.relativePath)
+
+// Work around JSDom not providing TextDecoder yet
+if (typeof TextDecoder === 'undefined') {
+  const { TextDecoder } = require('util')
+  global.TextDecoder = TextDecoder
+}
+
+/**
+ * checkEncoding
+ * @param {object | File} file - nodeJS fs file or browser File
+ * @param {buffer | Uint8Array} data - file content buffer
+ * @param {function} cb - returns { isUtf8 }
+ */
+const checkEncoding = (file, data, cb) => {
+  if (isJSONFile(file)) cb({ isUtf8: checkIfUtf8(data) })
+}
+
 /**
  * Read
  *
@@ -17,38 +39,42 @@ const isNode = typeof window === 'undefined'
 function readFile(file, annexed, dir) {
   return new Promise((resolve, reject) => {
     if (isNode) {
-      testFile(file, annexed, dir, function(issue, stats, remoteBuffer) {
+      testFile(file, annexed, dir, function (issue, stats, remoteBuffer) {
         if (issue) {
-          process.nextTick(function() {
-            return reject(issue)
-          })
+          return reject(issue)
         }
         if (!remoteBuffer) {
-          fs.readFile(file.path, 'utf8', function(err, data) {
-            process.nextTick(function() {
-              return resolve(data)
+          fs.readFile(file.path, function (err, data) {
+            if (err) {
+              return reject(err)
+            }
+            checkEncoding(file, data, ({ isUtf8 }) => {
+              if (!isUtf8) reject(new Issue({ code: 123, file }))
             })
+            return resolve(data.toString('utf8'))
           })
         }
         if (remoteBuffer) {
-          process.nextTick(function() {
-            return resolve(remoteBuffer.toString('utf8'))
-          })
+          return resolve(remoteBuffer.toString('utf8'))
         }
       })
     } else {
-      var reader = new FileReader()
-      reader.onloadend = function(e) {
+      const reader = new FileReader()
+      reader.onloadend = e => {
         if (e.target.readyState == FileReader.DONE) {
           if (!e.target.result) {
             return reject(new Issue({ code: 44, file: file }))
           }
-          return resolve(e.target.result)
+          const buffer = new Uint8Array(e.target.result)
+          checkEncoding(file, buffer, ({ isUtf8 }) => {
+            if (!isUtf8) reject(new Issue({ code: 123, file }))
+          })
+          return resolve(new TextDecoder().decode(buffer))
         }
       }
-      reader.readAsBinaryString(file)
+      reader.readAsArrayBuffer(file)
     }
   })
 }
 
-module.exports = readFile
+export default readFile

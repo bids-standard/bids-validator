@@ -1,9 +1,10 @@
-const BIDS = require('./obj')
-const reset = require('./reset')
-const quickTest = require('./quickTest')
-const quickTestError = require('./quickTestError')
-const fullTest = require('./fullTest')
-const utils = require('../../utils')
+import { version } from '../../package.json'
+import BIDS from './obj'
+import reset from './reset'
+import quickTest from './quickTest'
+import quickTestError from './quickTestError'
+import fullTest from './fullTest'
+import utils from '../../utils'
 
 /**
  * Start
@@ -16,14 +17,17 @@ const utils = require('../../utils')
  * arguments to the callback.
  */
 const start = (dir, options, callback) => {
-  utils.options.parse(options, function(issues, options) {
+  // eslint-disable-next-line
+  if (!options.json) console.log(`bids-validator@${version}\n`)
+
+  utils.options.parse(dir, options, function(issues, options) {
     if (issues && issues.length > 0) {
       // option parsing issues
       callback({ config: issues })
     } else {
       BIDS.options = options
       reset(BIDS)
-      utils.files.readDir(dir, function(files) {
+      utils.files.readDir(dir, options).then(files => {
         const couldBeBIDS = quickTest(files)
         if (couldBeBIDS) {
           // Is the dir using git-annex?
@@ -40,4 +44,4 @@ const start = (dir, options, callback) => {
   })
 }
 
-module.exports = start
+export default start

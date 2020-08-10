@@ -1,4 +1,4 @@
-var utils = require('../utils')
+import utils from '../utils'
 var Issue = utils.issues.Issue
 
 // Match sub-.../... files, except sub-emptyroom
@@ -49,5 +49,5 @@ function checkAnyDataPresent(fileList, summarySubjects) {
   return issues
 }
 
-module.exports = checkAnyDataPresent
-module.exports.getFolderSubjects = getFolderSubjects
+export default checkAnyDataPresent
+export { getFolderSubjects }

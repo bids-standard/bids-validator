@@ -1,5 +1,5 @@
-const assert = require('chai').assert
-const { collect39Issues } = require('../headerFields')
+import { assert } from 'chai'
+import { collect39Issues } from '../headerFields'
 
 describe('headerFields', () => {
   describe('collect39Issues()', () => {

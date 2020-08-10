@@ -1,5 +1,5 @@
 {
   "phenotypic_data": {
-    "regexp": "^\\/(?:phenotype)\\/(?:.*\\.tsv|.*\\.json)$"
+    "regexp": "^[\\/\\\\](?:phenotype)[\\/\\\\](?:.*\\.tsv|.*\\.json)$"
   }
 }

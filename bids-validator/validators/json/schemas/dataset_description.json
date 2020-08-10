@@ -8,6 +8,9 @@
     "BIDSVersion": {
       "type": "string"
     },
+    "HEDVersion": {
+      "type": "string"
+    },
     "License": {
       "type": "string"
     },
@@ -21,19 +24,25 @@
       "items": {
         "type": "string"
       },
-      "type": ["string", "array"]
+      "type": "string"
     },
     "HowToAcknowledge": {
       "items": {
         "type": "string"
       },
-      "type": ["string", "array"]
+      "type": "string"
     },
     "Funding": {
       "items": {
         "type": "string"
       },
-      "type": ["array", "string"]
+      "type": "array"
+    },
+    "EthicsApprovals": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
     },
     "ReferencesAndLinks": {
       "items": {
@@ -43,6 +52,27 @@
     },
     "DatasetDOI": {
       "type": "string"
+    },
+    "DatasetType": {
+      "type": "string",
+      "enum": ["raw", "derivative"]
+    },
+    "Genetics": {
+      "type": "object",
+      "properties": {
+        "Database": {
+          "type": "string"
+        },
+        "Dataset": {
+          "type": "string"
+        },
+        "Descriptors": {
+          "items": {
+            "type": "string"
+          },
+          "type": ["array", "string"]
+        }
+      }
     }
   },
   "required": ["Name", "BIDSVersion"],

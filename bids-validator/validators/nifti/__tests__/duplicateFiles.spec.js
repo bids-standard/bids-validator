@@ -1,5 +1,5 @@
-const assert = require('chai').assert
-const duplicateNiftis = require('../duplicateFiles')
+import { assert } from 'chai'
+import duplicateNiftis from '../duplicateFiles'
 
 describe('duplicateFiles', () => {
   describe('duplicateNiftis()', () => {

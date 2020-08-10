@@ -18,6 +18,16 @@ h5 {
   padding-top: 80px;
 }
 
+form.options label {
+  margin: 0;
+  padding-right: 2rem;
+  font-weight: normal;
+}
+form.options input {
+  margin-right: 0.4rem;
+}
+
+
 .validation-error {
   position: relative;
 }

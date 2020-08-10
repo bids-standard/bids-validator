@@ -1,20 +1,28 @@
-var files = require('./files')
-var json = require('./json')
+import path from 'path'
+import files from './files'
+import json from './json'
+import isNode from '../utils/isNode.js'
 
-module.exports = {
+let options
+
+export default {
   /**
    * Parse
    */
-  parse: function(options, callback) {
-    options = options ? options : {}
+  parse: function(dir, args, callback) {
+    options = args ? args : {}
     options = {
-      ignoreWarnings: options.ignoreWarnings ? true : false,
-      ignoreNiftiHeaders: options.ignoreNiftiHeaders ? true : false,
-      verbose: options.verbose ? true : false,
-      config: options.config ? options.config : {},
+      ignoreWarnings: Boolean(options.ignoreWarnings),
+      ignoreNiftiHeaders: Boolean(options.ignoreNiftiHeaders),
+      ignoreSymlinks: Boolean(options.ignoreSymlinks),
+      verbose: Boolean(options.verbose),
+      gitTreeMode: Boolean(options.gitTreeMode),
+      remoteFiles: Boolean(options.remoteFiles),
+      gitRef: options.gitRef || 'HEAD',
+      config: options.config || {},
     }
     if (options.config && typeof options.config !== 'boolean') {
-      this.parseConfig(options.config, function(issues, config) {
+      this.parseConfig(dir, options.config, function(issues, config) {
         options.config = config
         callback(issues, options)
       })
@@ -23,19 +31,43 @@ module.exports = {
     }
   },
 
+  getOptions: () => {
+    const readonlyOptions = Object.freeze({ ...options })
+    return readonlyOptions
+  },
+
   /**
    * Load Config
    */
-  loadConfig: function(config, callback) {
+  loadConfig: function(dir, config, callback) {
     if (typeof config === 'string') {
-      // load file
+      let configFile
+      if (isNode) {
+        const configPath = path.isAbsolute(config)
+          ? config
+          : path.join(dir, config)
+        configFile = { path: configPath }
+      } else {
+        // Grab file from FileList if a path was provided
+        configFile = [...dir].find(f => f.webkitRelativePath === config)
+        // No mathcing config, return a default
+        if (!configFile) {
+          return callback(null, configFile, JSON.stringify({}))
+        }
+      }
+      configFile.stats = files.getFileStats(configFile)
       files
-        .readFile({ path: config })
+        .readFile(configFile)
         .then(contents => {
-          callback(null, { path: config }, contents)
+          callback(null, configFile, contents)
         })
         .catch(issue => {
-          callback([issue], { path: config }, null)
+          // If the config does not exist, issue 44 is returned
+          if (issue.code === 44) {
+            callback(null, configFile, JSON.stringify({}))
+          } else {
+            callback([issue], configFile, null)
+          }
         })
     } else if (typeof config === 'object') {
       callback(null, { path: 'config' }, JSON.stringify(config))
@@ -45,8 +77,8 @@ module.exports = {
   /**
    * Parse Config
    */
-  parseConfig: function(config, callback) {
-    this.loadConfig(config, function(issues, file, contents) {
+  parseConfig: function(dir, config, callback) {
+    this.loadConfig(dir, config, function(issues, file, contents) {
       if (issues) {
         callback(issues, null)
       } else {

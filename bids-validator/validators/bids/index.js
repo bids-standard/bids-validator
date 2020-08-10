@@ -1,17 +1,32 @@
-const start = require('./start')
-const reset = require('./reset')
-const quickTest = require('./quickTest')
-const quickTestError = require('./quickTestError')
-const fullTest = require('./fullTest')
-const subIDsesIDmismatchTest = require('./subSesMismatchTest')
+import start from './start'
+import reset from './reset'
+import quickTest from './quickTest'
+import quickTestError from './quickTestError'
+import fullTest from './fullTest'
+import subIDsesIDmismatchTest from './subSesMismatchTest'
 
-module.exports = {
-  options: {},
-  issues: [],
-  start: start,
-  quickTestError: quickTestError,
-  quickTest: quickTest,
-  fullTest: fullTest,
-  subIDsesIDmismatchtest: subIDsesIDmismatchTest,
-  reset: reset,
+const options = {}
+const issues = []
+const subIDsesIDmismatchtest = subIDsesIDmismatchTest
+
+export {
+  options,
+  issues,
+  start,
+  quickTestError,
+  quickTest,
+  fullTest,
+  subIDsesIDmismatchtest,
+  reset,
+}
+
+export default {
+  options,
+  issues,
+  start,
+  quickTestError,
+  quickTest,
+  fullTest,
+  subIDsesIDmismatchtest,
+  reset,
 }

@@ -1,5 +1,5 @@
-const assert = require('chai').assert
-const checkPhenotype = require('../checkPhenotype')
+import { assert } from 'chai'
+import checkPhenotype from '../checkPhenotype'
 
 describe('checkPhenotype', () => {
   const summary = { subjects: ['01', '02'] }

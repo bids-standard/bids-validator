@@ -1,21 +1,22 @@
-const BIDS = require('./obj')
-const utils = require('../../utils')
+import BIDS from './obj'
+import utils from '../../utils'
 const Issue = utils.issues.Issue
-const tsv = require('../tsv')
-const json = require('../json')
-const NIFTI = require('../nifti')
-const bval = require('../bval')
-const bvec = require('../bvec')
-const Events = require('../events')
-const { session } = require('../session')
-const checkAnyDataPresent = require('../checkAnyDataPresent')
-const headerFields = require('../headerFields')
-const subSesMismatchTest = require('./subSesMismatchTest')
-const groupFileTypes = require('./groupFileTypes')
-const subjects = require('./subjects')
-const checkDatasetDescription = require('./checkDatasetDescription')
-const checkReadme = require('./checkReadme')
-const validateMisc = require('../../utils/files/validateMisc')
+import tsv from '../tsv'
+import json from '../json'
+import NIFTI from '../nifti'
+import bval from '../bval'
+import bvec from '../bvec'
+import Events from '../events'
+import { session } from '../session'
+import checkAnyDataPresent from '../checkAnyDataPresent'
+import headerFields from '../headerFields'
+import subSesMismatchTest from './subSesMismatchTest'
+import groupFileTypes from './groupFileTypes'
+import subjects from './subjects'
+import checkDatasetDescription from './checkDatasetDescription'
+import checkReadme from './checkReadme'
+import validateMisc from '../../utils/files/validateMisc'
+import collectSubjectMetadata from '../../utils/summary/collectSubjectMetadata'
 
 /**
  * Full Test
@@ -24,24 +25,33 @@ const validateMisc = require('../../utils/files/validateMisc')
  * Starts the validation process for a BIDS package.
  */
 const fullTest = (fileList, options, annexed, dir, callback) => {
-  let self = BIDS
+  const self = BIDS
   self.options = options
 
-  let jsonContentsDict = {},
-    bContentsDict = {},
-    events = [],
-    stimuli = {
-      events: [],
-      directory: [],
-    },
-    jsonFiles = [],
-    headers = [],
-    participants = null,
-    phenotypeParticipants = []
+  const jsonContentsDict = {}
+  const bContentsDict = {}
+  const events = []
+  const stimuli = {
+    events: [],
+    directory: [],
+  }
+  const jsonFiles = []
+  const headers = []
+  const participants = null
+  const phenotypeParticipants = []
 
-  let tsvs = []
+  const tsvs = []
 
-  let summary = utils.collectSummary(fileList, self.options)
+  const summary = utils.collectSummary(fileList, self.options)
+
+  // remove size redundancies
+  for (const key in fileList) {
+    if (fileList.hasOwnProperty(key)) {
+      const file = fileList[key]
+      if (typeof file.stats === 'object' && file.stats.hasOwnProperty('size'))
+        delete file.size
+    }
+  }
 
   // remove ignored files from list:
   Object.keys(fileList).forEach(function(key) {
@@ -93,9 +103,12 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
         stimuli,
       )
     })
-    .then(tsvIssues => {
+    .then(({ tsvIssues, participantsTsvContent }) => {
       self.issues = self.issues.concat(tsvIssues)
 
+      // extract metadata on participants to metadata.age and
+      // return metadata on each subject from participants.tsv
+      summary.subjectMetadata = collectSubjectMetadata(participantsTsvContent)
       // Bvec validation
       return bvec.validate(files.bvec, bContentsDict)
     })
@@ -131,7 +144,6 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     })
     .then(jsonIssues => {
       self.issues = self.issues.concat(jsonIssues)
-
       // Nifti validation
       return NIFTI.validate(
         files.nifti,
@@ -164,13 +176,15 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
 
       // Events validation
       stimuli.directory = files.stimuli
-      const eventsIssues = Events.validateEvents(
+      return Events.validateEvents(
         events,
         stimuli,
         headers,
         jsonContentsDict,
-        self.issues,
+        dir,
       )
+    })
+    .then(eventsIssues => {
       self.issues = self.issues.concat(eventsIssues)
 
       // Validate custom fields in all TSVs and add any issues to the list
@@ -206,4 +220,4 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     })
 }
 
-module.exports = fullTest
+export default fullTest

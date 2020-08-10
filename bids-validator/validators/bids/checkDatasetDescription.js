@@ -6,6 +6,10 @@ const checkDatasetDescription = jsonContentsDict => {
   const hasDatasetDescription = jsonFilePaths.some(path => {
     return path == '/dataset_description.json'
   })
+  const hasGeneticInfo = jsonFilePaths.some(path => {
+    return path === '/genetic_info.json'
+  })
+
   if (!hasDatasetDescription) {
     issues.push(new Issue({ code: 57 }))
   } else {
@@ -14,6 +18,11 @@ const checkDatasetDescription = jsonContentsDict => {
     // check to ensure that the dataset description Authors are
     // properly formatted
     issues = issues.concat(checkAuthorField(datasetDescription.Authors))
+
+    // if genetic info json present ensure mandatory GeneticDataset present
+    if (hasGeneticInfo && !(('Genetics' in datasetDescription) && ('Dataset' in datasetDescription.Genetics))) {
+      issues.push(new Issue({ code: 128 }));
+    }
   }
   return issues
 }
@@ -38,14 +47,14 @@ const checkAuthorField = authors => {
         // if there is one or less comma in the author field,
         // we suspect that the curator has not listed everyone involved
         issues.push(new Issue({ code: 102, evidence: author }))
-      } else if (author.split(',').length > 2) {
-        // if there are too many commas in the author field,
-        // we suspect that the curator has listed all authors in a single
-        // entry in the authors array... which is against bids spec
-        issues.push(new Issue({ code: 103, evidence: author }))
       }
     }
+  } else {
+    // if there are no authors,
+    // warn user that errors could occur during doi minting
+    // and that snapshots on OpenNeuro will not be allowed
+    issues.push(new Issue({ code: 113, evidence: authors }))
   }
   return issues
 }
-module.exports = checkDatasetDescription
+export default checkDatasetDescription

@@ -5,7 +5,7 @@
  * issue code and including severity and reason
  * agnostic to file specifics.
  */
-module.exports = {
+export default {
   0: {
     key: 'INTERNAL ERROR',
     severity: 'error',
@@ -466,7 +466,7 @@ module.exports = {
     key: 'ACQTIME_FMT',
     severity: 'error',
     reason:
-      'Entries in the "acq_time" column of _scans.tsv should be expressed in the following format YYYY-MM-DDTHH:mm:ss (year, month, day, hour (24h), minute, second; this is equivalent to the RFC3339 “date-time” format. ',
+      'Entries in the "acq_time" column of _scans.tsv should be expressed in the following format YYYY-MM-DDTHH:mm:ss[.000000] (year, month, day, hour (24h), minute, second, and optionally fractional second; this is equivalent to the RFC3339 "date-time" format.',
   },
   85: {
     key: 'SUSPICIOUSLY_LONG_EVENT_DESIGN',
@@ -757,4 +757,157 @@ module.exports = {
 
   
   
+  104: {
+    key: 'HED_GENERIC_ERROR',
+    severity: 'error',
+    reason: 'The validation on this HED string returned an error.',
+  },
+  105: {
+    key: 'HED_GENERIC_WARNING',
+    severity: 'warning',
+    reason: 'The validation on this HED string returned a warning.',
+  },
+  106: {
+    key: 'HED_ILLEGAL_CHARACTER',
+    severity: 'error',
+    reason: 'This HED string contains an illegal character.',
+  },
+  107: {
+    key: 'HED_PARENTHESES_MISMATCH',
+    severity: 'error',
+    reason: 'This HED string contains mismatched parentheses.',
+  },
+  108: {
+    key: 'HED_MISSING_COMMA_AFTER_TAG',
+    severity: 'error',
+    reason: 'This HED string is missing a required comma after a HED tag.',
+  },
+  109: {
+    key: 'HED_CAPITALIZATION',
+    severity: 'warning',
+    reason:
+      'This HED string is not properly capitalized. HED tags should start with a capital letter or be in CamelCase.',
+  },
+  110: {
+    key: 'HED_DUPLICATE_TAG_IN_SAME_GROUP_OR_TOP_LEVEL',
+    severity: 'error',
+    reason:
+      'This HED string contains duplicate HED tags in the same group or at the top level.',
+  },
+  111: {
+    key: 'HED_TOO_MANY_TILDES',
+    severity: 'error',
+    reason: 'This HED string has more than 2 tildes in the same tag group.',
+  },
+  112: {
+    key: 'HED_MISSING_VALUE_IN_SIDECAR',
+    severity: 'warning',
+    reason:
+      'The json sidecar does not contain this column value as a possible key to a HED string.',
+  },
+  113: {
+    key: 'NO_AUTHORS',
+    severity: 'warning',
+    reason:
+      'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered because there are no authors, which will make DOI registration from dataset metadata impossible.',
+  },
+  114: {
+    key: 'INCOMPLETE_DATASET',
+    severity: 'error',
+    reason:
+      'This dataset contains remote files. If you would like to validate with remote files, use the --remoteFiles option.',
+  },
+  115: {
+    key: 'HED_EXTRA_DELIMITER',
+    severity: 'error',
+    reason:
+      'This HED string contains an extra delimiter. There should be no consecutive delimiters or any delimiters at the start or end of the string.',
+  },
+  116: {
+    key: 'HED_INVALID_TAG',
+    severity: 'error',
+    reason:
+      "This HED string contains a tag that doesn't exist in the HED schema and isn't a legal extension of a valid tag.",
+  },
+  117: {
+    key: 'HED_MULTIPLE_UNIQUE_TAGS',
+    severity: 'error',
+    reason:
+      'This HED string contains multiple tags with a prefix defined as unique by the HED schema.',
+  },
+  118: {
+    key: 'HED_CHILD_REQUIRED',
+    severity: 'error',
+    reason:
+      "This HED string contains a tag which doesn't have a child, but is required to have one by the HED schema.",
+  },
+  119: {
+    key: 'HED_REQUIRED_PREFIX_MISSING',
+    severity: 'warning',
+    reason:
+      'This HED string is missing a tag with a prefix required by the HED schema.',
+  },
+  120: {
+    key: 'HED_UNIT_CLASS_DEFAULT_USED',
+    severity: 'warning',
+    reason:
+      "This HED string contains a tag with a missing unit. The default unit for that tag's unit class was used.",
+  },
+  121: {
+    key: 'HED_UNIT_CLASS_INVALID_UNIT',
+    severity: 'error',
+    reason:
+      'This HED string contains a tag with a unit that is not valid for its unit class.',
+  },
+  122: {
+    key: 'HED_EXTRA_COMMA_OR_INVALID',
+    severity: 'error',
+    reason:
+      'This HED string contains either a tag with an extra comma or an invalid tag.',
+  },
+  123: {
+    key: 'INVALID JSON ENCODING',
+    severity: 'error',
+    reason: 'JSON files must be valid utf-8.',
+  },
+  124: {
+    key: 'INVALID_TSV_UNITS',
+    severity: 'error',
+    reason:
+      'Units in .tsv files must be valid SI units as described in the BIDS spec Appendix V (https://bids-specification.readthedocs.io/en/stable/99-appendices/05-units.html).',
+  },
+  125: {
+    key: 'CHANNELS_COLUMN_STATUS',
+    severity: 'error',
+    reason:
+      'Status column in channels.tsv files must contain only one of two values: good or bad. Per the BIDS spec: (https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/04-intracranial-electroencephalography.html#channels-description-_channelstsv).',
+  },
+  128: {
+    key: 'NO_GENETIC_DATABASE',
+    severity: 'error',
+    reason:
+      'A genetic_info.json file is present but no Database field present in Genetics object in dataset_description.json.',
+  },
+  129: {
+    key: 'SCANS_FILENAME_NOT_MATCH_DATASET',
+    severity: 'error',
+    reason:
+      'The filename in scans.tsv file does not match what is present in the BIDS dataset.',
+  },
+  130: {
+    key: 'CHANNELS_COLUMN_TYPE_UPPER_CASE',
+    severity: 'error',
+    reason: 'Type column in channels.tsv files should consist of upper-case characters.'
+  },
+  131: {
+    key: 'CHANNELS_COLUMN_TYPE',
+    severity: 'error',
+    reason: 'Type column in channels.tsv files should only consist of values allowed in the specification for MEG/EEG/iEEG data.'
+  },
+  132: {
+    key: 'HED_VERSION_NOT_DEFINED',
+    severity: 'warning',
+    reason:
+      "You should define 'HEDVersion' for this file. If you don't provide this information, the HED validation will use the latest version available.",
+  }
 }

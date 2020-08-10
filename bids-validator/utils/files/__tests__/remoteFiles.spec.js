@@ -1,7 +1,7 @@
-const assert = require('chai').assert
-const remoteFiles = require('../remoteFiles')
-const fs = require('fs')
-const zlib = require('zlib')
+import { assert } from 'chai'
+import remoteFiles from '../remoteFiles'
+import fs from 'fs'
+import zlib from 'zlib'
 const config = {
   s3Params: {
     Bucket: 'none',
@@ -43,17 +43,6 @@ describe('remoteFiles', () => {
         done()
       })
     })
-    it(
-      'should return the error of constructAwsRequest if unsuccessful',
-      done => {
-        process.env.AWS_ACCESS_KEY_ID = 12
-        remoteFiles.accessRemoteFile(config).catch(err => {
-          expect(err).toBeInstanceOf(Error)
-          done()
-        })
-      },
-      120000,
-    )
   })
 
   describe('constructAwsRequest', () => {
@@ -73,30 +62,6 @@ describe('remoteFiles', () => {
           done()
         })
     })
-    it(
-      'should return a s3.getObject resolution promise when aws creds are present',
-      done => {
-        process.env.AWS_ACCESS_KEY_ID = 12
-        config.s3Params.Key = 'this_is_not_valid'
-        const response = remoteFiles.constructAwsRequest(config).catch(e => {
-          expect(e)
-          done()
-        })
-        expect(response).toBeInstanceOf(Promise)
-      },
-      120000,
-    )
-    it(
-      'should throw an error when a bucket cannot be accessed',
-      done => {
-        process.env.AWS_ACCESS_KEY_ID = 12
-        remoteFiles.constructAwsRequest(config).catch(e => {
-          expect(e)
-          done()
-        })
-      },
-      120000,
-    )
   })
 
   describe('extractGzipBuffer', () => {
