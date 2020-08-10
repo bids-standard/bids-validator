@@ -126,7 +126,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 137,
+              code: 159,
               reason:
                 "You should define 'LabelingPulseAverageGradient' for this file." + sidecarMessage,
             }),
@@ -489,7 +489,7 @@ export default function NIFTI(
         issues.push(
           new Issue({
             file: file,
-            code: 144,
+            code: 166,
             reason: "In case of a LookLocker acquisition you must define 'FlipAngle' for this file.  " + sidecarMessage,
           }),
         )  
@@ -498,7 +498,7 @@ export default function NIFTI(
         issues.push(
           new Issue({
             file: file,
-            code: 143,
+            code: 167,
             reason: "You should define 'FlipAngle' for this file.  " + sidecarMessage,
           }),
         )  
@@ -517,7 +517,7 @@ export default function NIFTI(
             issues.push(
               new Issue({
                 file: file,
-                code: 145,
+                code: 168,
                 reason:
                   "'FlipAngle' for this file do not match the 4th dimension of the NIFTI header. " +
                   sidecarMessage,

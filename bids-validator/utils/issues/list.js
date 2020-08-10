@@ -907,4 +907,19 @@ export default {
     severity: 'error',
     reason: "TSV lenght is not equal to the correspondent asl nifti file.",
   },
+  166: {
+    key: 'LOOK_LOCKER_FLIP_ANGLE_MISSING',
+    severity: 'error',
+    reason: "In case of a LookLocker acquisition you must define 'FlipAngle' for this file.",
+  },
+  167: {
+    key: 'FLIP_ANGLE_MISSING',
+    severity: 'warning',
+    reason: "In should define 'FlipAngle' for this file.",
+  },
+  168: {
+    key: 'FLIP_ANGLE_NOT_MATCHING_NIFTI',
+    severity: 'warning',
+    reason: "'FlipAngle' for this file do not match the 4th dimension of the NIFTI header. ",
+  },
 }

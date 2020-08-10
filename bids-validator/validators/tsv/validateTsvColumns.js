@@ -122,7 +122,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
         .split('\n')
         .filter(row => !(!row || /^\s*$/.test(row)))
         
-        if (rows.length == numVols) {
+        if (rows.length -1 != numVols) {
           tsvIssues.push(
             new Issue({
               code: 165,
