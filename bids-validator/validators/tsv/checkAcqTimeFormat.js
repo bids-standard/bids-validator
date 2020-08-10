@@ -2,7 +2,7 @@ const Issue = require('../../utils').issues.Issue
 import { isValid as dateIsValid, parseISO } from 'date-fns'
 
 const checkAcqTimeFormat = function(rows, file, issues) {
-  const rfc3339ish = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(.\d+)?(Z)?$/
+  const rfc3339ish = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(.\d+)?Z?$/
   const header = rows[0]
   const acqTimeColumn = header.indexOf('acq_time')
   const testRows = rows.slice(1)
