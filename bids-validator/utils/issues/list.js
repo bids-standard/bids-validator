@@ -665,7 +665,7 @@ module.exports = {
   },
   126: {
     key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
-    severity: 'error',
+    severity: 'warning',
     reason: "You have to define the 'BolusCutOffTechnique' for this file.",
   },
   127: {

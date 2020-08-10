@@ -194,11 +194,16 @@
         }
       ]
     },
+    "VolumeTiming" :{
+          "type": "array",
+          "items": { "type": "number" }
+    },
     "PulseSequenceDetails" : {
       "type" : "string"
     },
     "Manufacturer" : {
       "type" : "string"
     }
+
   }
 }

@@ -249,39 +249,44 @@ module.exports = function NIFTI(
           }
         }
       }
-    }
-    if (!mergedDictionary.hasOwnProperty('LabelingDuration')) {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 105,
-          reason:
-            "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible. " +
-            sidecarMessage,
-        }),
-      )
-    }
-    else { 
-      if (
-          header && 
-          mergedDictionary['LabelingDuration'].constructor === Array
-         ) { 
-        var LabelingDuration = mergedDictionary['LabelingDuration']
-        const LabelingDurationLength = LabelingDuration.length
-        const kDim = header.dim[4]
-        if (LabelingDurationLength !== kDim ) {
+      
+      if (LabelingTypeString == 'CASL' || LabelingTypeString == 'pCASL' ) {
+        if (!mergedDictionary.hasOwnProperty('LabelingDuration')) {
           issues.push(
             new Issue({
               file: file,
-              code: 135,
+              code: 105,
               reason:
-                "'LabelingDuration' for this file do not match the 4th dimension of the NIFTI header. " +
+                "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible. " +
                 sidecarMessage,
             }),
           )
         }
-      }
+        else { 
+          if (
+              header && 
+              mergedDictionary['LabelingDuration'].constructor === Array
+            ) { 
+            var LabelingDuration = mergedDictionary['LabelingDuration']
+            const LabelingDurationLength = LabelingDuration.length
+            const kDim = header.dim[4]
+            if (LabelingDurationLength !== kDim ) {
+              issues.push(
+                new Issue({
+                  file: file,
+                  code: 135,
+                  reason:
+                    "'LabelingDuration' for this file do not match the 4th dimension of the NIFTI header. " +
+                    sidecarMessage,
+                }),
+              )
+            }
+          }
+        }
+      }  
     }
+
+    
     if (!mergedDictionary.hasOwnProperty('PostLabelingDelay')) {
       issues.push(
         new Issue({
@@ -452,7 +457,7 @@ module.exports = function NIFTI(
       mergedDictionary['M0'].constructor === String
     ) {
       const M0String = mergedDictionary['M0']
-      if (M0String != 'Control') {
+      if (M0String != 'control') {
         checkIfIntendedExists(M0String, fileList, issues, file)
         checkIfValidFiletype(M0String, issues, file)
       }
@@ -470,7 +475,7 @@ module.exports = function NIFTI(
               new Issue({
                 file: file,
                 code: 130,
-                reason: "ASLContext " + mergedDictionary['ASLContext'] + " does not contain any M0 (M0Scan) that is required, since you specified True in the M0 field.  " + sidecarMessage,
+                reason: "ASLContext " + mergedDictionary['ASLContext'] + " does not contain any M0 (moscan) that is required, since you specified True in the M0 field.  " + sidecarMessage,
               }),
             )
           }
