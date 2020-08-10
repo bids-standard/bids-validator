@@ -112,7 +112,8 @@ const selectSchema = file => {
     ) {
       schema = require('./schemas/genetic_info.json')
     } else if (
-        file.name.endsWith('physio.json')
+        file.name.endsWith('physio.json') ||
+        file.name.endsWith('stim.json')
     ) {
       schema = require('./schemas/physio.json')
     }
