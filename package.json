@@ -27,5 +27,8 @@
     "jest": "^24.9.0",
     "jest-environment-node": "^24.9.0",
     "lerna": "^3.15.0"
+  },
+  "dependencies": {
+    "next-transpile-modules": "^4.0.2"
   }
 }
