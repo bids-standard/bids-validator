@@ -35,7 +35,6 @@ const potentialPaths = components => {
   // paths for this level. Also we do not want to include run in that list.
   const nonPathSpecificFileComponents = informationalFileComponents
     .filter(component => pathComponents.indexOf(component) < 0)
-    .filter(component => component.indexOf('run') < 0)
 
   // loop through all the directory levels - root, sub, (ses), (datatype)
   let paths = []
