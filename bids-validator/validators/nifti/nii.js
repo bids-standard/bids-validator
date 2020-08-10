@@ -42,7 +42,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 142,
+          code: 164,
           reason:
             "You should define 'Manufacturer' for this file. " +
             sidecarMessage,
@@ -53,7 +53,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 104,
+          code: 133,
           reason:
             "You should define 'LabelingType' for this file. If you don't provide this information CBF quantification will not be possible. " +
             sidecarMessage,
@@ -64,7 +64,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 131,
+          code: 155,
           reason:
             "You should define 'PulseSequenceType' for this file. If you don't provide this information CBF quantification will not be possible. " +
             sidecarMessage,
@@ -81,7 +81,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 127,
+              code: 151,
               reason:
                 "You should define 'LabelingPulseMaximumGradient' for this file." +
                 sidecarMessage,
@@ -105,7 +105,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 116,
+              code: 141,
               reason:
                 "You should define 'LabelingPulseFlipAngle' for this file." +
                 sidecarMessage,
@@ -116,7 +116,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 122,
+              code: 146,
               reason:
                 "You should define 'PCASLType' for this file." + sidecarMessage,
             }),
@@ -136,7 +136,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 139,
+              code: 161,
               reason:
                 "You should define 'LabelingPulseDuration' for this file." + sidecarMessage,
             }),
@@ -146,7 +146,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 139,
+              code: 162,
               reason:
                 "You should define 'LabelingPulseInterval' for this file." + sidecarMessage,
             }),
@@ -171,7 +171,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 141,
+              code: 163,
               reason:
                 "You should define 'PASLType' for this file." +
                 sidecarMessage,
@@ -182,7 +182,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 117,
+              code: 142,
               reason:
                 "You should define 'LabelingSlabThickness' for this file." +
                 sidecarMessage,
@@ -193,7 +193,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 123,
+              code: 147,
               reason:
                 "You should define 'BolusCutOffFlag' for this file." +
                 sidecarMessage,
@@ -212,7 +212,7 @@ export default function NIFTI(
             issues.push(
               new Issue({
                 file: file,
-                code: 124,
+                code: 148,
                 reason:
                   "You should define 'BolusCutOffTimingSequence' for this file." +
                   sidecarMessage,
@@ -226,7 +226,7 @@ export default function NIFTI(
             issues.push(
               new Issue({
                 file: file,
-                code: 125,
+                code: 149,
                 reason:
                   "You should define 'BolusCutOffDelayTime' for this file." +
                   sidecarMessage,
@@ -240,7 +240,7 @@ export default function NIFTI(
             issues.push(
               new Issue({
                 file: file,
-                code: 126,
+                code: 150,
                 reason:
                   "You should define 'BolusCutOffTechnique' for this file." +
                   sidecarMessage,
@@ -255,7 +255,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 105,
+              code: 134,
               reason:
                 "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible. " +
                 sidecarMessage,
@@ -291,7 +291,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 106,
+          code: 157,
           reason:
             "You should define 'PostLabelingDelay' for this file. If you don't provide this information CBF quantification will not be possible. " +
             sidecarMessage,
@@ -303,7 +303,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 107,
+          code: 158,
           reason:
             "You should define 'BackgroundSuppression' for this file. If you don't provide this information CBF quantification will be biased. " +
             sidecarMessage,
@@ -320,7 +320,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 120,
+              code: 144,
               reason:
                 "You should define 'BackgroundSuppressionPulseTime' for this file. " +
                 sidecarMessage,
@@ -332,7 +332,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 133,
+              code: 155,
               reason:
                 "You should define 'BackgroundSuppressionNumberPulses' for this file. " +
                 sidecarMessage,
@@ -352,7 +352,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 134,
+              code: 156,
               reason:
                 "The BackgroundSuppressionNumberPulses is " + BackgroundSuppressionNumberPulses + 
                 " however the array BackgroundSuppressionPulseTime array has " + kDim + " values. Please check the discrepancy between this two values that must coincides." +
@@ -366,7 +366,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 108,
+          code: 159,
           reason:
             "You should define 'VascularCrushing' for this file. If you don't provide this information CBF quantification will be biased. " +
             sidecarMessage,
@@ -380,7 +380,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 121,
+          code: 145,
           reason:
             "You should define 'VascularCrushingVenc' for this file. " +
             sidecarMessage,
@@ -391,7 +391,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 111,
+          code: 160,
           reason:
             "You should define 'PulseSequenceDetails' for this file.  " +
             sidecarMessage,
@@ -402,7 +402,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 113,
+          code: 139,
           reason:
             "You should define 'LabelingOrientation' for this file.  " +
             sidecarMessage,
@@ -413,7 +413,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 114,
+          code: 140,
           reason:
             "You should define 'LabelingDistance' for this file.  " +
             sidecarMessage,
@@ -424,7 +424,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 118,
+          code: 143,
           reason:
             "You should define 'AcquisitionVoxelSize' for this file.  " +
             sidecarMessage,
@@ -436,7 +436,7 @@ export default function NIFTI(
         issues.push(
           new Issue({
             file: file,
-            code: 118,
+            code: 156,
             reason:
               "The 'AcquisitionVoxelSize' field length is not 3. AcquisitionVoxelSize must be defined as a vector of length 3.  " +
               sidecarMessage,
@@ -448,7 +448,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 129,
+          code: 153,
           reason: "You should define 'M0' for this file.  " + sidecarMessage,
         }),
       )
@@ -474,7 +474,7 @@ export default function NIFTI(
             issues.push(
               new Issue({
                 file: file,
-                code: 130,
+                code: 154,
                 reason: "ASLContext " + mergedDictionary['ASLContext'] + " does not contain any M0 (moscan) that is required, since you specified True in the M0 field.  " + sidecarMessage,
               }),
             )
@@ -946,7 +946,7 @@ export default function NIFTI(
         issues.push(
           new Issue({
             file: file,
-            code: 128,
+            code: 152,
             reason:
               "You have to define 'IntendedFor' for this file. " +
               sidecarMessage,

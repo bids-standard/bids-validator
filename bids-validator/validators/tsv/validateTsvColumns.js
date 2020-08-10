@@ -125,7 +125,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
         if (rows.length == numVols) {
           tsvIssues.push(
             new Issue({
-              code: 142,
+              code: 165,
               file: file,
             })
           )

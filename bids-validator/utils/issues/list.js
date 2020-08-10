@@ -579,185 +579,6 @@ export default {
       'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered based on the presence of multiple commas in a single author field. Please ensure your authors are properly formatted.',
   },
   104: {
-    key: 'LABELING_TYPE_MUST_DEFINE',
-    severity: 'error',
-    reason: "You have to define 'LabelingType' for this file.",
-  },
-  105: {
-    key: 'LABELING_DURATION_MUST_DEFINE',
-    severity: 'error',
-    reason: "You have to define 'LabelingDuration' for this file.",
-  },
-  106: {
-    key: 'POST_LABELING_DELAY_MUST_DEFINE',
-    severity: 'error',
-    reason: "You have to define 'PostLabelingDelay' for this file.",
-  },
-  107: {
-    key: 'BACKGROUND_SUPPRESSION_MUST_DEFINE',
-    severity: 'error',
-    reason: "You have to define 'BackgroundSuppression' for this file.",
-  },
-  108: {
-    key: 'VASCULAR_CRUSHING_MUST_DEFINE',
-    severity: 'error',
-    reason: "You have to define 'VascularCrushing' for this file.",
-  },
-  111: {
-    key: 'PULSE_SEQUENCE_DETAILS_MISSING',
-    severity: 'warning',
-    reason: "The 'PulseSequenceDetails' field is missing.",
-  },
-  113: {
-    key: 'LABELING_ORIENTATION_MISSING',
-    severity: 'warning',
-    reason: "The 'LabelingOrientation' field is missing.",
-  },
-  114: {
-    key: 'LABELING_DISTANCE_MISSING',
-    severity: 'warning',
-    reason: "The 'LabelingDistance' field is missing.",
-  },
-  116: {
-    key: 'LABELING_PULSE_FLIP_ANGLE_MISSING',
-    severity: 'warning',
-    reason: "The 'LabelingPulseFlipAngle' field is missing.",
-  },
-  117: {
-    key: 'LABELING_SLAB_THICKNESS_MISSING',
-    severity: 'warning',
-    reason: "The 'LabelingSlabThickness' field is missing.",
-  },
-  118: {
-    key: 'ACQUISITION_VOXELSIZE_MISSING',
-    severity: 'warning',
-    reason: "The 'AcquisitionVoxelSize' field is missing.",
-  },
-  120: {
-    key: 'BACKGROUND_SUPPRESSION_PULSE_TIME_MISSING',
-    severity: 'warning',
-    reason: "The 'BackgroundSuppressionPulseTime' field is missing.",
-  },
-  121: {
-    key: 'VASCULAR_CRUCHING_VENC_MISSING',
-    severity: 'warning',
-    reason: "The 'VascularCrushingVenc' field is missing.",
-  },
-  122: {
-    key: 'PCASL_TYPE_MISSING',
-    severity: 'warning',
-    reason: "The 'PCASLType' field is missing.",
-  },
-  123: {
-    key: 'PASL_BOLUS_CUT_OFF_FLAG',
-    severity: 'error',
-    reason: "You have to define the 'BolusCutOffFlag' for this file.",
-  },
-  124: {
-    key: 'PASL_BOLUS_CUT_OFF_TIMING_SEQUENCE',
-    severity: 'error',
-    reason: "You have to define the 'BolusCutOffTimingSequence' for this file.",
-  },
-  125: {
-    key: 'PASL_BOLUS_CUT_OFF_DELAY_TIME',
-    severity: 'warning',
-    reason: "You have to define the 'BolusCutOffDelayTime' for this file.",
-  },
-  126: {
-    key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
-    severity: 'warning',
-    reason: "You have to define the 'BolusCutOffTechnique' for this file.",
-  },
-  127: {
-    key: 'LABELING_PULSE_MAXIMUM_GRADIENT_MISSING',
-    severity: 'warning',
-    reason:
-      "The 'LabelingPulseMaximumGradient' filed is missing for this file.",
-  },
-  128: {
-    key: 'INTENDED_FOR_NOT_SET',
-    severity: 'error',
-    reason: "You have to define the 'IntendedFor' for this file.",
-  },
-  129: {
-    key: 'M0_NOT_SET',
-    severity: 'error',
-    reason: "You have to define the 'M0' for this file. M0 can be either a boolean, a string or a number.",
-  },
-  130: {
-    key: 'M0_SET_UNCORRECTLY',
-    severity: 'error',
-    reason: "M0s was not defined.",
-  },
-  131: {
-    key: 'PULSE_SEQUENCE_TYPE_MUST_DEFINE',
-    severity: 'error',
-    reason: "You have to define 'PulseSequenceType' for this file.",
-  },
-  132: {
-    key: 'ACQUISITION_VOXELSIZE_WRONG',
-    severity: 'error',
-    reason: "The 'AcquisitionVoxelSize' field length is not 3. AcquisitionVoxelSize must be defined as a vector of length 3.",
-  },
-  133: {
-    key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_MISSING',
-    severity: 'warning',
-    reason: "The 'BackgroundSuppressionNumberPulses' field is missing.",
-  },
-  134: {
-    key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_NOT_CONSISTENT',
-    severity: 'warning',
-    reason: "The 'BackgroundSuppressionNumberPulses' field is not consisten with the lenght of 'BackgroundSuppressionPulseTime'.",
-  },
-  135: {
-    key: 'LABELLING_DURATION_LENGTH_NOT_CONSISTENT',
-    severity: 'error',
-    reason: "'LabelingDuration' for this file do not match the 4th dimension of the NIFTI header. ",
-  },
-  136: {
-    key: 'CASL_TYPE_MISSING',
-    severity: 'warning',
-    reason: "The 'CASLType' field is missing.",
-  },
-  137: {
-    key: 'LABELING_PULSE_AVERAGE_GRADIENT_MISSING',
-    severity: 'warning',
-    reason: "The 'LabelingPulseAverageGradient' field is missing.",
-  },
-  138: {
-    key: 'LABELING_PULSE_AVERAGE_B1_MISSING',
-    severity: 'warning',
-    reason: "The 'LabelingPulseAverageB1' field is missing.",
-  },
-  139: {
-    key: 'LABELING_PULSE_DURATION_MISSING',
-    severity: 'warning',
-    reason: "The 'LabelingPulseDuration' field is missing.",
-  },
-  140: {
-    key: 'LABELING_PULSE_INTERVAL_MISSING',
-    severity: 'warning',
-    reason: "The 'LabelingPulseInterval' field is missing.",
-  },
-  141: {
-    key: 'PASL_TYPE_MISSING',
-    severity: 'warning',
-    reason: "The 'PASLType' field is missing.",
-  },
-  142: {
-    key: 'ASL_MANUFACTURER_MISSING',
-    severity: 'warning',
-    reason: "The 'Manufacturer' field is missing.",
-  },
-  142: {
-    key: 'TSV_ASL_CONTEXT_NOT_CONSISTENT',
-    severity: 'error',
-    reason: "TSV lenght is not equal to the correspondent asl nifti file.",
-  },
-
-  
-  
-  104: {
     key: 'HED_GENERIC_ERROR',
     severity: 'error',
     reason: 'The validation on this HED string returned an error.',
@@ -909,5 +730,181 @@ export default {
     severity: 'warning',
     reason:
       "You should define 'HEDVersion' for this file. If you don't provide this information, the HED validation will use the latest version available.",
-  }
+  },
+  133: {
+    key: 'LABELING_TYPE_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'LabelingType' for this file.",
+  },
+  134: {
+    key: 'LABELING_DURATION_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'LabelingDuration' for this file.",
+  },
+  135: {
+    key: 'POST_LABELING_DELAY_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'PostLabelingDelay' for this file.",
+  },
+  136: {
+    key: 'BACKGROUND_SUPPRESSION_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'BackgroundSuppression' for this file.",
+  },
+  137: {
+    key: 'VASCULAR_CRUSHING_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'VascularCrushing' for this file.",
+  },
+  138: {
+    key: 'PULSE_SEQUENCE_DETAILS_MISSING',
+    severity: 'warning',
+    reason: "The 'PulseSequenceDetails' field is missing.",
+  },
+  139: {
+    key: 'LABELING_ORIENTATION_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingOrientation' field is missing.",
+  },
+  140: {
+    key: 'LABELING_DISTANCE_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingDistance' field is missing.",
+  },
+  141: {
+    key: 'LABELING_PULSE_FLIP_ANGLE_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingPulseFlipAngle' field is missing.",
+  },
+  142: {
+    key: 'LABELING_SLAB_THICKNESS_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingSlabThickness' field is missing.",
+  },
+  143: {
+    key: 'ACQUISITION_VOXELSIZE_MISSING',
+    severity: 'warning',
+    reason: "The 'AcquisitionVoxelSize' field is missing.",
+  },
+  144: {
+    key: 'BACKGROUND_SUPPRESSION_PULSE_TIME_MISSING',
+    severity: 'warning',
+    reason: "The 'BackgroundSuppressionPulseTime' field is missing.",
+  },
+  145: {
+    key: 'VASCULAR_CRUCHING_VENC_MISSING',
+    severity: 'warning',
+    reason: "The 'VascularCrushingVenc' field is missing.",
+  },
+  146: {
+    key: 'PCASL_TYPE_MISSING',
+    severity: 'warning',
+    reason: "The 'PCASLType' field is missing.",
+  },
+  147: {
+    key: 'PASL_BOLUS_CUT_OFF_FLAG',
+    severity: 'error',
+    reason: "You have to define the 'BolusCutOffFlag' for this file.",
+  },
+  148: {
+    key: 'PASL_BOLUS_CUT_OFF_TIMING_SEQUENCE',
+    severity: 'error',
+    reason: "You have to define the 'BolusCutOffTimingSequence' for this file.",
+  },
+  149: {
+    key: 'PASL_BOLUS_CUT_OFF_DELAY_TIME',
+    severity: 'warning',
+    reason: "You have to define the 'BolusCutOffDelayTime' for this file.",
+  },
+  150: {
+    key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
+    severity: 'warning',
+    reason: "You have to define the 'BolusCutOffTechnique' for this file.",
+  },
+  151: {
+    key: 'LABELING_PULSE_MAXIMUM_GRADIENT_MISSING',
+    severity: 'warning',
+    reason:
+      "The 'LabelingPulseMaximumGradient' filed is missing for this file.",
+  },
+  152: {
+    key: 'INTENDED_FOR_NOT_SET',
+    severity: 'error',
+    reason: "You have to define the 'IntendedFor' for this file.",
+  },
+  153: {
+    key: 'M0_NOT_SET',
+    severity: 'error',
+    reason: "You have to define the 'M0' for this file. M0 can be either a boolean, a string or a number.",
+  },
+  154: {
+    key: 'M0_SET_UNCORRECTLY',
+    severity: 'error',
+    reason: "M0s was not defined.",
+  },
+  155: {
+    key: 'PULSE_SEQUENCE_TYPE_MUST_DEFINE',
+    severity: 'error',
+    reason: "You have to define 'PulseSequenceType' for this file.",
+  },
+  156: {
+    key: 'ACQUISITION_VOXELSIZE_WRONG',
+    severity: 'error',
+    reason: "The 'AcquisitionVoxelSize' field length is not 3. AcquisitionVoxelSize must be defined as a vector of length 3.",
+  },
+  155: {
+    key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_MISSING',
+    severity: 'warning',
+    reason: "The 'BackgroundSuppressionNumberPulses' field is missing.",
+  },
+  156: {
+    key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_NOT_CONSISTENT',
+    severity: 'warning',
+    reason: "The 'BackgroundSuppressionNumberPulses' field is not consisten with the lenght of 'BackgroundSuppressionPulseTime'.",
+  },
+  157: {
+    key: 'LABELLING_DURATION_LENGTH_NOT_CONSISTENT',
+    severity: 'error',
+    reason: "'LabelingDuration' for this file do not match the 4th dimension of the NIFTI header. ",
+  },
+  158: {
+    key: 'CASL_TYPE_MISSING',
+    severity: 'warning',
+    reason: "The 'CASLType' field is missing.",
+  },
+  159: {
+    key: 'LABELING_PULSE_AVERAGE_GRADIENT_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingPulseAverageGradient' field is missing.",
+  },
+  160: {
+    key: 'LABELING_PULSE_AVERAGE_B1_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingPulseAverageB1' field is missing.",
+  },
+  161: {
+    key: 'LABELING_PULSE_DURATION_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingPulseDuration' field is missing.",
+  },
+  162: {
+    key: 'LABELING_PULSE_INTERVAL_MISSING',
+    severity: 'warning',
+    reason: "The 'LabelingPulseInterval' field is missing.",
+  },
+  163: {
+    key: 'PASL_TYPE_MISSING',
+    severity: 'warning',
+    reason: "The 'PASLType' field is missing.",
+  },
+  164: {
+    key: 'ASL_MANUFACTURER_MISSING',
+    severity: 'warning',
+    reason: "The 'Manufacturer' field is missing.",
+  },
+  165: {
+    key: 'TSV_ASL_CONTEXT_NOT_CONSISTENT',
+    severity: 'error',
+    reason: "TSV lenght is not equal to the correspondent asl nifti file.",
+  },
 }
