@@ -865,7 +865,7 @@ export default {
   157: {
     key: 'LABELLING_DURATION_LENGTH_NOT_CONSISTENT',
     severity: 'error',
-    reason: "'LabelingDuration' for this file do not match the 4th dimension of the NIFTI header. ",
+    reason: "'LabelingDuration' for this file does not match the 4th dimension of the NIFTI header. ",
   },
   158: {
     key: 'CASL_TYPE_MISSING',
@@ -921,5 +921,10 @@ export default {
     key: 'FLIP_ANGLE_NOT_MATCHING_NIFTI',
     severity: 'warning',
     reason: "'FlipAngle' for this file do not match the 4th dimension of the NIFTI header. ",
+  },
+  169: {
+    key: 'LABELING_DURATION_PASL_INCONSISTENT',
+    severity: 'error',
+    reason: "'LabelingDuration' for PASL LabellingType can be only a scalar value put to 0 or unset.",
   },
 }

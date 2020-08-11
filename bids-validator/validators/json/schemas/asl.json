@@ -186,13 +186,8 @@
       "type": ["number", "string", "boolean"] 
     },
     "TotalAcquiredVolumes" :{
-      "anyOf": [
-        { "type": "number" },
-        {
           "type": "array",
           "items": { "type": "number" }
-        }
-      ]
     },
     "VolumeTiming" :{
           "type": "array",

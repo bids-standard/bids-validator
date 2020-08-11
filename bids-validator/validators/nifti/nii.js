@@ -250,7 +250,24 @@ export default function NIFTI(
         }
       }
       
-      if (LabelingTypeString == 'CASL' || LabelingTypeString == 'pCASL' ) {
+      if (LabelingTypeString == 'PASL') {
+        if (mergedDictionary.hasOwnProperty('LabelingDuration')) {
+            var LabelingDuration = mergedDictionary['LabelingDuration']
+            const LabelingDurationLength = LabelingDuration.length
+            if (LabelingDurationLength > 1 || LabelingDuration >0)
+            issues.push(
+              new Issue({
+                file: file,
+                code: 169,
+                reason:
+                  "'LabelingDuration' for PASL LabellingType can be only a scalar value put to 0 or unset. " +
+                  sidecarMessage,
+              }),
+            )
+        }
+      }
+
+      if (LabelingTypeString == 'CASL' || LabelingTypeString == 'PCASL' ) {
         if (!mergedDictionary.hasOwnProperty('LabelingDuration')) {
           issues.push(
             new Issue({
@@ -274,9 +291,9 @@ export default function NIFTI(
               issues.push(
                 new Issue({
                   file: file,
-                  code: 135,
+                  code: 157,
                   reason:
-                    "'LabelingDuration' for this file do not match the 4th dimension of the NIFTI header. " +
+                    "'LabelingDuration' for this file does not match the 4th dimension of the NIFTI header. " +
                     sidecarMessage,
                 }),
               )
@@ -291,7 +308,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 157,
+          code: 135,
           reason:
             "You should define 'PostLabelingDelay' for this file. If you don't provide this information CBF quantification will not be possible. " +
             sidecarMessage,
