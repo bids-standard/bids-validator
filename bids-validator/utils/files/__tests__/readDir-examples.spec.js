@@ -9,9 +9,11 @@ describe('readDir.js - examples integration', () => {
         expect(filenames).toHaveLength(246)
         expect(filenames[0]).toBe('CHANGES')
         expect(filenames[25]).toBe(
-          'sub-02_task-mixedeventrelatedprobe_run-01_events.tsv',
+          'sub-02_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
         )
-        expect(filenames[200]).toBe('sub-15_T1w.nii.gz')
+        expect(filenames[200]).toBe(
+          'sub-14_task-probabilisticclassification_run-02_events.tsv'
+        )
         done()
       })
     })
