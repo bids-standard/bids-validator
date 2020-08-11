@@ -730,5 +730,12 @@ export default {
     severity: 'warning',
     reason:
       "You should define 'HEDVersion' for this file. If you don't provide this information, the HED validation will use the latest version available.",
+  },
+  133: {
+    key: 'CONTINOUS_RECORDING_MISSING_JSON',
+    severity: 'error',
+    reason:
+      "Continous recording data files are required to have an associated JSON metadata file.",
   }
+
 }
