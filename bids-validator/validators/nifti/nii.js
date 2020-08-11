@@ -158,7 +158,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 136,
+              code: 158,
               reason:
                 "You should define 'CASLType' for this file." + sidecarMessage,
             }),
