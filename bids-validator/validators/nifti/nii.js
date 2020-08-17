@@ -44,8 +44,7 @@ export default function NIFTI(
           file: file,
           code: 164,
           reason:
-            "You should define 'Manufacturer' for this file. " +
-            sidecarMessage,
+            "You should define 'Manufacturer' for this file. " + sidecarMessage,
         }),
       )
     }
@@ -128,7 +127,8 @@ export default function NIFTI(
               file: file,
               code: 159,
               reason:
-                "You should define 'LabelingPulseAverageGradient' for this file." + sidecarMessage,
+                "You should define 'LabelingPulseAverageGradient' for this file." +
+                sidecarMessage,
             }),
           )
         }
@@ -138,7 +138,8 @@ export default function NIFTI(
               file: file,
               code: 161,
               reason:
-                "You should define 'LabelingPulseDuration' for this file." + sidecarMessage,
+                "You should define 'LabelingPulseDuration' for this file." +
+                sidecarMessage,
             }),
           )
         }
@@ -148,7 +149,8 @@ export default function NIFTI(
               file: file,
               code: 162,
               reason:
-                "You should define 'LabelingPulseInterval' for this file." + sidecarMessage,
+                "You should define 'LabelingPulseInterval' for this file." +
+                sidecarMessage,
             }),
           )
         }
@@ -173,8 +175,7 @@ export default function NIFTI(
               file: file,
               code: 163,
               reason:
-                "You should define 'PASLType' for this file." +
-                sidecarMessage,
+                "You should define 'PASLType' for this file." + sidecarMessage,
             }),
           )
         }
@@ -249,12 +250,12 @@ export default function NIFTI(
           }
         }
       }
-      
+
       if (LabelingTypeString == 'PASL') {
         if (mergedDictionary.hasOwnProperty('LabelingDuration')) {
-            var LabelingDuration = mergedDictionary['LabelingDuration']
-            const LabelingDurationLength = LabelingDuration.length
-            if (LabelingDurationLength > 1 || LabelingDuration >0)
+          let LabelingDuration = mergedDictionary['LabelingDuration']
+          const LabelingDurationLength = LabelingDuration.length
+          if (LabelingDurationLength > 1 || LabelingDuration > 0)
             issues.push(
               new Issue({
                 file: file,
@@ -267,7 +268,7 @@ export default function NIFTI(
         }
       }
 
-      if (LabelingTypeString == 'CASL' || LabelingTypeString == 'PCASL' ) {
+      if (LabelingTypeString == 'CASL' || LabelingTypeString == 'PCASL') {
         if (!mergedDictionary.hasOwnProperty('LabelingDuration')) {
           issues.push(
             new Issue({
@@ -278,16 +279,15 @@ export default function NIFTI(
                 sidecarMessage,
             }),
           )
-        }
-        else { 
+        } else {
           if (
-              header && 
-              mergedDictionary['LabelingDuration'].constructor === Array
-            ) { 
-            var LabelingDuration = mergedDictionary['LabelingDuration']
+            header &&
+            mergedDictionary['LabelingDuration'].constructor === Array
+          ) {
+            let LabelingDuration = mergedDictionary['LabelingDuration']
             const LabelingDurationLength = LabelingDuration.length
             const kDim = header.dim[4]
-            if (LabelingDurationLength !== kDim ) {
+            if (LabelingDurationLength !== kDim) {
               issues.push(
                 new Issue({
                   file: file,
@@ -300,10 +300,9 @@ export default function NIFTI(
             }
           }
         }
-      }  
+      }
     }
 
-    
     if (!mergedDictionary.hasOwnProperty('PostLabelingDelay')) {
       issues.push(
         new Issue({
@@ -315,7 +314,7 @@ export default function NIFTI(
         }),
       )
     }
-    
+
     if (!mergedDictionary.hasOwnProperty('BackgroundSuppression')) {
       issues.push(
         new Issue({
@@ -327,12 +326,10 @@ export default function NIFTI(
         }),
       )
     }
-    if (
-      mergedDictionary.hasOwnProperty('BackgroundSuppression')
-    )
-    {
-      if (mergedDictionary['BackgroundSuppression']==true) {
-        if (!mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseTime')
+    if (mergedDictionary.hasOwnProperty('BackgroundSuppression')) {
+      if (mergedDictionary['BackgroundSuppression'] == true) {
+        if (
+          !mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseTime')
         ) {
           issues.push(
             new Issue({
@@ -344,8 +341,9 @@ export default function NIFTI(
             }),
           )
         }
-        if (!mergedDictionary.hasOwnProperty('BackgroundSuppressionNumberPulses'))
-        {
+        if (
+          !mergedDictionary.hasOwnProperty('BackgroundSuppressionNumberPulses')
+        ) {
           issues.push(
             new Issue({
               file: file,
@@ -360,19 +358,23 @@ export default function NIFTI(
       if (
         mergedDictionary.hasOwnProperty('BackgroundSuppressionNumberPulses') &&
         mergedDictionary.hasOwnProperty('BackgroundSuppressionPulseTime')
-      )
-      {
-        var BackgroundSuppressionNumberPulses = mergedDictionary['BackgroundSuppressionNumberPulses']
-        var BackgroundSuppressionPulseTime = mergedDictionary['BackgroundSuppressionPulseTime']
+      ) {
+        var BackgroundSuppressionNumberPulses =
+          mergedDictionary['BackgroundSuppressionNumberPulses']
+        var BackgroundSuppressionPulseTime =
+          mergedDictionary['BackgroundSuppressionPulseTime']
         const kDim = BackgroundSuppressionPulseTime.length
-        if (BackgroundSuppressionNumberPulses !== kDim ) {
+        if (BackgroundSuppressionNumberPulses !== kDim) {
           issues.push(
             new Issue({
               file: file,
               code: 156,
               reason:
-                "The BackgroundSuppressionNumberPulses is " + BackgroundSuppressionNumberPulses + 
-                " however the array BackgroundSuppressionPulseTime array has " + kDim + " values. Please check the discrepancy between this two values that must coincides." +
+                'The BackgroundSuppressionNumberPulses is ' +
+                BackgroundSuppressionNumberPulses +
+                ' however the array BackgroundSuppressionPulseTime array has ' +
+                kDim +
+                ' values. Please check the discrepancy between this two values that must coincides.' +
                 sidecarMessage,
             }),
           )
@@ -507,46 +509,45 @@ export default function NIFTI(
           new Issue({
             file: file,
             code: 166,
-            reason: "In case of a LookLocker acquisition you must define 'FlipAngle' for this file.  " + sidecarMessage,
+            reason:
+              "In case of a LookLocker acquisition you must define 'FlipAngle' for this file.  " +
+              sidecarMessage,
           }),
-        )  
-      }
-      else { 
+        )
+      } else {
         issues.push(
           new Issue({
             file: file,
             code: 167,
-            reason: "You should define 'FlipAngle' for this file.  " + sidecarMessage,
+            reason:
+              "You should define 'FlipAngle' for this file.  " + sidecarMessage,
           }),
-        )  
+        )
       }
-    }
-    else {
+    } else {
       if (
-        header && 
+        header &&
         mergedDictionary.hasOwnProperty('LookLocker') &&
         mergedDictionary['FlipAngle'].constructor === Array
-       ) { 
-          var FlipAngles = mergedDictionary['FlipAngle']
-          const FlipAngleLength = FlipAngle.length
-          const kDim = header.dim[4]
-          if (FlipAngleLength !== kDim ) {
-            issues.push(
-              new Issue({
-                file: file,
-                code: 168,
-                reason:
-                  "'FlipAngle' for this file do not match the 4th dimension of the NIFTI header. " +
-                  sidecarMessage,
-              }),
-            )
-          }
+      ) {
+        let FlipAngle = mergedDictionary['FlipAngle']
+        const FlipAngleLength = FlipAngle.length
+        const kDim = header.dim[4]
+        if (FlipAngleLength !== kDim) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 168,
+              reason:
+                "'FlipAngle' for this file do not match the 4th dimension of the NIFTI header. " +
+                sidecarMessage,
+            }),
+          )
+        }
       }
     }
-    }
+  }
 
-    
-  
   if (path.includes('_dwi.nii')) {
     const potentialBvecs = utils.files.potentialLocations(
       path.replace('.gz', '').replace('.nii', '.bvec'),
@@ -726,8 +727,15 @@ export default function NIFTI(
     }
 
     // we don't need slice timing or repetition time for SBref
-    if (path.includes('_bold.nii') || path.includes('_asl.nii') || path.includes('_m0scan.nii')) {
-      if (!mergedDictionary.hasOwnProperty('RepetitionTime') && !mergedDictionary.hasOwnProperty('VolumeTiming')) {
+    if (
+      path.includes('_bold.nii') ||
+      path.includes('_asl.nii') ||
+      path.includes('_m0scan.nii')
+    ) {
+      if (
+        !mergedDictionary.hasOwnProperty('RepetitionTime') &&
+        !mergedDictionary.hasOwnProperty('VolumeTiming')
+      ) {
         issues.push(
           new Issue({
             file: file,
@@ -735,7 +743,7 @@ export default function NIFTI(
             reason:
               "You have to define 'RepetitionTime' or 'VolumeTiming' for this file. " +
               sidecarMessage,
-          })
+          }),
         )
       } else if (
         header &&
@@ -777,27 +785,30 @@ export default function NIFTI(
               code: 11,
             }),
           )
-          }
-        } else if (mergedDictionary.RepetitionTime) {
-          const niftiTR = Number(repetitionTime).toFixed(3)
-          const jsonTR = Number(mergedDictionary.RepetitionTime).toFixed(3)
-          if (niftiTR !== jsonTR) {
-            issues.push(
-              new Issue({
-                file: file,
-                code: 12,
-                reason:
-                  'Repetition time defined in the JSON (' +
-                  jsonTR +
-                  ' sec.) did not match the one defined in the NIFTI header (' +
-                  niftiTR +
-                  ' sec.)',
-              }),
-            )
-          }
-        } else if (mergedDictionary.VolumeTiming && !mergedDictionary.SliceTiming && !mergedDictionary.AcquisitionDuration) {
-          issues.push(new Issue({ file: file, code: 170 }))
         }
+      } else if (mergedDictionary.RepetitionTime) {
+        const niftiTR = Number(repetitionTime).toFixed(3)
+        const jsonTR = Number(mergedDictionary.RepetitionTime).toFixed(3)
+        if (niftiTR !== jsonTR) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 12,
+              reason:
+                'Repetition time defined in the JSON (' +
+                jsonTR +
+                ' sec.) did not match the one defined in the NIFTI header (' +
+                niftiTR +
+                ' sec.)',
+            }),
+          )
+        }
+      } else if (
+        mergedDictionary.VolumeTiming &&
+        !mergedDictionary.SliceTiming &&
+        !mergedDictionary.AcquisitionDuration
+      ) {
+        issues.push(new Issue({ file: file, code: 171 }))
       }
 
       // check that slice timing is defined
@@ -857,124 +868,122 @@ export default function NIFTI(
           )
         }
       }
-    } else if (path.includes('_phasediff.nii')) {
-      if (
-        !mergedDictionary.hasOwnProperty('EchoTime1') ||
-        !mergedDictionary.hasOwnProperty('EchoTime2')
-      ) {
+  } else if (path.includes('_phasediff.nii')) {
+    if (
+      !mergedDictionary.hasOwnProperty('EchoTime1') ||
+      !mergedDictionary.hasOwnProperty('EchoTime2')
+    ) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 15,
+          reason:
+            "You have to define 'EchoTime1' and 'EchoTime2' for this file. " +
+            sidecarMessage,
+        }),
+      )
+    }
+    if (
+      mergedDictionary.hasOwnProperty('EchoTime1') &&
+      mergedDictionary.hasOwnProperty('EchoTime2')
+    ) {
+      const echoTimeDifference =
+        mergedDictionary['EchoTime2'] - mergedDictionary['EchoTime1']
+      if (echoTimeDifference < 0.0001 || echoTimeDifference > 0.01) {
         issues.push(
           new Issue({
             file: file,
-            code: 15,
+            code: 83,
             reason:
-              "You have to define 'EchoTime1' and 'EchoTime2' for this file. " +
-              sidecarMessage,
-          }),
-        )
-      }
-      if (
-        mergedDictionary.hasOwnProperty('EchoTime1') &&
-        mergedDictionary.hasOwnProperty('EchoTime2')
-      ) {
-        const echoTimeDifference =
-          mergedDictionary['EchoTime2'] - mergedDictionary['EchoTime1']
-        if (echoTimeDifference < 0.0001 || echoTimeDifference > 0.01) {
-          issues.push(
-            new Issue({
-              file: file,
-              code: 83,
-              reason:
-                'The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - 0.01. ' +
-                sidecarMessage,
-            }),
-          )
-        }
-      }
-    } else if (path.includes('_phase1.nii') || path.includes('_phase2.nii')) {
-      if (!mergedDictionary.hasOwnProperty('EchoTime')) {
-        issues.push(
-          new Issue({
-            file: file,
-            code: 16,
-            reason:
-              "You have to define 'EchoTime' for this file. " + sidecarMessage,
-          }),
-        )
-      }
-    } else if (path.includes('_fieldmap.nii')) {
-      if (!mergedDictionary.hasOwnProperty('Units')) {
-        issues.push(
-          new Issue({
-            file: file,
-            code: 17,
-            reason:
-              "You have to define 'Units' for this file. " + sidecarMessage,
-          }),
-        )
-      }
-    } else if (path.includes('_epi.nii')) {
-      if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
-        issues.push(
-          new Issue({
-            file: file,
-            code: 18,
-            reason:
-              "You have to define 'PhaseEncodingDirection' for this file. " +
-              sidecarMessage,
-          }),
-        )
-      }
-      if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
-        issues.push(
-          new Issue({
-            file: file,
-            code: 19,
-            reason:
-              "You have to define 'TotalReadoutTime' for this file. " +
+              'The value of (EchoTime2 - EchoTime1) should be within the range of 0.0001 - 0.01. ' +
               sidecarMessage,
           }),
         )
       }
     }
+  } else if (path.includes('_phase1.nii') || path.includes('_phase2.nii')) {
+    if (!mergedDictionary.hasOwnProperty('EchoTime')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 16,
+          reason:
+            "You have to define 'EchoTime' for this file. " + sidecarMessage,
+        }),
+      )
+    }
+  } else if (path.includes('_fieldmap.nii')) {
+    if (!mergedDictionary.hasOwnProperty('Units')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 17,
+          reason: "You have to define 'Units' for this file. " + sidecarMessage,
+        }),
+      )
+    }
+  } else if (path.includes('_epi.nii')) {
+    if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 18,
+          reason:
+            "You have to define 'PhaseEncodingDirection' for this file. " +
+            sidecarMessage,
+        }),
+      )
+    }
+    if (!mergedDictionary.hasOwnProperty('TotalReadoutTime')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 19,
+          reason:
+            "You have to define 'TotalReadoutTime' for this file. " +
+            sidecarMessage,
+        }),
+      )
+    }
+  }
 
-    if (
-      utils.type.file.isFieldMapMainNii(path) &&
-      mergedDictionary.hasOwnProperty('IntendedFor')
-    ) {
+  if (
+    utils.type.file.isFieldMapMainNii(path) &&
+    mergedDictionary.hasOwnProperty('IntendedFor')
+  ) {
+    const intendedFor =
+      typeof mergedDictionary['IntendedFor'] == 'string'
+        ? [mergedDictionary['IntendedFor']]
+        : mergedDictionary['IntendedFor']
+
+    for (let key = 0; key < intendedFor.length; key++) {
+      const intendedForFile = intendedFor[key]
+      checkIfIntendedExists(intendedForFile, fileList, issues, file)
+      checkIfValidFiletype(intendedForFile, issues, file)
+    }
+  }
+  if (path.includes('_m0scan.nii')) {
+    if (mergedDictionary.hasOwnProperty('IntendedFor')) {
       const intendedFor =
         typeof mergedDictionary['IntendedFor'] == 'string'
           ? [mergedDictionary['IntendedFor']]
           : mergedDictionary['IntendedFor']
-
       for (let key = 0; key < intendedFor.length; key++) {
         const intendedForFile = intendedFor[key]
         checkIfIntendedExists(intendedForFile, fileList, issues, file)
         checkIfValidFiletype(intendedForFile, issues, file)
       }
+    } else {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 152,
+          reason:
+            "You have to define 'IntendedFor' for this file. " + sidecarMessage,
+        }),
+      )
     }
-    if (path.includes('_m0scan.nii')) {
-      if (mergedDictionary.hasOwnProperty('IntendedFor')) {
-        const intendedFor =
-          typeof mergedDictionary['IntendedFor'] == 'string'
-            ? [mergedDictionary['IntendedFor']]
-            : mergedDictionary['IntendedFor']
-        for (let key = 0; key < intendedFor.length; key++) {
-          const intendedForFile = intendedFor[key]
-          checkIfIntendedExists(intendedForFile, fileList, issues, file)
-          checkIfValidFiletype(intendedForFile, issues, file)
-        }
-      } else {
-        issues.push(
-          new Issue({
-            file: file,
-            code: 152,
-            reason:
-              "You have to define 'IntendedFor' for this file. " +
-              sidecarMessage,
-          }),
-        )
-      }
-    }
+  }
   }
   callback(issues)
 }
