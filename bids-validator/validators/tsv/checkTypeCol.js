@@ -27,6 +27,9 @@ const checkTypeCol = function (rows, file, issues) {
             const line = rows[i]
             let type = line[typeColumn]
 
+            if (type === 'n/a') {
+              continue
+            }
             // check type casing
             let isUpperCase = true;
             if (type != type.toUpperCase()) {
