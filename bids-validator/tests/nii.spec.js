@@ -400,4 +400,38 @@ describe('NIFTI', function() {
       assert(issues.length === 0)
     })
   })
+  it('should give error if VolumeTiming missing acquisition time', function() {
+    let volumeJson = {
+      '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.json': {
+        VolumeTiming: 1,
+        TaskName: 'mixedeventrelatedprobrest'
+      }
+    }
+
+    file.relativePath =
+      '/sub-15/func/sub-15_task-mixedeventrelatedproberest_run-01_bold.nii.gz'
+    validate.NIFTI(null, file, volumeJson, {}, [], events, function(
+      issues,
+    ) {
+      assert(issues[0].code === 170 && issues.length === 1)
+    })
+  })
+  it('should not give error if VolumeTiming has an acquisition time', function() {
+    let volumeJson = {
+      '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.json': {
+        VolumeTiming: 1,
+        SliceTiming: 1,
+        TaskName: 'mixedeventrelatedprobrest'
+      }
+    }
+
+    file.relativePath =
+      '/sub-15/func/sub-15_task-mixedeventrelatedproberest_run-01_bold.nii.gz'
+    validate.NIFTI(null, file, volumeJson, {}, [], events, function(
+      issues,
+    ) {
+      assert(issues.length === 0)
+    })
+  })
+
 })

@@ -727,18 +727,19 @@ export default function NIFTI(
 
     // we don't need slice timing or repetition time for SBref
     if (path.includes('_bold.nii') || path.includes('_asl.nii') || path.includes('_m0scan.nii')) {
-      if (!mergedDictionary.hasOwnProperty('RepetitionTime')) {
+      if (!mergedDictionary.hasOwnProperty('RepetitionTime') && !mergedDictionary.hasOwnProperty('VolumeTiming')) {
         issues.push(
           new Issue({
             file: file,
             code: 10,
             reason:
-              "You have to define 'RepetitionTime' for this file. " +
+              "You have to define 'RepetitionTime' or 'VolumeTiming' for this file. " +
               sidecarMessage,
-          }),
+          })
         )
       } else if (
         header &&
+        mergedDictionary.RepetitionTime &&
         mergedDictionary.EffectiveEchoSpacing &&
         mergedDictionary.PhaseEncodingDirection
       ) {
@@ -776,7 +777,8 @@ export default function NIFTI(
               code: 11,
             }),
           )
-        } else {
+          }
+        } else if (mergedDictionary.RepetitionTime) {
           const niftiTR = Number(repetitionTime).toFixed(3)
           const jsonTR = Number(mergedDictionary.RepetitionTime).toFixed(3)
           if (niftiTR !== jsonTR) {
@@ -793,6 +795,8 @@ export default function NIFTI(
               }),
             )
           }
+        } else if (mergedDictionary.VolumeTiming && !mergedDictionary.SliceTiming && !mergedDictionary.AcquisitionDuration) {
+          issues.push(new Issue({ file: file, code: 170 }))
         }
       }
 
