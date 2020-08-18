@@ -927,4 +927,16 @@ export default {
     severity: 'error',
     reason: "'LabelingDuration' for PASL LabellingType can be only a scalar value put to 0 or unset.",
   },
+  170: {
+    key: 'CONTINOUS_RECORDING_MISSING_JSON',
+    severity: 'error',
+    reason:
+      "Continous recording data files are required to have an associated JSON metadata file.",
+  },
+  171: {
+    key: 'VOLUME_TIMING_MISSING_ACQUISITION_TIME',
+    severity: 'error',
+    reason: "'VolumeTiming' requires either 'SliceTiming' or 'AcquisitionDuration' be defined.",
+  }
+
 }

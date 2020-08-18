@@ -2,6 +2,9 @@
   "$schema": "http://json-schema.org/draft-06/schema#",
   "type": "object",
   "properties": {
+    "AcquisitionDuration": {
+      "type": "number"
+    },
     "CogAtlasID": {
       "type": "string"
     },
@@ -37,6 +40,10 @@
     },
     "TaskName": {
       "type": "string"
+    },
+    "VolumeTiming": {
+      "type": "number",
+      "exclusiveMinimum": 0
     }
   }
 }

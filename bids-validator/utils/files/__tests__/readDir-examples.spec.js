@@ -6,12 +6,14 @@ describe('readDir.js - examples integration', () => {
       readDir('bids-validator/tests/data/bids-examples/ds002/').then(files => {
         const filenames = Object.values(files).map(f => f.name)
         filenames.sort()
-        expect(filenames).toHaveLength(245)
+        expect(filenames).toHaveLength(246)
         expect(filenames[0]).toBe('CHANGES')
         expect(filenames[25]).toBe(
-          'sub-02_task-mixedeventrelatedprobe_run-01_events.tsv',
+          'sub-02_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
         )
-        expect(filenames[200]).toBe('sub-15_T1w.nii.gz')
+        expect(filenames[200]).toBe(
+          'sub-14_task-probabilisticclassification_run-02_events.tsv'
+        )
         done()
       })
     })

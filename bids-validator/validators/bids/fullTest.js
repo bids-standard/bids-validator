@@ -191,6 +191,8 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       self.issues = self.issues.concat(
         tsv.validateTsvColumns(tsvs, jsonContentsDict, headers),
       )
+      // Validate continous recording files
+      self.issues = self.issues.concat(tsv.validateContRec(files.contRecord, jsonContentsDict))
 
       // Validate session files
       self.issues = self.issues.concat(session(fileList))

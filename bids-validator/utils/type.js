@@ -131,6 +131,10 @@ export default {
       return path.endsWith('.tsv')
     },
 
+    isContinousRecording: function(path) {
+      return path.endsWith('.tsv.gz')
+    },
+
     isStimuliData: function(path) {
       return stimuliData.test(path)
     },
