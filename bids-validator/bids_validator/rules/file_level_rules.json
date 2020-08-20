@@ -170,7 +170,7 @@
   },
 
   "asl": {
-    "regexp": "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?perf\\/\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:@@@_asl_type_@@@)$",
+    "regexp": "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?perf\\/\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:@@@_asl_type_@@@)$",
     "tokens": {
       "@@@_asl_type_@@@": [
         "asl\\.nii\\.gz",
