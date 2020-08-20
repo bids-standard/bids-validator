@@ -119,6 +119,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
       if (associatedAslContext > -1)
       {
         const rows = tsv.contents
+        .replace(/[\r]+/g,'')
         .split('\n')
         .filter(row => !(!row || /^\s*$/.test(row)))
         
