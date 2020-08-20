@@ -14,15 +14,8 @@
       "enum": ["i", "j", "k", "i-", "j-", "k-"]
     },
     "RepetitionTime": {
-      "anyOf": [
-        { "type": "number",
-          "exclusiveMinimum": 0 },
-        {
-          "type": "array",
-          "exclusiveMinimum": 0,
-          "items": { "type": "number" }
-        }
-      ]
+         "type": "number",
+          "exclusiveMinimum": 0 
     }, 
     "PulseSequenceType": {
       "type": "string",
