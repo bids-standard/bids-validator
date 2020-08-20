@@ -863,7 +863,7 @@ export default {
     reason: "The 'BackgroundSuppressionNumberPulses' field is not consisten with the lenght of 'BackgroundSuppressionPulseTime'.",
   },
   157: {
-    key: 'LABELLING_DURATION_LENGTH_NOT_CONSISTENT',
+    key: 'LABELLING_DURATION_LENGTH_NOT_MATCHING_NIFTI',
     severity: 'error',
     reason: "'LabelingDuration' for this file does not match the 4th dimension of the NIFTI header. ",
   },
@@ -919,7 +919,7 @@ export default {
   },
   168: {
     key: 'FLIP_ANGLE_NOT_MATCHING_NIFTI',
-    severity: 'warning',
+    severity: 'error',
     reason: "'FlipAngle' for this file do not match the 4th dimension of the NIFTI header. ",
   },
   169: {
@@ -937,6 +937,30 @@ export default {
     key: 'VOLUME_TIMING_MISSING_ACQUISITION_TIME',
     severity: 'error',
     reason: "'VolumeTiming' requires either 'SliceTiming' or 'AcquisitionDuration' be defined.",
-  }
-
+  },
+  172: {
+    key: 'FLIP_ANGLE_NOT_MATCHING_TSV',
+    severity: 'error',
+    reason: "'FlipAngle' for this file does not match the TSV lenght. ",
+  },
+  173: {
+    key: 'POST_LABELLING_DELAY_NOT_MATCHING_NIFTI',
+    severity: 'error',
+    reason: "'FlipAngle' for this file does not match the 4th dimension of the NIFTI header. ",
+  },
+  174: {
+    key: 'POST_LABELLING_DELAY_NOT_MATCHING_TSV',
+    severity: 'error',
+    reason: "'PostLabelingDelay' for this file does not match the TSV lenght. ",
+  },
+  175: {
+    key: 'LABELLING_DURATION_NOT_MATCHING_TSV',
+    severity: 'error',
+    reason: "'LabelingDuration' for this file does not match the TSV lenght. ",
+  },
+  176: {
+    key: 'ASL_CONTENT_TSV_INCONSISTENT',
+    severity: 'error',
+    reason: "'volume_type' can only be filled with values ['cbf' ,'m0scan', 'label', 'control', 'deltam'].",
+  },
 }

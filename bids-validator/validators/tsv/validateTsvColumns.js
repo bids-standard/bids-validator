@@ -105,7 +105,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
       const numVols = dim[4]
 
       // get the json sidecar dictionary associated with that nifti scan
-      const potentialSidecars = utils.files.potentialLocations(
+      var potentialSidecars = utils.files.potentialLocations(
         file.relativePath.replace('.gz', '').replace('.nii', '.json'),
       )
     
@@ -122,6 +122,18 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
         .split('\n')
         .filter(row => !(!row || /^\s*$/.test(row)))
         
+        const asl_filters = ['cbf','m0scan','label','control','deltam','volume_type'];
+        const filtered_tsv_rows = rows.filter(row => asl_filters.includes(row))
+        if (rows.length != filtered_tsv_rows.length)
+        {
+          tsvIssues.push(
+            new Issue({
+              code: 176,
+              file: file,
+            })
+          )
+        }
+
         if (rows.length -1 != numVols) {
           tsvIssues.push(
             new Issue({
@@ -130,11 +142,84 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
             })
           )
         }
+
+        const m0scan_filters = ['m0scan'];
+        
+
+        // Get merged data dictionary for this file
+        potentialSidecars = utils.files.potentialLocations(
+          tsv.file.relativePath.replace('aslcontext.tsv', 'asl.json'),
+        )
+        const mergedDict = utils.files.generateMergedSidecarDict(
+          potentialSidecars,
+          jsonContentsDict,
+        )
+        // check Flip Angle requirements with LookLocker acquisitions
+        if (
+            mergedDict.hasOwnProperty('FlipAngle') &&
+            mergedDict.hasOwnProperty('LookLocker') &&
+            mergedDict['FlipAngle'].constructor === Array
+          ) 
+        {
+          let FlipAngle = mergedDict['FlipAngle']
+          const FlipAngleLength = FlipAngle.length
+          if (FlipAngleLength !== rows.length -1) {
+            tsvIssues.push(
+              new Issue({
+                file: file,
+                code: 172,
+                reason:
+                  "''FlipAngle' for this file do not match the TSV lenght." 
+              }),
+            )
+          }
+        }
+        // check Labelling Duration matching with TSV lenght only for PCASL or CASL
+        if 
+        (
+          mergedDict.hasOwnProperty('LabelingDuration') &&
+          mergedDict['LabelingDuration'].constructor === Array &&
+          mergedDict.hasOwnProperty('LabelingType') &&
+          (mergedDict['LabelingType'] == 'CASL' || mergedDict['LabelingType'] == 'PCASL')
+        ) 
+        {
+          let LabelingDuration = mergedDict['LabelingDuration']
+          const LabelingDurationLength = LabelingDuration.length
+          if (LabelingDurationLength !== rows.length -1) {
+            tsvIssues.push(
+              new Issue({
+                file: file,
+                code: 175,
+                reason:
+                  "''LabelingDuration' for this file do not match the TSV lenght." 
+              }),
+            )
+          }
+        }
+
+        // check Post Labelling Delays matching with TSV lenght
+        if (
+            mergedDict.hasOwnProperty('PostLabelingDelay') &&
+            mergedDict['PostLabelingDelay'].constructor === Array
+          ) 
+        {
+          let PostLabelingDelay = mergedDict['PostLabelingDelay']
+          const PostLabelingDelayLength = PostLabelingDelay.length
+          if (PostLabelingDelayLength !== rows.length -1) {
+            tsvIssues.push(
+              new Issue({
+                file: file,
+                code: 174,
+                reason:
+                  "''PostLabelingDelay' for this file do not match the TSV lenght." 
+              }),
+            )
+          }
+        }
+        
       }
     })
-
   })
-
   return tsvIssues
 }
 

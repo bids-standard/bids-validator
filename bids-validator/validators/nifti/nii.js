@@ -313,7 +313,28 @@ export default function NIFTI(
             sidecarMessage,
         }),
       )
-    }
+    } else {
+      if (
+        header &&
+        mergedDictionary['PostLabelingDelay'].constructor === Array
+      ) {
+        let PostLabelingDelay = mergedDictionary['PostLabelingDelay']
+        const PostLabelingDelayLength = PostLabelingDelay.length
+        const kDim = header.dim[4]
+        if (PostLabelingDelayLength !== kDim) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 173,
+              reason:
+                "'PostLabelingDelay' for this file does not match the 4th dimension of the NIFTI header. " +
+                sidecarMessage,
+            }),
+          )
+        }
+      }
+    }  
+    
 
     if (!mergedDictionary.hasOwnProperty('BackgroundSuppression')) {
       issues.push(
@@ -394,6 +415,8 @@ export default function NIFTI(
     }
     if (
       mergedDictionary.hasOwnProperty('VascularCrushing') &&
+      mergedDictionary['VascularCrushing'].constructor === Boolean &&
+      mergedDictionary['VascularCrushing'] &&
       !mergedDictionary.hasOwnProperty['VascularCrushingVenc']
     ) {
       issues.push(
