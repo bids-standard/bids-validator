@@ -142,10 +142,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
               file: file,
             })
           )
-        }
-
-        const m0scan_filters = ['m0scan'];
-        
+        }        
 
         // Get merged data dictionary for this file
         potentialSidecars = utils.files.potentialLocations(
@@ -193,6 +190,27 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
                 code: 175,
                 reason:
                   "''LabelingDuration' for this file do not match the TSV lenght." 
+              }),
+            )
+          }
+        }
+
+        // check VolumeTiming with TSV lenght
+        if 
+        (
+          mergedDict.hasOwnProperty('VolumeTiming') &&
+          mergedDict['VolumeTiming'].constructor === Array 
+        ) 
+        {
+          let VolumeTiming = mergedDict['VolumeTiming']
+          const VolumeTimingLength = VolumeTiming.length
+          if (VolumeTimingLength !== rows.length -1) {
+            tsvIssues.push(
+              new Issue({
+                file: file,
+                code: 177,
+                reason:
+                  "''VolumeTiming' for this file do not match the TSV lenght." 
               }),
             )
           }

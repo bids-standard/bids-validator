@@ -852,16 +852,6 @@ export default {
     severity: 'error',
     reason: "The 'AcquisitionVoxelSize' field length is not 3. AcquisitionVoxelSize must be defined as a vector of length 3.",
   },
-  155: {
-    key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_MISSING',
-    severity: 'warning',
-    reason: "The 'BackgroundSuppressionNumberPulses' field is missing.",
-  },
-  156: {
-    key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_NOT_CONSISTENT',
-    severity: 'warning',
-    reason: "The 'BackgroundSuppressionNumberPulses' field is not consisten with the lenght of 'BackgroundSuppressionPulseTime'.",
-  },
   157: {
     key: 'LABELLING_DURATION_LENGTH_NOT_MATCHING_NIFTI',
     severity: 'error',
@@ -962,5 +952,25 @@ export default {
     key: 'ASL_CONTENT_TSV_INCONSISTENT',
     severity: 'error',
     reason: "'volume_type' can only be filled with values ['cbf' ,'m0scan', 'label', 'control', 'deltam'].",
+  },
+  177: {
+    key: 'VOLUME_TIMING_NOT_MATCHING_TSV',
+    severity: 'error',
+    reason: "'VolumeTiming' for this file does not match the TSV lenght.",
+  },
+  178: {
+    key: 'VOLUME_TIMING_AND_REPETITION_TIME_MUTUALLY_EXCLUSIVE',
+    severity: 'error',
+    reason: "'VolumeTiming' and 'RepetitionTime' for this file are mutually exclusive.",
+  },
+  179: {
+    key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_MISSING',
+    severity: 'warning',
+    reason: "The 'BackgroundSuppressionNumberPulses' field is missing.",
+  },
+  180: {
+    key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_NOT_CONSISTENT',
+    severity: 'warning',
+    reason: "The 'BackgroundSuppressionNumberPulses' field is not consisten with the lenght of 'BackgroundSuppressionPulseTime'.",
   },
 }

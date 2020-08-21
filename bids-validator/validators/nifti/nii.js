@@ -368,7 +368,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 155,
+              code: 179,
               reason:
                 "You should define 'BackgroundSuppressionNumberPulses' for this file. " +
                 sidecarMessage,
@@ -389,7 +389,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 156,
+              code: 180,
               reason:
                 'The BackgroundSuppressionNumberPulses is ' +
                 BackgroundSuppressionNumberPulses +
@@ -772,7 +772,8 @@ export default function NIFTI(
         header &&
         mergedDictionary.RepetitionTime &&
         mergedDictionary.EffectiveEchoSpacing &&
-        mergedDictionary.PhaseEncodingDirection
+        mergedDictionary.PhaseEncodingDirection && 
+        !mergedDictionary.hasOwnProperty('VolumeTiming')
       ) {
         var axes = { i: 1, j: 2, k: 3 }
         if (
@@ -791,6 +792,21 @@ export default function NIFTI(
             }),
           )
         }
+      }
+      else if (
+        mergedDictionary.hasOwnProperty('VolumeTiming') &&
+        mergedDictionary.hasOwnProperty('RepetitionTime')
+      ) {
+        issues.push(
+          new Issue({
+            file: file,
+            code: 178,
+            reason:
+              "'VolumeTiming' and 'RepetitionTime' for this file are mutually exclusive." +
+              sidecarMessage,
+          }),
+        )
+
       }
 
       if (typeof repetitionTime === 'undefined' && header) {
