@@ -247,7 +247,8 @@ describe('utils.type.file.isMEG', function() {
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.trg',
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.chn',
     // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
-    '/acq-notcrosstalk_meg.dat',  // .dat in MEG only allowed for "acq-crosstalk"
+    // .dat in MEG only allowed for "acq-crosstalk"
+    '/acq-notcrosstalk_meg.dat',
     '/sub-01/ses-001/meg/sub-01_ses-001_acq-notcrosstalk_meg.dat',
   ]
 
