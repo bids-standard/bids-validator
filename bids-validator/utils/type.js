@@ -31,6 +31,8 @@ const funcData = buildRegExp(file_level_rules.func)
 const funcBoldData = buildRegExp(file_level_rules.func_bold)
 const ieegData = buildRegExp(file_level_rules.ieeg)
 const megData = buildRegExp(file_level_rules.meg)
+const megCalibrationData = buildRegExp(file_level_rules.meg_calbibration)
+const megCrosstalkData = buildRegExp(file_level_rules.meg_crosstalk)
 const stimuliData = buildRegExp(file_level_rules.stimuli)
 // Phenotypic data
 const phenotypicData = buildRegExp(phenotypic_rules.phenotypic_data)
@@ -41,6 +43,8 @@ const eegSes = buildRegExp(session_level_rules.eeg_ses)
 const funcSes = buildRegExp(session_level_rules.func_ses)
 const ieegSes = buildRegExp(session_level_rules.ieeg_ses)
 const megSes = buildRegExp(session_level_rules.meg_ses)
+const megCalibrationSes = buildRegExp(session_level_rules.meg_calibration_ses)
+const megCrosstalkSes = buildRegExp(session_level_rules.meg_crosstalk_ses)
 const scansSes = buildRegExp(session_level_rules.scans)
 // Subject level
 const subjectLevel = buildRegExp(subject_level_rules.subject_level)
@@ -54,6 +58,9 @@ const ieegTop = buildRegExp(top_level_rules.ieeg_top)
 const multiDirFieldmap = buildRegExp(top_level_rules.multi_dir_fieldmap)
 const otherTopFiles = buildRegExp(top_level_rules.other_top_files)
 const megTop = buildRegExp(top_level_rules.meg_top)
+const megCalibrationTop = buildRegExp(top_level_rules.meg_calibration_top)
+const megCrosstalkTop = buildRegExp(top_level_rules.meg_crosstalk_top)
+
 
 export default {
   /**
@@ -96,6 +103,8 @@ export default {
         multiDirFieldmap.test(path) ||
         otherTopFiles.test(path) ||
         megTop.test(path) ||
+        megCalibrationTop.test(path) ||
+        megCrosstalkTop.test(path) ||
         eegTop.test(path) ||
         ieegTop.test(path)
       )
@@ -148,6 +157,8 @@ export default {
         conditionalMatch(anatSes, path) ||
         conditionalMatch(dwiSes, path) ||
         conditionalMatch(megSes, path) ||
+        conditionalMatch(megCalibrationSes, path) ||
+        conditionalMatch(megCrosstalkSes, path) ||
         conditionalMatch(eegSes, path) ||
         conditionalMatch(ieegSes, path)
       )
@@ -196,7 +207,11 @@ export default {
     },
 
     isMeg: function(path) {
-      return conditionalMatch(megData, path)
+      return (
+        conditionalMatch(megData, path) ||
+        conditionalMatch(megCalibrationData, path) ||
+        conditionalMatch(megCrosstalkData, path)
+      )
     },
 
     isEEG: function(path) {

@@ -90,6 +90,9 @@ describe('utils.type.file.isTopLevel', function() {
     '/task-testing_eeg.json',
     '/task-testing_ieeg.json',
     '/task-testing_meg.json',
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    '/acq-calibration_meg.fif',
+    '/acq-crosstalk_meg.dat',
   ]
 
   goodFilenames.forEach(function(path) {
@@ -118,12 +121,41 @@ describe('utils.type.file.isTopLevel', function() {
   })
 })
 
+describe('utils.type.file.isSubjectLevel', () => {
+  const goodFilenames = [
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    '/sub-12/sub-12_acq-calibration_meg.fif',
+    '/sub-12/sub-12_acq-crosstalk_meg.dat',
+  ]
+
+  goodFilenames.forEach(path => {
+    it("isSubjectLevel('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isSubjectLevel(path), true)
+      isdone()
+    })
+  })
+
+  const badFilenames = [] // FIXME
+
+  badFilenames.forEach(path => {
+    it("isSubjectLevel('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isSubjectLevel(path), false)
+      isdone()
+    })
+  })
+})
+
 describe('utils.type.file.isSessionLevel', function() {
   const goodFilenames = [
     '/sub-12/sub-12_scans.tsv',
     '/sub-12/sub-12_scans.json',
     '/sub-12/ses-pre/sub-12_ses-pre_scans.tsv',
     '/sub-12/ses-pre/sub-12_ses-pre_scans.json',
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    '/sub-12/sub-12_acq-calibration_meg.fif',
+    '/sub-12/sub-12_acq-crosstalk_meg.dat',
+    '/sub-12/ses-pre/sub-12_ses-pre_acq-calibration_meg.fif',
+    '/sub-12/ses-pre/sub-12_ses-pre_acq-crosstalk_meg.dat',
   ]
 
   goodFilenames.forEach(function(path) {
@@ -207,8 +239,6 @@ describe('utils.type.file.isMEG', function() {
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_split-01_meg.fif',
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_acq-TEST_run-01_split-01_meg.fif',
     // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
-    '/acq-calibration_meg.fif',
-    '/acq-crosstalk_meg.dat',
     '/sub-01/ses-001/meg/sub-01_ses-001_acq-calibration_meg.fif',
     '/sub-01/ses-001/meg/sub-01_ses-001_acq-crosstalk_meg.dat',
   ]
