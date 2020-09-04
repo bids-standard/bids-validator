@@ -61,7 +61,6 @@ const megTop = buildRegExp(top_level_rules.meg_top)
 const megCalibrationTop = buildRegExp(top_level_rules.meg_calibration_top)
 const megCrosstalkTop = buildRegExp(top_level_rules.meg_crosstalk_top)
 
-
 export default {
   /**
    * Is BIDS
