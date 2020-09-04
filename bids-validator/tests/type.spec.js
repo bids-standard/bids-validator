@@ -135,7 +135,14 @@ describe('utils.type.file.isSubjectLevel', () => {
     })
   })
 
-  const badFilenames = [] // FIXME
+  const badFilenames = [
+    '/sub-12/sub-12_acq-calibration_meg.dat',
+    '/sub-12/sub-12_acq-crosstalk_meg.fif',
+    '/sub-12/acq-calibration_meg.fif',
+    '/sub-12/acq-crosstalk_meg.dat',
+    '/sub-12/acq-calibration.fif',
+    '/sub-12/acq-crosstalk.dat',
+  ]
 
   badFilenames.forEach(path => {
     it("isSubjectLevel('" + path + "') === false", function(isdone) {
