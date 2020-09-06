@@ -90,9 +90,6 @@ describe('utils.type.file.isTopLevel', function() {
     '/task-testing_eeg.json',
     '/task-testing_ieeg.json',
     '/task-testing_meg.json',
-    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
-    '/acq-calibration_meg.fif',
-    '/acq-crosstalk_meg.dat',
   ]
 
   goodFilenames.forEach(function(path) {
@@ -111,6 +108,10 @@ describe('utils.type.file.isTopLevel', function() {
     '/_T1w.json',
     '/_dwi.json',
     '/_task-test_physio.json',
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    // must be defined at file level.
+    '/acq-calibration_meg.fif',
+    '/acq-crosstalk_meg.dat',
   ]
 
   badFilenames.forEach(function(path) {

@@ -56,8 +56,6 @@ const ieegTop = buildRegExp(top_level_rules.ieeg_top)
 const multiDirFieldmap = buildRegExp(top_level_rules.multi_dir_fieldmap)
 const otherTopFiles = buildRegExp(top_level_rules.other_top_files)
 const megTop = buildRegExp(top_level_rules.meg_top)
-const megCalibrationTop = buildRegExp(top_level_rules.meg_calibration_top)
-const megCrosstalkTop = buildRegExp(top_level_rules.meg_crosstalk_top)
 
 export default {
   /**
@@ -100,8 +98,6 @@ export default {
         multiDirFieldmap.test(path) ||
         otherTopFiles.test(path) ||
         megTop.test(path) ||
-        megCalibrationTop.test(path) ||
-        megCrosstalkTop.test(path) ||
         eegTop.test(path) ||
         ieegTop.test(path)
       )
