@@ -43,8 +43,6 @@ const eegSes = buildRegExp(session_level_rules.eeg_ses)
 const funcSes = buildRegExp(session_level_rules.func_ses)
 const ieegSes = buildRegExp(session_level_rules.ieeg_ses)
 const megSes = buildRegExp(session_level_rules.meg_ses)
-const megCalibrationSes = buildRegExp(session_level_rules.meg_calibration_ses)
-const megCrosstalkSes = buildRegExp(session_level_rules.meg_crosstalk_ses)
 const scansSes = buildRegExp(session_level_rules.scans)
 // Subject level
 const subjectLevel = buildRegExp(subject_level_rules.subject_level)
@@ -156,8 +154,6 @@ export default {
         conditionalMatch(anatSes, path) ||
         conditionalMatch(dwiSes, path) ||
         conditionalMatch(megSes, path) ||
-        conditionalMatch(megCalibrationSes, path) ||
-        conditionalMatch(megCrosstalkSes, path) ||
         conditionalMatch(eegSes, path) ||
         conditionalMatch(ieegSes, path)
       )
