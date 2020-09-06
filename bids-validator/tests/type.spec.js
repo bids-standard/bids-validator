@@ -171,6 +171,12 @@ describe('utils.type.file.isSessionLevel', function() {
   const badFilenames = [
     '/sub-12/sub-12.tsv',
     '/sub-12/ses-pre/sub-12_ses-pre_scan.tsv',
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    // must be placed at file level.
+    '/sub-12/sub-12_acq-calibration_meg.fif',
+    '/sub-12/sub-12_acq-crosstalk_meg.dat',
+    '/sub-12/ses-pre/sub-12_ses-pre_acq-calibration_meg.fif',
+    '/sub-12/ses-pre/sub-12_ses-pre_acq-crosstalk_meg.dat',
   ]
 
   badFilenames.forEach(function(path) {
