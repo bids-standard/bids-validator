@@ -122,11 +122,7 @@ describe('utils.type.file.isTopLevel', function() {
 })
 
 describe('utils.type.file.isSubjectLevel', () => {
-  const goodFilenames = [
-    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
-    '/sub-12/sub-12_acq-calibration_meg.fif',
-    '/sub-12/sub-12_acq-crosstalk_meg.dat',
-  ]
+  const goodFilenames = [] // to be extended in the future...
 
   goodFilenames.forEach(path => {
     it("isSubjectLevel('" + path + "') === true", function(isdone) {
@@ -136,6 +132,10 @@ describe('utils.type.file.isSubjectLevel', () => {
   })
 
   const badFilenames = [
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    // must be placed on file level.
+    '/sub-12/sub-12_acq-calibration_meg.fif',
+    '/sub-12/sub-12_acq-crosstalk_meg.dat',
     '/sub-12/sub-12_acq-calibration_meg.dat',
     '/sub-12/sub-12_acq-crosstalk_meg.fif',
     '/sub-12/acq-calibration_meg.fif',
