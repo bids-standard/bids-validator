@@ -248,6 +248,8 @@ describe('utils.type.file.isMEG', function() {
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_split-01_meg.fif',
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_acq-TEST_run-01_split-01_meg.fif',
     // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    '/sub-01/meg/sub-01_acq-calibration_meg.fif',
+    '/sub-01/meg/sub-01_acq-crosstalk_meg.dat',
     '/sub-01/ses-001/meg/sub-01_ses-001_acq-calibration_meg.fif',
     '/sub-01/ses-001/meg/sub-01_ses-001_acq-crosstalk_meg.dat',
   ]
