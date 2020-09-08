@@ -101,7 +101,6 @@
   "multi_dir_fieldmap": {
     "regexp": "^[\\/\\\\](?:acq-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)epi\\.json$"
   },
-
   "other_top_files": {
     "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(@@@_other_top_files_ext_@@@)$",
     "tokens": {

@@ -31,6 +31,8 @@ const funcData = buildRegExp(file_level_rules.func)
 const funcBoldData = buildRegExp(file_level_rules.func_bold)
 const ieegData = buildRegExp(file_level_rules.ieeg)
 const megData = buildRegExp(file_level_rules.meg)
+const megCalibrationData = buildRegExp(file_level_rules.meg_calbibration)
+const megCrosstalkData = buildRegExp(file_level_rules.meg_crosstalk)
 const stimuliData = buildRegExp(file_level_rules.stimuli)
 // Phenotypic data
 const phenotypicData = buildRegExp(phenotypic_rules.phenotypic_data)
@@ -196,7 +198,11 @@ export default {
     },
 
     isMeg: function(path) {
-      return conditionalMatch(megData, path)
+      return (
+        conditionalMatch(megData, path) ||
+        conditionalMatch(megCalibrationData, path) ||
+        conditionalMatch(megCrosstalkData, path)
+      )
     },
 
     isEEG: function(path) {

@@ -248,6 +248,14 @@
     }
   },
 
+  "meg_calbibration": {
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?meg[\\/]\\1(_\\2)?_acq-calibration_meg\\.fif$"
+  },
+
+  "meg_crosstalk": {
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?meg[\\/]\\1(_\\2)?_acq-crosstalk_meg\\.dat$"
+  },
+
   "stimuli": {
     "regexp": "^[\\/\\\\](?:stimuli)[\\/\\\\](?:.*)$"
   }

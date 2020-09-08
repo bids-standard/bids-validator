@@ -108,11 +108,46 @@ describe('utils.type.file.isTopLevel', function() {
     '/_T1w.json',
     '/_dwi.json',
     '/_task-test_physio.json',
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    // must be defined at file level.
+    '/acq-calibration_meg.fif',
+    '/acq-crosstalk_meg.dat',
   ]
 
   badFilenames.forEach(function(path) {
     it("isTopLevel('" + path + "') === false", function(isdone) {
       assert.equal(utils.type.file.isTopLevel(path), false)
+      isdone()
+    })
+  })
+})
+
+describe('utils.type.file.isSubjectLevel', () => {
+  const goodFilenames = [] // to be extended in the future...
+
+  goodFilenames.forEach(path => {
+    it("isSubjectLevel('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isSubjectLevel(path), true)
+      isdone()
+    })
+  })
+
+  const badFilenames = [
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    // must be placed on file level.
+    '/sub-12/sub-12_acq-calibration_meg.fif',
+    '/sub-12/sub-12_acq-crosstalk_meg.dat',
+    '/sub-12/sub-12_acq-calibration_meg.dat',
+    '/sub-12/sub-12_acq-crosstalk_meg.fif',
+    '/sub-12/acq-calibration_meg.fif',
+    '/sub-12/acq-crosstalk_meg.dat',
+    '/sub-12/acq-calibration.fif',
+    '/sub-12/acq-crosstalk.dat',
+  ]
+
+  badFilenames.forEach(path => {
+    it("isSubjectLevel('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isSubjectLevel(path), false)
       isdone()
     })
   })
@@ -136,6 +171,12 @@ describe('utils.type.file.isSessionLevel', function() {
   const badFilenames = [
     '/sub-12/sub-12.tsv',
     '/sub-12/ses-pre/sub-12_ses-pre_scan.tsv',
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    // must be placed at file level.
+    '/sub-12/sub-12_acq-calibration_meg.fif',
+    '/sub-12/sub-12_acq-crosstalk_meg.dat',
+    '/sub-12/ses-pre/sub-12_ses-pre_acq-calibration_meg.fif',
+    '/sub-12/ses-pre/sub-12_ses-pre_acq-crosstalk_meg.dat',
   ]
 
   badFilenames.forEach(function(path) {
@@ -206,6 +247,11 @@ describe('utils.type.file.isMEG', function() {
     // NO father dir: fif data
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_split-01_meg.fif',
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_acq-TEST_run-01_split-01_meg.fif',
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    '/sub-01/meg/sub-01_acq-calibration_meg.fif',
+    '/sub-01/meg/sub-01_acq-crosstalk_meg.dat',
+    '/sub-01/ses-001/meg/sub-01_ses-001_acq-calibration_meg.fif',
+    '/sub-01/ses-001/meg/sub-01_ses-001_acq-crosstalk_meg.dat',
   ]
 
   goodFilenames.forEach(function(path) {
@@ -241,6 +287,10 @@ describe('utils.type.file.isMEG', function() {
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.kdf',
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.trg',
     '/sub-01/ses-001/meg/sub-01_ses-001_task-rest_run-01_meg/sub-01_ses-001_task-rest_run-01_meg.chn',
+    // cross-talk and fine-calibration files for Neuromag/Elekta/MEGIN data (.fif)
+    // .dat in MEG only allowed for "acq-crosstalk"
+    '/acq-notcrosstalk_meg.dat',
+    '/sub-01/ses-001/meg/sub-01_ses-001_acq-notcrosstalk_meg.dat',
   ]
 
   badFilenames.forEach(function(path) {
