@@ -45,7 +45,7 @@ export default {
     // MRI
     if (
       path[0].includes('.nii') &&
-      ['anat', 'func', 'dwi','perf'].indexOf(path[1]) != -1
+      ['anat', 'func', 'dwi', 'perf'].indexOf(path[1]) != -1
     ) {
       isCorrectModality = true
     } else if (['.json', '.tsv'].some(v => path[0].includes(v))) {

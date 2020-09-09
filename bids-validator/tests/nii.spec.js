@@ -201,7 +201,9 @@ describe('NIFTI', function() {
       relativePath:
         '/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz',
     })
-    validate.NIFTI(header, file, jsonContentsDict, {}, [], [], function(issues) {
+    validate.NIFTI(header, file, jsonContentsDict, {}, [], [], function(
+      issues,
+    ) {
       assert(
         issues.length === 3 && issues[0].code == 17 && issues[1].code == 37,
       )
@@ -427,8 +429,8 @@ describe('NIFTI', function() {
     let volumeJson = {
       '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.json': {
         VolumeTiming: 1,
-        TaskName: 'mixedeventrelatedprobrest'
-      }
+        TaskName: 'mixedeventrelatedprobrest',
+      },
     }
 
     let fileList = [
@@ -453,17 +455,14 @@ describe('NIFTI', function() {
       '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.json': {
         VolumeTiming: 1,
         SliceTiming: 1,
-        TaskName: 'mixedeventrelatedprobe'
-      }
+        TaskName: 'mixedeventrelatedprobe',
+      },
     }
 
     file.relativePath =
       '/sub-15/func/sub-15_task-mixedeventrelatedprobe_run-01_bold.nii.gz'
-    validate.NIFTI(null, file, volumeJson, {}, [], events, function(
-      issues,
-    ) {
+    validate.NIFTI(null, file, volumeJson, {}, [], events, function(issues) {
       assert(issues.filter(x => x.code === 171).length === 0)
     })
   })
-
 })
