@@ -33,9 +33,9 @@ const potentialPaths = components => {
   // filter filename components that are allowed only in a lower directory
   // eg if we are root level we will not want sub-* included in the possible
   // paths for this level. Also we do not want to include run in that list.
-  const nonPathSpecificFileComponents = informationalFileComponents
-    .filter(component => pathComponents.indexOf(component) < 0)
-    .filter(component => component.indexOf('run') < 0)
+  const nonPathSpecificFileComponents = informationalFileComponents.filter(
+    component => pathComponents.indexOf(component) < 0,
+  )
 
   // loop through all the directory levels - root, sub, (ses), (datatype)
   let paths = []
@@ -48,12 +48,13 @@ const potentialPaths = components => {
     )
 
     const prefix = prefixComponents.join('_')
-    // loop through the non path-specific file components and generate the filename
-    // based on directory + appropriate combinations of filename components
-    for (let j = nonPathSpecificFileComponents.length; j > -1; j--) {
-      // new file name
+    for (
+      let j = 0;
+      j < Math.pow(2, nonPathSpecificFileComponents.length);
+      j++
+    ) {
       const filename = nonPathSpecificFileComponents
-        .slice(0, j)
+        .filter((value, index) => j & (1 << index))
         .concat([file])
         .join('_')
 
