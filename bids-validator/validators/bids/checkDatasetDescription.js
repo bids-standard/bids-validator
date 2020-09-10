@@ -20,8 +20,14 @@ const checkDatasetDescription = jsonContentsDict => {
     issues = issues.concat(checkAuthorField(datasetDescription.Authors))
 
     // if genetic info json present ensure mandatory GeneticDataset present
-    if (hasGeneticInfo && !(('Genetics' in datasetDescription) && ('Dataset' in datasetDescription.Genetics))) {
-      issues.push(new Issue({ code: 128 }));
+    if (
+      hasGeneticInfo &&
+      !(
+        'Genetics' in datasetDescription &&
+        'Dataset' in datasetDescription.Genetics
+      )
+    ) {
+      issues.push(new Issue({ code: 128 }))
     }
   }
   return issues
@@ -34,7 +40,7 @@ const checkAuthorField = authors => {
   if (authors && typeof authors == 'object' && authors.length) {
     // if any author has more than one comma, throw an error
     authors.forEach(author => {
-      if (author.split(',').length > 2) {
+      if (('' + author).split(',').length > 2) {
         issues.push(new Issue({ code: 103, evidence: author }))
       }
     })
