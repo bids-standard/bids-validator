@@ -5,7 +5,7 @@
     "SamplingFrequency": { "type": "number" },
     "PowerLineFrequency": {
       "anyOf": [
-        { "type": "integer" },
+        { "type": "number", "exclusiveMinimum": 0},
         { "type": "string", "pattern": "^n/a$" }
       ]
     },
