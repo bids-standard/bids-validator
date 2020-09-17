@@ -4,10 +4,10 @@
     "CogAtlasID": { "type": "string" },
     "CogPOID": { "type": "string" },
     "DeviceSerialNumber": { "type": "string" },
-    "ECGChannelCount": { "type": "integer" },
-    "EEGChannelCount": { "type": "integer" },
-    "EMGChannelCount": { "type": "integer" },
-    "EOGChannelCount": { "type": "integer" },
+    "ECGChannelCount": { "type": "integer", "minimum": 0 },
+    "EEGChannelCount": { "type": "integer", "minimum": 0 },
+    "EMGChannelCount": { "type": "integer", "minimum": 0 },
+    "EOGChannelCount": { "type": "integer", "minimum": 0 },
     "HardwareFilters": {
       "anyOf": [
         { "type": "object", "additionalProperties": { "type": "object" } },
@@ -18,7 +18,7 @@
     "InstitutionName": { "type": "string" },
     "Instructions": { "type": "string" },
     "Manufacturer": { "type": "string", "minLength": 1 },
-    "MiscChannelCount": { "type": "integer" },
+    "MiscChannelCount": { "type": "integer", "minimum": 0 },
     "PowerLineFrequency": {
       "anyOf": [
         { "type": "integer" },
@@ -44,6 +44,6 @@
     "SoftwareVersions": { "type": "string" },
     "TaskDescription": { "type": "string" },
     "TaskName": { "type": "string", "minLength": 1 },
-    "TriggerChannelCount": { "type": "integer" }
+    "TriggerChannelCount": { "type": "integer", "minimum": 0 }
   }
 }
