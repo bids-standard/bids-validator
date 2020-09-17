@@ -1,19 +1,27 @@
 {
   "type": "object",
+  "definitions": {
+    "GeneticLevelEnum": {
+      "type": "string",
+      "enum": [
+        "Genetic",
+        "Genomic",
+        "Epigenomic",
+        "Transcriptomic",
+        "Metabolomic",
+        "Proteomic"
+      ]
+    }
+  },
   "properties": {
     "GeneticLevel": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "Genetic",
-          "Genomic",
-          "Epigenomic",
-          "Transcriptomic",
-          "Metabolomic",
-          "Proteomic"
-        ]
-      }
+      "anyof": [
+        {
+          "type": "array",
+          "items": {"$ref": "#/definitions/GeneticLevelEnum"}
+        },
+        { "$ref": "#/definitions/GeneticLevelEnum" }
+      ]
     },
     "AnalyticalApproach": {
       "items": {
