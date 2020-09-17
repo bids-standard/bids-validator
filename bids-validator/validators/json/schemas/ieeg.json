@@ -40,7 +40,7 @@
     "MiscChannelCount": { "type": "integer" },
     "TriggerChannelCount": { "type": "integer" },
     "RecordingDuration": { "type": "number" },
-    "RecordingType": { "type": "string" },
+    "RecordingType": { "$ref": "common_definitions.json#/definitions/RecordingType" },
     "EpochLength": { "type": "number" },
     "SubjectArtefactDescription": { "type": "string" },
     "SoftwareVersions": { "type": "string" },

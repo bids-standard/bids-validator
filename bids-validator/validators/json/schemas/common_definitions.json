@@ -1,0 +1,14 @@
+{
+  "$id": "common_definitions.json",
+  "definitions": {
+    "RecordingType": {
+      "type": "string",
+      "enum": [
+        "continuous",
+        "epoched",
+        "discontinuous" 
+      ]
+    }
+  }
+}
+

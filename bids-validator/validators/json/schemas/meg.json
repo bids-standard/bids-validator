@@ -51,7 +51,7 @@
       ]
     },
     "RecordingDuration": { "type": "number" },
-    "RecordingType": { "type": "string" },
+    "RecordingType": { "$ref": "common_definitions.json#/definitions/RecordingType" },
     "EpochLength": { "type": ["number", "string"] },
     "ContinuousHeadLocalization": { "type": "boolean" },
     "HeadCoilFrequency": {
