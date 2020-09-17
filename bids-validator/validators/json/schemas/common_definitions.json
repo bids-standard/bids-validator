@@ -1,6 +1,31 @@
 {
   "$id": "common_definitions.json",
   "definitions": {
+    "CogAtlasID": { "type": "string" },
+    "CogPOID": { "type": "string" },
+    "DeviceSerialNumber": { "type": "string" },
+    "ECGChannelCount": { "type": "integer" },
+    "EEGChannelCount": { "type": "integer" },
+    "EMGChannelCount": { "type": "integer" },
+    "EOGChannelCount": { "type": "integer" },
+    "HardwareFilters": {
+      "anyOf": [
+        { "type": "object", "additionalProperties": { "type": "object" } },
+        { "type": "string", "pattern": "^n/a$" }
+      ]
+    },
+    "InstitutionAddress": { "type": "string" },
+    "InstitutionName": { "type": "string" },
+    "Instructions": { "type": "string" },
+    "Manufacturer": { "type": "string", "minLength": 1 },
+    "MiscChannelCount": { "type": "integer" },
+    "PowerLineFrequency": {
+      "anyOf": [
+        { "type": "integer" },
+        { "type": "string", "pattern": "^n/a$" }
+      ]
+    },
+    "RecordingDuration": { "type": "number" },
     "RecordingType": {
       "type": "string",
       "enum": [
@@ -8,7 +33,17 @@
         "epoched",
         "discontinuous" 
       ]
-    }
+    },
+    "SamplingFrequency": { "type": "number" },
+    "SoftwareFilters": {
+      "anyOf": [
+        { "type": "object", "additionalProperties": { "type": "object" } },
+        { "type": "string", "pattern": "^n/a$" }
+      ]
+    },
+    "SoftwareVersions": { "type": "string" },
+    "TaskDescription": { "type": "string" },
+    "TaskName": { "type": "string", "minLength": 1 },
+    "TriggerChannelCount": { "type": "integer" }
   }
 }
-
