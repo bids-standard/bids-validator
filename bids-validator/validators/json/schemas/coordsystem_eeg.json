@@ -3,15 +3,27 @@
   "properties": {
     "IntendedFor": { "type": "string", "minLength": 1 },
     "FiducialsDescription": { "type": "string", "minLength": 1 },
+    "FiducialsCoordinates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "FiducialsCoordinateSystem": { "type": "string", "minLength": 1 },
+    "FiducialsCoordinateSystemDescription": { "type": "string" },
+    "FiducialsCoordinateUnits": { "type": "string", "enum": ["m", "mm", "cm"] },
     "EEGCoordinateSystem": { "type": "string", "minLength": 1 },
-    "EEGCoordinateUnits": { "type": "string", "minLength": 1 },
+    "EEGCoordinateUnits": { "type": "string", "enum": ["m", "mm", "cm"] },
     "EEGCoordinateSystemDescription": { "type": "string" },
     "AnatomicalLandmarkCoordinates": {
       "type": "object",
       "additionalProperties": { "type": "array" }
     },
     "AnatomicalLandmarkCoordinateSystem": { "type": "string", "minLength": 1 },
-    "AnatomicalLandmarkCoordinateUnits": { "type": "string", "minLength": 1 },
+    "AnatomicalLandmarkCoordinateUnits": { "type": "string", "enum": ["m", "mm", "cm"] },
     "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string" }
   },
   "required": ["EEGCoordinateSystem", "EEGCoordinateUnits"],

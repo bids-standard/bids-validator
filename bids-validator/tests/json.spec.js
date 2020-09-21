@@ -144,11 +144,12 @@ describe('JSON', function() {
         NAS: [0, 1, 0],
       },
       AnatomicalLandmarkCoordinateSystem: '...',
-      AnatomicalLandmarkCoordinateUnits: '...',
+      AnatomicalLandmarkCoordinateUnits: 'mm',
       AnatomicalLandmarkCoordinateSystemDescription: '...',
     }
     jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
+      console.log(issues)
       assert(issues.length === 0)
     })
   })
