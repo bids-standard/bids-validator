@@ -149,7 +149,6 @@ describe('JSON', function() {
     }
     jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
-      console.log(issues)
       assert(issues.length === 0)
     })
   })
