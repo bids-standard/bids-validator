@@ -81,7 +81,7 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
           if (!sidecarHedData) {
             continue
           }
-          if (sidecarHedData instanceof String) {
+          if (typeof sidecarHedData === 'string') {
             sidecarHedString = sidecarHedData.replace('#', rowCell)
           } else {
             sidecarHedString = sidecarHedData[rowCell]
