@@ -30,7 +30,7 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
       ) {
         const sidecarHedData = sidecarValue.HED
         if (
-          sidecarHedData instanceof String &&
+          typeof sidecarHedData === 'string' &&
           sidecarHedData.split('#').length !== 2
         ) {
           issues.push(
@@ -40,8 +40,9 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
               evidence: sidecarHedData,
             }),
           )
+          sidecarHedTags[sidecarKey] = false
         } else {
-          sidecarHedTags[sidecarKey] = sidecarValue.HED
+          sidecarHedTags[sidecarKey] = sidecarHedData
         }
       }
     }
@@ -77,6 +78,9 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
         const rowCell = rowCells[sidecarHedIndex]
         if (rowCell) {
           let sidecarHedString
+          if (!sidecarHedData) {
+            continue
+          }
           if (sidecarHedData instanceof String) {
             sidecarHedString = sidecarHedData.replace('#', rowCell)
           } else {
