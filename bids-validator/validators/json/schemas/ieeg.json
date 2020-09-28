@@ -26,7 +26,7 @@
     "TriggerChannelCount": { "$ref": "common_definitions.json#/definitions/TriggerChannelCount" },
     "RecordingDuration": { "$ref": "common_definitions.json#/definitions/RecordingDuration" },
     "RecordingType": { "$ref": "common_definitions.json#/definitions/RecordingType" },
-    "EpochLength": { "type": "number" },
+    "EpochLength": { "$ref": "common_definitions.json#/definitions/EpochLength" },
     "SubjectArtefactDescription": { "type": "string" },
     "SoftwareVersions": { "$ref": "common_definitions.json#/definitions/SoftwareVersions" },
     "iEEGReference": { "type": "string" },

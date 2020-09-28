@@ -8,6 +8,7 @@
     "EEGChannelCount": { "type": "integer", "minimum": 0 },
     "EMGChannelCount": { "type": "integer", "minimum": 0 },
     "EOGChannelCount": { "type": "integer", "minimum": 0 },
+    "EpochLength": { "type": "number", "minimum": 0 },
     "HardwareFilters": {
       "anyOf": [
         { "type": "object", "additionalProperties": { "type": "object" } },

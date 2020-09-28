@@ -34,7 +34,7 @@
     "SoftwareFilters": { "$ref": "common_definitions.json#/definitions/SoftwareFilters" },
     "RecordingDuration": { "$ref": "common_definitions.json#/definitions/RecordingDuration" },
     "RecordingType": { "$ref": "common_definitions.json#/definitions/RecordingType" },
-    "EpochLength": { "type": ["number", "string"] },
+    "EpochLength": { "$ref": "common_definitions.json#/definitions/EpochLength" },
     "ContinuousHeadLocalization": { "type": "boolean" },
     "HeadCoilFrequency": {
       "anyOf": [
