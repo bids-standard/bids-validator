@@ -1,7 +1,7 @@
 {
   "type": "object",
   "properties": {
-    "SamplingFrequency": { "type": "number" },
+    "SamplingFrequency": { "type": "number", "exclusiveMinimum": 0 },
     "StartTime": { "type": "number" },
     "Columns": {
       "type": "array",
