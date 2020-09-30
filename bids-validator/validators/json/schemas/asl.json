@@ -2,8 +2,15 @@
   "type": "object",
   "properties": {
     "EchoTime": {
-      "type": "number",
-      "exclusiveMinimum": 0
+      "anyOf": [
+        { "type": "number",
+          "exclusiveMinimum": 0 },
+        {
+          "type": "array",
+          "items": { "type": "number" ,
+            "exclusiveMinimum": 0}
+        }
+      ]
     },
     "EffectiveEchoSpacing": {
       "type": "number",
