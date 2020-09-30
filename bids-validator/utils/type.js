@@ -23,7 +23,6 @@ const associatedData = buildRegExp(associated_data_rules.associated_data)
 const anatData = buildRegExp(file_level_rules.anat)
 const anatDefacemaskData = buildRegExp(file_level_rules.anat_defacemask)
 const behavioralData = buildRegExp(file_level_rules.behavioral)
-const contData = buildRegExp(file_level_rules.cont)
 const dwiData = buildRegExp(file_level_rules.dwi)
 const eegData = buildRegExp(file_level_rules.eeg)
 const fieldmapData = buildRegExp(file_level_rules.field_map)
@@ -33,6 +32,8 @@ const funcBoldData = buildRegExp(file_level_rules.func_bold)
 const aslData = buildRegExp(file_level_rules.asl)
 const ieegData = buildRegExp(file_level_rules.ieeg)
 const megData = buildRegExp(file_level_rules.meg)
+const megCalibrationData = buildRegExp(file_level_rules.meg_calbibration)
+const megCrosstalkData = buildRegExp(file_level_rules.meg_crosstalk)
 const stimuliData = buildRegExp(file_level_rules.stimuli)
 // Phenotypic data
 const phenotypicData = buildRegExp(phenotypic_rules.phenotypic_data)
@@ -80,7 +81,6 @@ export default {
       this.file.isIEEG(path) ||
       this.file.isEEG(path) ||
       this.file.isBehavioral(path) ||
-      this.file.isCont(path) ||
       this.file.isFieldMap(path) ||
       this.file.isPhenotypic(path)
     )
@@ -207,7 +207,11 @@ export default {
     },
 
     isMeg: function(path) {
-      return conditionalMatch(megData, path)
+      return (
+        conditionalMatch(megData, path) ||
+        conditionalMatch(megCalibrationData, path) ||
+        conditionalMatch(megCrosstalkData, path)
+      )
     },
 
     isEEG: function(path) {
@@ -226,10 +230,6 @@ export default {
       return conditionalMatch(funcBoldData, path)
     },
 
-    isCont: function(path) {
-      return conditionalMatch(contData, path)
-    },
-
     hasModality: function(path) {
       return (
         this.isAnat(path) ||
@@ -242,8 +242,7 @@ export default {
         this.isEEG(path) ||
         this.isIEEG(path) ||
         this.isBehavioral(path) ||
-        this.isFuncBold(path) ||
-        this.isCont(path)
+        this.isFuncBold(path)
       )
     },
   },
