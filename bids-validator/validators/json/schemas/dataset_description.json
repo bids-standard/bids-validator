@@ -11,6 +11,10 @@
     "HEDVersion": {
       "type": "string"
     },
+    "DatasetType": {
+      "type": "string",
+      "enum": ["raw", "derivative"]
+    },
     "License": {
       "type": "string"
     },
@@ -21,15 +25,9 @@
       "type": "array"
     },
     "Acknowledgements": {
-      "items": {
-        "type": "string"
-      },
       "type": "string"
     },
     "HowToAcknowledge": {
-      "items": {
-        "type": "string"
-      },
       "type": "string"
     },
     "Funding": {
@@ -52,10 +50,6 @@
     },
     "DatasetDOI": {
       "type": "string"
-    },
-    "DatasetType": {
-      "type": "string",
-      "enum": ["raw", "derivative"]
     },
     "Genetics": {
       "type": "object",
