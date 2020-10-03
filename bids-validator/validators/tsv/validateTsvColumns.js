@@ -235,6 +235,22 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
             )
           }
         }
+
+        if ( mergedDict.hasOwnProperty('TotalAcquiredVolumes') ) {
+          let TotalAcquiredVolumes = mergedDict['TotalAcquiredVolumes']
+          const TotalAcquiredVolumesLength = TotalAcquiredVolumes.length
+          if (TotalAcquiredVolumesLength !== rows.length -1) {
+            tsvIssues.push(
+              new Issue({
+                file: file,
+                code: 177,
+                reason:
+                  "''VolumeTiming' for this file do not match the TSV lenght." 
+              }),
+            )
+          }
+        }
+
         
       }
     })

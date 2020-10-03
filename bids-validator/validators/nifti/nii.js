@@ -852,15 +852,19 @@ export default function NIFTI(
 
       // check that slice timing is defined
       if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
-        issues.push(
-          new Issue({
-            file: file,
-            code: 13,
-            reason:
-              "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " +
-              sidecarMessage,
-          }),
-        )
+        if (!(mergedDictionary.hasOwnProperty('PulseSequenceType') &&
+              mergedDictionary.PulseSequenceType == '3D_GRASE')
+            ) {
+              issues.push(
+                new Issue({
+                  file: file,
+                  code: 13,
+                  reason:
+                    "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " +
+                    sidecarMessage,
+                }),
+              )
+          }
       }
 
       // check that slice timing has the proper length

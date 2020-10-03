@@ -973,4 +973,10 @@ export default {
     severity: 'warning',
     reason: "The 'BackgroundSuppressionNumberPulses' field is not consisten with the lenght of 'BackgroundSuppressionPulseTime'.",
   },
+  181: {
+    key: 'TOTAL_ACQUIRED_VOLUMES_NOT_CONSISTENT',
+    severity: 'error',
+    reason: "'TotalAcquiredVolumes' for this file does not match the TSV lenght'.",
+  },
+  
 }
