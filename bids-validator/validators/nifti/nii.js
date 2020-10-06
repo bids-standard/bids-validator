@@ -102,7 +102,7 @@ export default function NIFTI(
           issues.push(
             new Issue({
               file: file,
-              code: 138,
+              code: 160,
               reason:
                 "You should define 'LabelingPulseAverageB1' for this file." +
                 sidecarMessage,
@@ -867,7 +867,7 @@ export default function NIFTI(
         if (!(mergedDictionary.hasOwnProperty('PulseSequenceType') &&
               mergedDictionary['PulseSequenceType'].constructor === String &&
               mergedDictionary.PulseSequenceType.startsWith('3D_') && 
-              path.includes('_asl.nii') )
+              (path.includes('_asl.nii') || path.includes('_m0scan.nii')  ))
             ) {
               issues.push(
                 new Issue({
