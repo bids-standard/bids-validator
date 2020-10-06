@@ -25,8 +25,7 @@
           "exclusiveMinimum": 0 
     }, 
     "PulseSequenceType": {
-      "type": "string",
-      "enum" : ["2D_EPI","3D_GRASE","3D_spiral"]
+      "type": "string"
     },
     "SliceEncodingDirection": {
       "type": "string",

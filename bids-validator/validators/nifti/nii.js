@@ -38,13 +38,24 @@ export default function NIFTI(
     potentialEvents.join(', ')
 
   if (path.includes('_asl.nii')) {
+    if (!mergedDictionary.hasOwnProperty('MagneticFieldStrength')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 182,
+          reason:
+            "You must define 'MagneticFieldStrength' for this file. It is required for perfusion quantification, to infer default relaxation values for blood/tissue." + sidecarMessage , 
+        }),
+      )
+    }
+
     if (!mergedDictionary.hasOwnProperty('Manufacturer')) {
       issues.push(
         new Issue({
           file: file,
           code: 164,
           reason:
-            "You should define 'Manufacturer' for this file. " + sidecarMessage,
+            "You should define 'Manufacturer' for this file. This may reflect site differences in multi-site study (especially readout differences, but perhaps also labeling differences). " + sidecarMessage,
         }),
       )
     }
@@ -82,7 +93,7 @@ export default function NIFTI(
               file: file,
               code: 151,
               reason:
-                "You should define 'LabelingPulseMaximumGradient' for this file." +
+                "You should define 'LabelingPulseMaximumGradient' for this file.  For (P)CASL, the maximum amplitude of the labeling gradient, in mT/m, which could explain systematic differences between sites." +
                 sidecarMessage,
             }),
           )
@@ -127,7 +138,7 @@ export default function NIFTI(
               file: file,
               code: 159,
               reason:
-                "You should define 'LabelingPulseAverageGradient' for this file." +
+                "You should define 'LabelingPulseAverageGradient' for this file.  For PCASL, the average labeling gradient, in mT/m, could explain systematic differences between sites. " +
                 sidecarMessage,
             }),
           )
@@ -275,7 +286,8 @@ export default function NIFTI(
               file: file,
               code: 134,
               reason:
-                "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible. " +
+                "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible." +
+                "LabelingDuration is the total duration, in seconds, of the labeling pulse train." +
                 sidecarMessage,
             }),
           )
@@ -406,9 +418,9 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 159,
+          code: 137,
           reason:
-            "You should define 'VascularCrushing' for this file. If you don't provide this information CBF quantification will be biased. " +
+            "You should define 'VascularCrushing' for this file. It indicates if an ASL crusher method has been used. If you don't provide this information CBF quantification could be biased. " +
             sidecarMessage,
         }),
       )
@@ -433,9 +445,9 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 160,
+          code: 138,
           reason:
-            "You should define 'PulseSequenceDetails' for this file.  " +
+            "You should define 'PulseSequenceDetails' for this file including information beyond pulse sequence type that identifies the specific pulse sequence used. " +
             sidecarMessage,
         }),
       )
@@ -853,14 +865,17 @@ export default function NIFTI(
       // check that slice timing is defined
       if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
         if (!(mergedDictionary.hasOwnProperty('PulseSequenceType') &&
-              mergedDictionary.PulseSequenceType == '3D_GRASE')
+              mergedDictionary['PulseSequenceType'].constructor === String &&
+              mergedDictionary.PulseSequenceType.startsWith('3D_') && 
+              path.includes('_asl.nii') )
             ) {
               issues.push(
                 new Issue({
                   file: file,
                   code: 13,
                   reason:
-                    "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. " +
+                    "You should define 'SliceTiming' for this file. " +
+                    "If you don't provide this information slice time correction will not be possible. " +
                     sidecarMessage,
                 }),
               )

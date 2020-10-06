@@ -123,6 +123,12 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
         .split('\n')
         .filter(row => !(!row || /^\s*$/.test(row)))
         
+        const m0scan_filters = ['m0scan'];
+        const filtered_m0scan_rows = rows.filter(row => m0scan_filters.includes(row))
+        
+        const control_filters = ['control'];
+        const filtered_control_rows = rows.filter(row => control_filters.includes(row))
+
         const asl_filters = ['cbf','m0scan','label','control','deltam','volume_type'];
         const filtered_tsv_rows = rows.filter(row => asl_filters.includes(row))
         if (rows.length != filtered_tsv_rows.length)
@@ -152,6 +158,39 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
           potentialSidecars,
           jsonContentsDict,
         )
+
+        //check M0 and tsv list for m0scan or controls
+        if (mergedDict.hasOwnProperty('M0') &&
+            mergedDict['M0'].constructor === Boolean &&
+            mergedDict['M0'] == true &&
+            filtered_m0scan_rows < 1
+          )
+        {
+          tsvIssues.push(
+            new Issue({
+              file: file,
+              code: 154,
+              reason:
+                "''M0' is set to 'true' however the tsv file does not contain any m0scan volume." 
+            }),
+          )
+        }
+        if (mergedDict.hasOwnProperty('M0') &&
+            mergedDict['M0'].constructor === Boolean &&
+            mergedDict['M0'] == false &&
+            filtered_control_rows < 1
+          )
+        {
+          tsvIssues.push(
+            new Issue({
+              file: file,
+              code: 154,
+              reason:
+                "''M0' is set to 'false' however the tsv file does not contain any control volume." 
+            }),
+          )
+        }
+
         // check Flip Angle requirements with LookLocker acquisitions
         if (
             mergedDict.hasOwnProperty('FlipAngle') &&
@@ -167,7 +206,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
                 file: file,
                 code: 172,
                 reason:
-                  "''FlipAngle' for this file do not match the TSV lenght." 
+                  "''FlipAngle' for this file does not match the TSV lenght. Since the ASL file was acquired with a look-locker approach please be sure that the size of the FlipAngle array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }
@@ -189,7 +228,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
                 file: file,
                 code: 175,
                 reason:
-                  "''LabelingDuration' for this file do not match the TSV lenght." 
+                  "''LabelingDuration' for this file does not match the TSV lenght. Please be sure that the size of the LabelingDuration array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }
@@ -243,9 +282,9 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
             tsvIssues.push(
               new Issue({
                 file: file,
-                code: 177,
+                code: 181,
                 reason:
-                  "''VolumeTiming' for this file do not match the TSV lenght." 
+                  "''TotalAcquiredVolumes' for this file do not match the TSV lenght." 
               }),
             )
           }

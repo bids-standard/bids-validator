@@ -171,7 +171,9 @@
         "m0scan\\.nii\\.gz",
         "m0scan\\.nii",
         "m0scan\\.json",
-        "aslcontext\\.tsv"
+        "aslcontext\\.tsv",
+        "labeling\\.jpg",
+        "labeling\\.png"
       ]
     }
   },
