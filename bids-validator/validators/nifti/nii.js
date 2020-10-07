@@ -864,21 +864,40 @@ export default function NIFTI(
 
       // check that slice timing is defined
       if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
+        // case of ASL with 3D sequence - slice timing is not necessary
         if (!(mergedDictionary.hasOwnProperty('PulseSequenceType') &&
               mergedDictionary['PulseSequenceType'].constructor === String &&
               mergedDictionary.PulseSequenceType.startsWith('3D_') && 
               (path.includes('_asl.nii') || path.includes('_m0scan.nii')  ))
             ) {
-              issues.push(
-                new Issue({
-                  file: file,
-                  code: 13,
-                  reason:
-                    "You should define 'SliceTiming' for this file. " +
-                    "If you don't provide this information slice time correction will not be possible. " +
-                    sidecarMessage,
-                }),
-              )
+              if (mergedDictionary.hasOwnProperty('PulseSequenceType') &&
+                  mergedDictionary['PulseSequenceType'].constructor === String &&
+                  mergedDictionary.PulseSequenceType.startsWith('2D_') && 
+                  (path.includes('_asl.nii') || path.includes('_m0scan.nii')  ))
+              {  // case of ASL with 2D sequence - slice timing is required
+                issues.push(
+                  new Issue({
+                    file: file,
+                    code: 183,
+                    reason:
+                      "You should define 'SliceTiming' for this file. " +
+                      "If you don't provide this information slice time correction will not be possible. " +
+                      sidecarMessage,
+                  }),
+                )
+              }
+              else {
+                issues.push(
+                  new Issue({
+                    file: file,
+                    code: 13,
+                    reason:
+                      "You should define 'SliceTiming' for this file. " +
+                      "If you don't provide this information slice time correction will not be possible. " +
+                      sidecarMessage,
+                  }),
+                )
+              }
           }
       }
 

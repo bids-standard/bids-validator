@@ -983,5 +983,10 @@ export default {
     severity: 'error',
     reason: "'MagneticFieldStrength' is missing. It is required for perfusion quantification, to infer default relaxation values for blood/tissue.",
   },
+  183: {
+    key: 'SLICE_TIMING_NOT_DEFINED_2D_ASL',
+    severity: 'error',
+    reason: "'SliceTiming' is missing. The 'SequenceType' flag indicates a 2D sequence, therefore it is required to indicate the 'SliceTiming' to correctly estimate perfusion.",
+  }
   
 }
