@@ -26,7 +26,7 @@
     "EEGGround": { "type": "string" },
     "CapManufacturer": { "type": "string" },
     "CapManufacturersModelName": { "type": "string" },
-    "HeadCircumference": { "type": "number" },
+    "HeadCircumference": { "type": "number", "exclusiveMinimum": 0 },
     "HardwareFilters": { "$ref": "common_definitions.json#/definitions/HardwareFilters" },
     "SoftwareFilters": { "$ref": "common_definitions.json#/definitions/SoftwareFilters" },
     "RecordingDuration": { "$ref": "common_definitions.json#/definitions/RecordingDuration" },

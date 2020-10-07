@@ -2,10 +2,10 @@
   "type": "object",
   "properties": {
     "MEGCoordinateSystem": { "type": "string", "minLength": 1 },
-    "MEGCoordinateUnits": { "type": "string", "enum": ["m", "mm", "cm"] },
+    "MEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "MEGCoordinateSystemDescription": { "type": "string" },
     "EEGCoordinateSystem": { "type": "string", "minLength": 1 },
-    "EEGCoordinateUnits": { "type": "string", "enum": ["m", "mm", "cm"] },
+    "EEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "EEGCoordinateSystemDescription": { "type": "string" },
     "IntendedFor": {
       "anyOf": [
@@ -20,23 +20,17 @@
       ]
     },
     "FiducialsDescription": { "type": "string", "minLength": 1 },
-    "HeadCoilCoordinates": {
-      "type": "object",
-      "additionalProperties": { "type": "array" }
-    },
+    "HeadCoilCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
     "HeadCoilCoordinateSystem": { "type": "string", "minLength": 1 },
-    "HeadCoilCoordinateUnits": { "type": "string", "enum": ["m", "mm", "cm"] },
+    "HeadCoilCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "HeadCoilCoordinateSystemDescription": { "type": "string" },
-    "AnatomicalLandmarkCoordinates": {
-      "type": "object",
-      "additionalProperties": { "type": "array" }
-    },
+    "AnatomicalLandmarkCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
     "AnatomicalLandmarkCoordinateSystem": { "type": "string", "minLength": 1 },
-    "AnatomicalLandmarkCoordinateUnits": { "type": "string", "enum": ["m", "mm", "cm"] },
+    "AnatomicalLandmarkCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string" },
     "DigitizedHeadPoints": { "type": "string" },
     "DigitizedHeadPointsCoordinateSystem": { "type": "string" },
-    "DigitizedHeadPointsCoordinateUnits": { "type": "string" },
+    "DigitizedHeadPointsCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "DigitizedHeadPointsCoordinateSystemDescription": { "type": "string" }
   },
   "required": ["MEGCoordinateSystem", "MEGCoordinateUnits"],

@@ -3,6 +3,7 @@
   "definitions": {
     "CogAtlasID": { "type": "string" },
     "CogPOID": { "type": "string" },
+    "CoordUnits": { "type": "string", "enum": ["m", "mm", "cm", "n/a"] },
     "DeviceSerialNumber": { "type": "string" },
     "ECGChannelCount": { "type": "integer", "minimum": 0 },
     "EEGChannelCount": { "type": "integer", "minimum": 0 },
@@ -18,6 +19,17 @@
     "InstitutionAddress": { "type": "string" },
     "InstitutionName": { "type": "string" },
     "Instructions": { "type": "string" },
+    "LandmarkCoordinates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array", 
+        "items": {
+          "type": "number"
+        },
+        "minItems": 3,
+        "maxItems": 3
+      }
+    },
     "Manufacturer": { "type": "string", "minLength": 1 },
     "MiscChannelCount": { "type": "integer", "minimum": 0 },
     "PowerLineFrequency": {
