@@ -987,6 +987,21 @@ export default {
     key: 'SLICE_TIMING_NOT_DEFINED_2D_ASL',
     severity: 'error',
     reason: "'SliceTiming' is missing. The 'SequenceType' flag indicates a 2D sequence, therefore it is required to indicate the 'SliceTiming' to correctly estimate perfusion.",
+  },
+  184: {
+    key: 'POST_LABELING_DELAY_GREATER',
+    severity: 'warning',
+    reason: "'PostLabelingDelay' is greater than 10, are you sure it's expressed in seconds?",
+  },
+  185: {
+    key: 'BOLUS_CUT_OFF_TIMING_SEQUENCE_GREATER',
+    severity: 'warning',
+    reason: "'BolusCutOffTimingSequence' is greater than 10, are you sure it's expressed in seconds?" 
+  },
+  186: {
+    key: 'BOLUS_CUT_OFF_DELAY_TIME_GREATER',
+    severity: 'warning',
+    reason: "'BolusCutOffDelayTime' is greater than 10, are you sure it's expressed in seconds?",
   }
   
 }

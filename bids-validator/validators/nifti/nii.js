@@ -44,7 +44,8 @@ export default function NIFTI(
           file: file,
           code: 182,
           reason:
-            "You must define 'MagneticFieldStrength' for this file. It is required for perfusion quantification, to infer default relaxation values for blood/tissue." + sidecarMessage , 
+            "You must define 'MagneticFieldStrength' for this file. It is required for perfusion quantification, to infer default relaxation values for blood/tissue." + 
+            sidecarMessage , 
         }),
       )
     }
@@ -55,7 +56,8 @@ export default function NIFTI(
           file: file,
           code: 164,
           reason:
-            "You should define 'Manufacturer' for this file. This may reflect site differences in multi-site study (especially readout differences, but perhaps also labeling differences). " + sidecarMessage,
+            "You should define 'Manufacturer' for this file. This may reflect site differences in multi-site study (especially readout differences, but perhaps also labeling differences). " + 
+            sidecarMessage,
         }),
       )
     }
@@ -104,7 +106,7 @@ export default function NIFTI(
               file: file,
               code: 160,
               reason:
-                "You should define 'LabelingPulseAverageB1' for this file." +
+                "You should define 'LabelingPulseAverageB1' for this file. " +
                 sidecarMessage,
             }),
           )
@@ -117,7 +119,7 @@ export default function NIFTI(
               file: file,
               code: 141,
               reason:
-                "You should define 'LabelingPulseFlipAngle' for this file." +
+                "You should define 'LabelingPulseFlipAngle' for this file. " +
                 sidecarMessage,
             }),
           )
@@ -128,7 +130,7 @@ export default function NIFTI(
               file: file,
               code: 146,
               reason:
-                "You should define 'PCASLType' for this file." + sidecarMessage,
+                "You should define 'PCASLType' for this file. " + sidecarMessage,
             }),
           )
         }
@@ -149,7 +151,7 @@ export default function NIFTI(
               file: file,
               code: 161,
               reason:
-                "You should define 'LabelingPulseDuration' for this file." +
+                "You should define 'LabelingPulseDuration' for this file. " +
                 sidecarMessage,
             }),
           )
@@ -160,7 +162,7 @@ export default function NIFTI(
               file: file,
               code: 162,
               reason:
-                "You should define 'LabelingPulseInterval' for this file." +
+                "You should define 'LabelingPulseInterval' for this file. " +
                 sidecarMessage,
             }),
           )
@@ -173,7 +175,7 @@ export default function NIFTI(
               file: file,
               code: 158,
               reason:
-                "You should define 'CASLType' for this file." + sidecarMessage,
+                "You should define 'CASLType' for this file. " + sidecarMessage,
             }),
           )
         }
@@ -186,7 +188,7 @@ export default function NIFTI(
               file: file,
               code: 163,
               reason:
-                "You should define 'PASLType' for this file." + sidecarMessage,
+                "You should define 'PASLType' for this file. " + sidecarMessage,
             }),
           )
         }
@@ -196,7 +198,7 @@ export default function NIFTI(
               file: file,
               code: 142,
               reason:
-                "You should define 'LabelingSlabThickness' for this file." +
+                "You should define 'LabelingSlabThickness' for this file. " +
                 sidecarMessage,
             }),
           )
@@ -207,7 +209,7 @@ export default function NIFTI(
               file: file,
               code: 147,
               reason:
-                "You should define 'BolusCutOffFlag' for this file." +
+                "You should define 'BolusCutOffFlag' for this file. " +
                 sidecarMessage,
             }),
           )
@@ -226,10 +228,25 @@ export default function NIFTI(
                 file: file,
                 code: 148,
                 reason:
-                  "You should define 'BolusCutOffTimingSequence' for this file." +
+                  "You should define 'BolusCutOffTimingSequence' for this file. " +
                   sidecarMessage,
               }),
             )
+          }
+          else if (
+            BolusCutOffFlagBoolean && 
+            mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence') &&
+            mergedDictionary['BolusCutOffTimingSequence'] > 10) 
+          {
+            issues.push(
+              new Issue({
+                file: file,
+                code: 185,
+                reason:
+                "'BolusCutOffTimingSequence' is greater than 10, are you sure it's expressed in seconds?" 
+              }),
+            )
+            
           }
           if (
             BolusCutOffFlagBoolean &&
@@ -244,6 +261,41 @@ export default function NIFTI(
                   sidecarMessage,
               }),
             )
+          }
+          else if (
+            BolusCutOffFlagBoolean &&
+            mergedDictionary.hasOwnProperty('BolusCutOffDelayTime') &&
+            mergedDictionary.hasOwnProperty.constructor === Number &&
+            mergedDictionary['BolusCutOffDelayTime'] > 10
+          )
+          {
+            issues.push(
+              new Issue({
+                file: file,
+                code: 186,
+                reason:
+                "'BolusCutOffDelayTime' is greater than 10, are you sure it's expressed in seconds? " ,
+              }),
+            ) 
+          }
+          else if (
+            BolusCutOffFlagBoolean &&
+            mergedDictionary.hasOwnProperty('BolusCutOffDelayTime') &&
+            mergedDictionary.hasOwnProperty.constructor === Array
+          )
+          {
+            const BolusCutOffDelayTimeWarning = PostLabelingDelay.filter((x) => x > 10);
+            if (BolusCutOffDelayTimeWarning.length > 0)
+            {
+              issues.push(
+                new Issue({
+                  file: file,
+                  code: 186,
+                  reason:
+                  "Some values of the 'BolusCutOffDelayTime' array you defined are greater than 10, are you sure they are expressed in seconds? " ,
+                }),
+              ) 
+            }
           }
           if (
             BolusCutOffFlagBoolean &&
@@ -272,8 +324,7 @@ export default function NIFTI(
                 file: file,
                 code: 169,
                 reason:
-                  "'LabelingDuration' for PASL LabellingType can be only a scalar value put to 0 or unset. " +
-                  sidecarMessage,
+                  "'LabelingDuration' for PASL LabellingType can be only a scalar value put to 0 or unset. " ,
               }),
             )
         }
@@ -287,7 +338,7 @@ export default function NIFTI(
               code: 134,
               reason:
                 "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible." +
-                "LabelingDuration is the total duration, in seconds, of the labeling pulse train." +
+                "LabelingDuration is the total duration, in seconds, of the labeling pulse train. " +
                 sidecarMessage,
             }),
           )
@@ -305,8 +356,7 @@ export default function NIFTI(
                   file: file,
                   code: 157,
                   reason:
-                    "'LabelingDuration' for this file does not match the 4th dimension of the NIFTI header. " +
-                    sidecarMessage,
+                    "'LabelingDuration' for this file does not match the 4th dimension of the NIFTI header. " ,
                 }),
               )
             }
@@ -326,6 +376,20 @@ export default function NIFTI(
         }),
       )
     } else {
+
+      if (mergedDictionary['PostLabelingDelay'].constructor === Number &&
+          mergedDictionary['PostLabelingDelay'] > 10 )
+      {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 184,
+              reason:
+                "'PostLabelingDelay' is greater than 10, are you sure it's expressed in seconds?" ,
+            }),
+          )
+      }
+
       if (
         header &&
         mergedDictionary['PostLabelingDelay'].constructor === Array
@@ -339,8 +403,19 @@ export default function NIFTI(
               file: file,
               code: 173,
               reason:
-                "'PostLabelingDelay' for this file does not match the 4th dimension of the NIFTI header. " +
-                sidecarMessage,
+                "'PostLabelingDelay' for this file does not match the 4th dimension of the NIFTI header. " ,
+            }),
+          )
+        }
+        const PostLabelingDelayWarning = PostLabelingDelay.filter((x) => x > 10);
+        if (PostLabelingDelayWarning.length > 0)
+        {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 184,
+              reason:
+                "In the 'PostLabelingDelay' array some values are greater than 10, are you sure they are expressed in seconds? " ,
             }),
           )
         }
