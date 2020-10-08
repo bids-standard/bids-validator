@@ -734,108 +734,108 @@ export default {
   133: {
     key: 'LABELING_TYPE_MUST_DEFINE',
     severity: 'error',
-    reason: "You have to define 'LabelingType' for this file. You must indicate the type of labeling used: PASL (pulsed ASL), CASL (continuous ASL) or PCASL (pseudo-continuous ASL).",
+    reason: "You should define 'LabelingType' for this file. 'LabelingType' is the type of labeling used: PASL (pulsed ASL), CASL (continuous ASL) or PCASL (pseudo-continuous ASL).",
   },
   134: {
     key: 'LABELING_DURATION_MUST_DEFINE',
     severity: 'error',
-    reason: "You have to define 'LabelingDuration' for this file. 'LabelingDuration' is the total duration, in seconds, of the labeling pulse train. Specify either one value for total time-series or provide a vector of different values for each volume in case of sequential acquisitions with varying labeling duration.",
+    reason: "You should define 'LabelingDuration' for this file. 'LabelingDuration' is the total duration, in seconds, of the labeling pulse train. Specify either one value for the total time-series or provide an array of different values for each volume in case of sequential acquisitions with varying labeling duration.",
   },
   135: {
     key: 'POST_LABELING_DELAY_MUST_DEFINE',
     severity: 'error',
-    reason: "You have to define 'PostLabelingDelay' for this file. It is the time, in seconds, after the middle of the labeling pulse (for PASL) or the end of labeling (for (P)CASL) until the middle of the excitation pulse applied to the imaging slab.",
+    reason: "You should define 'PostLabelingDelay' for this file. 'PostLabelingDelay' is the time, in seconds, after the middle of the labeling pulse (for PASL) or the end of labeling (for (P)CASL) until the middle of the excitation pulse applied to the imaging slab.",
   },
   136: {
     key: 'BACKGROUND_SUPPRESSION_MUST_DEFINE',
     severity: 'error',
-    reason: "You have to define 'BackgroundSuppression' for this file. It is a Boolean value that indicates if Background Suppression has been used.",
+    reason: "You should define 'BackgroundSuppression' for this file. 'BackGroundSuppression' is a Boolean value indicating if Background Suppression has been used.",
   },
   137: {
     key: 'VASCULAR_CRUSHING_MUST_DEFINE',
     severity: 'warning',
-    reason: "It is recommended to define 'VascularCrushing' for this file. It is Boolean value indicating if an ASL crusher method has been used.",
+    reason: "It is recommended to define 'VascularCrushing' for this file. 'VascularCrushing' is a boolean value indicating if an ASL crusher method has been used.",
   },
   138: {
     key: 'PULSE_SEQUENCE_DETAILS_MISSING',
     severity: 'warning',
-    reason: "The 'PulseSequenceDetails' field is missing. It is recommended to include information beyond pulse sequence type that identifies the specific pulse sequence used.",
+    reason: "It is recommended to define 'PulseSequenceDetails' for this file. 'PulseSequenceDetails' is the information beyond pulse sequence type that identifies the specific pulse sequence used.",
   },
   139: {
     key: 'LABELING_ORIENTATION_MISSING',
     severity: 'warning',
-    reason: "The 'LabelingOrientation' field is missing. It is recommended to include the orientation of the labeling plane or slab.",
+    reason: "It is recommended to define 'LabelingOrientation' for this file. 'LabelingOrientation' is the orientation of the labeling plane or slab.",
   },
   140: {
     key: 'LABELING_DISTANCE_MISSING',
     severity: 'warning',
-    reason: "The 'LabelingDistance' field is missing. It is recommended to provide the distance of the center of the labeling slab to the center of the imaging slab, in millimeter.",
+    reason: "It is recommended to define 'LabelingDistance' for this file. 'LabelingDistance' is the distance of the center of the labeling slab to the center of the imaging slab, in millimeter.",
   },
   141: {
     key: 'LABELING_PULSE_FLIP_ANGLE_MISSING',
     severity: 'warning',
-    reason: "The 'LabelingPulseFlipAngle' field is missing. It is recommended to report for PCASL, the flip angle of a single labeling pulse, in degrees.",
+    reason: "It is recommended to define 'LabelingPulseFlipAngle' for this file. 'LabelingPulseFlipAngle' the flip angle of a single labeling pulse, in degrees.<, for PCASL",
   },
   142: {
     key: 'LABELING_SLAB_THICKNESS_MISSING',
     severity: 'warning',
-    reason: "The 'LabelingSlabThickness' field is missing. It is recommended to provide For PASL the thickness of the labeling slab in millimeters. Could explain systematic differences between sites.",
+    reason: "It is recommended to define 'LabelingSlabThickness' for this file. 'LabelingSlabThickness' is the thickness of the labeling slab in millimeters, for PASL.",
   },
   143: {
     key: 'ACQUISITION_VOXELSIZE_MISSING',
     severity: 'warning',
-    reason: "The 'AcquisitionVoxelSize' field is missing. It is recommended to provide a vector 3, in mm, that denotes the original acquisition voxel size.",
+    reason: "It is recommended to define 'AcquisitionVoxelSize' for this file. 'AcquisitionVoxelSize' is the original acquisition voxel size as a vector 3, in mm.",
   },
   144: {
     key: 'BACKGROUND_SUPPRESSION_PULSE_TIME_MISSING',
     severity: 'warning',
-    reason: "The 'BackgroundSuppressionPulseTime' field is missing. You set the 'BackgroundSuppression' to true. It is recommended to report the timing, in seconds, of the background suppression pulses before the start of the readout ",
+    reason: "It is recommended to define 'BackgroundSuppressionPulseTime' for this file, when the 'BackgroundSuppression' is set to true. 'BackGroundSuppressionPulseTime' is the timing, in seconds, of the background suppression pulses before the start of the readout.",
   },
   145: {
     key: 'VASCULAR_CRUCHING_VENC_MISSING',
     severity: 'warning',
-    reason: "The 'VascularCrushingVenc' field is missing. You set the 'VascularCrushing' field to true, it is recommended to indicate the vascular crushing gradient strength, in cm/s.",
+    reason: "It is recommended to define 'VascularCrushingVenc' for this file, when the 'VascularCrushing' is set to true. 'VascularCruchingVenc' indicates the vascular crushing gradient strength, in cm/s.",
   },
   146: {
     key: 'PCASL_TYPE_MISSING',
     severity: 'warning',
-    reason: "The 'PCASLType' field is missing. It is recommended to provide the type of the control pulse: balanced or unbalanced.",
+    reason: "It is recommended to define 'PCASLType' for this file. 'PCASLType' is the type of the control pulse: balanced or unbalanced.",
   },
   147: {
     key: 'PASL_BOLUS_CUT_OFF_FLAG',
     severity: 'error',
-    reason: "You have to define the 'BolusCutOffFlag' for this file. Boolean value, indicating if a bolus cut-off technique is used.",
+    reason: "You should define the 'BolusCutOffFlag' for this file. 'BolusCutOffFlag' is a boolean value, indicating if a bolus cut-off technique is used.",
   },
   148: {
     key: 'PASL_BOLUS_CUT_OFF_TIMING_SEQUENCE',
     severity: 'error',
-    reason: "You have to define the 'BolusCutOffTimingSequence' for this file. Sequence specifying the timing after labeling, in seconds, of the start of the bolus cut off saturation pulses.",
+    reason: "You should define the 'BolusCutOffTimingSequence' for this file. 'BolusCutOffTimingSequence is a sequence, specifying the timing after labeling, in seconds, of the start of the bolus cut off saturation pulses.",
   },
   149: {
     key: 'PASL_BOLUS_CUT_OFF_DELAY_TIME',
     severity: 'warning',
-    reason: "The 'BolusCutOffDelayTime' for this file is missing. You set the 'BolusCutOffFlag' to true, it is reccomended to report the duration, in seconds, of the bolus cut off saturation pulse.",
+    reason: "It is recommended to define 'BolusCutOffDelayTime' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffDelayTime is the duration, in seconds, of the bolus cut off saturation pulse.",
   },
   150: {
     key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
     severity: 'warning',
-    reason: "The 'BolusCutOffTechnique' for this file is missing. You set the 'BolusCutOffFlag' to true, it is reccomended to report the name of the technique used (e.g. Q2TIPS, QUIPSS, QUIPSSII).",
+    reason: "It is recommended to define 'BolusCutOffTechnique' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffTechnique' is the name of the technique used (e.g. Q2TIPS, QUIPSS, QUIPSSII).",
   },
   151: {
     key: 'LABELING_PULSE_MAXIMUM_GRADIENT_MISSING',
     severity: 'warning',
     reason:
-      "The 'LabelingPulseMaximumGradient' filed is missing for this file. It is recommended to report the maximum amplitude of the labeling gradient, in mT/m, which could explain systematic differences between sites.",
+      "It is recommended to define 'LabelingPulseMaximumGradient' for this file. 'LabelingPulseMaximumGradient' is the maximum amplitude of the labeling gradient, in mT/m, which could explain systematic differences between sites.",
   },
   152: {
     key: 'INTENDED_FOR_NOT_SET',
     severity: 'error',
-    reason: "You have to define the 'IntendedFor' for this file. You should indicate one or more filenames with paths relative to the subject subfolder, with forward slashes, referring to ASL timeseries for which this file is intended.",
+    reason: "You should define the 'IntendedFor' for this file. 'IntendedFor' indicates one or more filenames with paths relative to the subject subfolder, with forward slashes, referring to ASL timeseries for which this file is intended.",
   },
   153: {
     key: 'M0_NOT_SET',
     severity: 'error',
-    reason: "You have to define the 'M0' for this file. M0 can be either a boolean, a string or a number and depending on the data type it refers to m0scan location file or M0 approach used.",
+    reason: "You should define the 'M0' for this file. 'M0' can be either a boolean, a string or a number, and depending on the data type it refers to m0scan location file or M0 approach used.",
   },
   154: {
     key: 'M0_SET_UNCORRECTLY',
@@ -845,12 +845,12 @@ export default {
   155: {
     key: 'PULSE_SEQUENCE_TYPE_MUST_DEFINE',
     severity: 'error',
-    reason: "You have to define 'PulseSequenceType' for this file. Please report the type of read-out. Allowed values are any combination of 2D or 3D, with the read-out type, separated by underscore.",
+    reason: "You should define 'PulseSequenceType' for this file. 'PulseSequenceType' is the the type of read-out. Allowed values are any combination of 2D or 3D, with the read-out type, separated by underscore.",
   },
   156: {
     key: 'ACQUISITION_VOXELSIZE_WRONG',
     severity: 'warning',
-    reason: "The 'AcquisitionVoxelSize' field length is not 3. AcquisitionVoxelSize should be defined as a vector of length 3, in millimeters.",
+    reason: "The 'AcquisitionVoxelSize' field length is not 3. 'AcquisitionVoxelSize' should be defined as a vector of length 3, in millimeters.",
   },
   157: {
     key: 'LABELLING_DURATION_LENGTH_NOT_MATCHING_NIFTI',
@@ -860,37 +860,37 @@ export default {
   158: {
     key: 'CASL_TYPE_MISSING',
     severity: 'warning',
-    reason: "The 'CASLType' field is missing. It is recommended to describe if a separate coil is used for labeling: single-coil or double-coil.",
+    reason: "ITt is recommended to define 'CASLType' for this file. 'CASLType' defines if a separate coil is used for labeling: single-coil or double-coil.",
   },
   159: {
     key: 'LABELING_PULSE_AVERAGE_GRADIENT_MISSING',
     severity: 'warning',
-    reason: "The recommended field 'LabelingPulseAverageGradient' field is missing.  For PCASL, the average labeling gradient, in mT/m, could explain systematic differences between site.",
+    reason: "It is recommended to define 'LabelingPulseAverageGradient' for this file.  'LabelingPulseAverageGradient' is the average labeling gradient, in mT/m, for PCASL.",
   },
   160: {
     key: 'LABELING_PULSE_AVERAGE_B1_MISSING',
     severity: 'warning',
-    reason: "The recommended field 'LabelingPulseAverageB1' field is missing. You set the labellingType to PCASL, it is reccommended to report the average B1-field strength of the RF labeling pulses, in μT, could explain systematic differences between sites.",
+    reason: "It is recommended to define 'LabelingPulseAverageB1' for this file, when 'LabellingType' is set to PCASL. 'LabelingPulseAverageB1' is the average B1-field strength of the RF labeling pulses, in μT.",
   },
   161: {
     key: 'LABELING_PULSE_DURATION_MISSING',
     severity: 'warning',
-    reason: "The 'LabelingPulseDuration' field is missing. It is reccomended to report the duration, in seconds, of the individual labeling pulses.",
+    reason: "It is recommended to define 'LabelingPulseDuration' for this file. 'LabelingPulseDuration' is the duration, in seconds, of the individual labeling pulses.",
   },
   162: {
     key: 'LABELING_PULSE_INTERVAL_MISSING',
     severity: 'warning',
-    reason: "The 'LabelingPulseInterval' field is missing. It is reccomended to report the time delay, in seconds, between the peaks of the individual labeling pulses.",
+    reason: "It is recommended to define 'LabelingPulseInterval' for this file. 'LabelingPulseInterval' the time delay, in seconds, between the peaks of the individual labeling pulses.",
   },
   163: {
     key: 'PASL_TYPE_MISSING',
     severity: 'warning',
-    reason: "The 'PASLType' field is missing. It is recommended to report the type of the labeling pulse of PASL labeling (i.e. FAIR, EPISTAR, PICORE, etc.).",
+    reason: "It is recommended to define 'PASLType' for this file. 'PASLType' is the type of the labeling pulse of PASL labeling (i.e. FAIR, EPISTAR, PICORE, etc.).",
   },
   164: {
     key: 'ASL_MANUFACTURER_MISSING',
     severity: 'warning',
-    reason: "The 'Manufacturer' field is missing.",
+    reason: "It is recommended to define 'Manufacturer' for this file.",
   },
   165: {
     key: 'TSV_ASL_CONTEXT_NOT_CONSISTENT',
@@ -900,12 +900,12 @@ export default {
   166: {
     key: 'LOOK_LOCKER_FLIP_ANGLE_MISSING',
     severity: 'error',
-    reason: "In case of a LookLocker acquisition you must define 'FlipAngle' for this file.",
+    reason: "You should define 'FlipAngle' for this file, in case of a LookLocker acquisition.",
   },
   167: {
     key: 'FLIP_ANGLE_MISSING',
     severity: 'warning',
-    reason: "In should define 'FlipAngle' for this file.",
+    reason: "It is recommended to define 'FlipAngle' for this file. 'FlipAngle' is either a scalar value or a vector, with length corresponding to the number of volumes, in degrees.",
   },
   168: {
     key: 'FLIP_ANGLE_NOT_MATCHING_NIFTI',
@@ -936,7 +936,7 @@ export default {
   173: {
     key: 'POST_LABELLING_DELAY_NOT_MATCHING_NIFTI',
     severity: 'error',
-    reason: "'FlipAngle' for this file does not match the 4th dimension of the NIFTI header.",
+    reason: "'PostLabelingDelay' for this file does not match the 4th dimension of the NIFTI header.",
   },
   174: {
     key: 'POST_LABELLING_DELAY_NOT_MATCHING_TSV',
@@ -966,12 +966,12 @@ export default {
   179: {
     key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_MISSING',
     severity: 'warning',
-    reason: "The 'BackgroundSuppressionNumberPulses' field is missing. It is recommended to define the number of background suppression pulses used to determine the decrease in labeling effciency, in case BackgroundSuppression is set to true."
+    reason: "It is recommended to define 'BackgroundSuppressionNumberPulses' for this file, in case BackgroundSuppression is set to true. 'BackgroundSuppressionNumberPulses' is the number of background suppression pulses used to determine the decrease in labeling effciency."
   },
   180: {
     key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_NOT_CONSISTENT',
     severity: 'warning',
-    reason: "The 'BackgroundSuppressionNumberPulses' field is not consisten with the length of 'BackgroundSuppressionPulseTime'.",
+    reason: "The 'BackgroundSuppressionNumberPulses' field is not consistent with the length of 'BackgroundSuppressionPulseTime'.",
   },
   181: {
     key: 'TOTAL_ACQUIRED_VOLUMES_NOT_CONSISTENT',
@@ -981,12 +981,12 @@ export default {
   182: {
     key: 'MAGNETIC_FIELD_STRENGTH_MISSING',
     severity: 'error',
-    reason: "'MagneticFieldStrength' is missing. It is required for perfusion quantification, to infer default relaxation values for blood/tissue.",
+    reason: "'You should define MagneticFieldStrength' for ths file. It is required for perfusion quantification, to infer default relaxation values for blood/tissue.",
   },
   183: {
     key: 'SLICE_TIMING_NOT_DEFINED_2D_ASL',
     severity: 'error',
-    reason: "'SliceTiming' is missing. The 'SequenceType' flag indicates a 2D sequence, therefore it is required to indicate the 'SliceTiming' to correctly estimate perfusion.",
+    reason: "'You should define SliceTiming', in case 'SequenceType' is set to a 2D sequence . 'SliceTiming' is the list of times, in seconds, specifying the acquisition time of each slice with respect to the beginning of volume acquisition (i.e. after the PostLabelingDelay).",
   },
   184: {
     key: 'POST_LABELING_DELAY_GREATER',
