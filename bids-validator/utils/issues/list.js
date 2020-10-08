@@ -718,12 +718,14 @@ export default {
   130: {
     key: 'CHANNELS_COLUMN_TYPE_UPPER_CASE',
     severity: 'error',
-    reason: 'Type column in channels.tsv files should consist of upper-case characters.'
+    reason:
+      'Type column in channels.tsv files should consist of upper-case characters.',
   },
   131: {
     key: 'CHANNELS_COLUMN_TYPE',
     severity: 'error',
-    reason: 'Type column in channels.tsv files should only consist of values allowed in the specification for MEG/EEG/iEEG data.'
+    reason:
+      'Type column in channels.tsv files should only consist of values allowed in the specification for MEG/EEG/iEEG data.',
   },
   132: {
     key: 'HED_VERSION_NOT_DEFINED',
@@ -735,7 +737,12 @@ export default {
     key: 'CONTINOUS_RECORDING_MISSING_JSON',
     severity: 'error',
     reason:
-      "Continous recording data files are required to have an associated JSON metadata file.",
-  }
-
+      'Continous recording data files are required to have an associated JSON metadata file.',
+  },
+  134: {
+    key: 'HED_WRONG_NUMBER_OF_NUMBER_SIGNS',
+    severity: 'error',
+    reason:
+      'You must have exactly one number sign in a HED value-taking string template.',
+  },
 }
