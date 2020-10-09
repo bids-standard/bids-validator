@@ -46,7 +46,7 @@
             {
               "type": "string",
               "title": "HED",
-              "description": "For value variables: a string with a single '#' character where the cell value is to be interpolated.",
+              "description": "For value variables: a string with a single '#' character where the cell value is to be interpolated."
             }
           ]
         }
