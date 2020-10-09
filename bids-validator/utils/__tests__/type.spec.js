@@ -21,7 +21,7 @@ describe('type.js', () => {
     it('does not throw an error for recording entity in physio data at root of the dataset', () => {
       expect(
         type.isBIDS(
-          '/task-matchingpennies_recording-eyetracking_physio.tsv.gz',
+          '/task-matchingpennies_recording-eyetracking_physio.json',
         ),
       ).toBe(true)
     })

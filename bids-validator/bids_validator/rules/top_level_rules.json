@@ -23,8 +23,9 @@
     "tokens": {
       "@@@_func_top_ext_@@@": [
         "_bold\\.json",
-        "_sbref\\.json"
+        "_sbref\\.json",
         "_events\\.json",
+        "_events\\.tsv",
         "_beh\\.json"
       ],
       "@@@_cont_ext_@@@": [
