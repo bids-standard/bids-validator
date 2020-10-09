@@ -18,6 +18,14 @@ describe('type.js', () => {
       ).toBe(true)
     })
 
+    it('does not throw an error for recording entity in physio data at root of the dataset', () => {
+      expect(
+        type.isBIDS(
+          '/task-matchingpennies_recording-eyetracking_physio.tsv.gz',
+        ),
+      ).toBe(true)
+    })
+
     const physio_task_modalities = ['eeg', 'ieeg', 'meg', 'func', 'beh']
     physio_task_modalities.map(mod => {
       it(`does not throw an error for recording entity in ${mod} physio data`, () => {
