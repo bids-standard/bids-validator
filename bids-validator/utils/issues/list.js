@@ -840,7 +840,7 @@ export default {
   154: {
     key: 'M0_SET_UNCORRECTLY',
     severity: 'warning',
-    reason: "M0 was not defined correctly.",
+    reason: "M0 was not defined correctly. 'M0' can be either a boolean, a string or a number, and depending on the data type it refers to m0scan location file or M0 approach used.",
   },
   155: {
     key: 'PULSE_SEQUENCE_TYPE_MUST_DEFINE',
@@ -855,7 +855,7 @@ export default {
   157: {
     key: 'LABELLING_DURATION_LENGTH_NOT_MATCHING_NIFTI',
     severity: 'error',
-    reason: "'LabelingDuration' for this file does not match the 4th dimension of the NIFTI header. ",
+    reason: "The number of values for 'LabelingDuration' for this file does not match the 4th dimension of the NIfTI header. ",
   },
   158: {
     key: 'CASL_TYPE_MISSING',
@@ -893,9 +893,9 @@ export default {
     reason: "It is recommended to define 'Manufacturer' for this file.",
   },
   165: {
-    key: 'TSV_ASL_CONTEXT_NOT_CONSISTENT',
+    key: 'ASLCONTEXT_TSV_NOT_CONSISTENT',
     severity: 'error',
-    reason: "TSV length is not equal to the correspondent asl nifti file.",
+    reason: "The number of volumes in the 'aslcontext.tsv' for this file does not match the number of values in the NIfTI header.",
   },
   166: {
     key: 'LOOK_LOCKER_FLIP_ANGLE_MISSING',
@@ -910,12 +910,12 @@ export default {
   168: {
     key: 'FLIP_ANGLE_NOT_MATCHING_NIFTI',
     severity: 'error',
-    reason: "'FlipAngle' for this file do not match the 4th dimension of the NIFTI header. ",
+    reason: "The number of values for 'FlipAngle' for this file does not match the 4th dimension of the NIfTI header. ",
   },
   169: {
     key: 'LABELING_DURATION_PASL_INCONSISTENT',
     severity: 'error',
-    reason: "'LabelingDuration' for PASL 'LabelingType' can be only a scalar value put to 0 or unset.",
+    reason: "The 'LabelingDuration' for PASL 'LabelingType' can be only a scalar value put to 0 or unset.",
   },
   170: {
     key: 'CONTINOUS_RECORDING_MISSING_JSON',
@@ -926,42 +926,42 @@ export default {
   171: {
     key: 'VOLUME_TIMING_MISSING_ACQUISITION_TIME',
     severity: 'error',
-    reason: "'VolumeTiming' requires either 'SliceTiming' or 'AcquisitionDuration' be defined.",
+    reason: "The field 'VolumeTiming' requires either  'SliceTiming' or 'AcquisitionDuration' be defined.",
   },
   172: {
-    key: 'FLIP_ANGLE_NOT_MATCHING_TSV',
+    key: 'FLIP_ANGLE_NOT_MATCHING_ASLCONTEXT_TSV',
     severity: 'error',
-    reason: "'FlipAngle' for this file does not match the TSV length.",
+    reason: "The number of values for 'FlipAngle' for this file does not match the number of volumes in the 'aslcontext.tsv'.",
   },
   173: {
     key: 'POST_LABELLING_DELAY_NOT_MATCHING_NIFTI',
     severity: 'error',
-    reason: "'PostLabelingDelay' for this file does not match the 4th dimension of the NIFTI header.",
+    reason: "The number of values for 'PostLabelingDelay' for this file does not match the 4th dimension of the NIfTI header.",
   },
   174: {
-    key: 'POST_LABELLING_DELAY_NOT_MATCHING_TSV',
+    key: 'POST_LABELLING_DELAY_NOT_MATCHING_ASLCONTEXT_TSV',
     severity: 'error',
-    reason: "'PostLabelingDelay' for this file does not match the TSV length.",
+    reason: "'The number of values for PostLabelingDelay' for this file does not match the number of volumes in the 'aslcontext.tsv'.",
   },
   175: {
-    key: 'LABELLING_DURATION_NOT_MATCHING_TSV',
+    key: 'LABELLING_DURATION_NOT_MATCHING_ASLCONTEXT_TSV',
     severity: 'error',
-    reason: "'LabelingDuration' for this file does not match the TSV length.",
+    reason: "The number of values for 'LabelingDuration' for this file does not match the number of volumes in the 'asl.context.tsv'.",
   },
   176: {
-    key: 'ASL_CONTENT_TSV_INCONSISTENT',
+    key: 'ASLCONTEXT_TSV_INCONSISTENT',
     severity: 'error',
-    reason: "'volume_type' can only be filled with values ['cbf' ,'m0scan', 'label', 'control', 'deltam'].",
+    reason: "In the 'aslcontext.tsv', the 'volume_type' can only be filled with the volumes ['cbf' ,'m0scan', 'label', 'control', 'deltam'].",
   },
   177: {
-    key: 'VOLUME_TIMING_NOT_MATCHING_TSV',
+    key: 'VOLUME_TIMING_NOT_MATCHING_ASLCONTEXT_TSV',
     severity: 'error',
-    reason: "'VolumeTiming' for this file does not match the TSV length.",
+    reason: "The number of values of 'VolumeTiming' for this file does not match the number of volumes in the 'aslcontext.tsv'.",
   },
   178: {
     key: 'VOLUME_TIMING_AND_REPETITION_TIME_MUTUALLY_EXCLUSIVE',
     severity: 'error',
-    reason: "'VolumeTiming' and 'RepetitionTime' for this file are mutually exclusive.",
+    reason: "The fields 'VolumeTiming' and 'RepetitionTime' for this file are mutually exclusive. Choose 'RepetitionTime' when the same repetition time is used for all volumes, or 'VolumeTiming' when variable times are used.",
   },
   179: {
     key: 'BACKGROUND_SUPPRESSION_PULSE_NUMBER_MISSING',
@@ -976,12 +976,12 @@ export default {
   181: {
     key: 'TOTAL_ACQUIRED_VOLUMES_NOT_CONSISTENT',
     severity: 'warning',
-    reason: "'TotalAcquiredVolumes' for this file does not match the TSV length'.",
+    reason: "The number of values for 'TotalAcquiredVolumes' for this file does not match number of volumes in the 'aslcontext.tsv'.",
   },
   182: {
     key: 'MAGNETIC_FIELD_STRENGTH_MISSING',
     severity: 'error',
-    reason: "'You should define MagneticFieldStrength' for ths file. It is required for perfusion quantification, to infer default relaxation values for blood/tissue.",
+    reason: "You should define 'MagneticFieldStrength' for ths file. It is required for perfusion quantification, to infer default relaxation values for blood/tissue.",
   },
   183: {
     key: 'SLICE_TIMING_NOT_DEFINED_2D_ASL',
