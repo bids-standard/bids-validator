@@ -24,10 +24,10 @@
       "@@@_func_top_ext_@@@": [
         "_bold\\.json",
         "_sbref\\.json"
+        "_events\\.json",
+        "_beh\\.json"
       ],
       "@@@_cont_ext_@@@": [
-        "_physio\\.tsv\\.gz",
-        "_stim\\.tsv\\.gz",
         "_physio\\.json",
         "_stim\\.json"
       ]
