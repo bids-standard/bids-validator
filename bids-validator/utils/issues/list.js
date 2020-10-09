@@ -915,7 +915,7 @@ export default {
   169: {
     key: 'LABELING_DURATION_PASL_INCONSISTENT',
     severity: 'error',
-    reason: "'LabelingDuration' for PASL LabellingType can be only a scalar value put to 0 or unset.",
+    reason: "'LabelingDuration' for PASL 'LabelingType' can be only a scalar value put to 0 or unset.",
   },
   170: {
     key: 'CONTINOUS_RECORDING_MISSING_JSON',
