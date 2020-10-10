@@ -18,7 +18,7 @@ var argv = require('yargs')
   )
   .boolean('ignoreSessionConsistency')
   .describe(
-    'ignoreSymlinks',
+    'ignoreSessionConsistency',
     'Skip checking that any given session file is present for all subjects.',
   )
   .boolean('verbose')
