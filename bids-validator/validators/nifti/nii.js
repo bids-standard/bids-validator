@@ -220,7 +220,7 @@ export default function NIFTI(
         ) {
           const BolusCutOffFlagBoolean = mergedDictionary['BolusCutOffFlag']
           if (
-            BolusCutOffFlagBoolean &&
+            BolusCutOffFlagBoolean === true &&
             !mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence')
           ) {
             issues.push(
@@ -234,8 +234,9 @@ export default function NIFTI(
             )
           }
           else if (
-            BolusCutOffFlagBoolean && 
+            BolusCutOffFlagBoolean === true  && 
             mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence') &&
+            mergedDictionary['BolusCutOffTimingSequence'].constructor === Number &&
             mergedDictionary['BolusCutOffTimingSequence'] > 10) 
           {
             issues.push(
@@ -248,8 +249,27 @@ export default function NIFTI(
             )
             
           }
+          else if (
+            BolusCutOffFlagBoolean === true  && 
+            mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence') &&
+            mergedDictionary['BolusCutOffTimingSequence'].constructor === Array 
+            ) 
+          {
+            let BolusCutOffTimingSequence = mergedDictionary['BolusCutOffTimingSequence'];
+            const BolusCutOffDelayTimeWarning = BolusCutOffTimingSequence.filter((x) => x > 10);
+            issues.push(
+              new Issue({
+                file: file,
+                code: 185,
+                reason:
+                "Some values of the 'BolusCutOffTimingSequence' array you defined are greater than 10, are you sure they are expressed in seconds?" 
+              }),
+            )
+            
+          }
+
           if (
-            BolusCutOffFlagBoolean &&
+            BolusCutOffFlagBoolean === true &&
             !mergedDictionary.hasOwnProperty('BolusCutOffDelayTime')
           ) {
             issues.push(
@@ -263,9 +283,9 @@ export default function NIFTI(
             )
           }
           else if (
-            BolusCutOffFlagBoolean &&
+            BolusCutOffFlagBoolean === true &&
             mergedDictionary.hasOwnProperty('BolusCutOffDelayTime') &&
-            mergedDictionary.hasOwnProperty.constructor === Number &&
+            mergedDictionary['BolusCutOffDelayTime'].constructor === Number &&
             mergedDictionary['BolusCutOffDelayTime'] > 10
           )
           {
@@ -279,12 +299,13 @@ export default function NIFTI(
             ) 
           }
           else if (
-            BolusCutOffFlagBoolean &&
+            BolusCutOffFlagBoolean === true &&
             mergedDictionary.hasOwnProperty('BolusCutOffDelayTime') &&
-            mergedDictionary.hasOwnProperty.constructor === Array
+            mergedDictionary['BolusCutOffDelayTime'].constructor === Array
           )
           {
-            const BolusCutOffDelayTimeWarning = PostLabelingDelay.filter((x) => x > 10);
+            let BolusCutOffDelayTime = mergedDictionary['BolusCutOffDelayTime'];
+            const BolusCutOffDelayTimeWarning = BolusCutOffDelayTime.filter((x) => x > 10);
             if (BolusCutOffDelayTimeWarning.length > 0)
             {
               issues.push(
@@ -298,7 +319,7 @@ export default function NIFTI(
             }
           }
           if (
-            BolusCutOffFlagBoolean &&
+            BolusCutOffFlagBoolean === true &&
             !mergedDictionary.hasOwnProperty('BolusCutOffTechnique')
           ) {
             issues.push(
@@ -360,6 +381,30 @@ export default function NIFTI(
                 }),
               )
             }
+            const LabelingDurationWarning = LabelingDuration.filter((x) => x > 10);
+            if (LabelingDurationWarning.length > 0)
+            { 
+              issues.push(
+                new Issue({
+                  file: file,
+                  code: 187,
+                  reason:
+                    "In the 'LabelingDuration' array some values are greater than 10, are you sure they are expressed in seconds? " ,
+                }),
+              )
+            }
+          }
+          if (mergedDictionary['LabelingDuration'].constructor === Number &&
+          mergedDictionary['LabelingDuration'] > 10 )
+          {
+            issues.push(
+              new Issue({
+                file: file,
+                code: 187,
+                reason:
+                  "'LabelingDuration' is greater than 10, are you sure it's expressed in seconds?" ,
+              }),
+            )
           }
         }
       }

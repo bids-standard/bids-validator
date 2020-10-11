@@ -1002,6 +1002,11 @@ export default {
     key: 'BOLUS_CUT_OFF_DELAY_TIME_GREATER',
     severity: 'warning',
     reason: "'BolusCutOffDelayTime' is greater than 10, are you sure it's expressed in seconds?",
+  },
+  187: {
+    key: 'LABELING_DURATION_GREATER',
+    severity: 'warning',
+    reason: "'LabelingDuration' is greater than 10, are you sure it's expressed in seconds?",
   }
   
 }

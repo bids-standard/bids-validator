@@ -171,8 +171,16 @@
       "type": "boolean"
     },
     "BolusCutOffTimingSequence" :{
-      "type": "number",
-      "Minimum": 0
+      "anyOf": [
+        { "type": "number",
+          "Minimum": 0 
+        },
+        {
+          "type": "array",
+          "items": { "type": "number" },
+          "Minimum": 0
+        }
+      ]
     },
     "BolusCutOffDelayTime" :{
       "anyOf": [
