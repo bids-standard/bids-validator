@@ -224,7 +224,10 @@ describe('JSON', function() {
     jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
       assert(issues.length === 1)
-      assert(issues[0].evidence == '.EEGCoordinateSystem should be equal to one of the allowed values')
+      assert(
+        issues[0].evidence ==
+          '.EEGCoordinateSystem should be equal to one of the allowed values',
+      )
     })
   })
 
