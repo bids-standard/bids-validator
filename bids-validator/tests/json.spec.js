@@ -76,6 +76,23 @@ describe('JSON', function() {
     relativePath: '/sub-01_run-01_eeg.json',
   }
 
+  it('*.json sidecars with CogPOID or CogAtlasID fields should require a uri format', function() {
+    var jsonObj = {
+      TaskName: 'rest',
+      SamplingFrequency: 1000,
+      EEGReference: 'Cz',
+      SoftwareFilters: 'n/a',
+      PowerLineFrequency: 1000,
+      CogAtlasID:
+        'we did a search on https://ww.idontexist.com for the word "atlas"',
+    }
+    jsonDict[eeg_file.relativePath] = jsonObj
+    validate.JSON(eeg_file, jsonDict, function(issues) {
+      assert(issues.length === 1)
+      assert(issues[0].evidence == '.CogAtlasID should match format "uri"')
+    })
+  })
+
   it('*_eeg.json sidecars should have required key/value pairs', function() {
     var jsonObj = {
       TaskName: 'rest',
@@ -85,6 +102,7 @@ describe('JSON', function() {
         HighPass: { HalfAmplitudeCutOffHz: 1, RollOff: '6dB/Octave' },
       },
       PowerLineFrequency: 'n/a',
+      CogPOID: 'https://www.idontexist.com',
     }
     jsonDict[eeg_file.relativePath] = jsonObj
     validate.JSON(eeg_file, jsonDict, function(issues) {
@@ -113,6 +131,7 @@ describe('JSON', function() {
         HighPass: { HalfAmplitudeCutOffHz: 1, RollOff: '6dB/Octave' },
       },
       iEEGReference: 'chan1',
+      CogAtlasID: 'doi:thisisadoi',
     }
     jsonDict[ieeg_file.relativePath] = jsonObj
     validate.JSON(ieeg_file, jsonDict, function(issues) {

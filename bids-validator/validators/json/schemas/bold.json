@@ -2,12 +2,8 @@
   "$schema": "http://json-schema.org/draft-06/schema#",
   "type": "object",
   "properties": {
-    "CogAtlasID": {
-      "type": "string"
-    },
-    "CogPOID": {
-      "type": "string"
-    },
+    "CogAtlasID": { "$ref": "common_definitions.json#/definitions/CogAtlasID" },
+    "CogPOID": { "$ref": "common_definitions.json#/definitions/CogPOID" },
     "EchoTime": {
       "type": "number",
       "exclusiveMinimum": 0
