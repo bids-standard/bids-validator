@@ -3,10 +3,10 @@
   "properties": {
     "MEGCoordinateSystem": { "type": "string", "minLength": 1 },
     "MEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
-    "MEGCoordinateSystemDescription": { "type": "string" },
+    "MEGCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "EEGCoordinateSystem": { "type": "string", "minLength": 1 },
     "EEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
-    "EEGCoordinateSystemDescription": { "type": "string" },
+    "EEGCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "IntendedFor": {
       "anyOf": [
         {
@@ -23,16 +23,75 @@
     "HeadCoilCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
     "HeadCoilCoordinateSystem": { "type": "string", "minLength": 1 },
     "HeadCoilCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
-    "HeadCoilCoordinateSystemDescription": { "type": "string" },
+    "HeadCoilCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "AnatomicalLandmarkCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
     "AnatomicalLandmarkCoordinateSystem": { "type": "string", "minLength": 1 },
     "AnatomicalLandmarkCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
-    "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string" },
+    "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "DigitizedHeadPoints": { "type": "string" },
     "DigitizedHeadPointsCoordinateSystem": { "type": "string" },
     "DigitizedHeadPointsCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
-    "DigitizedHeadPointsCoordinateSystemDescription": { "type": "string" }
+    "DigitizedHeadPointsCoordinateSystemDescription": { "type": "string", "minLength": 1 }
   },
   "required": ["MEGCoordinateSystem", "MEGCoordinateUnits"],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    { "$ref": "#/dependency-definitions/if-MEGCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-EEGCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-HeadCoilCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-AnatomicalLandmarkCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-DigitizedHeadPointsCoordinateSystem-is-Other-then-Description-is-required" }
+  ],
+  "dependency-definitions": {
+    "if-MEGCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "MEGCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["MEGCoordinateSystem"]
+      },
+      "then": { "required": ["MEGCoordinateSystemDescription"] }
+    },
+    "if-EEGCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "EEGCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["EEGCoordinateSystem"]
+      },
+      "then": { "required": ["EEGCoordinateSystemDescription"] }
+    },
+    "if-HeadCoilCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "HeadCoilCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["HeadCoilCoordinateSystem"]
+      },
+      "then": { "required": ["HeadCoilCoordinateSystemDescription"] }
+    },
+    "if-AnatomicalLandmarkCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "AnatomicalLandmarkCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["AnatomicalLandmarkCoordinateSystem"]
+      },
+      "then": { "required": ["AnatomicalLandmarkCoordinateSystemDescription"] }
+    },
+    "if-DigitizedHeadPointsCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "DigitizedHeadPointsCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["DigitizedHeadPointsCoordinateSystem"]
+      },
+      "then": { "required": ["DigitizedHeadPointsCoordinateSystemDescription"] }
+    }
+  }
 }

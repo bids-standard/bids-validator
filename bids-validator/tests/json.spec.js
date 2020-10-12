@@ -145,6 +145,49 @@ describe('JSON', function() {
     })
   })
 
+  var meg_coordsystem_file = {
+    name: 'sub-01/meg/sub-01_task-testing_coordsystem.json',
+    relativePath: '/sub-01/meg/sub-01_task-testing_coordsystem.json',
+  }
+
+  it('MEG *_coordsystem.json files should have required key/value pairs', function() {
+    var jsonObj = {
+      FiducialsDescription: 'Fiducials were digitized using  ... ',
+      MEGCoordinateSystem: 'CTF',
+      MEGCoordinateUnits: 'mm',
+      MEGCoordinateSystemDescription: 'this is the usual ...',
+      EEGCoordinateSystem: 'Other',
+      EEGCoordinateSystemDescription: 'RAS orientation ...',
+      HeadCoilCoordinateSystem: 'Other',
+      HeadCoilCoordinates: {
+        LPA: [-1, 0, 0],
+        RPA: [1, 0, 0],
+        NAS: [0, 1, 0],
+      },
+      AnatomicalLandmarkCoordinates: {
+        LPA: [-1, 0, 0],
+        RPA: [1, 0, 0],
+        NAS: [0, 1, 0],
+      },
+      AnatomicalLandmarkCoordinateSystem: 'Other',
+      AnatomicalLandmarkCoordinateUnits: 'mm',
+    }
+    jsonDict[meg_coordsystem_file.relativePath] = jsonObj
+    validate.JSON(meg_coordsystem_file, jsonDict, function(issues) {
+      assert(issues.length === 4)
+      assert(
+        issues[0].evidence ==
+          " should have required property 'HeadCoilCoordinateSystemDescription'",
+      )
+      assert(issues[1].evidence == ' should match "then" schema')
+      assert(
+        issues[2].evidence ==
+          " should have required property 'AnatomicalLandmarkCoordinateSystemDescription'",
+      )
+      assert(issues[3].evidence == ' should match "then" schema')
+    })
+  })
+
   var eeg_coordsystem_file = {
     name: 'sub-01/eeg/sub-01_task-testing_coordsystem.json',
     relativePath: '/sub-01/eeg/sub-01_task-testing_coordsystem.json',
@@ -154,7 +197,7 @@ describe('JSON', function() {
     var jsonObj = {
       IntendedFor: 'sub-01_task-testing_electrodes.tsv',
       FiducialsDescription: 'Fiducials were digitized using  ... ',
-      EEGCoordinateSystem: 'Captrack',
+      EEGCoordinateSystem: 'CapTrak',
       EEGCoordinateUnits: 'mm',
       EEGCoordinateSystemDescription: 'RAS orientation ...',
       AnatomicalLandmarkCoordinates: {
@@ -172,6 +215,47 @@ describe('JSON', function() {
     })
   })
 
+  it('EEG *_coordsystem.json schema should require *Description if *Coordsystem is "Other"', function() {
+    var jsonObj = {
+      EEGCoordinateSystem: 'Other',
+      EEGCoordinateUnits: 'mm',
+      EEGCoordinateSystemDescription: 'we did ...',
+      FiducialsCoordinateSystem: 'Other',
+      AnatomicalLandmarkCoordinateSystem: 'Other',
+      AnatomicalLandmarkCoordinateSystemDescription: 'we did ...',
+    }
+    jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
+    validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
+      assert(issues.length === 2)
+      assert(
+        issues[0].evidence ==
+          " should have required property 'FiducialsCoordinateSystemDescription'",
+      )
+      assert(issues[1].evidence == ' should match "then" schema')
+    })
+  })
+
+  it('EEG *_coordsystem.json schema general requirements should not be overridden by conditional requirements', function() {
+    var jsonObj = {
+      EEGCoordinateSystem: 'Other',
+      EEGCoordinateSystemDescription: 'We used a ...',
+      AnatomicalLandmarkCoordinateSystem: 'Other',
+    }
+    jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
+    validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
+      assert(issues.length === 3)
+      assert(
+        issues[0].evidence ==
+          " should have required property 'EEGCoordinateUnits'",
+      )
+      assert(
+        issues[1].evidence ==
+          " should have required property 'AnatomicalLandmarkCoordinateSystemDescription'",
+      )
+      assert(issues[2].evidence == ' should match "then" schema')
+    })
+  })
+
   var ieeg_coordsystem_file = {
     name: 'sub-01/ieeg/sub-01_task-testing_coordsystem.json',
     relativePath: '/sub-01/ieeg/sub-01_task-testing_coordsystem.json',
@@ -179,12 +263,28 @@ describe('JSON', function() {
 
   it('iEEG *_coordsystem.json files should have required key/value pairs', function() {
     var jsonObj = {
-      iEEGCoordinateSystem: 'Other',
+      iEEGCoordinateSystem: 'Pixels',
       iEEGCoordinateUnits: 'mm',
     }
     jsonDict[ieeg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(ieeg_coordsystem_file, jsonDict, function(issues) {
       assert(issues.length === 0)
+    })
+  })
+
+  it('iEEG *_coordsystem.json schema should require *Description if *Coordsystem is "Other"', function() {
+    var jsonObj = {
+      iEEGCoordinateSystem: 'Other',
+      iEEGCoordinateUnits: 'mm',
+    }
+    jsonDict[ieeg_coordsystem_file.relativePath] = jsonObj
+    validate.JSON(ieeg_coordsystem_file, jsonDict, function(issues) {
+      assert(issues.length === 2)
+      assert(
+        issues[0].evidence ==
+          " should have required property 'iEEGCoordinateSystemDescription'",
+      )
+      assert(issues[1].evidence == ' should match "then" schema')
     })
   })
 
