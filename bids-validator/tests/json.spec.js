@@ -155,11 +155,16 @@ describe('JSON', function() {
     }
     jsonDict[meg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(meg_coordsystem_file, jsonDict, function(issues) {
-      console.log(issues)
       assert(issues.length === 4)
-      assert(issues[0].evidence == ' should have required property \'HeadCoilCoordinateSystemDescription\'')
+      assert(
+        issues[0].evidence ==
+          " should have required property 'HeadCoilCoordinateSystemDescription'",
+      )
       assert(issues[1].evidence == ' should match "then" schema')
-      assert(issues[2].evidence == ' should have required property \'AnatomicalLandmarkCoordinateSystemDescription\'')
+      assert(
+        issues[2].evidence ==
+          " should have required property 'AnatomicalLandmarkCoordinateSystemDescription'",
+      )
       assert(issues[3].evidence == ' should match "then" schema')
     })
   })
@@ -203,7 +208,10 @@ describe('JSON', function() {
     jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
       assert(issues.length === 2)
-      assert(issues[0].evidence == ' should have required property \'FiducialsCoordinateSystemDescription\'')
+      assert(
+        issues[0].evidence ==
+          " should have required property 'FiducialsCoordinateSystemDescription'",
+      )
       assert(issues[1].evidence == ' should match "then" schema')
     })
   })
@@ -212,17 +220,22 @@ describe('JSON', function() {
     var jsonObj = {
       EEGCoordinateSystem: 'Other',
       EEGCoordinateSystemDescription: 'We used a ...',
-      AnatomicalLandmarkCoordinateSystem: 'Other'
+      AnatomicalLandmarkCoordinateSystem: 'Other',
     }
     jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
       assert(issues.length === 3)
-      assert(issues[0].evidence == ' should have required property \'EEGCoordinateUnits\'')
-      assert(issues[1].evidence == ' should have required property \'AnatomicalLandmarkCoordinateSystemDescription\'')
+      assert(
+        issues[0].evidence ==
+          " should have required property 'EEGCoordinateUnits'",
+      )
+      assert(
+        issues[1].evidence ==
+          " should have required property 'AnatomicalLandmarkCoordinateSystemDescription'",
+      )
       assert(issues[2].evidence == ' should match "then" schema')
     })
   })
-
 
   var ieeg_coordsystem_file = {
     name: 'sub-01/ieeg/sub-01_task-testing_coordsystem.json',
@@ -231,7 +244,7 @@ describe('JSON', function() {
 
   it('iEEG *_coordsystem.json files should have required key/value pairs', function() {
     var jsonObj = {
-      iEEGCoordinateSystem: 'pixels',
+      iEEGCoordinateSystem: 'Pixels',
       iEEGCoordinateUnits: 'mm',
     }
     jsonDict[ieeg_coordsystem_file.relativePath] = jsonObj
@@ -248,11 +261,13 @@ describe('JSON', function() {
     jsonDict[ieeg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(ieeg_coordsystem_file, jsonDict, function(issues) {
       assert(issues.length === 2)
-      assert(issues[0].evidence == ' should have required property \'iEEGCoordinateSystemDescription\'')
+      assert(
+        issues[0].evidence ==
+          " should have required property 'iEEGCoordinateSystemDescription'",
+      )
       assert(issues[1].evidence == ' should match "then" schema')
     })
   })
-
 
   it('should use inherited sidecars to find missing fields', function() {
     const multiEntryJsonDict = {}
