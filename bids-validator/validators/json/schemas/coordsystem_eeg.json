@@ -16,5 +16,42 @@
     "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string" }
   },
   "required": ["EEGCoordinateSystem", "EEGCoordinateUnits"],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    { "$ref": "#/dependency-definitions/if-EEGCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-FiducialsCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-AnatomicalLandmarkCoordinateSystem-is-Other-then-Description-is-required" }
+  ],
+  "dependency-definitions": {
+    "if-EEGCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "EEGCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["EEGCoordinateSystem"]
+      },
+      "then": { "required": ["EEGCoordinateSystemDescription"] }
+    },
+    "if-FiducialsCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "FiducialsCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["FiducialsCoordinateSystem"]
+      },
+      "then": { "required": ["FiducialsCoordinateSystemDescription"] }
+    },
+    "if-AnatomicalLandmarkCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "AnatomicalLandmarkCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["AnatomicalLandmarkCoordinateSystem"]
+      },
+      "then": { "required": ["AnatomicalLandmarkCoordinateSystemDescription"] }
+    }
+  }
 }

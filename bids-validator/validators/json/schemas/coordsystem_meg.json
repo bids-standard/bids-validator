@@ -34,5 +34,64 @@
     "DigitizedHeadPointsCoordinateSystemDescription": { "type": "string" }
   },
   "required": ["MEGCoordinateSystem", "MEGCoordinateUnits"],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    { "$ref": "#/dependency-definitions/if-MEGCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-EEGCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-HeadCoilCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-AnatomicalLandmarkCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-DigitizedHeadPointsCoordinateSystem-is-Other-then-Description-is-required" }
+  ],
+  "dependency-definitions": {
+    "if-MEGCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "MEGCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["MEGCoordinateSystem"]
+      },
+      "then": { "required": ["MEGCoordinateSystemDescription"] }
+    },
+    "if-EEGCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "EEGCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["EEGCoordinateSystem"]
+      },
+      "then": { "required": ["EEGCoordinateSystemDescription"] }
+    },
+    "if-HeadCoilCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "HeadCoilCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["HeadCoilCoordinateSystem"]
+      },
+      "then": { "required": ["HeadCoilCoordinateSystemDescription"] }
+    },
+    "if-AnatomicalLandmarkCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "AnatomicalLandmarkCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["AnatomicalLandmarkCoordinateSystem"]
+      },
+      "then": { "required": ["AnatomicalLandmarkCoordinateSystemDescription"] }
+    },
+    "if-DigitizedHeadPointsCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "DigitizedHeadPointsCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["DigitizedHeadPointsCoordinateSystem"]
+      },
+      "then": { "required": ["DigitizedHeadPointsCoordinateSystemDescription"] }
+    }
+  }
 }
