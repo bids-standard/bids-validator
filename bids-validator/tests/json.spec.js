@@ -205,13 +205,26 @@ describe('JSON', function() {
         RPA: [1, 0, 0],
         NAS: [0, 1, 0],
       },
-      AnatomicalLandmarkCoordinateSystem: '...',
+      AnatomicalLandmarkCoordinateSystem: 'Other',
       AnatomicalLandmarkCoordinateUnits: 'mm',
       AnatomicalLandmarkCoordinateSystemDescription: '...',
     }
     jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
       assert(issues.length === 0)
+    })
+  })
+
+  it('EEG *_coordsystem.json files should not contain unaccepted *CoordinateSystem keywords', function() {
+    var jsonObj = {
+      EEGCoordinateSystem: 'RAS',
+      EEGCoordinateUnits: 'mm',
+      EEGCoordinateSystemDescription: 'RAS orientation ...',
+    }
+    jsonDict[eeg_coordsystem_file.relativePath] = jsonObj
+    validate.JSON(eeg_coordsystem_file, jsonDict, function(issues) {
+      assert(issues.length === 1)
+      assert(issues[0].evidence == '.EEGCoordinateSystem should be equal to one of the allowed values')
     })
   })
 
