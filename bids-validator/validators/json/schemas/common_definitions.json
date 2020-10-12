@@ -1,8 +1,8 @@
 {
   "$id": "common_definitions.json",
   "definitions": {
-    "CogAtlasID": { "type": "string" },
-    "CogPOID": { "type": "string" },
+    "CogAtlasID": { "type": "string", "format": "uri" },
+    "CogPOID": { "type": "string", "format": "uri" },
     "CoordUnits": { "type": "string", "enum": ["m", "mm", "cm", "n/a"] },
     "DeviceSerialNumber": { "type": "string" },
     "ECGChannelCount": { "type": "integer", "minimum": 0 },
@@ -22,7 +22,7 @@
     "LandmarkCoordinates": {
       "type": "object",
       "additionalProperties": {
-        "type": "array", 
+        "type": "array",
         "items": {
           "type": "number"
         },
@@ -44,7 +44,7 @@
       "enum": [
         "continuous",
         "epoched",
-        "discontinuous" 
+        "discontinuous"
       ]
     },
     "SamplingFrequency": { "type": "number" },

@@ -55,10 +55,10 @@
       "type": "object",
       "properties": {
         "Database": {
-          "type": "string"
+          "type": "string", "format": "uri"
         },
         "Dataset": {
-          "type": "string"
+          "type": "string", "format": "uri"
         },
         "Descriptors": {
           "items": {
