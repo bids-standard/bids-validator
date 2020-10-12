@@ -3,10 +3,10 @@
   "properties": {
     "MEGCoordinateSystem": { "type": "string", "minLength": 1 },
     "MEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
-    "MEGCoordinateSystemDescription": { "type": "string" },
+    "MEGCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "EEGCoordinateSystem": { "type": "string", "minLength": 1 },
     "EEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
-    "EEGCoordinateSystemDescription": { "type": "string" },
+    "EEGCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "IntendedFor": {
       "anyOf": [
         {
@@ -23,15 +23,15 @@
     "HeadCoilCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
     "HeadCoilCoordinateSystem": { "type": "string", "minLength": 1 },
     "HeadCoilCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
-    "HeadCoilCoordinateSystemDescription": { "type": "string" },
+    "HeadCoilCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "AnatomicalLandmarkCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
     "AnatomicalLandmarkCoordinateSystem": { "type": "string", "minLength": 1 },
     "AnatomicalLandmarkCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
-    "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string" },
+    "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "DigitizedHeadPoints": { "type": "string" },
     "DigitizedHeadPointsCoordinateSystem": { "type": "string" },
     "DigitizedHeadPointsCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
-    "DigitizedHeadPointsCoordinateSystemDescription": { "type": "string" }
+    "DigitizedHeadPointsCoordinateSystemDescription": { "type": "string", "minLength": 1 }
   },
   "required": ["MEGCoordinateSystem", "MEGCoordinateUnits"],
   "additionalProperties": false,
