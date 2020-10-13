@@ -1,10 +1,10 @@
 {
   "type": "object",
   "properties": {
-    "MEGCoordinateSystem": { "type": "string", "minLength": 1 },
+    "MEGCoordinateSystem": { "type": "string", "enum": ["CTF", "ElektaNeuromag", "4DBti", "KitYokogawa", "ChietiItab", "Other"] },
     "MEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "MEGCoordinateSystemDescription": { "type": "string", "minLength": 1 },
-    "EEGCoordinateSystem": { "type": "string", "minLength": 1 },
+    "EEGCoordinateSystem": { "type": "string", "enum": ["CTF", "ElektaNeuromag", "4DBti", "KitYokogawa", "ChietiItab", "Other"] },
     "EEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "EEGCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "IntendedFor": {
@@ -21,15 +21,15 @@
     },
     "FiducialsDescription": { "type": "string", "minLength": 1 },
     "HeadCoilCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
-    "HeadCoilCoordinateSystem": { "type": "string", "minLength": 1 },
+    "HeadCoilCoordinateSystem": { "type": "string", "enum": ["CTF", "ElektaNeuromag", "4DBti", "KitYokogawa", "ChietiItab", "Other"] },
     "HeadCoilCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "HeadCoilCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "AnatomicalLandmarkCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
-    "AnatomicalLandmarkCoordinateSystem": { "type": "string", "minLength": 1 },
+    "AnatomicalLandmarkCoordinateSystem": { "type": "string", "enum": ["CTF", "ElektaNeuromag", "4DBti", "KitYokogawa", "ChietiItab", "Other"] },
     "AnatomicalLandmarkCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "DigitizedHeadPoints": { "type": "string" },
-    "DigitizedHeadPointsCoordinateSystem": { "type": "string" },
+    "DigitizedHeadPointsCoordinateSystem": { "type": "string", "enum": ["CTF", "ElektaNeuromag", "4DBti", "KitYokogawa", "ChietiItab", "Other"] },
     "DigitizedHeadPointsCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "DigitizedHeadPointsCoordinateSystemDescription": { "type": "string", "minLength": 1 }
   },
