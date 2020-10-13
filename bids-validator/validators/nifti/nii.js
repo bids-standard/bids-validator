@@ -219,54 +219,6 @@ export default function NIFTI(
           mergedDictionary['BolusCutOffFlag'].constructor === Boolean
         ) {
           const BolusCutOffFlagBoolean = mergedDictionary['BolusCutOffFlag']
-          if (
-            BolusCutOffFlagBoolean === true &&
-            !mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence')
-          ) {
-            issues.push(
-              new Issue({
-                file: file,
-                code: 148,
-                reason:
-                  "You should define 'BolusCutOffTimingSequence' for this file. " +
-                  sidecarMessage,
-              }),
-            )
-          }
-          else if (
-            BolusCutOffFlagBoolean === true  && 
-            mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence') &&
-            mergedDictionary['BolusCutOffTimingSequence'].constructor === Number &&
-            mergedDictionary['BolusCutOffTimingSequence'] > 10) 
-          {
-            issues.push(
-              new Issue({
-                file: file,
-                code: 185,
-                reason:
-                "'BolusCutOffTimingSequence' is greater than 10, are you sure it's expressed in seconds?" 
-              }),
-            )
-            
-          }
-          else if (
-            BolusCutOffFlagBoolean === true  && 
-            mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence') &&
-            mergedDictionary['BolusCutOffTimingSequence'].constructor === Array 
-            ) 
-          {
-            let BolusCutOffTimingSequence = mergedDictionary['BolusCutOffTimingSequence'];
-            const BolusCutOffDelayTimeWarning = BolusCutOffTimingSequence.filter((x) => x > 10);
-            issues.push(
-              new Issue({
-                file: file,
-                code: 185,
-                reason:
-                "Some values of the 'BolusCutOffTimingSequence' array you defined are greater than 10, are you sure they are expressed in seconds?" 
-              }),
-            )
-            
-          }
 
           if (
             BolusCutOffFlagBoolean === true &&

@@ -806,11 +806,6 @@ export default {
     severity: 'error',
     reason: "You should define the 'BolusCutOffFlag' for this file. 'BolusCutOffFlag' is a boolean value, indicating if a bolus cut-off technique is used.",
   },
-  148: {
-    key: 'PASL_BOLUS_CUT_OFF_TIMING_SEQUENCE',
-    severity: 'error',
-    reason: "You should define the 'BolusCutOffTimingSequence' for this file. 'BolusCutOffTimingSequence is a sequence, specifying the timing after labeling, in seconds, of the start of the bolus cut off saturation pulses.",
-  },
   149: {
     key: 'PASL_BOLUS_CUT_OFF_DELAY_TIME',
     severity: 'warning',
@@ -992,11 +987,6 @@ export default {
     key: 'POST_LABELING_DELAY_GREATER',
     severity: 'warning',
     reason: "'PostLabelingDelay' is greater than 10, are you sure it's expressed in seconds?",
-  },
-  185: {
-    key: 'BOLUS_CUT_OFF_TIMING_SEQUENCE_GREATER',
-    severity: 'warning',
-    reason: "'BolusCutOffTimingSequence' is greater than 10, are you sure it's expressed in seconds?" 
   },
   186: {
     key: 'BOLUS_CUT_OFF_DELAY_TIME_GREATER',
