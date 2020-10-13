@@ -808,13 +808,13 @@ export default {
   },
   149: {
     key: 'PASL_BOLUS_CUT_OFF_DELAY_TIME',
-    severity: 'warning',
-    reason: "It is recommended to define 'BolusCutOffDelayTime' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffDelayTime is the duration, in seconds, of the bolus cut off saturation pulse.",
+    severity: 'error',
+    reason: "It is required to define 'BolusCutOffDelayTime' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffDelayTime' is the duration between the end of the labeling and the start of the bolus cut-off saturation pulse(s), in seconds.",
   },
   150: {
     key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
-    severity: 'warning',
-    reason: "It is recommended to define 'BolusCutOffTechnique' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffTechnique' is the name of the technique used (e.g. Q2TIPS, QUIPSS, QUIPSSII).",
+    severity: 'error',
+    reason: "It is required to define 'BolusCutOffTechnique' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffTechnique' is the name of the technique used (e.g. Q2TIPS, QUIPSS, QUIPSSII).",
   },
   151: {
     key: 'LABELING_PULSE_MAXIMUM_GRADIENT_MISSING',
