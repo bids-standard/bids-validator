@@ -10,6 +10,7 @@
     "codecov": "./node_modules/.bin/codecov",
     "test": "bids-validator/bin/test-submodule-exists && jest",
     "npmPublish": "cd bids-validator && publish",
+    "lernaPublish": "./node_modules/.bin/lerna publish && ./tools/post_publish.sh",
     "web-dev": "cd bids-validator-web && yarn dev",
     "web-build": "cd bids-validator-web && yarn build",
     "web-export": "yarn web-build && cd bids-validator-web && yarn next export"
