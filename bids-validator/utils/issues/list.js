@@ -819,7 +819,7 @@ export default {
   154: {
     key: 'M0_SET_UNCORRECTLY',
     severity: 'warning',
-    reason: "M0 was not defined correctly. 'M0' can be either a boolean, a string or a number, and depending on the data type it refers to m0scan location file or M0 approach used.",
+    reason: "M0 was not defined correctly. If 'M0' is a boolean, the corresponding tsv file should contains m0scan/control volumes if 'M0' is qeual to true/false respectively.",
   },
   155: {
     key: 'PULSE_SEQUENCE_TYPE_MUST_DEFINE',
@@ -951,6 +951,11 @@ export default {
     key: 'LABELING_DURATION_GREATER',
     severity: 'warning',
     reason: "'LabelingDuration' is greater than 10, are you sure it's expressed in seconds?",
+  },
+  188: {
+    key: 'VOLUME_TIMING_NOT_MONOTONICALLY_INCREASING',
+    severity: 'error',
+    reason: "'VolumeTiming' is not monotonically increasing. You should define the 'VolumeTiming' array as non-negative and monotonically increasing.",
   }
   
 }

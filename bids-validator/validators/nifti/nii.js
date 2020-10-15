@@ -790,7 +790,24 @@ export default function NIFTI(
         )
 
       }
-
+      else if (
+        mergedDictionary.hasOwnProperty('VolumeTiming') &&
+        !mergedDictionary.hasOwnProperty('RepetitionTime')
+      )
+      {
+      let VolumeTiming = mergedDictionary['VolumeTiming']
+      const MonotonicallyIncreasingVolumeTiming = isMonotonicIncreasingArray(VolumeTiming)
+          if (!MonotonicallyIncreasingVolumeTiming) {
+            issues.push(
+              new Issue({
+                file: file,
+                code: 188,
+                reason:
+                  "'VolumeTiming' should be monotonically increasing." ,
+              }),
+            )
+          }
+      }
       if (typeof repetitionTime === 'undefined' && header) {
         issues.push(
           new Issue({
@@ -1121,4 +1138,16 @@ function checkIfValidFiletype(intendedForFile, issues, file) {
       }),
     )
   }
+}
+
+function isMonotonicIncreasingArray(A) {
+  let isInc = false;
+  for(let i = 1; i <A.length; i++){
+    if(A[i] > A[i-1]){
+        isInc = true;
+    } else {
+        return false;
+    }
+  }
+  return isInc;
 }

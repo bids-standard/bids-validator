@@ -82,12 +82,11 @@
         "type": "boolean" 
     },
     "LabelingLocationDescription" :{
-      "type": "string",
-      "_type_comment":"to be checked"
+      "type": "string"
     },
     "LabelingOrientation" :{
-      "type": "string",
-      "_type_comment":"to be checked"
+      "type": "array",
+      "items": { "type": "number" }
     },
     "LabelingDistance" :{
       "type": "number"
