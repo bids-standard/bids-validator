@@ -771,11 +771,6 @@ export default {
     severity: 'warning',
     reason: "It is recommended to define 'LabelingDistance' for this file. 'LabelingDistance' is the distance of the center of the labeling slab to the center of the imaging slab, in millimeter.",
   },
-  141: {
-    key: 'LABELING_PULSE_FLIP_ANGLE_MISSING',
-    severity: 'warning',
-    reason: "It is recommended to define 'LabelingPulseFlipAngle' for this file. 'LabelingPulseFlipAngle' the flip angle of a single labeling pulse, in degrees.<, for PCASL",
-  },
   142: {
     key: 'LABELING_SLAB_THICKNESS_MISSING',
     severity: 'warning',
@@ -796,11 +791,6 @@ export default {
     severity: 'warning',
     reason: "It is recommended to define 'VascularCrushingVenc' for this file, when the 'VascularCrushing' is set to true. 'VascularCruchingVenc' indicates the vascular crushing gradient strength, in cm/s.",
   },
-  146: {
-    key: 'PCASL_TYPE_MISSING',
-    severity: 'warning',
-    reason: "It is recommended to define 'PCASLType' for this file. 'PCASLType' is the type of the control pulse: balanced or unbalanced.",
-  },
   147: {
     key: 'PASL_BOLUS_CUT_OFF_FLAG',
     severity: 'error',
@@ -815,12 +805,6 @@ export default {
     key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
     severity: 'error',
     reason: "It is required to define 'BolusCutOffTechnique' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffTechnique' is the name of the technique used (e.g. Q2TIPS, QUIPSS, QUIPSSII).",
-  },
-  151: {
-    key: 'LABELING_PULSE_MAXIMUM_GRADIENT_MISSING',
-    severity: 'warning',
-    reason:
-      "It is recommended to define 'LabelingPulseMaximumGradient' for this file. 'LabelingPulseMaximumGradient' is the maximum amplitude of the labeling gradient, in mT/m, which could explain systematic differences between sites.",
   },
   152: {
     key: 'INTENDED_FOR_NOT_SET',
@@ -851,36 +835,6 @@ export default {
     key: 'LABELLING_DURATION_LENGTH_NOT_MATCHING_NIFTI',
     severity: 'error',
     reason: "The number of values for 'LabelingDuration' for this file does not match the 4th dimension of the NIfTI header. ",
-  },
-  158: {
-    key: 'CASL_TYPE_MISSING',
-    severity: 'warning',
-    reason: "ITt is recommended to define 'CASLType' for this file. 'CASLType' defines if a separate coil is used for labeling: single-coil or double-coil.",
-  },
-  159: {
-    key: 'LABELING_PULSE_AVERAGE_GRADIENT_MISSING',
-    severity: 'warning',
-    reason: "It is recommended to define 'LabelingPulseAverageGradient' for this file.  'LabelingPulseAverageGradient' is the average labeling gradient, in mT/m, for PCASL.",
-  },
-  160: {
-    key: 'LABELING_PULSE_AVERAGE_B1_MISSING',
-    severity: 'warning',
-    reason: "It is recommended to define 'LabelingPulseAverageB1' for this file, when 'LabellingType' is set to PCASL. 'LabelingPulseAverageB1' is the average B1-field strength of the RF labeling pulses, in μT.",
-  },
-  161: {
-    key: 'LABELING_PULSE_DURATION_MISSING',
-    severity: 'warning',
-    reason: "It is recommended to define 'LabelingPulseDuration' for this file. 'LabelingPulseDuration' is the duration, in seconds, of the individual labeling pulses.",
-  },
-  162: {
-    key: 'LABELING_PULSE_INTERVAL_MISSING',
-    severity: 'warning',
-    reason: "It is recommended to define 'LabelingPulseInterval' for this file. 'LabelingPulseInterval' the time delay, in seconds, between the peaks of the individual labeling pulses.",
-  },
-  163: {
-    key: 'PASL_TYPE_MISSING',
-    severity: 'warning',
-    reason: "It is recommended to define 'PASLType' for this file. 'PASLType' is the type of the labeling pulse of PASL labeling (i.e. FAIR, EPISTAR, PICORE, etc.).",
   },
   164: {
     key: 'ASL_MANUFACTURER_MISSING',
