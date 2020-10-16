@@ -12,7 +12,7 @@
     "npmPublish": "cd bids-validator && publish",
     "web-dev": "cd bids-validator-web && yarn dev",
     "web-build": "cd bids-validator-web && yarn build",
-    "web-start": "yarn && yarn upgrade && cd bids-validator-web && yarn build && yarn start",
+    "web-start": "cd bids-validator-web && yarn build && yarn start",
     "web-export": "yarn web-build && cd bids-validator-web && yarn next export"
   },
   "jest": {
