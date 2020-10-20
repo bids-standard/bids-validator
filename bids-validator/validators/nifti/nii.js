@@ -168,6 +168,25 @@ export default function NIFTI(
               ) 
             }
           }
+
+          if (
+            mergedDictionary.hasOwnProperty('BolusCutOffDelayTime')
+          )
+          {
+          let BolusCutOffDelayTime = mergedDictionary['BolusCutOffDelayTime']
+          const MonotonicallyIncreasingBolusCutOffDelayTime = isMonotonicIncreasingArray(BolusCutOffDelayTime)
+              if (!MonotonicallyIncreasingBolusCutOffDelayTime) {
+                issues.push(
+                  new Issue({
+                    file: file,
+                    code: 192,
+                    reason:
+                      "'BolusCutOffDelayTime' should be monotonically increasing." ,
+                  }),
+                )
+              }
+          }
+
           if (
             BolusCutOffFlagBoolean === true &&
             !mergedDictionary.hasOwnProperty('BolusCutOffTechnique')
@@ -745,15 +764,32 @@ export default function NIFTI(
       path.includes('_m0scan.nii')
     ) {
       if (!mergedDictionary.hasOwnProperty('EchoTime')) {
-        issues.push(
-          new Issue({
-            file: file,
-            code: 6,
-            reason:
-              "You should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible. " +
-              sidecarMessage,
-          }),
-        )
+        if (
+          path.includes('_asl.nii') ||
+          path.includes('_m0scan.nii')
+        ) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 193,
+              reason:
+                "You must define 'EchoTime' for this file. If you don't provide this information a correct CBF quantification will not be possible." +
+                sidecarMessage,
+            }),
+          )
+        }
+        }
+        else {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 6,
+              reason:
+                "You should define 'EchoTime' for this file. If you don't provide this information field map correction will not be possible. " +
+                sidecarMessage,
+            }),
+          )
+        }
       }
       if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
         issues.push(

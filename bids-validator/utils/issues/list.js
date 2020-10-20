@@ -790,12 +790,12 @@ export default {
   },
   149: {
     key: 'PASL_BOLUS_CUT_OFF_DELAY_TIME',
-    severity: 'warning',
+    severity: 'error',
     reason: "It is required to define 'BolusCutOffDelayTime' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffDelayTime' is the duration between the end of the labeling and the start of the bolus cut-off saturation pulse(s), in seconds.",
   },
   150: {
     key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
-    severity: 'warning',
+    severity: 'error',
     reason: "It is required to define 'BolusCutOffTechnique' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffTechnique' is the name of the technique used (e.g. Q2TIPS, QUIPSS, QUIPSSII).",
   },
   152: {
@@ -969,5 +969,15 @@ export default {
     key: 'PCASL_CASL_LABELING_TYPE_NOT_ALLOWED',
     severity: 'error',
     reason: "You defined either the 'CASLType' with a PCASL 'LabellingType' or the 'PCASLType' with a CASL 'LabellingType'. This is not allowed, please check that these field are filled correctly."
-  }
+  },
+  192: {
+    key: 'BOLUS_CUT_OFF_DELAY_TIME_NOT_MONOTONICALLY_INCREASING',
+    severity: 'error',
+    reason: "'BolusCutOffDelayTime' is not monotonically increasing. You should define the 'BolusCutOffDelayTime' array as non-negative and monotonically increasing.",
+  },
+  193: {
+    key: 'ECHO_TIME_NOT_DEFINED_FOR_ASL_OR_M0',
+    severity: 'error',
+    reason: "You must define 'EchoTime' for this file. If you don't provide this information a correct CBF quantification will not be possible.",
+  },
 }
