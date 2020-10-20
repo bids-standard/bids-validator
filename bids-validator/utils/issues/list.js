@@ -958,17 +958,18 @@ export default {
   189: {
     key: 'CASL_PCASL_NOT_ALLOWED_FIELDS',
     severity: 'error',
-    reason: "You defined one of the not allowed fields in case of CASL or PCASL 'LabelingType'. Please verify which field among 'PASLType', 'LabelingSlabThickness' 'BolusCutOffFlag', 'BolusCutOffTimingSequence', 'BolusCutOffDelayTime' and 'BolusCutOffTechnique' you have filled."
+    reason: "You defined one of the not allowed fields in case of CASL or PCASL 'LabelingType'. Please verify which field among 'PASLType', 'LabelingSlabThickness' 'BolusCutOffFlag', 'BolusCutOffTimingSequence', 'BolusCutOffDelayTime' and 'BolusCutOffTechnique' you have filled.",
   },
   190: {
     key: 'PASL_NOT_ALLOWED_FIELDS',
     severity: 'error',
-    reason: "You defined one of the not allowed fields in case of CASL or PCASL 'LabelingType'. Please verify which field among 'PASLType', 'LabelingSlabThickness' 'BolusCutOffFlag', 'BolusCutOffTimingSequence', 'BolusCutOffDelayTime' and 'BolusCutOffTechnique' you have filled."
+    reason: "You defined one of the not allowed fields in case of PASL 'LabelingType'." + 
+            "Please verify which field among 'CASLType', 'PCASLType' 'LabelingPulseAverageGradient', 'LabelingPulseMaximumGradient', 'LabelingPulseAverageB1', 'LabelingPulseDuration', 'LabelingPulseFlipAngle' and 'LabelingPulseInterval' you have filled.",
   },
   191: {
     key: 'PCASL_CASL_LABELING_TYPE_NOT_ALLOWED',
     severity: 'error',
-    reason: "You defined either the 'CASLType' with a PCASL 'LabellingType' or the 'PCASLType' with a CASL 'LabellingType'. This is not allowed, please check that these field are filled correctly."
+    reason: "You defined either the 'CASLType' with a PCASL 'LabellingType' or the 'PCASLType' with a CASL 'LabellingType'. This is not allowed, please check that these field are filled correctly.",
   },
   192: {
     key: 'BOLUS_CUT_OFF_DELAY_TIME_NOT_MONOTONICALLY_INCREASING',
