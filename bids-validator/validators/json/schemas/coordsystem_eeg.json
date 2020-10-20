@@ -3,17 +3,55 @@
   "properties": {
     "IntendedFor": { "type": "string", "minLength": 1 },
     "FiducialsDescription": { "type": "string", "minLength": 1 },
-    "EEGCoordinateSystem": { "type": "string", "minLength": 1 },
-    "EEGCoordinateUnits": { "type": "string", "minLength": 1 },
-    "EEGCoordinateSystemDescription": { "type": "string" },
-    "AnatomicalLandmarkCoordinates": {
-      "type": "object",
-      "additionalProperties": { "type": "array" }
-    },
-    "AnatomicalLandmarkCoordinateSystem": { "type": "string", "minLength": 1 },
-    "AnatomicalLandmarkCoordinateUnits": { "type": "string", "minLength": 1 },
-    "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string" }
+    "FiducialsCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
+    "FiducialsCoordinateSystem": { "type": "string", "enum": ["CapTrak", "Other"] },
+    "FiducialsCoordinateSystemDescription": { "type": "string", "minLength": 1 },
+    "FiducialsCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
+    "EEGCoordinateSystem": { "type": "string", "enum": ["CapTrak", "Other"] },
+    "EEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
+    "EEGCoordinateSystemDescription": { "type": "string", "minLength": 1 },
+    "AnatomicalLandmarkCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
+    "AnatomicalLandmarkCoordinateSystem": { "type": "string", "enum": ["CapTrak", "Other"] },
+    "AnatomicalLandmarkCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
+    "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string", "minLength": 1 }
   },
   "required": ["EEGCoordinateSystem", "EEGCoordinateUnits"],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    { "$ref": "#/dependency-definitions/if-EEGCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-FiducialsCoordinateSystem-is-Other-then-Description-is-required" },
+    { "$ref": "#/dependency-definitions/if-AnatomicalLandmarkCoordinateSystem-is-Other-then-Description-is-required" }
+  ],
+  "dependency-definitions": {
+    "if-EEGCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "EEGCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["EEGCoordinateSystem"]
+      },
+      "then": { "required": ["EEGCoordinateSystemDescription"] }
+    },
+    "if-FiducialsCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "FiducialsCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["FiducialsCoordinateSystem"]
+      },
+      "then": { "required": ["FiducialsCoordinateSystemDescription"] }
+    },
+    "if-AnatomicalLandmarkCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "AnatomicalLandmarkCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["AnatomicalLandmarkCoordinateSystem"]
+      },
+      "then": { "required": ["AnatomicalLandmarkCoordinateSystemDescription"] }
+    }
+  }
 }

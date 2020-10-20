@@ -2,6 +2,7 @@ import utils from '../../utils'
 import Ajv from 'ajv'
 const ajv = new Ajv({ allErrors: true })
 ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'))
+ajv.addSchema(require('./schemas/common_definitions.json'))
 const Issue = utils.issues.Issue
 
 /**

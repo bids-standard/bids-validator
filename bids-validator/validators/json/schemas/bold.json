@@ -2,15 +2,11 @@
   "$schema": "http://json-schema.org/draft-06/schema#",
   "type": "object",
   "properties": {
-    "AcquisitionDuration": {
+    "CogAtlasID": { "$ref": "common_definitions.json#/definitions/CogAtlasID" },
+    "CogPOID": { "$ref": "common_definitions.json#/definitions/CogPOID" },
+    },
       "type": "number"
-    },
-    "CogAtlasID": {
-      "type": "string"
-    },
-    "CogPOID": {
-      "type": "string"
-    },
+    "AcquisitionDuration": {
     "EchoTime": {
       "type": "number",
       "exclusiveMinimum": 0

@@ -1,13 +1,28 @@
 {
   "type": "object",
   "properties": {
-    "iEEGCoordinateSystem": { "type": "string", "minLength": 1 },
-    "iEEGCoordinateUnits": { "type": "string", "minLength": 1 },
+    "IntendedFor": { "type": "string", "minLength": 1 },
+    "iEEGCoordinateSystem": { "type": "string", "enum": ["Pixels", "ACPC", "Other"] },
+    "iEEGCoordinateUnits":  { "$ref": "common_definitions.json#/definitions/CoordUnits" },
     "iEEGCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "iEEGCoordinateProcessingDescription": { "type": "string", "minLength": 1 },
-    "iEEGCoordinateProcessingReference": { "type": "string", "minLength": 1 },
-    "IntendedFor": { "type": "string", "minLength": 1 }
+    "iEEGCoordinateProcessingReference": { "type": "string", "minLength": 1 }
   },
   "required": ["iEEGCoordinateSystem", "iEEGCoordinateUnits"],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    { "$ref": "#/dependency-definitions/if-iEEGCoordinateSystem-is-Other-then-Description-is-required" }
+  ],
+  "dependency-definitions": {
+    "if-iEEGCoordinateSystem-is-Other-then-Description-is-required": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "iEEGCoordinateSystem": { "const": "Other" }
+        },
+        "required": ["iEEGCoordinateSystem"]
+      },
+      "then": { "required": ["iEEGCoordinateSystemDescription"] }
+    }
+  }
 }
