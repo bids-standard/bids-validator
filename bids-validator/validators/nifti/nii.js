@@ -778,7 +778,6 @@ export default function NIFTI(
             }),
           )
         }
-        }
         else {
           issues.push(
             new Issue({
