@@ -217,17 +217,17 @@ export default function NIFTI(
         )
         {
           
-          var CASLTypeString = ""
-          var PCASLTypeString = ""
-          var LabelingPulseAverageGradientString = ""
-          var LabelingPulseMaximumGradientString = ""
-          var LabelingPulseAverageB1String = ""
-          var LabelingPulseDurationString = ""
-          var LabelingPulseFlipAngleString = ""
-          var LabelingPulseIntervalString = ""
+          var CASLTypeString = ''
+          var PCASLTypeString = ''
+          var LabelingPulseAverageGradientString = ''
+          var LabelingPulseMaximumGradientString = ''
+          var LabelingPulseAverageB1String = ''
+          var LabelingPulseDurationString = ''
+          var LabelingPulseFlipAngleString = ''
+          var LabelingPulseIntervalString = ''
 
-          if (mergedDictionary.hasOwnProperty('CASLType')) {CASLTypeString = "'CASLType', ";}
-          if (mergedDictionary.hasOwnProperty('PCASLType')) {PCASLTypeString = "'PCASLType', ";}
+          if (mergedDictionary.hasOwnProperty('CASLType')) CASLTypeString = "'CASLType', ";
+          if (mergedDictionary.hasOwnProperty('PCASLType')) PCASLTypeString = "'PCASLType', ";
           if (mergedDictionary.hasOwnProperty('LabelingPulseAverageGradient')) LabelingPulseAverageGradientString = "'LabelingPulseAverageGradient', ";
           if (mergedDictionary.hasOwnProperty('LabelingPulseMaximumGradient')) LabelingPulseMaximumGradientString = "'LabelingPulseMaximumGradient', ";
           if (mergedDictionary.hasOwnProperty('LabelingPulseAverageB1')) LabelingPulseAverageB1String = "'LabelingPulseAverageB1', ";
@@ -241,8 +241,8 @@ export default function NIFTI(
               code: 190,
               reason:
               "You defined one of the not allowed fields in case PASL 'LabelingType'. Please verify " + CASLTypeString + PCASLTypeString + 
-              + LabelingPulseAverageGradientString + LabelingPulseMaximumGradientString + LabelingPulseAverageB1String + LabelingPulseDurationString + 
-              + LabelingPulseFlipAngleString + LabelingPulseIntervalString + 
+              LabelingPulseAverageGradientString + LabelingPulseMaximumGradientString + LabelingPulseAverageB1String + LabelingPulseDurationString + 
+              LabelingPulseFlipAngleString + LabelingPulseIntervalString + 
               " and change accordingly."
             }),
           )
@@ -303,12 +303,12 @@ export default function NIFTI(
             var BolusCutOffDelayTimeString = ""
             var BolusCutOffTechniqueString = ""
 
-            if (mergedDictionary.hasOwnProperty('PASLType')) {PASLTypeString = " 'PASLType', ";}
-            if (mergedDictionary.hasOwnProperty('LabelingSlabThickness')) LabelingSlabThicknessString = "'LabelingSlabThickness', ";
-            if (mergedDictionary.hasOwnProperty('BolusCutOffFlag')) BolusCutOffFlagString = "'BolusCutOffFlag', ";
-            if (mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence')) BolusCutOffTimingSequenceString = "'BolusCutOffTimingSequence', ";
-            if (mergedDictionary.hasOwnProperty('BolusCutOffDelayTime')) BolusCutOffDelayTimeString = "'BolusCutOffDelayTime', ";
-            if (mergedDictionary.hasOwnProperty('BolusCutOffTechnique')) BolusCutOffTechniqueString = "'BolusCutOffTechnique', ";
+            if (mergedDictionary.hasOwnProperty('PASLType')) PASLTypeString = " 'PASLType', ";
+            if (mergedDictionary.hasOwnProperty('LabelingSlabThickness')) LabelingSlabThicknessString = " 'LabelingSlabThickness', ";
+            if (mergedDictionary.hasOwnProperty('BolusCutOffFlag')) BolusCutOffFlagString = " 'BolusCutOffFlag', ";
+            if (mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence')) BolusCutOffTimingSequenceString = " 'BolusCutOffTimingSequence', ";
+            if (mergedDictionary.hasOwnProperty('BolusCutOffDelayTime')) BolusCutOffDelayTimeString = " 'BolusCutOffDelayTime', ";
+            if (mergedDictionary.hasOwnProperty('BolusCutOffTechnique')) BolusCutOffTechniqueString = " 'BolusCutOffTechnique', ";
 
             issues.push(
               new Issue({
@@ -316,7 +316,7 @@ export default function NIFTI(
                 code: 189,
                 reason:
                 "You defined one of the not allowed fields in case of CASL or PCASL 'LabelingType'. Please verify " + PASLTypeString + 
-                + LabelingSlabThicknessString + BolusCutOffFlagString + BolusCutOffTimingSequenceString + BolusCutOffDelayTimeString + BolusCutOffTechniqueString + 
+                LabelingSlabThicknessString + BolusCutOffFlagString + BolusCutOffTimingSequenceString + BolusCutOffDelayTimeString + BolusCutOffTechniqueString + 
                 " and change accordingly."
               }),
             )
