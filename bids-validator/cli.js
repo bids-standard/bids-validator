@@ -66,7 +66,7 @@ export default function(dir, options) {
       })
     }
   } else {
-    console.log(colors.red(dir + ' does not exist'))
+    console.log(colors.red(dir + ' does not exist '))
     process.exit(2)
   }
 }
