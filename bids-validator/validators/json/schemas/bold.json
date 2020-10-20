@@ -4,9 +4,10 @@
   "properties": {
     "CogAtlasID": { "$ref": "common_definitions.json#/definitions/CogAtlasID" },
     "CogPOID": { "$ref": "common_definitions.json#/definitions/CogPOID" },
-    },
-      "type": "number"
     "AcquisitionDuration": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
     "EchoTime": {
       "type": "number",
       "exclusiveMinimum": 0

@@ -186,6 +186,49 @@ export default function NIFTI(
       }
 
       if (LabelingTypeString == 'PASL') {
+        if (
+          mergedDictionary.hasOwnProperty('CASLType') ||
+          mergedDictionary.hasOwnProperty('PCASLType') || 
+          mergedDictionary.hasOwnProperty('LabelingPulseAverageGradient') || 
+          mergedDictionary.hasOwnProperty('LabelingPulseMaximumGradient') || 
+          mergedDictionary.hasOwnProperty('LabelingPulseAverageB1') || 
+          mergedDictionary.hasOwnProperty('LabelingPulseDuration') ||
+          mergedDictionary.hasOwnProperty('LabelingPulseFlipAngle') ||
+          mergedDictionary.hasOwnProperty('LabelingPulseInterval')
+        )
+        {
+          
+          var CASLTypeString = ""
+          var PCASLTypeString = ""
+          var LabelingPulseAverageGradientString = ""
+          var LabelingPulseMaximumGradientString = ""
+          var LabelingPulseAverageB1String = ""
+          var LabelingPulseDurationString = ""
+          var LabelingPulseFlipAngleString = ""
+          var LabelingPulseIntervalString = ""
+
+          if (mergedDictionary.hasOwnProperty('CASLType')) {CASLTypeString = "'CASLType', ";}
+          if (mergedDictionary.hasOwnProperty('PCASLType')) {PCASLTypeString = "'PCASLType', ";}
+          if (mergedDictionary.hasOwnProperty('LabelingPulseAverageGradient')) LabelingPulseAverageGradientString = "'LabelingPulseAverageGradient', ";
+          if (mergedDictionary.hasOwnProperty('LabelingPulseMaximumGradient')) LabelingPulseMaximumGradientString = "'LabelingPulseMaximumGradient', ";
+          if (mergedDictionary.hasOwnProperty('LabelingPulseAverageB1')) LabelingPulseAverageB1String = "'LabelingPulseAverageB1', ";
+          if (mergedDictionary.hasOwnProperty('LabelingPulseDuration')) LabelingPulseDurationString = "'LabelingPulseDuration', ";
+          if (mergedDictionary.hasOwnProperty('LabelingPulseFlipAngle')) LabelingPulseFlipAngleString = "'LabelingPulseFlipAngle', ";
+          if (mergedDictionary.hasOwnProperty('LabelingPulseInterval')) LabelingPulseIntervalString = "'LabelingPulseInterval', ";
+
+          issues.push(
+            new Issue({
+              file: file,
+              code: 190,
+              reason:
+              "You defined one of the not allowed fields in case PASL 'LabelingType'. Please verify " + CASLTypeString + PCASLTypeString + 
+              + LabelingPulseAverageGradientString + LabelingPulseMaximumGradientString + LabelingPulseAverageB1String + LabelingPulseDurationString + 
+              + LabelingPulseFlipAngleString + LabelingPulseIntervalString + 
+              " and change accordingly."
+            }),
+          )
+        }
+
         if (mergedDictionary.hasOwnProperty('LabelingDuration')) {
           let LabelingDuration = mergedDictionary['LabelingDuration']
           const LabelingDurationLength = LabelingDuration.length
@@ -202,6 +245,65 @@ export default function NIFTI(
       }
 
       if (LabelingTypeString == 'CASL' || LabelingTypeString == 'PCASL') {
+        if (LabelingTypeString == 'CASL' && mergedDictionary.hasOwnProperty('PCASLType'))
+        {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 191,
+              reason:
+              "You defined the 'PCASLType' with a CASL 'LabellingType'. This is not allowed."
+            }),
+          )
+        }
+        if (LabelingTypeString == 'PCASL' && mergedDictionary.hasOwnProperty('CASLType'))
+        {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 191,
+              reason:
+              "You defined the 'CASLType' with a PCASL 'LabellingType'. This is not allowed."
+            }),
+          )
+        }
+        if (
+            mergedDictionary.hasOwnProperty('PASLType') || 
+            mergedDictionary.hasOwnProperty('LabelingSlabThickness') || 
+            mergedDictionary.hasOwnProperty('BolusCutOffFlag') || 
+            mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence') || 
+            mergedDictionary.hasOwnProperty('BolusCutOffDelayTime') ||
+            mergedDictionary.hasOwnProperty('BolusCutOffTechnique')
+          )
+          {
+            
+            var PASLTypeString = ""
+            var LabelingSlabThicknessString = ""
+            var BolusCutOffFlagString = ""
+            var BolusCutOffTimingSequenceString = ""
+            var BolusCutOffDelayTimeString = ""
+            var BolusCutOffTechniqueString = ""
+
+            if (mergedDictionary.hasOwnProperty('PASLType')) {PASLTypeString = " 'PASLType', ";}
+            if (mergedDictionary.hasOwnProperty('LabelingSlabThickness')) LabelingSlabThicknessString = "'LabelingSlabThickness', ";
+            if (mergedDictionary.hasOwnProperty('BolusCutOffFlag')) BolusCutOffFlagString = "'BolusCutOffFlag', ";
+            if (mergedDictionary.hasOwnProperty('BolusCutOffTimingSequence')) BolusCutOffTimingSequenceString = "'BolusCutOffTimingSequence', ";
+            if (mergedDictionary.hasOwnProperty('BolusCutOffDelayTime')) BolusCutOffDelayTimeString = "'BolusCutOffDelayTime', ";
+            if (mergedDictionary.hasOwnProperty('BolusCutOffTechnique')) BolusCutOffTechniqueString = "'BolusCutOffTechnique', ";
+
+            issues.push(
+              new Issue({
+                file: file,
+                code: 189,
+                reason:
+                "You defined one of the not allowed fields in case of CASL or PCASL 'LabelingType'. Please verify " + PASLTypeString + 
+                + LabelingSlabThicknessString + BolusCutOffFlagString + BolusCutOffTimingSequenceString + BolusCutOffDelayTimeString + BolusCutOffTechniqueString + 
+                " and change accordingly."
+              }),
+            )
+          }
+
+
         if (!mergedDictionary.hasOwnProperty('LabelingDuration')) {
           issues.push(
             new Issue({
@@ -422,28 +524,6 @@ export default function NIFTI(
         }),
       )
     }
-    if (!mergedDictionary.hasOwnProperty('LabelingOrientation')) {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 139,
-          reason:
-            "You should define 'LabelingOrientation' for this file.  " +
-            sidecarMessage,
-        }),
-      )
-    }
-    if (!mergedDictionary.hasOwnProperty('LabelingDistance')) {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 140,
-          reason:
-            "You should define 'LabelingDistance' for this file.  " +
-            sidecarMessage,
-        }),
-      )
-    }
     if (!mergedDictionary.hasOwnProperty('AcquisitionVoxelSize')) {
       issues.push(
         new Issue({
@@ -485,26 +565,7 @@ export default function NIFTI(
         checkIfIntendedExists(M0String, fileList, issues, file)
         checkIfValidFiletype(M0String, issues, file)
       }
-    } /*else if (
-      mergedDictionary.hasOwnProperty('M0') &&
-      mergedDictionary['M0'].constructor === Boolean
-    ) {
-      if ( mergedDictionary['M0'] &&
-        mergedDictionary.hasOwnProperty('ASLContext') &&
-        mergedDictionary['ASLContext'].constructor === String
-      ) {
-          const ASLContextString = mergedDictionary['ASLContext']
-          if (!ASLContextString.includes('M0')) {
-            issues.push(
-              new Issue({
-                file: file,
-                code: 154,
-                reason: "ASLContext " + mergedDictionary['ASLContext'] + " does not contain any M0 (moscan) that is required, since you specified True in the M0 field.  " + sidecarMessage,
-              }),
-            )
-          }
-        }
-      }*/
+    } 
     if (!mergedDictionary.hasOwnProperty('FlipAngle')) {
       if (
         mergedDictionary.hasOwnProperty('LookLocker') &&

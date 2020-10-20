@@ -763,16 +763,6 @@ export default {
     severity: 'warning',
     reason: "It is recommended to define 'PulseSequenceDetails' for this file. 'PulseSequenceDetails' is the information beyond pulse sequence type that identifies the specific pulse sequence used.",
   },
-  139: {
-    key: 'LABELING_ORIENTATION_MISSING',
-    severity: 'warning',
-    reason: "It is recommended to define 'LabelingOrientation' for this file. 'LabelingOrientation' is the orientation of the labeling plane or slab.",
-  },
-  140: {
-    key: 'LABELING_DISTANCE_MISSING',
-    severity: 'warning',
-    reason: "It is recommended to define 'LabelingDistance' for this file. 'LabelingDistance' is the distance of the center of the labeling slab to the center of the imaging slab, in millimeter.",
-  },
   142: {
     key: 'LABELING_SLAB_THICKNESS_MISSING',
     severity: 'warning',
@@ -800,12 +790,12 @@ export default {
   },
   149: {
     key: 'PASL_BOLUS_CUT_OFF_DELAY_TIME',
-    severity: 'error',
+    severity: 'warning',
     reason: "It is required to define 'BolusCutOffDelayTime' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffDelayTime' is the duration between the end of the labeling and the start of the bolus cut-off saturation pulse(s), in seconds.",
   },
   150: {
     key: 'PASL_BOLUS_CUT_OFF_TECHNIQUE',
-    severity: 'error',
+    severity: 'warning',
     reason: "It is required to define 'BolusCutOffTechnique' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffTechnique' is the name of the technique used (e.g. Q2TIPS, QUIPSS, QUIPSSII).",
   },
   152: {
@@ -964,6 +954,20 @@ export default {
     key: 'VOLUME_TIMING_NOT_MONOTONICALLY_INCREASING',
     severity: 'error',
     reason: "'VolumeTiming' is not monotonically increasing. You should define the 'VolumeTiming' array as non-negative and monotonically increasing.",
+  },
+  189: {
+    key: 'CASL_PCASL_NOT_ALLOWED_FIELDS',
+    severity: 'error',
+    reason: "You defined one of the not allowed fields in case of CASL or PCASL 'LabelingType'. Please verify which field among 'PASLType', 'LabelingSlabThickness' 'BolusCutOffFlag', 'BolusCutOffTimingSequence', 'BolusCutOffDelayTime' and 'BolusCutOffTechnique' you have filled."
+  },
+  190: {
+    key: 'PASL_NOT_ALLOWED_FIELDS',
+    severity: 'error',
+    reason: "You defined one of the not allowed fields in case of CASL or PCASL 'LabelingType'. Please verify which field among 'PASLType', 'LabelingSlabThickness' 'BolusCutOffFlag', 'BolusCutOffTimingSequence', 'BolusCutOffDelayTime' and 'BolusCutOffTechnique' you have filled."
+  },
+  191: {
+    key: 'PCASL_CASL_LABELING_TYPE_NOT_ALLOWED',
+    severity: 'error',
+    reason: "You defined either the 'CASLType' with a PCASL 'LabellingType' or the 'PCASLType' with a CASL 'LabellingType'. This is not allowed, please check that these field are filled correctly."
   }
-  
 }
