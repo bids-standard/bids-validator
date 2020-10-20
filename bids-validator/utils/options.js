@@ -15,7 +15,7 @@ export default {
       ignoreWarnings: Boolean(options.ignoreWarnings),
       ignoreNiftiHeaders: Boolean(options.ignoreNiftiHeaders),
       ignoreSymlinks: Boolean(options.ignoreSymlinks),
-      ignoreSessionConsistency: Boolean(options.ignoreSessionConsistency),
+      ignoreSubjectConsistency: Boolean(options.ignoreSubjectConsistency),
       verbose: Boolean(options.verbose),
       gitTreeMode: Boolean(options.gitTreeMode),
       remoteFiles: Boolean(options.remoteFiles),
