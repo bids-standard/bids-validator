@@ -8,6 +8,10 @@ const Options = ({ setOption, options }) => (
       <label htmlFor="ignoreWarnings">Ignore Warnings</label>
       <input name="ignoreNiftiHeaders" type="checkbox" checked={options.ignoreNiftiHeaders} readOnly />
       <label htmlFor="ignoreNiftiHeaders">Ignore NIfTI Headers</label>
+      <input name="ignoreSubjectConsistency" type="checkbox" checked={options.ignoreSubjectConsistency} readOnly />
+      <label htmlFor="ignoreSubjectConsistency">
+        Skip Subject Filename Consistency Check
+      </label>
     </form>
     <hr />
   </>

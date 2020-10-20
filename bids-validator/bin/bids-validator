@@ -16,6 +16,11 @@ var argv = require('yargs')
     'ignoreNiftiHeaders',
     'Disregard NIfTI header content during validation',
   )
+  .boolean('ignoreSubjectConsistency')
+  .describe(
+    'ignoreSubjectConsistency',
+    'Skip checking that any given file for one subject is present for all other subjects.',
+  )
   .boolean('verbose')
   .describe('verbose', 'Log more extensive information about issues')
   .boolean('json')
