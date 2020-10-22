@@ -63,6 +63,9 @@ export default {
           // iEEG
           isCorrectModality = true
           break
+        case 'beh':
+          isCorrectModality = true
+          break
         default:
           break
       }
