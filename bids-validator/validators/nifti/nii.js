@@ -937,10 +937,11 @@ export default function NIFTI(
             }),
           )
         }
-      } else if (
+      } 
+      else if (
         mergedDictionary.VolumeTiming &&
-        !mergedDictionary.SliceTiming &&
-        !mergedDictionary.AcquisitionDuration
+        !mergedDictionary.AcquisitionDuration &&
+        (path.includes('_asl.nii') || path.includes('_m0scan.nii'))
       ) {
         issues.push(new Issue({ file: file, code: 171 }))
       }

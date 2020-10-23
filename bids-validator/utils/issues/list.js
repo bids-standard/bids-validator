@@ -871,9 +871,9 @@ export default {
       'You must have exactly one number sign in a HED value-taking string template.',
   },
   171: {
-    key: 'VOLUME_TIMING_MISSING_ACQUISITION_TIME',
+    key: 'VOLUME_TIMING_MISSING_ACQUISITION_DURATION',
     severity: 'error',
-    reason: "The field 'VolumeTiming' requires 'AcquisitionDuration' to be defined. 'AcquisitionDuration' is the duration (in seconds) of volume acquisition. Corresponds to DICOM Tag 0018,9073 Acquisition Duration. This field is mutually exclusive with 'RepetitionTime'.",
+    reason: "The field 'VolumeTiming' requires 'AcquisitionDuration' be defined.",
   },
   172: {
     key: 'FLIP_ANGLE_NOT_MATCHING_ASLCONTEXT_TSV',
