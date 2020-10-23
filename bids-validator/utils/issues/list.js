@@ -761,7 +761,7 @@ export default {
   138: {
     key: 'PULSE_SEQUENCE_DETAILS_MISSING',
     severity: 'warning',
-    reason: "It is recommended to define 'PulseSequenceDetails' for this file. 'PulseSequenceDetails' is the information beyond pulse sequence type that identifies the specific pulse sequence used (for example, "Standard Siemens Sequence distributed with the VB17 software", "Siemens WIP ### version #.##", or "Sequence written by X using a version compiled on MM/DD/YYYY").",
+    reason: "It is recommended to define 'PulseSequenceDetails' for this file. 'PulseSequenceDetails' is the information beyond pulse sequence type that identifies the specific pulse sequence used (for example, 'Standard Siemens Sequence distributed with the VB17 software', 'Siemens WIP ### version #.##', or 'Sequence written by X using a version compiled on MM/DD/YYYY').",
   },
   142: {
     key: 'LABELING_SLAB_THICKNESS_MISSING',
