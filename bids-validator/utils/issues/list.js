@@ -903,7 +903,7 @@ export default {
   177: {
     key: 'VOLUME_TIMING_NOT_MATCHING_ASLCONTEXT_TSV',
     severity: 'error',
-    reason: "The number of values of 'VolumeTiming' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'VolumeTiming' is the time at which each volume was acquired during the acquisition, referring to the start of each readout in the ASL timeseries. Use this field instead of the 'RepetitionTime' field in the case that the ASL timeseries have a non-uniform time distance between acquired volumes. The list must have the same length as the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv', and the numbers must be non-negative and monotonically increasing. If 'VolumeTiming' is defined, this requires acquisition time (TA) should be defined via 'AcquisitionDuration'.",
+    reason: "The number of values of 'VolumeTiming' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'VolumeTiming' is the time at which each volume was acquired during the acquisition, referring to the start of each readout in the ASL timeseries. Use this field instead of the 'RepetitionTime' field in the case that the ASL timeseries have a non-uniform time distance between acquired volumes. The list must have the same length as the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv', and the numbers must be non-negative and monotonically increasing. If 'VolumeTiming' is defined, this requires acquisition time (TA) to be defined via 'AcquisitionDuration'.",
   },
   178: {
     key: 'VOLUME_TIMING_AND_REPETITION_TIME_MUTUALLY_EXCLUSIVE',
@@ -953,7 +953,7 @@ export default {
   188: {
     key: 'VOLUME_TIMING_NOT_MONOTONICALLY_INCREASING',
     severity: 'error',
-    reason: "'VolumeTiming' is not monotonically increasing. 'VolumeTiming' is the time at which each volume was acquired during the acquisition, referring to the start of each readout in the ASL timeseries. Use this field instead of the 'RepetitionTime' field in the case that the ASL timeseries have a non-uniform time distance between acquired volumes. The list must have the same length as the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv', and the numbers must be non-negative and monotonically increasing. If 'VolumeTiming' is defined, this requires acquisition time (TA) should be defined via 'AcquisitionDuration'.",
+    reason: "'VolumeTiming' is not monotonically increasing. 'VolumeTiming' is the time at which each volume was acquired during the acquisition, referring to the start of each readout in the ASL timeseries. Use this field instead of the 'RepetitionTime' field in the case that the ASL timeseries have a non-uniform time distance between acquired volumes. The list must have the same length as the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv', and the numbers must be non-negative and monotonically increasing. If 'VolumeTiming' is defined, this requires acquisition time (TA) to be defined via 'AcquisitionDuration'.",
   },
   189: {
     key: 'CASL_PCASL_NOT_ALLOWED_FIELDS',
