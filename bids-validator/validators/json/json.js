@@ -74,7 +74,6 @@ const compareSidecarProperties = (file, sidecar) => {
   return issues
 }
 
-// TODO: add /events.json schema loading/validation
 const selectSchema = file => {
   let schema = null
   if (file.name) {
@@ -108,15 +107,15 @@ const selectSchema = file => {
       file.name.endsWith('coordsystem.json')
     ) {
       schema = require('./schemas/coordsystem_eeg.json')
-    } else if (
-        file.name.endsWith('genetic_info.json')
-    ) {
+    } else if (file.name.endsWith('genetic_info.json')) {
       schema = require('./schemas/genetic_info.json')
     } else if (
         file.name.endsWith('physio.json') ||
         file.name.endsWith('stim.json')
     ) {
       schema = require('./schemas/physio.json')
+    } else if (file.name.endsWith('events.json')) {
+      schema = require('./schemas/events.json')
     }
   }
   return schema
