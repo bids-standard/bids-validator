@@ -129,20 +129,28 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
     }
 
     // run HED validator
-    return hedValidator.buildSchema(schemaDefinition).then(hedSchema => {
-      for (const [file, hedString] of hedStrings) {
-        const [isHedStringValid, hedIssues] = hedValidator.validateHedString(
-          hedString,
-          hedSchema,
-          true,
-        )
-        if (!isHedStringValid) {
-          const convertedIssues = convertHedIssuesToBidsIssues(hedIssues, file)
-          issues = issues.concat(convertedIssues)
+    return hedValidator.validator
+      .buildSchema(schemaDefinition)
+      .then(hedSchema => {
+        for (const [file, hedString] of hedStrings) {
+          const [
+            isHedStringValid,
+            hedIssues,
+          ] = hedValidator.validator.validateHedString(
+            hedString,
+            hedSchema,
+            true,
+          )
+          if (!isHedStringValid) {
+            const convertedIssues = convertHedIssuesToBidsIssues(
+              hedIssues,
+              file,
+            )
+            issues = issues.concat(convertedIssues)
+          }
         }
-      }
-      return issues
-    })
+        return issues
+      })
   }
 }
 
@@ -162,6 +170,10 @@ function convertHedIssuesToBidsIssues(hedIssues, file) {
     unitClassDefaultUsed: 120,
     unitClassInvalidUnit: 121,
     extraCommaOrInvalid: 122,
+    invalidParentNode: 135,
+    noValidTagFound: 136,
+    emptyTagFound: 137,
+    duplicateTagsInSchema: 138,
   }
 
   const convertedIssues = []
