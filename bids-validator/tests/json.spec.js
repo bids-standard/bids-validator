@@ -503,7 +503,7 @@ describe('JSON', function() {
       BIDSVersion: '1.4.0',
       Authors: ['example author'],
       DatasetType: 'derivative',
-      GeneratedBy: [{Name: 'Manual'}],
+      GeneratedBy: [{ Name: 'Manual' }],
     }
     jsonDict[dataset_description_file.relativePath] = jsonObj
     validate.JSON(dataset_description_file, jsonDict, function(issues) {
