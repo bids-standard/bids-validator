@@ -521,7 +521,10 @@ describe('JSON', function() {
     }
     jsonDict[dataset_description_file.relativePath] = jsonObj
     validate.JSON(dataset_description_file, jsonDict, function(issues) {
-      assert(issues.length === 1 && issues[0].code == 55)
+      assert(issues.length === 1)
+      assert(issues[0].code == 55 &&
+             issues[0].evidence ==
+             ".GeneratedBy should NOT have fewer than 1 items")
     })
   })
 
@@ -534,7 +537,10 @@ describe('JSON', function() {
     }
     jsonDict[dataset_description_file.relativePath] = jsonObj
     validate.JSON(dataset_description_file, jsonDict, function(issues) {
-      assert(issues.length === 1 && issues[0].code == 55)
+      assert(issues.length === 2)
+      assert(issues[0].code == 55 &&
+             issues[0].evidence ==
+             " should have required property 'GeneratedBy'")
     })
   })
 })
