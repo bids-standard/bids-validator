@@ -51,6 +51,37 @@
     "DatasetDOI": {
       "type": "string"
     },
+    "GeneratedBy": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {"type": "string"},
+          "Version": {"type": "string"},
+          "Description": {"type": "string"},
+          "CodeURL": {"type": "string", "format": "uri"},
+          "Container": {
+            "type": "object",
+            "properties": {
+              "Type": {"type": "string"},
+              "Tag": {"type": "string"},
+              "URI": {"type": "string", "format": "uri"}
+            }
+          }
+        }
+      }
+    },
+    "SourceDatasets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "URL": {"type": "string", "format": "uri"},
+          "DOI": {"type": "string"},
+          "Version": {"type": "string"}
+        }
+      }
+    },
     "Genetics": {
       "type": "object",
       "properties": {
