@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-06/schema#",
   "$id": "http://example.com/example.json",
+  "type": "object",
   "properties": {
     "Name": {
       "type": "string"
@@ -53,6 +54,7 @@
     },
     "GeneratedBy": {
       "type": "array",
+      "minLength": 1,
       "items": {
         "type": "object",
         "properties": {
@@ -101,5 +103,15 @@
     }
   },
   "required": ["Name", "BIDSVersion"],
-  "type": "object"
+  "allOf": [
+    {
+      "if": {
+	"type": "object",
+	"properties": {"DatasetType": {"const": "derivative"}}
+      },
+      "then": {
+	"required": ["GeneratedBy"]
+      }
+    }
+  ]
 }

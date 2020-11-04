@@ -496,4 +496,45 @@ describe('JSON', function() {
       assert(issues.length === 0)
     })
   })
+
+  it('dataset_description.json should validate with DatasetType "derivative" and GeneratedBy defined', function() {
+    var jsonObj = {
+      Name: 'Example Name',
+      BIDSVersion: '1.4.0',
+      Authors: ['example author'],
+      DatasetType: 'derivative',
+      GeneratedBy: [{Name: 'Manual'}],
+    }
+    jsonDict[dataset_description_file.relativePath] = jsonObj
+    validate.JSON(dataset_description_file, jsonDict, function(issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  it('dataset_description.json should NOT validate with DatasetType "derivative" and GeneratedBy empty', function() {
+    var jsonObj = {
+      Name: 'Example Name',
+      BIDSVersion: '1.4.0',
+      Authors: ['example author'],
+      DatasetType: 'derivative',
+      GeneratedBy: [],
+    }
+    jsonDict[dataset_description_file.relativePath] = jsonObj
+    validate.JSON(dataset_description_file, jsonDict, function(issues) {
+      assert(issues.length === 1 && issues[0].code == 55)
+    })
+  })
+
+  it('dataset_description.json should NOT validate with DatasetType "derivative" and GeneratedBy missing', function() {
+    var jsonObj = {
+      Name: 'Example Name',
+      BIDSVersion: '1.4.0',
+      Authors: ['example author'],
+      DatasetType: 'derivative',
+    }
+    jsonDict[dataset_description_file.relativePath] = jsonObj
+    validate.JSON(dataset_description_file, jsonDict, function(issues) {
+      assert(issues.length === 1 && issues[0].code == 55)
+    })
+  })
 })
