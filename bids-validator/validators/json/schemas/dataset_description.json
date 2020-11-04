@@ -104,10 +104,10 @@
   },
   "required": ["Name", "BIDSVersion"],
   "allOf": [
-    { "$ref": "#/dependency-definitions/if-DatasetTpe-is-derivative-then-GeneratedBy-is-required" }
+    { "$ref": "#/dependency-definitions/if-DatasetType-is-derivative-then-GeneratedBy-is-required" }
   ],
   "dependency-definitions": {
-    "if-DatasetTpe-is-derivative-then-GeneratedBy-is-required": {
+    "if-DatasetType-is-derivative-then-GeneratedBy-is-required": {
       "if": {
 	"type": "object",
 	"properties": {"DatasetType": {"const": "derivative"}},
