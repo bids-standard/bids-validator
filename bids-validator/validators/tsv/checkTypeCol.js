@@ -2,7 +2,7 @@ const Issue = require('../../utils').issues.Issue
 
 // allowable 'type' values from the BIDS specification
 const allowedMEEGTypes = ['EEG', 'ECOG', 'SEEG', 'DBS', 'PD', 'OTHER',  // (i)EEG
-    'EOG', 'ECG', 'EMG', 'EYEGAZE', 'GSR', 'HEOG', 'MISC', 'PUPIL', 'RESP', 'TEMP', 'VEOG', // physio
+    'EOG', 'ECG', 'EMG', 'EYEGAZE', 'GSR', 'HEOG', 'MISC', 'PUPIL', 'RESP', 'TEMP', 'VEOG', 'PPG', // physio
     'AUDIO', 'REF', 'SYSCLOCK', 'TRIG', 'ADC', 'DAC', // system
     'MEGMAG', 'MEGGRADAXIAL', 'MEGGRADPLANAR', 'MEGREFMAG', 'MEGREFGRADAXIAL', 'MEGREFGRADPLANAR', 'MEGOTHER', 'HLU', 'FITERR' // MEG
 ]
@@ -10,7 +10,7 @@ const allowedMEEGTypes = ['EEG', 'ECOG', 'SEEG', 'DBS', 'PD', 'OTHER',  // (i)EE
 
 /**
  * Checks type column in an ephys _channels.tsv file to
- * ensure its values are only in an acceptable set of values and fires off a 
+ * ensure its values are only in an acceptable set of values and fires off a
  * warning to the user if the characters are not all upper-case.
  * @param {string[]} rows - Each row of a tsv file to be checked.
  * @param {Object} file - File of rows being checked, used for error message if
