@@ -745,4 +745,24 @@ export default {
     reason:
       'You must have exactly one number sign in a HED value-taking string template.',
   },
+  135: {
+    key: 'HED_INVALID_PARENT_NODE',
+    severity: 'error',
+    reason: 'You cannot use a valid HED node as a value or extension.',
+  },
+  136: {
+    key: 'HED_NO_VALID_TAG_FOUND',
+    severity: 'error',
+    reason: 'No valid base node was found for this HED tag.',
+  },
+  137: {
+    key: 'HED_EMPTY_TAG_FOUND',
+    severity: 'error',
+    reason: 'An empty HED tag cannot be validated.',
+  },
+  138: {
+    key: 'HED_DUPLICATE_TAGS_IN_SCHEMA',
+    severity: 'error',
+    reason: 'The source HED schema is invalid as it contains duplicate tags.',
+  },
 }
