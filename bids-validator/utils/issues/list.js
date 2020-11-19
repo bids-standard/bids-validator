@@ -814,9 +814,9 @@ export default {
     reason: "M0 was not defined correctly. If 'M0' is equal to true/false, the corresponding 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv' should contain the 'm0scan'/'control' volume respectively.",
   },
   155: {
-    key: 'PULSE_SEQUENCE_TYPE_MUST_DEFINE',
+    key: 'MRACQUISITIONTYPE_MUST_DEFINE',
     severity: 'error',
-    reason: "You should define 'PulseSequenceType' for this file. 'PulseSequenceType' is the general description of the pulse sequence used for the scan. Allowed values are any combination of 2D or 3D acquisition, with the read-out type, separated by an underscore: e.g. “2D_EPI”, “3D_GRASE”, “3D_spiral”.",
+    reason: "You should define 'MRAcquisitionType' for this file. 'MRAcquistionType' is the type of sequence readout with possible values: `2D` or `3D`. Corresponds to DICOM Tag 0018,0023 `MR Acquisition Type`.",
   },
   156: {
     key: 'ACQUISITION_VOXELSIZE_WRONG',
@@ -841,17 +841,17 @@ export default {
   166: {
     key: 'LOOK_LOCKER_FLIP_ANGLE_MISSING',
     severity: 'error',
-    reason: "You should define 'FlipAngle' for this file, in case of a LookLocker acquisition. 'FlipAngle' is the flip angle for the acquisition, specified in degrees, either as a number or an array of numbers, with the length corresponding to the number of volumes. Corresponds to: DICOM Tag 0018, 1314 Flip Angle.",
+    reason: "You should define 'FlipAngle' for this file, in case of a LookLocker acquisition. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. A single value applies to all volumes, or an array provides a value for each volume. Corresponds to: DICOM Tag 0018, 1314 'Flip Angle'. 4D files with variable FA should only be used when volume timing is critical for interpretation of the data, as in ASL or variable FA fMRI sequences.",
   },
   167: {
     key: 'FLIP_ANGLE_MISSING',
     severity: 'warning',
-    reason: "It is recommended to define 'FlipAngle' for this file. 'FlipAngle' is the flip angle for the acquisition, specified in degrees, either as a number or an array of numbers, with the length corresponding to the number of volumes. Corresponds to: DICOM Tag 0018, 1314 Flip Angle.",
+    reason: "It is recommended to define 'FlipAngle' for this file. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. A single value applies to all volumes, or an array provides a value for each volume. Corresponds to: DICOM Tag 0018, 1314 'Flip Angle'. 4D files with variable FA should only be used when volume timing is critical for interpretation of the data, as in ASL or variable FA fMRI sequences."",
   },
   168: {
     key: 'FLIP_ANGLE_NOT_MATCHING_NIFTI',
     severity: 'error',
-    reason: "The number of values for 'FlipAngle' for this file does not match the 4th dimension of the NIfTI header. 'FlipAngle' is the flip angle for the acquisition, specified in degrees, either as a number or an array of numbers, with the length corresponding to the number of volumes. Corresponds to: DICOM Tag 0018, 1314 Flip Angle.",
+    reason: "The number of values for 'FlipAngle' for this file does not match the 4th dimension of the NIfTI header. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. A single value applies to all volumes, or an array provides a value for each volume. Corresponds to: DICOM Tag 0018, 1314 'Flip Angle'. 4D files with variable FA should only be used when volume timing is critical for interpretation of the data, as in ASL or variable FA fMRI sequences.",
   },
   169: {
     key: 'LABELING_DURATION_PASL_INCONSISTENT',
@@ -878,7 +878,7 @@ export default {
   172: {
     key: 'FLIP_ANGLE_NOT_MATCHING_ASLCONTEXT_TSV',
     severity: 'error',
-    reason: "The number of values for 'FlipAngle' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'FlipAngle' is the flip angle for the acquisition, specified in degrees, either as a number or an array of numbers, with the length corresponding to the number of volumes. Corresponds to: DICOM Tag 0018, 1314 Flip Angle.",
+    reason: "The number of values for 'FlipAngle' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. A single value applies to all volumes, or an array provides a value for each volume. Corresponds to: DICOM Tag 0018, 1314 'Flip Angle'. 4D files with variable FA should only be used when volume timing is critical for interpretation of the data, as in ASL or variable FA fMRI sequences.",
   },
   173: {
     key: 'POST_LABELING_DELAY_NOT_MATCHING_NIFTI',
@@ -928,12 +928,12 @@ export default {
   182: {
     key: 'MAGNETIC_FIELD_STRENGTH_MISSING',
     severity: 'error',
-    reason: "You should define 'MagneticFieldStrength' for ths file. 'MagneticFieldStrength' is the nominal field strength of MR magnet in Tesla. Corresponds to DICOM Tag 0018,0087 Magnetic Field Strength.",
+    reason: "You should define 'MagneticFieldStrength' for ths file. 'MagneticFieldStrength' is the nominal field strength of MR magnet in Tesla. Corresponds to DICOM Tag 0018,0087 'Magnetic Field Strength'.",
   },
   183: {
     key: 'SLICE_TIMING_NOT_DEFINED_2D_ASL',
     severity: 'error',
-    reason: "'You should define SliceTiming', in case 'SequenceType' is set to a 2D sequence. 'SliceTiming' is the time at which each slice was acquired within each volume (frame) of the acquisition with respect to the beginning of volume acquisition (i.e. after the 'PostLabelingDelay'). In the case of 3D acquisition, a zero is entered. The length of this array of numbers should be equal to the number of slices for 2D acquisition, with the first time being zero (i.e. effectively equal to the 'PostLabelingDelay'). Slice timing is not the same as slice order. Rather, it is a list of times containing the time (in seconds) of each slice acquisition in relation to the beginning of volume acquisition. The list goes through the slices along the slice axis in the slice encoding dimension (see below). Note that to ensure the proper interpretation of the 'SliceTiming' field, it is important to check if the OPTIONAL 'SliceEncodingDirection' exists. In particular, if 'SliceEncodingDirection' is negative, the entries in 'SliceTiming' are defined in reverse order with respect to the slice axis, such that the final entry in the 'SliceTiming' list is the time of acquisition of slice zero.",
+    reason: "'You should define SliceTiming', in case 'SequenceType' is set to a 2D sequence. 'SliceTiming' is the time at which each slice was acquired within each volume (frame) of the acquisition. Slice timing is not slice order -- rather, it is a list of times containing the time (in seconds) of each slice acquisition in relation to the beginning of volume acquisition. The list goes through the slices along the slice axis in the slice encoding dimension (see below). Note that to ensure the proper interpretation of the `SliceTiming` field, it is important to check if the OPTIONAL `SliceEncodingDirection` exists. In particular, if `SliceEncodingDirection` is negative, the entries in `SliceTiming` are defined in reverse order with respect to the slice axis, such that the final entry in the `SliceTiming` list is the time of acquisition of slice 0. Without this parameter slice time correction will not be possible. ",
   },
   184: {
     key: 'POST_LABELING_DELAY_GREATER',
@@ -979,6 +979,11 @@ export default {
   193: {
     key: 'ECHO_TIME_NOT_DEFINED_FOR_ASL_OR_M0',
     severity: 'error',
-    reason: "You must define 'EchoTime' for this file. 'EchoTime' is the echo time (TE) for the acquisition, specified in seconds. Specify either one number for the total time-series, or provide an array of numbers with different values of each volume. Corresponds to DICOM Tag 0018, 0081 Echo Time (please note that the DICOM term is in milliseconds not seconds).",
+    reason: "You must define 'EchoTime' for this file. 'EchoTime' is the echo time (TE) for the acquisition, specified in seconds. A single value applies to all volumes, or an array provides a value for each volume. Corresponds to DICOM Tag 0018, 0081 'Echo Time' (please note that the DICOM term is in milliseconds not seconds). 4D files with variable TE should only be used when volume timing is critical for interpretation of the data, as in ASL or variable TE fMRI sequences.",
+  },
+   194: {
+    key: 'MRACQUISITIONTYPE_MISSING',
+    severity: 'warning',
+    reason: "It is recommended to define 'MRAcquisitionType' for this file. 'MRAcquistionType' is the type of sequence readout with possible values: `2D` or `3D`. Corresponds to DICOM Tag 0018,0023 `MR Acquisition Type`.",
   },
 }
