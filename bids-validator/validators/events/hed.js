@@ -21,14 +21,13 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
         datasetDescription.HEDVersion,
       )
     }
-  } else {
-    issues.push(new Issue({ code: 132 }))
   }
 
   // run HED validator
   return hedValidator.validator
     .buildSchema(schemaDefinition)
     .then(hedSchema => {
+      let hedStringsFound = false
       // loop through event data files
       events.forEach(eventFile => {
         const hedStrings = []
@@ -127,6 +126,10 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
           hedStrings.push(hedStringParts.join(','))
         }
 
+        if (hedStrings.length > 0) {
+          hedStringsFound = true
+        }
+
         for (const hedString of hedStrings) {
           const [
             isHedStringValid,
@@ -145,6 +148,9 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
           }
         }
       })
+      if (hedStringsFound && Object.entries(schemaDefinition).length === 0) {
+        issues.push(new Issue({ code: 132 }))
+      }
       return issues
     })
 }
