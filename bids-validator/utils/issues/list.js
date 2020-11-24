@@ -841,17 +841,17 @@ export default {
   166: {
     key: 'LOOK_LOCKER_FLIP_ANGLE_MISSING',
     severity: 'error',
-    reason: "You should define 'FlipAngle' for this file, in case of a LookLocker acquisition. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. A single value applies to all volumes, or an array provides a value for each volume. Corresponds to: DICOM Tag 0018, 1314 'Flip Angle'. 4D files with variable FA should only be used when volume timing is critical for interpretation of the data, as in ASL or variable FA fMRI sequences.",
+    reason: "You should define 'FlipAngle' for this file, in case of a LookLocker acquisition. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. Corresponds to: DICOM Tag 0018, 1314 `Flip Angle`. The data type number may apply to files from any MRI modality concerned with a single value for this field, or to the files in a file collection where the value of this field is iterated using the flip entity. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL or variable flip angle fMRI sequences.",
   },
   167: {
     key: 'FLIP_ANGLE_MISSING',
     severity: 'warning',
-    reason: "It is recommended to define 'FlipAngle' for this file. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. A single value applies to all volumes, or an array provides a value for each volume. Corresponds to: DICOM Tag 0018, 1314 'Flip Angle'. 4D files with variable FA should only be used when volume timing is critical for interpretation of the data, as in ASL or variable FA fMRI sequences."",
+    reason: "It is recommended to define 'FlipAngle' for this file. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. Corresponds to: DICOM Tag 0018, 1314 `Flip Angle`. The data type number may apply to files from any MRI modality concerned with a single value for this field, or to the files in a file collection where the value of this field is iterated using the flip entity. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL or variable flip angle fMRI sequences.",
   },
   168: {
     key: 'FLIP_ANGLE_NOT_MATCHING_NIFTI',
     severity: 'error',
-    reason: "The number of values for 'FlipAngle' for this file does not match the 4th dimension of the NIfTI header. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. A single value applies to all volumes, or an array provides a value for each volume. Corresponds to: DICOM Tag 0018, 1314 'Flip Angle'. 4D files with variable FA should only be used when volume timing is critical for interpretation of the data, as in ASL or variable FA fMRI sequences.",
+    reason: "The number of values for 'FlipAngle' for this file does not match the 4th dimension of the NIfTI header. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. Corresponds to: DICOM Tag 0018, 1314 `Flip Angle`. The data type number may apply to files from any MRI modality concerned with a single value for this field, or to the files in a file collection where the value of this field is iterated using the flip entity. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL or variable flip angle fMRI sequences.",
   },
   169: {
     key: 'LABELING_DURATION_PASL_INCONSISTENT',
@@ -878,7 +878,7 @@ export default {
   172: {
     key: 'FLIP_ANGLE_NOT_MATCHING_ASLCONTEXT_TSV',
     severity: 'error',
-    reason: "The number of values for 'FlipAngle' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. A single value applies to all volumes, or an array provides a value for each volume. Corresponds to: DICOM Tag 0018, 1314 'Flip Angle'. 4D files with variable FA should only be used when volume timing is critical for interpretation of the data, as in ASL or variable FA fMRI sequences.",
+    reason: "The number of values for 'FlipAngle' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'FlipAngle' is the flip angle (FA) for the acquisition, specified in degrees. Corresponds to: DICOM Tag 0018, 1314 `Flip Angle`. The data type number may apply to files from any MRI modality concerned with a single value for this field, or to the files in a file collection where the value of this field is iterated using the flip entity. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL or variable flip angle fMRI sequences.",
   },
   173: {
     key: 'POST_LABELING_DELAY_NOT_MATCHING_NIFTI',
@@ -977,9 +977,9 @@ export default {
     reason: "'BolusCutOffDelayTime' is not monotonically increasing. 'BolusCutOffDelayTime' is the duration between the end of the labeling and the start of the bolus cut-off saturation pulse(s), in seconds. This can be a number or array of numbers, of which the values must be non-negative and monotonically increasing, depending on the number of bolus cut-off saturation pulses. For Q2TIPS, only the values for the first and last bolus cut-off saturation pulses are provided. Based on DICOM Tag 0018,925F ASL Bolus Cut-off Delay Time.",
   },
   193: {
-    key: 'ECHO_TIME_NOT_DEFINED_FOR_ASL_OR_M0',
+    key: 'ECHO_TIME_NOT_DEFINED_FOR_ASL',
     severity: 'error',
-    reason: "You must define 'EchoTime' for this file. 'EchoTime' is the echo time (TE) for the acquisition, specified in seconds. A single value applies to all volumes, or an array provides a value for each volume. Corresponds to DICOM Tag 0018, 0081 'Echo Time' (please note that the DICOM term is in milliseconds not seconds). 4D files with variable TE should only be used when volume timing is critical for interpretation of the data, as in ASL or variable TE fMRI sequences.",
+    reason: "You must define 'EchoTime' for this file. 'EchoTime' is the echo time (TE) for the acquisition, specified in seconds. Corresponds to DICOM Tag 0018, 0081 Echo Time (please note that the DICOM term is in milliseconds not seconds). The data type number may apply to files from any MRI modality concerned with a single value for this field, or to the files in a file collection where the value of this field is iterated using the echo entity. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL or variable echo time fMRI sequences.",
   },
    194: {
     key: 'MRACQUISITIONTYPE_MISSING',
