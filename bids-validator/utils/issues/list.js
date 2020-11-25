@@ -776,7 +776,7 @@ export default {
   144: {
     key: 'BACKGROUND_SUPPRESSION_PULSE_TIME_MISSING',
     severity: 'warning',
-    reason: "It is recommended to define 'BackgroundSuppressionPulseTime' for this file, when the 'BackgroundSuppression' is set to true. 'BackGroundSuppressionPulseTime' is an array of numbers containing timing, in seconds, of the background suppression pulses before the start of the readout. In case of multi-PLD with different background suppression pulse times, only the pulse time of the first PLD should be defined.",
+    reason: "It is recommended to define 'BackgroundSuppressionPulseTime' for this file, when the 'BackgroundSuppression' is set to true. 'BackGroundSuppressionPulseTime' is an array of numbers containing timing, in seconds, of the background suppression pulses with respect to the start of the labeling. In case of multi-PLD with different background suppression pulse times, only the pulse time of the first PLD should be defined.",
   },
   145: {
     key: 'VASCULAR_CRUCHING_VENC_MISSING',
