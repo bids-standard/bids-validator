@@ -89,14 +89,14 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
           // get the 'HED' field
           const rowCells = row.trim().split('\t')
           const hedStringParts = []
-          if (rowCells[hedColumnIndex]) {
+          if (rowCells[hedColumnIndex] && rowCells[hedColumnIndex] !== 'n/a') {
             hedStringParts.push(rowCells[hedColumnIndex])
           }
           for (const sidecarHedColumn in sidecarHedColumnIndices) {
             const sidecarHedIndex = sidecarHedColumnIndices[sidecarHedColumn]
             const sidecarHedData = sidecarHedTags[sidecarHedColumn]
             const rowCell = rowCells[sidecarHedIndex]
-            if (rowCell) {
+            if (rowCell && rowCell !== 'n/a') {
               let sidecarHedString
               if (!sidecarHedData) {
                 continue
