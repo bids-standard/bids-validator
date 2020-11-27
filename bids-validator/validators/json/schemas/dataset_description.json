@@ -52,6 +52,9 @@
     "DatasetDOI": {
       "type": "string"
     },
+    "Preregistration": {
+      "type": "string"
+    },
     "GeneratedBy": {
       "type": "array",
       "minItems": 1,
