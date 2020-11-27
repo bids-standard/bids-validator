@@ -53,7 +53,8 @@
       "type": "string"
     },
     "Preregistration": {
-      "type": "string"
+      "type": "string",
+      "format": "uri"
     },
     "GeneratedBy": {
       "type": "array",
