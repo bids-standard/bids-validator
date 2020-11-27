@@ -736,7 +736,7 @@ export default {
   133: {
     key: 'LABELING_TYPE_MUST_DEFINE',
     severity: 'error',
-    reason: "You should define 'LabelingType' for this file. 'LabelingType' can be CASL, PCASL, PASL.",
+    reason: "You should define 'ArterialSpinLabelingType' for this file. 'ArterialSpinLabelingType' can be CASL, PCASL, PASL.",
   },
   134: {
     key: 'LABELING_DURATION_MUST_DEFINE',
@@ -856,7 +856,7 @@ export default {
   169: {
     key: 'LABELING_DURATION_PASL_INCONSISTENT',
     severity: 'error',
-    reason: "The 'LabelingDuration' for PASL 'LabelingType' can be only a numerical value put to zero or unset. 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for (P)CASL. Specify either one number for total time-series or provide an array of numbers of different values for each volume in case of sequential acquisitions with varying labeling duration. In the case that an array of numbers is provided, its length should be equal to the number of volumes specified in 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. An 'm0scan' acquired within the ASL time-series, gets a value of zero. Corresponds to DICOM Tag 0018,9258 ASL Pulse Train Duration.",
+    reason: "The 'LabelingDuration' for PASL 'ArterialSpinLabelingType' can be only a numerical value put to zero or unset. 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for (P)CASL. Specify either one number for total time-series or provide an array of numbers of different values for each volume in case of sequential acquisitions with varying labeling duration. In the case that an array of numbers is provided, its length should be equal to the number of volumes specified in 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. An 'm0scan' acquired within the ASL time-series, gets a value of zero. Corresponds to DICOM Tag 0018,9258 ASL Pulse Train Duration.",
   },
   170: {
     key: 'CONTINOUS_RECORDING_MISSING_JSON',
@@ -958,12 +958,12 @@ export default {
   189: {
     key: 'CASL_PCASL_NOT_ALLOWED_FIELDS',
     severity: 'error',
-    reason: "You defined one of the not allowed fields in case of CASL or PCASL 'LabelingType'. Please verify which field among 'PASLType', 'LabelingSlabThickness' 'BolusCutOffFlag', 'BolusCutOffTimingSequence', 'BolusCutOffDelayTime' and 'BolusCutOffTechnique' you have filled.",
+    reason: "You defined one of the not allowed fields in case of CASL or PCASL 'ArterialSpinLabelingType'. Please verify which field among 'PASLType', 'LabelingSlabThickness' 'BolusCutOffFlag', 'BolusCutOffTimingSequence', 'BolusCutOffDelayTime' and 'BolusCutOffTechnique' you have filled.",
   },
   190: {
     key: 'PASL_NOT_ALLOWED_FIELDS',
     severity: 'error',
-    reason: "You defined one of the not allowed fields in case of PASL 'LabelingType'." + 
+    reason: "You defined one of the not allowed fields in case of PASL 'ArterialSpinLabelingType'." + 
             "Please verify which field among 'CASLType', 'PCASLType' 'LabelingPulseAverageGradient', 'LabelingPulseMaximumGradient', 'LabelingPulseAverageB1', 'LabelingPulseDuration', 'LabelingPulseFlipAngle' and 'LabelingPulseInterval' you have filled.",
   },
   191: {
