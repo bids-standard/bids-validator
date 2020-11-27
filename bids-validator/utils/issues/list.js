@@ -804,14 +804,14 @@ export default {
     reason: "You should define the 'IntendedFor' for this file. 'IntendedFor' indicates one or more filenames with paths relative to the subject subfolder, with forward slashes, referring to ASL timeseries for which the 'm0scan' is intended.",
   },
   153: {
-    key: 'M0_NOT_SET',
+    key: 'M0Type_NOT_SET',
     severity: 'error',
-    reason: "You should define the 'M0' for this file. 'M0' describes the available M0 information or the location of an 'm0scan' file, as either: Numerical: a single numerical whole-brain M0 value (e.g. obtained from CSF in another sequence); SeparateFile: 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_dir-<label>][_run-<index>]_m0scan.nii[.gz]'; Within ASL time-series: Boolean: true referring to an 'm0scan' within the time-series (as defined within the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'); false referring to the use of the (average) 'control' image for M0 calibration.",
+    reason: "You should define the 'M0Type' for this file. 'M0Type' describes the presence of M0 information, as either: “Separate” when a separate `*_m0scan.nii[.gz]` is present, “Included” when an m0scan volume is contained within the current ‘*_asl.nii[.gz]’, “Estimate” when a single whole-brain M0 value is provided, or “Absent” when no specific M0 information is present.",
   },
   154: {
-    key: 'M0_SET_INCORRECTLY',
+    key: 'M0Type_SET_INCORRECTLY',
     severity: 'warning',
-    reason: "M0 was not defined correctly. If 'M0' is equal to true/false, the corresponding 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv' should contain the 'm0scan'/'control' volume respectively.",
+    reason: "M0Type was not defined correctly. If 'M0Type' is equal to included, the corresponding '*_aslcontext.tsv' should contain the 'm0scan' volume.",
   },
   155: {
     key: 'MRACQUISITIONTYPE_MUST_DEFINE',
@@ -836,7 +836,7 @@ export default {
   165: {
     key: 'ASLCONTEXT_TSV_NOT_CONSISTENT',
     severity: 'error',
-    reason: "The number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv' for this file does not match the number of values in the NIfTI header.",
+    reason: "The number of volumes in the '*_aslcontext.tsv' for this file does not match the number of values in the NIfTI header.",
   },
   166: {
     key: 'LOOK_LOCKER_FLIP_ANGLE_MISSING',
@@ -986,4 +986,15 @@ export default {
     severity: 'warning',
     reason: "It is recommended to define 'MRAcquisitionType' for this file. 'MRAcquistionType' is the type of sequence readout with possible values: `2D` or `3D`. Corresponds to DICOM Tag 0018,0023 `MR Acquisition Type`.",
   },
+    195: {
+    key: 'M0ESTIMATE_NOT_DEFINED',
+    severity: 'error',
+    reason: "You must define 'M0Estimate' for this file, in case 'M0Type' is defined as 'Estimate'. 'M0Estimate' is a single numerical whole-brain M0 value, only if obtained externally (for example retrieved from CSF in a separate measurement).",
+  },
+    196: {
+    key: 'M0Type_SET_INCORRECTLY',
+    severity: 'warning',
+    reason: "M0Type was not defined correctly. If 'M0Type' is equal to separate, the dataset should include a *_m0scan.nii[.gz] and *_m0scan.json file.",
+  },
+
 }
