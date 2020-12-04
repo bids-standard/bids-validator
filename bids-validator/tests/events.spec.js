@@ -1114,5 +1114,106 @@ describe('Events', function() {
         assert.deepStrictEqual(issues, [])
       })
     })
+
+    it('should not throw an issue if the HED string is a valid short-form tag', () => {
+      const events = [
+        {
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
+          path: '/sub01/sub01_task-test_events.tsv',
+          contents: 'onset\tduration\tHED\n' + '7\tsomething\tDuration/3 ms\n',
+        },
+      ]
+      const jsonDictionary = {
+        '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
+      }
+
+      return validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        '',
+      ).then(issues => {
+        assert.deepStrictEqual(issues, [])
+      })
+    })
+
+    it('should throw an issue if the HED string contains a nested valid short-form tag', () => {
+      const events = [
+        {
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
+          path: '/sub01/sub01_task-test_events.tsv',
+          contents:
+            'onset\tduration\tHED\n' +
+            '7\tsomething\tExperiment-control/Geometric\n',
+        },
+      ]
+      const jsonDictionary = {
+        '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
+      }
+
+      return validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        '',
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 135)
+      })
+    })
+
+    it('should throw an issue if the HED string contains non-existent path', () => {
+      const events = [
+        {
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
+          path: '/sub01/sub01_task-test_events.tsv',
+          contents: 'onset\tduration\tHED\n' + '7\tsomething\tInvalidEvent\n',
+        },
+      ]
+      const jsonDictionary = {
+        '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
+      }
+
+      return validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        '',
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 136)
+      })
+    })
+
+    it('should throw an issue if the HED string is empty after removing extra slashes and whitespace', () => {
+      const events = [
+        {
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
+          path: '/sub01/sub01_task-test_events.tsv',
+          contents: 'onset\tduration\tHED\n' + '7\tsomething\t/ / / / \n',
+        },
+      ]
+      const jsonDictionary = {
+        '/sub01/sub01_task-test_events.json': {},
+        '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
+      }
+
+      return validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        '',
+      ).then(issues => {
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 137)
+      })
+    })
   })
 })
