@@ -41,7 +41,7 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
         for (const sidecarName of potentialSidecars) {
           if (!(sidecarName in sidecarIssues)) {
             const sidecarDictionary = jsonContents[sidecarName]
-            const sidecarHedStrings = []
+            let sidecarHedStrings = []
             for (const sidecarKey in sidecarDictionary) {
               const sidecarValue = sidecarDictionary[sidecarKey]
               if (
@@ -49,7 +49,13 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
                 typeof sidecarValue === 'object' &&
                 sidecarValue.HED !== undefined
               ) {
-                sidecarHedStrings.push(sidecarValue.HED)
+                if (typeof sidecarValue.HED === 'string') {
+                  sidecarHedStrings.push(sidecarValue.HED)
+                } else {
+                  sidecarHedStrings = sidecarHedStrings.concat(
+                    Object.values(sidecarValue.HED),
+                  )
+                }
               }
             }
             let fileIssues = []
