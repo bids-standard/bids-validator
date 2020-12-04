@@ -1,13 +1,16 @@
 {
   "type": "object",
   "properties": {
-    "IntendedFor": { 
-        "type": "string", 
-        "minLength": 1 
-      },
     "EchoTime": {
-      "type": "number",
-      "exclusiveMinimum": 0
+      "anyOf": [
+        { "type": "number",
+          "exclusiveMinimum": 0 },
+        {
+          "type": "array",
+          "items": { "type": "number" ,
+            "exclusiveMinimum": 0}
+        }
+      ]
     },
     "EffectiveEchoSpacing": {
       "type": "number",
@@ -17,10 +20,18 @@
       "type": "string",
       "enum": ["i", "j", "k", "i-", "j-", "k-"]
     },
-    "RepetitionTime": {
-      "type": "number",
-      "exclusiveMinimum": 0
-    },
+    "RepetitionTimePreparation": {
+      "anyOf": [
+        { "type": "number",
+          "Minimum": 0 
+        },
+        {
+          "type": "array",
+          "items": { "type": "number" },
+          "Minimum": 0
+        }
+      ]  
+    }, 
     "SliceEncodingDirection": {
       "type": "string",
       "enum": ["i", "j", "k", "i-", "j-", "k-"]

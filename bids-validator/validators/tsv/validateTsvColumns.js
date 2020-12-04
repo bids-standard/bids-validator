@@ -159,10 +159,9 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
           jsonContentsDict,
         )
 
-        //check M0 and tsv list for m0scan or controls
-        if (mergedDict.hasOwnProperty('M0') &&
-            mergedDict['M0'].constructor === Boolean &&
-            mergedDict['M0'] == true &&
+        //check M0Type and tsv list for m0scan in case of an Included M0Type
+        if (mergedDict.hasOwnProperty('M0Type') &&
+            mergedDict['M0Type'] === "Included" &&
             filtered_m0scan_rows < 1
           )
         {
@@ -171,26 +170,26 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
               file: file,
               code: 154,
               reason:
-                "''M0' is set to 'true' however the tsv file does not contain any m0scan volume." 
+                "''M0Type' is set to 'Included' however the tsv file does not contain any m0scan volume." 
             }),
           )
         }
-        if (mergedDict.hasOwnProperty('M0') &&
-            mergedDict['M0'].constructor === Boolean &&
-            mergedDict['M0'] == false &&
-            filtered_control_rows < 1
+        //check M0Type and tsv list for m0scan in case of an Absent M0Type
+        if (mergedDict.hasOwnProperty('M0Type') &&
+            mergedDict['M0Type'] === "Absent" &&
+            filtered_m0scan_rows > 1
           )
         {
           tsvIssues.push(
             new Issue({
               file: file,
-              code: 154,
+              code: 199,
               reason:
-                "''M0' is set to 'false' however the tsv file does not contain any control volume." 
+                "''M0Type' is set to 'Absent' however the tsv file contains an m0scan volume. This should be avoided." 
             }),
           )
         }
-
+       
         // check Flip Angle requirements with LookLocker acquisitions
         if (
             mergedDict.hasOwnProperty('FlipAngle') &&
@@ -216,8 +215,8 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
         (
           mergedDict.hasOwnProperty('LabelingDuration') &&
           mergedDict['LabelingDuration'].constructor === Array &&
-          mergedDict.hasOwnProperty('LabelingType') &&
-          (mergedDict['LabelingType'] == 'CASL' || mergedDict['LabelingType'] == 'PCASL')
+          mergedDict.hasOwnProperty('ArterialSpinLabelingType') &&
+          (mergedDict['ArterialSpinLabelingType'] == 'CASL' || mergedDict['ArterialSpinLabelingType'] == 'PCASL')
         ) 
         {
           let LabelingDuration = mergedDict['LabelingDuration']
@@ -237,19 +236,19 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
         // check VolumeTiming with TSV lenght
         if 
         (
-          mergedDict.hasOwnProperty('VolumeTiming') &&
-          mergedDict['VolumeTiming'].constructor === Array 
+          mergedDict.hasOwnProperty('RepetitionTimePreparation') &&
+          mergedDict['RepetitionTimePreparation'].constructor === Array 
         ) 
         {
-          let VolumeTiming = mergedDict['VolumeTiming']
-          const VolumeTimingLength = VolumeTiming.length
-          if (VolumeTimingLength !== rows.length -1) {
+          let RepetitionTimePreparation = mergedDict['RepetitionTimePreparation']
+          const RepetitionTimePreparationLength = RepetitionTimePreparation.length
+          if (RepetitionTimePreparationLength !== rows.length -1) {
             tsvIssues.push(
               new Issue({
                 file: file,
                 code: 177,
                 reason:
-                  "''VolumeTiming' for this file do not match the TSV lenght." 
+                  "''RepetitionTimePreparation' for this file do not match the TSV lenght. Please be sure that the size of the RepetitionTimePreparation array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }
@@ -269,7 +268,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
                 file: file,
                 code: 174,
                 reason:
-                  "''PostLabelingDelay' for this file do not match the TSV lenght." 
+                  "''PostLabelingDelay' for this file do not match the TSV lenght. Please be sure that the size of the PostLabelingDelay array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }
@@ -284,7 +283,25 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
                 file: file,
                 code: 181,
                 reason:
-                  "''TotalAcquiredVolumes' for this file do not match the TSV lenght." 
+                  "''TotalAcquiredVolumes' for this file do not match the TSV lenght. Please be sure that the size of the TotalAcquiredVolumes array in the json corresponds to the number of volume listed in the tsv file." 
+              }),
+            )
+          }
+        }
+
+        if ( 
+             mergedDict.hasOwnProperty('EchoTime') && 
+             mergedDict['EchoTime'].constructor === Array  
+             ) {
+          let EchoTime = mergedDict['EchoTime']
+          const EchoTimeLength = EchoTime.length
+          if (EchoTimeLength !== rows.length -1) {
+            tsvIssues.push(
+              new Issue({
+                file: file,
+                code: 196,
+                reason:
+                  "''EchoTime' for this file do not match the TSV lenght. Please be sure that the size of the EchoTime array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }

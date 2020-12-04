@@ -20,13 +20,18 @@
       "type": "string",
       "enum": ["i", "j", "k", "i-", "j-", "k-"]
     },
-    "RepetitionTime": {
-         "type": "number",
-          "exclusiveMinimum": 0 
+    "RepetitionTimePreparation": {
+      "anyOf": [
+        { "type": "number",
+          "Minimum": 0 
+        },
+        {
+          "type": "array",
+          "items": { "type": "number" },
+          "Minimum": 0
+        }
+      ]  
     }, 
-    "PulseSequenceType": {
-      "type": "string"
-    },
     "SliceEncodingDirection": {
       "type": "string",
       "enum": ["i", "j", "k", "i-", "j-", "k-"]
@@ -47,7 +52,7 @@
         }
       ]
     }, 
-    "LabelingType": {
+    "ArterialSpinLabelingType": {
       "type": "string",
       "enum": ["PASL", "CASL", "PCASL"]
     },
@@ -184,14 +189,15 @@
     "BolusCutOffTechnique" :{
       "type": "string"
     },
-    "M0": { 
-      "type": ["number", "string", "boolean"] 
+    "M0Type": { 
+      "type": "string",
+      "enum": ["Separate", "Included", "Estimate","Absent"]
+    },
+    "M0Estimate" :{
+      "type": "number",
+      "exclusiveMinimum": 0
     },
     "TotalAcquiredVolumes" :{
-          "type": "array",
-          "items": { "type": "number" }
-    },
-    "VolumeTiming" :{
           "type": "array",
           "items": { "type": "number" }
     },
@@ -200,7 +206,10 @@
     },
     "Manufacturer" : {
       "type" : "string"
+    },
+    "MRAcquisitionType" : {
+      "type": "string",
+      "enum": ["2D","3D"]
     }
-
   }
 }

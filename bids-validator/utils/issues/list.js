@@ -92,7 +92,7 @@ export default {
     key: 'SLICE_TIMING_NOT_DEFINED',
     severity: 'warning',
     reason:
-      "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible.",
+      "You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. 'Slice Timing' is the time at which each slice was acquired within each volume (frame) of the acquisition. Slice timing is not slice order -- rather, it is a list of times containing the time (in seconds) of each slice acquisition in relation to the beginning of volume acquisition.",
   },
   15: {
     key: 'ECHO_TIME1-2_NOT_DEFINED',
@@ -903,7 +903,7 @@ export default {
   177: {
     key: 'VOLUME_TIMING_NOT_MATCHING_ASLCONTEXT_TSV',
     severity: 'error',
-    reason: "The number of values of 'VolumeTiming' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'VolumeTiming' is the time at which each volume was acquired during the acquisition, referring to the start of each readout in the ASL timeseries. Use this field instead of the 'RepetitionTime' field in the case that the ASL timeseries have a non-uniform time distance between acquired volumes. The list must have the same length as the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv', and the numbers must be non-negative and monotonically increasing. If 'VolumeTiming' is defined, this requires acquisition time (TA) to be defined via 'AcquisitionDuration'.",
+    reason: "The number of values of 'RepetitionTimePreparationLength' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'RepetitionTimePreparationLength' is the time at which each volume was acquired during the acquisition, referring to the start of each readout in the ASL timeseries. Use this field instead of the 'RepetitionTimePreparationLength' field in the case that the ASL timeseries have a non-uniform time distance between acquired volumes. The list must have the same length as the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv', and the numbers must be non-negative and monotonically increasing. If 'RepetitionTimePreparationLength' is defined, this requires acquisition time (TA) to be defined via 'AcquisitionDuration'.",
   },
   178: {
     key: 'VOLUME_TIMING_AND_REPETITION_TIME_MUTUALLY_EXCLUSIVE',
@@ -964,7 +964,7 @@ export default {
     key: 'PASL_NOT_ALLOWED_FIELDS',
     severity: 'error',
     reason: "You defined one of the not allowed fields in case of PASL 'ArterialSpinLabelingType'." + 
-            "Please verify which field among 'CASLType', 'PCASLType' 'LabelingPulseAverageGradient', 'LabelingPulseMaximumGradient', 'LabelingPulseAverageB1', 'LabelingPulseDuration', 'LabelingPulseFlipAngle' and 'LabelingPulseInterval' you have filled.",
+            "Please verify which field among 'CASLType', 'PCASLType' 'LabelingPulseAverageGradient', 'LabelingPulseMaximumGradient', 'LabelingPulseAverageB1', 'LabelingPulseDuration', 'LabelingPulseFlipAngle', 'LabelingPulseInterval', 'LabelingDuration' you have filled.",
   },
   191: {
     key: 'PCASL_CASL_LABELING_TYPE_NOT_ALLOWED',
@@ -995,6 +995,29 @@ export default {
     key: 'M0Type_SET_INCORRECTLY',
     severity: 'warning',
     reason: "M0Type was not defined correctly. If 'M0Type' is equal to separate, the dataset should include a *_m0scan.nii[.gz] and *_m0scan.json file.",
+  },
+    196: {
+    key: 'ECHO_TIME_NOT_CONSISTENT',
+    severity: 'warning',
+    reason: "The number of values for 'EchoTime' for this file does not match number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'.  'EchoTime' is the echo time (TE) for the acquisition, specified in seconds. ",
+  },
+    197: {
+    key: 'ECHO_TIME_ELEMENTS',
+    severity: 'warning',
+    reason:
+      "The number of elements in the 'EchoTime' array should match the 'k' dimension of the corresponding NIfTI volume.",
+  },
+  198: {
+    key: 'M0Type_SET_INCORRECTLY_TO_ABSENT',
+    severity: 'warning',
+    reason:
+      "",
+  },
+  199: {
+    key: 'M0Type_SET_INCORRECTLY_TO_ABSENT_IN_ASLCONTEXT',
+    severity: 'warning',
+    reason:
+      "",
   },
 
 }

@@ -26,6 +26,9 @@ export default function NIFTI(
   const potentialEvents = utils.files.potentialLocations(
     path.replace('.gz', '').replace('bold.nii', 'events.tsv'),
   )
+  const potentialM0Scans = utils.files.potentialLocations(
+    path.replace('_asl.nii', '_m0scan..nii'),
+  )
   const mergedDictionary = utils.files.generateMergedSidecarDict(
     potentialSidecars,
     jsonContentsDict,
@@ -61,35 +64,35 @@ export default function NIFTI(
         }),
       )
     }
-    if (!mergedDictionary.hasOwnProperty('LabelingType')) {
+    if (!mergedDictionary.hasOwnProperty('ArterialSpinLabelingType')) {
       issues.push(
         new Issue({
           file: file,
           code: 133,
           reason:
-            "You should define 'LabelingType' for this file. If you don't provide this information CBF quantification will not be possible. " +
+            "You should define 'ArterialSpinLabelingType' for this file. If you don't provide this information CBF quantification will not be possible. " +
             sidecarMessage,
         }),
       )
     }
-    if (!mergedDictionary.hasOwnProperty('PulseSequenceType')) {
+    if (!mergedDictionary.hasOwnProperty('MRAcquisitionType')) {
       issues.push(
         new Issue({
           file: file,
           code: 155,
           reason:
-            "You should define 'PulseSequenceType' for this file. If you don't provide this information CBF quantification will not be possible. " +
+            "You should define 'MRAcquisitionType' for this file. If you don't provide this information CBF quantification will not be possible. " +
             sidecarMessage,
         }),
       )
     }
     if (
-      mergedDictionary.hasOwnProperty('LabelingType') &&
-      mergedDictionary['LabelingType'].constructor === String
+      mergedDictionary.hasOwnProperty('ArterialSpinLabelingType') &&
+      mergedDictionary['ArterialSpinLabelingType'].constructor === String
     ) {
-      const LabelingTypeString = mergedDictionary['LabelingType']
+      const ArterialSpinLabelingTypeString = mergedDictionary['ArterialSpinLabelingType']
 
-      if (LabelingTypeString == 'PASL') {
+      if (ArterialSpinLabelingTypeString == 'PASL') {
         if (!mergedDictionary.hasOwnProperty('LabelingSlabThickness')) {
           issues.push(
             new Issue({
@@ -202,9 +205,7 @@ export default function NIFTI(
             )
           }
         }
-      }
-
-      if (LabelingTypeString == 'PASL') {
+      
         if (
           mergedDictionary.hasOwnProperty('CASLType') ||
           mergedDictionary.hasOwnProperty('PCASLType') || 
@@ -234,37 +235,25 @@ export default function NIFTI(
           if (mergedDictionary.hasOwnProperty('LabelingPulseDuration')) LabelingPulseDurationString = "'LabelingPulseDuration', ";
           if (mergedDictionary.hasOwnProperty('LabelingPulseFlipAngle')) LabelingPulseFlipAngleString = "'LabelingPulseFlipAngle', ";
           if (mergedDictionary.hasOwnProperty('LabelingPulseInterval')) LabelingPulseIntervalString = "'LabelingPulseInterval', ";
+          if (mergedDictionary.hasOwnProperty('LabelingDuration')) LabelingDurationString = "'LabelingDuration', ";
+          
 
           issues.push(
             new Issue({
               file: file,
               code: 190,
               reason:
-              "You defined one of the not allowed fields in case PASL 'LabelingType'. Please verify " + CASLTypeString + PCASLTypeString + 
+              "You defined one of the not allowed fields in case PASL 'ArterialSpinLabelingType'. Please verify " + CASLTypeString + PCASLTypeString + 
               LabelingPulseAverageGradientString + LabelingPulseMaximumGradientString + LabelingPulseAverageB1String + LabelingPulseDurationString + 
-              LabelingPulseFlipAngleString + LabelingPulseIntervalString + 
+              LabelingPulseFlipAngleString + LabelingPulseIntervalString + LabelingDurationString + 
               " and change accordingly."
             }),
           )
         }
-
-        if (mergedDictionary.hasOwnProperty('LabelingDuration')) {
-          let LabelingDuration = mergedDictionary['LabelingDuration']
-          const LabelingDurationLength = LabelingDuration.length
-          if (LabelingDurationLength > 1 || LabelingDuration > 0)
-            issues.push(
-              new Issue({
-                file: file,
-                code: 169,
-                reason:
-                  "'LabelingDuration' for PASL LabellingType can be only a scalar value put to 0 or unset. " ,
-              }),
-            )
-        }
       }
 
-      if (LabelingTypeString == 'CASL' || LabelingTypeString == 'PCASL') {
-        if (LabelingTypeString == 'CASL' && mergedDictionary.hasOwnProperty('PCASLType'))
+      if (ArterialSpinLabelingTypeString == 'CASL' || ArterialSpinLabelingTypeString == 'PCASL') {
+        if (ArterialSpinLabelingTypeString == 'CASL' && mergedDictionary.hasOwnProperty('PCASLType'))
         {
           issues.push(
             new Issue({
@@ -275,7 +264,7 @@ export default function NIFTI(
             }),
           )
         }
-        if (LabelingTypeString == 'PCASL' && mergedDictionary.hasOwnProperty('CASLType'))
+        if (ArterialSpinLabelingTypeString == 'PCASL' && mergedDictionary.hasOwnProperty('CASLType'))
         {
           issues.push(
             new Issue({
@@ -315,7 +304,7 @@ export default function NIFTI(
                 file: file,
                 code: 189,
                 reason:
-                "You defined one of the not allowed fields in case of CASL or PCASL 'LabelingType'. Please verify " + PASLTypeString + 
+                "You defined one of the not allowed fields in case of CASL or PCASL 'ArterialSpinLabelingType'. Please verify " + PASLTypeString + 
                 LabelingSlabThicknessString + BolusCutOffFlagString + BolusCutOffTimingSequenceString + BolusCutOffDelayTimeString + BolusCutOffTechniqueString + 
                 " and change accordingly."
               }),
@@ -567,12 +556,12 @@ export default function NIFTI(
         )
       }
     }
-    if (!mergedDictionary.hasOwnProperty('M0')) {
+    if (!mergedDictionary.hasOwnProperty('M0Type')) {
       issues.push(
         new Issue({
           file: file,
           code: 153,
-          reason: "You should define 'M0' for this file.  " + sidecarMessage,
+          reason: "You should define 'M0Type' for this file.  " + sidecarMessage,
         }),
       )
     } else if (
@@ -580,11 +569,66 @@ export default function NIFTI(
       mergedDictionary['M0'].constructor === String
     ) {
       const M0String = mergedDictionary['M0']
-      if (M0String != 'control') {
-        checkIfIntendedExists(M0String, fileList, issues, file)
-        checkIfValidFiletype(M0String, issues, file)
-      }
-    } 
+      switch(M0String) {
+        case "Separate":
+          // check if an m0 scan file is available and if it is valid
+          
+          if (!checkIfSeparateM0scanExists(potentialM0Scans, fileList, issues, file)) {
+            issues.push(
+              new Issue({
+                file: file,
+                code: 37,
+                reason:
+                  "'M0Type' property of this asl ('" +
+                  file.relativePath +
+                  "') does not point to an existing file('" +
+                  m0scanFile +
+                  "'). Please mind that this value should not include subject level directory " +
+                  "('/" +
+                  file.relativePath.split('/')[1] +
+                  "/').",
+                evidence: m0scanFile,
+              }),
+            )
+          }
+
+
+          checkIfValidFiletype(potentialM0Scans, issues, file)
+          break;
+        case "Included":
+          // Here we need to check if the tsv includes m0scan -> move this to validateTsvColumns
+          break;
+        case "Estimate":
+          // Check if there is an estimated value in the json file
+          if (!mergedDictionary.hasOwnProperty('M0Type')) {
+            issues.push(
+              new Issue({
+                file: file,
+                code: 195,
+                reason: "You set the 'M0Type' to 'Estimate', therefore you should also define 'M0Estimate' for this file.  " + sidecarMessage,
+              }),
+            )
+          }
+          break;
+        case "Absent":
+          if (
+            checkIfSeparateM0scanExists(potentialM0Scans, fileList, issues, file) || 
+            mergedDictionary.hasOwnProperty('M0Estimate')
+          ) {
+            issues.push(
+              new Issue({
+                file: file,
+                code: 198,
+                reason: "You set the 'M0Type' to 'Absent', you should avoid to define 'M0Estimate' or to include an [_m0scan.nii.gz] for this file.  " + sidecarMessage,
+              }),
+            )
+          }
+          break;
+      } 
+
+
+    }
+
     if (!mergedDictionary.hasOwnProperty('FlipAngle')) {
       if (
         mergedDictionary.hasOwnProperty('LookLocker') &&
@@ -612,7 +656,6 @@ export default function NIFTI(
     } else {
       if (
         header &&
-        mergedDictionary.hasOwnProperty('LookLocker') &&
         mergedDictionary['FlipAngle'].constructor === Array
       ) {
         let FlipAngle = mergedDictionary['FlipAngle']
@@ -629,6 +672,40 @@ export default function NIFTI(
             }),
           )
         }
+      }
+    }
+  }
+  if (path.includes('_asl.nii') || path.includes('_m0scan.nii')) {
+    if (!mergedDictionary.hasOwnProperty('RepetitionTimePreparation')) {
+        issues.push(
+          new Issue({
+            file: file,
+            code: 198,
+            reason:
+              "'RepetitionTimePreparation' must be defined for this file. " +
+              sidecarMessage,
+          }),
+        )
+    }
+    else if (
+      header &&
+      mergedDictionary.hasOwnProperty('RepetitionTimePreparation') &&
+      mergedDictionary['RepetitionTimePreparation'].constructor === Array
+    ) {
+      const RepetitionTimePreparationArray = mergedDictionary['RepetitionTimePreparation']
+      const kDim = header.dim[4]
+      if (RepetitionTimePreparationArray.length !== kDim) {
+        issues.push(
+          new Issue({
+            file: file,
+            code: 199,
+            evidence:
+              'RepetitionTimePreparation array is of length ' +
+              RepetitionTimePreparationArray.length +
+              ' for this file and does not match the 4th dimension of the NIFTI header.' +
+              sidecarMessage,
+          }),
+        )
       }
     }
   }
@@ -764,10 +841,7 @@ export default function NIFTI(
       path.includes('_m0scan.nii')
     ) {
       if (!mergedDictionary.hasOwnProperty('EchoTime')) {
-        if (
-          path.includes('_asl.nii') ||
-          path.includes('_m0scan.nii')
-        ) {
+        if ( path.includes('_asl.nii')) {
           issues.push(
             new Issue({
               file: file,
@@ -789,6 +863,32 @@ export default function NIFTI(
             }),
           )
         }
+      } 
+      else {
+        if (
+          header &&
+          mergedDictionary.hasOwnProperty('EchoTime') &&
+          mergedDictionary['EchoTime'].constructor === Array
+        ) {
+          const EchoTimeArray = mergedDictionary['EchoTime']
+          const kDim = header.dim[3]
+          if (EchoTimeArray.length !== kDim) {
+            issues.push(
+              new Issue({
+                file: file,
+                code: 197,
+                evidence:
+                  'EchoTime array is of length ' +
+                  EchoTimeArray.length +
+                  " and the value of the 'k' dimension is " +
+                  kDim +
+                  ' for the corresponding nifti header.',
+              }),
+            )
+          }
+        }
+
+
       }
       if (!mergedDictionary.hasOwnProperty('PhaseEncodingDirection')) {
         issues.push(
@@ -826,13 +926,72 @@ export default function NIFTI(
         )
       }
     }
-
-    // we don't need slice timing or repetition time for SBref
     if (
       path.includes('_bold.nii') ||
-      path.includes('_asl.nii') ||
-      path.includes('_m0scan.nii')
-    ) {
+      path.includes('_asl.nii')  
+      ) {
+      // check that slice timing is defined
+      if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
+        // case of ASL with 3D sequence - slice timing is not necessary
+        if (!(mergedDictionary.hasOwnProperty('MRAcquisitionType') &&
+              mergedDictionary.MRAcquisitionType === '3D' && 
+              (path.includes('_asl.nii') || path.includes('_m0scan.nii')  ))
+            ) {
+              if (mergedDictionary.hasOwnProperty('MRAcquisitionType') &&
+                  mergedDictionary.MRAcquisitionType === '2D' && 
+                  (path.includes('_asl.nii') || path.includes('_m0scan.nii')  ))
+              {  // case of ASL with 2D sequence - slice timing is required
+                issues.push(
+                  new Issue({
+                    file: file,
+                    code: 183,
+                    reason:
+                      "You should define 'SliceTiming' for this file. " +
+                      "If you don't provide this information slice time correction will not be possible. " +
+                      sidecarMessage,
+                  }),
+                )
+              }
+              else {
+                issues.push(
+                  new Issue({
+                    file: file,
+                    code: 13,
+                    reason:
+                      "You should define 'SliceTiming' for this file. " +
+                      "If you don't provide this information slice time correction will not be possible. " +
+                      sidecarMessage,
+                  }),
+                )
+              }
+          }
+      }
+      // check that slice timing has the proper length
+      if (
+        header &&
+        mergedDictionary.hasOwnProperty('SliceTiming') &&
+        mergedDictionary['SliceTiming'].constructor === Array
+      ) {
+        const sliceTimingArray = mergedDictionary['SliceTiming']
+        const kDim = header.dim[3]
+        if (sliceTimingArray.length !== kDim) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 87,
+              evidence:
+                'SliceTiming array is of length ' +
+                sliceTimingArray.length +
+                " and the value of the 'k' dimension is " +
+                kDim +
+                ' for the corresponding nifti header.',
+            }),
+          )
+        }
+      }
+    }
+    // we don't need slice timing or repetition time for SBref
+    if (path.includes('_bold.nii')) {
       if (
         !mergedDictionary.hasOwnProperty('RepetitionTime') &&
         !mergedDictionary.hasOwnProperty('VolumeTiming')
@@ -937,77 +1096,9 @@ export default function NIFTI(
             }),
           )
         }
-      } 
-      else if (
-        mergedDictionary.VolumeTiming &&
-        !mergedDictionary.AcquisitionDuration &&
-        (path.includes('_asl.nii') || path.includes('_m0scan.nii'))
-      ) {
-        issues.push(new Issue({ file: file, code: 171 }))
-      }
-
-      // check that slice timing is defined
-      if (!mergedDictionary.hasOwnProperty('SliceTiming')) {
-        // case of ASL with 3D sequence - slice timing is not necessary
-        if (!(mergedDictionary.hasOwnProperty('PulseSequenceType') &&
-              mergedDictionary['PulseSequenceType'].constructor === String &&
-              mergedDictionary.PulseSequenceType.startsWith('3D_') && 
-              (path.includes('_asl.nii') || path.includes('_m0scan.nii')  ))
-            ) {
-              if (mergedDictionary.hasOwnProperty('PulseSequenceType') &&
-                  mergedDictionary['PulseSequenceType'].constructor === String &&
-                  mergedDictionary.PulseSequenceType.startsWith('2D_') && 
-                  (path.includes('_asl.nii') || path.includes('_m0scan.nii')  ))
-              {  // case of ASL with 2D sequence - slice timing is required
-                issues.push(
-                  new Issue({
-                    file: file,
-                    code: 183,
-                    reason:
-                      "You should define 'SliceTiming' for this file. " +
-                      "If you don't provide this information slice time correction will not be possible. " +
-                      sidecarMessage,
-                  }),
-                )
-              }
-              else {
-                issues.push(
-                  new Issue({
-                    file: file,
-                    code: 13,
-                    reason:
-                      "You should define 'SliceTiming' for this file. " +
-                      "If you don't provide this information slice time correction will not be possible. " +
-                      sidecarMessage,
-                  }),
-                )
-              }
-          }
-      }
-
-      // check that slice timing has the proper length
-      if (
-        header &&
-        mergedDictionary.hasOwnProperty('SliceTiming') &&
-        mergedDictionary['SliceTiming'].constructor === Array
-      ) {
-        const sliceTimingArray = mergedDictionary['SliceTiming']
-        const kDim = header.dim[3]
-        if (sliceTimingArray.length !== kDim) {
-          issues.push(
-            new Issue({
-              file: file,
-              code: 87,
-              evidence:
-                'SliceTiming array is of length ' +
-                sliceTimingArray.length +
-                " and the value of the 'k' dimension is " +
-                kDim +
-                ' for the corresponding nifti header.',
-            }),
-          )
-        }
-      }
+      }     
+      
+    
 
       // check that slice timing values are greater than repetition time
       if (
@@ -1123,30 +1214,9 @@ export default function NIFTI(
       checkIfValidFiletype(intendedForFile, issues, file)
     }
   }
-  if (path.includes('_m0scan.nii')) {
-    if (mergedDictionary.hasOwnProperty('IntendedFor')) {
-      const intendedFor =
-        typeof mergedDictionary['IntendedFor'] == 'string'
-          ? [mergedDictionary['IntendedFor']]
-          : mergedDictionary['IntendedFor']
-      for (let key = 0; key < intendedFor.length; key++) {
-        const intendedForFile = intendedFor[key]
-        checkIfIntendedExists(intendedForFile, fileList, issues, file)
-        checkIfValidFiletype(intendedForFile, issues, file)
-      }
-    } else {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 152,
-          reason:
-            "You have to define 'IntendedFor' for this file. " + sidecarMessage,
-        }),
-      )
-    }
-  }
-  }
   callback(issues)
+}
+
 }
 
 function missingEvents(path, potentialEvents, events) {
@@ -1220,6 +1290,22 @@ function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
       }),
     )
   }
+}
+
+function checkIfSeparateM0scanExists(m0scanFile, fileList, issues, file) {
+  const m0scanFileFull =
+    '/' + file.relativePath.split('/')[1] + '/' + m0scanFile
+  let onTheList = false
+
+  for (let key2 in fileList) {
+    if (key2) {
+      const filePath = fileList[key2].relativePath
+      if (filePath === m0scanFileFull) {
+        onTheList = true
+      }
+    }
+  }
+  return onTheList;
 }
 
 function checkIfValidFiletype(intendedForFile, issues, file) {
