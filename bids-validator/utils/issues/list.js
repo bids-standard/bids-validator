@@ -765,4 +765,9 @@ export default {
     severity: 'error',
     reason: 'The source HED schema is invalid as it contains duplicate tags.',
   },
+  139: {
+    key: 'HED_INVALID_SIDECAR',
+    severity: 'error',
+    reason: 'A HED error was found in the JSON sidecar.',
+  },
 }
