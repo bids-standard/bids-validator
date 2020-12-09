@@ -969,7 +969,7 @@ export default {
   191: {
     key: 'PCASL_CASL_LABELING_TYPE_NOT_ALLOWED',
     severity: 'error',
-    reason: "You defined either the 'CASLType' with a PCASL 'LabellingType' or the 'PCASLType' with a CASL 'LabellingType'. This is not allowed, please check that these field are filled correctly.",
+    reason: "You defined either the 'CASLType' with a PCASL 'LabellingType' or the 'PCASLType' with a CASL 'LabellingType'. This is not allowed, please check that these fields are filled correctly.",
   },
   192: {
     key: 'BOLUS_CUT_OFF_DELAY_TIME_NOT_MONOTONICALLY_INCREASING',
@@ -1010,13 +1010,13 @@ export default {
     key: 'M0Type_SET_INCORRECTLY_TO_ABSENT',
     severity: 'warning',
     reason:
-      "",
+      "You defined M0Type as 'absent' while including a separate '*_m0scan.nii[.gz]' and '*_m0scan.json', or defining the 'M0Estimate' field. This is not allowed, please check that this field are filled correctly.",
   },
     199: {
     key: 'M0Type_SET_INCORRECTLY_TO_ABSENT_IN_ASLCONTEXT',
     severity: 'warning',
     reason:
-      "",
+      "You defined M0Type as 'absent' while including an m0scan volume within the '*_aslcontext.tsv'. This is not allowed, please check that this field are filled correctly.",
   },
     200: {
     key: 'REPETITIONTIMEPREPARATION_MISSING',
