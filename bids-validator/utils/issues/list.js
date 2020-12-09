@@ -901,9 +901,9 @@ export default {
     reason: "In the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv', the 'volume_type' can only be filled with volumes ['cbf' ,'m0scan', 'label', 'control', 'deltam'].",
   },
   177: {
-    key: 'VOLUME_TIMING_NOT_MATCHING_ASLCONTEXT_TSV',
+    key: 'REPETITIONTIMEPREPARATION_NOT_MATCHING_ASLCONTEXT_TSV',
     severity: 'error',
-    reason: "The number of values of 'RepetitionTimePreparationLength' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'RepetitionTimePreparationLength' is the time at which each volume was acquired during the acquisition, referring to the start of each readout in the ASL timeseries. Use this field instead of the 'RepetitionTimePreparationLength' field in the case that the ASL timeseries have a non-uniform time distance between acquired volumes. The list must have the same length as the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv', and the numbers must be non-negative and monotonically increasing. If 'RepetitionTimePreparationLength' is defined, this requires acquisition time (TA) to be defined via 'AcquisitionDuration'.",
+    reason: "The number of values of 'RepetitionTimePreparationLength' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'RepetitionTimePreparationLength' is the interval, in seconds, that it takes a preparation pulse block to re-appear at the beginning of the succeeding (essentially identical) pulse sequence block. The data type number may apply to files from any MRI modality concerned with a single value for this field. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL.",
   },
   178: {
     key: 'VOLUME_TIMING_AND_REPETITION_TIME_MUTUALLY_EXCLUSIVE',
@@ -977,7 +977,7 @@ export default {
     reason: "'BolusCutOffDelayTime' is not monotonically increasing. 'BolusCutOffDelayTime' is the duration between the end of the labeling and the start of the bolus cut-off saturation pulse(s), in seconds. This can be a number or array of numbers, of which the values must be non-negative and monotonically increasing, depending on the number of bolus cut-off saturation pulses. For Q2TIPS, only the values for the first and last bolus cut-off saturation pulses are provided. Based on DICOM Tag 0018,925F ASL Bolus Cut-off Delay Time.",
   },
   193: {
-    key: 'ECHO_TIME_NOT_DEFINED_FOR_ASL',
+    key: 'ECHO_TIME_NOT_DEFINED',
     severity: 'error',
     reason: "You must define 'EchoTime' for this file. 'EchoTime' is the echo time (TE) for the acquisition, specified in seconds. Corresponds to DICOM Tag 0018, 0081 Echo Time (please note that the DICOM term is in milliseconds not seconds). The data type number may apply to files from any MRI modality concerned with a single value for this field, or to the files in a file collection where the value of this field is iterated using the echo entity. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL or variable echo time fMRI sequences.",
   },
@@ -1004,20 +1004,23 @@ export default {
     197: {
     key: 'ECHO_TIME_ELEMENTS',
     severity: 'warning',
-    reason:
-      "The number of elements in the 'EchoTime' array should match the 'k' dimension of the corresponding NIfTI volume.",
+    reason: "The number of elements in the 'EchoTime' array should match the 'k' dimension of the corresponding NIfTI volume.",
   },
-  198: {
+    198: {
     key: 'M0Type_SET_INCORRECTLY_TO_ABSENT',
     severity: 'warning',
     reason:
       "",
   },
-  199: {
+    199: {
     key: 'M0Type_SET_INCORRECTLY_TO_ABSENT_IN_ASLCONTEXT',
     severity: 'warning',
     reason:
       "",
   },
-
+    200: {
+    key: 'REPETITIONTIMEPREPARATION_MISSING',
+    severity: 'error',
+    reason: "You must define 'RepetitionTimePreparation' for this file. 'RepetitionTimePreparation' is the interval, in seconds, that it takes a preparation pulse block to re-appear at the beginning of the succeeding (essentially identical) pulse sequence block. The data type number may apply to files from any MRI modality concerned with a single value for this field. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL.",
+  },
 }
