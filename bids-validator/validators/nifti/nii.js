@@ -173,7 +173,8 @@ export default function NIFTI(
           }
 
           if (
-            mergedDictionary.hasOwnProperty('BolusCutOffDelayTime')
+            mergedDictionary.hasOwnProperty('BolusCutOffDelayTime') &&
+            mergedDictionary['BolusCutOffDelayTime'].constructor === Array
           )
           {
           let BolusCutOffDelayTime = mergedDictionary['BolusCutOffDelayTime']
@@ -532,30 +533,6 @@ export default function NIFTI(
         }),
       )
     }
-    if (!mergedDictionary.hasOwnProperty('AcquisitionVoxelSize')) {
-      issues.push(
-        new Issue({
-          file: file,
-          code: 143,
-          reason:
-            "You should define 'AcquisitionVoxelSize' for this file.  " +
-            sidecarMessage,
-        }),
-      )
-    } else {
-      var AcquisitionVoxelSize = mergedDictionary['AcquisitionVoxelSize']
-      if (AcquisitionVoxelSize.length != 3) {
-        issues.push(
-          new Issue({
-            file: file,
-            code: 156,
-            reason:
-              "The 'AcquisitionVoxelSize' field length is not 3. AcquisitionVoxelSize must be defined as a vector of length 3.  " +
-              sidecarMessage,
-          }),
-        )
-      }
-    }
     if (!mergedDictionary.hasOwnProperty('M0Type')) {
       issues.push(
         new Issue({
@@ -577,7 +554,7 @@ export default function NIFTI(
             issues.push(
               new Issue({
                 file: file,
-                code: 37,
+                code: 202,
                 reason:
                   "'M0Type' property of this asl ('" +
                   file.relativePath +
@@ -676,11 +653,35 @@ export default function NIFTI(
     }
   }
   if (path.includes('_asl.nii') || path.includes('_m0scan.nii')) {
+    if (!mergedDictionary.hasOwnProperty('AcquisitionVoxelSize')) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 143,
+          reason:
+            "You should define 'AcquisitionVoxelSize' for this file.  " +
+            sidecarMessage,
+        }),
+      )
+    } else {
+      var AcquisitionVoxelSize = mergedDictionary['AcquisitionVoxelSize']
+      if (AcquisitionVoxelSize.length != 3) {
+        issues.push(
+          new Issue({
+            file: file,
+            code: 156,
+            reason:
+              "The 'AcquisitionVoxelSize' field length is not 3. AcquisitionVoxelSize must be defined as a vector of length 3.  " +
+              sidecarMessage,
+          }),
+        )
+      }
+    }
     if (!mergedDictionary.hasOwnProperty('RepetitionTimePreparation')) {
         issues.push(
           new Issue({
             file: file,
-            code: 198,
+            code: 200,
             reason:
               "'RepetitionTimePreparation' must be defined for this file. " +
               sidecarMessage,
@@ -698,7 +699,7 @@ export default function NIFTI(
         issues.push(
           new Issue({
             file: file,
-            code: 199,
+            code: 201,
             evidence:
               'RepetitionTimePreparation array is of length ' +
               RepetitionTimePreparationArray.length +
@@ -841,7 +842,10 @@ export default function NIFTI(
       path.includes('_m0scan.nii')
     ) {
       if (!mergedDictionary.hasOwnProperty('EchoTime')) {
-        if ( path.includes('_asl.nii')) {
+        if ( 
+          path.includes('_asl.nii') ||
+          path.includes('_m0scan.nii')
+        ) {
           issues.push(
             new Issue({
               file: file,
@@ -935,11 +939,11 @@ export default function NIFTI(
         // case of ASL with 3D sequence - slice timing is not necessary
         if (!(mergedDictionary.hasOwnProperty('MRAcquisitionType') &&
               mergedDictionary.MRAcquisitionType === '3D' && 
-              (path.includes('_asl.nii') || path.includes('_m0scan.nii')  ))
+              path.includes('_asl.nii') )
             ) {
               if (mergedDictionary.hasOwnProperty('MRAcquisitionType') &&
                   mergedDictionary.MRAcquisitionType === '2D' && 
-                  (path.includes('_asl.nii') || path.includes('_m0scan.nii')  ))
+                  path.includes('_asl.nii') )
               {  // case of ASL with 2D sequence - slice timing is required
                 issues.push(
                   new Issue({
@@ -1200,7 +1204,8 @@ export default function NIFTI(
   }
 
   if (
-    utils.type.file.isFieldMapMainNii(path) &&
+    (path.includes('_m0scan.nii') ||
+    utils.type.file.isFieldMapMainNii(path) ) &&
     mergedDictionary.hasOwnProperty('IntendedFor')
   ) {
     const intendedFor =

@@ -798,11 +798,6 @@ export default {
     severity: 'error',
     reason: "It is required to define 'BolusCutOffTechnique' for this file, when 'BolusCutOffFlag' is set to true. 'BolusCutOffTechnique' is the name of the technique used (e.g. Q2TIPS, QUIPSS, QUIPSSII). Corresponds to DICOM Tag 0018,925E ASL Bolus Cut-off Technique.",
   },
-  152: {
-    key: 'INTENDED_FOR_NOT_SET',
-    severity: 'error',
-    reason: "You should define the 'IntendedFor' for this file. 'IntendedFor' indicates one or more filenames with paths relative to the subject subfolder, with forward slashes, referring to ASL timeseries for which the 'm0scan' is intended.",
-  },
   153: {
     key: 'M0Type_NOT_SET',
     severity: 'error',
@@ -992,11 +987,6 @@ export default {
     reason: "You must define 'M0Estimate' for this file, in case 'M0Type' is defined as 'Estimate'. 'M0Estimate' is a single numerical whole-brain M0 value, only if obtained externally (for example retrieved from CSF in a separate measurement).",
   },
     196: {
-    key: 'M0Type_SET_INCORRECTLY',
-    severity: 'warning',
-    reason: "M0Type was not defined correctly. If 'M0Type' is equal to separate, the dataset should include a *_m0scan.nii[.gz] and *_m0scan.json file.",
-  },
-    196: {
     key: 'ECHO_TIME_NOT_CONSISTENT',
     severity: 'warning',
     reason: "The number of values for 'EchoTime' for this file does not match number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'.  'EchoTime' is the echo time (TE) for the acquisition, specified in seconds. ",
@@ -1019,8 +1009,18 @@ export default {
       "You defined M0Type as 'absent' while including an m0scan volume within the '*_aslcontext.tsv'. This is not allowed, please check that this field are filled correctly.",
   },
     200: {
-    key: 'REPETITIONTIMEPREPARATION_MISSING',
+    key: 'REPETITION_TIME_PREPARATION_MISSING',
     severity: 'error',
     reason: "You must define 'RepetitionTimePreparation' for this file. 'RepetitionTimePreparation' is the interval, in seconds, that it takes a preparation pulse block to re-appear at the beginning of the succeeding (essentially identical) pulse sequence block. The data type number may apply to files from any MRI modality concerned with a single value for this field. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL.",
+  },
+    201: {
+      key: 'REPETITIONTIME_PREPARATION_NOT_CONSISTENT',
+      severity: 'warning',
+      reason: "",
+  },
+    202: {
+      key: 'M0Type_SET_INCORRECTLY',
+      severity: 'warning',
+      reason: "M0Type was not defined correctly. If 'M0Type' is equal to separate, the dataset should include a *_m0scan.nii[.gz] and *_m0scan.json file.",
   },
 }

@@ -193,7 +193,6 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
         // check Flip Angle requirements with LookLocker acquisitions
         if (
             mergedDict.hasOwnProperty('FlipAngle') &&
-            mergedDict.hasOwnProperty('LookLocker') &&
             mergedDict['FlipAngle'].constructor === Array
           ) 
         {
@@ -205,7 +204,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
                 file: file,
                 code: 172,
                 reason:
-                  "''FlipAngle' for this file does not match the TSV length. Since the ASL file was acquired with a look-locker approach please be sure that the size of the FlipAngle array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''FlipAngle' for this file does not match the TSV length. Please make sure that the size of the FlipAngle array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }
