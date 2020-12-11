@@ -1024,8 +1024,8 @@ export default {
     reason: "You must define 'RepetitionTimePreparation' for this file. 'RepetitionTimePreparation' is the interval, in seconds, that it takes a preparation pulse block to re-appear at the beginning of the succeeding (essentially identical) pulse sequence block. The data type number may apply to files from any MRI modality concerned with a single value for this field. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL.",
   },
     201: {
-    key: 'REPETITIONTIMEPREPARATION_LENGTH_NOT_MATCHING_NIFTI',
-    severity: 'error',
+    key: 'REPETITIONTIMEPREPARATION_NOT_CONSISTENT',
+    severity: 'warning',
     reason: "The number of values for 'RepetitionTimePreparation' for this file does not match the 4th dimension of the NIfTI header. 'RepetitionTimePreparation' is the interval, in seconds, that it takes a preparation pulse block to re-appear at the beginning of the succeeding (essentially identical) pulse sequence block. The data type number may apply to files from any MRI modality concerned with a single value for this field. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL.",
   },
 }
