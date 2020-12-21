@@ -162,7 +162,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
         //check M0Type and tsv list for m0scan in case of an Included M0Type
         if (mergedDict.hasOwnProperty('M0Type') &&
             mergedDict['M0Type'] === "Included" &&
-            filtered_m0scan_rows < 1
+            filtered_m0scan_rows.length < 1
           )
         {
           tsvIssues.push(
@@ -177,7 +177,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
         //check M0Type and tsv list for m0scan in case of an Absent M0Type
         if (mergedDict.hasOwnProperty('M0Type') &&
             mergedDict['M0Type'] === "Absent" &&
-            filtered_m0scan_rows > 1
+            filtered_m0scan_rows.length >= 1
           )
         {
           tsvIssues.push(

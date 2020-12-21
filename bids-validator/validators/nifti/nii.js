@@ -26,9 +26,8 @@ export default function NIFTI(
   const potentialEvents = utils.files.potentialLocations(
     path.replace('.gz', '').replace('bold.nii', 'events.tsv'),
   )
-  const potentialM0Scans = utils.files.potentialLocations(
-    path.replace('_asl.nii', '_m0scan..nii'),
-  )
+  const potentialM0Scans = path.replace('_asl.nii', '_m0scan.nii')
+
   const mergedDictionary = utils.files.generateMergedSidecarDict(
     potentialSidecars,
     jsonContentsDict,
@@ -215,7 +214,8 @@ export default function NIFTI(
           mergedDictionary.hasOwnProperty('LabelingPulseAverageB1') || 
           mergedDictionary.hasOwnProperty('LabelingPulseDuration') ||
           mergedDictionary.hasOwnProperty('LabelingPulseFlipAngle') ||
-          mergedDictionary.hasOwnProperty('LabelingPulseInterval')
+          mergedDictionary.hasOwnProperty('LabelingPulseInterval') ||
+          mergedDictionary.hasOwnProperty('LabelingDuration')
         )
         {
           
@@ -542,10 +542,10 @@ export default function NIFTI(
         }),
       )
     } else if (
-      mergedDictionary.hasOwnProperty('M0') &&
-      mergedDictionary['M0'].constructor === String
+      mergedDictionary.hasOwnProperty('M0Type') &&
+      mergedDictionary['M0Type'].constructor === String
     ) {
-      const M0String = mergedDictionary['M0']
+      const M0String = mergedDictionary['M0Type']
       switch(M0String) {
         case "Separate":
           // check if an m0 scan file is available and if it is valid
@@ -559,12 +559,12 @@ export default function NIFTI(
                   "'M0Type' property of this asl ('" +
                   file.relativePath +
                   "') does not point to an existing file('" +
-                  m0scanFile +
+                  potentialM0Scans +
                   "'). Please mind that this value should not include subject level directory " +
                   "('/" +
                   file.relativePath.split('/')[1] +
                   "/').",
-                evidence: m0scanFile,
+                evidence: potentialM0Scans,
               }),
             )
           }
@@ -577,7 +577,7 @@ export default function NIFTI(
           break;
         case "Estimate":
           // Check if there is an estimated value in the json file
-          if (!mergedDictionary.hasOwnProperty('M0Type')) {
+          if (!mergedDictionary.hasOwnProperty('M0Estimate')) {
             issues.push(
               new Issue({
                 file: file,
@@ -1298,14 +1298,12 @@ function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
 }
 
 function checkIfSeparateM0scanExists(m0scanFile, fileList, issues, file) {
-  const m0scanFileFull =
-    '/' + file.relativePath.split('/')[1] + '/' + m0scanFile
   let onTheList = false
 
   for (let key2 in fileList) {
     if (key2) {
       const filePath = fileList[key2].relativePath
-      if (filePath === m0scanFileFull) {
+      if (filePath === m0scanFile) {
         onTheList = true
       }
     }

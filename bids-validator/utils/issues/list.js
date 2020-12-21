@@ -805,7 +805,7 @@ export default {
   },
   154: {
     key: 'M0Type_SET_INCORRECTLY',
-    severity: 'warning',
+    severity: 'error',
     reason: "M0Type was not defined correctly. If 'M0Type' is equal to included, the corresponding '*_aslcontext.tsv' should contain the 'm0scan' volume.",
   },
   155: {
@@ -1015,7 +1015,7 @@ export default {
   },
     201: {
       key: 'REPETITIONTIME_PREPARATION_NOT_CONSISTENT',
-      severity: 'warning',
+      severity: 'error',
     reason: "The number of values for 'RepetitionTimePreparation' for this file does not match the 4th dimension of the NIfTI header. 'RepetitionTimePreparation' is the interval, in seconds, that it takes a preparation pulse block to re-appear at the beginning of the succeeding (essentially identical) pulse sequence block. The data type number may apply to files from any MRI modality concerned with a single value for this field. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL.",
   },
     202: {
