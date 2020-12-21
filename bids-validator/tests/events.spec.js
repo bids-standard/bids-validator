@@ -604,7 +604,7 @@ describe('Events', function() {
             },
           },
           myValue: {
-            HED: 'Attribute/Visual/Color/#,Item/Object/Vehicle/Bus',
+            HED: 'Attribute/Visual/Color/#,Item/Object/Vehicle/Bicycle',
           },
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
@@ -643,7 +643,7 @@ describe('Events', function() {
             },
           },
           myCodes: {
-            HED: 'Attribute/Visual/Color/#,Item/Object/Vehicle/Bus',
+            HED: 'Attribute/Visual/Color/#,Item/Object/Vehicle/Bicycle',
           },
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
@@ -681,7 +681,7 @@ describe('Events', function() {
             },
           },
           myValue: {
-            HED: 'Attribute/Visual/Color,Item/Object/Vehicle/Bus',
+            HED: 'Attribute/Visual/Color/Red,Item/Object/Vehicle/Bicycle',
           },
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
@@ -907,7 +907,7 @@ describe('Events', function() {
           path: '/sub01/sub01_task-test_events.tsv',
           contents:
             'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Item/Object/Person/Driver,Event/Something\n',
+            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Item/Object/Person/Cyclist,Event/Something\n',
         },
       ]
       const jsonDictionary = {

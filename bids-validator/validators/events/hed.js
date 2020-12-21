@@ -67,6 +67,7 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
                 hedString,
                 hedSchema,
                 true,
+                true,
               )
               if (!isHedStringValid) {
                 const convertedIssues = convertHedIssuesToBidsIssues(
@@ -188,7 +189,7 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
           const [
             isHedStringValid,
             hedIssues,
-          ] = hedValidator.validator.validateHedString(
+          ] = hedValidator.validator.validateHedEvent(
             hedString,
             hedSchema,
             true,
