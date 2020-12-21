@@ -185,22 +185,20 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
           hedStringsFound = true
         }
 
-        for (const hedString of hedStrings) {
-          const [
-            isHedStringValid,
+        const [
+          isHedDatasetValid,
+          hedIssues,
+        ] = hedValidator.validator.validateHedDataset(
+          hedStrings,
+          hedSchema,
+          true,
+        )
+        if (!isHedDatasetValid) {
+          const convertedIssues = convertHedIssuesToBidsIssues(
             hedIssues,
-          ] = hedValidator.validator.validateHedEvent(
-            hedString,
-            hedSchema,
-            true,
+            eventFile.file,
           )
-          if (!isHedStringValid) {
-            const convertedIssues = convertHedIssuesToBidsIssues(
-              hedIssues,
-              eventFile.file,
-            )
-            issues = issues.concat(convertedIssues)
-          }
+          issues = issues.concat(convertedIssues)
         }
       })
       if (hedStringsFound && Object.entries(schemaDefinition).length === 0) {
