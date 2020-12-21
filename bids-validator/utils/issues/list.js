@@ -770,4 +770,9 @@ export default {
     severity: 'error',
     reason: 'A HED error was found in the JSON sidecar.',
   },
+  140: {
+    key: 'HED_TAG_EXTENSION',
+    severity: 'warning',
+    reason: 'A HED tag extension was found.',
+  },
 }

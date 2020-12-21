@@ -230,6 +230,7 @@ function convertHedIssuesToBidsIssues(hedIssues, file) {
     noValidTagFound: 136,
     emptyTagFound: 137,
     duplicateTagsInSchema: 138,
+    extension: 140,
   }
 
   const convertedIssues = []
