@@ -1171,9 +1171,7 @@ describe('Events', function() {
         {
           file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tmyCodes\n' +
-            '7\tsomething\tone\n',
+          contents: 'onset\tduration\tmyCodes\n' + '7\tsomething\tone\n',
         },
       ]
       const jsonDictionary = {
@@ -1230,9 +1228,7 @@ describe('Events', function() {
         {
           file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tmyCodes\n' +
-            '7\tsomething\tone\n',
+          contents: 'onset\tduration\tmyCodes\n' + '7\tsomething\tone\n',
         },
       ]
       const jsonDictionary = {
@@ -1289,9 +1285,7 @@ describe('Events', function() {
         {
           file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tmyCodes\n' +
-            '7\tsomething\tone\n',
+          contents: 'onset\tduration\tmyCodes\n' + '7\tsomething\tone\n',
         },
       ]
       const jsonDictionary = {
