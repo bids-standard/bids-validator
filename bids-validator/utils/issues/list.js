@@ -984,7 +984,7 @@ export default {
     195: {
     key: 'M0ESTIMATE_NOT_DEFINED',
     severity: 'error',
-    reason: "You must define 'M0Estimate' for this file, in case 'M0Type' is defined as 'Estimate'. 'M0Estimate' is a single numerical whole-brain M0 value, only if obtained externally (for example retrieved from CSF in a separate measurement).",
+    reason: "You must define 'M0Estimate' for this file, in case 'M0Type' is defined as 'Estimate'. 'M0Estimate' is a single numerical whole-brain M0 value (referring to the M0 of blood), only if obtained externally (for example retrieved from CSF in a separate measurement).",
   },
     196: {
     key: 'ECHO_TIME_NOT_CONSISTENT',
