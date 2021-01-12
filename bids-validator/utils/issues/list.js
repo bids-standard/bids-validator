@@ -998,13 +998,13 @@ export default {
   },
     198: {
     key: 'M0Type_SET_INCORRECTLY_TO_ABSENT',
-    severity: 'warning',
+    severity: 'error',
     reason:
       "You defined M0Type as 'absent' while including a separate '*_m0scan.nii[.gz]' and '*_m0scan.json', or defining the 'M0Estimate' field. This is not allowed, please check that this field are filled correctly.",
   },
     199: {
     key: 'M0Type_SET_INCORRECTLY_TO_ABSENT_IN_ASLCONTEXT',
-    severity: 'warning',
+    severity: 'error',
     reason:
       "You defined M0Type as 'absent' while including an m0scan volume within the '*_aslcontext.tsv'. This is not allowed, please check that this field are filled correctly.",
   },
@@ -1020,7 +1020,7 @@ export default {
   },
     202: {
       key: 'M0Type_SET_INCORRECTLY',
-      severity: 'warning',
+      severity: 'error',
       reason: "M0Type was not defined correctly. If 'M0Type' is equal to separate, the dataset should include a *_m0scan.nii[.gz] and *_m0scan.json file.",
   },
 }
