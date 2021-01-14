@@ -3,7 +3,6 @@
  */
 import readline from 'readline'
 import path from 'path'
-import { promisify } from 'util'
 import consoleFormat from './consoleFormat'
 import quickTest from '../validators/bids/quickTest'
 import fullTest from '../validators/bids/fullTest'
@@ -51,13 +50,16 @@ export async function validateFilenames(stream) {
         issues,
         summary,
       ) {
+        // eslint-disable-next-line no-console
         console.log(consoleFormat.issues(issues, defaultOptions) + '\n')
+        // eslint-disable-next-line no-console
         console.log(consoleFormat.summary(summary, defaultOptions))
         resolve()
       })
     })
     return true
   } else {
+    // eslint-disable-next-line no-console
     console.log(
       'This dataset failed a quick validation, please verify it is a BIDS dataset at the root of the git repository',
     )
