@@ -741,7 +741,7 @@ export default {
   134: {
     key: 'LABELING_DURATION_MUST_DEFINE',
     severity: 'error',
-    reason: "You should define 'LabelingDuration' for this file. 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for (P)CASL. Specify either one number for total time-series or provide an array of numbers of different values for each volume in case of sequential acquisitions with varying labeling duration. In the case that an array of numbers is provided, its length should be equal to the number of volumes specified in 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. An 'm0scan' acquired within the ASL time-series, gets a value of zero. Corresponds to DICOM Tag 0018,9258 ASL Pulse Train Duration.",
+    reason: "You should define 'LabelingDuration' for this file. 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for `(P)CASL`. In case all control-label volumes (or deltam or CBF) have the same `LabelingDuration`, a scalar must be specified. In case the control-label volumes (or deltam or cbf) have a different `LabelingDuration`, an array of numbers must be specified, for which any `m0scan` in the timeseries has a `LabelingDuration` of zero. In case an array of numbers is provided, its length should be equal to the number of volumes specified in `*_aslcontext.tsv`. Corresponds to DICOM Tag 0018,9258 `ASL Pulse Train Duration`.",
   },
   135: {
     key: 'POST_LABELING_DELAY_MUST_DEFINE',
@@ -821,7 +821,7 @@ export default {
   157: {
     key: 'LABELLING_DURATION_LENGTH_NOT_MATCHING_NIFTI',
     severity: 'error',
-    reason: "The number of values for 'LabelingDuration' for this file does not match the 4th dimension of the NIfTI header. 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for (P)CASL. Specify either one number for total time-series or provide an array of numbers of different values for each volume in case of sequential acquisitions with varying labeling duration. In the case that an array of numbers is provided, its length should be equal to the number of volumes specified in 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. An 'm0scan' acquired within the ASL time-series, gets a value of zero. Corresponds to DICOM Tag 0018,9258 ASL Pulse Train Duration.",
+    reason: "The number of values for 'LabelingDuration' for this file does not match the 4th dimension of the NIfTI header. 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for `(P)CASL`. In case all control-label volumes (or deltam or CBF) have the same `LabelingDuration`, a scalar must be specified. In case the control-label volumes (or deltam or cbf) have a different `LabelingDuration`, an array of numbers must be specified, for which any `m0scan` in the timeseries has a `LabelingDuration` of zero. In case an array of numbers is provided, its length should be equal to the number of volumes specified in `*_aslcontext.tsv`. Corresponds to DICOM Tag 0018,9258 `ASL Pulse Train Duration`.",
   },
   164: {
     key: 'ASL_MANUFACTURER_MISSING',
@@ -851,7 +851,7 @@ export default {
   169: {
     key: 'LABELING_DURATION_PASL_INCONSISTENT',
     severity: 'error',
-    reason: "The 'LabelingDuration' for PASL 'ArterialSpinLabelingType' can be only a numerical value put to zero or unset. 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for (P)CASL. Specify either one number for total time-series or provide an array of numbers of different values for each volume in case of sequential acquisitions with varying labeling duration. In the case that an array of numbers is provided, its length should be equal to the number of volumes specified in 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. An 'm0scan' acquired within the ASL time-series, gets a value of zero. Corresponds to DICOM Tag 0018,9258 ASL Pulse Train Duration.",
+    reason: "The 'LabelingDuration' for PASL 'ArterialSpinLabelingType' can be only a numerical value put to zero or unset. 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for `(P)CASL`. In case all control-label volumes (or deltam or CBF) have the same `LabelingDuration`, a scalar must be specified. In case the control-label volumes (or deltam or cbf) have a different `LabelingDuration`, an array of numbers must be specified, for which any `m0scan` in the timeseries has a `LabelingDuration` of zero. In case an array of numbers is provided, its length should be equal to the number of volumes specified in `*_aslcontext.tsv`. Corresponds to DICOM Tag 0018,9258 `ASL Pulse Train Duration`.",
   },
   170: {
     key: 'CONTINOUS_RECORDING_MISSING_JSON',
@@ -888,7 +888,7 @@ export default {
   175: {
     key: 'LABELLING_DURATION_NOT_MATCHING_ASLCONTEXT_TSV',
     severity: 'error',
-    reason: "The number of values for 'LabelingDuration' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for (P)CASL. Specify either one number for total time-series or provide an array of numbers of different values for each volume in case of sequential acquisitions with varying labeling duration. In the case that an array of numbers is provided, its length should be equal to the number of volumes specified in 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. An 'm0scan' acquired within the ASL time-series, gets a value of zero. Corresponds to DICOM Tag 0018,9258 ASL Pulse Train Duration.",
+    reason: "The number of values for 'LabelingDuration' for this file does not match the number of volumes in the 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for `(P)CASL`. In case all control-label volumes (or deltam or CBF) have the same `LabelingDuration`, a scalar must be specified. In case the control-label volumes (or deltam or cbf) have a different `LabelingDuration`, an array of numbers must be specified, for which any `m0scan` in the timeseries has a `LabelingDuration` of zero. In case an array of numbers is provided, its length should be equal to the number of volumes specified in `*_aslcontext.tsv`. Corresponds to DICOM Tag 0018,9258 `ASL Pulse Train Duration`.",
   },
   176: {
     key: 'ASLCONTEXT_TSV_INCONSISTENT',
@@ -943,7 +943,7 @@ export default {
   187: {
     key: 'LABELING_DURATION_GREATER',
     severity: 'warning',
-    reason: "'LabelingDuration' is greater than 10, are you sure it's expressed in seconds? 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for (P)CASL. Specify either one number for total time-series or provide an array of numbers of different values for each volume in case of sequential acquisitions with varying labeling duration. In the case that an array of numbers is provided, its length should be equal to the number of volumes specified in 'sub-<label>[_ses-<label>][_acq-<label>][_rec-<label>][_run-<index>]_aslcontext.tsv'. An 'm0scan' acquired within the ASL time-series, gets a value of zero. Corresponds to DICOM Tag 0018,9258 ASL Pulse Train Duration.",
+    reason: "'LabelingDuration' is greater than 10, are you sure it's expressed in seconds? 'LabelingDuration' is the total duration of the labeling pulse train, in seconds, corresponding to the temporal width of the labeling bolus for `(P)CASL`. In case all control-label volumes (or deltam or CBF) have the same `LabelingDuration`, a scalar must be specified. In case the control-label volumes (or deltam or cbf) have a different `LabelingDuration`, an array of numbers must be specified, for which any `m0scan` in the timeseries has a `LabelingDuration` of zero. In case an array of numbers is provided, its length should be equal to the number of volumes specified in `*_aslcontext.tsv`. Corresponds to DICOM Tag 0018,9258 `ASL Pulse Train Duration`.",
   },
   188: {
     key: 'VOLUME_TIMING_NOT_MONOTONICALLY_INCREASING',
@@ -984,7 +984,7 @@ export default {
     195: {
     key: 'M0ESTIMATE_NOT_DEFINED',
     severity: 'error',
-    reason: "You must define 'M0Estimate' for this file, in case 'M0Type' is defined as 'Estimate'. 'M0Estimate' is a single numerical whole-brain M0 value, only if obtained externally (for example retrieved from CSF in a separate measurement).",
+    reason: "You must define 'M0Estimate' for this file, in case 'M0Type' is defined as 'Estimate'. 'M0Estimate' is a single numerical whole-brain M0 value (referring to the M0 of blood), only if obtained externally (for example retrieved from CSF in a separate measurement).",
   },
     196: {
     key: 'ECHO_TIME_NOT_CONSISTENT',
