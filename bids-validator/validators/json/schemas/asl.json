@@ -128,7 +128,7 @@
         "minimum": 0
       }
     },
-    "VascularCrushingVenc" :{
+    "VascularCrushingVENC" :{
       "anyOf": [
         { "type": "number" },
         {

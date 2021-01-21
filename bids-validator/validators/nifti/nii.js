@@ -227,6 +227,7 @@ export default function NIFTI(
           var LabelingPulseDurationString = ''
           var LabelingPulseFlipAngleString = ''
           var LabelingPulseIntervalString = ''
+          var LabelingDurationString = ''
 
           if (mergedDictionary.hasOwnProperty('CASLType')) CASLTypeString = "'CASLType', ";
           if (mergedDictionary.hasOwnProperty('PCASLType')) PCASLTypeString = "'PCASLType', ";
@@ -510,14 +511,14 @@ export default function NIFTI(
       mergedDictionary.hasOwnProperty('VascularCrushing') &&
       mergedDictionary['VascularCrushing'].constructor === Boolean &&
       mergedDictionary['VascularCrushing'] &&
-      !mergedDictionary.hasOwnProperty['VascularCrushingVenc']
+      !mergedDictionary.hasOwnProperty['VascularCrushingVENC']
     ) {
       issues.push(
         new Issue({
           file: file,
           code: 145,
           reason:
-            "You should define 'VascularCrushingVenc' for this file. " +
+            "You should define 'VascularCrushingVENC' for this file. " +
             sidecarMessage,
         }),
       )
@@ -1297,18 +1298,35 @@ function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
   }
 }
 
-function checkIfSeparateM0scanExists(m0scanFile, fileList, issues, file) {
-  let onTheList = false
+/**
+ * Functions to check if m0scan is present in various sub-types, be aware of the '-dir' pattern that could be subject to changes in future versions 
+ *
+ */
 
+function checkIfSeparateM0scanExists(m0scanFile, fileList, issues, file) {
+  let rule = m0scanFile.replace('_m0scan.nii','').replace('.gz','');
+  let m0scanFile_nii = m0scanFile.replace('.nii.gz','.nii');
+  let m0scanFile_niigz = m0scanFile;
+
+  let onTheList = false
   for (let key2 in fileList) {
     if (key2) {
       const filePath = fileList[key2].relativePath
-      if (filePath === m0scanFile) {
+      if (
+        matchRule_m0scan(filePath,rule  + '_dir-*') ||
+        filePath === m0scanFile_nii ||
+        filePath === m0scanFile_niigz
+      ) {
         onTheList = true
       }
     }
   }
   return onTheList;
+}
+
+function matchRule_m0scan(str, rule) {
+  var escapeRegex = (str) => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+  return new RegExp( rule.split("*").map(escapeRegex).join(".*") + "_m0scan.nii").test(str);
 }
 
 function checkIfValidFiletype(intendedForFile, issues, file) {

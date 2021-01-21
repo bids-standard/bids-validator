@@ -172,7 +172,7 @@
         "m0scan\\.nii",
         "m0scan\\.json",
         "aslcontext\\.tsv",
-        "labeling\\.jpg"
+        "asllabeling\\.jpg"
       ]
     }
   },
