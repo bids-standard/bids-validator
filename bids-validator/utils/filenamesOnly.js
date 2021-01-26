@@ -4,6 +4,7 @@
 import readline from 'readline'
 import path from 'path'
 import consoleFormat from './consoleFormat'
+import { defaultIgnore } from './files/readDir'
 import quickTest from '../validators/bids/quickTest'
 import fullTest from '../validators/bids/fullTest'
 
@@ -21,26 +22,50 @@ const defaultOptions = {
 }
 
 async function generateFileObjects(stream) {
+  const ig = defaultIgnore()
   const inputFiles = {}
+  let bidsIgnore = true
   let index = 0
   for await (const line of stream) {
-    const rootPath = `/${line}`
-    /**
-     * Simulated file object based on input
-     * File size is 1 to prevent 0 size errors but makes some checks inaccurate
-     */
-    const file = {
-      name: path.basename(line),
-      path: rootPath,
-      relativePath: rootPath,
-      size: 1,
+    // Part 1, parse bidsignore until 0001 (git delimiter packet)
+    if (line === '0001') {
+      bidsIgnore = false
+    } else {
+      if (bidsIgnore) {
+        ig.add(line)
+      } else {
+        // Done with bidsignore, read filename data
+        const rootPath = `/${line}`
+        /**
+         * Simulated file object based on input
+         * File size is 1 to prevent 0 size errors but makes some checks inaccurate
+         */
+        const file = {
+          name: path.basename(line),
+          path: rootPath,
+          relativePath: rootPath,
+          size: 1,
+        }
+        if (ig.ignores(rootPath)) {
+          file.ignore = true
+        }
+        inputFiles[index] = file
+        index++
+      }
     }
-    inputFiles[index] = file
-    index++
   }
   return inputFiles
 }
 
+/**
+ * Validate input from stdin as bidsignore + filenames
+ *
+ * Protocol uses `0000` line to separate the two streams
+ * .bidsignore lines are read first
+ * One filename per line is read in and bidsignore rules applied
+ *
+ * @param {AsyncIterable} stream Readline stream
+ */
 export async function validateFilenames(stream) {
   const inputFiles = await generateFileObjects(stream)
   const couldBeBIDS = quickTest(inputFiles)
