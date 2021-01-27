@@ -1053,20 +1053,31 @@ export default function NIFTI(
       else if (
         mergedDictionary.hasOwnProperty('VolumeTiming') &&
         !mergedDictionary.hasOwnProperty('RepetitionTime')
-      )
-      {
-      let VolumeTiming = mergedDictionary['VolumeTiming']
-      const MonotonicallyIncreasingVolumeTiming = isMonotonicIncreasingArray(VolumeTiming)
-          if (!MonotonicallyIncreasingVolumeTiming) {
-            issues.push(
-              new Issue({
-                file: file,
-                code: 188,
-                reason:
-                  "'VolumeTiming' should be monotonically increasing." ,
-              }),
-            )
-          }
+      ) {
+        if (
+          mergedDictionary.hasOwnProperty('VolumeTiming') && 
+          !mergedDictionary.hasOwnProperty('SliceTiming') &&
+          !mergedDictionary.hasOwnProperty('AcquisitionDuration')
+        ) {
+          issues.push(
+            new Issue({
+              file: file,
+              code: 171
+            })
+          )
+        }
+        let VolumeTiming = mergedDictionary['VolumeTiming']
+        const MonotonicallyIncreasingVolumeTiming = isMonotonicIncreasingArray(VolumeTiming)
+            if (!MonotonicallyIncreasingVolumeTiming) {
+              issues.push(
+                new Issue({
+                  file: file,
+                  code: 188,
+                  reason:
+                    "'VolumeTiming' should be monotonically increasing." ,
+                }),
+              )
+            }
       }
       if (typeof repetitionTime === 'undefined' && header) {
         issues.push(

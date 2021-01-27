@@ -859,16 +859,10 @@ export default {
     reason:
       'Continous recording data files are required to have an associated JSON metadata file.',
   },
-  134: {
-    key: 'HED_WRONG_NUMBER_OF_NUMBER_SIGNS',
-    severity: 'error',
-    reason:
-      'You must have exactly one number sign in a HED value-taking string template.',
-  },
   171: {
     key: 'VOLUME_TIMING_MISSING_ACQUISITION_DURATION',
     severity: 'error',
-    reason: "The field 'VolumeTiming' requires 'AcquisitionDuration' be defined.",
+    reason: "The field 'VolumeTiming' requires 'AcquisitionDuration' or 'SliceTiming' to be defined.",
   },
   172: {
     key: 'FLIP_ANGLE_NOT_MATCHING_ASLCONTEXT_TSV',
@@ -1018,32 +1012,38 @@ export default {
       severity: 'error',
     reason: "The number of values for 'RepetitionTimePreparation' for this file does not match the 4th dimension of the NIfTI header. 'RepetitionTimePreparation' is the interval, in seconds, that it takes a preparation pulse block to re-appear at the beginning of the succeeding (essentially identical) pulse sequence block. The data type number may apply to files from any MRI modality concerned with a single value for this field. The data type array provides a value for each volume in a 4D dataset and should only be used when the volume timing is critical for interpretation of the data, such as in ASL.",
   },
-    202: {
+  202: {
       key: 'M0Type_SET_INCORRECTLY',
       severity: 'error',
       reason: "M0Type was not defined correctly. If 'M0Type' is equal to separate, the dataset should include a *_m0scan.nii[.gz] and *_m0scan.json file.",
   },
   203: {
+    key: 'HED_WRONG_NUMBER_OF_NUMBER_SIGNS',
+    severity: 'error',
+    reason:
+      'You must have exactly one number sign in a HED value-taking string template.',
+  },
+  204: {
     key: 'HED_INVALID_PARENT_NODE',
     severity: 'error',
     reason: 'You cannot use a valid HED node as a value or extension.',
   },
-  204: {
+  205: {
     key: 'HED_NO_VALID_TAG_FOUND',
     severity: 'error',
     reason: 'No valid base node was found for this HED tag.',
   },
-  205: {
+  206: {
     key: 'HED_EMPTY_TAG_FOUND',
     severity: 'error',
     reason: 'An empty HED tag cannot be validated.',
   },
-  206: {
+  207: {
     key: 'HED_DUPLICATE_TAGS_IN_SCHEMA',
     severity: 'error',
     reason: 'The source HED schema is invalid as it contains duplicate tags.',
   },
-  207: {
+  208: {
     key: 'HED_INVALID_SIDECAR',
     severity: 'error',
     reason: 'A HED error was found in the JSON sidecar.',
