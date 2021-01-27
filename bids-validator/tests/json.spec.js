@@ -291,7 +291,7 @@ describe('JSON', function() {
   it('iEEG *_coordsystem.json schema should require *Description if *Coordsystem is "Other"', function() {
     var jsonObj = {
       iEEGCoordinateSystem: 'Other',
-      iEEGCoordinateUnits: 'mm',
+      iEEGCoordinateUnits: 'pixels',
     }
     jsonDict[ieeg_coordsystem_file.relativePath] = jsonObj
     validate.JSON(ieeg_coordsystem_file, jsonDict, function(issues) {
@@ -494,6 +494,56 @@ describe('JSON', function() {
     jsonDict[dataset_description_file.relativePath] = jsonObj
     validate.JSON(dataset_description_file, jsonDict, function(issues) {
       assert(issues.length === 0)
+    })
+  })
+
+  it('dataset_description.json should validate with DatasetType "derivative" and GeneratedBy defined', function() {
+    var jsonObj = {
+      Name: 'Example Name',
+      BIDSVersion: '1.4.0',
+      Authors: ['example author'],
+      DatasetType: 'derivative',
+      GeneratedBy: [{ Name: 'Manual' }],
+    }
+    jsonDict[dataset_description_file.relativePath] = jsonObj
+    validate.JSON(dataset_description_file, jsonDict, function(issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  it('dataset_description.json should NOT validate with DatasetType "derivative" and GeneratedBy empty', function() {
+    var jsonObj = {
+      Name: 'Example Name',
+      BIDSVersion: '1.4.0',
+      Authors: ['example author'],
+      DatasetType: 'derivative',
+      GeneratedBy: [],
+    }
+    jsonDict[dataset_description_file.relativePath] = jsonObj
+    validate.JSON(dataset_description_file, jsonDict, function(issues) {
+      assert(issues.length === 1)
+      assert(
+        issues[0].code == 55 &&
+          issues[0].evidence ==
+            '.GeneratedBy should NOT have fewer than 1 items',
+      )
+    })
+  })
+
+  it('dataset_description.json should NOT validate with DatasetType "derivative" and GeneratedBy missing', function() {
+    var jsonObj = {
+      Name: 'Example Name',
+      BIDSVersion: '1.4.0',
+      Authors: ['example author'],
+      DatasetType: 'derivative',
+    }
+    jsonDict[dataset_description_file.relativePath] = jsonObj
+    validate.JSON(dataset_description_file, jsonDict, function(issues) {
+      assert(issues.length === 2)
+      assert(
+        issues[0].code == 55 &&
+          issues[0].evidence == " should have required property 'GeneratedBy'",
+      )
     })
   })
 })

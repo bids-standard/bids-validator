@@ -194,8 +194,10 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       // Validate continous recording files
       self.issues = self.issues.concat(tsv.validateContRec(files.contRecord, jsonContentsDict))
 
-      // Validate session files
-      self.issues = self.issues.concat(session(fileList))
+      if (!options.ignoreSubjectConsistency) {
+        // Validate session files
+        self.issues = self.issues.concat(session(fileList))
+      }
 
       // Determine if each subject has data present
       self.issues = self.issues.concat(

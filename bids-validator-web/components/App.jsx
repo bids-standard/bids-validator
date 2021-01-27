@@ -23,6 +23,7 @@ const initState = () => ({
   options: {
     ignoreWarnings: false,
     ignoreNiftiHeaders: false,
+    ignoreSubjectConsistency: false
   },
 })
 

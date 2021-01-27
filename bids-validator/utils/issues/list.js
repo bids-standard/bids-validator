@@ -1023,4 +1023,34 @@ export default {
       severity: 'error',
       reason: "M0Type was not defined correctly. If 'M0Type' is equal to separate, the dataset should include a *_m0scan.nii[.gz] and *_m0scan.json file.",
   },
+  203: {
+    key: 'HED_INVALID_PARENT_NODE',
+    severity: 'error',
+    reason: 'You cannot use a valid HED node as a value or extension.',
+  },
+  204: {
+    key: 'HED_NO_VALID_TAG_FOUND',
+    severity: 'error',
+    reason: 'No valid base node was found for this HED tag.',
+  },
+  205: {
+    key: 'HED_EMPTY_TAG_FOUND',
+    severity: 'error',
+    reason: 'An empty HED tag cannot be validated.',
+  },
+  206: {
+    key: 'HED_DUPLICATE_TAGS_IN_SCHEMA',
+    severity: 'error',
+    reason: 'The source HED schema is invalid as it contains duplicate tags.',
+  },
+  207: {
+    key: 'HED_INVALID_SIDECAR',
+    severity: 'error',
+    reason: 'A HED error was found in the JSON sidecar.',
+  },
+  208: {
+    key: 'HED_TAG_EXTENSION',
+    severity: 'warning',
+    reason: 'A HED tag extension was found.',
+  }
 }
