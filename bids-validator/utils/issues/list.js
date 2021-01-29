@@ -1044,13 +1044,13 @@ export default {
     reason: 'The source HED schema is invalid as it contains duplicate tags.',
   },
   208: {
-    key: 'HED_INVALID_SIDECAR',
-    severity: 'error',
-    reason: 'A HED error was found in the JSON sidecar.',
-  },
-  208: {
     key: 'HED_TAG_EXTENSION',
     severity: 'warning',
     reason: 'A HED tag extension was found.',
+  },
+  209: {
+    key: 'HED_INVALID_SIDECAR',
+    severity: 'error',
+    reason: 'A HED error was found in the JSON sidecar.',
   }
 }
