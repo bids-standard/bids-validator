@@ -775,4 +775,9 @@ export default {
     severity: 'warning',
     reason: 'A HED tag extension was found.',
   },
+  141: {
+    key: 'HED_INVALID_SIDECAR_WARNING',
+    severity: 'warning',
+    reason: 'A HED warning was found in the JSON sidecar.',
+  },
 }

@@ -1311,5 +1311,38 @@ describe('Events', function() {
         assert.strictEqual(issues[1].code, 136)
       })
     })
+
+    it('should throw an issue if a sidecar HED string contains a tag extension', () => {
+      const events = [
+        {
+          file: { path: '/sub01/sub01_task-test_events.tsv' },
+          path: '/sub01/sub01_task-test_events.tsv',
+          contents: 'onset\tduration\tmyCodes\n' + '7\tsomething\tone\n',
+        },
+      ]
+      const jsonDictionary = {
+        '/sub01/sub01_task-test_events.json': {
+          myCodes: {
+            HED: {
+              one: 'Human/Driver',
+            },
+          },
+        },
+        '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
+      }
+
+      return validate.Events.validateEvents(
+        events,
+        [],
+        headers,
+        jsonDictionary,
+        '',
+      ).then(issues => {
+        // TODO: Change length back to 2 once hed-validator event- and string-level validation is properly split.
+        assert.strictEqual(issues.length, 3)
+        assert.strictEqual(issues[0].code, 141)
+        assert.strictEqual(issues[1].code, 140)
+      })
+    })
   })
 })
