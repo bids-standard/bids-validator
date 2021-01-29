@@ -1095,7 +1095,7 @@ export default function NIFTI(
             }),
           )
         }
-      } else if (mergedDictionary.RepetitionTime) {
+      } else if (mergedDictionary.RepetitionTime && header) {
         const niftiTR = Number(repetitionTime).toFixed(3)
         const jsonTR = Number(mergedDictionary.RepetitionTime).toFixed(3)
         if (niftiTR !== jsonTR) {
