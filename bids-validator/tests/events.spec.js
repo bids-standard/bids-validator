@@ -1340,8 +1340,8 @@ describe('Events', function() {
       ).then(issues => {
         // TODO: Change length back to 2 once hed-validator event- and string-level validation is properly split.
         assert.strictEqual(issues.length, 3)
-        assert.strictEqual(issues[0].code, 141)
-        assert.strictEqual(issues[1].code, 140)
+        assert.strictEqual(issues[0].code, 210)
+        assert.strictEqual(issues[1].code, 209)
       })
     })
   })
