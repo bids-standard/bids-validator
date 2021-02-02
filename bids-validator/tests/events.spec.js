@@ -1250,7 +1250,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 2)
-        assert.strictEqual(issues[0].code, 207)
+        assert.strictEqual(issues[0].code, 209)
         assert.strictEqual(issues[1].code, 204)
       })
     })
@@ -1307,7 +1307,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 2)
-        assert.strictEqual(issues[0].code, 207)
+        assert.strictEqual(issues[0].code, 209)
         assert.strictEqual(issues[1].code, 205)
       })
     })
