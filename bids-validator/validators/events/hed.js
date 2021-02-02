@@ -87,10 +87,10 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
                 }
               }
               if (fileErrorsFound) {
-                issues.push(new Issue({ code: 139, file: sidecarName }))
+                issues.push(new Issue({ code: 209, file: sidecarName }))
                 sidecarIssueTypes[sidecarName] = 'error'
               } else {
-                issues.push(new Issue({ code: 141, file: sidecarName }))
+                issues.push(new Issue({ code: 210, file: sidecarName }))
                 sidecarIssueTypes[sidecarName] = 'warning'
               }
               issues = issues.concat(fileIssues)
@@ -122,7 +122,7 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
             ) {
               issues.push(
                 new Issue({
-                  code: 134,
+                  code: 203,
                   file: eventFile.file,
                   evidence: sidecarHedData,
                 }),
@@ -236,11 +236,11 @@ function convertHedIssuesToBidsIssues(hedIssues, file) {
     unitClassDefaultUsed: 120,
     unitClassInvalidUnit: 121,
     extraCommaOrInvalid: 122,
-    invalidParentNode: 135,
-    noValidTagFound: 136,
-    emptyTagFound: 137,
-    duplicateTagsInSchema: 138,
-    extension: 140,
+    invalidParentNode: 204,
+    noValidTagFound: 205,
+    emptyTagFound: 206,
+    duplicateTagsInSchema: 207,
+    extension: 208,
   }
 
   const convertedIssues = []

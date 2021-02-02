@@ -106,7 +106,8 @@
         "magnitude2",
         "magnitude",
         "fieldmap",
-        "epi"
+        "epi",
+        "m0scan"
       ],
       "@@@_field_map_ext_@@@": ["nii\\.gz", "nii", "json"]
     }
@@ -164,6 +165,22 @@
         "_bold\\.nii",
         "_sbref\\.nii\\.gz",
         "_sbref\\.nii"
+      ]
+    }
+  },
+
+  "asl": {
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?perf[\\/\\\\]\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:@@@_asl_type_@@@)$",
+    "tokens": {
+      "@@@_asl_type_@@@": [
+        "asl\\.nii\\.gz",
+        "asl\\.nii",
+        "asl\\.json",
+        "m0scan\\.nii\\.gz",
+        "m0scan\\.nii",
+        "m0scan\\.json",
+        "aslcontext\\.tsv",
+        "asllabeling\\.jpg"
       ]
     }
   },

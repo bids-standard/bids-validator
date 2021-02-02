@@ -695,7 +695,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 134)
+        assert.strictEqual(issues[0].code, 203)
       })
     })
 
@@ -734,7 +734,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 134)
+        assert.strictEqual(issues[0].code, 203)
       })
     })
 
@@ -950,7 +950,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 140)
+        assert.strictEqual(issues[0].code, 208)
       })
     })
 
@@ -1219,7 +1219,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 135)
+        assert.strictEqual(issues[0].code, 204)
       })
     })
 
@@ -1250,8 +1250,8 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 2)
-        assert.strictEqual(issues[0].code, 139)
-        assert.strictEqual(issues[1].code, 135)
+        assert.strictEqual(issues[0].code, 207)
+        assert.strictEqual(issues[1].code, 204)
       })
     })
 
@@ -1276,7 +1276,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 136)
+        assert.strictEqual(issues[0].code, 205)
       })
     })
 
@@ -1307,8 +1307,8 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 2)
-        assert.strictEqual(issues[0].code, 139)
-        assert.strictEqual(issues[1].code, 136)
+        assert.strictEqual(issues[0].code, 207)
+        assert.strictEqual(issues[1].code, 205)
       })
     })
 
