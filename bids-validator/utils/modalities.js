@@ -38,5 +38,5 @@ export default {
     }
 
     return modalities
-  }
+  },
 }
