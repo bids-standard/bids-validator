@@ -96,5 +96,9 @@ export async function filenamesOnly() {
   const rl = readline.createInterface({
     input: process.stdin,
   })
-  validateFilenames(rl)
+  if (await validateFilenames(rl)) {
+    process.exit(0)
+  } else {
+    process.exit(1)
+  }
 }
