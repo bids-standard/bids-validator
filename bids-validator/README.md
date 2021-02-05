@@ -71,6 +71,10 @@ address these issues on a case by case basis.
 
 ## Maintainers and Contributors
 
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-13-orange.svg?style=flat-square)](#contributors)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification.
 Contributions of any kind are welcome!
 
@@ -254,8 +258,7 @@ because it would be functionally the same as this:
 ```
 
 For passing a configuration while using the bids-validator on the command line,
-note that you **have to specify at least two configurations of a given type**,
-because an array is expected. For example, the following code will ignore empty
+you can use the following style to for example ignore empty
 file errors (99) and files that cannot be read (44):
 
 ```
