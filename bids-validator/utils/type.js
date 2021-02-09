@@ -34,7 +34,10 @@ const dwiData = buildRegExp(file_level_rules.dwi)
 const eegData = buildRegExp(file_level_rules.eeg)
 const fieldmapData = buildRegExp(file_level_rules.field_map)
 const fieldmapMainNiiData = buildRegExp(file_level_rules.field_map_main_nii)
-const funcData = buildRegExp(file_level_rules.func)
+const func = buildRegExp(file_level_rules.func)
+const funcPhaseDeprecated = buildRegExp(file_level_rules.func_phase_deprecated)
+const funcEvents = buildRegExp(file_level_rules.func_events)
+const funcTimeseries = buildRegExp(file_level_rules.func_timeseries)
 const funcBoldData = buildRegExp(file_level_rules.func_bold)
 const aslData = buildRegExp(file_level_rules.asl)
 const ieegData = buildRegExp(file_level_rules.ieeg)
@@ -214,8 +217,14 @@ export default {
      * Check if the file has a name appropriate for a functional scan
      */
     isFunc: function(path) {
-      return conditionalMatch(funcData, path)
+      return (
+        conditionalMatch(func, path) ||
+        conditionalMatch(funcPhaseDeprecated, path) ||
+        conditionalMatch(funcEvents, path) ||
+        conditionalMatch(funcTimeseries, path)
+      )
     },
+
     isAsl: function(path) {
       return conditionalMatch(aslData, path)
     },
