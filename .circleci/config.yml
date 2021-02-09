@@ -85,9 +85,9 @@ jobs:
           path: ~/web_version
   pypi_precheck:
     docker:
-      - image: alpine:3.8
+      - image: alpine:3.13
     steps:
-      - run: apk --no-cache add ca-certificates git openssh-client
+      - run: apk --no-cache add ca-certificates git openssh-client rust cargo
       - checkout
       - run:
           name: Set up environment
