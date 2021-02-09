@@ -20,8 +20,15 @@ import top_level_rules from '../bids_validator/rules/top_level_rules.json'
 // Associated data
 const associatedData = buildRegExp(associated_data_rules.associated_data)
 // File level
-const anatData = buildRegExp(file_level_rules.anat)
-const anatDefacemaskData = buildRegExp(file_level_rules.anat_defacemask)
+const anatNonparametric = buildRegExp(file_level_rules.anat_nonparametric)
+const anatParametric = buildRegExp(file_level_rules.anat_parametric)
+const anatDefacemask = buildRegExp(file_level_rules.anat_defacemask)
+const anatMultiEcho = buildRegExp(file_level_rules.anat_multiecho)
+const anatMultiFlip = buildRegExp(file_level_rules.anat_multiflip)
+const anatMultiInv = buildRegExp(file_level_rules.anat_multiinv)
+const anatMP2RAGE = buildRegExp(file_level_rules.anat_mp2rage)
+const anatVFAMT = buildRegExp(file_level_rules.anat_vfa_mt)
+const anatMTR = buildRegExp(file_level_rules.anat_mtr)
 const behavioralData = buildRegExp(file_level_rules.behavioral)
 const dwiData = buildRegExp(file_level_rules.dwi)
 const eegData = buildRegExp(file_level_rules.eeg)
@@ -173,8 +180,15 @@ export default {
      */
     isAnat: function(path) {
       return (
-        conditionalMatch(anatData, path) ||
-        conditionalMatch(anatDefacemaskData, path)
+        conditionalMatch(anatNonparametric, path) ||
+        conditionalMatch(anatParametric, path) ||
+        conditionalMatch(anatDefacemask, path) ||
+        conditionalMatch(anatMultiEcho, path) ||
+        conditionalMatch(anatMultiFlip, path) ||
+        conditionalMatch(anatMultiInv, path) ||
+        conditionalMatch(anatMP2RAGE, path) ||
+        conditionalMatch(anatVFAMT, path) ||
+        conditionalMatch(anatMTR, path)
       )
     },
 
