@@ -1064,13 +1064,13 @@ export default {
     reason: 'A HED tag extension was found.',
   },
   209: {
+    key: 'HED_INVALID_SIDECAR_ERROR',
+    severity: 'error',
+    reason: 'A HED error was found in the JSON sidecar.',
+  },
+  210: {
     key: 'HED_INVALID_SIDECAR_WARNING',
     severity: 'warning',
     reason: 'A HED warning was found in the JSON sidecar.',
-  },
-  210: {
-    key: 'HED_INVALID_SIDECAR',
-    severity: 'error',
-    reason: 'A HED error was found in the JSON sidecar.',
   }
 }
