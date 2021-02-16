@@ -22,8 +22,6 @@ jobs:
       FORCE_COLOR: 1
 
     steps:
-    - uses: actions/checkout@v2
-
     - name: Set up Node.js
       uses: actions/setup-node@v1
       with:
@@ -31,9 +29,7 @@ jobs:
 
     - name: Install bids-validator
       run: |
-        git branch -a
-        git remote -v
-        git checkout ${{ matrix.bids-validator-branch }}
+        git clone --depth 1 https://github.com/bids-standard/bids-validator -b ${{ matrix.bids-validator-branch }}
         npm install -g bids-validator/bids-validator
 
     - name: Get bids-examples data
