@@ -197,9 +197,9 @@
       "type": "number",
       "exclusiveMinimum": 0
     },
-    "TotalAcquiredVolumes" :{
-          "type": "array",
-          "items": { "type": "number" }
+    "TotalAcquiredPairs" :{
+      "type": "number",
+      "exclusiveMinimum": 0
     },
     "PulseSequenceDetails" : {
       "type" : "string"
