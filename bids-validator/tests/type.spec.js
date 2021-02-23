@@ -345,7 +345,9 @@ describe('utils.type.file.isEEG', function() {
     '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.fdt',
     '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_channels.tsv',
     '/sub-01/ses-001/eeg/sub-01_ses-001_electrodes.tsv',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_space-CapTrak_electrodes.tsv',
     '/sub-01/ses-001/eeg/sub-01_ses-001_coordsystem.json',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_space-CapTrak_coordsystem.json',
     '/sub-01/ses-001/eeg/sub-01_ses-001_photo.jpg',
   ]
 
@@ -360,6 +362,8 @@ describe('utils.type.file.isEEG', function() {
     '/sub-01/eeg/sub-01_ses-001_task-rest_run-01_eeg.json',
     '/sub-01/ses-001/eeg/sub-12_ses-001_task-rest_run-01_split-01_eeg.edf',
     '/sub-01/ses-001/eeg/sub-01_ses-001_task-rest_run-01_eeg.tsv',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_space-BOGUS_electrodes.tsv',
+    '/sub-01/ses-001/eeg/sub-01_ses-001_space-BOGUS_coordsystem.json',
   ]
 
   badFilenames.forEach(function(path) {
@@ -386,7 +390,8 @@ describe('utils.type.file.isIEEG', function() {
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.idx',
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_split-01_ieeg.mefd/CH1.timd/CH1-000000.segd/sub-01_ses-001_task-rest_run-01_ieeg.tmet',
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_channels.tsv',
-    '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_electrodes.tsv',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_space-fsaverage_electrodes.tsv',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_space-fsaverage_coordsystem.json',
   ]
 
   goodFilenames.forEach(function(path) {
@@ -400,6 +405,8 @@ describe('utils.type.file.isIEEG', function() {
     '/sub-01/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.json',
     '/sub-01/ses-001/ieeg/sub-12_ses-001_task-rest_run-01_split-01_ieeg.fif',
     '/sub-01/ses-001/ieeg/sub-01_ses-001_task-rest_run-01_ieeg.tsv',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_space-fsavg_electrodes.tsv',
+    '/sub-01/ses-001/ieeg/sub-01_ses-001_space-fsavg_coordsystem.json',
   ]
 
   badFilenames.forEach(function(path) {
