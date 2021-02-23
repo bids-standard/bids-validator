@@ -434,7 +434,7 @@ export default function NIFTI(
       issues.push(
         new Issue({
           file: file,
-          code: 158,
+          code: 136,
           reason:
             "You should define 'BackgroundSuppression' for this file. If you don't provide this information CBF quantification will be biased. " +
             sidecarMessage,
