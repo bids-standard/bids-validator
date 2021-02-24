@@ -13,7 +13,7 @@ jobs:
       matrix:
         platform: [ubuntu-latest]
         bids-validator-branch: [master]
-        bids-examples-branch: [bep001_qmri]
+        bids-examples-branch: [master]
 
     runs-on: ${{ matrix.platform }}
 
