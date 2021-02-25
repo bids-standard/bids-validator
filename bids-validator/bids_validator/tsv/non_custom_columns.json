@@ -43,5 +43,6 @@
   "phenotype": ["participant_id"],
   "scans": ["acq_time", "filename"],
   "sessions": ["acq_time", "session_id"],
-  "aslcontext": ["volume_type"]
+  "aslcontext": ["volume_type"],
+  "blood.tsv": ["plasma_radioactivity", "wholeblood_radioactivity", "metabolite_parent_fraction"]
 }

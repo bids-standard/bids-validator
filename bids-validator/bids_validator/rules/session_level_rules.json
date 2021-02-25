@@ -32,6 +32,15 @@
     }
   },
 
+  "pet_ses": {
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?\\1(_\\2)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+_)?(@@@_pet_ses_type_@@@).json$",
+    "tokens": {
+      "@@@_pet_ses_ext_@@@": [
+        "pet"
+      ]
+    }
+  },
+
   "anat_ses": {
     "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+_)?(@@@_anat_ses_type_@@@).json$",
     "tokens": {
