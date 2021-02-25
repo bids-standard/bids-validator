@@ -2,6 +2,7 @@ import utils from '../../utils'
 import Ajv from 'ajv'
 const ajv = new Ajv({ allErrors: true })
 ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'))
+ajv.addSchema(require('./schemas/common_definitions.json'))
 const Issue = utils.issues.Issue
 
 /**
@@ -73,7 +74,6 @@ const compareSidecarProperties = (file, sidecar) => {
   return issues
 }
 
-// TODO: add /events.json schema loading/validation
 const selectSchema = file => {
   let schema = null
   if (file.name) {
@@ -84,6 +84,8 @@ const selectSchema = file => {
       file.name.endsWith('sbref.json')
     ) {
       schema = require('./schemas/bold.json')
+    } else if (file.name.endsWith('asl.json')) {
+      schema = require('./schemas/asl.json')
     } else if (file.relativePath === '/dataset_description.json') {
       schema = require('./schemas/dataset_description.json')
     } else if (file.name.endsWith('meg.json')) {
@@ -107,15 +109,15 @@ const selectSchema = file => {
       file.name.endsWith('coordsystem.json')
     ) {
       schema = require('./schemas/coordsystem_eeg.json')
-    } else if (
-        file.name.endsWith('genetic_info.json')
-    ) {
+    } else if (file.name.endsWith('genetic_info.json')) {
       schema = require('./schemas/genetic_info.json')
     } else if (
         file.name.endsWith('physio.json') ||
         file.name.endsWith('stim.json')
     ) {
       schema = require('./schemas/physio.json')
+    } else if (file.name.endsWith('events.json')) {
+      schema = require('./schemas/events.json')
     }
   }
   return schema

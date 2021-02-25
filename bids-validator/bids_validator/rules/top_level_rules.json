@@ -13,22 +13,38 @@
         "phasediff.json",
         "phase1.json",
         "phase2.json",
-        "fieldmap.json"
+        "fieldmap.json",
+        "events.json",
+        "scans.json"
       ]
     }
   },
-  
+
   "func_top": {
-    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_ce-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_echo-[0-9]+)?(@@@_func_top_ext_@@@)$",
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_ce-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_echo-[0-9]+)?((?:@@@_func_top_ext_@@@)|(?:_recording-[a-zA-Z0-9]+)?(?:@@@_cont_ext_@@@))$",
     "tokens": {
       "@@@_func_top_ext_@@@": [
         "_bold\\.json",
         "_sbref\\.json",
         "_events\\.json",
         "_events\\.tsv",
-        "_physio\\.json",
-        "_stim\\.json",
         "_beh\\.json"
+      ],
+      "@@@_cont_ext_@@@": [
+        "_physio\\.json",
+        "_stim\\.json"
+      ]
+    }
+  },
+
+  "asl_top": {
+    "regexp": "^\\/(?:ses-[a-zA-Z0-9]+_)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(@@@_asl_top_ext_@@@)$",
+    "tokens": {
+      "@@@_asl_top_ext_@@@": [
+        "_asl\\.json",
+        "_m0scan\\.json",
+        "_aslcontext\\.tsv",
+        "_labeling.jpg"
       ]
     }
   },
@@ -58,7 +74,7 @@
   },
 
   "dwi_top": {
-    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?dwi\\.(?:@@@_dwi_top_ext_@@@)$",
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(dwi\\.(?:@@@_dwi_top_ext_@@@)|sbref\\.json)$",
     "tokens": {
       "@@@_dwi_top_ext_@@@": ["json", "bval", "bvec"]
     }
@@ -69,7 +85,9 @@
       "@@@_eeg_top_ext_@@@": [
         "_eeg\\.json",
         "_channels\\.tsv",
+        "_channels\\.json",
         "_electrodes\\.tsv",
+        "_electrodes\\.json",
         "_photo\\.jpg",
         "_coordsystem\\.json"
       ]
@@ -81,7 +99,9 @@
       "@@@_ieeg_top_ext_@@@": [
         "_ieeg\\.json",
         "_channels\\.tsv",
+        "_channels\\.json",
         "_electrodes\\.tsv",
+        "_electrodes\\.json",
         "_photo\\.jpg",
         "_coordsystem\\.json"
       ]
@@ -93,6 +113,7 @@
       "@@@_meg_top_ext_@@@": [
         "_meg\\.json",
         "_channels\\.tsv",
+        "_channels\\.json",
         "_photo\\.jpg",
         "_coordsystem\\.json"
       ]
@@ -101,9 +122,8 @@
   "multi_dir_fieldmap": {
     "regexp": "^[\\/\\\\](?:acq-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)epi\\.json$"
   },
-
   "other_top_files": {
-    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(@@@_other_top_files_ext_@@@)$",
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(@@@_other_top_files_ext_@@@)$",
     "tokens": {
       "@@@_other_top_files_ext_@@@": ["physio\\.json", "stim\\.json"]
     }

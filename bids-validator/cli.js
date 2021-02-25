@@ -5,7 +5,7 @@ import validate from './index.js'
 const format = validate.consoleFormat
 import colors from 'colors/safe'
 import fs from 'fs'
-import remoteFiles from './utils/files/remoteFiles'
+import { filenamesOnly } from './utils/filenamesOnly.js'
 
 const exitProcess = issues => {
   if (
@@ -51,6 +51,10 @@ export default function(dir, options) {
     process.exit(3)
   })
 
+  if (options.filenames) {
+    return filenamesOnly()
+  }
+
   if (fs.existsSync(dir)) {
     if (options.json) {
       validate.BIDS(dir, options, function(issues, summary) {
@@ -66,7 +70,7 @@ export default function(dir, options) {
       })
     }
   } else {
-    console.log(colors.red(dir + ' does not exist'))
+    console.log(colors.red(dir + ' does not exist '))
     process.exit(2)
   }
 }

@@ -42,7 +42,7 @@ jobs:
           name: Eslint
           command: yarn lint
       - run:
-          name: Test Data
+          name: Get bids-examples data
           command: git submodule update --init
       - run:
           name: Jest tests
@@ -52,7 +52,9 @@ jobs:
           command: yarn codecov
       - run:
           name: Smoke tests
-          command: bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders && bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders --json
+          command: |
+            bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders
+            bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders --json
   test_docker:
     machine:
       # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
@@ -85,9 +87,9 @@ jobs:
           path: ~/web_version
   pypi_precheck:
     docker:
-      - image: alpine:3.8
+      - image: alpine:3.13
     steps:
-      - run: apk --no-cache add ca-certificates git openssh-client
+      - run: apk --no-cache add ca-certificates git openssh-client rust cargo
       - checkout
       - run:
           name: Set up environment
@@ -97,7 +99,9 @@ jobs:
           command: apk --no-cache add python3 python3-dev
       - run:
           name: Update Python install tools
-          command: python3 -m pip install --upgrade pip setuptools wheel
+          command: |
+            python3 -m ensurepip
+            python3 -m pip install --upgrade pip setuptools wheel
       - run:
           name: Install twine, readme renderer
           command: python3 -m pip install twine readme_renderer[md]

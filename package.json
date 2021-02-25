@@ -10,8 +10,10 @@
     "codecov": "./node_modules/.bin/codecov",
     "test": "bids-validator/bin/test-submodule-exists && jest",
     "npmPublish": "cd bids-validator && publish",
+    "lernaPublish": "./node_modules/.bin/lerna publish && ./tools/post_publish.sh",
     "web-dev": "cd bids-validator-web && yarn dev",
     "web-build": "cd bids-validator-web && yarn build",
+    "web-start": "cd bids-validator-web && yarn build && yarn start",
     "web-export": "yarn web-build && cd bids-validator-web && yarn next export"
   },
   "jest": {
@@ -26,5 +28,8 @@
     "jest": "^24.9.0",
     "jest-environment-node": "^24.9.0",
     "lerna": "^3.15.0"
+  },
+  "dependencies": {
+    "next-transpile-modules": "^4.0.2"
   }
 }

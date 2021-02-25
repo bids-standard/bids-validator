@@ -27,8 +27,6 @@ const validate = (
           fileList,
           events,
           function(niftiIssues) {
-            // console.log('niftiIssues.length:', niftiIssues.length)
-            // console.log('squirt')
             issues = issues.concat(niftiIssues)
             resolve()
           },
