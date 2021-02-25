@@ -48,7 +48,6 @@
     "InfusionSpeed": { "type": "string", "minLength": 1 },
     "InfusionSpeedUnit": { "type": "string", "minLength": 1 },
     "InjectedVolume": { "type": "number" },
-    "InjectedVolumeUnit": { "type": "string", "minLength": 1 },
     "Purity": { "type": "number" },
 
     "TimeZero": {
