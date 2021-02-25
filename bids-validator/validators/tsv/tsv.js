@@ -276,6 +276,15 @@ const TSV = (file, contents, fileList, callback) => {
     checkheader('size', 4, file, 73)
   }
 
+  // blood.tsv
+  if (
+    file.relativePath.includes('/pet/') &&
+    file.name.endsWith('_blood.tsv')
+  ) {
+    // Validate fields here
+    checkheader('time', 0, file, 126)
+  }
+
   // check for valid SI units
   /* 
    * Commenting out call to validation until it is inline with spec:
