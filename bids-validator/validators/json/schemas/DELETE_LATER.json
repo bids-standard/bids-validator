@@ -1,0 +1,170 @@
+{
+  "type": "object",
+  "properties": {
+    "Modality": { "type": "string", "minLength": 1 },
+    "PlasmaType": { "type": "string", "minLength": 1 },
+    "FreeFraction": {
+      "type": "number",
+      "min": 0,
+      "max": 1
+    },
+    "FreeFractionMethod": { "type": "string", "minLength": 1 },
+    "PlasmaTimeZero": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "PlasmaDecayCorrected": { "type": "boolean" },
+    "PlasmaDecayCorrectionTime": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "PlasmaSampleTime": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "PlasmaSampleTimeUnits": { "type": "string", "minLength": 1 },
+    "PlasmaActivity": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "PlasmaActivityUnits": { "type": "string", "minLength": 1 },
+
+    "MetaboliteType": { "type": "string", "minLength": 1 },
+    "MetaboliteMethod": { "type": "string", "minLength": 1 },
+    "MetaboliteTimeZero": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "MetaboliteSampleTime": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "MetaboliteSampleTimeUnits": { "type": "string", "minLength": 1 },
+    "MetaboliteParentFraction": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "min": 0,
+        "max": 1
+      }
+    },
+    "MetaboliteParentFractionUnits": { "type": "string", "minLength": 1 },
+    "MetabolitePolar": { "type": "array", "items": { "type": "number" } },
+    "MetabolitePolarUnits": { "type": "string", "minLength": 1 },
+    "MetaboliteLipophilic": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "MetaboliteLipophilicUnits": { "type": "string", "minLength": 1 },
+
+    "Haematocrit": { "type": "string", "minLength": 1 },
+    "BloodDensity": { "type": "string", "minLength": 1 },
+    "BloodDensityUnits": { "type": "string", "minLength": 1 },
+    "BloodDiscreteTimeZero": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "BloodDiscreteDecayCorrected": { "type": "boolean" },
+    "BloodDiscreteDecayCorrectionTime": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "BloodDiscreteType": { "type": "string", "minLength": 1 },
+    "BloodDiscreteSampleTime": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "BloodDiscreteSampleTimeUnits": { "type": "string", "minLength": 1 },
+    "BloodDiscreteActivity": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "BloodDiscreteActivityUnits": { "type": "string", "minLength": 1 },
+
+    "WithdrawalRate": { "type": "string", "minLength": 1 },
+    "WithdrawalRateUnits": { "type": "string", "minLength": 1 },
+    "TubingLength": { "type": "string", "minLength": 1 },
+    "TubingLengthUnits": { "type": "string", "minLength": 1 },
+    "DispersionCorrected": { "type": "boolean" },
+    "DispersionConstant": { "type": "string", "minLength": 1 },
+    "DispersionConstantUnits": { "type": "string", "minLength": 1 },
+    "BloodContinuousTimeZero": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "BloodContinuousDecayCorrected": { "type": "boolean" },
+    "BloodContinuousDecayCorrectionTime": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "BloodContinuousType": { "type": "string", "minLength": 1 },
+    "BloodContinuousSampleTime": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "BloodContinuousSampleTimeUnits": { "type": "string", "minLength": 1 },
+    "BloodContinuousActivity": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "BloodContinuousActivityUnits": { "type": "string", "minLength": 1 }
+  },
+  "required": [
+    "PlasmaType",
+    "PlasmaTimeZero",
+    "PlasmaDecayCorrected",
+    "PlasmaSampleTime",
+    "PlasmaActivity",
+
+    "MetaboliteType",
+    "MetaboliteMethod",
+    "MetaboliteTimeZero",
+    "MetaboliteSampleTime",
+    "MetaboliteParentFraction",
+
+    "Haematocrit",
+    "BloodDiscreteDecayCorrected",
+    "BloodDiscreteType",
+    "BloodDiscreteSampleTime",
+    "BloodDiscreteActivity",
+
+    "BloodContinuousDecayCorrected",
+    "BloodContinuousSampleTime",
+    "BloodContinuousActivity"
+  ],
+  "dependencies": {
+    "PlasmaDecayCorrected": ["PlasmaDecayCorrectionTime"],
+    "PlasmaSampleTime": ["PlasmaSampleTimeUnits"],
+    "PlasmaActivity": ["PlasmaActivityUnits"],
+
+    "MetaboliteSampleTime": ["MetaboliteSampleTimeUnits"],
+    "MetaboliteParentFraction": ["MetaboliteParentFractionUnits"],
+    "MetabolitePolar": ["MetabolitePolarUnits"],
+    "MetaboliteLipophilic": ["MetaboliteLipophilicUnits"],
+
+    "BloodDensity": ["BloodDensityUnits"],
+    "BloodDiscreteDecayCorrected": ["BloodDiscreteDecayCorrectionTime"],
+    "BloodDiscreteSampleTime": ["BloodDiscreteSampleTimeUnits"],
+    "BloodDiscreteActivity": ["BloodDiscreteActivityUnits"],
+
+    "WithdrawalRate": ["WithdrawalRateUnits"],
+    "TubingLength": ["TubingLengthUnits"],
+    "DispersionCorrected": ["DispersionConstant", "DispersionConstantUnits"],
+    "BloodContinuousSampleTime": ["BloodContinuousSampleTimeUnits"],
+    "BloodContinuousActivity": ["BloodContinuousActivityUnits"]
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "BloodContinuousDecayCorrected": {
+            "enum": [true]
+          }
+        }
+      },
+      "then": {
+        "required": ["BloodContinuousDecayCorrectionTime"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "type": "object",
+  "properties": {
+    "Modality": { "type": "string", "minLength": 1 },
+    "Manufacturer": { "type": "string", "minLength": 1 },
+    "ManufacturersModelName": { "type": "string", "minLength": 1 },
+    "Anaesthesia": { "type": "string", "minLength": 1 },
+    "BodyPart": { "type": "string", "minLength": 1 },
+    "Unit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "TracerName": { "type": "string", "minLength": 1 },
+    "TracerRadLex": { "type": "string", "minLength": 1 },
+    "TracerSNOMED": { "type": "string", "minLength": 1 },
+    "TracerRadionuclide": { "type": "string", "minLength": 1 },
+    "TracerMolecularWeight": { "type": "number" },
+    "TracerMolecularWeightUnit": { "type": "string", "minLength": 1 },
+    "PharmaceuticalName": { "type": "string", "minLength": 1 },
+    "PharmaceuticalDoseAmount": { "type": "string", "minLength": 1 },
+    "PharmaceuticalDoseUnit": { "type": "string", "minLength": 1 },
+    "PharmaceuticalDoseRegimen": { "type": "string", "minLength": 1 },
+    "PharmaceuticalDoseTime": { "type": "number" },
+    "PharmaceuticalDoseTimeUnit": { "type": "string", "minLength": 1 },
+
+    "InjectedRadioactivity": { "type": "number" },
+    "InjectedRadioactivityUnit": { "type": "string", "minLength": 1 },
+    "InjectedMass": { "type": "number" },
+    "InjectedMassUnit": { "type": "string", "minLength": 1 },
+    "InjectedMassPerWeight": { "type": "number" },
+    "InjectedMassPerWeightUnit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "SpecificRadioactivity": { "type": "number" },
+    "SpecificRadioactivityUnit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "SpecificRadioactivityMeasTime": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "MolarActivity": { "type": "number" },
+    "MolarActivityUnit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "MolarActivityMeasTime": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "ModeOfAdministration": { "type": "string", "minLength": 1 },
+    "InfusionSpeed": { "type": "string", "minLength": 1 },
+    "InfusionSpeedUnit": { "type": "string", "minLength": 1 },
+    "InjectedVolume": { "type": "number" },
+    "InjectedVolumeUnit": { "type": "string", "minLength": 1 },
+    "Purity": { "type": "number" },
+    "PurityUnit": { "type": "string", "minLength": 1 },
+
+    "ScanDate": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "ScanStart": { "type": "number" },
+    "InjectionStart": { "type": "number" },
+    "InjectionEnd": { "type": "number" },
+    "TimeZero": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "FrameTimesStart": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "FrameDuration": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+
+    "AcquisitionMode": { "type": "string", "minLength": 1 },
+    "ImageDecayCorrected": { "type": "boolean" },
+    "ImageDecayCorrectionTime": { "type": "number" },
+    "ReconMethodName": { "type": "string", "minLength": 1 },
+    "ReconMethodParameterLabels": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "ReconMethodParameterUnit": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "ReconMethodParameterValues": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "ReconMethodImplementationVersion": { "type": "string", "minLength": 1 },
+    "ReconFilterType": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "ReconFilterSize": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "AttenuationCorrection": { "type": "string", "minLength": 1 },
+    "AttenuationCorrectionMethodReference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ScaleFactor": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "ScatterFraction": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "DecayCorretionFactor": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "PromptRate": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "RandomRate": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "SinglesRate": {
+      "type": "array",
+      "items": { "type": "number" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "TracerName": {
+            "enum": ["FDG"]
+          }
+        }
+      },
+      "then": {
+      },
+      "else": {
+        "required": ["InjectedMass", "InjectedMassUnit", "SpecificRadioactivity", "SpecificRadioactivityUnit"]
+      }
+    }
+  ],
+  "required": [
+    "Manufacturer",
+    "ManufacturersModelName",
+    "Unit",
+    "TracerName",
+    "TracerRadionuclide",
+
+    "InjectedRadioactivity",
+    "InjectedRadioactivityUnit",
+    "ModeOfAdministration",
+
+    "ScanStart",
+    "InjectionStart",
+    "TimeZero",
+    "FrameTimesStart",
+    "FrameDuration",
+    "AcquisitionMode",
+    "ImageDecayCorrected",
+    "ImageDecayCorrectionTime",
+    "ReconMethodName",
+    "ReconMethodParameterLabels",
+    "ReconMethodParameterUnit",
+    "ReconMethodParameterValues",
+    "ReconFilterType",
+    "ReconFilterSize",
+    "AttenuationCorrection"
+  ],
+  "dependencies": {
+    "TracerMolecularWeight": ["TracerMolecularWeightUnit"],
+    "BodyWeight": ["BodyWeightUnit"],
+
+    "InjectedRadioactivity": ["InjectedRadioactivityUnit"],
+    "InjectedMass": ["InjectedMassUnit"],
+    "InjectedMassPerWeight": ["InjectedMassPerWeightUnit"],
+    "MolarActivity": ["MolarActivityUnit"],
+    "SpecificRadioactivity": ["SpecificRadioactivityUnit"],
+    "Purity": ["PurityUnit"],
+    "InfusionSpeed": ["InfusionSpeedUnit"],
+    "InjectedVolume": ["InjectedVolumeUnit"],
+
+    "ReconMethodParameterLabels": [
+      "ReconMethodParameterUnit",
+      "ReconMethodParameterValues"
+    ]
+  }
+}
