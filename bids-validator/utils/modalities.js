@@ -39,7 +39,7 @@ export default {
 
     return modalities
   },
-  /* 
+  /*
    * Removed in #1122, but modified in BEP-009
    *
    * isCorrectModality: path => {
