@@ -51,7 +51,7 @@ const megCalibrationData = buildRegExp(file_level_rules.meg_calbibration)
 const megCrosstalkData = buildRegExp(file_level_rules.meg_crosstalk)
 const stimuliData = buildRegExp(file_level_rules.stimuli)
 const petData = buildRegExp(file_level_rules.pet)
-const petBloodData = buildRegExp(file_level_rules.pet_blood)
+const petBlood = buildRegExp(file_level_rules.pet_blood)
 // Phenotypic data
 const phenotypicData = buildRegExp(phenotypic_rules.phenotypic_data)
 // Session level
@@ -265,7 +265,7 @@ export default {
     },
 
     isPETBlood: function(path) {
-      return conditionalMatch(petDataBlood, path)
+      return conditionalMatch(petBlood, path)
     },
 
     isMeg: function(path) {
@@ -305,8 +305,8 @@ export default {
         this.isIEEG(path) ||
         this.isBehavioral(path) ||
         this.isFuncBold(path) ||
-        this.isPETData(path) ||
-        this.isPETBloodData(path)
+        this.isPET(path) ||
+        this.isPETBlood(path)
       )
     },
   },
