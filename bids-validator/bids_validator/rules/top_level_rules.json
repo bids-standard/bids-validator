@@ -49,6 +49,15 @@
     }
   },
 
+  "pet_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:trc-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(@@@_pet_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_pet_suffixes_@@@": [
+        "pet"
+      ]
+    }
+  },
+
   "anat_top": {
     "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(@@@_anat_suffixes_@@@)\\.json$",
     "tokens": {

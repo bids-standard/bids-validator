@@ -44,5 +44,5 @@
   "scans": ["acq_time", "filename"],
   "sessions": ["acq_time", "session_id"],
   "aslcontext": ["volume_type"],
-  "blood.tsv": ["plasma_radioactivity", "wholeblood_radioactivity", "metabolite_parent_fraction"]
+  "blood": ["plasma_radioactivity", "wholeblood_radioactivity", "metabolite_parent_fraction"]
 }
