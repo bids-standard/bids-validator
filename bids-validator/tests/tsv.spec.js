@@ -156,7 +156,7 @@ describe('TSV', function() {
       'participant_id\theader-two\theader-three\n' +
       '01\tvalue-two\tvalue-three'
     validate.TSV.TSV(participantsFile, tsv, [], function(issues) {
-      ssert(issues.length === 1 && issues[0].code === 211)
+      assert(issues.length === 1 && issues[0].code === 211)
     })
   })
 
