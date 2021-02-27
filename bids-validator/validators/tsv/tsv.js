@@ -218,7 +218,6 @@ const TSV = (file, contents, fileList, callback) => {
 
         // check if any incorrect patterns in participant_id column
         if (!row[participantIdColumn].startsWith('sub-')) {
-          bad_id_rows.push(row[participantIdColumn])
           issues.push(
             new Issue({
               file: file,
@@ -226,7 +225,7 @@ const TSV = (file, contents, fileList, callback) => {
               reason: 'Participant_id column should be named ' +
                       'as sub-<subject_id>.',
               line: l,
-              code: 48,
+              code: 211,
             }),
           )
         }
