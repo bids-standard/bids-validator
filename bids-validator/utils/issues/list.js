@@ -1078,5 +1078,5 @@ export default {
     severity: 'error',
     reason:
       'Participant_id column labels must consist of the pattern "sub-<subject_id>".',
-  },
+  }
 }
