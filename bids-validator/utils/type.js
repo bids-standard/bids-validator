@@ -36,6 +36,9 @@ const fmapGre = buildRegExp(file_level_rules.fmap_gre)
 const fmapPepolarAsl = buildRegExp(file_level_rules.fmap_pepolar_asl)
 const fmapTB1DAM = buildRegExp(file_level_rules.fmap_TB1DAM)
 const fmapTB1EPI = buildRegExp(file_level_rules.fmap_TB1EPI)
+const fmapRF = buildRegExp(file_level_rules.fmap_rf)
+const fmapTB1SRGE = buildRegExp(file_level_rules.fmap_TB1SRGE)
+const fmapParametric = buildRegExp(file_level_rules.fmap_parametric)
 const func = buildRegExp(file_level_rules.func)
 const funcPhaseDeprecated = buildRegExp(file_level_rules.func_phase_deprecated)
 const funcEvents = buildRegExp(file_level_rules.func_events)
@@ -212,7 +215,10 @@ export default {
         conditionalMatch(fmapGre, path) ||
         conditionalMatch(fmapPepolarAsl, path) ||
         conditionalMatch(fmapTB1DAM, path) ||
-        conditionalMatch(fmapTB1EPI, path)
+        conditionalMatch(fmapTB1EPI, path) ||
+        conditionalMatch(fmapTB1SRGE, path) ||
+        conditionalMatch(fmapRF, path) ||
+        conditionalMatch(fmapParametric, path)
       )
     },
 
@@ -223,7 +229,10 @@ export default {
         (conditionalMatch(fmapGre, path) ||
           conditionalMatch(fmapPepolarAsl, path) ||
           conditionalMatch(fmapTB1DAM, path) ||
-          conditionalMatch(fmapTB1EPI, path))
+          conditionalMatch(fmapTB1EPI, path) ||
+          conditionalMatch(fmapTB1SRGE, path) ||
+          conditionalMatch(fmapRF, path) ||
+          conditionalMatch(fmapParametric, path))
       )
     },
 
