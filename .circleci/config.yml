@@ -34,22 +34,22 @@ jobs:
       - restore_cache:
           keys:
             - npm-deps-{{ checksum "package.json" }}
-      - run: yarn
+      - run: npm
       - save_cache:
           key: npm-deps-{{ checksum "package.json" }}
           paths: node_modules
       - run:
           name: Eslint
-          command: yarn lint
+          command: npm run lint
       - run:
           name: Get bids-examples data
           command: git submodule update --init
       - run:
           name: Jest tests
-          command: yarn coverage --maxWorkers=2
+          command: npm run coverage --maxWorkers=2
       - run:
           name: Upload to codecov
-          command: yarn codecov
+          command: npm run codecov
       - run:
           name: Smoke tests
           command: |
@@ -79,10 +79,10 @@ jobs:
       - run: apk --no-cache add rsync git python build-base openssh
       - run:
           name: Install bids-validator and bids-validator-web dependencies
-          command: yarn
+          command: npm install
       - run:
           name: Build and export web-validator
-          command: yarn web-export && rsync -av ./bids-validator-web/out/ ~/web_version
+          command: npm run web-export && rsync -av ./bids-validator-web/out/ ~/web_version
       - store_artifacts:
           path: ~/web_version
   pypi_precheck:
@@ -148,10 +148,10 @@ jobs:
           command: git checkout --orphan gh-pages
       - run:
           name: Install web demo dependencies
-          command: yarn
+          command: npm install
       - run:
           name: Build and export next project
-          command: yarn web-export
+          command: npm run web-export
       - run:
           name: Clean and remove bids-validator files
           command: git reset . && git clean --force -d --exclude bids-validator-web/out
