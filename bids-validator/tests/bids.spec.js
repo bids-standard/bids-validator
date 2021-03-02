@@ -273,9 +273,21 @@ describe('BIDS example datasets ', function() {
       isdone()
     })
   })
+
   it('should validate pet data', function(isdone) {
     validate.BIDS(
       createDatasetFileList('broken_pet_example_2-pet_mri'),
+      options,
+      function(issues) {
+        assertErrorCode(issues.errors, 55)
+        isdone()
+      },
+    )
+  })
+
+  it('should validate pet blood data', function(isdone) {
+    validate.BIDS(
+      createDatasetFileList('broken_pet_example_3-pet_blood'),
       options,
       function(issues) {
         assertErrorCode(issues.errors, 55)
