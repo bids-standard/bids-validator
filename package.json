@@ -25,11 +25,13 @@
   "devDependencies": {
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",
+    "eslint": "^7.15.0",
     "jest": "^24.9.0",
     "jest-environment-node": "^24.9.0",
     "lerna": "^3.22.1"
   },
   "dependencies": {
     "next-transpile-modules": "^4.0.2"
-  }
+  },
+  "name": "bids-validator"
 }
