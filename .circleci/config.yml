@@ -34,7 +34,7 @@ jobs:
       - restore_cache:
           keys:
             - npm-deps-{{ checksum "package.json" }}
-      - run: npm
+      - run: npm install
       - save_cache:
           key: npm-deps-{{ checksum "package.json" }}
           paths: node_modules
