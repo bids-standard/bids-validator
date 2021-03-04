@@ -47,7 +47,7 @@ jobs:
           command: git submodule update --init
       - run:
           name: Jest tests
-          command: npm run coverage --maxWorkers=2
+          command: npm run coverage --maxWorkers=2 --testTimeout= 10000
       - run:
           name: Upload to codecov
           command: npm run codecov
