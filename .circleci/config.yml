@@ -71,13 +71,12 @@ jobs:
             docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
   githubPagesTest:
     docker:
-      - image: cimg/node:lts
+      - image: cimg/node:15.11
     steps:
       - run:
-          name: update npm
+          name: check npm version
           command: |
             echo `npm --version`
-            npm install -g npm@latest
       - run: apk --no-cache add ca-certificates git openssh-client
       - checkout
       - restore_cache:
