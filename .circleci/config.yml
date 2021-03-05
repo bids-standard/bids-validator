@@ -81,7 +81,9 @@ jobs:
       - run: apk --no-cache add rsync git python build-base openssh
       - run:
           name: Install bids-validator and bids-validator-web dependencies
-          command: npm install
+          command: |
+            echo `npm --version`
+            npm install
       - run:
           name: Build and export web-validator
           command: npm run web-export && rsync -av ./bids-validator-web/out/ ~/web_version
