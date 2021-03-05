@@ -71,8 +71,13 @@ jobs:
             docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
   githubPagesTest:
     docker:
-      - image: node:12.14.1-alpine
+      - image: cimg/node:lts
     steps:
+      - run:
+          name: update npm
+          command: |
+            echo `npm --version`
+            npm install -g npm@latest
       - run: apk --no-cache add ca-certificates git openssh-client
       - checkout
       - restore_cache:
@@ -81,9 +86,7 @@ jobs:
       - run: apk --no-cache add rsync git python build-base openssh
       - run:
           name: Install bids-validator and bids-validator-web dependencies
-          command: |
-            echo `npm --version`
-            npm install
+          command: npm install
       - run:
           name: Build and export web-validator
           command: npm run web-export && rsync -av ./bids-validator-web/out/ ~/web_version
