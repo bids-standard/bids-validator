@@ -75,14 +75,11 @@ jobs:
     steps:
       - run:
           name: check npm version
-          command: |
-            echo `npm --version`
-      - run: apk --no-cache add ca-certificates git openssh-client
+          command: echo `npm --version`
       - checkout
       - restore_cache:
           keys:
             - npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}
-      - run: apk --no-cache add rsync git python build-base openssh
       - run:
           name: Install bids-validator and bids-validator-web dependencies
           command: npm install
