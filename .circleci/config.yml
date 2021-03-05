@@ -46,8 +46,9 @@ jobs:
           name: Get bids-examples data
           command: git submodule update --init
       - run:
+          # must include separating --, see https://stackoverflow.com/a/14404223/5201771
           name: Jest tests
-          command: ./node_modules/.bin/jest --coverage --maxWorkers=2 --testTimeout=10000
+          command: npm run coverage -- --maxWorkers=2 --testTimeout=10000
       - run:
           name: Upload to codecov
           command: npm run codecov
