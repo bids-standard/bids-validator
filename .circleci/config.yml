@@ -81,7 +81,7 @@ jobs:
       - restore_cache:
           keys:
             - npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
-      - run: apk --no-cache add rsync git python build-base openssh
+      - run: apk --no-cache add rsync git python3 build-base openssh
       - run:
           name: Install bids-validator and bids-validator-web dependencies
           command: npm install
