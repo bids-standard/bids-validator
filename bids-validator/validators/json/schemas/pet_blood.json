@@ -25,7 +25,6 @@
     "TubingLength": { "type": "number" },
     "TubingLengthUnits": { "type": "string" },
     "DispersionConstant": { "type": "number" },
-    "DispersionConstantUnits": { "type": "string" },
     "DispersionCorrected": { "type": "boolean" },
 
     "WholeBloodAvail": {
