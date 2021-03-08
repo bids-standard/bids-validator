@@ -45,5 +45,5 @@
   "scans": ["acq_time", "filename"],
   "sessions": ["acq_time", "session_id"],
   "aslcontext": ["volume_type"],
-  "blood": ["plasma_radioactivity", "wholeblood_radioactivity", "metabolite_parent_fraction"]
+  "blood": ["time", "plasma_radioactivity", "whole_blood_radioactivity", "metabolite_parent_fraction", "hplc_recovery_fractions"]
 }
