@@ -72,11 +72,13 @@ jobs:
             docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
   githubPagesTest:
     docker:
-      - image: mhart/alpine-node:latest
+      - image: mhart/alpine-node:12
     steps:
       - run:
           name: check npm version
-          command: echo `npm --version`
+          command: |
+            echo `npm --version`
+            sudo npm install --global npm@7
       - run: apk --no-cache add ca-certificates git openssh-client
       - checkout
       - restore_cache:
