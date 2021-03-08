@@ -116,11 +116,9 @@
       "then": {
       },
       "else": {
-        "required": ["InjectedMass", "InjectedMassUnit", "SpecificRadioactivity", "SpecificRadioactivityUnit"]
+        "required": ["InjectedMass", "InjectedMassUnit"]
       }
-    }
-  ],
-  "allOf": [
+    },
     {
       "if": {
         "properties": {
@@ -137,9 +135,7 @@
       "else": {
         "required": ["SpecificRadioactivity", "SpecificRadioactivityUnit"]
       }
-    }
-  ],
-  "allOf": [
+    },
     {
       "if": {
         "properties": {
@@ -156,9 +152,7 @@
       "else": {
         "required": ["ReconFilterType", "ReconFilterSize"]
       }
-    }
-  ],
-  "allOf": [
+    },
     {
       "if": {
         "properties": {
@@ -185,6 +179,10 @@
     "ModeOfAdministration",
     "InjectedRadioactivity",
     "InjectedRadioactivityUnit",
+    "InjectedMass",
+    "InjectedMassUnit",
+    "SpecificRadioactivity",
+    "SpecificRadioactivityUnit",
 
     "TimeZero",
     "ScanStart",
@@ -206,10 +204,8 @@
   "dependencies": {
     "TracerMolecularWeight": ["TracerMolecularWeightUnit"],
     "InjectedRadioactivity": ["InjectedRadioactivityUnit"],
-    "InjectedMass": ["InjectedMassUnit"],
     "InjectedMassPerWeight": ["InjectedMassPerWeightUnit"],
     "MolarActivity": ["MolarActivityUnit"],
-    "SpecificRadioactivity": ["SpecificRadioactivityUnit"],
     "InfusionSpeed": ["InfusionSpeedUnit"],
     "ReconMethodParameterLabels": [
       "ReconMethodParameterUnit",
