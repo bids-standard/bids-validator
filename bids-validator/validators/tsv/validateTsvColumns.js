@@ -18,7 +18,8 @@ export const getTsvType = function(file) {
     file.name.endsWith('_events.tsv') ||
     file.name.endsWith('_scans.tsv') ||
     file.name.endsWith('_sessions.tsv') ||
-    file.name.endsWith('_aslcontext.tsv')
+    file.name.endsWith('_aslcontext.tsv') ||
+    file.name.endsWith('_pet-blood.tsv')
   ) {
     const split = file.name.split('_')
     tsvType = split[split.length - 1].replace('.tsv', '')

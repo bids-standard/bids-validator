@@ -126,6 +126,12 @@ const selectSchema = file => {
     } else if (file.name.endsWith('events.json')) {
       schema = require('./schemas/events.json')
     }
+     else if (
+       file.relativePath.includes('/pet/') &&
+       file.name.endsWith('blood.json')
+     ) {
+       schema = require('./schemas/blood_pet.json')
+     }
   }
   return schema
 }
