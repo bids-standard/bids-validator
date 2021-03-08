@@ -38,7 +38,8 @@ jobs:
       - run: npm install
       - save_cache:
           key: npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
-          paths: node_modules
+          paths:
+            - ./node_modules
       - run:
           name: Eslint
           command: npm run lint
@@ -88,6 +89,11 @@ jobs:
       - run:
           name: Build and export web-validator
           command: npm run web-export && rsync -av ./bids-validator-web/out/ ~/web_version
+      - save_cache:
+          key: npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
+          paths:
+            - ./node_modules
+            - ./.next/cache
       - store_artifacts:
           path: ~/web_version
   pypi_precheck:
