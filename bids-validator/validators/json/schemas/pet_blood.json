@@ -19,7 +19,8 @@
     "MetaboliteMethod": { "type": "string", "minLength": 1 },
     "MetaboliteRecoveryCorrectionApplied": { "type": "boolean" },
 
-    "WithdrawalRateUnit": { "type": "string" },
+    "WithdrawalRate": { "type": "number" },
+
     "TubingType": { "type": "string" },
     "TubingLength": { "type": "number" },
     "TubingLengthUnits": { "type": "string" },
