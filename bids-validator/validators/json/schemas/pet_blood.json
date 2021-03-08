@@ -33,7 +33,8 @@
     },
     "Haematocrit": { "type": "number" },
 
-    "BloodDensity": { "type": "string", "minLength": 1 }
+    "BloodDensity": { "type": "number" }
+
   },
   "allOf": [
     {
