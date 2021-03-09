@@ -286,14 +286,6 @@ export default {
       return conditionalMatch(ieegData, path)
     },
 
-    isPET: function(path) {
-      return conditionalMatch(petData, path)
-    },
-
-    isPETBlood: function(path) {
-      return conditionalMatch(petBloodData, path)
-    },
-
     isBehavioral: function(path) {
       return conditionalMatch(behavioralData, path)
     },
