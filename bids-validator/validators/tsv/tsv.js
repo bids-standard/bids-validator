@@ -314,12 +314,6 @@ const TSV = (file, contents, fileList, callback) => {
   }
   */
 
-  if (file.name.endsWith('_pet-blood.tsv')) {
-    // Validate fields here
-    checkheader('Time', 0, file, 126)
-    checkheader('PlasmaActivity', 1, file, 126)
-  }
-
   // check partcipants.tsv for age 89+
   if (file.name === 'participants.tsv') {
     checkAge89(rows, file, issues)
