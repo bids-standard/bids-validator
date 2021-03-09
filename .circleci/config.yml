@@ -33,23 +33,26 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - npm-deps-{{ checksum "package.json" }}
-      - run: yarn
+            - npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
+      - run: npm install -g npm@^7
+      - run: npm install
       - save_cache:
-          key: npm-deps-{{ checksum "package.json" }}
-          paths: node_modules
+          key: npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
+          paths:
+            - ./node_modules
       - run:
           name: Eslint
-          command: yarn lint
+          command: npm run lint
       - run:
           name: Get bids-examples data
           command: git submodule update --init
       - run:
+          # must include separating --, see https://stackoverflow.com/a/14404223/5201771
           name: Jest tests
-          command: yarn coverage --maxWorkers=2
+          command: npm run coverage -- --maxWorkers=2 --testTimeout=10000
       - run:
           name: Upload to codecov
-          command: yarn codecov
+          command: npm run codecov
       - run:
           name: Smoke tests
           command: |
@@ -69,20 +72,30 @@ jobs:
             docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
   githubPagesTest:
     docker:
-      - image: node:12.14.1-alpine
+      - image: mhart/alpine-node:12
     steps:
+      - run:
+          name: check npm version
+          command: |
+            echo `npm --version`
+            npm install --global npm@7
       - run: apk --no-cache add ca-certificates git openssh-client
       - checkout
       - restore_cache:
           keys:
-            - npm-deps-{{ checksum "package.json" }}
-      - run: apk --no-cache add rsync git python build-base openssh
+            - npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
+      - run: apk --no-cache add rsync git python3 build-base openssh
       - run:
           name: Install bids-validator and bids-validator-web dependencies
-          command: yarn
+          command: npm install
       - run:
           name: Build and export web-validator
-          command: yarn web-export && rsync -av ./bids-validator-web/out/ ~/web_version
+          command: npm run web-export && rsync -av ./bids-validator-web/out/ ~/web_version
+      - save_cache:
+          key: npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
+          paths:
+            - ./node_modules
+            - ./.next/cache
       - store_artifacts:
           path: ~/web_version
   pypi_precheck:
@@ -127,7 +140,7 @@ jobs:
       - run: apk --no-cache add ca-certificates git openssh-client
       - add_ssh_keys:
           fingerprints:
-            - '86:74:77:4c:90:02:f4:5d:b4:f8:3c:b4:37:c3:c0:25'
+            - "86:74:77:4c:90:02:f4:5d:b4:f8:3c:b4:37:c3:c0:25"
       - checkout
       - run: apk --no-cache add python build-base openssh libffi-dev libressl-dev
       - run:
@@ -148,10 +161,10 @@ jobs:
           command: git checkout --orphan gh-pages
       - run:
           name: Install web demo dependencies
-          command: yarn
+          command: npm install
       - run:
           name: Build and export next project
-          command: yarn web-export
+          command: npm run web-export
       - run:
           name: Clean and remove bids-validator files
           command: git reset . && git clean --force -d --exclude bids-validator-web/out
