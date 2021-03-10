@@ -8,7 +8,7 @@
     "lint": "cd ./bids-validator && ./node_modules/eslint/bin/eslint.js ./**/*.js",
     "coverage": "./node_modules/.bin/jest --coverage",
     "codecov": "./node_modules/.bin/codecov",
-    "test": "bids-validator/bin/test-submodule-exists && jest",
+    "test": "node bids-validator/bin/test-submodule-exists && jest",
     "npmPublish": "cd bids-validator && publish",
     "lernaPublish": "./node_modules/.bin/lerna publish && ./tools/post_publish.sh",
     "web-dev": "cd bids-validator-web && npm run dev",
