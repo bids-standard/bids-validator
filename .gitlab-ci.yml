@@ -12,7 +12,7 @@ tests:
     - windows
   before_script:
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-    - choco install -y npm
+    - choco install -y nodejs
     - refreshenv
   script:
     - git config core.symlinks true
