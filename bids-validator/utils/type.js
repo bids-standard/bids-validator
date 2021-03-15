@@ -53,7 +53,7 @@ const megCalibrationData = buildRegExp(file_level_rules.meg_calbibration)
 const megCrosstalkData = buildRegExp(file_level_rules.meg_crosstalk)
 const stimuliData = buildRegExp(file_level_rules.stimuli)
 const petData = buildRegExp(file_level_rules.pet)
-const petBloodData = buildRegExp(file_level_rules.pet_blood)
+const petBlood = buildRegExp(file_level_rules.pet_blood)
 // Phenotypic data
 const phenotypicData = buildRegExp(phenotypic_rules.phenotypic_data)
 // Session level
@@ -65,6 +65,7 @@ const aslSes = buildRegExp(session_level_rules.asl_ses)
 const ieegSes = buildRegExp(session_level_rules.ieeg_ses)
 const megSes = buildRegExp(session_level_rules.meg_ses)
 const scansSes = buildRegExp(session_level_rules.scans)
+const petSes = buildRegExp(session_level_rules.pet_ses)
 // Subject level
 const subjectLevel = buildRegExp(subject_level_rules.subject_level)
 // Top level
@@ -78,6 +79,7 @@ const ieegTop = buildRegExp(top_level_rules.ieeg_top)
 const multiDirFieldmap = buildRegExp(top_level_rules.multi_dir_fieldmap)
 const otherTopFiles = buildRegExp(top_level_rules.other_top_files)
 const megTop = buildRegExp(top_level_rules.meg_top)
+const petTop = buildRegExp(top_level_rules.pet_top)
 
 export default {
   /**
@@ -125,7 +127,8 @@ export default {
         otherTopFiles.test(path) ||
         megTop.test(path) ||
         eegTop.test(path) ||
-        ieegTop.test(path)
+        ieegTop.test(path) ||
+        petTop.test(path)
       )
     },
 
@@ -178,7 +181,8 @@ export default {
         conditionalMatch(dwiSes, path) ||
         conditionalMatch(megSes, path) ||
         conditionalMatch(eegSes, path) ||
-        conditionalMatch(ieegSes, path)
+        conditionalMatch(ieegSes, path) ||
+        conditionalMatch(petSes, path)
       )
     },
 
@@ -258,6 +262,14 @@ export default {
       return conditionalMatch(aslData, path)
     },
 
+    isPET: function(path) {
+      return conditionalMatch(petData, path)
+    },
+
+    isPETBlood: function(path) {
+      return conditionalMatch(petBlood, path)
+    },
+
     isMeg: function(path) {
       return (
         conditionalMatch(megData, path) ||
@@ -272,14 +284,6 @@ export default {
 
     isIEEG: function(path) {
       return conditionalMatch(ieegData, path)
-    },
-
-    isPET: function(path) {
-      return conditionalMatch(petData, path)
-    },
-
-    isPETBlood: function(path) {
-      return conditionalMatch(petBloodData, path)
     },
 
     isBehavioral: function(path) {
@@ -311,8 +315,8 @@ export default {
         this.isIEEG(path) ||
         this.isBehavioral(path) ||
         this.isFuncBold(path) ||
-        this.isPETData(path) ||
-        this.isPETBloodData(path)
+        this.isPET(path) ||
+        this.isPETBlood(path)
       )
     },
   },
