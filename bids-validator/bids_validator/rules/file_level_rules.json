@@ -528,27 +528,6 @@
     }
   },
 
-  "pet_blood_recording": {
-    "regexp": "^/(sub-[a-zA-Z0-9]+)/(?:(ses-[a-zA-Z0-9]+)/)pet/(sub-[a-zA-Z0-9]+)_(?:(ses-[a-zA-Z0-9]+))(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_recording-(?:[a-zA-Z0-9]+)_((@@@_pet_ext_@@@))$",
-    "tokens": {
-      "@@@_pet_ext_@@@": ["_blood.json", "_blood.tsv"]
-    }
-  },
-
-  "pet_data": {
-    "regexp": "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)pet\\/(sub-[a-zA-Z0-9]+)_(?:(ses-[a-zA-Z0-9]+))|((@@@_pet_ext_@@@))$",
-    "tokens": {
-      "@@@_pet_ext_@@@": ["_pet\\.nii\\.gz", "_pet\\.nii"]
-    }
-  },
-
-  "pet_blood_data": {
-    "regexp": "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)pet\\/(sub-[a-zA-Z0-9]+)_(?:(ses-[a-zA-Z0-9]+))|((@@@_pet_ext_@@@))$",
-    "tokens": {
-      "@@@_pet_ext_@@@": ["_blood\\.tsv"]
-    }
-  },
-
   "meg_calbibration": {
     "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?meg[\\/]\\1(_\\2)?_acq-calibration_meg\\.dat$"
   },
