@@ -134,7 +134,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
  * @param {*} schema 
  * @returns 
  */
-const validatePetBloodHeaders = (tsv, mergedDict, schema) => {
+export const validatePetBloodHeaders = (tsv, mergedDict, schema) => {
   const tsvIssues = []
   const headers = getHeaders(tsv.contents)
 
