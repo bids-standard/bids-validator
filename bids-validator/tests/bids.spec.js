@@ -295,4 +295,15 @@ describe('BIDS example datasets ', function() {
       },
     )
   })
+
+  it('should catch missing tsv columns', function(isdone) {
+    validate.BIDS(
+      createDatasetFileList('pet_blood_missing_tsv_column'),
+      options,
+      function(issues) {
+        assertErrorCode(issues.errors, 211)
+        isdone()
+      },
+    )
+  })
 })
