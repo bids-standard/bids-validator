@@ -3,7 +3,8 @@
   "properties": {
     "PlasmaAvail": {
       "default": false,
-      "type": "boolean"
+      "type": "boolean",
+      "requires_tsv_non_custom_columns": ["plasma_radioactivity", "someHeader"]
     },
     "PlasmaFreeFraction": {
       "type": "number",
@@ -14,10 +15,14 @@
 
     "MetaboliteAvail": {
       "default": false,
-      "type": "boolean"
+      "type": "boolean",
+      "requires_tsv_non_custom_columns": ["metabolite_parent_fraction"]
     },
     "MetaboliteMethod": { "type": "string", "minLength": 1 },
-    "MetaboliteRecoveryCorrectionApplied": { "type": "boolean" },
+    "MetaboliteRecoveryCorrectionApplied": {
+      "type": "boolean",
+      "requires_tsv_non_custom_columns": ["hplc_recovery_fractions"]
+    },
 
     "WithdrawalRate": { "type": "number" },
 
@@ -29,7 +34,8 @@
 
     "WholeBloodAvail": {
       "default": false,
-      "type": "boolean"
+      "type": "boolean",
+      "requires_tsv_non_custom_columns": ["whole_blood_radioactivity"]
     },
     "Haematocrit": { "type": "number" },
 

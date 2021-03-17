@@ -1072,5 +1072,10 @@ export default {
     key: 'HED_INVALID_SIDECAR_WARNING',
     severity: 'warning',
     reason: 'A HED warning was found in the JSON sidecar.',
+  },
+  211: {
+    key: 'TSV_MISSING_REQUIRED_COLUMN',
+    severity: 'error',
+    reason: 'A TSV file is missing a column required by a value in its JSON sidecar.'
   }
 }
