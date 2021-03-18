@@ -501,6 +501,74 @@ describe('utils.type.getPathValues', function() {
   })
 })
 
+describe('utils.type.file.isPET', function() {
+  const goodFilenames = [
+    '/sub-1/ses-1/pet/sub-1_ses-1_task-1_trc-1_rec-1_run-1_pet.json',
+    '/sub-1/ses-1/pet/sub-1_ses-1_task-1_trc-1_rec-1_run-1_pet.nii',
+    '/sub-1/ses-1/pet/sub-1_ses-1_task-1_trc-1_rec-1_run-1_pet.nii.gz',
+    '/sub-03/ses-01/pet/sub-02_ses-40_task-30_pet.json',
+    '/sub-03/ses-01/pet/sub-02_ses-40_pet.nii',
+    '/sub-03/ses-01/pet/sub-02_ses-40_pet.nii.gz',
+    '/sub-03/pet/sub-02_pet.nii',
+    '/sub-03/pet/sub-02_pet.nii.gz',
+  ]
+
+  goodFilenames.forEach(function(path) {
+    it("isPET('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isPET(path), true)
+      isdone()
+    })
+  })
+
+  const badFilenames = [
+    '/sub-1/ses-1/pet/sub-1_ses-1_task-1_trc-1_rec-1_run-1_pet+json',
+    '/sub-1/ses-1/pet/sub-1_ses-1_task-1_trc-1_rec-1_run-1_pet.json.gz',
+    '/sub-1/ses-1/pet/sub-1ses-1_task-1_trc-1_rec-1_run-1_pet.nii',
+    'sub-1/ses-1/pet/sub-1ses-1_task-1_trc-1_rec-1_run-1_pet.nii',
+    '/sub-1/ses-1/pet/sub-1/ses-1_task-1_trc-1_rec-1_run-q_pet.csv',
+    '/sub-1/ses-1/pet/sub-1/ses-1_task-1_trc-1_rec-1_run-q_recording-1_pet.nii',
+  ]
+
+  badFilenames.forEach(function(path) {
+    it("isPET('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isPET(path), false)
+      isdone()
+    })
+  })
+})
+
+describe('utils.type.file.isPETBlood', function() {
+  const goodFilenames = [
+    '/sub-1/ses-1/pet/sub-1_ses-1_task-1_trc-1_rec-1_run-1_recording-1_blood.json',
+    '/sub-1/ses-1/pet/sub-1_ses-1_task-1_trc-1_rec-1_run-1_recording-1_blood.tsv',
+    '/sub-03/ses-01/pet/sub-02_ses-40_task-30_recording-manual_blood.json',
+    '/sub-03/ses-01/pet/sub-02_ses-40_recording-manual_blood.tsv',
+    '/sub-03/pet/sub-02_recording-manual_blood.tsv',
+  ]
+
+  goodFilenames.forEach(function(path) {
+    it("isPETBlood('" + path + "') === true", function(isdone) {
+      assert.equal(utils.type.file.isPETBlood(path), true)
+      isdone()
+    })
+  })
+
+  const badFilenames = [
+    '/sub-1/ses-1/pet/sub-1_ses-1_task-1_trc-1_rec-1_run-1_recording-1_blood+json',
+    '/sub-1/ses-1/pet/sub-1ses-1_task-1_trc-1_rec-1_run-1_recording-1_blood.tsv',
+    'sub-1/ses-1/pet/sub-1ses-1_task-1_trc-1_rec-1_run-1_recording-1_blood.tsv',
+    '/sub-1/ses-1/pet/sub-1/ses-1_task-1_trc-1_rec-1_run-q_recording-1_blood.csv',
+    '/sub-1/ses-1/pet/sub-1/ses-1_task-1_trc-1_rec-1_run-q_recording-1_pet.tsv',
+  ]
+
+  badFilenames.forEach(function(path) {
+    it("isPETBlood('" + path + "') === false", function(isdone) {
+      assert.equal(utils.type.file.isPETBlood(path), false)
+      isdone()
+    })
+  })
+})
+
 describe('BIDS.subIDsesIDmismatchtest', function() {
   it('should return if sub and ses doesnt match', function() {
     const files = {

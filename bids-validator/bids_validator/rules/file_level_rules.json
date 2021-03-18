@@ -528,41 +528,6 @@
     }
   },
 
-  "pet": {
-    "regexp": "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)pet\\/(sub-[a-zA-Z0-9]+)_(?:(ses-[a-zA-Z0-9]+))|((@@@_pet_ext_@@@))$",
-    "tokens": {
-      "@@@_pet_ext_@@@": ["_pet.json", "_pet\\.nii\\.gz", "_pet\\.nii"]
-    }
-  },
-
-  "pet_blood": {
-    "regexp": "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)pet\\/(sub-[a-zA-Z0-9]+)_(?:(ses-[a-zA-Z0-9]+))|((@@@_pet_ext_@@@))$",
-    "tokens": {
-      "@@@_pet_ext_@@@": ["_blood\\.nii\\.json"]
-    }
-  },
-
-  "pet_blood_recording": {
-    "regexp": "^/(sub-[a-zA-Z0-9]+)/(?:(ses-[a-zA-Z0-9]+)/)pet/(sub-[a-zA-Z0-9]+)_(?:(ses-[a-zA-Z0-9]+))(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_recording-(?:[a-zA-Z0-9]+)_((@@@_pet_ext_@@@))$",
-    "tokens": {
-      "@@@_pet_ext_@@@": ["_blood.json", "_blood.tsv"]
-    }
-  },
-
-  "pet_data": {
-    "regexp": "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)pet\\/(sub-[a-zA-Z0-9]+)_(?:(ses-[a-zA-Z0-9]+))|((@@@_pet_ext_@@@))$",
-    "tokens": {
-      "@@@_pet_ext_@@@": ["_pet\\.nii\\.gz", "_pet\\.nii"]
-    }
-  },
-
-  "pet_blood_data": {
-    "regexp": "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)pet\\/(sub-[a-zA-Z0-9]+)_(?:(ses-[a-zA-Z0-9]+))|((@@@_pet_ext_@@@))$",
-    "tokens": {
-      "@@@_pet_ext_@@@": ["_blood\\.tsv"]
-    }
-  },
-
   "meg_calbibration": {
     "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?meg[\\/]\\1(_\\2)?_acq-calibration_meg\\.dat$"
   },
@@ -576,9 +541,9 @@
   },
 
   "pet": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?pet[\\/\\\\]\\1(_\\2)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_task-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:@@@_pet_type_@@@)$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?pet[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_task-[a-zA-Z0-9]+)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(@@@_pet_ext_@@@)$",
     "tokens": {
-      "@@@_pet_type_@@@": [
+      "@@@_pet_ext_@@@": [
         "pet\\.nii\\.gz",
         "pet\\.nii",
         "pet\\.json" 
@@ -587,7 +552,7 @@
   },
 
   "pet_blood": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?pet[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_task-[a-zA-Z0-9]+)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_recording-[a-zA-Z0-9]+)?(@@@_pet_ext_@@@)$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?pet[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_task-[a-zA-Z0-9]+)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_recording-[a-zA-Z0-9]+)?_(@@@_pet_ext_@@@)$",
     "tokens": {
       "@@@_pet_ext_@@@": [
         "blood\\.tsv\\.gz",
