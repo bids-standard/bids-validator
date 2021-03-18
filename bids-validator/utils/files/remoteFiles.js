@@ -2,7 +2,7 @@ import AWS from 'aws-sdk'
 import fs from 'fs'
 import cp from 'child_process'
 import Issue from '../issues'
-import zlib from 'zlib'
+import pako from 'pako'
 import isNode from '../isNode'
 
 /**
@@ -119,16 +119,7 @@ const remoteFiles = {
   extractGzipBuffer: function(buffer, config) {
     return new Promise((resolve, reject) => {
       try {
-        const decompressStream = zlib
-          .createGunzip()
-          .on('data', function(chunk) {
-            resolve(chunk)
-            decompressStream.pause()
-          })
-          .on('error', function() {
-            return reject(new Issue({ code: 28, file: config.file }))
-          })
-        decompressStream.write(buffer)
+        resolve(pako.inflate(buffer))
       } catch (e) {
         return reject(new Issue({ code: 28, file: config.file }))
       }
