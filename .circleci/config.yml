@@ -34,6 +34,9 @@ jobs:
       - restore_cache:
           keys:
             - npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
+      - run:
+          name: add node_modules bin to path
+          command: echo "export PATH=$PATH:./node_modules/.bin" >> $BASH_ENV
       - run: npm install -g npm@^7
       - run: npm install
       - run:
@@ -43,12 +46,8 @@ jobs:
           name: Get bids-examples data
           command: git submodule update --init
       - run:
-          # must include separating --, see https://stackoverflow.com/a/14404223/5201771
           name: Jest tests
-          command: npm run coverage -- --maxWorkers=2 --testTimeout=10000
-      - run:
-          name: Upload to codecov
-          command: npm run codecov
+          command: npm run coverage --maxWorkers=2 --testTimeout=10000
       - run:
           name: Smoke tests
           command: |

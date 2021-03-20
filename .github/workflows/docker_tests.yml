@@ -1,0 +1,23 @@
+name: Docker Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: bids/validator:latest
+      - name: Smoke Test
+        run: | 
+            docker run --rm -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders
+            docker run --rm -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json

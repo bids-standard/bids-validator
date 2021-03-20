@@ -1,0 +1,82 @@
+name: PyPi, NPM, gh-pages deployment
+on:
+  branches:
+    - main
+  tags:
+    - v*
+
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
+  npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+  gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Set up NodeJS ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Install npm@7
+        run: npm install --global npm@7
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+      - name: Install bids-validator
+        run: |
+          npm install
+          echo "./node_modules/.bin" >> $GITHUB_PATH
+
+
+      - name: Create new gh-pages branch without history
+        run: git checkout --orphan gh-pages
+      - name: Install web demo dependencies
+        run: npm install
+      - name: Build and export next project
+        run: npm run web-export
+      - name: Clean and remove bids-validator files
+        run: git reset . && git clean --force -d --exclude bids-validator-web/out
+      - name: Move build into root directory
+        run: mv bids-validator-web/out/* .
+      - name: Remove files not related to build
+        run: rm -r bids-validator bids-validator-web node_modules
+      - name: Create a nojekyll file (gh-pages specific)
+        run: touch .nojekyll
+      - run: git status
+      - name: Commit updates
+        run: git add . && git commit --allow-empty --no-verify -m "Circle CI - Generate validator demo with version ${{ steps.get_version.outputs.VERSION }}"
+      - run: git push origin gh-pages -f
