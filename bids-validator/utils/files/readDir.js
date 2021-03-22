@@ -3,7 +3,7 @@ import readFile from './readFile'
 import path from 'path'
 import crypto from 'crypto'
 import fs from 'fs'
-import { spawn } from 'child_process'
+import * as child_proccess from 'child_process'
 import isNode from '../isNode'
 
 /**
@@ -117,10 +117,14 @@ async function preprocessNode(dir, ig, options) {
 const getGitLsTree = (cwd, gitRef) =>
   new Promise((resolve, reject) => {
     let output = ''
-    const gitProcess = spawn('git', ['ls-tree', '-l', '-r', gitRef], {
-      cwd,
-      encoding: 'utf-8',
-    })
+    const gitProcess = child_proccess.spawn(
+      'git',
+      ['ls-tree', '-l', '-r', gitRef],
+      {
+        cwd,
+        encoding: 'utf-8',
+      },
+    )
     gitProcess.stdout.on('data', data => {
       output += data.toString()
     })
