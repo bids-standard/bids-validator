@@ -1072,5 +1072,11 @@ export default {
     key: 'HED_INVALID_SIDECAR_WARNING',
     severity: 'warning',
     reason: 'A HED warning was found in the JSON sidecar.',
+  },
+  211: {
+    key: 'PARTICIPANT_ID_PATTERN',
+    severity: 'error',
+    reason:
+      'Participant_id column labels must consist of the pattern "sub-<subject_id>".',
   }
 }
