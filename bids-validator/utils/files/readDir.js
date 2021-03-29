@@ -1,7 +1,6 @@
 import ignore from 'ignore'
 import readFile from './readFile'
 import path from 'path'
-import crypto from 'crypto'
 import fs from 'fs'
 import * as child_proccess from 'child_process'
 import isNode from '../isNode'
@@ -135,12 +134,6 @@ const getGitLsTree = (cwd, gitRef) =>
       resolve(output.trim().split('\n'))
     })
   })
-
-const computeFileHash = (gitHash, path) => {
-  const hash = crypto.createHash('sha1')
-  hash.update(`${gitHash}:${path}`)
-  return hash.digest('hex')
-}
 
 const readLsTreeLines = gitTreeLines =>
   gitTreeLines
