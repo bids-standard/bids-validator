@@ -25,7 +25,8 @@ const checkPhenotype = (phenotypeParticipants, summary) => {
 }
 
 const constructMissingPhenotypeEvidence = (fileParticipants, subjects) => {
-  const diffs = utils.array.diff(fileParticipants, subjects)
+  const subjectsClone = subjects.slice()
+  const diffs = utils.array.diff(fileParticipants, subjectsClone)
   const subjectsNotInSummarySubjects = diffs[0]
   const subjectsNotInFileParticipants = diffs[1]
   const evidenceOfMissingParticipants = subjectsNotInFileParticipants.length
