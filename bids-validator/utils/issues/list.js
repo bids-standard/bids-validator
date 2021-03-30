@@ -1077,5 +1077,11 @@ export default {
     key: 'TSV_MISSING_REQUIRED_COLUMN',
     severity: 'error',
     reason: 'A TSV file is missing a column required by a value in its JSON sidecar.'
+  },
+  212: {
+    key: 'PARTICIPANT_ID_PATTERN',
+    severity: 'error',
+    reason:
+      'Participant_id column labels must consist of the pattern "sub-<subject_id>".',
   }
 }

@@ -2,9 +2,9 @@ name: test-bids-examples
 
 on:
   push:
-    branches: ['**']
+    branches: ["**"]
   pull_request:
-    branches: ['**']
+    branches: ["**"]
 
 jobs:
   build:
@@ -22,32 +22,32 @@ jobs:
       FORCE_COLOR: 1
 
     steps:
-    - name: Set up Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
 
-    - name: Install bids-validator
-      run: |
-        git clone --depth 1 https://github.com/bids-standard/bids-validator -b ${{ matrix.bids-validator-branch }}
-        npm install -g bids-validator/bids-validator
+      - name: Install bids-validator
+        run: |
+          git clone --depth 1 https://github.com/bids-standard/bids-validator -b ${{ matrix.bids-validator-branch }}
+          npm install -g bids-validator/bids-validator
 
-    - name: Get bids-examples data
-      run: |
-        git clone --depth 1 https://github.com/bids-standard/bids-examples -b ${{ matrix.bids-examples-branch }}
+      - name: Get bids-examples data
+        run: |
+          git clone --depth 1 https://github.com/bids-standard/bids-examples -b ${{ matrix.bids-examples-branch }}
 
-    - name: Display versions and environment information
-      run: |
-        echo $TZ
-        date
-        echo "npm"; npm --version
-        echo "node"; node --version
-        echo "bids-validator"; bids-validator --version
+      - name: Display versions and environment information
+        run: |
+          echo $TZ
+          date
+          echo "npm"; npm --version
+          echo "node"; node --version
+          echo "bids-validator"; bids-validator --version
 
-    - name: Validate all BIDS datasets using bids-validator
-      run: |
-        pushd ./bids-examples
-        cat ./run_tests.sh
-        bash ./run_tests.sh
-        popd
-      shell: bash
+      - name: Validate all BIDS datasets using bids-validator
+        run: |
+          pushd ./bids-examples
+          cat ./run_tests.sh
+          bash ./run_tests.sh
+          popd
+        shell: bash

@@ -37,6 +37,7 @@
       and report the error at [https://github.com/bids-standard/bids-validator/issues](https://github.com/bids-standard/bids-validator/issues).
 1. Command line version:
    1. Install [Node.js](https://nodejs.org) (at least version 10.11.0)
+   1. Update `npm` to be at least version 7 (`npm install --global npm@^7`)
    1. From a terminal run `npm install -g bids-validator`
    1. Run `bids-validator` to start validating datasets.
 1. Docker
@@ -44,12 +45,12 @@
    1. From a terminal run `docker run -ti --rm -v /path/to/data:/data:ro bids/validator /data`
       but replace the `/path/to/data` part of the command with your own path on your machine.
 1. Python Library:
-   1. Install [Python](https://www.python.org/) (works with python2 and python3)
-   1. Install [Pip](https://pip.pypa.io/en/stable/installing/) package manager for python, if
+   1. Install [Python](https://www.python.org/)
+   1. Install [Pip](https://pip.pypa.io/en/stable/installing/) package manager for Python, if
       not already installed.
    1. From a terminal run `pip install bids_validator` to acquire the
       [BIDS Validator PyPi package](https://pypi.org/project/bids-validator/)
-   1. Open a Python terminal `python`
+   1. Open a Python terminal and type: `python`
    1. Import the BIDS Validator package `from bids_validator import BIDSValidator`
    1. Check if a file is BIDS compatible `BIDSValidator().is_bids('path/to/a/bids/file')`
 
@@ -72,7 +73,9 @@ address these issues on a case by case basis.
 ## Maintainers and Contributors
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-42-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification.
@@ -395,7 +398,7 @@ for filepath in filepaths:
 
 ## Development
 
-To develop locally, clone the project and run `yarn` from the project
+To develop locally, clone the project and run `npm install` from the project
 root. This will install external dependencies. If you wish to install
 `bids-validator` globally (so that you can run it in other folders), use the
 following command to install it globally: `cd bids-validator && npm install -g`
@@ -412,7 +415,7 @@ node-gyp which needs xcode to be installed in order to be compiled.
    `/bids-validator-web`. It is a [React.js](https://reactjs.org/) application
    that uses the [next.js](https://nextjs.org/) framework.
 2. To develop `bids-validator` and see how it will act in the browser, simply run
-   `yarn web-dev` in the project root and navigate to `localhost:3000`.
+   `npm run web-dev` in the project root and navigate to `localhost:3000`.
 3. In development mode, changes to the codebase will trigger rebuilds of the application
    automatically.
 4. Changes to the `/bids-validator` in the codebase will also be reflected in the
@@ -420,13 +423,13 @@ node-gyp which needs xcode to be installed in order to be compiled.
 5. Tests use the [Jest](https://jestjs.io/index.html) testing library and should be developed in `/bids-validator-web/tests`.
    We can always use more tests, so please feel free to contribute a test that reduces the chance
    of any bugs you fix!
-6. To ensure that the web application compiles successfully in production, run `yarn web-export`
+6. To ensure that the web application compiles successfully in production, run `npm run web-export`
 
 ### Testing
 
 If it's your first time running tests, first use the command `git submodule update --init --depth 1` to pull the test example data. This repo contains the [bids-examples github repository](https://github.com/bids-standard/bids-examples) as a [submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
-To start the test suite run `npm test` from the project root. `npm test -- --watch`
+To start the test suite run `npm run test` from the project root. `npm run test -- --watch`
 is useful to run tests while making changes. A coverage report is available with
 `npm run coverage`.
 
@@ -434,7 +437,7 @@ To run the linter which checks code conventions run `npm run lint`.
 
 ### Publishing
 
-Publishing is done with [Lerna](https://github.com/lerna/lerna). Use the command `yarn lerna publish` and follow instructions to set a new version.
+Publishing is done with [Lerna](https://github.com/lerna/lerna). Use the command `npm run lernaPublish` and follow instructions to set a new version.
 
 Using lerna publish will create a git commit with updated version information and create a version number tag for it, push the tag to GitHub, then publish to NPM and PyPI. The GitHub release is manual following that.
 

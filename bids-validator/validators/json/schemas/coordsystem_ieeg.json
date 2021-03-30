@@ -2,12 +2,21 @@
   "type": "object",
   "properties": {
     "IntendedFor": { "type": "string", "minLength": 1 },
-    "iEEGCoordinateSystem": { "anyOf": [
-      { "$ref": "common_definitions.json#/definitions/iEEGCoordSys" },
-      { "$ref": "common_definitions.json#/definitions/StandardTemplateCoordSys" },
-      { "$ref": "common_definitions.json#/definitions/StandardTemplateDeprecatedCoordSys" }
-    ]},
-    "iEEGCoordinateUnits":  { "type": "string", "enum": ["m", "mm", "cm", "pixels", "n/a"] },
+    "iEEGCoordinateSystem": {
+      "anyOf": [
+        { "$ref": "common_definitions.json#/definitions/iEEGCoordSys" },
+        {
+          "$ref": "common_definitions.json#/definitions/StandardTemplateCoordSys"
+        },
+        {
+          "$ref": "common_definitions.json#/definitions/StandardTemplateDeprecatedCoordSys"
+        }
+      ]
+    },
+    "iEEGCoordinateUnits": {
+      "type": "string",
+      "enum": ["m", "mm", "cm", "pixels", "n/a"]
+    },
     "iEEGCoordinateSystemDescription": { "type": "string", "minLength": 1 },
     "iEEGCoordinateProcessingDescription": { "type": "string", "minLength": 1 },
     "iEEGCoordinateProcessingReference": { "type": "string", "minLength": 1 }
@@ -15,9 +24,12 @@
   "required": ["iEEGCoordinateSystem", "iEEGCoordinateUnits"],
   "additionalProperties": false,
   "allOf": [
-    { "$ref": "#/dependency-definitions/if-iEEGCoordinateSystem-is-Other-then-Description-is-required" },
-    { "$ref": "#/dependency-definitions/if-iEEGCoordinateSystem-is-Pixels-then-iEEGCoordinateUnits-must-be-pixels" }
-
+    {
+      "$ref": "#/dependency-definitions/if-iEEGCoordinateSystem-is-Other-then-Description-is-required"
+    },
+    {
+      "$ref": "#/dependency-definitions/if-iEEGCoordinateSystem-is-Pixels-then-iEEGCoordinateUnits-must-be-pixels"
+    }
   ],
   "dependency-definitions": {
     "if-iEEGCoordinateSystem-is-Other-then-Description-is-required": {

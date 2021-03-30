@@ -30,10 +30,7 @@
         "_events\\.tsv",
         "_beh\\.json"
       ],
-      "@@@_cont_ext_@@@": [
-        "_physio\\.json",
-        "_stim\\.json"
-      ]
+      "@@@_cont_ext_@@@": ["_physio\\.json", "_stim\\.json"]
     }
   },
 
