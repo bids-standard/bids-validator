@@ -4,7 +4,7 @@
     "PlasmaAvail": {
       "default": false,
       "type": "boolean",
-      "requires_tsv_non_custom_columns": ["plasma_radioactivity", "someHeader"]
+      "requires_tsv_non_custom_columns": ["plasma_radioactivity"]
     },
     "PlasmaFreeFraction": {
       "type": "number",
@@ -40,7 +40,6 @@
     "Haematocrit": { "type": "number" },
 
     "BloodDensity": { "type": "number" }
-
   },
   "allOf": [
     {
@@ -61,6 +60,5 @@
     "PlasmaAvail",
     "WholeBloodAvail",
     "DispersionCorrected"
-
   ]
 }
