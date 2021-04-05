@@ -6,8 +6,6 @@ jobs:
       - image: continuumio/miniconda3
     environment:
       BASH_ENV: "/root/.bashrc"
-      GIT_COMMITTER_EMAIL: "bv-ci@example.com"
-      GIT_COMMITTER_NAME: "bv-ci"
     steps:
       - checkout
       - run:
@@ -15,6 +13,8 @@ jobs:
           command: |
             conda create -n testenv Python=3.7
             conda init
+      - run: git config --global user.email "bids.maintenance@gmail.com"
+      - run: git config --global user.name "bids-maintenance"
       - run:
           name: install datalad
           command: |
