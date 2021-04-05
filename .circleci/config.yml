@@ -6,6 +6,8 @@ jobs:
       - image: continuumio/miniconda3
     environment:
       BASH_ENV: "/root/.bashrc"
+      GIT_COMMITTER_EMAIL: "bv-ci@example.com"
+      GIT_COMMITTER_NAME: "bv-ci"
     steps:
       - checkout
       - run:
