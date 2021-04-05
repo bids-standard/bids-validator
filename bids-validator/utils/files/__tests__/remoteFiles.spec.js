@@ -68,7 +68,7 @@ describe('remoteFiles', () => {
     it('should extract proper gzip files', async () => {
       zlib.gzip('Some String', async (err, res) => {
         const gzip = await remoteFiles.extractGzipBuffer(res, {})
-        expect(gzip).toBeInstanceOf(Buffer)
+        expect(gzip).toBeInstanceOf(Uint8Array)
       })
     })
     it('should reject with an issue when gzip reading fails', async () => {
