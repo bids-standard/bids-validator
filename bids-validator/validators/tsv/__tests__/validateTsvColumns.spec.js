@@ -58,7 +58,7 @@ describe('validateTsvColumns', () => {
     })
   })
 
-  describe('validatePetBloodHeaders', () => {
+  describe('requires_tsv_non_custom_columns for validatePetBloodHeaders', () => {
     let tsv, mergedDict, schema
     beforeEach(() => {
       tsv = {
