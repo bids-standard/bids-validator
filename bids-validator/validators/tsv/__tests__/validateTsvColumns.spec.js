@@ -66,7 +66,7 @@ describe('validateTsvColumns', () => {
         file: file,
       },
     ]
-    const issues = validateTsvColumns(tsvs, {}, {})
+    const issues = validateTsvColumns(tsvs, {}, [])
     assert.lengthOf(issues, 2)
   })
 })
