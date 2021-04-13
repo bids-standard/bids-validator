@@ -112,4 +112,28 @@ describe('validateTsvColumns', () => {
       assert.lengthOf(issues, 2)
     })
   })
+  it('should strip byte order marks from the start of TSV files', () => {
+    const tsvs = [
+      {
+        contents: '\uFEFFparticipant_id\t\r\n',
+        file: file,
+      },
+    ]
+    const issues = validateTsvColumns(tsvs, {}, [])
+    assert.lengthOf(issues, 0)
+  })
+  it('should generate error with empty columns', () => {
+    const tsvs = [
+      {
+        contents: '\t',
+        file: file,
+      },
+      {
+        contents: '\t\t',
+        file: file,
+      },
+    ]
+    const issues = validateTsvColumns(tsvs, {}, [])
+    assert.lengthOf(issues, 2)
+  })
 })

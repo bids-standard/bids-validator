@@ -3,7 +3,8 @@
  * Module for parsing TSV (and eventually other formats)
  */
 
-const trimSplit = separator => str => str.trim().split(separator)
+const stripBOM = str => str.replace(/^\uFEFF/, '')
+const normalizeEOL = str => str.replace('\r\n', '\n').replace('\r', '\n')
 const isContentfulRow = row => row && !/^\s*$/.test(row)
 
 function parseTSV(contents) {
@@ -11,10 +12,12 @@ function parseTSV(contents) {
     headers: [],
     rows: [],
   }
-  content.rows = trimSplit('\n')(contents)
+  contents = stripBOM(contents)
+  content.rows = normalizeEOL(contents)
+    .split('\n')
     .filter(isContentfulRow)
-    .map(trimSplit('\t'))
-  content.headers = content.rows.length ? content.rows[0] : [] 
+    .map(str => str.split('\t'))
+  content.headers = content.rows.length ? content.rows[0] : []
   return content
 }
 
