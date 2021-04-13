@@ -36,7 +36,7 @@ jobs:
         run: |
           npm install
           npm link
-          echo "./node_modules/.bin" >> $GITHUB_PATH
+          # echo "./node_modules/.bin" >> $GITHUB_PATH
 
       - name: Get bids-examples data
         run: |
