@@ -36,6 +36,7 @@ jobs:
         run: |
           npm install
           npm link
+          npm link ./bids-validator
           # echo "./node_modules/.bin" >> $GITHUB_PATH
 
       - name: Get bids-examples data
