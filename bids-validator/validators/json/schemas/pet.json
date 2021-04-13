@@ -3,7 +3,7 @@
   "properties": {
     "Manufacturer": { "type": "string", "minLength": 1 },
     "ManufacturersModelName": { "type": "string", "minLength": 1 },
-    "Unit": {
+    "Units": {
       "type": "string",
       "minLength": 1
     },
@@ -16,29 +16,29 @@
     "TracerRadLex": { "type": "string", "minLength": 1 },
     "TracerSNOMED": { "type": "string", "minLength": 1 },
     "TracerMolecularWeight": { "type": "number" },
-    "TracerMolecularWeightUnit": { "type": "string", "minLength": 1 },
+    "TracerMolecularWeightUnits": { "type": "string", "minLength": 1 },
     "PharmaceuticalName": { "type": "string", "minLength": 1 },
     "PharmaceuticalDoseAmount": { "type": "number" },
-    "PharmaceuticalDoseUnit": { "type": "string", "minLength": 1 },
+    "PharmaceuticalDoseUnits": { "type": "string", "minLength": 1 },
     "PharmaceuticalDoseRegimen": { "type": "string", "minLength": 1 },
     "PharmaceuticalDoseTime": { "type": "number" },
     "Anaesthesia": { "type": "string", "minLength": 1 },
     
     "ModeOfAdministration": { "type": "string", "minLength": 1 },
     "InjectedRadioactivity": { "type": "number" },
-    "InjectedRadioactivityUnit": { "type": "string", "minLength": 1 },
+    "InjectedRadioactivityUnits": { "type": "string", "minLength": 1 },
     "InjectedMass": { "type": "number" },
-    "InjectedMassUnit": { "type": "string", "minLength": 1 },
+    "InjectedMassUnits": { "type": "string", "minLength": 1 },
     "SpecificRadioactivity": { "type": "number" },
-    "SpecificRadioactivityUnit": { "type": "string", "minLength": 1 },
+    "SpecificRadioactivityUnits": { "type": "string", "minLength": 1 },
     "InjectedMassPerWeight": { "type": "number" },
-    "InjectedMassPerWeightUnit": { "type": "string", "minLength": 1 },
+    "InjectedMassPerWeightUnits": { "type": "string", "minLength": 1 },
     "SpecificRadioactivityMeasTime": {
       "type": "string",
       "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
     },
     "MolarActivity": { "type": "number" },
-    "MolarActivityUnit": { "type": "string", "minLength": 1 },
+    "MolarActivityUnits": { "type": "string", "minLength": 1 },
     "MolarActivityMeasTime": {
       "type": "string",
       "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
@@ -46,7 +46,7 @@
     "InfusionRadioactivity": { "type": "number" },
     "InfusionStart": { "type": "number" },  
     "InfusionSpeed": { "type": "number" }, 
-    "InfusionSpeedUnit": { "type": "string", "minLength": 1 },
+    "InfusionSpeedUnits": { "type": "string", "minLength": 1 },
     "InjectedVolume": { "type": "number" },
     "Purity": { "type": "number" },
 
@@ -69,7 +69,7 @@
     "ImageDecayCorrectionTime": { "type": "number" },
     "ReconMethodName": { "type": "string", "minLength": 1 },
     "ReconMethodParameterLabels": { "type": "array", "items": { "type": "string" } },
-    "ReconMethodParameterUnit": { "type": "array", "items": { "type": "string" } },
+    "ReconMethodParameterUnits": { "type": "array", "items": { "type": "string" } },
     "ReconMethodParameterValues": { "type": "array", "items": { "type": "number" } },
     "ReconFilterType": { "type": "array", "items": { "type": "string" } },
     "ReconFilterSize": { "type": "array", "items": { "type": "number" } },
@@ -116,7 +116,7 @@
       "then": {
       },
       "else": {
-        "required": ["InjectedMass", "InjectedMassUnit"]
+        "required": ["InjectedMass", "InjectedMassUnits"]
       }
     },
     {
@@ -125,7 +125,7 @@
           "SpecificRadioactivity": {
             "enum": ["n/a"]
           },
-          "SpecificRadioactivityUnit": {
+          "SpecificRadioactivityUnits": {
             "enum": ["n/a"]
           }
         }
@@ -133,7 +133,7 @@
       "then": {
       },
       "else": {
-        "required": ["SpecificRadioactivity", "SpecificRadioactivityUnit"]
+        "required": ["SpecificRadioactivity", "SpecificRadioactivityUnits"]
       }
     },
     {
@@ -172,17 +172,17 @@
   "required": [
     "Manufacturer",
     "ManufacturersModelName",
-    "Unit",
+    "Units",
     "TracerName",
     "TracerRadionuclide",
 
     "ModeOfAdministration",
     "InjectedRadioactivity",
-    "InjectedRadioactivityUnit",
+    "InjectedRadioactivityUnits",
     "InjectedMass",
-    "InjectedMassUnit",
+    "InjectedMassUnits",
     "SpecificRadioactivity",
-    "SpecificRadioactivityUnit",
+    "SpecificRadioactivityUnits",
 
     "TimeZero",
     "ScanStart",
@@ -195,20 +195,20 @@
     "ImageDecayCorrectionTime",
     "ReconMethodName",
     "ReconMethodParameterLabels",
-    "ReconMethodParameterUnit",
+    "ReconMethodParameterUnits",
     "ReconMethodParameterValues",
     "ReconFilterType",
     "ReconFilterSize",
     "AttenuationCorrection"
   ],
   "dependencies": {
-    "TracerMolecularWeight": ["TracerMolecularWeightUnit"],
-    "InjectedRadioactivity": ["InjectedRadioactivityUnit"],
-    "InjectedMassPerWeight": ["InjectedMassPerWeightUnit"],
-    "MolarActivity": ["MolarActivityUnit"],
-    "InfusionSpeed": ["InfusionSpeedUnit"],
+    "TracerMolecularWeight": ["TracerMolecularWeightUnits"],
+    "InjectedRadioactivity": ["InjectedRadioactivityUnits"],
+    "InjectedMassPerWeight": ["InjectedMassPerWeightUnits"],
+    "MolarActivity": ["MolarActivityUnits"],
+    "InfusionSpeed": ["InfusionSpeedUnits"],
     "ReconMethodParameterLabels": [
-      "ReconMethodParameterUnit",
+      "ReconMethodParameterUnits",
       "ReconMethodParameterValues"
     ]
   }
