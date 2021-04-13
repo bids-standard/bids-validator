@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Set up Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: 12
       - uses: actions/checkout@v2
@@ -45,6 +45,7 @@ jobs:
       - name: Display versions and environment information
         run: |
           echo $TZ
+          export PATH="../node_modules/.bin:$PATH"
           date
           echo "npm"; npm --version
           echo "node"; node --version
@@ -52,7 +53,7 @@ jobs:
 
       - name: Validate all BIDS datasets using bids-validator
         run: |
-          export PATH="../node_modules/.bin"
+          export PATH="../node_modules/.bin:$PATH"
           cat ./run_tests.sh
           bash ./run_tests.sh
         shell: bash
