@@ -34,9 +34,9 @@ jobs:
 
       - name: Install bids-validator
         run: |
-          # npm install
+          npm install
           npm link ./bids-validator
-          # echo "./node_modules/.bin" >> $GITHUB_PATH
+          echo "./node_modules/.bin" >> $GITHUB_PATH
 
       - name: Get bids-examples data
         run: |
@@ -45,7 +45,7 @@ jobs:
       - name: Display versions and environment information
         run: |
           echo $TZ
-          # export PATH="../node_modules/.bin:$PATH"
+          export PATH="../node_modules/.bin:$PATH"
           date
           echo "npm"; npm --version
           echo "node"; node --version
@@ -55,7 +55,7 @@ jobs:
 
       - name: Validate all BIDS datasets using bids-validator
         run: |
-          # export PATH="../node_modules/.bin:$PATH"
+          export PATH="../node_modules/.bin:$PATH"
           cat ./run_tests.sh
           bash ./run_tests.sh
         shell: bash
