@@ -12,6 +12,7 @@ function parseTSV(contents) {
     headers: [],
     rows: [],
   }
+  contents = stripBOM(contents)
   content.rows = normalizeEOL(contents)
     .split('\n')
     .filter(isContentfulRow)
