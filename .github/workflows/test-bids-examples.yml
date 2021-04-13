@@ -31,7 +31,7 @@ jobs:
 
       - name: Install bids-validator
         run: |
-          npm install -g
+          npm install
 
       - name: Get bids-examples data
         run: |
@@ -47,6 +47,7 @@ jobs:
 
       - name: Validate all BIDS datasets using bids-validator
         run: |
+          export PATH="../node_modules/.bin"
           cat ./run_tests.sh
           bash ./run_tests.sh
         shell: bash
