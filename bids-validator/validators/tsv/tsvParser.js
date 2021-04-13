@@ -3,11 +3,8 @@
  * Module for parsing TSV (and eventually other formats)
  */
 
-const normalizeEOL = str =>
-  str
-    .replace('\r\n', '\n')
-    .replace('\r', '\n')
-    .replace(/\uFEFF/g, '')
+const stripBOM = str => str.replace(/^\uFEFF/, '')
+const normalizeEOL = str => str.replace('\r\n', '\n').replace('\r', '\n')
 const isContentfulRow = row => row && !/^\s*$/.test(row)
 
 function parseTSV(contents) {
