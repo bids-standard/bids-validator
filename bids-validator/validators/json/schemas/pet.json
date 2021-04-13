@@ -18,10 +18,20 @@
     "TracerMolecularWeight": { "type": "number" },
     "TracerMolecularWeightUnits": { "type": "string", "minLength": 1 },
     "PharmaceuticalName": { "type": "string", "minLength": 1 },
-    "PharmaceuticalDoseAmount": { "type": "number" },
+    "PharmaceuticalDoseAmount": { 
+      "anyOf": [
+        { "type": "number", "minimum": 0 },
+        { "type": "array", "items": { "type": "number" } }
+        ]
+      },
     "PharmaceuticalDoseUnits": { "type": "string", "minLength": 1 },
     "PharmaceuticalDoseRegimen": { "type": "string", "minLength": 1 },
-    "PharmaceuticalDoseTime": { "type": "number" },
+    "PharmaceuticalDoseTime": { 
+      "anyOf": [
+        { "type": "number" },
+        { "type": "array", "items": { "type": "number" } }
+        ]
+      },
     "Anaesthesia": { "type": "string", "minLength": 1 },
     
     "ModeOfAdministration": { "type": "string", "minLength": 1 },
@@ -71,8 +81,18 @@
     "ReconMethodParameterLabels": { "type": "array", "items": { "type": "string" } },
     "ReconMethodParameterUnits": { "type": "array", "items": { "type": "string" } },
     "ReconMethodParameterValues": { "type": "array", "items": { "type": "number" } },
-    "ReconFilterType": { "type": "array", "items": { "type": "string" } },
-    "ReconFilterSize": { "type": "array", "items": { "type": "number" } },
+    "ReconFilterType": { 
+      "anyOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+        ]
+      },
+    "ReconFilterSize": { 
+      "anyOf": [
+        { "type": "number", "minimum": 0 },
+        {"type": "array", "items": { "type": "number" } }
+        ]
+      }, 
     "ReconMethodImplementationVersion": { "type": "string", "minLength": 1 },
     "AttenuationCorrection": { "type": "string", "minLength": 1 },
     "AttenuationCorrectionMethodReference": { "type": "string", "minLength": 1 },
@@ -84,7 +104,7 @@
       "type": "array",
       "items": { "type": "number" }
     },
-    "DecayCorretionFactor": {
+    "DecayCorrectionFactor": {
       "type": "array",
       "items": { "type": "number" }
     },
@@ -108,7 +128,7 @@
           "InjectedMass": {
             "enum": ["n/a"]
           },
-          "InjectedMassUnit": {
+          "InjectedMassUnits": {
             "enum": ["n/a"]
           }
         }
