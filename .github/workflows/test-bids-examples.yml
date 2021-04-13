@@ -50,6 +50,7 @@ jobs:
           echo "npm"; npm --version
           echo "node"; node --version
           echo "bids-validator"; bids-validator --version
+          echo which bids-validator
 
       - name: Validate all BIDS datasets using bids-validator
         run: |
