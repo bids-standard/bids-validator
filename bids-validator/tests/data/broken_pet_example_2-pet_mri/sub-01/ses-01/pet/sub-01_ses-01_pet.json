@@ -32,8 +32,4 @@
         "ReconFilterType": "none",
         "ReconFilterSize": 0,
         "AttenuationCorrection": "[137Cs]transmission scan-based",
-        "PlasmaAvail": false,
-        "MetaboliteAvail": false,
-        "ContinuousBloodAvail": false,
-        "DiscreteBloodAvail": false
 }
