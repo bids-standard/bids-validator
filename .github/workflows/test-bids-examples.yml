@@ -34,8 +34,7 @@ jobs:
 
       - name: Install bids-validator
         run: |
-          npm install
-          npm link
+          # npm install
           npm link ./bids-validator
           # echo "./node_modules/.bin" >> $GITHUB_PATH
 
@@ -52,6 +51,7 @@ jobs:
           echo "node"; node --version
           echo "bids-validator"; bids-validator --version
           which bids-validator
+          ls -a $(which bids-validator)
 
       - name: Validate all BIDS datasets using bids-validator
         run: |
