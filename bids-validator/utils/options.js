@@ -1,5 +1,5 @@
 import path from 'path'
-import files from './files'
+import getFileStats from '../utils/files/getFileStats'
 import json from './json'
 import isNode from '../utils/isNode.js'
 
@@ -56,7 +56,7 @@ export default {
           return callback(null, configFile, JSON.stringify({}))
         }
       }
-      configFile.stats = files.getFileStats(configFile)
+      configFile.stats = getFileStats(configFile)
       files
         .readFile(configFile)
         .then(contents => {
