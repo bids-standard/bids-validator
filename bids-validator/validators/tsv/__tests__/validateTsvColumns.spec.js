@@ -1,5 +1,7 @@
 import { assert } from 'chai'
-import validateTsvColumns, { validatePetBloodHeaders } from '../validateTsvColumns'
+import validateTsvColumns, {
+  validatePetBloodHeaders,
+} from '../validateTsvColumns'
 
 describe('validateTsvColumns', () => {
   describe('for participants.tsv', () => {
@@ -10,7 +12,7 @@ describe('validateTsvColumns', () => {
     const jsonContentsDict = {
       '/participants.json': { NewColumn: 'description' },
     }
-  
+
     it('allows for tabular files with columns that are described in the bids spec', () => {
       const tsvs = [
         {
@@ -63,27 +65,27 @@ describe('validateTsvColumns', () => {
     beforeEach(() => {
       tsv = {
         contents: 'col_A\tcol_B\n',
-        file: { name: 'test_blood.tsv' }
+        file: { name: 'test_blood.tsv' },
       }
       // associated json sidecar to tsv
       mergedDict = {
         PropA: true,
         PropB: true,
-        PropC: ''
+        PropC: '',
       }
       // minimal subset of bids-validator/validators/json/schemas/pet_blood.json
       schema = {
         properties: {
           PropA: {
             type: 'boolean',
-            requires_tsv_non_custom_columns: ['col_A']
+            requires_tsv_non_custom_columns: ['col_A'],
           },
           PropB: {
             type: 'boolean',
-            requires_tsv_non_custom_columns: ['col_A', 'col_B']
+            requires_tsv_non_custom_columns: ['col_A', 'col_B'],
           },
-          PropC: { type: 'string' }
-        }
+          PropC: { type: 'string' },
+        },
       }
     })
     it('passes when required columns are present', () => {
@@ -116,7 +118,10 @@ describe('validateTsvColumns', () => {
     const tsvs = [
       {
         contents: '\uFEFFparticipant_id\t\r\n',
-        file: file,
+        file: {
+          name: 'participants.tsv',
+          relativePath: './participants.tsv',
+        },
       },
     ]
     const issues = validateTsvColumns(tsvs, {}, [])
@@ -126,11 +131,17 @@ describe('validateTsvColumns', () => {
     const tsvs = [
       {
         contents: '\t',
-        file: file,
+        file: {
+          name: 'test.tsv',
+          relativePath: './test.tsv',
+        },
       },
       {
         contents: '\t\t',
-        file: file,
+        file: {
+          name: 'test.tsv',
+          relativePath: './test.tsv',
+        },
       },
     ]
     const issues = validateTsvColumns(tsvs, {}, [])

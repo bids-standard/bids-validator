@@ -1,11 +1,9 @@
 {
   "PlasmaAvail": true,
-
   "MetaboliteAvail": true,
   "MetaboliteMethod": "Bioscan g-detector",
   "MetaboliteRecoveryCorrectionApplied": false,
   "DispersionCorrected": false,
-
   "time": {
     "Description": "Time in relation to time zero defined by the _pet.json",
     "Units": "s"
