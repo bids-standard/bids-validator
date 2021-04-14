@@ -6,6 +6,8 @@
  * BIDS specification requirements.
  */
 
+import { _isBids } from './schemaTypes'
+
 /**
  * Import RegExps from bids-validator-common
  */
@@ -83,11 +85,15 @@ export default {
    * bids spec.
    */
   isBIDS: function(path) {
+    // _isBids(path)
     return (
       this.file.isTopLevel(path) ||
       this.file.isStimuliData(path) ||
       this.file.isSessionLevel(path) ||
       this.file.isSubjectLevel(path) ||
+      this.file.isPhenotypic(path) ||
+      _isBids(path)
+      /*
       this.file.isAnat(path) ||
       this.file.isDWI(path) ||
       this.file.isFunc(path) ||
@@ -97,7 +103,7 @@ export default {
       this.file.isEEG(path) ||
       this.file.isBehavioral(path) ||
       this.file.isFieldMap(path) ||
-      this.file.isPhenotypic(path)
+      */
     )
   },
 

@@ -1,0 +1,61 @@
+{
+  "type": "object",
+  "definitions": {
+    "GeneticLevelEnum": {
+      "type": "string",
+      "enum": [
+        "Genetic",
+        "Genomic",
+        "Epigenomic",
+        "Transcriptomic",
+        "Metabolomic",
+        "Proteomic"
+      ]
+    }
+  },
+  "properties": {
+    "GeneticLevel": {
+      "anyof": [
+        {
+          "type": "array",
+          "items": {"$ref": "#/definitions/GeneticLevelEnum"}
+        },
+        { "$ref": "#/definitions/GeneticLevelEnum" }
+      ]
+    },
+    "AnalyticalApproach": {
+      "items": {
+        "type": "string"
+      },
+      "type": ["array", "string"]
+    },
+    "SampleOrigin": {
+      "type": "string",
+      "enum": [
+        "blood",
+        "saliva",
+        "brain",
+        "csf",
+        "breast milk",
+        "bile",
+        "amniotic fluid",
+        "other biospecimen"
+      ]
+    },
+    "TissueOrigin": {
+      "type": "string",
+      "enum": [
+        "gray matter",
+        "white matter",
+        "csf",
+        "meninges",
+        "macrovascular",
+        "microvascular"
+      ]
+    },
+    "BrainLocation": { "type": "string" },
+    "CellType": { "type": "string" }
+  },
+  "required": ["GeneticLevel", "SampleOrigin"],
+  "additionalProperties": false
+}

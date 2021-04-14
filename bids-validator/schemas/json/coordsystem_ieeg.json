@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "properties": {
+    "iEEGCoordinateSystem": { "type": "string", "minLength": 1 },
+    "iEEGCoordinateUnits":  { "$ref": "common_definitions.json#/definitions/CoordUnits" },
+    "iEEGCoordinateSystemDescription": { "type": "string", "minLength": 1 },
+    "iEEGCoordinateProcessingDescription": { "type": "string", "minLength": 1 },
+    "iEEGCoordinateProcessingReference": { "type": "string", "minLength": 1 },
+    "IntendedFor": { "type": "string", "minLength": 1 }
+  },
+  "required": ["iEEGCoordinateSystem", "iEEGCoordinateUnits"],
+  "additionalProperties": false
+}

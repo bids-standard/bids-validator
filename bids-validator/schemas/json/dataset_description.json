@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "http://example.com/example.json",
+  "properties": {
+    "Name": {
+      "type": "string"
+    },
+    "BIDSVersion": {
+      "type": "string"
+    },
+    "HEDVersion": {
+      "type": "string"
+    },
+    "DatasetType": {
+      "type": "string",
+      "enum": ["raw", "derivative"]
+    },
+    "License": {
+      "type": "string"
+    },
+    "Authors": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "Acknowledgements": {
+      "type": "string"
+    },
+    "HowToAcknowledge": {
+      "type": "string"
+    },
+    "Funding": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "EthicsApprovals": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "ReferencesAndLinks": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "DatasetDOI": {
+      "type": "string"
+    },
+    "Genetics": {
+      "type": "object",
+      "properties": {
+        "Database": {
+          "type": "string"
+        },
+        "Dataset": {
+          "type": "string"
+        },
+        "Descriptors": {
+          "items": {
+            "type": "string"
+          },
+          "type": ["array", "string"]
+        }
+      }
+    }
+  },
+  "required": ["Name", "BIDSVersion"],
+  "type": "object"
+}

@@ -30,6 +30,7 @@
     "hed-validator": "3.0.5",
     "ignore": "^4.0.2",
     "is-utf8": "^0.2.1",
+    "js-yaml": "^3.14.0",
     "jshint": "^2.9.6",
     "minimatch": "3.0.4",
     "nifti-js": "^1.0.1",

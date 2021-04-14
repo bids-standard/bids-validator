@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "properties": {
+    "MEGCoordinateSystem": { "type": "string", "minLength": 1 },
+    "MEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
+    "MEGCoordinateSystemDescription": { "type": "string" },
+    "EEGCoordinateSystem": { "type": "string", "minLength": 1 },
+    "EEGCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
+    "EEGCoordinateSystemDescription": { "type": "string" },
+    "IntendedFor": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        { "type": "string", "minLength": 1 }
+      ]
+    },
+    "FiducialsDescription": { "type": "string", "minLength": 1 },
+    "HeadCoilCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
+    "HeadCoilCoordinateSystem": { "type": "string", "minLength": 1 },
+    "HeadCoilCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
+    "HeadCoilCoordinateSystemDescription": { "type": "string" },
+    "AnatomicalLandmarkCoordinates": { "$ref": "common_definitions.json#/definitions/LandmarkCoordinates" },
+    "AnatomicalLandmarkCoordinateSystem": { "type": "string", "minLength": 1 },
+    "AnatomicalLandmarkCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
+    "AnatomicalLandmarkCoordinateSystemDescription": { "type": "string" },
+    "DigitizedHeadPoints": { "type": "string" },
+    "DigitizedHeadPointsCoordinateSystem": { "type": "string" },
+    "DigitizedHeadPointsCoordinateUnits": { "$ref": "common_definitions.json#/definitions/CoordUnits" },
+    "DigitizedHeadPointsCoordinateSystemDescription": { "type": "string" }
+  },
+  "required": ["MEGCoordinateSystem", "MEGCoordinateUnits"],
+  "additionalProperties": false
+}

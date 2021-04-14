@@ -1,0 +1,62 @@
+{
+  "$id": "common_definitions.json",
+  "definitions": {
+    "CogAtlasID": { "type": "string" },
+    "CogPOID": { "type": "string" },
+    "CoordUnits": { "type": "string", "enum": ["m", "mm", "cm", "n/a"] },
+    "DeviceSerialNumber": { "type": "string" },
+    "ECGChannelCount": { "type": "integer", "minimum": 0 },
+    "EEGChannelCount": { "type": "integer", "minimum": 0 },
+    "EMGChannelCount": { "type": "integer", "minimum": 0 },
+    "EOGChannelCount": { "type": "integer", "minimum": 0 },
+    "EpochLength": { "type": "number", "minimum": 0 },
+    "HardwareFilters": {
+      "anyOf": [
+        { "type": "object", "additionalProperties": { "type": "object" } },
+        { "type": "string", "pattern": "^n/a$" }
+      ]
+    },
+    "InstitutionAddress": { "type": "string" },
+    "InstitutionName": { "type": "string" },
+    "Instructions": { "type": "string" },
+    "LandmarkCoordinates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array", 
+        "items": {
+          "type": "number"
+        },
+        "minItems": 3,
+        "maxItems": 3
+      }
+    },
+    "Manufacturer": { "type": "string", "minLength": 1 },
+    "MiscChannelCount": { "type": "integer", "minimum": 0 },
+    "PowerLineFrequency": {
+      "anyOf": [
+        { "type": "number", "exclusiveMinimum": 0 },
+        { "type": "string", "pattern": "^n/a$" }
+      ]
+    },
+    "RecordingDuration": { "type": "number" },
+    "RecordingType": {
+      "type": "string",
+      "enum": [
+        "continuous",
+        "epoched",
+        "discontinuous" 
+      ]
+    },
+    "SamplingFrequency": { "type": "number" },
+    "SoftwareFilters": {
+      "anyOf": [
+        { "type": "object", "additionalProperties": { "type": "object" } },
+        { "type": "string", "pattern": "^n/a$" }
+      ]
+    },
+    "SoftwareVersions": { "type": "string" },
+    "TaskDescription": { "type": "string" },
+    "TaskName": { "type": "string", "minLength": 1 },
+    "TriggerChannelCount": { "type": "integer", "minimum": 0 }
+  }
+}

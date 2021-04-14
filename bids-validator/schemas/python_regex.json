@@ -1,0 +1,35 @@
+{
+  "anat": [
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?anat[\\/\\\\]\\1(_\\2)?(?P<run>_run-[0-9]+)?(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<ce>_ce-[a-zA-Z0-9]+)?(?P<rec>_rec-[a-zA-Z0-9]+)?(?P<part>_part-[a-zA-Z0-9]+)?_(?P<suffix>T1w|T2w|T1rho|T1map|T2map|T2star|FLAIR|FLASH|PD|PDmap|PDT2|inplaneT1|inplaneT2|angio)(?P<ext>.nii.gz|.nii|.json)$",
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?anat[\\/\\\\]\\1(_\\2)?(?P<run>_run-[0-9]+)?(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<ce>_ce-[a-zA-Z0-9]+)?(?P<rec>_rec-[a-zA-Z0-9]+)?(?P<mod>_mod-[a-zA-Z0-9]+)?_(?P<suffix>defacemask)(?P<ext>.nii.gz|.nii|.json)$"
+  ],
+  "beh": [
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?beh[\\/\\\\]\\1(_\\2)?(?P<task>_task-[a-zA-Z0-9]+)(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?(?P<recording>_recording-[a-zA-Z0-9]+)?_(?P<suffix>stim|physio)(?P<ext>.tsv.gz|.json)$",
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?beh[\\/\\\\]\\1(_\\2)?(?P<task>_task-[a-zA-Z0-9]+)(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?_(?P<suffix>events|beh)(?P<ext>.tsv|.json)$"
+  ],
+  "dwi": [
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?dwi[\\/\\\\]\\1(_\\2)?(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<dir>_dir-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?(?P<part>_part-[a-zA-Z0-9]+)?_(?P<suffix>dwi)(?P<ext>.nii.gz|.nii|.json|.bvec|.bval)$",
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?dwi[\\/\\\\]\\1(_\\2)?(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<dir>_dir-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?(?P<part>_part-[a-zA-Z0-9]+)?_(?P<suffix>sbref)(?P<ext>.nii.gz|.nii|.json)$"
+  ],
+  "eeg": [
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?eeg[\\/\\\\]\\1(_\\2)?(?P<task>_task-[a-zA-Z0-9]+)(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?_(?P<suffix>eeg)(?P<ext>.json|.edf|.vhdr|.vmrk|.eeg|.set|.fdt|.bdf)$"
+  ],
+  "fmap": [
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?fmap[\\/\\\\]\\1(_\\2)?(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?_(?P<suffix>phasediff|phase1|phase2|magnitude1|magnitude2|magnitude|fieldmap)(?P<ext>.nii.gz|.nii|.json)$",
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?fmap[\\/\\\\]\\1(_\\2)?(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<ce>_ce-[a-zA-Z0-9]+)?(?P<dir>_dir-[a-zA-Z0-9]+)(?P<run>_run-[0-9]+)?_(?P<suffix>epi)(?P<ext>.nii.gz|.nii|.json)$"
+  ],
+  "func": [
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?func[\\/\\\\]\\1(_\\2)?(?P<task>_task-[a-zA-Z0-9]+)(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<ce>_ce-[a-zA-Z0-9]+)?(?P<rec>_rec-[a-zA-Z0-9]+)?(?P<dir>_dir-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?(?P<echo>_echo-[0-9]+)?(?P<part>_part-[a-zA-Z0-9]+)?_(?P<suffix>bold|cbv|sbref)(?P<ext>.nii.gz|.nii|.json)$",
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?func[\\/\\\\]\\1(_\\2)?(?P<task>_task-[a-zA-Z0-9]+)(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<ce>_ce-[a-zA-Z0-9]+)?(?P<rec>_rec-[a-zA-Z0-9]+)?(?P<dir>_dir-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?(?P<echo>_echo-[0-9]+)?_(?P<suffix>phase)(?P<ext>.nii.gz|.nii|.json)$",
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?func[\\/\\\\]\\1(_\\2)?(?P<task>_task-[a-zA-Z0-9]+)(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<ce>_ce-[a-zA-Z0-9]+)?(?P<rec>_rec-[a-zA-Z0-9]+)?(?P<dir>_dir-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?(?P<echo>_echo-[0-9]+)?_(?P<suffix>events)(?P<ext>.tsv|.json)$",
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?func[\\/\\\\]\\1(_\\2)?(?P<task>_task-[a-zA-Z0-9]+)(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<rec>_rec-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?(?P<recording>_recording-[a-zA-Z0-9]+)?_(?P<suffix>physio|stim)(?P<ext>.tsv.gz|.json)$"
+  ],
+  "ieeg": [
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?ieeg[\\/\\\\]\\1(_\\2)?(?P<task>_task-[a-zA-Z0-9]+)(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?_(?P<suffix>ieeg)(?P<ext>.mefd/|.json|.edf|.vhdr|.eeg|.vmrk|.set|.fdt|.nwb)$"
+  ],
+  "meg": [
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?meg[\\/\\\\]\\1(_\\2)?(?P<task>_task-[a-zA-Z0-9]+)(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<run>_run-[0-9]+)?(?P<proc>_proc-[a-zA-Z0-9]+)?(?P<split>_split-[0-9]+)?_(?P<suffix>meg)(?P<ext>/|.ds/|.json|.fif|.sqd|.con|.raw|.ave|.mrk|.kdf|.mhd)$",
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?meg[\\/\\\\]\\1(_\\2)?(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<space>_space-[a-zA-Z0-9]+)?_(?P<suffix>headshape)(?P<ext>.pos|.txt)$",
+    "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?meg[\\/\\\\]\\1(_\\2)?(?P<task>_task-[a-zA-Z0-9]+)?(?P<acq>_acq-[a-zA-Z0-9]+)?(?P<space>_space-[a-zA-Z0-9]+)?_(?P<suffix>markers)(?P<ext>.json)$"
+  ]
+}
