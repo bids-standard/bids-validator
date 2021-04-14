@@ -4,7 +4,7 @@
  */
 
 const stripBOM = str => str.replace(/^\uFEFF/, '')
-const normalizeEOL = str => str.replace('\r\n', '\n').replace('\r', '\n')
+const normalizeEOL = str => str.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 const isContentfulRow = row => row && !/^\s*$/.test(row)
 
 function parseTSV(contents) {
