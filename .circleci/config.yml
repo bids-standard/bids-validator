@@ -129,7 +129,7 @@ jobs:
             pip install dist/*.tar.gz
   deployment:
     docker:
-      - image: node:12-alpine
+      - image: node:12-alpine3.12
     steps:
       - run: apk --no-cache add ca-certificates git openssh-client
       - add_ssh_keys:
