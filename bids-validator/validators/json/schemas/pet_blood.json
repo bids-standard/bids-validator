@@ -1,0 +1,64 @@
+{
+  "type": "object",
+  "properties": {
+    "PlasmaAvail": {
+      "default": false,
+      "type": "boolean",
+      "requires_tsv_non_custom_columns": ["plasma_radioactivity"]
+    },
+    "PlasmaFreeFraction": {
+      "type": "number",
+      "min": 0,
+      "max": 1
+    },
+    "PlasmaFreeFractionMethod": { "type": "string", "minLength": 1 },
+
+    "MetaboliteAvail": {
+      "default": false,
+      "type": "boolean",
+      "requires_tsv_non_custom_columns": ["metabolite_parent_fraction"]
+    },
+    "MetaboliteMethod": { "type": "string", "minLength": 1 },
+    "MetaboliteRecoveryCorrectionApplied": {
+      "type": "boolean",
+      "requires_tsv_non_custom_columns": ["hplc_recovery_fractions"]
+    },
+
+    "WithdrawalRate": { "type": "number" },
+
+    "TubingType": { "type": "string" },
+    "TubingLength": { "type": "number" },
+    "TubingLengthUnits": { "type": "string" },
+    "DispersionConstant": { "type": "number" },
+    "DispersionCorrected": { "type": "boolean" },
+
+    "WholeBloodAvail": {
+      "default": false,
+      "type": "boolean",
+      "requires_tsv_non_custom_columns": ["whole_blood_radioactivity"]
+    },
+    "Haematocrit": { "type": "number" },
+
+    "BloodDensity": { "type": "number" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "MetaboliteAvail": {
+            "enum": [true]
+          }
+        }
+      },
+      "then": {
+        "required": ["MetaboliteMethod", "MetaboliteRecoveryCorrectionApplied"]
+      }
+    }
+  ],
+  "required": [
+    "MetaboliteAvail",
+    "PlasmaAvail",
+    "WholeBloodAvail",
+    "DispersionCorrected"
+  ]
+}

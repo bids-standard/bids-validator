@@ -225,7 +225,7 @@ const TSV = (file, contents, fileList, callback) => {
               reason: 'Participant_id column should be named ' +
                       'as sub-<subject_id>.',
               line: l,
-              code: 211,
+              code: 212,
             }),
           )
         }
@@ -297,6 +297,15 @@ const TSV = (file, contents, fileList, callback) => {
     checkheader('size', 4, file, 73)
   }
 
+  // blood.tsv
+  if (
+    file.relativePath.includes('/pet/') &&
+    file.name.endsWith('_blood.tsv')
+  ) {
+    // Validate fields here
+    checkheader('time', 0, file, 126)
+  }
+
   // check for valid SI units
   /* 
    * Commenting out call to validation until it is inline with spec:
@@ -327,7 +336,6 @@ const TSV = (file, contents, fileList, callback) => {
   */
 
   // check partcipants.tsv for age 89+
-
   if (file.name === 'participants.tsv') {
     checkAge89(rows, file, issues)
   }

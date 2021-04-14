@@ -86,6 +86,8 @@ const selectSchema = file => {
       schema = require('./schemas/bold.json')
     } else if (file.name.endsWith('asl.json')) {
       schema = require('./schemas/asl.json')
+    } else if (file.name.endsWith('pet.json')) {
+      schema = require('./schemas/pet.json')
     } else if (file.relativePath === '/dataset_description.json') {
       schema = require('./schemas/dataset_description.json')
     } else if (file.name.endsWith('meg.json')) {
@@ -109,6 +111,11 @@ const selectSchema = file => {
       file.name.endsWith('coordsystem.json')
     ) {
       schema = require('./schemas/coordsystem_eeg.json')
+    } else if (
+      file.relativePath.includes('/pet/') &&
+      file.name.endsWith('blood.json')
+    ) {
+      schema = require('./schemas/pet_blood.json')
     } else if (file.name.endsWith('genetic_info.json')) {
       schema = require('./schemas/genetic_info.json')
     } else if (

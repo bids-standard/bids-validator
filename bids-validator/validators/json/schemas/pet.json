@@ -1,0 +1,235 @@
+{
+  "type": "object",
+  "properties": {
+    "Manufacturer": { "type": "string", "minLength": 1 },
+    "ManufacturersModelName": { "type": "string", "minLength": 1 },
+    "Units": {
+      "type": "string",
+      "minLength": 1
+    },
+    "TracerName": { "type": "string", "minLength": 1 },
+    "TracerRadionuclide": { "type": "string", "minLength": 1 },
+    "InstitutionName": { "type": "string", "minLength": 1 },
+    "InstitutionAddress": { "type": "string", "minLength": 1 },  
+    "InstitutionalDepartmentName": { "type": "string", "minLength": 1 }, 
+    "BodyPart": { "type": "string", "minLength": 1 },
+    "TracerRadLex": { "type": "string", "minLength": 1 },
+    "TracerSNOMED": { "type": "string", "minLength": 1 },
+    "TracerMolecularWeight": { "type": "number" },
+    "TracerMolecularWeightUnits": { "type": "string", "minLength": 1 },
+    "PharmaceuticalName": { "type": "string", "minLength": 1 },
+    "PharmaceuticalDoseAmount": { 
+      "anyOf": [
+        { "type": "number", "minimum": 0 },
+        { "type": "array", "items": { "type": "number" } }
+        ]
+      },
+    "PharmaceuticalDoseUnits": { "type": "string", "minLength": 1 },
+    "PharmaceuticalDoseRegimen": { "type": "string", "minLength": 1 },
+    "PharmaceuticalDoseTime": { 
+      "anyOf": [
+        { "type": "number" },
+        { "type": "array", "items": { "type": "number" } }
+        ]
+      },
+    "Anaesthesia": { "type": "string", "minLength": 1 },
+    
+    "ModeOfAdministration": { "type": "string", "minLength": 1 },
+    "InjectedRadioactivity": { "type": "number" },
+    "InjectedRadioactivityUnits": { "type": "string", "minLength": 1 },
+    "InjectedMass": { "type": "number" },
+    "InjectedMassUnits": { "type": "string", "minLength": 1 },
+    "SpecificRadioactivity": { "type": "number" },
+    "SpecificRadioactivityUnits": { "type": "string", "minLength": 1 },
+    "InjectedMassPerWeight": { "type": "number" },
+    "InjectedMassPerWeightUnits": { "type": "string", "minLength": 1 },
+    "SpecificRadioactivityMeasTime": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "MolarActivity": { "type": "number" },
+    "MolarActivityUnits": { "type": "string", "minLength": 1 },
+    "MolarActivityMeasTime": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "InfusionRadioactivity": { "type": "number" },
+    "InfusionStart": { "type": "number" },  
+    "InfusionSpeed": { "type": "number" }, 
+    "InfusionSpeedUnits": { "type": "string", "minLength": 1 },
+    "InjectedVolume": { "type": "number" },
+    "Purity": { "type": "number" },
+
+    "TimeZero": {
+      "type": "string",
+      "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
+    },
+    "ScanStart": { "type": "number" },
+    "InjectionStart": { "type": "number" },
+    "FrameTimesStart": {"type": "array", "items": { "type": "number" } },
+    "FrameDuration": { "type": "array", "items": { "type": "number" } },
+    "ScanDate": {
+      "type": "string",
+      "pattern": "date"
+    },
+    "InjectionEnd": { "type": "number" },
+
+    "AcquisitionMode": { "type": "string", "minLength": 1 },
+    "ImageDecayCorrected": { "type": "boolean" },
+    "ImageDecayCorrectionTime": { "type": "number" },
+    "ReconMethodName": { "type": "string", "minLength": 1 },
+    "ReconMethodParameterLabels": { "type": "array", "items": { "type": "string" } },
+    "ReconMethodParameterUnits": { "type": "array", "items": { "type": "string" } },
+    "ReconMethodParameterValues": { "type": "array", "items": { "type": "number" } },
+    "ReconFilterType": { 
+      "anyOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+        ]
+      },
+    "ReconFilterSize": { 
+      "anyOf": [
+        { "type": "number", "minimum": 0 },
+        {"type": "array", "items": { "type": "number" } }
+        ]
+      }, 
+    "ReconMethodImplementationVersion": { "type": "string", "minLength": 1 },
+    "AttenuationCorrection": { "type": "string", "minLength": 1 },
+    "AttenuationCorrectionMethodReference": { "type": "string", "minLength": 1 },
+    "ScaleFactor": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "ScatterFraction": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "DecayCorrectionFactor": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "PromptRate": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "RandomRate": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "SinglesRate": {
+      "type": "array",
+      "items": { "type": "number" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "InjectedMass": {
+            "enum": ["n/a"]
+          },
+          "InjectedMassUnits": {
+            "enum": ["n/a"]
+          }
+        }
+      },
+      "then": {
+      },
+      "else": {
+        "required": ["InjectedMass", "InjectedMassUnits"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "SpecificRadioactivity": {
+            "enum": ["n/a"]
+          },
+          "SpecificRadioactivityUnits": {
+            "enum": ["n/a"]
+          }
+        }
+      },
+      "then": {
+      },
+      "else": {
+        "required": ["SpecificRadioactivity", "SpecificRadioactivityUnits"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ReconFilterType": {
+            "enum": ["n/a"]
+          },
+          "ReconFilterSize": {
+            "enum": ["n/a"]
+          }
+        }
+      },
+      "then": {
+      },
+      "else": {
+        "required": ["ReconFilterType", "ReconFilterSize"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ModeOfAdministration": {
+            "enum": ["bolus-infusion"]
+          }
+        }
+      },
+      "then": {
+        "required": ["InfusionRadioactivity", "InfusionStart", "InfusionSpeed", "InjectedVolume"]
+      },
+      "else": {
+      }
+    }
+  ],
+
+  "required": [
+    "Manufacturer",
+    "ManufacturersModelName",
+    "Units",
+    "TracerName",
+    "TracerRadionuclide",
+
+    "ModeOfAdministration",
+    "InjectedRadioactivity",
+    "InjectedRadioactivityUnits",
+    "InjectedMass",
+    "InjectedMassUnits",
+    "SpecificRadioactivity",
+    "SpecificRadioactivityUnits",
+
+    "TimeZero",
+    "ScanStart",
+    "InjectionStart",
+    "FrameTimesStart",
+    "FrameDuration",
+
+    "AcquisitionMode",
+    "ImageDecayCorrected",
+    "ImageDecayCorrectionTime",
+    "ReconMethodName",
+    "ReconMethodParameterLabels",
+    "ReconMethodParameterUnits",
+    "ReconMethodParameterValues",
+    "ReconFilterType",
+    "ReconFilterSize",
+    "AttenuationCorrection"
+  ],
+  "dependencies": {
+    "TracerMolecularWeight": ["TracerMolecularWeightUnits"],
+    "InjectedRadioactivity": ["InjectedRadioactivityUnits"],
+    "InjectedMassPerWeight": ["InjectedMassPerWeightUnits"],
+    "MolarActivity": ["MolarActivityUnits"],
+    "InfusionSpeed": ["InfusionSpeedUnits"],
+    "ReconMethodParameterLabels": [
+      "ReconMethodParameterUnits",
+      "ReconMethodParameterValues"
+    ]
+  }
+}

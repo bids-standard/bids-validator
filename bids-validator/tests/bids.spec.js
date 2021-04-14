@@ -273,12 +273,35 @@ describe('BIDS example datasets ', function() {
       isdone()
     })
   })
-  it('should throw an error if it encounters a non-utf-8 file', function(isdone) {
+
+  it('should validate pet data', function(isdone) {
     validate.BIDS(
-      createDatasetFileList('latin-1_description'),
+      createDatasetFileList('broken_pet_example_2-pet_mri'),
       options,
       function(issues) {
-        assertErrorCode(issues.errors, 123)
+        assertErrorCode(issues.errors, 55)
+        isdone()
+      },
+    )
+  })
+
+  it('should validate pet blood data', function(isdone) {
+    validate.BIDS(
+      createDatasetFileList('broken_pet_example_3-pet_blood'),
+      options,
+      function(issues) {
+        assertErrorCode(issues.errors, 55)
+        isdone()
+      },
+    )
+  })
+
+  it('should catch missing tsv columns', function(isdone) {
+    validate.BIDS(
+      createDatasetFileList('pet_blood_missing_tsv_column'),
+      options,
+      function(issues) {
+        assertErrorCode(issues.errors, 211)
         isdone()
       },
     )
