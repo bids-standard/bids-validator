@@ -127,65 +127,6 @@ jobs:
             python --version
             pip install -U pip setuptools>=27.0 wheel
             pip install dist/*.tar.gz
-  test_deployment:
-    docker:
-      - image: node:12-alpine3.12
-    steps:
-      - run: apk --no-cache add ca-certificates git openssh-client
-      - add_ssh_keys:
-          fingerprints:
-            - "86:74:77:4c:90:02:f4:5d:b4:f8:3c:b4:37:c3:c0:25"
-      - checkout
-      - run: apk --no-cache add ca-certificates git openssh-client rust cargo
-      - run:
-          name: Set up environment
-          command: apk --no-cache add build-base libffi-dev libressl-dev
-      - run:
-          name: Install Python 3 and build tools
-          command: apk --no-cache add python3 python3-dev
-      - run:
-          name: Update Python install tools
-          command: |
-            python3 -m ensurepip
-            python3 -m pip install --upgrade pip setuptools wheel
-      - run:
-          name: Install Twine
-          command: |
-            python3 -m pip install twine
-      - run: git checkout -f $CIRCLE_TAG
-      - run: cd bids-validator && python3 setup.py sdist bdist_wheel
-      # Publish to PyPI
-      - run: cd bids-validator && twine -r testpypi upload dist/*
-      # Update gh-pages demo site
-      - run: git config --global user.email "bids.maintenance@gmail.com"
-      - run: git config --global user.name "bids-maintenance"
-      - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - run:
-          name: Create new gh-pages branch without history
-          command: git checkout --orphan gh-pages
-      - run:
-          name: Install web demo dependencies
-          command: npm install
-      - run:
-          name: Build and export next project
-          command: npm run web-export
-      - run:
-          name: Clean and remove bids-validator files
-          command: git reset . && git clean --force -d --exclude bids-validator-web/out
-      - run:
-          name: Move build into root directory
-          command: mv bids-validator-web/out/* .
-      - run:
-          name: Remove files not related to build
-          command: rm -r bids-validator bids-validator-web node_modules
-      - run:
-          name: Create a nojekyll file (gh-pages specific)
-          command: touch .nojekyll
-      - run: git status
-      - run:
-          name: Commit updates
-          command: git add . && git commit --allow-empty --no-verify -m "Circle CI - Generate validator demo with version $CIRCLE_TAG"
-
   deployment:
     docker:
       - image: node:12-alpine3.12
@@ -276,16 +217,6 @@ workflows:
               only: /.*/
       - pypi_precheck:
           filters:
-            tags:
-              only: /.*/
-      - test_deployment:
-          requires:
-            - test_python
-            - test
-            - githubPagesTest
-          filters:
-            branches:
-              ignore: /.*/
             tags:
               only: /.*/
       - deployment:
