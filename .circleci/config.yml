@@ -285,7 +285,7 @@ workflows:
             - githubPagesTest
           filters:
             branches:
-              only: /.*/
+              ignore: /.*/
             tags:
               only: /.*/
       - deployment:
