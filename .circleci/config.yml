@@ -129,19 +129,29 @@ jobs:
             pip install dist/*.tar.gz
   deployment:
     docker:
-      - image: node:12.14.1-alpine
+      - image: node:12-alpine3.12
     steps:
       - run: apk --no-cache add ca-certificates git openssh-client
       - add_ssh_keys:
           fingerprints:
             - "86:74:77:4c:90:02:f4:5d:b4:f8:3c:b4:37:c3:c0:25"
       - checkout
-      - run: apk --no-cache add python build-base openssh libffi-dev libressl-dev
+      - run: apk --no-cache add ca-certificates git openssh-client rust cargo
       - run:
-          name: Install Python 3 and update setuptools
+          name: Set up environment
+          command: apk --no-cache add build-base libffi-dev libressl-dev
+      - run:
+          name: Install Python 3 and build tools
+          command: apk --no-cache add python3 python3-dev
+      - run:
+          name: Update Python install tools
           command: |
-            apk --no-cache add python3 python3-dev py3-cffi
-            python3 -m pip install --upgrade pip setuptools wheel twine
+            python3 -m ensurepip
+            python3 -m pip install --upgrade pip setuptools wheel
+      - run:
+          name: Install Twine
+          command: |
+            python3 -m pip install twine
       - run: git checkout -f $CIRCLE_TAG
       - run: cd bids-validator && python3 setup.py sdist bdist_wheel
       # Publish to PyPI
