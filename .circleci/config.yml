@@ -241,9 +241,7 @@ workflows:
             - pypi_precheck
           filters:
             branches:
-              only: /.*/
-              # Don't ingore for testing this PR
-              # ignore: /.*/
+              ignore: /.*/
             tags:
               only: /.*/
       - gh-pages_deployment:
@@ -253,8 +251,6 @@ workflows:
             - githubPagesTest
           filters:
             branches:
-              only: /.*/
-              # Don't ingore for testing this PR
-              # ignore: /.*/
+              ignore: /.*/
             tags:
               only: /.*/
