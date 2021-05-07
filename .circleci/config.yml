@@ -192,8 +192,7 @@ jobs:
       - run:
           name: Commit updates
           command: git add . && git commit --allow-empty --no-verify -m "Circle CI - Generate validator demo with version $CIRCLE_TAG"
-      # skip force push while testing this PR
-      # - run:  git push origin gh-pages -f
+      - run: git push origin gh-pages -f
       - save_cache:
           key: npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
           paths:
