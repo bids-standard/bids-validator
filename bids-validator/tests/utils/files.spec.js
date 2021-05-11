@@ -97,7 +97,6 @@ describe('README', () => {
       },
     }
     const issues = checkReadme(fileList)
-    console.log(issues)
     assert(issues[0].key === 'README_FILE_SMALL')
   })
 })
