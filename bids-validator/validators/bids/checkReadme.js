@@ -14,7 +14,7 @@ const checkReadme = fileList => {
   } else {
     // Get the README file object
     for (var key in fileList) {
-      if (fileList[key].name == '/README') {
+      if (fileList[key].relativePath == '/README') {
         var readmeFile = fileList[key]
         break
       }
