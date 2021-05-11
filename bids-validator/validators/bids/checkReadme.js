@@ -22,7 +22,7 @@ const checkReadme = fileList => {
 
     // Check size and raise warning if too small
     const size = !isNode ? readmeFile.size : readmeFile.stats.size
-    var failsSizeRequirement = size <= 150
+    const failsSizeRequirement = size <= 150
     if (failsSizeRequirement) {
       issues.push(new Issue({ code: 213 }))
     }
