@@ -10,7 +10,7 @@ await esbuild.build({
   ],
   outdir: path.join(process.cwd(), 'dist', 'commonjs'),
   target: 'node12',
-  bundle: false,
+  bundle: true,
   sourcemap: true,
   platform: 'node',
 })
@@ -36,6 +36,7 @@ await esbuild.build({
       stdin: '',
       version: 'v12.14.1',
     }),
+    external: ['pluralize'],
   },
   plugins: [
     GlobalsPlugin({
