@@ -32,9 +32,11 @@ describe('Events', function() {
       events: ['/stimuli/images/red-square.jpg'],
       directory: [{ relativePath: '/stimuli/images/red-square.jpg' }],
     }
-    return validate.Events.validateEvents([], stimuli, [], {}).then(issues => {
-      assert.deepStrictEqual(issues, [])
-    })
+    return validate.Events.validateEvents([], stimuli, [], {}, []).then(
+      issues => {
+        assert.deepStrictEqual(issues, [])
+      },
+    )
   })
 
   it('should throw an issue if the onset of the last event in _events.tsv is more than TR * number of volumes in corresponding nifti header', () => {
@@ -50,12 +52,19 @@ describe('Events', function() {
         RepetitionTime: 1,
       },
     }
+    const jsonFiles = [
+      {
+        relativePath: '/sub01/sub01_task-test_events.json',
+        path: '/sub01/sub01_task-test_events.json',
+      },
+    ]
 
     return validate.Events.validateEvents(
       events,
       [],
       headers,
       jsonDictionary,
+      jsonFiles,
       '',
     ).then(issues => {
       assert.strictEqual(issues.length, 1)
@@ -76,12 +85,19 @@ describe('Events', function() {
         RepetitionTime: 1,
       },
     }
+    const jsonFiles = [
+      {
+        relativePath: '/sub01/sub01_task-test_events.json',
+        path: '/sub01/sub01_task-test_events.json',
+      },
+    ]
 
     return validate.Events.validateEvents(
       events,
       [],
       headers,
       jsonDictionary,
+      jsonFiles,
       '',
     ).then(issues => {
       assert.strictEqual(issues.length, 1)
@@ -102,12 +118,19 @@ describe('Events', function() {
         RepetitionTime: 1,
       },
     }
+    const jsonFiles = [
+      {
+        relativePath: '/sub01/sub01_task-test_events.json',
+        path: '/sub01/sub01_task-test_events.json',
+      },
+    ]
 
     return validate.Events.validateEvents(
       events,
       [],
       headers,
       jsonDictionary,
+      jsonFiles,
       '',
     ).then(issues => {
       assert.deepStrictEqual(issues, [])
@@ -129,12 +152,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -156,12 +190,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -182,12 +227,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -209,12 +265,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -242,12 +309,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -276,12 +354,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -311,12 +400,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -344,12 +444,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -378,12 +489,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -414,12 +536,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -455,12 +588,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -497,12 +641,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -539,12 +694,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -570,12 +736,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -609,12 +786,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -648,12 +836,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -686,12 +885,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -725,12 +935,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -752,12 +973,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -779,12 +1011,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -806,12 +1049,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -833,12 +1087,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -860,12 +1125,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -887,12 +1163,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -914,12 +1201,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -941,12 +1239,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -968,12 +1277,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -995,12 +1315,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1022,12 +1353,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1049,12 +1391,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1076,12 +1429,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1103,12 +1467,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.1.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1130,12 +1505,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '7.0.5' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -1154,12 +1540,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -1184,12 +1581,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -1210,12 +1618,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1241,12 +1660,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 2)
@@ -1267,12 +1697,23 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {},
         '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1298,12 +1739,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 2)
@@ -1330,12 +1782,23 @@ describe('Events', function() {
         },
         '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
       }
+      const jsonFiles = [
+        {
+          relativePath: '/sub01/sub01_task-test_events.json',
+          path: '/sub01/sub01_task-test_events.json',
+        },
+        {
+          relativePath: '/dataset_description.json',
+          path: '/dataset_description.json',
+        },
+      ]
 
       return validate.Events.validateEvents(
         events,
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         // TODO: Change length back to 2 once hed-validator event- and string-level validation is properly split.
