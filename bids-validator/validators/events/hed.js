@@ -36,14 +36,14 @@ function detectHed(events, jsonContents) {
       eventFile.path.replace('.tsv', '.json'),
     )
     for (const sidecarName of potentialSidecars) {
-      if (!checkedSidecars.includes(sidecarName)) {
-        checkedSidecars.push(sidecarName)
-        const sidecarDictionary = jsonContents[sidecarName]
-        for (const sidecarKey in sidecarDictionary) {
-          const sidecarValue = sidecarDictionary[sidecarKey]
-          if (sidecarValueHasHed(sidecarValue)) {
-            return true
-          }
+      if (checkedSidecars.includes(sidecarName)) {
+        continue
+      }
+      checkedSidecars.push(sidecarName)
+      const sidecarDictionary = jsonContents[sidecarName]
+      for (const sidecarKey in sidecarDictionary) {
+        if (sidecarValueHasHed(sidecarDictionary[sidecarKey])) {
+          return true
         }
       }
     }
