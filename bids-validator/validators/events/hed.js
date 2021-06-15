@@ -51,11 +51,7 @@ function detectHed(events, jsonContents) {
         }
       }
     }
-    const rows = eventFile.contents
-      .split('\n')
-      .filter(row => !(!row || /^\s*$/.test(row)))
-
-    const columnHeaders = rows[0].trim().split('\t')
+    const [columnHeaders] = splitTsv(eventFile)
     const hedColumnIndex = columnHeaders.indexOf('HED')
     if (hedColumnIndex !== -1) {
       return true
@@ -257,11 +253,7 @@ function mergeSidecarHed(potentialSidecars, jsonContents, issues, eventFile) {
 function parseTsvHed(sidecarHedTags, eventFile) {
   const hedStrings = []
   const issues = []
-  const rows = eventFile.contents
-    .split('\n')
-    .filter(row => !(!row || /^\s*$/.test(row)))
-
-  const columnHeaders = rows[0].trim().split('\t')
+  const [columnHeaders, dataRows] = splitTsv(eventFile)
   const hedColumnIndex = columnHeaders.indexOf('HED')
   const sidecarHedColumnIndices = {}
   for (const sidecarHedColumn in sidecarHedTags) {
@@ -274,7 +266,7 @@ function parseTsvHed(sidecarHedTags, eventFile) {
     return
   }
 
-  for (const row of rows.slice(1)) {
+  for (const row of dataRows) {
     // get the 'HED' field
     const rowCells = row.trim().split('\t')
     const hedStringParts = []
@@ -315,6 +307,16 @@ function parseTsvHed(sidecarHedTags, eventFile) {
     hedStrings.push(hedStringParts.join(','))
   }
   return [hedStrings, issues]
+}
+
+function splitTsv(eventFile) {
+  const rows = eventFile.contents
+    .split('\n')
+    .filter(row => !(!row || /^\s*$/.test(row)))
+
+  const columnHeaders = rows[0].trim().split('\t')
+  const dataRows = rows.slice(1)
+  return [columnHeaders, dataRows]
 }
 
 function validateDataset(hedStrings, hedSchema, eventFile) {
