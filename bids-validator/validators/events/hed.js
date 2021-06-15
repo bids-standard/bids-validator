@@ -41,11 +41,7 @@ function detectHed(events, jsonContents) {
         const sidecarDictionary = jsonContents[sidecarName]
         for (const sidecarKey in sidecarDictionary) {
           const sidecarValue = sidecarDictionary[sidecarKey]
-          if (
-            sidecarValue !== null &&
-            typeof sidecarValue === 'object' &&
-            sidecarValue.HED !== undefined
-          ) {
+          if (sidecarValueHasHed(sidecarValue)) {
             return true
           }
         }
@@ -141,11 +137,7 @@ function validateSidecars(
       let sidecarHedStrings = []
       for (const sidecarKey in sidecarDictionary) {
         const sidecarValue = sidecarDictionary[sidecarKey]
-        if (
-          sidecarValue !== null &&
-          typeof sidecarValue === 'object' &&
-          sidecarValue.HED !== undefined
-        ) {
+        if (sidecarValueHasHed(sidecarValue)) {
           if (typeof sidecarValue.HED === 'string') {
             sidecarHedStrings.push(sidecarValue.HED)
           } else {
@@ -224,11 +216,7 @@ function mergeSidecarHed(potentialSidecars, jsonContents, issues, eventFile) {
   const sidecarHedTags = {}
   for (const sidecarKey in mergedDictionary) {
     const sidecarValue = mergedDictionary[sidecarKey]
-    if (
-      sidecarValue !== null &&
-      typeof sidecarValue === 'object' &&
-      sidecarValue.HED !== undefined
-    ) {
+    if (sidecarValueHasHed(sidecarValue)) {
       const sidecarHedData = sidecarValue.HED
       if (
         typeof sidecarHedData === 'string' &&
@@ -248,6 +236,14 @@ function mergeSidecarHed(potentialSidecars, jsonContents, issues, eventFile) {
     }
   }
   return sidecarHedTags
+}
+
+function sidecarValueHasHed(sidecarValue) {
+  return (
+    sidecarValue !== null &&
+    typeof sidecarValue === 'object' &&
+    sidecarValue.HED !== undefined
+  )
 }
 
 function parseTsvHed(sidecarHedTags, eventFile) {
