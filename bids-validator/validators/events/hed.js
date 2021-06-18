@@ -4,13 +4,7 @@ import semver from 'semver'
 import utils from '../../utils'
 const Issue = utils.issues.Issue
 
-export default function checkHedStrings(
-  events,
-  headers,
-  jsonContents,
-  jsonFiles,
-  dir,
-) {
+export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
   const hedDataExists = detectHed(events, jsonContents)
   if (!hedDataExists) {
     return Promise.resolve([])
