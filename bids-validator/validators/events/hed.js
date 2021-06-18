@@ -111,9 +111,12 @@ function extractHed(
 
     const [tsvHedStrings, tsvIssues] = parseTsvHed(sidecarHedTags, eventFile)
     hedStrings = tsvHedStrings
-
-    const datasetIssues = validateDataset(hedStrings, hedSchema, eventFile)
-    issues = issues.concat(sidecarIssues, tsvIssues, datasetIssues)
+    if (!hedStrings) {
+      issues = issues.concat(sidecarIssues)
+    } else {
+      const datasetIssues = validateDataset(hedStrings, hedSchema, eventFile)
+      issues = issues.concat(sidecarIssues, tsvIssues, datasetIssues)
+    }
   })
   if (Object.entries(schemaDefinition).length === 0) {
     issues.push(new Issue({ code: 132 }))
@@ -259,7 +262,7 @@ function parseTsvHed(sidecarHedTags, eventFile) {
     }
   }
   if (hedColumnIndex === -1 && sidecarHedColumnIndices.length === 0) {
-    return
+    return [[], []]
   }
 
   for (const row of dataRows) {
