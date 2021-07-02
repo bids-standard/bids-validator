@@ -20,7 +20,7 @@ export default function(
   const designIssues = checkDesignLength(events, headers, jsonContents)
 
   // check the HED strings
-  return hed(events, headers, jsonContents, jsonFiles, dir).then(hedIssues => {
+  return hed(events, jsonContents, jsonFiles, dir).then(hedIssues => {
     return issues.concat(stimuliIssues, designIssues, hedIssues)
   })
 }
