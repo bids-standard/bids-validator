@@ -9,13 +9,7 @@ function internalHedValidatorIssue(error) {
   return Issue.errorToIssue(error, 210)
 }
 
-export default function checkHedStrings(
-  events,
-  headers,
-  jsonContents,
-  jsonFiles,
-  dir,
-) {
+export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
   const hedDataExists = detectHed(events, jsonContents)
   if (!hedDataExists) {
     return Promise.resolve([])
