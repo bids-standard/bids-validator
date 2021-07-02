@@ -5,23 +5,31 @@ import utils from '../../utils'
 import parseTsv from '../tsv/tsvParser'
 const Issue = utils.issues.Issue
 
+function internalHedValidatorIssue(error) {
+  return Issue.errorToIssue(error, 210)
+}
+
 export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
   const hedDataExists = detectHed(events, jsonContents)
   if (!hedDataExists) {
     return Promise.resolve([])
   }
   const schemaDefinition = parseHedVersion(jsonContents, dir)
-  return hedValidator.validator
-    .buildSchema(schemaDefinition)
-    .then(hedSchema => {
-      return extractHed(
-        events,
-        jsonContents,
-        jsonFiles,
-        hedSchema,
-        schemaDefinition,
-      )
-    })
+  let hedSchemaPromise
+  try {
+    hedSchemaPromise = hedValidator.validator.buildSchema(schemaDefinition)
+  } catch (error) {
+    return Promise.resolve([internalHedValidatorIssue(error)])
+  }
+  return hedSchemaPromise.then(hedSchema => {
+    return extractHed(
+      events,
+      jsonContents,
+      jsonFiles,
+      hedSchema,
+      schemaDefinition,
+    )
+  })
 }
 
 function detectHed(events, jsonContents) {
@@ -147,8 +155,9 @@ function validateSidecars(
       }
       let fileIssues = []
       for (const hedString of sidecarHedStrings) {
+        let isHedStringValid, hedIssues
         try {
-          const [
+          ;[
             isHedStringValid,
             hedIssues,
           ] = hedValidator.validator.validateHedString(
@@ -157,15 +166,15 @@ function validateSidecars(
             true,
             true,
           )
-          if (!isHedStringValid) {
-            const convertedIssues = convertHedIssuesToBidsIssues(
-              hedIssues,
-              getSidecarFileObject(sidecarName, jsonFiles),
-            )
-            fileIssues = fileIssues.concat(convertedIssues)
-          }
-        } catch (e) {
-          fileIssues.push(new Issue({ code: 209 }))
+        } catch (error) {
+          return [internalHedValidatorIssue(error)]
+        }
+        if (!isHedStringValid) {
+          const convertedIssues = convertHedIssuesToBidsIssues(
+            hedIssues,
+            getSidecarFileObject(sidecarName, jsonFiles),
+          )
+          fileIssues = fileIssues.concat(convertedIssues)
         }
       }
       if (fileIssues.length > 0) {
@@ -288,22 +297,24 @@ function parseTsvHed(sidecarHedTags, eventFile) {
 }
 
 function validateDataset(hedStrings, hedSchema, eventFile) {
+  let isHedDatasetValid, hedIssues
   try {
-    const [
-      isHedDatasetValid,
+    ;[isHedDatasetValid, hedIssues] = hedValidator.validator.validateHedDataset(
+      hedStrings,
+      hedSchema,
+      true,
+    )
+  } catch (error) {
+    return [internalHedValidatorIssue(error)]
+  }
+  if (!isHedDatasetValid) {
+    const convertedIssues = convertHedIssuesToBidsIssues(
       hedIssues,
-    ] = hedValidator.validator.validateHedDataset(hedStrings, hedSchema, true)
-    if (!isHedDatasetValid) {
-      const convertedIssues = convertHedIssuesToBidsIssues(
-        hedIssues,
-        eventFile.file,
-      )
-      return convertedIssues
-    } else {
-      return []
-    }
-  } catch (e) {
-    return [new Issue({ code: 209 })]
+      eventFile.file,
+    )
+    return convertedIssues
+  } else {
+    return []
   }
 }
 

@@ -122,7 +122,7 @@ var issues = {
    *
    * Takes and expection and returns an Issue
    */
-  errorToIssue: function(err) {
+  errorToIssue: function(err, code = 0) {
     const callStack = err.stack
       ? err.stack
           .split('\n')
@@ -135,7 +135,7 @@ var issues = {
       file: callStack,
       evidence: err.stack || '',
       reason: `${err.message}; please help the BIDS team and community by opening an issue at (https://github.com/bids-standard/bids-validator/issues) with the evidence here.`,
-      code: 0,
+      code: code,
     })
   },
 

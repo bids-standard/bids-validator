@@ -1132,9 +1132,9 @@ export default {
     reason: 'An internal error occurred during HED validation.',
   },
   210: {
-    key: 'EMPTY_210',
+    key: 'HED_INTERNAL_WARNING',
     severity: 'warning',
-    reason: '',
+    reason: 'An internal error occurred during HED validation.',
   },
   211: {
     key: 'TSV_MISSING_REQUIRED_COLUMN',
