@@ -6,8 +6,7 @@ import parseTsv from '../tsv/tsvParser'
 const Issue = utils.issues.Issue
 
 function internalHedValidatorIssue(error) {
-  const issue = Issue.errorToIssue(error, 210)
-  return issue
+  return Issue.errorToIssue(error, 210)
 }
 
 export default function checkHedStrings(
