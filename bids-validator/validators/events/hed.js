@@ -5,10 +5,6 @@ import utils from '../../utils'
 import parseTsv from '../tsv/tsvParser'
 const Issue = utils.issues.Issue
 
-function internalHedValidatorIssue(error) {
-  return Issue.errorToIssue(error, 210)
-}
-
 export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
   const hedDataExists = detectHed(events, jsonContents)
   if (!hedDataExists) {
@@ -315,6 +311,10 @@ function validateDataset(hedStrings, hedSchema, eventFile) {
   } else {
     return []
   }
+}
+
+function internalHedValidatorIssue(error) {
+  return Issue.errorToIssue(error, 210)
 }
 
 function convertHedIssuesToBidsIssues(hedIssues, file) {
