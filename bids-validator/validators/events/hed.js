@@ -4,6 +4,11 @@ import semver from 'semver'
 import utils from '../../utils'
 const Issue = utils.issues.Issue
 
+function internalHedValidatorIssue(error) {
+  const issue = Issue.errorToIssue(error, 214)
+  return issue
+}
+
 export default function checkHedStrings(
   events,
   headers,
@@ -26,6 +31,9 @@ export default function checkHedStrings(
         hedSchema,
         schemaDefinition,
       )
+    })
+    .catch(error => {
+      return [internalHedValidatorIssue(error)]
     })
 }
 
@@ -152,15 +160,20 @@ function validateSidecars(
       }
       let fileIssues = []
       for (const hedString of sidecarHedStrings) {
-        const [
-          isHedStringValid,
-          hedIssues,
-        ] = hedValidator.validator.validateHedString(
-          hedString,
-          hedSchema,
-          true,
-          true,
-        )
+        let isHedStringValid, hedIssues
+        try {
+          ;[
+            isHedStringValid,
+            hedIssues,
+          ] = hedValidator.validator.validateHedString(
+            hedString,
+            hedSchema,
+            true,
+            true,
+          )
+        } catch (error) {
+          return [internalHedValidatorIssue(error)]
+        }
         if (!isHedStringValid) {
           const convertedIssues = convertHedIssuesToBidsIssues(
             hedIssues,
@@ -319,10 +332,16 @@ function splitTsv(eventFile) {
 }
 
 function validateDataset(hedStrings, hedSchema, eventFile) {
-  const [
-    isHedDatasetValid,
-    hedIssues,
-  ] = hedValidator.validator.validateHedDataset(hedStrings, hedSchema, true)
+  let isHedDatasetValid, hedIssues
+  try {
+    ;[isHedDatasetValid, hedIssues] = hedValidator.validator.validateHedDataset(
+      hedStrings,
+      hedSchema,
+      true,
+    )
+  } catch (error) {
+    return [internalHedValidatorIssue(error)]
+  }
   if (!isHedDatasetValid) {
     const convertedIssues = convertHedIssuesToBidsIssues(
       hedIssues,
