@@ -86,7 +86,6 @@ function extractHed(
   schemaDefinition,
 ) {
   let issues = []
-  const sidecarIssueTypes = {}
   // loop through event data files
   events.forEach(eventFile => {
     let hedStrings = []
@@ -96,7 +95,6 @@ function extractHed(
     )
     const [sidecarErrorsFound, sidecarIssues] = validateSidecars(
       potentialSidecars,
-      sidecarIssueTypes,
       jsonContents,
       hedSchema,
       jsonFiles,
@@ -127,9 +125,10 @@ function extractHed(
   return issues
 }
 
+const sidecarIssueTypes = {}
+
 function validateSidecars(
   potentialSidecars,
-  sidecarIssueTypes,
   jsonContents,
   hedSchema,
   jsonFiles,
