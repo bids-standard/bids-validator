@@ -4,7 +4,14 @@ import hed from './hed'
 import utils from '../../utils'
 const Issue = utils.issues.Issue
 
-export default function(events, stimuli, headers, jsonContents, dir) {
+export default function(
+  events,
+  stimuli,
+  headers,
+  jsonContents,
+  jsonFiles,
+  dir,
+) {
   const issues = []
   // check that all stimuli files present in /stimuli are included in an _events.tsv file
   const stimuliIssues = checkStimuli(stimuli)
@@ -13,7 +20,7 @@ export default function(events, stimuli, headers, jsonContents, dir) {
   const designIssues = checkDesignLength(events, headers, jsonContents)
 
   // check the HED strings
-  return hed(events, headers, jsonContents, dir).then(hedIssues => {
+  return hed(events, jsonContents, jsonFiles, dir).then(hedIssues => {
     return issues.concat(stimuliIssues, designIssues, hedIssues)
   })
 }

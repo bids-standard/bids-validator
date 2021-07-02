@@ -27,7 +27,7 @@
     "cross-fetch": "^3.0.6",
     "date-fns": "^2.7.0",
     "esm": "^3.2.25",
-    "hed-validator": "3.0.5",
+    "hed-validator": "^3.1.1",
     "ignore": "^4.0.2",
     "is-utf8": "^0.2.1",
     "jshint": "^2.9.6",

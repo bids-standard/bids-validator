@@ -181,6 +181,7 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
         stimuli,
         headers,
         jsonContentsDict,
+        jsonFiles,
         dir,
       )
     })
@@ -192,7 +193,9 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
         tsv.validateTsvColumns(tsvs, jsonContentsDict, headers),
       )
       // Validate continous recording files
-      self.issues = self.issues.concat(tsv.validateContRec(files.contRecord, jsonContentsDict))
+      self.issues = self.issues.concat(
+        tsv.validateContRec(files.contRecord, jsonContentsDict),
+      )
 
       if (!options.ignoreSubjectConsistency) {
         // Validate session files

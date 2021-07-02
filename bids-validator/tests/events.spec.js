@@ -32,9 +32,11 @@ describe('Events', function() {
       events: ['/stimuli/images/red-square.jpg'],
       directory: [{ relativePath: '/stimuli/images/red-square.jpg' }],
     }
-    return validate.Events.validateEvents([], stimuli, [], {}).then(issues => {
-      assert.deepStrictEqual(issues, [])
-    })
+    return validate.Events.validateEvents([], stimuli, [], {}, []).then(
+      issues => {
+        assert.deepStrictEqual(issues, [])
+      },
+    )
   })
 
   it('should throw an issue if the onset of the last event in _events.tsv is more than TR * number of volumes in corresponding nifti header', () => {
@@ -50,12 +52,19 @@ describe('Events', function() {
         RepetitionTime: 1,
       },
     }
+    const jsonFiles = [
+      {
+        relativePath: '/sub01/sub01_task-test_events.json',
+        path: '/sub01/sub01_task-test_events.json',
+      },
+    ]
 
     return validate.Events.validateEvents(
       events,
       [],
       headers,
       jsonDictionary,
+      jsonFiles,
       '',
     ).then(issues => {
       assert.strictEqual(issues.length, 1)
@@ -76,12 +85,19 @@ describe('Events', function() {
         RepetitionTime: 1,
       },
     }
+    const jsonFiles = [
+      {
+        relativePath: '/sub01/sub01_task-test_events.json',
+        path: '/sub01/sub01_task-test_events.json',
+      },
+    ]
 
     return validate.Events.validateEvents(
       events,
       [],
       headers,
       jsonDictionary,
+      jsonFiles,
       '',
     ).then(issues => {
       assert.strictEqual(issues.length, 1)
@@ -102,19 +118,37 @@ describe('Events', function() {
         RepetitionTime: 1,
       },
     }
+    const jsonFiles = [
+      {
+        relativePath: '/sub01/sub01_task-test_events.json',
+        path: '/sub01/sub01_task-test_events.json',
+      },
+    ]
 
     return validate.Events.validateEvents(
       events,
       [],
       headers,
       jsonDictionary,
+      jsonFiles,
       '',
     ).then(issues => {
       assert.deepStrictEqual(issues, [])
     })
   })
 
-  describe('HED event strings', function() {
+  describe('HED event strings', () => {
+    const jsonFiles = [
+      {
+        relativePath: '/sub01/sub01_task-test_events.json',
+        path: '/sub01/sub01_task-test_events.json',
+      },
+      {
+        relativePath: '/dataset_description.json',
+        path: '/dataset_description.json',
+      },
+    ]
+
     it('should throw an issue if the HED column in a single row contains invalid HED data in the form of duplicate tags', () => {
       const events = [
         {
@@ -135,6 +169,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -162,6 +197,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -188,6 +224,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -215,6 +252,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -248,6 +286,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -282,6 +321,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -317,6 +357,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -350,6 +391,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -384,6 +426,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -420,6 +463,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -461,6 +505,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -503,6 +548,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -545,6 +591,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -576,6 +623,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -615,6 +663,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -654,6 +703,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -692,6 +742,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -731,6 +782,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -758,6 +810,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -785,6 +838,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -812,6 +866,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -839,6 +894,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -866,6 +922,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -893,6 +950,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -920,6 +978,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -947,6 +1006,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -974,6 +1034,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1001,6 +1062,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1028,6 +1090,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1055,6 +1118,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1082,6 +1146,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1109,6 +1174,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1136,6 +1202,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -1160,6 +1227,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -1190,6 +1258,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.deepStrictEqual(issues, [])
@@ -1216,6 +1285,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1247,11 +1317,11 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
-        assert.strictEqual(issues.length, 2)
-        assert.strictEqual(issues[0].code, 209)
-        assert.strictEqual(issues[1].code, 204)
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 204)
       })
     })
 
@@ -1273,6 +1343,7 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
@@ -1304,11 +1375,11 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
-        assert.strictEqual(issues.length, 2)
-        assert.strictEqual(issues[0].code, 209)
-        assert.strictEqual(issues[1].code, 205)
+        assert.strictEqual(issues.length, 1)
+        assert.strictEqual(issues[0].code, 205)
       })
     })
 
@@ -1336,11 +1407,12 @@ describe('Events', function() {
         [],
         headers,
         jsonDictionary,
+        jsonFiles,
         '',
       ).then(issues => {
         // TODO: Change length back to 2 once hed-validator event- and string-level validation is properly split.
-        assert.strictEqual(issues.length, 3)
-        assert.strictEqual(issues[0].code, 210)
+        assert.strictEqual(issues.length, 2)
+        assert.strictEqual(issues[0].code, 208)
         assert.strictEqual(issues[1].code, 208)
         // Check for correct file properties
         expect(issues[0].file).toHaveProperty('path')

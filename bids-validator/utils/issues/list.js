@@ -1127,14 +1127,14 @@ export default {
     reason: 'A HED tag extension was found.',
   },
   209: {
-    key: 'HED_INVALID_SIDECAR_ERROR',
+    key: 'HED_INTERNAL_ERROR',
     severity: 'error',
-    reason: 'A HED error was found in the JSON sidecar.',
+    reason: 'An internal error occurred during HED validation.',
   },
   210: {
-    key: 'HED_INVALID_SIDECAR_WARNING',
+    key: 'HED_INTERNAL_WARNING',
     severity: 'warning',
-    reason: 'A HED warning was found in the JSON sidecar.',
+    reason: 'An internal error occurred during HED validation.',
   },
   211: {
     key: 'TSV_MISSING_REQUIRED_COLUMN',

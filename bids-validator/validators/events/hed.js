@@ -2,12 +2,64 @@ import hedValidator from 'hed-validator'
 import path from 'path'
 import semver from 'semver'
 import utils from '../../utils'
+import parseTsv from '../tsv/tsvParser'
 const Issue = utils.issues.Issue
 
-export default function checkHedStrings(events, headers, jsonContents, dir) {
-  let issues = []
+function internalHedValidatorIssue(error) {
+  return Issue.errorToIssue(error, 210)
+}
 
-  // find specified version in sidecar
+export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
+  const hedDataExists = detectHed(events, jsonContents)
+  if (!hedDataExists) {
+    return Promise.resolve([])
+  }
+  const schemaDefinition = parseHedVersion(jsonContents, dir)
+  let hedSchemaPromise
+  try {
+    hedSchemaPromise = hedValidator.validator.buildSchema(schemaDefinition)
+  } catch (error) {
+    return Promise.resolve([internalHedValidatorIssue(error)])
+  }
+  return hedSchemaPromise.then(hedSchema => {
+    return extractHed(
+      events,
+      jsonContents,
+      jsonFiles,
+      hedSchema,
+      schemaDefinition,
+    )
+  })
+}
+
+function detectHed(events, jsonContents) {
+  const checkedSidecars = []
+  for (const eventFile of events) {
+    const potentialSidecars = utils.files.potentialLocations(
+      eventFile.path.replace('.tsv', '.json'),
+    )
+    for (const sidecarName of potentialSidecars) {
+      if (checkedSidecars.includes(sidecarName)) {
+        continue
+      }
+      checkedSidecars.push(sidecarName)
+      const sidecarDictionary = jsonContents[sidecarName]
+      for (const sidecarKey in sidecarDictionary) {
+        if (sidecarValueHasHed(sidecarDictionary[sidecarKey])) {
+          return true
+        }
+      }
+    }
+    const parsedTsv = parseTsv(eventFile.contents)
+    const hedColumnIndex = parsedTsv.headers.indexOf('HED')
+    if (hedColumnIndex !== -1) {
+      return true
+    }
+  }
+  return false
+}
+
+function parseHedVersion(jsonContents, dir) {
   const schemaDefinition = {}
   const datasetDescription = jsonContents['/dataset_description.json']
 
@@ -23,213 +75,247 @@ export default function checkHedStrings(events, headers, jsonContents, dir) {
     }
   }
 
-  // run HED validator
-  return hedValidator.validator
-    .buildSchema(schemaDefinition)
-    .then(hedSchema => {
-      let hedStringsFound = false
-      const sidecarIssueTypes = {}
-      let sidecarErrorsFound = false
-      // loop through event data files
-      events.forEach(eventFile => {
-        const hedStrings = []
-        // get the json sidecar dictionary associated with the event data
-        const potentialSidecars = utils.files.potentialLocations(
-          eventFile.path.replace('.tsv', '.json'),
-        )
-        // validate the HED strings in the json sidecars
-        for (const sidecarName of potentialSidecars) {
-          if (!(sidecarName in sidecarIssueTypes)) {
-            const sidecarDictionary = jsonContents[sidecarName]
-            let sidecarHedStrings = []
-            for (const sidecarKey in sidecarDictionary) {
-              const sidecarValue = sidecarDictionary[sidecarKey]
-              if (
-                sidecarValue !== null &&
-                typeof sidecarValue === 'object' &&
-                sidecarValue.HED !== undefined
-              ) {
-                if (typeof sidecarValue.HED === 'string') {
-                  sidecarHedStrings.push(sidecarValue.HED)
-                } else {
-                  sidecarHedStrings = sidecarHedStrings.concat(
-                    Object.values(sidecarValue.HED),
-                  )
-                }
-              }
-            }
-            let fileIssues = []
-            for (const hedString of sidecarHedStrings) {
-              const [
-                isHedStringValid,
-                hedIssues,
-              ] = hedValidator.validator.validateHedString(
-                hedString,
-                hedSchema,
-                true,
-                true,
-              )
-              if (!isHedStringValid) {
-                const convertedIssues = convertHedIssuesToBidsIssues(
-                  hedIssues,
-                  eventFile.file,
-                )
-                fileIssues = fileIssues.concat(convertedIssues)
-              }
-            }
-            if (fileIssues.length > 0) {
-              let fileErrorsFound = false
-              for (const fileIssue of fileIssues) {
-                if (fileIssue.severity === 'error') {
-                  fileErrorsFound = true
-                  sidecarErrorsFound = true
-                  break
-                }
-              }
-              if (fileErrorsFound) {
-                issues.push(
-                  new Issue({
-                    code: 209,
-                    file: eventFile.file,
-                    evidence: sidecarName,
-                  }),
-                )
-                sidecarIssueTypes[sidecarName] = 'error'
-              } else {
-                issues.push(
-                  new Issue({
-                    code: 210,
-                    file: eventFile.file,
-                    evidence: sidecarName,
-                  }),
-                )
-                sidecarIssueTypes[sidecarName] = 'warning'
-              }
-              issues = issues.concat(fileIssues)
-            }
-          } else if (sidecarIssueTypes[sidecarName] === 'error') {
-            sidecarErrorsFound = true
+  return schemaDefinition
+}
+
+function extractHed(
+  events,
+  jsonContents,
+  jsonFiles,
+  hedSchema,
+  schemaDefinition,
+) {
+  let issues = []
+  const sidecarIssueTypes = {}
+  // loop through event data files
+  events.forEach(eventFile => {
+    let hedStrings = []
+    // get the json sidecar dictionary associated with the event data
+    const potentialSidecars = utils.files.potentialLocations(
+      eventFile.path.replace('.tsv', '.json'),
+    )
+    const [sidecarErrorsFound, sidecarIssues] = validateSidecars(
+      potentialSidecars,
+      sidecarIssueTypes,
+      jsonContents,
+      hedSchema,
+      jsonFiles,
+    )
+    if (sidecarErrorsFound) {
+      issues = issues.concat(sidecarIssues)
+      return
+    }
+    const sidecarHedTags = mergeSidecarHed(
+      potentialSidecars,
+      jsonContents,
+      issues,
+      eventFile,
+    )
+
+    const [tsvHedStrings, tsvIssues] = parseTsvHed(sidecarHedTags, eventFile)
+    hedStrings = tsvHedStrings
+    if (!hedStrings) {
+      issues = issues.concat(sidecarIssues)
+    } else {
+      const datasetIssues = validateDataset(hedStrings, hedSchema, eventFile)
+      issues = issues.concat(sidecarIssues, tsvIssues, datasetIssues)
+    }
+  })
+  if (Object.entries(schemaDefinition).length === 0) {
+    issues.push(new Issue({ code: 132 }))
+  }
+  return issues
+}
+
+function validateSidecars(
+  potentialSidecars,
+  sidecarIssueTypes,
+  jsonContents,
+  hedSchema,
+  jsonFiles,
+) {
+  let issues = []
+  let sidecarErrorsFound = false
+  // validate the HED strings in the json sidecars
+  for (const sidecarName of potentialSidecars) {
+    if (!(sidecarName in sidecarIssueTypes)) {
+      const sidecarDictionary = jsonContents[sidecarName]
+      let sidecarHedStrings = []
+      for (const sidecarKey in sidecarDictionary) {
+        const sidecarValue = sidecarDictionary[sidecarKey]
+        if (sidecarValueHasHed(sidecarValue)) {
+          if (typeof sidecarValue.HED === 'string') {
+            sidecarHedStrings.push(sidecarValue.HED)
+          } else {
+            sidecarHedStrings = sidecarHedStrings.concat(
+              Object.values(sidecarValue.HED),
+            )
           }
         }
-        if (sidecarErrorsFound) {
-          return
+      }
+      let fileIssues = []
+      for (const hedString of sidecarHedStrings) {
+        let isHedStringValid, hedIssues
+        try {
+          ;[
+            isHedStringValid,
+            hedIssues,
+          ] = hedValidator.validator.validateHedString(
+            hedString,
+            hedSchema,
+            true,
+            true,
+          )
+        } catch (error) {
+          return [internalHedValidatorIssue(error)]
         }
-        const mergedDictionary = utils.files.generateMergedSidecarDict(
-          potentialSidecars,
-          jsonContents,
-        )
-
-        const sidecarHedTags = {}
-        for (const sidecarKey in mergedDictionary) {
-          const sidecarValue = mergedDictionary[sidecarKey]
-          if (
-            sidecarValue !== null &&
-            typeof sidecarValue === 'object' &&
-            sidecarValue.HED !== undefined
-          ) {
-            const sidecarHedData = sidecarValue.HED
-            if (
-              typeof sidecarHedData === 'string' &&
-              sidecarHedData.split('#').length !== 2
-            ) {
-              issues.push(
-                new Issue({
-                  code: 203,
-                  file: eventFile.file,
-                  evidence: sidecarHedData,
-                }),
-              )
-              sidecarHedTags[sidecarKey] = false
-            } else {
-              sidecarHedTags[sidecarKey] = sidecarHedData
-            }
-          }
-        }
-
-        // get all non-empty rows
-        const rows = eventFile.contents
-          .split('\n')
-          .filter(row => !(!row || /^\s*$/.test(row)))
-
-        const columnHeaders = rows[0].trim().split('\t')
-        const hedColumnIndex = columnHeaders.indexOf('HED')
-        const sidecarHedColumnIndices = {}
-        for (const sidecarHedColumn in sidecarHedTags) {
-          const sidecarHedColumnHeader = columnHeaders.indexOf(sidecarHedColumn)
-          if (sidecarHedColumnHeader > -1) {
-            sidecarHedColumnIndices[sidecarHedColumn] = sidecarHedColumnHeader
-          }
-        }
-        if (hedColumnIndex === -1 && sidecarHedColumnIndices.length === 0) {
-          return
-        }
-
-        for (const row of rows.slice(1)) {
-          // get the 'HED' field
-          const rowCells = row.trim().split('\t')
-          const hedStringParts = []
-          if (rowCells[hedColumnIndex] && rowCells[hedColumnIndex] !== 'n/a') {
-            hedStringParts.push(rowCells[hedColumnIndex])
-          }
-          for (const sidecarHedColumn in sidecarHedColumnIndices) {
-            const sidecarHedIndex = sidecarHedColumnIndices[sidecarHedColumn]
-            const sidecarHedData = sidecarHedTags[sidecarHedColumn]
-            const rowCell = rowCells[sidecarHedIndex]
-            if (rowCell && rowCell !== 'n/a') {
-              let sidecarHedString
-              if (!sidecarHedData) {
-                continue
-              }
-              if (typeof sidecarHedData === 'string') {
-                sidecarHedString = sidecarHedData.replace('#', rowCell)
-              } else {
-                sidecarHedString = sidecarHedData[rowCell]
-              }
-              if (sidecarHedString !== undefined) {
-                hedStringParts.push(sidecarHedString)
-              } else {
-                issues.push(
-                  new Issue({
-                    code: 112,
-                    file: eventFile.file,
-                    evidence: rowCell,
-                  }),
-                )
-              }
-            }
-          }
-
-          if (hedStringParts.length === 0) {
-            continue
-          }
-          hedStrings.push(hedStringParts.join(','))
-        }
-
-        if (hedStrings.length > 0) {
-          hedStringsFound = true
-        }
-
-        const [
-          isHedDatasetValid,
-          hedIssues,
-        ] = hedValidator.validator.validateHedDataset(
-          hedStrings,
-          hedSchema,
-          true,
-        )
-        if (!isHedDatasetValid) {
+        if (!isHedStringValid) {
           const convertedIssues = convertHedIssuesToBidsIssues(
             hedIssues,
-            eventFile.file,
+            getSidecarFileObject(sidecarName, jsonFiles),
           )
-          issues = issues.concat(convertedIssues)
+          fileIssues = fileIssues.concat(convertedIssues)
         }
-      })
-      if (hedStringsFound && Object.entries(schemaDefinition).length === 0) {
-        issues.push(new Issue({ code: 132 }))
       }
-      return issues
-    })
+      if (fileIssues.length > 0) {
+        for (const fileIssue of fileIssues) {
+          if (fileIssue.severity === 'error') {
+            sidecarErrorsFound = true
+            break
+          }
+        }
+        issues = issues.concat(fileIssues)
+      }
+    } else if (sidecarIssueTypes[sidecarName] === 'error') {
+      sidecarErrorsFound = true
+    }
+  }
+  return [sidecarErrorsFound, issues]
+}
+
+function getSidecarFileObject(sidecarName, jsonFiles) {
+  return jsonFiles.filter(file => {
+    return file.relativePath === sidecarName
+  })[0]
+}
+
+function mergeSidecarHed(potentialSidecars, jsonContents, issues, eventFile) {
+  const mergedDictionary = utils.files.generateMergedSidecarDict(
+    potentialSidecars,
+    jsonContents,
+  )
+
+  const sidecarHedTags = {}
+  for (const sidecarKey in mergedDictionary) {
+    const sidecarValue = mergedDictionary[sidecarKey]
+    if (sidecarValueHasHed(sidecarValue)) {
+      const sidecarHedData = sidecarValue.HED
+      if (
+        typeof sidecarHedData === 'string' &&
+        sidecarHedData.split('#').length !== 2
+      ) {
+        issues.push(
+          new Issue({
+            code: 203,
+            file: eventFile.file,
+            evidence: sidecarHedData,
+          }),
+        )
+        sidecarHedTags[sidecarKey] = false
+      } else {
+        sidecarHedTags[sidecarKey] = sidecarHedData
+      }
+    }
+  }
+  return sidecarHedTags
+}
+
+function sidecarValueHasHed(sidecarValue) {
+  return (
+    sidecarValue !== null &&
+    typeof sidecarValue === 'object' &&
+    sidecarValue.HED !== undefined
+  )
+}
+
+function parseTsvHed(sidecarHedTags, eventFile) {
+  const hedStrings = []
+  const issues = []
+  const parsedTsv = parseTsv(eventFile.contents)
+  const hedColumnIndex = parsedTsv.headers.indexOf('HED')
+  const sidecarHedColumnIndices = {}
+  for (const sidecarHedColumn in sidecarHedTags) {
+    const sidecarHedColumnHeader = parsedTsv.headers.indexOf(sidecarHedColumn)
+    if (sidecarHedColumnHeader > -1) {
+      sidecarHedColumnIndices[sidecarHedColumn] = sidecarHedColumnHeader
+    }
+  }
+  if (hedColumnIndex === -1 && sidecarHedColumnIndices.length === 0) {
+    return [[], []]
+  }
+
+  for (const rowCells of parsedTsv.rows.slice(1)) {
+    // get the 'HED' field
+    const hedStringParts = []
+    if (rowCells[hedColumnIndex] && rowCells[hedColumnIndex] !== 'n/a') {
+      hedStringParts.push(rowCells[hedColumnIndex])
+    }
+    for (const sidecarHedColumn in sidecarHedColumnIndices) {
+      const sidecarHedIndex = sidecarHedColumnIndices[sidecarHedColumn]
+      const sidecarHedData = sidecarHedTags[sidecarHedColumn]
+      const rowCell = rowCells[sidecarHedIndex]
+      if (rowCell && rowCell !== 'n/a') {
+        let sidecarHedString
+        if (!sidecarHedData) {
+          continue
+        }
+        if (typeof sidecarHedData === 'string') {
+          sidecarHedString = sidecarHedData.replace('#', rowCell)
+        } else {
+          sidecarHedString = sidecarHedData[rowCell]
+        }
+        if (sidecarHedString !== undefined) {
+          hedStringParts.push(sidecarHedString)
+        } else {
+          issues.push(
+            new Issue({
+              code: 112,
+              file: eventFile.file,
+              evidence: rowCell,
+            }),
+          )
+        }
+      }
+    }
+
+    if (hedStringParts.length === 0) {
+      continue
+    }
+    hedStrings.push(hedStringParts.join(','))
+  }
+  return [hedStrings, issues]
+}
+
+function validateDataset(hedStrings, hedSchema, eventFile) {
+  let isHedDatasetValid, hedIssues
+  try {
+    ;[isHedDatasetValid, hedIssues] = hedValidator.validator.validateHedDataset(
+      hedStrings,
+      hedSchema,
+      true,
+    )
+  } catch (error) {
+    return [internalHedValidatorIssue(error)]
+  }
+  if (!isHedDatasetValid) {
+    const convertedIssues = convertHedIssuesToBidsIssues(
+      hedIssues,
+      eventFile.file,
+    )
+    return convertedIssues
+  } else {
+    return []
+  }
 }
 
 function convertHedIssuesToBidsIssues(hedIssues, file) {
