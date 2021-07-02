@@ -1154,4 +1154,10 @@ export default {
     reason:
       'The recommended file /README is very small. Please consider expanding it with additional information about the dataset.',
   },
+  214: {
+    key: 'HED_VALIDATOR_INTERNAL_ERROR',
+    severity: 'warning',
+    reason:
+      'HED validation failed to complete due to an error thrown by the HED validator.',
+  },
 }
