@@ -2,6 +2,7 @@ import hedValidator from 'hed-validator'
 import path from 'path'
 import semver from 'semver'
 import utils from '../../utils'
+import parseTsv from '../tsv/tsvParser'
 const Issue = utils.issues.Issue
 
 export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
@@ -41,8 +42,8 @@ function detectHed(events, jsonContents) {
         }
       }
     }
-    const [columnHeaders] = splitTsv(eventFile)
-    const hedColumnIndex = columnHeaders.indexOf('HED')
+    const parsedTsv = parseTsv(eventFile.contents)
+    const hedColumnIndex = parsedTsv.headers.indexOf('HED')
     if (hedColumnIndex !== -1) {
       return true
     }
@@ -146,48 +147,33 @@ function validateSidecars(
       }
       let fileIssues = []
       for (const hedString of sidecarHedStrings) {
-        const [
-          isHedStringValid,
-          hedIssues,
-        ] = hedValidator.validator.validateHedString(
-          hedString,
-          hedSchema,
-          true,
-          true,
-        )
-        if (!isHedStringValid) {
-          const convertedIssues = convertHedIssuesToBidsIssues(
+        try {
+          const [
+            isHedStringValid,
             hedIssues,
-            getSidecarFileObject(sidecarName, jsonFiles),
+          ] = hedValidator.validator.validateHedString(
+            hedString,
+            hedSchema,
+            true,
+            true,
           )
-          fileIssues = fileIssues.concat(convertedIssues)
+          if (!isHedStringValid) {
+            const convertedIssues = convertHedIssuesToBidsIssues(
+              hedIssues,
+              getSidecarFileObject(sidecarName, jsonFiles),
+            )
+            fileIssues = fileIssues.concat(convertedIssues)
+          }
+        } catch (e) {
+          fileIssues.push(new Issue({ code: 209 }))
         }
       }
       if (fileIssues.length > 0) {
-        let fileErrorsFound = false
         for (const fileIssue of fileIssues) {
           if (fileIssue.severity === 'error') {
-            fileErrorsFound = true
             sidecarErrorsFound = true
             break
           }
-        }
-        if (fileErrorsFound) {
-          issues.push(
-            new Issue({
-              code: 209,
-              file: getSidecarFileObject(sidecarName, jsonFiles),
-            }),
-          )
-          sidecarIssueTypes[sidecarName] = 'error'
-        } else {
-          issues.push(
-            new Issue({
-              code: 210,
-              file: getSidecarFileObject(sidecarName, jsonFiles),
-            }),
-          )
-          sidecarIssueTypes[sidecarName] = 'warning'
         }
         issues = issues.concat(fileIssues)
       }
@@ -246,11 +232,11 @@ function sidecarValueHasHed(sidecarValue) {
 function parseTsvHed(sidecarHedTags, eventFile) {
   const hedStrings = []
   const issues = []
-  const [columnHeaders, dataRows] = splitTsv(eventFile)
-  const hedColumnIndex = columnHeaders.indexOf('HED')
+  const parsedTsv = parseTsv(eventFile.contents)
+  const hedColumnIndex = parsedTsv.headers.indexOf('HED')
   const sidecarHedColumnIndices = {}
   for (const sidecarHedColumn in sidecarHedTags) {
-    const sidecarHedColumnHeader = columnHeaders.indexOf(sidecarHedColumn)
+    const sidecarHedColumnHeader = parsedTsv.headers.indexOf(sidecarHedColumn)
     if (sidecarHedColumnHeader > -1) {
       sidecarHedColumnIndices[sidecarHedColumn] = sidecarHedColumnHeader
     }
@@ -259,9 +245,8 @@ function parseTsvHed(sidecarHedTags, eventFile) {
     return [[], []]
   }
 
-  for (const row of dataRows) {
+  for (const rowCells of parsedTsv.rows.slice(1)) {
     // get the 'HED' field
-    const rowCells = row.trim().split('\t')
     const hedStringParts = []
     if (rowCells[hedColumnIndex] && rowCells[hedColumnIndex] !== 'n/a') {
       hedStringParts.push(rowCells[hedColumnIndex])
@@ -302,29 +287,23 @@ function parseTsvHed(sidecarHedTags, eventFile) {
   return [hedStrings, issues]
 }
 
-function splitTsv(eventFile) {
-  const rows = eventFile.contents
-    .split('\n')
-    .filter(row => !(!row || /^\s*$/.test(row)))
-
-  const columnHeaders = rows[0].trim().split('\t')
-  const dataRows = rows.slice(1)
-  return [columnHeaders, dataRows]
-}
-
 function validateDataset(hedStrings, hedSchema, eventFile) {
-  const [
-    isHedDatasetValid,
-    hedIssues,
-  ] = hedValidator.validator.validateHedDataset(hedStrings, hedSchema, true)
-  if (!isHedDatasetValid) {
-    const convertedIssues = convertHedIssuesToBidsIssues(
+  try {
+    const [
+      isHedDatasetValid,
       hedIssues,
-      eventFile.file,
-    )
-    return convertedIssues
-  } else {
-    return []
+    ] = hedValidator.validator.validateHedDataset(hedStrings, hedSchema, true)
+    if (!isHedDatasetValid) {
+      const convertedIssues = convertHedIssuesToBidsIssues(
+        hedIssues,
+        eventFile.file,
+      )
+      return convertedIssues
+    } else {
+      return []
+    }
+  } catch (e) {
+    return [new Issue({ code: 209 })]
   }
 }
 
