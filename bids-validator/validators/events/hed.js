@@ -116,7 +116,7 @@ function extractHed(
     }
   })
   if (Object.entries(schemaDefinition).length === 0) {
-    issues.push(new Issue({ code: 132 }))
+    issues.push(new Issue({ code: 109 }))
   }
   return issues
 }
@@ -211,7 +211,7 @@ function mergeSidecarHed(potentialSidecars, jsonContents, issues, eventFile) {
       ) {
         issues.push(
           new Issue({
-            code: 203,
+            code: 110,
             file: eventFile.file,
             evidence: sidecarHedData,
           }),
@@ -274,7 +274,7 @@ function parseTsvHed(sidecarHedTags, eventFile) {
         } else {
           issues.push(
             new Issue({
-              code: 112,
+              code: 108,
               file: eventFile.file,
               evidence: rowCell,
             }),
@@ -314,57 +314,24 @@ function validateDataset(hedStrings, hedSchema, eventFile) {
 }
 
 function internalHedValidatorIssue(error) {
-  return Issue.errorToIssue(error, 210)
+  return Issue.errorToIssue(error, 107)
 }
 
 function convertHedIssuesToBidsIssues(hedIssues, file) {
-  const hedIssuesToBidsCodes = {
-    invalidCharacter: 106,
-    parentheses: 107,
-    commaMissing: 108,
-    capitalization: 109,
-    duplicateTag: 110,
-    tooManyTildes: 111,
-    extraDelimiter: 115,
-    invalidTag: 116,
-    multipleUniqueTags: 117,
-    childRequired: 118,
-    requiredPrefixMissing: 119,
-    unitClassDefaultUsed: 120,
-    unitClassInvalidUnit: 121,
-    extraCommaOrInvalid: 122,
-    invalidParentNode: 204,
-    noValidTagFound: 205,
-    emptyTagFound: 206,
-    duplicateTagsInSchema: 207,
-    extension: 208,
-  }
-
   const convertedIssues = []
   for (const hedIssue of hedIssues) {
-    const bidsIssueCode = hedIssuesToBidsCodes[hedIssue.code]
-    if (bidsIssueCode === undefined) {
-      if (hedIssue.message.startsWith('WARNING')) {
-        convertedIssues.push(
-          new Issue({
-            code: 105,
-            file: file,
-            evidence: hedIssue.message,
-          }),
-        )
-      } else {
-        convertedIssues.push(
-          new Issue({
-            code: 104,
-            file: file,
-            evidence: hedIssue.message,
-          }),
-        )
-      }
+    if (hedIssue.level === 'warning') {
+      convertedIssues.push(
+        new Issue({
+          code: 105,
+          file: file,
+          evidence: hedIssue.message,
+        }),
+      )
     } else {
       convertedIssues.push(
         new Issue({
-          code: bidsIssueCode,
+          code: 104,
           file: file,
           evidence: hedIssue.message,
         }),

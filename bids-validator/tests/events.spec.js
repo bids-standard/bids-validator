@@ -173,7 +173,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 110)
+        assert.strictEqual(issues[0].code, 104)
       })
     })
 
@@ -290,7 +290,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 110)
+        assert.strictEqual(issues[0].code, 104)
       })
     })
 
@@ -395,7 +395,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 110)
+        assert.strictEqual(issues[0].code, 104)
       })
     })
 
@@ -509,7 +509,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 110)
+        assert.strictEqual(issues[0].code, 104)
       })
     })
 
@@ -627,7 +627,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 112)
+        assert.strictEqual(issues[0].code, 108)
       })
     })
 
@@ -746,7 +746,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 203)
+        assert.strictEqual(issues[0].code, 110)
       })
     })
 
@@ -786,399 +786,7 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 203)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an illegal character', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test]\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 106)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of mismatched parentheses', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\t(Event/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 107)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a missing comma after a tag', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,/Action/Reach/To touch,(/Attribute/Object side/Left,/Participant/Effect/Body part/Arm)/Attribute/Location/Screen/Top/70 px,/Attribute/Location/Screen/Left/23 px\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 108)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of improper capitalization', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/label/test,Event/Category/Miscellaneous/Test,Event/Description/Test\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 109)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of too many tildes in a single group', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,(Participant/ID/1 ~ Participant/Effect/Visual ~ Item/Object/Vehicle/Car, Item/ID/RedCar, Attribute/Visual/Color/Red ~ Attribute/Object control/Perturb)\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 111)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an extra delimiter', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/label/Test,Event/Category/Miscellaneous/Test~,Event/Description/Test\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 115)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an invalid tag', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Item/Object/Person/Cyclist,Event/Something\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 116)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a tag extension', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Item/Object/Person/Driver\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 208)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a duplicate unique tag', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Description/Bad\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 117)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a tag with a missing required child', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category,Event/Description/Test\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 118)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a missing required prefix', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Category/Miscellaneous/Test,Event/Description/Test\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 119)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a value tag with an implied default unit', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Duration/3\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 120)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of a value tag with an invalid unit', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,Event/Duration/3 cm\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 121)
-      })
-    })
-
-    it('should throw an issue if the HED column in a single row contains invalid HED data in the form of an invalid tag or an extra comma', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tEvent/Label/Test,Event/Category/Miscellaneous/Test,Event/Description/Test,This/Is/A/Tag\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {},
-        '/dataset_description.json': { HEDVersion: '7.1.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 122)
+        assert.strictEqual(issues[0].code, 110)
       })
     })
 
@@ -1265,14 +873,12 @@ describe('Events', function() {
       })
     })
 
-    it('should throw an issue if the HED string contains a nested valid short-form tag', () => {
+    it('should throw an issue if the HED string contains an invalid short-form tag', () => {
       const events = [
         {
           file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
-          contents:
-            'onset\tduration\tHED\n' +
-            '7\tsomething\tExperiment-control/Geometric\n',
+          contents: 'onset\tduration\tHED\n' + '7\tsomething\tDuration/5 cm\n',
         },
       ]
       const jsonDictionary = {
@@ -1289,11 +895,11 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 204)
+        assert.strictEqual(issues[0].code, 104)
       })
     })
 
-    it('should throw an issue if a sidecar HED string contains a nested valid short-form tag', () => {
+    it('should throw an issue if a sidecar HED string contains an invalid short-form tag', () => {
       const events = [
         {
           file: { path: '/sub01/sub01_task-test_events.tsv' },
@@ -1305,7 +911,7 @@ describe('Events', function() {
         '/sub01/sub01_task-test_events.json': {
           myCodes: {
             HED: {
-              one: 'Experiment-control/Geometric',
+              one: 'Duration/5 cm',
             },
           },
         },
@@ -1321,16 +927,16 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 204)
+        assert.strictEqual(issues[0].code, 104)
       })
     })
 
-    it('should throw an issue if the HED string contains a non-existent path', () => {
+    it('properly distinguish errors from warnings in HED strings', () => {
       const events = [
         {
           file: { path: '/sub01/sub01_task-test_events.tsv' },
           path: '/sub01/sub01_task-test_events.tsv',
-          contents: 'onset\tduration\tHED\n' + '7\tsomething\tInvalidEvent\n',
+          contents: 'onset\tduration\tHED\n' + '7\tsomething\tHuman/Driver\n',
         },
       ]
       const jsonDictionary = {
@@ -1347,43 +953,11 @@ describe('Events', function() {
         '',
       ).then(issues => {
         assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 205)
+        assert.strictEqual(issues[0].code, 105)
       })
     })
 
-    it('should throw an issue if a sidecar HED string contains a non-existent path', () => {
-      const events = [
-        {
-          file: { path: '/sub01/sub01_task-test_events.tsv' },
-          path: '/sub01/sub01_task-test_events.tsv',
-          contents: 'onset\tduration\tmyCodes\n' + '7\tsomething\tone\n',
-        },
-      ]
-      const jsonDictionary = {
-        '/sub01/sub01_task-test_events.json': {
-          myCodes: {
-            HED: {
-              one: 'InvalidEvent',
-            },
-          },
-        },
-        '/dataset_description.json': { HEDVersion: '8.0.0-alpha.1' },
-      }
-
-      return validate.Events.validateEvents(
-        events,
-        [],
-        headers,
-        jsonDictionary,
-        jsonFiles,
-        '',
-      ).then(issues => {
-        assert.strictEqual(issues.length, 1)
-        assert.strictEqual(issues[0].code, 205)
-      })
-    })
-
-    it('should throw an issue if a sidecar HED string contains a tag extension', () => {
+    it('properly distinguish errors from warnings in sidecar HED strings', () => {
       const events = [
         {
           file: { path: '/sub01/sub01_task-test_events.tsv' },
@@ -1410,13 +984,10 @@ describe('Events', function() {
         jsonFiles,
         '',
       ).then(issues => {
-        // TODO: Change length back to 2 once hed-validator event- and string-level validation is properly split.
+        // TODO The validator validates the string twice, in string- and dataset-level validation.
         assert.strictEqual(issues.length, 2)
-        assert.strictEqual(issues[0].code, 208)
-        assert.strictEqual(issues[1].code, 208)
-        // Check for correct file properties
-        expect(issues[0].file).toHaveProperty('path')
-        expect(issues[1].file).toHaveProperty('path')
+        assert.strictEqual(issues[0].code, 105)
+        assert.strictEqual(issues[1].code, 105)
       })
     })
   })
