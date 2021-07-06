@@ -108,6 +108,10 @@
       "type": "array",
       "items": { "type": "number" }
     },
+    "DoseCalibrationFactor": {
+      "type": "number",
+      "items": { "type": "number" }
+    },
     "PromptRate": {
       "type": "array",
       "items": { "type": "number" }
