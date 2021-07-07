@@ -579,52 +579,42 @@ export default {
       'The Authors field of dataset_description.json should contain an array of fields - with one author per field. This was triggered based on the presence of multiple commas in a single author field. Please ensure your authors are properly formatted.',
   },
   104: {
-    key: 'HED_GENERIC_ERROR',
+    key: 'HED_ERROR',
     severity: 'error',
     reason: 'The validation on this HED string returned an error.',
   },
   105: {
-    key: 'HED_GENERIC_WARNING',
+    key: 'HED_WARNING',
     severity: 'warning',
     reason: 'The validation on this HED string returned a warning.',
   },
   106: {
-    key: 'HED_ILLEGAL_CHARACTER',
+    key: 'HED_INTERNAL_ERROR',
     severity: 'error',
-    reason: 'This HED string contains an illegal character.',
+    reason: 'An internal error occurred during HED validation.',
   },
   107: {
-    key: 'HED_PARENTHESES_MISMATCH',
-    severity: 'error',
-    reason: 'This HED string contains mismatched parentheses.',
+    key: 'HED_INTERNAL_WARNING',
+    severity: 'warning',
+    reason: 'An internal warning occurred during HED validation.',
   },
   108: {
-    key: 'HED_MISSING_COMMA_AFTER_TAG',
-    severity: 'error',
-    reason: 'This HED string is missing a required comma after a HED tag.',
-  },
-  109: {
-    key: 'HED_CAPITALIZATION',
-    severity: 'warning',
-    reason:
-      'This HED string is not properly capitalized. HED tags should start with a capital letter or be in CamelCase.',
-  },
-  110: {
-    key: 'HED_DUPLICATE_TAG_IN_SAME_GROUP_OR_TOP_LEVEL',
-    severity: 'error',
-    reason:
-      'This HED string contains duplicate HED tags in the same group or at the top level.',
-  },
-  111: {
-    key: 'HED_TOO_MANY_TILDES',
-    severity: 'error',
-    reason: 'This HED string has more than 2 tildes in the same tag group.',
-  },
-  112: {
     key: 'HED_MISSING_VALUE_IN_SIDECAR',
     severity: 'warning',
     reason:
       'The json sidecar does not contain this column value as a possible key to a HED string.',
+  },
+  109: {
+    key: 'HED_VERSION_NOT_DEFINED',
+    severity: 'warning',
+    reason:
+      "You should define 'HEDVersion' for this file. If you don't provide this information, the HED validation will use the latest version available.",
+  },
+  110: {
+    key: 'HED_WRONG_NUMBER_OF_NUMBER_SIGNS',
+    severity: 'error',
+    reason:
+      'You must have exactly one number sign in a HED value-taking string template.',
   },
   113: {
     key: 'NO_AUTHORS',
@@ -637,54 +627,6 @@ export default {
     severity: 'error',
     reason:
       'This dataset contains remote files. If you would like to validate with remote files, use the --remoteFiles option.',
-  },
-  115: {
-    key: 'HED_EXTRA_DELIMITER',
-    severity: 'error',
-    reason:
-      'This HED string contains an extra delimiter. There should be no consecutive delimiters or any delimiters at the start or end of the string.',
-  },
-  116: {
-    key: 'HED_INVALID_TAG',
-    severity: 'error',
-    reason:
-      "This HED string contains a tag that doesn't exist in the HED schema and isn't a legal extension of a valid tag.",
-  },
-  117: {
-    key: 'HED_MULTIPLE_UNIQUE_TAGS',
-    severity: 'error',
-    reason:
-      'This HED string contains multiple tags with a prefix defined as unique by the HED schema.',
-  },
-  118: {
-    key: 'HED_CHILD_REQUIRED',
-    severity: 'error',
-    reason:
-      "This HED string contains a tag which doesn't have a child, but is required to have one by the HED schema.",
-  },
-  119: {
-    key: 'HED_REQUIRED_PREFIX_MISSING',
-    severity: 'warning',
-    reason:
-      'This HED string is missing a tag with a prefix required by the HED schema.',
-  },
-  120: {
-    key: 'HED_UNIT_CLASS_DEFAULT_USED',
-    severity: 'warning',
-    reason:
-      "This HED string contains a tag with a missing unit. The default unit for that tag's unit class was used.",
-  },
-  121: {
-    key: 'HED_UNIT_CLASS_INVALID_UNIT',
-    severity: 'error',
-    reason:
-      'This HED string contains a tag with a unit that is not valid for its unit class.',
-  },
-  122: {
-    key: 'HED_EXTRA_COMMA_OR_INVALID',
-    severity: 'error',
-    reason:
-      'This HED string contains either a tag with an extra comma or an invalid tag.',
   },
   123: {
     key: 'INVALID JSON ENCODING',
@@ -736,12 +678,6 @@ export default {
     severity: 'error',
     reason:
       'Type column in channels.tsv files should only consist of values allowed in the specification for MEG/EEG/iEEG data.',
-  },
-  132: {
-    key: 'HED_VERSION_NOT_DEFINED',
-    severity: 'warning',
-    reason:
-      "You should define 'HEDVersion' for this file. If you don't provide this information, the HED validation will use the latest version available.",
   },
   133: {
     key: 'LABELING_TYPE_MUST_DEFINE',
@@ -1094,47 +1030,6 @@ export default {
     severity: 'error',
     reason:
       "M0Type was not defined correctly. If 'M0Type' is equal to separate, the dataset should include a *_m0scan.nii[.gz] and *_m0scan.json file.",
-  },
-  203: {
-    key: 'HED_WRONG_NUMBER_OF_NUMBER_SIGNS',
-    severity: 'error',
-    reason:
-      'You must have exactly one number sign in a HED value-taking string template.',
-  },
-  204: {
-    key: 'HED_INVALID_PARENT_NODE',
-    severity: 'error',
-    reason: 'You cannot use a valid HED node as a value or extension.',
-  },
-  205: {
-    key: 'HED_NO_VALID_TAG_FOUND',
-    severity: 'error',
-    reason: 'No valid base node was found for this HED tag.',
-  },
-  206: {
-    key: 'HED_EMPTY_TAG_FOUND',
-    severity: 'error',
-    reason: 'An empty HED tag cannot be validated.',
-  },
-  207: {
-    key: 'HED_DUPLICATE_TAGS_IN_SCHEMA',
-    severity: 'error',
-    reason: 'The source HED schema is invalid as it contains duplicate tags.',
-  },
-  208: {
-    key: 'HED_TAG_EXTENSION',
-    severity: 'warning',
-    reason: 'A HED tag extension was found.',
-  },
-  209: {
-    key: 'HED_INTERNAL_ERROR',
-    severity: 'error',
-    reason: 'An internal error occurred during HED validation.',
-  },
-  210: {
-    key: 'HED_INTERNAL_WARNING',
-    severity: 'warning',
-    reason: 'An internal error occurred during HED validation.',
   },
   211: {
     key: 'TSV_MISSING_REQUIRED_COLUMN',
