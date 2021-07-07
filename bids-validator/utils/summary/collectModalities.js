@@ -1,25 +1,58 @@
 import type from '../type'
 
-const collectModalities = fileList => {
-  const modalities = []
-  const keys = Object.keys(fileList)
-  keys.forEach(key => {
-    const file = fileList[key]
-    const path = file.relativePath
-    const pathParts = path.split('_')
-    const suffix = pathParts[pathParts.length - 1]
-
-    // check modality by data file extension ...
-    // and capture data files for later sanity checks (when available)
-    if (type.file.hasModality(file.relativePath)) {
-      // collect modality summary
-      const modality = suffix.slice(0, suffix.indexOf('.'))
-      if (modalities.indexOf(modality) === -1) {
-        modalities.push(modality)
+export const collect = filenames => {
+  const modalities = {
+    MRI: 0,
+    PET: 0,
+    MEG: 0,
+    EEG: 0,
+    iEEG: 0,
+  }
+  for (const path of filenames) {
+    // MRI files
+    if (
+      type.file.isAnat(path) ||
+      type.file.isDWI(path) ||
+      type.file.isFieldMap(path) ||
+      type.file.isFuncBold(path)
+    ) {
+      modalities['MRI']++
+    }
+    if (type.file.isPET(path) || type.file.isPETBlood(path)) {
+      modalities['PET']++
+    }
+    if (type.file.isMeg(path)) {
+      modalities['MEG']++
+    }
+    if (type.file.isEEG(path)) {
+      modalities['EEG']++
+    }
+    if (type.file.isIEEG(path)) {
+      modalities['iEEG']++
+    }
+  }
+  // Order by matching file count
+  const nonZero = Object.keys(modalities).filter(a => modalities[a] !== 0)
+  if (nonZero.length === 0) {
+    return []
+  }
+  return nonZero.sort((a, b) => {
+    if (modalities[b] === modalities[a]) {
+      // On a tie, hand it to the non-MRI modality
+      if (b === 'MRI') {
+        return -1
+      } else {
+        return 0
       }
     }
+    return modalities[b] - modalities[a]
   })
-  return modalities
+}
+
+// Preserve the old fileList signature
+const collectModalities = fileList => {
+  const keys = Object.keys(fileList).map(file => fileList[file].relativePath)
+  return collect(keys)
 }
 
 export default collectModalities
