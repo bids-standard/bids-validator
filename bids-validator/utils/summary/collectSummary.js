@@ -14,6 +14,7 @@ const collectSummary = (fileList, options) => {
     totalFiles: -1,
     size: 0,
     dataProcessed: false,
+    pet: null,
   }
 
   summary.dataProcessed = checkForDerivatives(fileList)
