@@ -99,7 +99,7 @@ describe('BIDS example datasets ', function() {
       assert(summary.sessions.length === 0)
       assert(summary.subjects.length === 16)
       assert.deepEqual(summary.tasks, ['balloon analog risk task'])
-      assert(summary.modalities.includes('MRI'))
+      expect(summary.modalities).toEqual(['MRI'])
       assert(summary.totalFiles === 134)
       assert.deepEqual(errors.length, 1)
       assert(warnings.length === 2)
@@ -124,7 +124,7 @@ describe('BIDS example datasets ', function() {
       assert(summary.subjects.length === 1)
       assert.deepEqual(summary.tasks, ['rhyme judgment'])
       assert.isFalse(summary.dataProcessed)
-      assert(summary.modalities.includes('MRI'))
+      expect(summary.modalities).toEqual(['MRI'])
       expect(summary.totalFiles).toEqual(8)
       assert(
         errors.findIndex(error => error.code === 60) > -1,
