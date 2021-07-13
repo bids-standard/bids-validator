@@ -11,6 +11,7 @@ const collectSummary = (fileList, options) => {
     subjectMetadata: {},
     tasks: [],
     modalities: [],
+    secondaryModalities: [],
     totalFiles: -1,
     size: 0,
     dataProcessed: false,
@@ -28,11 +29,17 @@ const collectSummary = (fileList, options) => {
 
   summary.totalFiles = Object.keys(fileList).length
 
+  const relativePaths = Object.keys(fileList).map(
+    file => fileList[file].relativePath,
+  )
+
   //collect file directory statistics
   summary.size = files.collectDirectorySize(fileList)
 
   // collect modalities for summary
-  summary.modalities = collectModalities(fileList)
+  const { primary, secondary } = collectModalities(relativePaths)
+  summary.modalities = primary
+  summary.secondaryModalities = secondary
 
   // collect subjects
   summary.subjects = collectSubjects(fileList, options)

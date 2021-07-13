@@ -5,29 +5,53 @@ import {
   ds002718,
   ds003400,
 } from '../../../tests/data/collectModalities-data'
-import { collect } from '../collectModalities'
+import { collectModalities } from '../collectModalities'
 
 describe('collectModalities()', () => {
   it('returns correct values for a PET dataset', () => {
-    expect(collect(ds001421)).toEqual(['PET', 'MRI'])
+    expect(collectModalities(ds001421)).toEqual({
+      primary: ['PET', 'MRI'],
+      secondary: ['MRI_Structural'],
+    })
   })
   it('returns correct values for an MRI dataset', () => {
-    expect(collect(ds001734)).toEqual(['MRI'])
+    expect(collectModalities(ds001734)).toEqual({
+      primary: ['MRI'],
+      secondary: ['MRI_Functional', 'MRI_Structural'],
+    })
   })
   it('returns correct values for an EEG dataset', () => {
-    expect(collect(ds002718)).toEqual(['EEG', 'MRI'])
+    expect(collectModalities(ds002718)).toEqual({
+      primary: ['EEG', 'MRI'],
+      secondary: ['MRI_Structural'],
+    })
   })
   it('returns correct values for an iEEG dataset', () => {
-    expect(collect(ds003400)).toEqual(['iEEG'])
+    expect(collectModalities(ds003400)).toEqual({
+      primary: ['iEEG'],
+      secondary: [],
+    })
   })
   it('returns correct values for an MEG dataset', () => {
-    expect(collect(ds000247)).toEqual(['MEG', 'MRI'])
+    expect(collectModalities(ds000247)).toEqual({
+      primary: ['MEG', 'MRI'],
+      secondary: ['MRI_Structural'],
+    })
   })
   it('sorts other modalities ahead of MRI on ties', () => {
     const tied = [
       '/sub-01/ses-02/pet/sub-01_ses-02_pet.nii.gz',
       '/sub-01/ses-02/anat/sub-01_ses-02_T1w.nii',
     ]
-    expect(collect(tied)).toEqual(['PET', 'MRI'])
+    expect(collectModalities(tied)).toEqual({
+      primary: ['PET', 'MRI'],
+      secondary: ['MRI_Structural'],
+    })
+  })
+  it('returns empty arrays when no matches are found', () => {
+    expect(collectModalities([])).toEqual({
+      primary: [],
+      secondary: [],
+    })
   })
 })
