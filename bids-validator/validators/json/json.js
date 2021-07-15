@@ -88,6 +88,8 @@ const selectSchema = file => {
       schema = require('./schemas/asl.json')
     } else if (file.name.endsWith('pet.json')) {
       schema = require('./schemas/pet.json')
+    } else if (file.name.endsWith('nirs.json')) {
+      schema = require('./schemas/nirs.json')
     } else if (file.relativePath === '/dataset_description.json') {
       schema = require('./schemas/dataset_description.json')
     } else if (file.name.endsWith('meg.json')) {
