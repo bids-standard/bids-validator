@@ -1,6 +1,5 @@
+import Issue from '../../utils/issues/issue.js'
 import isNode from '../../utils/isNode'
-
-const Issue = require('../../utils').issues.Issue
 
 const checkReadme = fileList => {
   const issues = []
