@@ -81,7 +81,7 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
   })
 
   // check if dataset contains T1w
-  if (summary.dataTypes.includes('T1w')) {
+  if (!summary.dataTypes.includes('T1w')) {
     self.issues.push(
       new Issue({
         code: 53,
