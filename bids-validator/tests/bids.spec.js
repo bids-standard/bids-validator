@@ -156,6 +156,13 @@ describe('BIDS example datasets ', function() {
     )
   })
 
+  it('includes issue 53 NO_T1W for dataset without T1w files', function(isdone) {
+    validate.BIDS(createDatasetFileList('no_t1w'), options, function(issues) {
+      assertErrorCode(issues.ignored, 53)
+      isdone()
+    })
+  })
+
   // test for illegal characters used in acq and task name
   it('validates dataset with illegal characters in task name', function(isdone) {
     validate.BIDS(
