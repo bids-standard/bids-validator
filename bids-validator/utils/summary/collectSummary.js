@@ -1,5 +1,6 @@
 import files from '../files'
 import checkForDerivatives from './checkForDerivatives'
+import collectDataTypes from './collectDataTypes'
 import collectModalities from './collectModalities'
 import collectSessions from './collectSessions'
 import collectSubjects from './collectSubjects'
@@ -40,6 +41,7 @@ const collectSummary = (fileList, options) => {
   const { primary, secondary } = collectModalities(relativePaths)
   summary.modalities = primary
   summary.secondaryModalities = secondary
+  summary.dataTypes = collectDataTypes(relativePaths)
 
   // collect subjects
   summary.subjects = collectSubjects(fileList, options)
