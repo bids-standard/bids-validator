@@ -42,7 +42,6 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
   const phenotypeParticipants = []
 
   const tsvs = []
-  const samples = []
 
   const summary = utils.collectSummary(fileList, self.options)
 
@@ -90,10 +89,6 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
     )
   }
 
-  // Does 
-  // Does 'files.tsv' has a file with <sample> in it? --Yes--> needSample
-
-
   validateMisc(files.misc)
     .then(miscIssues => {
       self.issues = self.issues.concat(miscIssues)
@@ -106,10 +101,10 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
         events,
         participants,
         phenotypeParticipants,
-        stimuli,
-        samples
+        stimuli
       )
     })
+
     .then(({ tsvIssues, participantsTsvContent }) => {
       self.issues = self.issues.concat(tsvIssues)
 
@@ -119,6 +114,7 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       // Bvec validation
       return bvec.validate(files.bvec, bContentsDict)
     })
+
     .then(bvecIssues => {
       self.issues = self.issues.concat(bvecIssues)
 
