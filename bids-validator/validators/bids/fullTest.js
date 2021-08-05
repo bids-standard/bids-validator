@@ -101,10 +101,9 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
         events,
         participants,
         phenotypeParticipants,
-        stimuli
+        stimuli,
       )
     })
-
     .then(({ tsvIssues, participantsTsvContent }) => {
       self.issues = self.issues.concat(tsvIssues)
 
@@ -114,7 +113,6 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       // Bvec validation
       return bvec.validate(files.bvec, bContentsDict)
     })
-
     .then(bvecIssues => {
       self.issues = self.issues.concat(bvecIssues)
 
