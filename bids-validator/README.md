@@ -401,7 +401,7 @@ for filepath in filepaths:
 To develop locally, clone the project and run `npm install` from the project
 root. This will install external dependencies. If you wish to install
 `bids-validator` globally (so that you can run it in other folders), use the
-following command to install it globally: `cd bids-validator && npm install -g`  (for windows users, if in a different drive add /d, e.g. `cd /d F:\bids-validator && npm install -g`)
+following command to install it globally: `cd bids-validator && npm install -g` (for windows users, if in a different drive add /d, e.g. `cd /d F:\bids-validator && npm install -g`)
 
 Please see the [CONTRIBUTING.md](../CONTRIBUTING.md)
 for additional details.
