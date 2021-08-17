@@ -4,7 +4,8 @@ node_modules/
 npm-debug.log
 .idea/
 .ipynb_checkpoints
-# package-lock.json
+!/package-lock.json
+package-lock.json
 .nyc_output/
 coverage/
 __pycache__/
