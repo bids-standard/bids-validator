@@ -23,14 +23,13 @@ export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
     return hedValidator.validator
       .validateBidsDataset(dataset, schemaDefinition)
       .then(hedValidationIssues => {
-        return [].concat(
-          schemaDefinitionIssues,
+        return schemaDefinitionIssues.concat(
           convertHedIssuesToBidsIssues(hedValidationIssues),
         )
       })
   } catch (error) {
-    const issues = [internalHedValidatorIssue(error)].concat(
-      schemaDefinitionIssues,
+    const issues = schemaDefinitionIssues.concat(
+      internalHedValidatorIssue(error),
     )
     return Promise.resolve(issues)
   }
