@@ -1,9 +1,9 @@
 import hedValidator from 'hed-validator'
 import path from 'path'
 import semver from 'semver'
+import union from 'lodash/union'
 import utils from '../../utils'
 import parseTsv from '../tsv/tsvParser'
-import union from 'lodash/union'
 
 const Issue = utils.issues.Issue
 
@@ -14,13 +14,14 @@ export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
   if (!hedDataExists) {
     return Promise.resolve([])
   }
+  const dataset = new hedValidator.validator.BidsDataset(eventData, sidecarData)
   const [schemaDefinition, schemaDefinitionIssues] = parseHedVersion(
     jsonContents,
     dir,
   )
   try {
     return hedValidator.validator
-      .validateBidsDataset(eventData, sidecarData, schemaDefinition)
+      .validateBidsDataset(dataset, schemaDefinition)
       .then(hedValidationIssues => {
         return [].concat(
           schemaDefinitionIssues,
@@ -47,6 +48,7 @@ function constructEventData(events, jsonContents) {
     const parsedTsv = parseTsv(eventFile.contents)
     const file = eventFile.file
     return new hedValidator.validator.BidsEventFile(
+      eventFile.path,
       potentialSidecars,
       mergedDictionary,
       parsedTsv,
@@ -64,17 +66,13 @@ function constructSidecarData(eventData, jsonContents, jsonFiles) {
     )
   }
   const actualEventSidecars = union(actualSidecarNames, potentialEventSidecars)
-  return new Map(
-    actualEventSidecars.map(sidecarName => {
-      return [
-        sidecarName,
-        new hedValidator.validator.BidsSidecar(
-          jsonContents[sidecarName],
-          getSidecarFileObject(sidecarName, jsonFiles),
-        ),
-      ]
-    }),
-  )
+  return actualEventSidecars.map(sidecarName => {
+    return new hedValidator.validator.BidsSidecar(
+      sidecarName,
+      jsonContents[sidecarName],
+      getSidecarFileObject(sidecarName, jsonFiles),
+    )
+  })
 }
 
 function getSidecarFileObject(sidecarName, jsonFiles) {
@@ -85,7 +83,7 @@ function getSidecarFileObject(sidecarName, jsonFiles) {
 
 function detectHed(eventData, sidecarData) {
   return (
-    Array.from(sidecarData.values()).some(sidecarFileData => {
+    sidecarData.some(sidecarFileData => {
       return Object.values(sidecarFileData.sidecarData).some(sidecarValueHasHed)
     }) ||
     eventData.some(eventFileData => {
