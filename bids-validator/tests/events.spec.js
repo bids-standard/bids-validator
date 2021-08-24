@@ -1030,10 +1030,8 @@ describe('Events', function() {
         jsonFiles,
         '',
       ).then(issues => {
-        // TODO The validator validates the string twice, in string- and dataset-level validation.
-        assert.strictEqual(issues.length, 2)
+        assert.strictEqual(issues.length, 1)
         assert.strictEqual(issues[0].code, 105)
-        assert.strictEqual(issues[1].code, 105)
       })
     })
   })
