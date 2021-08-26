@@ -66,6 +66,5 @@ compatible with the Brain Imaging Data Structure specification. To learn \
 more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
   ).argv
 
-// import and init command line interface
-const esmRequire = require('esm')(module)
-esmRequire('../cli.js').default(argv._[0], argv)
+const cli = require('bids-validator/cli').default
+cli(argv._[0], argv)
