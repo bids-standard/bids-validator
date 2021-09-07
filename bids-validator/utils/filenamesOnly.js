@@ -3,9 +3,9 @@
  */
 import readline from 'readline'
 import path from 'path'
-import { defaultIgnore } from './files/readDir'
-import quickTest from '../validators/bids/quickTest'
-import groupFileTypes from '../validators/bids/groupFileTypes'
+import { defaultIgnore } from './files/readDir.js'
+import quickTest from '../validators/bids/quickTest.js'
+import groupFileTypes from '../validators/bids/groupFileTypes.js'
 
 // Disable most tests that might access files
 const defaultOptions = {
@@ -104,8 +104,8 @@ export async function filenamesOnly() {
     input: process.stdin,
   })
   if (await validateFilenames(rl)) {
-    process.exit(0)
+    return 0
   } else {
-    process.exit(1)
+    return 1
   }
 }

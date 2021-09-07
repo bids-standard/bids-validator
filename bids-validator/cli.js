@@ -1,5 +1,6 @@
 /*eslint no-console: ["error", {allow: ["log"]}] */
 
+import { parseOptions } from './src/options'
 import validate from './index.js'
 
 const format = validate.consoleFormat
@@ -7,19 +8,7 @@ import colors from 'colors/safe'
 import fs from 'fs'
 import { filenamesOnly } from './utils/filenamesOnly.js'
 
-const exitProcess = issues => {
-  if (
-    issues === 'Invalid' ||
-    (issues.errors && issues.errors.length >= 1) ||
-    (issues.config && issues.config.length >= 1)
-  ) {
-    process.exit(1)
-  } else {
-    process.exit(0)
-  }
-}
-
-const errorToString = err => {
+const errorToString = (err) => {
   if (err instanceof Error) return err.stack
   else if (typeof err === 'object') return JSON.parse(err)
   else return err
@@ -40,40 +29,59 @@ const writeStdout = (data, cb) => {
   }
 }
 
-export default function(dir, options) {
-  if (process.env['NO_COLOR'] !== undefined) {
-    colors.disable()
-  }
-  process.on('unhandledRejection', err => {
-    console.log(
-      format.unexpectedError(
-        // eslint-disable-next-line
-        `Unhandled rejection (\n  reason: ${errorToString(err)}\n).\n`,
-      ),
-    )
-    process.exit(3)
-  })
+export function cli(argumentOverride) {
+  return new Promise((resolve, reject) => {
+    // Setup CLI state when called via Node.js
+    if (process.env['NO_COLOR'] !== undefined) {
+      colors.disable()
+    }
+    process.title = 'bids-validator'
+    const argv = parseOptions(argumentOverride)
+    const dir = argv._[0]
+    const options = argv
+    process.on('unhandledRejection', (err) => {
+      console.log(
+        format.unexpectedError(
+          // eslint-disable-next-line
+          `Unhandled rejection (\n  reason: ${errorToString(err)}\n).\n`,
+        ),
+      )
+      reject(3)
+    })
 
-  if (options.filenames) {
-    return filenamesOnly()
-  }
+    if (options.filenames) {
+      return filenamesOnly()
+    }
 
-  if (fs.existsSync(dir)) {
-    if (options.json) {
-      validate.BIDS(dir, options, function(issues, summary) {
-        writeStdout(JSON.stringify({ issues, summary }), () =>
-          exitProcess(issues),
-        )
+    if (fs.existsSync(dir)) {
+      validate.BIDS(dir, options, function (issues, summary) {
+        function resolveOrReject() {
+          if (
+            issues === 'Invalid' ||
+            (issues.errors && issues.errors.length >= 1) ||
+            (issues.config && issues.config.length >= 1)
+          ) {
+            reject(1)
+          } else {
+            resolve(0)
+          }
+        }
+        if (options.json) {
+          writeStdout(JSON.stringify({ issues, summary }), resolveOrReject)
+        } else {
+          writeStdout(
+            format.issues(issues, options) +
+              '\n' +
+              format.summary(summary, options),
+            resolveOrReject,
+          )
+        }
       })
     } else {
-      validate.BIDS(dir, options, function(issues, summary) {
-        console.log(format.issues(issues, options) + '\n')
-        console.log(format.summary(summary, options))
-        exitProcess(issues)
-      })
+      console.log(colors.red(dir + ' does not exist '))
+      reject(2)
     }
-  } else {
-    console.log(colors.red(dir + ' does not exist '))
-    process.exit(2)
-  }
+  })
 }
+
+export default cli
