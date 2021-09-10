@@ -53,6 +53,7 @@
     "semver": "^7.3.2",
     "stream-browserify": "^3.0.0",
     "table": "^5.2.3",
+    "yaml": "^1.10.2",
     "yargs": "^16.2.0"
   },
   "devDependencies": {
@@ -82,6 +83,7 @@
     "stream": "stream-browserify"
   },
   "files": [
-    "dist/*"
+    "dist/*",
+    "schema/*"
   ]
 }
