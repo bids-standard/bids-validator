@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 try {
   const { default: cli } = require('bids-validator/cli')
-  cli().catch((code) => {
+  cli(process.argv.slice(2)).catch(code => {
     process.exit(code)
   })
 } catch (err) {
