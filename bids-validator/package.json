@@ -60,6 +60,7 @@
     "chai": "",
     "codecov": "^3.1.0",
     "esbuild": "^0.11.5",
+    "esbuild-runner": "^2.2.1",
     "esbuild-plugin-globals": "^0.1.1",
     "eslint": "^5.2.0",
     "eslint-config-prettier": "^2.9.0",

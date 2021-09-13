@@ -1,9 +1,20 @@
 #!/usr/bin/env node
-try {
-  const { default: cli } = require('bids-validator/cli')
+function entry(cli) {
   cli(process.argv.slice(2)).catch(code => {
     process.exit(code)
   })
+}
+
+try {
+  const { default: cli } = require('bids-validator/cli')
+  entry(cli)
 } catch (err) {
-  console.log(err)
+  if (err.code === 'MODULE_NOT_FOUND') {
+    // For dev, use esbuild-runner if not testing a build
+    require('esbuild-runner/register')
+    const { default: cli } = require('../cli.js')
+    entry(cli)
+  } else {
+    console.log(err)
+  }
 }
