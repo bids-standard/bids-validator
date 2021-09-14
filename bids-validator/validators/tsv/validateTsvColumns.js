@@ -290,7 +290,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
             )
           }
         }
-        // check Labelling Duration matching with TSV lenght only for PCASL or CASL
+        // check Labelling Duration matching with TSV length only for PCASL or CASL
         if 
         (
           mergedDict.hasOwnProperty('LabelingDuration') &&
@@ -307,13 +307,13 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 175,
                 reason:
-                  "''LabelingDuration' for this file does not match the TSV lenght. Please be sure that the size of the LabelingDuration array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''LabelingDuration' for this file does not match the TSV length. Please be sure that the size of the LabelingDuration array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }
         }
 
-        // check VolumeTiming with TSV lenght
+        // check VolumeTiming with TSV length
         if 
         (
           mergedDict.hasOwnProperty('RepetitionTimePreparation') &&
@@ -328,13 +328,13 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 177,
                 reason:
-                  "''RepetitionTimePreparation' for this file do not match the TSV lenght. Please be sure that the size of the RepetitionTimePreparation array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''RepetitionTimePreparation' for this file do not match the TSV length. Please be sure that the size of the RepetitionTimePreparation array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }
         }
 
-        // check Post Labelling Delays matching with TSV lenght
+        // check Post Labelling Delays matching with TSV length
         if (
             mergedDict.hasOwnProperty('PostLabelingDelay') &&
             mergedDict['PostLabelingDelay'].constructor === Array
@@ -348,7 +348,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 174,
                 reason:
-                  "''PostLabelingDelay' for this file do not match the TSV lenght. Please be sure that the size of the PostLabelingDelay array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''PostLabelingDelay' for this file do not match the TSV length. Please be sure that the size of the PostLabelingDelay array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }
@@ -363,7 +363,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 181,
                 reason:
-                  "''TotalAcquiredVolumes' for this file do not match the TSV lenght. Please be sure that the size of the TotalAcquiredVolumes array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''TotalAcquiredVolumes' for this file do not match the TSV length. Please be sure that the size of the TotalAcquiredVolumes array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }
@@ -381,7 +381,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 196,
                 reason:
-                  "''EchoTime' for this file do not match the TSV lenght. Please be sure that the size of the EchoTime array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''EchoTime' for this file do not match the TSV length. Please be sure that the size of the EchoTime array in the json corresponds to the number of volume listed in the tsv file." 
               }),
             )
           }

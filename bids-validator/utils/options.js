@@ -52,7 +52,7 @@ export default {
       } else {
         // Grab file from FileList if a path was provided
         configFile = [...dir].find(f => f.webkitRelativePath === config)
-        // No mathcing config, return a default
+        // No matching config, return a default
         if (!configFile) {
           return callback(null, configFile, JSON.stringify({}))
         }
