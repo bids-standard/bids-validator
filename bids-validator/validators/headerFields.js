@@ -269,7 +269,7 @@ const headerField = (headers, field) => {
  * if elements of the two arrays differ by less than one we won't raise a
  * warning about them. There are a large number of floating point rounding
  * errors that cause resolutions to be slightly different. Returns true if
- * the two headers are signifigantly different
+ * the two headers are significantly different
  */
 const headerFieldCompare = (header1, header2) => {
   var hdr1 = header1.split(',')

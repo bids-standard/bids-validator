@@ -908,7 +908,7 @@ export default {
     key: 'MAGNETIC_FIELD_STRENGTH_MISSING',
     severity: 'error',
     reason:
-      "You should define 'MagneticFieldStrength' for ths file. 'MagneticFieldStrength' is the nominal field strength of MR magnet in Tesla. Corresponds to DICOM Tag 0018,0087 'Magnetic Field Strength'.",
+      "You should define 'MagneticFieldStrength' for this file. 'MagneticFieldStrength' is the nominal field strength of MR magnet in Tesla. Corresponds to DICOM Tag 0018,0087 'Magnetic Field Strength'.",
   },
   183: {
     key: 'SLICE_TIMING_NOT_DEFINED_2D_ASL',

@@ -789,7 +789,7 @@ export default function NIFTI(
 
     if (bval && bvec && header) {
       /*
-        bvec length ==3 is checked at bvec.spec.js hence following if loop doesnot have else block
+        bvec length ==3 is checked at bvec.spec.js hence following if loop does not have else block
         */
       if (bvec.replace(/^\s+|\s+$/g, '').split('\n').length === 3) {
         const volumes = [

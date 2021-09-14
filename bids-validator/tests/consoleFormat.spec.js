@@ -14,7 +14,7 @@ describe('console format', () => {
           files: [
             new Issue({
               key: 'TEST_ERROR',
-              file: '/nonexistant/test/file.wut',
+              file: '/nonexistent/test/file.wut',
               code: 0,
               evidence: 'none',
               line: -1,
@@ -34,7 +34,7 @@ describe('console format', () => {
           files: [
             new Issue({
               key: 'TEST_WARNING',
-              file: '/nonexistant/test/file.wut',
+              file: '/nonexistent/test/file.wut',
               code: 2,
               evidence: 'none',
               line: -1,
