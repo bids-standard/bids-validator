@@ -110,22 +110,21 @@ export async function generateRegex(schema, pythonRegex = false) {
     const modality_datatype_schema = schema.datatypes[mod]
     for (const datatype of modality_datatype_schema) {
       let file_regex = `${regex.sub_ses_dirs}${mod}${regex.type_dir}${regex.sub_ses_entity}`
-      for (const entity of Object.keys(datatype.entities)) {
-        // sub and ses entities in file name handled by directory pattern matching groups
-        if (
-          entity === 'sub' ||
-          entity === 'ses' ||
-          entity === 'subject' ||
-          entity === 'session'
-        ) {
-          continue
-        }
-        const format = regex[schema.entities[entity].format]
-        if (format) {
-          // Limitation here is that if format is missing an essential entity may be skipped
-          file_regex += `(?${P}<${entity}>_${entity}-${format})${
-            regex[datatype.entities[entity]]
-          }`
+      for (const entity of Object.keys(schema.entities)) {
+        const entityDefinion = schema.entities[entity]
+        if (entity in datatype.entities) {
+          // sub and ses entities in file name handled by directory pattern matching groups
+          if (entity === 'subject' || entity === 'session') {
+            continue
+          }
+          const entityKey = entityDefinion.entity
+          const format = regex[schema.entities[entity].format]
+          if (format) {
+            // Limitation here is that if format is missing an essential entity may be skipped
+            file_regex += `(?${P}<${entity}>_${entityKey}-${format})${
+              regex[datatype.entities[entity]]
+            }`
+          }
         }
       }
       const suffix_regex = `_(?${P}<suffix>${datatype.suffixes.join('|')})`
