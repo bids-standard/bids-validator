@@ -1,8 +1,10 @@
 FROM node:14-alpine
 
-COPY ./bids-validator /src
+COPY . /src
 
 RUN npm install -g npm
-RUN npm install -g /src
+WORKDIR /src
+RUN npm install 
+RUN npm install -g ./bids-validator
 
 ENTRYPOINT ["/usr/local/bin/bids-validator"]
