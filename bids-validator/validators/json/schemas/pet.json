@@ -10,7 +10,7 @@
     "TracerName": { "type": "string", "minLength": 1 },
     "TracerRadionuclide": { "type": "string", "minLength": 1 },
     "InstitutionName": { "type": "string", "minLength": 1 },
-    "InstitutionAddress": { "type": "string", "minLength": 1 },  
+    "InstitutionAddress": { "type": "string", "minLength": 1 },
     "InstitutionalDepartmentName": { "$ref": "common_definitions.json#/definitions/InstitutionalDepartmentName" },
     "BodyPart": { "type": "string", "minLength": 1 },
     "TracerRadLex": { "type": "string", "minLength": 1 },
@@ -18,7 +18,7 @@
     "TracerMolecularWeight": { "type": "number" },
     "TracerMolecularWeightUnits": { "type": "string", "minLength": 1 },
     "PharmaceuticalName": { "type": "string", "minLength": 1 },
-    "PharmaceuticalDoseAmount": { 
+    "PharmaceuticalDoseAmount": {
       "anyOf": [
         { "type": "number", "minimum": 0 },
         { "type": "array", "items": { "type": "number" } }
@@ -26,14 +26,14 @@
       },
     "PharmaceuticalDoseUnits": { "type": "string", "minLength": 1 },
     "PharmaceuticalDoseRegimen": { "type": "string", "minLength": 1 },
-    "PharmaceuticalDoseTime": { 
+    "PharmaceuticalDoseTime": {
       "anyOf": [
         { "type": "number" },
         { "type": "array", "items": { "type": "number" } }
         ]
       },
     "Anaesthesia": { "type": "string", "minLength": 1 },
-    
+
     "ModeOfAdministration": { "type": "string", "minLength": 1 },
     "InjectedRadioactivity": { "type": "number" },
     "InjectedRadioactivityUnits": { "type": "string", "minLength": 1 },
@@ -54,8 +54,8 @@
       "pattern": "^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$"
     },
     "InfusionRadioactivity": { "type": "number" },
-    "InfusionStart": { "type": "number" },  
-    "InfusionSpeed": { "type": "number" }, 
+    "InfusionStart": { "type": "number" },
+    "InfusionSpeed": { "type": "number" },
     "InfusionSpeedUnits": { "type": "string", "minLength": 1 },
     "InjectedVolume": { "type": "number" },
     "Purity": { "type": "number" },
@@ -81,18 +81,18 @@
     "ReconMethodParameterLabels": { "type": "array", "items": { "type": "string" } },
     "ReconMethodParameterUnits": { "type": "array", "items": { "type": "string" } },
     "ReconMethodParameterValues": { "type": "array", "items": { "type": "number" } },
-    "ReconFilterType": { 
+    "ReconFilterType": {
       "anyOf": [
         { "type": "string" },
         { "type": "array", "items": { "type": "string" } }
         ]
       },
-    "ReconFilterSize": { 
+    "ReconFilterSize": {
       "anyOf": [
         { "type": "number", "minimum": 0 },
         {"type": "array", "items": { "type": "number" } }
         ]
-      }, 
+      },
     "ReconMethodImplementationVersion": { "type": "string", "minLength": 1 },
     "AttenuationCorrection": { "type": "string", "minLength": 1 },
     "AttenuationCorrectionMethodReference": { "type": "string", "minLength": 1 },
