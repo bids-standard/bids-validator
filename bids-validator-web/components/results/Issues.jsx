@@ -47,7 +47,7 @@ class Issues extends React.Component {
       // issue card
       if (hasErrorFiles) {
         return (
-          <Card key={index} className="validation-error fadeIn" key={index}>
+          <Card className="validation-error fadeIn" key={index}>
             <Card.Header
               className="error-header"
               aria-expanded={this.state.errorOpen}

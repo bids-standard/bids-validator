@@ -349,7 +349,7 @@ export default function NIFTI(
               file: file,
               code: 134,
               reason:
-                "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible." +
+                "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible. " +
                 'LabelingDuration is the total duration, in seconds, of the labeling pulse train. ' +
                 sidecarMessage,
             }),

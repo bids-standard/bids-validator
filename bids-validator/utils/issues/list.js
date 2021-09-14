@@ -950,8 +950,7 @@ export default {
     key: 'PASL_NOT_ALLOWED_FIELDS',
     severity: 'error',
     reason:
-      "You defined one of the not allowed fields in case of PASL 'ArterialSpinLabelingType'." +
-      "Please verify which field among 'CASLType', 'PCASLType' 'LabelingPulseAverageGradient', 'LabelingPulseMaximumGradient', 'LabelingPulseAverageB1', 'LabelingPulseDuration', 'LabelingPulseFlipAngle', 'LabelingPulseInterval', 'LabelingDuration' you have filled.",
+      "You defined one of the not allowed fields in case of PASL 'ArterialSpinLabelingType'. Please verify which field among 'CASLType', 'PCASLType' 'LabelingPulseAverageGradient', 'LabelingPulseMaximumGradient', 'LabelingPulseAverageB1', 'LabelingPulseDuration', 'LabelingPulseFlipAngle', 'LabelingPulseInterval', 'LabelingDuration' you have filled.",
   },
   191: {
     key: 'PCASL_CASL_LABELING_TYPE_NOT_ALLOWED',
