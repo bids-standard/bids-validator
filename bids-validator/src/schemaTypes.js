@@ -92,7 +92,7 @@ export async function generateRegex(schema, pythonRegex = false) {
   }
 
   const exportRegex = {
-    top_level_files: '',
+    top_level_files: [],
     datatypes: {
       anat: [],
       beh: [],
@@ -104,6 +104,15 @@ export async function generateRegex(schema, pythonRegex = false) {
       meg: [],
       pet: [],
     },
+  }
+
+  // Modality agnostic top level files
+  for (const root of Object.keys(schema.top_level_files)) {
+    const extensions = schema.top_level_files[root].extensions.join('|')
+    const root_level = `[\\/\\\\]${root}${
+      extensions === 'None' ? '' : `(?${P}<suffix>${extensions})`
+    }$`
+    exportRegex.top_level_files.push(new RegExp(root_level))
   }
 
   for (const mod of modalities) {

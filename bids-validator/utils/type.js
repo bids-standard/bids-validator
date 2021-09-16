@@ -122,19 +122,35 @@ export default {
      * Check if the file has appropriate name for a top level file
      */
     isTopLevel: function(path) {
-      return (
-        rootTop.test(path) ||
-        funcTop.test(path) ||
-        aslTop.test(path) ||
-        dwiTop.test(path) ||
-        anatTop.test(path) ||
-        multiDirFieldmap.test(path) ||
-        otherTopFiles.test(path) ||
-        megTop.test(path) ||
-        eegTop.test(path) ||
-        ieegTop.test(path) ||
-        petTop.test(path)
-      )
+      if (bids_schema) {
+        return (
+          bids_schema.top_level_files.some(regex => regex.exec(path)) ||
+          funcTop.test(path) ||
+          aslTop.test(path) ||
+          dwiTop.test(path) ||
+          anatTop.test(path) ||
+          multiDirFieldmap.test(path) ||
+          otherTopFiles.test(path) ||
+          megTop.test(path) ||
+          eegTop.test(path) ||
+          ieegTop.test(path) ||
+          petTop.test(path)
+        )
+      } else {
+        return (
+          rootTop.test(path) ||
+          funcTop.test(path) ||
+          aslTop.test(path) ||
+          dwiTop.test(path) ||
+          anatTop.test(path) ||
+          multiDirFieldmap.test(path) ||
+          otherTopFiles.test(path) ||
+          megTop.test(path) ||
+          eegTop.test(path) ||
+          ieegTop.test(path) ||
+          petTop.test(path)
+        )
+      }
     },
 
     /**
