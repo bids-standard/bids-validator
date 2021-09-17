@@ -275,7 +275,6 @@ describe('NIFTI', function() {
       [],
       events,
       function(issues) {
-        console.log(issues)
         assert(issues[3].code === 66 && issues.length === 4)
         assert(issues[2].code === 12 && issues.length === 4)
       },
