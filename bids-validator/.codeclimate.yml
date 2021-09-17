@@ -1,3 +1,4 @@
+---
 version: '2'
 checks:
   similar-code:
@@ -11,3 +12,6 @@ plugins:
     enabled: true
     config:
       count_threshold: 3
+exclude_patterns:
+  - "**/versioneer.py"
+  - "**/_version.py"
