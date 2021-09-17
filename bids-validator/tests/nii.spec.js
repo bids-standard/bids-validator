@@ -28,7 +28,7 @@ describe('NIFTI', function() {
     },
   ]
 
-  it('should warn user about misisng events file', function() {
+  it('should warn user about missing events file', function() {
     validate.NIFTI(null, file, jsonContentsDict, {}, [], events, function(
       issues,
     ) {
