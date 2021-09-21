@@ -1,6 +1,6 @@
 {
   "name": "bids-validator",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "description": "",
   "main": "./dist/commonjs/index.js",
   "exports": {
@@ -60,8 +60,8 @@
     "chai": "",
     "codecov": "^3.1.0",
     "esbuild": "^0.11.5",
-    "esbuild-runner": "^2.2.1",
     "esbuild-plugin-globals": "^0.1.1",
+    "esbuild-runner": "^2.2.1",
     "eslint": "^5.2.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.2",
