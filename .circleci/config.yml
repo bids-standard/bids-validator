@@ -58,7 +58,7 @@ jobs:
             bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders --json
   test_docker:
     environment:
-      IMAGE_NAME: cbinyu/validator
+      IMAGE_NAME: bids/validator
     machine:
       # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
       image: ubuntu-1604:201903-01
@@ -210,7 +210,7 @@ jobs:
           path: ~/
   docker-deployment:
     environment:
-      IMAGE_NAME: cbinyu/validator
+      IMAGE_NAME: bids/validator
     machine:
       # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
       image: ubuntu-1604:201903-01
