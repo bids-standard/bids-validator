@@ -10,6 +10,9 @@
     },
     "./cli": {
       "require": "./dist/commonjs/cli.js"
+    },
+    "./utils/consoleFormat": {
+      "require": "./dist/commonjs/consoleFormat.js"
     }
   },
   "scripts": {
