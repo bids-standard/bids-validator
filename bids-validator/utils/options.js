@@ -22,6 +22,7 @@ export default {
       remoteFiles: Boolean(options.remoteFiles),
       gitRef: options.gitRef || 'HEAD',
       config: options.config || {},
+      schema: options.schema !== 'disable' ? options.schema : false,
     }
     if (options.config && typeof options.config !== 'boolean') {
       this.parseConfig(dir, options.config, function(issues, config) {
