@@ -56,8 +56,8 @@ const commaSeparatedStringOf = items => items.map(item => `"${item}"`).join(', '
 /**
  * Loads relevant JSON schema for given tsv modalities.
  * Currently only required for pet_blood.
- * @param {*} tsvs 
- * @returns 
+ * @param {*} tsvs
+ * @returns
  */
 const loadSchemas = tsvs => {
   const schemas = {}
@@ -128,11 +128,11 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
 }
 
 /**
- * Validates that tsv columns required by 
- * @param {*} tsv 
- * @param {*} mergedDict 
- * @param {*} schema 
- * @returns 
+ * Validates that tsv columns required by
+ * @param {*} tsv
+ * @param {*} mergedDict
+ * @param {*} schema
+ * @returns
  */
 export const validatePetBloodHeaders = (tsv, mergedDict, schema) => {
   const tsvIssues = []
@@ -176,7 +176,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
       const file = header[0]
       return file.relativePath.includes('_asl')
     })
-    
+
     aslHeaders.forEach(aslHeader => {
       // extract the fourth element of 'dim' field of header - this is the
       // number of volumes that were obtained during scan (numVols)
@@ -189,24 +189,24 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
       var potentialSidecars = utils.files.potentialLocations(
         file.relativePath.replace('.gz', '').replace('.nii', '.json'),
       )
-    
+
       // get the _asl_context.tsv associated with this asl scan
       const potentialAslContext = utils.files.potentialLocations(
         file.relativePath.replace('.gz', '').replace('asl.nii', 'aslcontext.tsv'),
       )
       const associatedAslContext = potentialAslContext.indexOf(tsv.file.relativePath)
-      
-      
+
+
       if (associatedAslContext > -1)
       {
         const rows = tsv.contents
         .replace(/[\r]+/g,'')
         .split('\n')
         .filter(row => !(!row || /^\s*$/.test(row)))
-        
+
         const m0scan_filters = ['m0scan'];
         const filtered_m0scan_rows = rows.filter(row => m0scan_filters.includes(row))
-        
+
         const control_filters = ['control'];
         const filtered_control_rows = rows.filter(row => control_filters.includes(row))
 
@@ -229,7 +229,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
               file: file,
             })
           )
-        }        
+        }
 
         // Get merged data dictionary for this file
         potentialSidecars = utils.files.potentialLocations(
@@ -251,7 +251,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
               file: file,
               code: 154,
               reason:
-                "''M0Type' is set to 'Included' however the tsv file does not contain any m0scan volume." 
+                "''M0Type' is set to 'Included' however the tsv file does not contain any m0scan volume."
             }),
           )
         }
@@ -266,16 +266,16 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
               file: file,
               code: 199,
               reason:
-                "''M0Type' is set to 'Absent' however the tsv file contains an m0scan volume. This should be avoided." 
+                "''M0Type' is set to 'Absent' however the tsv file contains an m0scan volume. This should be avoided."
             }),
           )
         }
-       
+
         // check Flip Angle requirements with LookLocker acquisitions
         if (
             mergedDict.hasOwnProperty('FlipAngle') &&
             mergedDict['FlipAngle'].constructor === Array
-          ) 
+          )
         {
           let FlipAngle = mergedDict['FlipAngle']
           const FlipAngleLength = FlipAngle.length
@@ -285,19 +285,19 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 172,
                 reason:
-                  "''FlipAngle' for this file does not match the TSV length. Please make sure that the size of the FlipAngle array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''FlipAngle' for this file does not match the TSV length. Please make sure that the size of the FlipAngle array in the json corresponds to the number of volume listed in the tsv file."
               }),
             )
           }
         }
         // check Labelling Duration matching with TSV length only for PCASL or CASL
-        if 
+        if
         (
           mergedDict.hasOwnProperty('LabelingDuration') &&
           mergedDict['LabelingDuration'].constructor === Array &&
           mergedDict.hasOwnProperty('ArterialSpinLabelingType') &&
           (mergedDict['ArterialSpinLabelingType'] == 'CASL' || mergedDict['ArterialSpinLabelingType'] == 'PCASL')
-        ) 
+        )
         {
           let LabelingDuration = mergedDict['LabelingDuration']
           const LabelingDurationLength = LabelingDuration.length
@@ -307,18 +307,18 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 175,
                 reason:
-                  "''LabelingDuration' for this file does not match the TSV length. Please be sure that the size of the LabelingDuration array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''LabelingDuration' for this file does not match the TSV length. Please be sure that the size of the LabelingDuration array in the json corresponds to the number of volume listed in the tsv file."
               }),
             )
           }
         }
 
         // check VolumeTiming with TSV length
-        if 
+        if
         (
           mergedDict.hasOwnProperty('RepetitionTimePreparation') &&
-          mergedDict['RepetitionTimePreparation'].constructor === Array 
-        ) 
+          mergedDict['RepetitionTimePreparation'].constructor === Array
+        )
         {
           let RepetitionTimePreparation = mergedDict['RepetitionTimePreparation']
           const RepetitionTimePreparationLength = RepetitionTimePreparation.length
@@ -328,7 +328,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 177,
                 reason:
-                  "''RepetitionTimePreparation' for this file do not match the TSV length. Please be sure that the size of the RepetitionTimePreparation array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''RepetitionTimePreparation' for this file do not match the TSV length. Please be sure that the size of the RepetitionTimePreparation array in the json corresponds to the number of volume listed in the tsv file."
               }),
             )
           }
@@ -338,7 +338,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
         if (
             mergedDict.hasOwnProperty('PostLabelingDelay') &&
             mergedDict['PostLabelingDelay'].constructor === Array
-          ) 
+          )
         {
           let PostLabelingDelay = mergedDict['PostLabelingDelay']
           const PostLabelingDelayLength = PostLabelingDelay.length
@@ -348,7 +348,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 174,
                 reason:
-                  "''PostLabelingDelay' for this file do not match the TSV length. Please be sure that the size of the PostLabelingDelay array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''PostLabelingDelay' for this file do not match the TSV length. Please be sure that the size of the PostLabelingDelay array in the json corresponds to the number of volume listed in the tsv file."
               }),
             )
           }
@@ -363,15 +363,15 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 181,
                 reason:
-                  "''TotalAcquiredVolumes' for this file do not match the TSV length. Please be sure that the size of the TotalAcquiredVolumes array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''TotalAcquiredVolumes' for this file do not match the TSV length. Please be sure that the size of the TotalAcquiredVolumes array in the json corresponds to the number of volume listed in the tsv file."
               }),
             )
           }
         }
 
-        if ( 
-             mergedDict.hasOwnProperty('EchoTime') && 
-             mergedDict['EchoTime'].constructor === Array  
+        if (
+             mergedDict.hasOwnProperty('EchoTime') &&
+             mergedDict['EchoTime'].constructor === Array
              ) {
           let EchoTime = mergedDict['EchoTime']
           const EchoTimeLength = EchoTime.length
@@ -381,7 +381,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
                 file: file,
                 code: 196,
                 reason:
-                  "''EchoTime' for this file do not match the TSV length. Please be sure that the size of the EchoTime array in the json corresponds to the number of volume listed in the tsv file." 
+                  "''EchoTime' for this file do not match the TSV length. Please be sure that the size of the EchoTime array in the json corresponds to the number of volume listed in the tsv file."
               }),
             )
           }
