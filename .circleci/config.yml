@@ -213,8 +213,8 @@ jobs:
     environment:
       IMAGE_NAME: bids/validator
     machine:
-      # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
-      image: ubuntu-1604:201903-01
+      # Ubuntu 20.04, docker 19.03.13, docker-compose 1.27.4
+      image: ubuntu-2004:202008-01
     steps:
       - attach_workspace:
           at: /tmp/workspace
