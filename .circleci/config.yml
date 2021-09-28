@@ -1,6 +1,4 @@
 version: 2
-orbs:
-  docker: circleci/docker@1.7.0
 
 jobs:
   test_python:
@@ -223,13 +221,9 @@ jobs:
       - run:
           name: Load archived Docker image
           command: docker load -i /tmp/workspace/image.tar
-      # - run:
-          # name: Publish Docker Image to Docker Hub
-          # command: if [[ -n "$DOCKER_PASS" ]]; then echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin && docker push $IMAGE_NAME:latest && if [[ -n "$CIRCLE_TAG" ]]; then docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_TAG && docker push $IMAGE_NAME:$CIRCLE_TAG; fi; fi
-      - docker/publish:
-          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
-          use-docker-credentials-store: true
-          
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: if [[ -n "$DOCKER_PASS" ]]; then echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin && docker push $IMAGE_NAME:latest && if [[ -n "$CIRCLE_TAG" ]]; then docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_TAG && docker push $IMAGE_NAME:$CIRCLE_TAG; fi; fi
 
 workflows:
   version: 2
