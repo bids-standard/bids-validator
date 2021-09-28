@@ -209,22 +209,6 @@ jobs:
             - ./node_modules
       - store_artifacts:
           path: ~/
-  docker-deployment:
-    environment:
-      IMAGE_NAME: bids/validator
-    machine:
-      # Ubuntu 20.04, docker 19.03.13, docker-compose 1.27.4
-      image: ubuntu-2004:202008-01
-    steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - run:
-          name: Load archived Docker image
-          command: docker load -i /tmp/workspace/image.tar
-      - run:
-          name: Publish Docker Image to Docker Hub
-          command: if [[ -n "$DOCKER_PASS" ]]; then echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin && docker push $IMAGE_NAME:latest && if [[ -n "$CIRCLE_TAG" ]]; then docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_TAG && docker push $IMAGE_NAME:$CIRCLE_TAG; fi; fi
-
 workflows:
   version: 2
   build-deploy:
@@ -276,15 +260,5 @@ workflows:
           filters:
             branches:
               ignore: /.*/
-            tags:
-              only: /v\d+\.\d+\.\d+$/
-      - docker-deployment:
-          context: test
-          requires:
-            - test
-            - test_docker
-          filters:
-            branches:
-              only: /.*/
             tags:
               only: /v\d+\.\d+\.\d+$/
