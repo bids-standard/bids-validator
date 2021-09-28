@@ -36,7 +36,7 @@
       couple of minutes please open [developer tools ](https://developer.chrome.com/devtools)
       and report the error at [https://github.com/bids-standard/bids-validator/issues](https://github.com/bids-standard/bids-validator/issues).
 1. Command line version:
-   1. Install [Node.js](https://nodejs.org) (at least version 10.11.0)
+   1. Install [Node.js](https://nodejs.org) (at least version 12.12.0)
    1. Update `npm` to be at least version 7 (`npm install --global npm@^7`)
    1. From a terminal run `npm install -g bids-validator`
    1. Run `bids-validator` to start validating datasets.
@@ -327,7 +327,7 @@ contents as described above.
 The BIDS Validator currently works in the browser with [browserify](http://browserify.org/)
 or [webpack](https://webpack.js.org/). You can add it to a project by cloning
 the validator and requiring it with browserify syntax
-`var validate = require('bids-validator');` or an ES2015 webpack import
+`const validate = require('bids-validator');` or an ES2015 webpack import
 `import validate from 'bids-validator'`.
 
 ### On the Server
@@ -406,6 +406,10 @@ following command to install it globally: `cd bids-validator && npm install -g` 
 Please see the [CONTRIBUTING.md](../CONTRIBUTING.md)
 for additional details.
 
+### Bundling
+
+bids-validator is bundled with esbuild. While developing, the script `bids-validator/bin/bids-validator` will automatically bundle the project each time it is run. To test a build without publishing it `npm -w bids-validator run build`. This will generate a bids-validator/dist directory containing the local build and `bids-validator/bin/bids-validator` will use this build. To return to automatic bundling on each run, remove the dist directory.
+
 ### Running Locally in a Browser
 
 A note about OS X, the dependencies for the browser require a npm package called
@@ -434,6 +438,14 @@ is useful to run tests while making changes. A coverage report is available with
 `npm run coverage`.
 
 To run the linter which checks code conventions run `npm run lint`.
+
+### Install globally from a development branch
+
+Global installs are not recommended for development because of the possibility of package conflicts with other Node.js projects. If you do need to test with a global install from a development tree, follow these steps to generate the NPM package without publishing it and install the package locally.
+
+1. `npm -w bids-validator run build`
+2. `npm -w bids-validator pack`
+3. `npm install -g bids-validator-*.tgz`
 
 ### Publishing
 
