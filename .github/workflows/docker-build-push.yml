@@ -86,7 +86,7 @@ jobs:
           echo $tags
           singularity pull container.sif docker://${tags%,*}
       - name: Login and Deploy Container
-        if: (github.event_name != 'pull_request')
+        if: (github.event_name == 'pull_request')
         run: |
           tags=${{ steps.meta.outputs.tags }}
           echo ${{ secrets.GITHUB_TOKEN }} |  singularity remote login -u ${{ github.actor }} --password-stdin oras://ghcr.io
