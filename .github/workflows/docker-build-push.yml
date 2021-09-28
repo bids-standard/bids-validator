@@ -90,5 +90,5 @@ jobs:
         run: |
           tags=${{ steps.meta.outputs.tags }}
           echo ${{ secrets.GITHUB_TOKEN }} |  singularity remote login -u ${{ github.actor }} --password-stdin oras://ghcr.io
-          for tag in $(echo $tags | sed "s/,/ /g"); 
+          for tag in $(echo $tags | sed "s/,/ /g" | sed "s/bids\/validator/bids-standard\/bids-validator/g"); 
             do echo $tag; singularity push container.sif oras://ghcr.io/$tag; done
