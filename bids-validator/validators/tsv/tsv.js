@@ -194,7 +194,7 @@ const TSV = (file, contents, fileList, callback) => {
   ) {
     const participantIdColumn = headers.indexOf('participant_id')
 
-    // if the participant_id column is missing, an error 
+    // if the participant_id column is missing, an error
     // will be raised
     if (participantIdColumn === -1) {
       issues.push(
@@ -206,7 +206,7 @@ const TSV = (file, contents, fileList, callback) => {
         }),
       )
     } else {
-      // otherwise, the participants should comprise of 
+      // otherwise, the participants should comprise of
       // sub-<subject_id> and one subject per row
       participants = []
       for (let l = 1; l < rows.length; l++) {
@@ -229,7 +229,7 @@ const TSV = (file, contents, fileList, callback) => {
             }),
           )
         }
-        
+
         // obtain a list of the subject IDs in the participants.tsv file
         const participant = row[participantIdColumn].replace('sub-', '')
         if (participant == 'emptyroom') {
@@ -307,7 +307,7 @@ const TSV = (file, contents, fileList, callback) => {
   }
 
   // check for valid SI units
-  /* 
+  /*
    * Commenting out call to validation until it is inline with spec:
    * https://github.com/bids-standard/bids-specification/pull/411
   if (headers.includes('units')) {

@@ -1,6 +1,6 @@
 {
   "name": "bids-validator",
-  "version": "1.8.2",
+  "version": "1.8.5-dev.0",
   "description": "",
   "main": "./dist/commonjs/index.js",
   "exports": {
@@ -10,6 +10,9 @@
     },
     "./cli": {
       "require": "./dist/commonjs/cli.js"
+    },
+    "./utils/consoleFormat": {
+      "require": "./dist/commonjs/consoleFormat.js"
     }
   },
   "scripts": {
@@ -53,6 +56,7 @@
     "semver": "^7.3.2",
     "stream-browserify": "^3.0.0",
     "table": "^5.2.3",
+    "yaml": "^1.10.2",
     "yargs": "^16.2.0"
   },
   "devDependencies": {
@@ -60,8 +64,8 @@
     "chai": "",
     "codecov": "^3.1.0",
     "esbuild": "^0.11.5",
-    "esbuild-runner": "^2.2.1",
     "esbuild-plugin-globals": "^0.1.1",
+    "esbuild-runner": "^2.2.1",
     "eslint": "^5.2.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.2",
@@ -82,6 +86,7 @@
     "stream": "stream-browserify"
   },
   "files": [
-    "dist/*"
+    "dist/*",
+    "schema/*"
   ]
 }
