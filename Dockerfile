@@ -1,7 +1,12 @@
-FROM node:12.14.1-alpine
+FROM node:14-alpine
 
-COPY ./bids-validator /src
+COPY . /src
 
-RUN npm install -g /src
+RUN npm install -g npm
+WORKDIR /src
+RUN npm install 
+RUN npm -w bids-validator run build
+RUN npm -w bids-validator pack
+RUN npm install -g bids-validator-*.tgz
 
 ENTRYPOINT ["/usr/local/bin/bids-validator"]

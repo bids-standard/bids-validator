@@ -11,7 +11,7 @@
         "Units": "s"
     },
     "plasma_radioactivity": {
-        "Description": "Radioactivity in plasma samples", 
+        "Description": "Radioactivity in plasma samples",
         "Units": "Bq/ml"
     },
     "metabolite_parent_fraction": {
@@ -19,4 +19,3 @@
         "Units": "unitless"
     }
 }
-
