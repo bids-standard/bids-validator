@@ -207,9 +207,6 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
         const m0scan_filters = ['m0scan'];
         const filtered_m0scan_rows = rows.filter(row => m0scan_filters.includes(row))
 
-        const control_filters = ['control'];
-        const filtered_control_rows = rows.filter(row => control_filters.includes(row))
-
         const asl_filters = ['cbf','m0scan','label','control','deltam','volume_type'];
         const filtered_tsv_rows = rows.filter(row => asl_filters.includes(row))
         if (rows.length != filtered_tsv_rows.length)
