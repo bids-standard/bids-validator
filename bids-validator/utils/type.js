@@ -17,6 +17,13 @@ import session_level_rules from '../bids_validator/rules/session_level_rules.jso
 import subject_level_rules from '../bids_validator/rules/subject_level_rules.json'
 import top_level_rules from '../bids_validator/rules/top_level_rules.json'
 
+let bids_schema
+
+// Alternative method of loading from bids-specification schema
+export function schemaSetup(schema) {
+  bids_schema = schema
+}
+
 // Associated data
 const associatedData = buildRegExp(associated_data_rules.associated_data)
 // File level
@@ -121,20 +128,37 @@ export default {
      * Check if the file has appropriate name for a top level file
      */
     isTopLevel: function(path) {
-      return (
-        rootTop.test(path) ||
-        funcTop.test(path) ||
-        aslTop.test(path) ||
-        dwiTop.test(path) ||
-        anatTop.test(path) ||
-        multiDirFieldmap.test(path) ||
-        otherTopFiles.test(path) ||
-        megTop.test(path) ||
-        eegTop.test(path) ||
-        ieegTop.test(path) ||
-        petTop.test(path) ||
-        microscopyTop.test(path)
-      )
+      if (bids_schema) {
+        return (
+          bids_schema.top_level_files.some(regex => regex.exec(path)) ||
+          funcTop.test(path) ||
+          aslTop.test(path) ||
+          dwiTop.test(path) ||
+          anatTop.test(path) ||
+          multiDirFieldmap.test(path) ||
+          otherTopFiles.test(path) ||
+          megTop.test(path) ||
+          eegTop.test(path) ||
+          ieegTop.test(path) ||
+          petTop.test(path) ||
+          microscopyTop.test(path)
+        )
+      } else {
+        return (
+          rootTop.test(path) ||
+          funcTop.test(path) ||
+          aslTop.test(path) ||
+          dwiTop.test(path) ||
+          anatTop.test(path) ||
+          multiDirFieldmap.test(path) ||
+          otherTopFiles.test(path) ||
+          megTop.test(path) ||
+          eegTop.test(path) ||
+          ieegTop.test(path) ||
+          petTop.test(path) ||
+          microscopyTop.test(path)
+        )
+      }
     },
 
     /**
@@ -203,39 +227,51 @@ export default {
      * Check if the file has a name appropriate for an anatomical scan
      */
     isAnat: function(path) {
-      return (
-        conditionalMatch(anatNonparametric, path) ||
-        conditionalMatch(anatParametric, path) ||
-        conditionalMatch(anatDefacemask, path) ||
-        conditionalMatch(anatMultiEcho, path) ||
-        conditionalMatch(anatMultiFlip, path) ||
-        conditionalMatch(anatMultiInv, path) ||
-        conditionalMatch(anatMP2RAGE, path) ||
-        conditionalMatch(anatVFAMT, path) ||
-        conditionalMatch(anatMTR, path)
-      )
+      if (bids_schema) {
+        return bids_schema.datatypes['anat'].some(regex => regex.exec(path))
+      } else {
+        return (
+          conditionalMatch(anatNonparametric, path) ||
+          conditionalMatch(anatParametric, path) ||
+          conditionalMatch(anatDefacemask, path) ||
+          conditionalMatch(anatMultiEcho, path) ||
+          conditionalMatch(anatMultiFlip, path) ||
+          conditionalMatch(anatMultiInv, path) ||
+          conditionalMatch(anatMP2RAGE, path) ||
+          conditionalMatch(anatVFAMT, path) ||
+          conditionalMatch(anatMTR, path)
+        )
+      }
     },
 
     /**
      * Check if the file has a name appropriate for a diffusion scan
      */
     isDWI: function(path) {
-      return conditionalMatch(dwiData, path)
+      if (bids_schema) {
+        return bids_schema.datatypes['dwi'].some(regex => regex.exec(path))
+      } else {
+        return conditionalMatch(dwiData, path)
+      }
     },
 
     /**
      * Check if the file has a name appropriate for a fieldmap scan
      */
     isFieldMap: function(path) {
-      return (
-        conditionalMatch(fmapGre, path) ||
-        conditionalMatch(fmapPepolarAsl, path) ||
-        conditionalMatch(fmapTB1DAM, path) ||
-        conditionalMatch(fmapTB1EPI, path) ||
-        conditionalMatch(fmapTB1SRGE, path) ||
-        conditionalMatch(fmapRF, path) ||
-        conditionalMatch(fmapParametric, path)
-      )
+      if (bids_schema) {
+        return bids_schema.datatypes['fmap'].some(regex => regex.exec(path))
+      } else {
+        return (
+          conditionalMatch(fmapGre, path) ||
+          conditionalMatch(fmapPepolarAsl, path) ||
+          conditionalMatch(fmapTB1DAM, path) ||
+          conditionalMatch(fmapTB1EPI, path) ||
+          conditionalMatch(fmapTB1SRGE, path) ||
+          conditionalMatch(fmapRF, path) ||
+          conditionalMatch(fmapParametric, path)
+        )
+      }
     },
 
     isFieldMapMainNii: function(path) {
@@ -256,12 +292,16 @@ export default {
      * Check if the file has a name appropriate for a functional scan
      */
     isFunc: function(path) {
-      return (
-        conditionalMatch(func, path) ||
-        conditionalMatch(funcPhaseDeprecated, path) ||
-        conditionalMatch(funcEvents, path) ||
-        conditionalMatch(funcTimeseries, path)
-      )
+      if (bids_schema) {
+        return bids_schema.datatypes['func'].some(regex => regex.exec(path))
+      } else {
+        return (
+          conditionalMatch(func, path) ||
+          conditionalMatch(funcPhaseDeprecated, path) ||
+          conditionalMatch(funcEvents, path) ||
+          conditionalMatch(funcTimeseries, path)
+        )
+      }
     },
 
     isAsl: function(path) {
@@ -269,7 +309,11 @@ export default {
     },
 
     isPET: function(path) {
-      return conditionalMatch(petData, path)
+      if (bids_schema) {
+        return bids_schema.datatypes['pet'].some(regex => regex.exec(path))
+      } else {
+        return conditionalMatch(petData, path)
+      }
     },
 
     isPETBlood: function(path) {
@@ -277,19 +321,31 @@ export default {
     },
 
     isMeg: function(path) {
-      return (
-        conditionalMatch(megData, path) ||
-        conditionalMatch(megCalibrationData, path) ||
-        conditionalMatch(megCrosstalkData, path)
-      )
+      if (bids_schema) {
+        return bids_schema.datatypes['meg'].some(regex => regex.exec(path))
+      } else {
+        return (
+          conditionalMatch(megData, path) ||
+          conditionalMatch(megCalibrationData, path) ||
+          conditionalMatch(megCrosstalkData, path)
+        )
+      }
     },
 
     isEEG: function(path) {
-      return conditionalMatch(eegData, path)
+      if (bids_schema) {
+        return bids_schema.datatypes['eeg'].some(regex => regex.exec(path))
+      } else {
+        return conditionalMatch(eegData, path)
+      }
     },
 
     isIEEG: function(path) {
-      return conditionalMatch(ieegData, path)
+      if (bids_schema) {
+        return bids_schema.datatypes['ieeg'].some(regex => regex.exec(path))
+      } else {
+        return conditionalMatch(ieegData, path)
+      }
     },
 
     isMicroscopy: function(path) {
@@ -301,7 +357,11 @@ export default {
     },
 
     isBehavioral: function(path) {
-      return conditionalMatch(behavioralData, path)
+      if (bids_schema) {
+        return bids_schema.datatypes['beh'].some(regex => regex.exec(path))
+      } else {
+        return conditionalMatch(behavioralData, path)
+      }
     },
 
     isFuncBold: function(path) {
@@ -359,10 +419,13 @@ export default {
 
     return values
   },
+
+  // CommonJS default export
+  schemaSetup,
 }
 
 function conditionalMatch(expression, path) {
-  var match = expression.exec(path)
+  const match = expression.exec(path)
 
   // we need to do this because JS does not support conditional groups
   if (match) {

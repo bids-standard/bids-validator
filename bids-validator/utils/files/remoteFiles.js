@@ -52,7 +52,7 @@ const remoteFiles = {
     const dir = config.dir.endsWith('/') ? config.dir.slice(0, -1) : config.dir
     const datasetName = dir.split('/')[dir.split('/').length - 1]
     const key = datasetName + config.file.relativePath
-    // Add additonal parameters
+    // Add additional parameters
     config.s3Params['Key'] = key
     config.s3Params['VersionId'] = remote.versionId
     return this.accessRemoteFile(config)

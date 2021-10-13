@@ -120,7 +120,7 @@ var issues = {
   /**
    * Error To Issue
    *
-   * Takes and expection and returns an Issue
+   * Takes and exception and returns an Issue
    */
   errorToIssue: function(err, code = 0) {
     const callStack = err.stack

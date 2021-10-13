@@ -570,7 +570,7 @@ describe('utils.type.file.isPETBlood', function() {
 })
 
 describe('BIDS.subIDsesIDmismatchtest', function() {
-  it('should return if sub and ses doesnt match', function() {
+  it("should return if sub and ses doesn't match", function() {
     const files = {
       '0': {
         name: 'sub-22_ses-1_task-rest_acq-prefrontal_physio.tsv.gz',

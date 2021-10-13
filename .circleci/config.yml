@@ -25,9 +25,10 @@ jobs:
           name: test python
           command: |
             conda activate testenv
-            pytest --doctest-modules bids-validator/bids_validator
-            flake8 bids-validator/bids_validator
-            pydocstyle bids-validator/bids_validator/bids_validator.py
+            cd bids-validator
+            pytest --doctest-modules bids_validator
+            flake8 bids_validator
+            pydocstyle bids_validator/bids_validator.py
   test:
     docker:
       - image: node:12.16.1
@@ -57,17 +58,26 @@ jobs:
             bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders
             bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders --json
   test_docker:
+    environment:
+      IMAGE_NAME: bids/validator
     machine:
       # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
       image: ubuntu-1604:201903-01
     steps:
       - checkout
-      - run: docker build -t bids/validator:latest .
+      - run: docker build -t $IMAGE_NAME:latest .
       - run:
           name: Smoke tests
           command: |
             docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders
             docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
+      - run:
+          name: Archive Docker image
+          command: docker save -o image.tar $IMAGE_NAME
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./image.tar
   githubPagesTest:
     docker:
       - image: mhart/alpine-node:12
@@ -191,7 +201,7 @@ jobs:
       - run: git status
       - run:
           name: Commit updates
-          command: git add . && git commit --allow-empty --no-verify -m "Circle CI - Generate validator demo with version $CIRCLE_TAG"
+          command: git add . && git commit --allow-empty --no-verify -m "Circle CI - Generate validator demo with version $CIRCLE_TAG [ci skip]"
       - run: git push origin gh-pages -f
       - save_cache:
           key: npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
@@ -199,7 +209,6 @@ jobs:
             - ./node_modules
       - store_artifacts:
           path: ~/
-
 workflows:
   version: 2
   build-deploy:

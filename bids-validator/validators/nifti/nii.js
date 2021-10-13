@@ -349,7 +349,7 @@ export default function NIFTI(
               file: file,
               code: 134,
               reason:
-                "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible." +
+                "You should define 'LabelingDuration' for this file. If you don't provide this information CBF quantification will not be possible. " +
                 'LabelingDuration is the total duration, in seconds, of the labeling pulse train. ' +
                 sidecarMessage,
             }),
@@ -789,7 +789,7 @@ export default function NIFTI(
 
     if (bval && bvec && header) {
       /*
-        bvec length ==3 is checked at bvec.spec.js hence following if loop doesnot have else block
+        bvec length ==3 is checked at bvec.spec.js hence following if loop does not have else block
         */
       if (bvec.replace(/^\s+|\s+$/g, '').split('\n').length === 3) {
         const volumes = [

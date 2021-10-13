@@ -26,7 +26,7 @@ import collectPetFields from '../../utils/summary/collectPetFields'
  * Takes on an array of files, callback, and boolean inidicating if git-annex is used.
  * Starts the validation process for a BIDS package.
  */
-const fullTest = (fileList, options, annexed, dir, callback) => {
+const fullTest = (fileList, options, annexed, dir, schema, callback) => {
   const self = BIDS
   self.options = options
 
@@ -44,7 +44,7 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
 
   const tsvs = []
 
-  const summary = utils.collectSummary(fileList, self.options)
+  const summary = utils.collectSummary(fileList, self.options, schema)
 
   // remove size redundancies
   for (const key in fileList) {
@@ -199,7 +199,7 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       self.issues = self.issues.concat(
         tsv.validateTsvColumns(tsvs, jsonContentsDict, headers),
       )
-      // Validate continous recording files
+      // Validate continuous recording files
       self.issues = self.issues.concat(
         tsv.validateContRec(files.contRecord, jsonContentsDict),
       )
