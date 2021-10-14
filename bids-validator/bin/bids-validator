@@ -6,13 +6,15 @@ function entry(cli) {
 }
 
 try {
-  const { default: cli } = require('bids-validator/cli')
+  // Test if there's a development tree to run
+  require.resolve('../cli.js')
+  // For dev, use esbuild-runner
+  require('esbuild-runner/register')
+  const { default: cli } = require('../cli.js')
   entry(cli)
 } catch (err) {
   if (err.code === 'MODULE_NOT_FOUND') {
-    // For dev, use esbuild-runner if not testing a build
-    require('esbuild-runner/register')
-    const { default: cli } = require('../cli.js')
+    const { default: cli } = require('bids-validator/cli')
     entry(cli)
   } else {
     console.log(err)
