@@ -12,7 +12,7 @@
     "BodyPart": { "type": "string", "minLength": 1 },
     "BodyPartDetails": { "type": "string", "minLength": 1 },
     "BodyPartDetailsOntology": { "type": "string", "minLength": 1 },
-    "Environment": { "type": "string", "minLength": 1  },
+    "SampleEnvironment": { "type": "string", "minLength": 1  },
     "SampleEmbedding": { "type": "string", "minLength": 1 },
     "SampleFixation": { "type": "string", "minLength": 1 },
     "SampleStaining": { 
@@ -36,7 +36,7 @@
     "SliceThickness": { "type": "number" },
     "SampleExtractionProtocol": { "type": "string", "minLength": 1 },
     "SampleExtractionInstitution": { "type": "string", "minLength": 1 },
-    "ShrinkageFactor": { "type": "number" },
+    "TissueDeformationScaling": { "type": "number" },
     "PixelSize": {"type": "array", "items": { "type": "number" } },
     "PixelSizeUnits": { "type": "string", "enum": ["mm", "um", "nm"] },
     "Immersion": { "type": "string", "minLength": 1 },

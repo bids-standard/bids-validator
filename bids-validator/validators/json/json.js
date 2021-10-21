@@ -99,7 +99,7 @@ const selectSchema = file => {
     } else if (
       file.name.endsWith('TEM.json') ||
       file.name.endsWith('SEM.json') ||
-      file.name.endsWith('CT.json') ||
+      file.name.endsWith('uCT.json') ||
       file.name.endsWith('BF.json') ||
       file.name.endsWith('DF.json') ||
       file.name.endsWith('PC.json') ||
