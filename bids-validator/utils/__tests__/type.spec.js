@@ -103,6 +103,18 @@ describe('type.js', () => {
           ),
         ).toBe(true)
       })
+      it('allows an directiories within datatypes', () => {
+        expect(
+          type.isBIDS(
+            '/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/sub-0001_task-AEF_run-01_meg.acq',
+          ),
+        ).toBe(true)
+        expect(
+          type.isBIDS(
+            '/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/BadChannels',
+          ),
+        ).toBe(true)
+      })
     })
   })
 })
