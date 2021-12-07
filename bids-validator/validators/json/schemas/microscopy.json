@@ -67,8 +67,7 @@
     "SampleEnvironment",
     "SampleStaining",
     "SamplePrimaryAntibody",
-    "SampleSecondaryAntibody",
-    "ChunkTransformationMatrix"
+    "SampleSecondaryAntibody"
   ],
 
   "dependencies": {
