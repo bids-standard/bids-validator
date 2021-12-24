@@ -29,5 +29,9 @@
     "jest-environment-node": "^24.9.0",
     "lerna": "^4.0.0"
   },
-  "name": "bids-validator"
+  "name": "bids-validator",
+  "dependencies": {
+    "exifreader": "^4.1.0",
+    "xml2js": "^0.4.23"
+  }
 }
