@@ -6,6 +6,7 @@ import json from '../json'
 import NIFTI from '../nifti'
 import bval from '../bval'
 import bvec from '../bvec'
+import ometiff from '../microscopy'
 import Events from '../events'
 import { session } from '../session'
 import checkAnyDataPresent from '../checkAnyDataPresent'
@@ -22,7 +23,7 @@ import collectPetFields from '../../utils/summary/collectPetFields'
 /**
  * Full Test
  *
- * Takes on an array of files, callback, and boolean inidicating if git-annex is used.
+ * Takes on an array of files, callback, and boolean indicating if git-annex is used.
  * Starts the validation process for a BIDS package.
  */
 const fullTest = (fileList, options, annexed, dir, schema, callback) => {
@@ -140,11 +141,29 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
       const readmeIssues = checkReadme(fileList)
       self.issues = self.issues.concat(readmeIssues)
 
+      // Check for samples file in the proper place (only for the microscopy modality)
+      if (summary.modalities.includes('Microscopy')) {
+        const samplesIssues = ometiff.checkSamples(fileList)
+        const jsonAndFieldIssues = ometiff.checkJSONAndField(
+          files,
+          jsonContentsDict,
+        )
+
+        self.issues = self.issues
+          .concat(samplesIssues)
+          .concat(jsonAndFieldIssues)
+      }
       // Validate json files and contents
       return json.validate(jsonFiles, fileList, jsonContentsDict, summary)
     })
     .then(jsonIssues => {
       self.issues = self.issues.concat(jsonIssues)
+
+      // ome-tiff consistency check
+      return ometiff.validate(files.ome, jsonContentsDict)
+    })
+    .then(omeIssues => {
+      self.issues = self.issues.concat(omeIssues)
       // Nifti validation
       return NIFTI.validate(
         files.nifti,
