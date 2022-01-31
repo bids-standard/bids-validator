@@ -442,12 +442,12 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/nirs/') &&
     file.name.endsWith('_channels.tsv')
   ) {
-    checkheader('name', 0, file, 9991)
-    checkheader('type', 1, file, 9991)
-    checkheader('source', 2, file, 9991)
-    checkheader('detector', 3, file, 9991)
-    checkheader('wavelength_nominal', 4, file, 9991)
-    checkheader('units', 5, file, 9991)
+    checkheader('name', 0, file, 229)
+    checkheader('type', 1, file, 229)
+    checkheader('source', 2, file, 229)
+    checkheader('detector', 3, file, 229)
+    checkheader('wavelength_nominal', 4, file, 229)
+    checkheader('units', 5, file, 229)
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
   }
@@ -478,11 +478,11 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/nirs/') &&
     file.name.endsWith('_optodes.tsv')
   ) {
-    checkheader('name', 0, file, 9992)
-    checkheader('type', 1, file, 9992)
-    checkheader('x', 2, file, 9992)
-    checkheader('y', 3, file, 9992)
-    checkheader('z', 4, file, 9992)
+    checkheader('name', 0, file, 228)
+    checkheader('type', 1, file, 228)
+    checkheader('x', 2, file, 228)
+    checkheader('y', 3, file, 228)
+    checkheader('z', 4, file, 228)
   }
 
   // blood.tsv
