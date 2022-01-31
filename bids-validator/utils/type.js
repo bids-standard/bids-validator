@@ -122,7 +122,6 @@ export default {
       this.file.isPETBlood(path) ||
       this.file.isMicroscopy(path) ||
       this.file.isMicroscopyJSON(path)
-
     )
   },
 
