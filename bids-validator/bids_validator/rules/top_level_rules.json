@@ -138,6 +138,7 @@
         "_coordsystem\\.json"
       ]
     }
+  },
   "meg_calibration_top": {
     "regexp": "^[\\/\\\\](?:(ses-[a-zA-Z0-9]+_)?)acq-calibration_meg\\.fif$"
   },
