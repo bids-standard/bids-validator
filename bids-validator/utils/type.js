@@ -218,8 +218,6 @@ export default {
         conditionalMatch(dwiSes, path) ||
         conditionalMatch(megSes, path) ||
         conditionalMatch(nirsSes, path) ||
-        conditionalMatch(megCalibrationSes, path) ||
-        conditionalMatch(megCrosstalkSes, path) ||
         conditionalMatch(eegSes, path) ||
         conditionalMatch(ieegSes, path) ||
         conditionalMatch(petSes, path) ||
