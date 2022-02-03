@@ -1,12 +1,17 @@
 // ESM import for yargs does not work for mysterious reasons
-const yargs = require('yargs')
+import { yargs } from '../deps/yargs.ts'
 
-export function parseOptions(argumentOverride) {
+/**
+ *
+ * @param argumentOverride
+ * @returns {void}
+ */
+export function parseOptions(argumentOverride: any[] | undefined) {
   return yargs(argumentOverride)
     .usage('Usage: $0 <dataset_directory> [options]')
     .help('help')
     .alias('help', 'h')
-    .version(require('../package.json').version)
+    .version('TODO: make version work in Deno')
     .alias('version', 'v')
     .demand(1, 1)
     .boolean('ignoreWarnings')
@@ -71,5 +76,6 @@ export function parseOptions(argumentOverride) {
       'This tool checks if a dataset in a given directory is \
 compatible with the Brain Imaging Data Structure specification. To learn \
 more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
-    ).argv
+    )
+    .parseSync()
 }
