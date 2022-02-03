@@ -3,7 +3,7 @@ Deno validator examples.
 
 ```shell
 # Run tests:
-deno test src/
+deno test --allow-read src/
 ```
 
 ```shell
