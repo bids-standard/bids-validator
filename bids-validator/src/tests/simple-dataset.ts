@@ -16,3 +16,5 @@ rootFileTree.files = [
 rootFileTree.directories = [subjectFileTree]
 
 export const simpleDataset = rootFileTree
+
+export const simpleDatasetFileCount = 5
