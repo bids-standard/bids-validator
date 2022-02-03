@@ -8,20 +8,20 @@ export interface BIDSFile {
   size: bigint
 }
 
-export interface Directory {
-  name: string
-  tree: FileTree
-}
-
 export class FileTree {
   // Reference to this FileTree location
   path: string
-  files: [BIDSFile?]
-  directories: [FileTree?]
+  // Name of this directory level
+  name: string
+  files: BIDSFile[]
+  directories: FileTree[]
+  parent?: FileTree
 
-  constructor(path: string) {
+  constructor(path: string, name: string, parent?: FileTree) {
     this.path = path
     this.files = []
     this.directories = []
+    this.name = path
+    this.parent = parent
   }
 }

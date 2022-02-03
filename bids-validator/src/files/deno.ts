@@ -1,15 +1,16 @@
 /**
  * Deno specific implementation for reading files
  */
-import { resolve, join } from '../deps/path.ts'
-import { FileTree, BIDSFile } from './filetree.ts'
+import { resolve, join, basename } from '../deps/path.ts'
+import { FileTree } from './filetree.ts'
 
 /**
  * Read in the target directory structure and return a FileTree
  */
 export async function readFileTree(path: string): Promise<FileTree> {
   const absPath = resolve(Deno.cwd(), path)
-  const tree = new FileTree(absPath)
+  const base = basename(path)
+  const tree = new FileTree(absPath, base)
   for await (const dirEntry of Deno.readDir(tree.path)) {
     if (dirEntry.isFile) {
       // TODO - Create a lazy stream reference
