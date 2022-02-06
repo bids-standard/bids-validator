@@ -6,7 +6,7 @@ import json from '../json'
 import NIFTI from '../nifti'
 import bval from '../bval'
 import bvec from '../bvec'
-import ometiff from '../microscopy'
+import microscopy from '../microscopy'
 import Events from '../events'
 import { session } from '../session'
 import checkAnyDataPresent from '../checkAnyDataPresent'
@@ -141,14 +141,14 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
       const readmeIssues = checkReadme(fileList)
       self.issues = self.issues.concat(readmeIssues)
 
-      // Check for samples file in the proper place (only for the microscopy modality)
+      // Check for microscopy samples file and json files
       if (summary.modalities.includes('Microscopy')) {
-        const samplesIssues = ometiff.checkSamples(fileList)
-        const jsonAndFieldIssues = ometiff.checkJSONAndField(
+        const samplesIssues = microscopy.checkSamples(fileList)
+        const jsonAndFieldIssues = microscopy.checkJSONAndField(
           files,
           jsonContentsDict,
+          fileList
         )
-
         self.issues = self.issues
           .concat(samplesIssues)
           .concat(jsonAndFieldIssues)
@@ -159,8 +159,8 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
     .then(jsonIssues => {
       self.issues = self.issues.concat(jsonIssues)
 
-      // ome-tiff consistency check
-      return ometiff.validate(files.ome, jsonContentsDict)
+      // OME-TIFF consistency check
+      return microscopy.validate(files.ome, jsonContentsDict)
     })
     .then(omeIssues => {
       self.issues = self.issues.concat(omeIssues)
