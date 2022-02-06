@@ -117,6 +117,7 @@ export default {
       this.file.isPET(path) ||
       this.file.isPETBlood(path) ||
       this.file.isMicroscopy(path) ||
+      this.file.isMicroscopyPhoto(path) ||
       this.file.isMicroscopyJSON(path)
     )
   },
@@ -351,7 +352,12 @@ export default {
 
     isMicroscopy: function(path) {
       return (
-        conditionalMatch(microscopyData, path) ||
+        conditionalMatch(microscopyData, path)
+      )
+    },
+
+    isMicroscopyPhoto: function(path) {
+      return (
         conditionalMatch(microscopyPhotoData, path)
       )
     },
@@ -388,6 +394,7 @@ export default {
         this.isPET(path) ||
         this.isPETBlood(path) ||
         this.isMicroscopy(path) ||
+        this.isMicroscopyPhoto(path) ||
         this.isMicroscopyJSON(path)
       )
     },
