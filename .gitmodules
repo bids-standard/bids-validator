@@ -1,4 +1,3 @@
 [submodule "bids-examples"]
     path = bids-validator/tests/data/bids-examples
-    url = https://github.com/rob-luke/bids-examples
-    branch = fnirstapping
+    url = https://github.com/bids-standard/bids-examples.git
