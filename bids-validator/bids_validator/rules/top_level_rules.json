@@ -125,6 +125,17 @@
       ]
     }
   },
+  "motion_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:@@@_motion_top_ext_@@@)$",
+    "tokens": {
+      "@@@_motion_top_ext_@@@": [
+        "_motion\\.json",
+        "_channels\\.tsv",
+        "_channels\\.json",
+        "_coordsystem\\.json"
+      ]
+    }
+  },
   "multi_dir_fieldmap": {
     "regexp": "^[\\/\\\\](?:acq-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)epi\\.json$"
   },
