@@ -9,7 +9,7 @@ import fs from 'fs'
 import { filenamesOnly } from './utils/filenamesOnly.js'
 
 const errorToString = err => {
-  if (err instanceof Error) return err.stack
+  if (err instanceof Error && err.stack) return err.stack
   else if (typeof err === 'object') return JSON.parse(err)
   else return err
 }
