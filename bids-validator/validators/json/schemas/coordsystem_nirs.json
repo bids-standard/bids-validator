@@ -9,7 +9,7 @@
     "FiducialsCoordinateSystem": {
       "anyOf": [
         { "$ref": "common_definitions.json#/definitions/MEGCoordSys" },
-        { "$ref": "common_definitions.json#/definitions/NIRSCoordSys" },
+        { "$ref": "common_definitions.json#/definitions/EEGCoordSys" },
         {
           "$ref": "common_definitions.json#/definitions/StandardTemplateCoordSys"
         },
@@ -28,7 +28,7 @@
     "NIRSCoordinateSystem": {
       "anyOf": [
         { "$ref": "common_definitions.json#/definitions/MEGCoordSys" },
-        { "$ref": "common_definitions.json#/definitions/NIRSCoordSys" },
+        { "$ref": "common_definitions.json#/definitions/EEGCoordSys" },
         {
           "$ref": "common_definitions.json#/definitions/StandardTemplateCoordSys"
         },
@@ -47,7 +47,7 @@
     "AnatomicalLandmarkCoordinateSystem": {
       "anyOf": [
         { "$ref": "common_definitions.json#/definitions/MEGCoordSys" },
-        { "$ref": "common_definitions.json#/definitions/NIRSCoordSys" },
+        { "$ref": "common_definitions.json#/definitions/EEGCoordSys" },
         {
           "$ref": "common_definitions.json#/definitions/StandardTemplateCoordSys"
         },
