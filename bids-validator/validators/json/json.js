@@ -114,7 +114,7 @@ const selectSchema = file => {
       file.name.endsWith('NLO.json') ||
       file.name.endsWith('OCT.json') ||
       file.name.endsWith('SPIM.json')
-      ) {
+    ) {
       schema = require('./schemas/microscopy.json')
     } else if (
       file.relativePath.includes('/meg/') &&

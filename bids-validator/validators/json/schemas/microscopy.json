@@ -3,31 +3,31 @@
   "properties": {
     "Manufacturer": { "type": "string", "minLength": 1 },
     "ManufacturersModelName": { "type": "string", "minLength": 1 },
-    "DeviceSerialNumber": {"type": "string", "minLength": 1},
+    "DeviceSerialNumber": { "type": "string", "minLength": 1 },
     "StationName": { "type": "string", "minLength": 1 },
     "SoftwareVersions": { "type": "string", "minLength": 1 },
     "InstitutionName": { "type": "string", "minLength": 1 },
-    "InstitutionAddress": { "type": "string", "minLength": 1 },  
-    "InstitutionalDepartmentName": { "type": "string", "minLength": 1 }, 
+    "InstitutionAddress": { "type": "string", "minLength": 1 },
+    "InstitutionalDepartmentName": { "type": "string", "minLength": 1 },
     "BodyPart": { "type": "string", "minLength": 1 },
     "BodyPartDetails": { "type": "string", "minLength": 1 },
     "BodyPartDetailsOntology": { "type": "string", "minLength": 1, "format": "uri" },
     "SampleEnvironment": { "type": "string", "minLength": 1, "enum": ["in vivo", "ex vivo", "in vitro"]  },
     "SampleEmbedding": { "type": "string", "minLength": 1 },
     "SampleFixation": { "type": "string", "minLength": 1 },
-    "SampleStaining": { 
+    "SampleStaining": {
       "anyOf": [
         { "type": "string", "minLength": 1 },
         { "type": "array", "items": { "type": "string" } }
       ]
     },
-    "SamplePrimaryAntibody": { 
+    "SamplePrimaryAntibody": {
       "anyOf": [
         { "type": "string", "minLength": 1 },
         { "type": "array", "items": { "type": "string" } }
       ]
     },
-    "SampleSecondaryAntibody": { 
+    "SampleSecondaryAntibody": {
       "anyOf": [
         { "type": "string", "minLength": 1 },
         { "type": "array", "items": { "type": "string" } }
@@ -52,12 +52,10 @@
     },
     "ChunkTransformationMatrixAxis": { "type": "array", "minItems": 2, "maxItems": 3, "items": { "type": "string" }}
     },
-
   "required": [
     "PixelSize",
     "PixelSizeUnits"
   ],
-
   "recommended": [
     "Manufacturer",
     "ManufacturersModelName",
@@ -79,5 +77,4 @@
     "PixelSize": ["PixelSizeUnits"],
     "ChunkTransformationMatrix": ["ChunkTransformationMatrixAxis"]
   }
-
 }
