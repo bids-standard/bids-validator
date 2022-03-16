@@ -2,12 +2,14 @@ const Issue = require('../../utils').issues.Issue
 
 // allowable 'type' values from the BIDS specification
 const allowedMEEGTypes = [
+  /* (i)EEG */
   'EEG',
   'ECOG',
   'SEEG',
   'DBS',
   'PD',
-  'OTHER', // (i)EEG
+  'OTHER',
+  /* physio */
   'EOG',
   'ECG',
   'EMG',
@@ -19,13 +21,15 @@ const allowedMEEGTypes = [
   'RESP',
   'TEMP',
   'VEOG',
-  'PPG', // physio
+  'PPG',
+  /* system */
   'AUDIO',
   'REF',
   'SYSCLOCK',
   'TRIG',
   'ADC',
-  'DAC', // system
+  'DAC',
+  /* MEG */
   'MEGMAG',
   'MEGGRADAXIAL',
   'MEGGRADPLANAR',
@@ -34,7 +38,7 @@ const allowedMEEGTypes = [
   'MEGREFGRADPLANAR',
   'MEGOTHER',
   'HLU',
-  'FITERR', // MEG
+  'FITERR',
 ]
 
 /**
