@@ -19,6 +19,7 @@ export const getTsvType = function(file) {
     file.name.endsWith('_scans.tsv') ||
     file.name.endsWith('_sessions.tsv') ||
     file.name.endsWith('_aslcontext.tsv') ||
+    file.name.endsWith('_eyetrack.tsv') ||
     file.name.endsWith('_blood.tsv')
   ) {
     const split = file.name.split('_')

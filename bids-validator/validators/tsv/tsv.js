@@ -574,6 +574,20 @@ const TSV = (file, contents, fileList, callback) => {
       checkAcqTimeFormat(rows, file, issues)
     }
   }
+
+  if (
+    file.relativePath.includes('eyetrack/') &&
+    file.name.endsWith('_events.tsv')
+  ) {
+    if (headers.indexOf('eventIdentifier') === -1) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 228,
+        }),
+      )
+    }
+  }
   callback(issues, participants, stimPaths)
 }
 export default TSV

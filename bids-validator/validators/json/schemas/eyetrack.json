@@ -1,0 +1,73 @@
+{
+  "type": "object",
+  "properties": {
+    "TaskName": { "$ref": "common_definitions.json#/definitions/TaskName" },
+    "TaskDescription": {
+      "$ref": "common_definitions.json#/definitions/TaskDescription"
+    },
+    "Instructions": {
+      "$ref": "common_definitions.json#/definitions/Instructions"
+    },
+    "CogAtlasID": { "$ref": "common_definitions.json#/definitions/CogAtlasID" },
+    "CogPOID": { "$ref": "common_definitions.json#/definitions/CogPOID" },
+    "InstitutionName": {
+      "$ref": "common_definitions.json#/definitions/InstitutionName"
+    },
+    "InstitutionAddress": {
+      "$ref": "common_definitions.json#/definitions/InstitutionAddress"
+    },
+    "InstitutionalDepartmentName": {
+      "$ref": "common_definitions.json#/definitions/InstitutionalDepartmentName"
+    },
+    "Manufacturer": {
+      "$ref": "common_definitions.json#/definitions/Manufacturer"
+    },
+    "ManufacturersModelName": { "type": "string", "minLength": 1 },
+    "DeviceSerialNumber": {
+      "$ref": "common_definitions.json#/definitions/DeviceSerialNumber"
+    },
+    "SamplingFrequency": { "type": "number" },
+    "SampleCoordinateUnit": { "type": "string" },
+    "SampleCoordinateSystem": { "type": "string" },
+    "EventIdentifier": { "type": "string" },
+    "RawSamples": { "type": "number" },
+    "CapManufacturersModelName": { "type": "string" },
+    "DetectionAlgorithm": { "type": "string" },
+    "StartMessage": { "type": "string" },
+    "EndMessage": { "type": "string" },
+    "KeyPressMessage": { "type": "string" },
+    "CalibrationType": { "type": "string" },
+    "CalibrationPosition": { "type": "number" },
+    "CalibrationUnit": { "type": "string" },
+    "MaximalCalibrationError": { "type": "number" },
+    "CalibrationList": { "type": "number" },
+    "RecordedEye": { "type": "string" },
+    "EyeCameraSettings": { "type": "string" },
+    "FeatureDetectionSettings": { "type": "string" },
+    "GazeMappingSettings": { "type": "string" },
+    "DetectionAlgorithmSettings": { "type": "string" },
+    "DetectionAlgorithm": { "type": "string" },
+    "RawDataFilters": { "type": "string" },
+    "ScreenSize": { "type": "string" },
+    "ScreenResolution": { "type": "string" },
+    "ScreenRefreshRate": { "type": "string" },
+    "AOIDefinition": { "type": "string" },
+    "PupilPositionType": { "type": "string" },
+    "IncludedEyeMovementEvents": { "type": "string" },
+    "EnvironmentCoordinates": { "type": "string" },
+    "PupilFitMethod": { "type": "string" }
+  },
+  "required": [
+    "TaskName",
+    "DetectionAlgorithm",
+    "IncludedEyeMovementEvents",
+    "PupilFitMethod",
+    "EnvironmentCoordinates",
+    "SamplingFrequency",
+    "SampleCoordinateUnit",
+    "SampleCoordinateSystem",
+    "EventIdentifier",
+    "RawSamples"
+  ],
+  "additionalProperties": false
+}

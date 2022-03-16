@@ -14,6 +14,7 @@ const groupFileTypes = (fileList, options) => {
     ome: [],
     png: [],
     tif: [],
+    eyetrack: [],
     // used to check all files not already passed through testFile()
     misc: [],
   }

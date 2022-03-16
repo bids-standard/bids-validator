@@ -1119,4 +1119,9 @@ export default {
     severity: 'error',
     reason: 'Inconsistent TIFF file type and extension',
   },
+  228: {
+    key: 'MISSING_EVENTIDENTIFIER_COLUMN',
+    severity: 'error',
+    reason: 'Eyetracking _event.tsv files require an eventIdentifier column',
+  },
 }
