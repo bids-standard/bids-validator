@@ -5,7 +5,7 @@
 // Avoid overloading the default File type
 export interface BIDSFile {
   name: string
-  size: bigint
+  size: Promise<number>
 }
 
 export class FileTree {
