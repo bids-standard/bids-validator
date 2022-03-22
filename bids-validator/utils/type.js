@@ -125,7 +125,7 @@ export default {
       this.file.isMOTION(path) ||
       this.file.isMicroscopy(path) ||
       this.file.isMicroscopyJSON(path)
-    )
+          )
   },
 
   /**
@@ -382,7 +382,7 @@ export default {
       if (bids_schema) {
         return bids_schema.datatypes['motion'].some(regex => regex.exec(path))
       } else {
-        return conditionalMatch(motionData, path)
+        return conditionalMatch(motion, path)
       }
     },
 
