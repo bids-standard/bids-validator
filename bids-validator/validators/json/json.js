@@ -97,6 +97,26 @@ const selectSchema = file => {
     } else if (file.name.endsWith('eeg.json')) {
       schema = require('./schemas/eeg.json')
     } else if (
+      file.name.endsWith('TEM.json') ||
+      file.name.endsWith('SEM.json') ||
+      file.name.endsWith('uCT.json') ||
+      file.name.endsWith('BF.json') ||
+      file.name.endsWith('DF.json') ||
+      file.name.endsWith('PC.json') ||
+      file.name.endsWith('DIC.json') ||
+      file.name.endsWith('FLUO.json') ||
+      file.name.endsWith('CONF.json') ||
+      file.name.endsWith('PLI.json') ||
+      file.name.endsWith('CARS.json') ||
+      file.name.endsWith('2PE.json') ||
+      file.name.endsWith('MPE.json') ||
+      file.name.endsWith('SR.json') ||
+      file.name.endsWith('NLO.json') ||
+      file.name.endsWith('OCT.json') ||
+      file.name.endsWith('SPIM.json')
+    ) {
+      schema = require('./schemas/microscopy.json')
+    } else if (
       file.relativePath.includes('/meg/') &&
       file.name.endsWith('coordsystem.json')
     ) {

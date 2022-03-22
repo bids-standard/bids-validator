@@ -1,4 +1,3 @@
-import utils from '../../utils'
 import Issue from '../../utils/issues/issue'
 import checkAcqTimeFormat from './checkAcqTimeFormat'
 import checkAge89 from './checkAge89'
@@ -149,7 +148,9 @@ const TSV = (file, contents, fileList, callback) => {
     // create full dataset path list
     const pathList = []
     for (let f in fileList) {
-      pathList.push(fileList[f].relativePath)
+      if (fileList.hasOwnProperty(f)) {
+        pathList.push(fileList[f].relativePath)
+      }
     }
 
     // check for stimuli file
@@ -222,8 +223,9 @@ const TSV = (file, contents, fileList, callback) => {
             new Issue({
               file: file,
               evidence: headersEvidence(headers),
-              reason: 'Participant_id column should be named ' +
-                      'as sub-<subject_id>.',
+              reason:
+                'Participant_id column should be named ' +
+                'as sub-<subject_id>.',
               line: l,
               code: 212,
             }),
@@ -236,6 +238,168 @@ const TSV = (file, contents, fileList, callback) => {
           continue
         }
         participants.push(participant)
+      }
+    }
+  }
+
+  // samples.tsv
+  let samples = null
+  if (file.name === 'samples.tsv') {
+    const sampleIssues = []
+    const sampleIdColumnValues = []
+    const participantIdColumnValues = []
+    const sampleIdColumn = headers.indexOf('sample_id')
+    const participantIdColumn = headers.indexOf('participant_id')
+    const sampleTypeColumn = headers.indexOf('sample_type')
+
+    // if the sample_id column is missing, an error
+    // will be raised
+    if (sampleIdColumn === -1) {
+      sampleIssues.push(
+        new Issue({
+          file: file,
+          evidence: headersEvidence(headers),
+          line: 1,
+          code: 216,
+        }),
+      )
+    }
+    // if the participant_id column is missing, an error
+    // will be raised
+    if (participantIdColumn === -1) {
+      sampleIssues.push(
+        new Issue({
+          file: file,
+          evidence: headersEvidence(headers),
+          line: 1,
+          code: 217,
+        }),
+      )
+    }
+    // if the sample_type column is missing, an error
+    // will be raised
+    if (sampleTypeColumn === -1) {
+      sampleIssues.push(
+        new Issue({
+          file: file,
+          evidence: headersEvidence(headers),
+          line: 1,
+          code: 218,
+        }),
+      )
+    }
+    // Fold sampleIssues into main issue array, only needed it for this
+    // conditional.
+    issues.push(...sampleIssues)
+    if (sampleIssues.length === 0) {
+      // otherwise, the samples should comprise of
+      // sample-<sample_id> and one sample per row
+      samples = []
+      for (let l = 1; l < rows.length; l++) {
+        const row = rows[l]
+        // skip empty rows
+        if (!row || /^\s*$/.test(row)) {
+          continue
+        }
+        sampleIdColumnValues.push(row[sampleIdColumn])
+
+        // check if any incorrect patterns in sample_id column
+        if (!row[sampleIdColumn].startsWith('sample-')) {
+          issues.push(
+            new Issue({
+              file: file,
+              evidence: row[sampleIdColumn],
+              reason:
+                'sample_id column should be named ' + 'as sample-<sample_id>.',
+              line: l,
+              code: 215,
+            }),
+          )
+        }
+      }
+      // The participants should comprise of
+      // sub-<subject_id> and one subject per row
+      participants = []
+      for (let l = 1; l < rows.length; l++) {
+        const row = rows[l]
+        // skip empty rows
+        if (!row || /^\s*$/.test(row)) {
+          continue
+        }
+        participantIdColumnValues.push(row[participantIdColumn])
+
+        // check if any incorrect patterns in participant_id column
+        if (!row[participantIdColumn].startsWith('sub-')) {
+          issues.push(
+            new Issue({
+              file: file,
+              evidence: row[participantIdColumn],
+              reason:
+                'Participant_id column should be named ' +
+                'as sub-<subject_id>.',
+              line: l,
+              code: 212,
+            }),
+          )
+        }
+
+        // obtain a list of the sample IDs in the samples.tsv file
+        const sample = row[sampleIdColumn].replace('sample-', '')
+        if (sample == 'emptyroom') {
+          continue
+        }
+        samples.push(sample)
+      }
+
+      // check if a sample from same subject is described by one and only one row
+      let samplePartIdsSet = new Set()
+      for (let r = 0; r < rows.length - 1; r++) {
+        let uniqueString = sampleIdColumnValues[r].concat(
+          participantIdColumnValues[r],
+        )
+        // check if SampleId Have Duplicate
+        if (samplePartIdsSet.has(uniqueString)) {
+          issues.push(
+            new Issue({
+              file: file,
+              evidence: sampleIdColumnValues,
+              reason:
+                'Each sample from a same subject MUST be described by one and only one row.',
+              line: 1,
+              code: 220,
+            }),
+          )
+          break
+        } else samplePartIdsSet.add(uniqueString)
+      }
+    }
+
+    if (sampleTypeColumn !== -1) {
+      // check if any incorrect patterns in sample_type column
+      const validSampleTypes = [
+        'cell line',
+        'in vitro differentiated cells',
+        'primary cell',
+        'cell-free sample',
+        'cloning host',
+        'tissue',
+        'whole organisms',
+        'organoid',
+        'technical sample',
+      ]
+      for (let c = 1; c < rows.length; c++) {
+        const row = rows[c]
+        if (!validSampleTypes.includes(row[sampleTypeColumn])) {
+          issues.push(
+            new Issue({
+              file: file,
+              evidence: row[sampleTypeColumn],
+              reason: "sample_type can't be any value.",
+              line: c + 1,
+              code: 219,
+            }),
+          )
+        }
       }
     }
   }
@@ -298,10 +462,7 @@ const TSV = (file, contents, fileList, callback) => {
   }
 
   // blood.tsv
-  if (
-    file.relativePath.includes('/pet/') &&
-    file.name.endsWith('_blood.tsv')
-  ) {
+  if (file.relativePath.includes('/pet/') && file.name.endsWith('_blood.tsv')) {
     // Validate fields here
     checkheader('time', 0, file, 126)
   }
@@ -365,7 +526,7 @@ const TSV = (file, contents, fileList, callback) => {
           pathList.push(fDir)
         } else if (fPath.includes('_ieeg.mefd/')) {
           // MEF3 data
-          const fDir = fPath.substring(0, fPath.indexOf('_ieeg.mefd/') + 10);
+          const fDir = fPath.substring(0, fPath.indexOf('_ieeg.mefd/') + 10)
           if (!pathList.includes(fDir)) {
             pathList.push(fDir)
           }
@@ -415,5 +576,4 @@ const TSV = (file, contents, fileList, callback) => {
   }
   callback(issues, participants, stimPaths)
 }
-
 export default TSV

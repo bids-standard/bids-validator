@@ -60,6 +60,9 @@ const stimuliData = buildRegExp(file_level_rules.stimuli)
 const petData = buildRegExp(file_level_rules.pet)
 const petBlood = buildRegExp(file_level_rules.pet_blood)
 const motion = buildRegExp(file_level_rules.motion)
+const microscopyData = buildRegExp(file_level_rules.microscopy)
+const microscopyPhotoData = buildRegExp(file_level_rules.microscopy_photo)
+const microscopyJSON = buildRegExp(file_level_rules.microscopy_json)
 // Phenotypic data
 const phenotypicData = buildRegExp(phenotypic_rules.phenotypic_data)
 // Session level
@@ -73,6 +76,7 @@ const megSes = buildRegExp(session_level_rules.meg_ses)
 const scansSes = buildRegExp(session_level_rules.scans)
 const petSes = buildRegExp(session_level_rules.pet_ses)
 const motionSes = buildRegExp(session_level_rules.motion_ses)
+const microscopySes = buildRegExp(session_level_rules.microscopy_ses)
 // Subject level
 const subjectLevel = buildRegExp(subject_level_rules.subject_level)
 // Top level
@@ -88,6 +92,7 @@ const otherTopFiles = buildRegExp(top_level_rules.other_top_files)
 const megTop = buildRegExp(top_level_rules.meg_top)
 const petTop = buildRegExp(top_level_rules.pet_top)
 const motionTop = buildRegExp(top_level_rules.motion_top)
+const microscopyTop = buildRegExp(top_level_rules.microscopy_top)
 
 export default {
   /**
@@ -114,7 +119,9 @@ export default {
       this.file.isPhenotypic(path) ||
       this.file.isPET(path) ||
       this.file.isPETBlood(path) ||
-      this.file.isMOTION(path)
+      this.file.isMOTION(path) ||
+      this.file.isMicroscopy(path) ||
+      this.file.isMicroscopyJSON(path)
     )
   },
 
@@ -139,7 +146,8 @@ export default {
           eegTop.test(path) ||
           ieegTop.test(path) ||
           petTop.test(path) ||
-	    motionTop.test(path)
+          motionTop.test(path) ||
+          microscopyTop.test(path)
         )
       } else {
         return (
@@ -154,7 +162,8 @@ export default {
           eegTop.test(path) ||
           ieegTop.test(path) ||
           petTop.test(path) ||
-          motionTop.test(path)
+          motionTop.test(path) ||
+          microscopyTop.test(path)
         )
       }
     },
@@ -210,7 +219,8 @@ export default {
         conditionalMatch(eegSes, path) ||
         conditionalMatch(ieegSes, path) ||
         conditionalMatch(petSes, path) ||
-	  conditionalMatch(motionSes, path) 
+        conditionalMatch(motionSes, path) ||
+        conditionalMatch(microscopySes, path)
       )
     },
 
@@ -353,6 +363,16 @@ export default {
         return conditionalMatch(motion, path)
       }
     },
+    isMicroscopy: function(path) {
+      return (
+        conditionalMatch(microscopyData, path) ||
+        conditionalMatch(microscopyPhotoData, path)
+      )
+    },
+
+    isMicroscopyJSON: function(path) {
+      return conditionalMatch(microscopyJSON, path)
+    },
 
     isBehavioral: function(path) {
       if (bids_schema) {
@@ -381,7 +401,9 @@ export default {
         this.isFuncBold(path) ||
         this.isPET(path) ||
         this.isPETBlood(path) ||
-        this.isMOTION(path) 
+        this.isMOTION(path) ||
+        this.isMicroscopy(path) ||
+        this.isMicroscopyJSON(path)
       )
     },
   },

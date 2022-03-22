@@ -49,7 +49,7 @@ const checkAuthorField = authors => {
     if (authors.length == 1) {
       const author = authors[0]
       // check the number of commas in the single author field
-      if (author.split(',').length <= 2) {
+      if (typeof author == 'string' && author.split(',').length <= 2) {
         // if there is one or less comma in the author field,
         // we suspect that the curator has not listed everyone involved
         issues.push(new Issue({ code: 102, evidence: author }))
@@ -59,7 +59,7 @@ const checkAuthorField = authors => {
     // if there are no authors,
     // warn user that errors could occur during doi minting
     // and that snapshots on OpenNeuro will not be allowed
-    issues.push(new Issue({ code: 113, evidence: authors }))
+    issues.push(new Issue({ code: 113, evidence: JSON.stringify(authors) }))
   }
   return issues
 }

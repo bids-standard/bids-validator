@@ -710,9 +710,10 @@ export default {
       "It is recommended to define 'PulseSequenceDetails' for this file. 'PulseSequenceDetails' is the information beyond pulse sequence type that identifies the specific pulse sequence used (for example, 'Standard Siemens Sequence distributed with the VB17 software', 'Siemens WIP ### version #.##', or 'Sequence written by X using a version compiled on MM/DD/YYYY').",
   },
   139: {
-    key: '139_EMPTY',
-    severity: 'warning',
-    reason: '',
+    key: 'BLACKLISTED_MODALITY',
+    severity: 'error',
+    reason:
+      'Found a modality that has been blacklisted through validator configuration.',
   },
   140: {
     key: '140_EMPTY',
@@ -1041,5 +1042,81 @@ export default {
     severity: 'warning',
     reason:
       'The recommended file /README is very small. Please consider expanding it with additional information about the dataset.',
+  },
+  214: {
+    key: 'SAMPLES_TSV_MISSING',
+    severity: 'error',
+    reason:
+      'The compulsory file /samples.tsv is missing. See Section 03 (Modality agnostic files) of the BIDS specification.',
+  },
+  215: {
+    key: 'SAMPLE_ID_PATTERN',
+    severity: 'error',
+    reason:
+      'sample_id column labels must consist of the pattern "sample-<sample_id>".',
+  },
+  216: {
+    key: 'SAMPLE_ID_COLUMN',
+    severity: 'error',
+    reason: "Samples .tsv files must have a 'sample_id' column.",
+  },
+  217: {
+    key: 'PARTICIPANT_ID_COLUMN',
+    severity: 'error',
+    reason: "Samples .tsv files must have a 'participant_id' column.",
+  },
+  218: {
+    key: 'SAMPLE_TYPE_COLUMN',
+    severity: 'error',
+    reason: "Samples .tsv files must have a 'sample_type' column.",
+  },
+  219: {
+    key: 'SAMPLE_TYPE_VALUE',
+    severity: 'error',
+    reason:
+      'sample_type MUST consist of one of the following values: cell line, in vitro differentiated cells, primary cell, cell-free sample, cloning host, tissue, whole organisms, organoid or technical sample.',
+  },
+  220: {
+    key: 'SAMPLE_ID_DUPLICATE',
+    severity: 'error',
+    reason:
+      'Each sample from a same subject MUST be described by one and only one row.',
+  },
+  221: {
+    key: 'PIXEL_SIZE_INCONSISTENT',
+    severity: 'error',
+    reason:
+      'PixelSize need to be consistent with PhysicalSizeX, PhysicalSizeY and PhysicalSizeZ OME metadata fields',
+  },
+  222: {
+    key: 'INVALID_PIXEL_SIZE_UNIT',
+    severity: 'warning',
+    reason: 'PixelSize consistency is only validated for "mm", "µm" and "nm".',
+  },
+  223: {
+    key: 'CHUNK_TRANSFORMATION_MATRIX_MISSING',
+    severity: 'warning',
+    reason:
+      "It is recommended to define 'ChunkTransformationMatrix' for this file.",
+  },
+  224: {
+    key: 'OPTIONAL_FIELD_INCONSISTENT',
+    severity: 'error',
+    reason: 'Optional JSON field is not consistent with the OME-TIFF metadata',
+  },
+  225: {
+    key: 'NO_VALID_JSON',
+    severity: 'error',
+    reason: 'No valid JSON file found for this file',
+  },
+  226: {
+    key: 'UNSUPPORTED_BIG_TIFF',
+    severity: 'warning',
+    reason: 'Metadata consistency check skipped for BigTiff OME-TIFF file',
+  },
+  227: {
+    key: 'INCONSISTENT_TIFF_EXTENSION',
+    severity: 'error',
+    reason: 'Inconsistent TIFF file type and extension',
   },
 }
