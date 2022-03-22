@@ -3,4 +3,4 @@ export {
   join,
   basename,
   fromFileUrl,
-} from 'https://deno.land/std@0.124.0/path/mod.ts'
+} from 'https://deno.land/std@0.130.0/path/mod.ts'
