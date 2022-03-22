@@ -212,7 +212,7 @@
         "_channels.tsv",
         "_channels.json",
         "_motion.json",
-        "_coordsystem.json",
+        "_coordsystem.json"
       ]
     }
   }

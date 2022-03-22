@@ -114,8 +114,7 @@ export default {
       this.file.isPhenotypic(path) ||
       this.file.isPET(path) ||
       this.file.isPETBlood(path) ||
-	this.file.isMOTION(path)
-
+      this.file.isMOTION(path)
     )
   },
 
@@ -351,7 +350,7 @@ export default {
       if (bids_schema) {
         return bids_schema.datatypes['motion'].some(regex => regex.exec(path))
       } else {
-        return conditionalMatch(motionData, path)
+        return conditionalMatch(motion, path)
       }
     },
 
