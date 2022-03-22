@@ -6,18 +6,18 @@ import { FileTree, BIDSFile } from './filetree.ts'
 
 /**
  * Deno implementation of BIDSFile
- *
- * TODO - Make a stream of file content available
  */
-class BIDSFileDeno implements BIDSFile {
+export class BIDSFileDeno implements BIDSFile {
   name: string
+  ignored: boolean
   private _fileInfo: Deno.FileInfo | undefined
 
   constructor(name: string) {
     this.name = name
+    this.ignored = false
   }
 
-  private async getSize(): Promise<number> {
+  private async _getSize(): Promise<number> {
     if (!this._fileInfo) {
       this._fileInfo = await Deno.stat(this.name)
     }
@@ -25,7 +25,17 @@ class BIDSFileDeno implements BIDSFile {
   }
 
   get size(): Promise<number> {
-    return this.getSize()
+    return this._getSize()
+  }
+
+  private async _getStream(): Promise<ReadableStream<Uint8Array>> {
+    // Avoid asking for write access
+    const openOptions = { read: true, write: false }
+    return (await Deno.open(this.name, openOptions)).readable
+  }
+
+  get stream(): Promise<ReadableStream<Uint8Array>> {
+    return this._getStream()
   }
 }
 

@@ -4,8 +4,14 @@
 
 // Avoid overloading the default File type
 export interface BIDSFile {
+  // Dataset relative path for the file
   name: string
+  // File size in bytes
   size: Promise<number>
+  // BIDS ignore status of the file
+  ignored: boolean
+  // ReadableStream to file raw contents
+  stream: Promise<ReadableStream<Uint8Array>>
 }
 
 export class FileTree {
