@@ -358,7 +358,9 @@ export default {
 
     isMOTION: function(path) {
       if (bids_schema) {
-        return bids_schema.datatypes['motion'].some(regex => regex.exec(path))
+        // Motion not currently in schema
+        // return bids_schema.datatypes['motion'].some(regex => regex.exec(path))
+        return conditionalMatch(motion, path)
       } else {
         return conditionalMatch(motion, path)
       }
