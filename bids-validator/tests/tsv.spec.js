@@ -527,6 +527,26 @@ describe('TSV', function() {
     })
   })
 
+  it('should return a string value for evidence for issue 130', function() {
+    const tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\teeg\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 130)
+      expect(typeof issues[0].evidence).toBe('string')
+    })
+  })
+
+  it('should return a string value for evidence for issue 131', function() {
+    const tsv =
+      'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
+      'value-name\tMEEG\tmV\tvalue-lowcut\tvalue-highcut\tgood'
+    validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 131)
+      expect(typeof issues[0].evidence).toBe('string')
+    })
+  })
+
   it('should not allow EEG channels.tsv files with value other than accepted values in type column', function() {
     var tsv =
       'name\ttype\tunits\tlow_cutoff\thigh_cutoff\tstatus\n' +
