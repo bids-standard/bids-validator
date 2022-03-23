@@ -1,12 +1,18 @@
 // ESM import for yargs does not work for mysterious reasons
 import { yargs } from '../deps/yargs.ts'
 
+export interface ValidatorOptions {
+  _: string[]
+}
+
 /**
  *
  * @param argumentOverride
  * @returns {void}
  */
-export function parseOptions(argumentOverride: any[] | undefined) {
+export function parseOptions(
+  argumentOverride: any[] | undefined,
+): ValidatorOptions {
   return yargs(argumentOverride)
     .usage('Usage: $0 <dataset_directory> [options]')
     .help('help')
