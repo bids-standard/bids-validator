@@ -260,16 +260,9 @@ async function getFilesFromGitTree(dir, ig, options) {
 /**
  * Recursive helper function for 'preprocessNode'
  */
-async function getFilesFromFs(dir, rootPath, ig, options) {
+async function getFilesFromFs(dir, rootPath, ig, options, parent = []) {
   const files = await fs.promises.readdir(dir, { withFileTypes: true })
-  const filesAccumulator = []
-  // Closure to merge the next file depth into this one
-  const recursiveMerge = async nextRoot => {
-    Array.prototype.push.apply(
-      filesAccumulator,
-      await getFilesFromFs(nextRoot, rootPath, ig, options),
-    )
-  }
+  const filesAccumulator = parent
   for (const file of files) {
     const fullPath = path.join(dir, file.name)
     const relativePath = harmonizeRelativePath(
@@ -286,7 +279,7 @@ async function getFilesFromFs(dir, rootPath, ig, options) {
     }
     // Three cases to consider: directories, files, symlinks
     if (file.isDirectory()) {
-      await recursiveMerge(fullPath)
+      await getFilesFromFs(fullPath, rootPath, ig, options, filesAccumulator)
     } else if (file.isSymbolicLink()) {
       // Allow skipping symbolic links which lead to recursion
       // Disabling this is a big performance advantage on high latency
@@ -297,7 +290,13 @@ async function getFilesFromFs(dir, rootPath, ig, options) {
           const targetStat = await fs.promises.stat(targetPath)
           // Either add or recurse from the target depending
           if (targetStat.isDirectory()) {
-            await recursiveMerge(targetPath)
+            await getFilesFromFs(
+              targetPath,
+              rootPath,
+              ig,
+              options,
+              filesAccumulator,
+            )
           } else {
             filesAccumulator.push(fileObj)
           }
