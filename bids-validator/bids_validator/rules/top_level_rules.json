@@ -4,6 +4,9 @@
     "tokens": {
       "@@@_root_files_@@@": [
         "README",
+        "README.md",
+        "README.rst",
+        "README.txt",
         "CHANGES",
         "LICENSE",
         "dataset_description.json",
