@@ -327,7 +327,7 @@ contents as described above.
 
 ### In the Browser
 
-The BIDS Validator currently works in the browser with [browserify](http://browserify.org/)
+The BIDS Validator currently works in the browser with [browserify](https://browserify.org/)
 or [webpack](https://webpack.js.org/). You can add it to a project by cloning
 the validator and requiring it with browserify syntax
 `const validate = require('bids-validator');` or an ES2015 webpack import
@@ -470,7 +470,7 @@ below.
 Development and contributions were supported through the following federally
 funded projects/grants:
 
-- [BIDS Derivatives (NIMH: R24MH114705, PI: Poldrack)](http://grantome.com/grant/NIH/R24-MH114705-01)
-- [OpenNeuro (NIMH: R24MH117179, PI: Poldrack)](http://grantome.com/grant/NIH/R24-MH117179-01)
-- [Spokes: MEDIUM: WEST (NSF: 1760950, PI: Poldrack & Gorgolewski)](http://grantome.com/grant/NSF/IIS-1760950)
+- [BIDS Derivatives (NIMH: R24MH114705, PI: Poldrack)](https://grantome.com/grant/NIH/R24-MH114705-01)
+- [OpenNeuro (NIMH: R24MH117179, PI: Poldrack)](https://grantome.com/grant/NIH/R24-MH117179-01)
+- [Spokes: MEDIUM: WEST (NSF: 1760950, PI: Poldrack & Gorgolewski)](https://grantome.com/grant/NSF/IIS-1760950)
 - [ReproNim](http://repronim.org) [(NIH-NIBIB P41 EB019936, PI: Kennedy)](https://projectreporter.nih.gov/project_info_description.cfm?aid=8999833)

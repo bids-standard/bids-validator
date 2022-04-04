@@ -21,7 +21,7 @@ function formatIssues(issues, options = {}) {
   if (issues.errors.length === 1 && issues.errors[0].code === '61') {
     output.push(
       colors.red(
-        '[ERR]  The given directory failed an initial Quick Test. This means the basic names and structure of the files and directories do not comply with BIDS specification. For more info go to http://bids.neuroimaging.io/',
+        '[ERR]  The given directory failed an initial Quick Test. This means the basic names and structure of the files and directories do not comply with BIDS specification. For more info go to https://bids.neuroimaging.io/',
       ),
     )
   } else if (issues.config && issues.config.length >= 1) {
