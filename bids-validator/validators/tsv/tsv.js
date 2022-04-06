@@ -108,7 +108,12 @@ const TSV = (file, contents, fileList, callback) => {
   }
 
   // specific file checks -----------------------------------------------------
-  const checkheader = function checkheader(headername, idx, file, code) {
+  const checkheader = function checkheader(headername, idx, file, missingCode, orderCode=null) {
+    let code = missingCode
+    if (headers.includes(headername) && orderCode) {
+      code = orderCode
+    }
+
     if (headers[idx] !== headername) {
       issues.push(
         new Issue({
@@ -408,9 +413,9 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/meg/') &&
     file.name.endsWith('_channels.tsv')
   ) {
-    checkheader('name', 0, file, 71)
-    checkheader('type', 1, file, 71)
-    checkheader('units', 2, file, 71)
+    checkheader('name', 0, file, 71, 228)
+    checkheader('type', 1, file, 71, 228)
+    checkheader('units', 2, file, 71, 228)
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
   }
@@ -419,9 +424,9 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/eeg/') &&
     file.name.endsWith('_channels.tsv')
   ) {
-    checkheader('name', 0, file, 71)
-    checkheader('type', 1, file, 71)
-    checkheader('units', 2, file, 71)
+    checkheader('name', 0, file, 71, 228)
+    checkheader('type', 1, file, 71, 228)
+    checkheader('units', 2, file, 71, 228)
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
   }
@@ -430,11 +435,11 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/ieeg/') &&
     file.name.endsWith('_channels.tsv')
   ) {
-    checkheader('name', 0, file, 72)
-    checkheader('type', 1, file, 72)
-    checkheader('units', 2, file, 72)
-    checkheader('low_cutoff', 3, file, 72)
-    checkheader('high_cutoff', 4, file, 72)
+    checkheader('name', 0, file, 72, 229)
+    checkheader('type', 1, file, 72, 229)
+    checkheader('units', 2, file, 72, 229)
+    checkheader('low_cutoff', 3, file, 72, 229)
+    checkheader('high_cutoff', 4, file, 72, 229)
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
   }

@@ -1119,4 +1119,16 @@ export default {
     severity: 'error',
     reason: 'Inconsistent TIFF file type and extension',
   },
+  228: {
+    key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS',
+    severity: 'error',
+    reason:
+      "The column names of the EEG channels file must be in the following order ['name', 'type', 'units']",
+  },
+  229: {
+    key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS',
+    severity: 'error',
+    reason:
+      "The column names of the IEEG channels file must be in the following order ['name', 'type', 'units', 'low_cutoff', 'high_cutoff']",
+  },
 }
