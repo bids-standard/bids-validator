@@ -108,7 +108,13 @@ const TSV = (file, contents, fileList, callback) => {
   }
 
   // specific file checks -----------------------------------------------------
-  const checkheader = function checkheader(headername, idx, file, missingCode, orderCode=null) {
+  const checkheader = function checkheader(
+    headername,
+    idx,
+    file,
+    missingCode,
+    orderCode = null,
+  ) {
     let code = missingCode
     if (headers.includes(headername) && orderCode) {
       code = orderCode
