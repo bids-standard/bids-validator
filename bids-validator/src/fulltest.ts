@@ -13,7 +13,7 @@ export async function fullTestAdapter(
   const fullTest = require('../validators/bids/fullTest.js')
   const fileList: Array<BIDSFile> = []
   for await (const context of walkFileTree(tree)) {
-    fileList.append(context.file)
+    fileList.push(context.file)
   }
 
   fullTest(fileList, options, false, options._[0], false, () => {})
