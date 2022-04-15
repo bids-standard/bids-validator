@@ -98,6 +98,8 @@
         "_electrodes\\.tsv",
         "_electrodes\\.json",
         "_photo\\.jpg",
+        "_photo\\.png",
+        "_photo\\.tif",
         "_coordsystem\\.json"
       ]
     }
@@ -112,6 +114,8 @@
         "_electrodes\\.tsv",
         "_electrodes\\.json",
         "_photo\\.jpg",
+        "_photo\\.png",
+        "_photo\\.tif",
         "_coordsystem\\.json"
       ]
     }
@@ -124,6 +128,8 @@
         "_channels\\.tsv",
         "_channels\\.json",
         "_photo\\.jpg",
+        "_photo\\.png",
+        "_photo\\.tif",
         "_coordsystem\\.json"
       ]
     }
