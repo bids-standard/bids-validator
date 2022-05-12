@@ -17,8 +17,9 @@ async function main() {
     depth: 6,
     colors: true,
   }
-  console.log(Deno.inspect(schemaIssues.concat(issues), inspectOpts))
-  console.log(Deno.inspect(summary, inspectOpts))
+  // console.log(Deno.inspect(schemaIssues.concat(issues), inspectOpts))
+  console.log(Deno.inspect(schemaIssues, inspectOpts))
+  // console.log(Deno.inspect(summary, inspectOpts))
 }
 
 await main()

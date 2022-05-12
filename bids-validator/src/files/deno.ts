@@ -64,6 +64,12 @@ export async function _readFileTree(
 ): Promise<FileTree> {
   const name = basename(relativePath)
   const tree = new FileTreeDeno(relativePath, name, parent, rootPath)
+
+  // stop-gap until bidsIgnore implemented
+  if (relativePath.includes('.git')) {
+    return tree
+  }
+
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     if (dirEntry.isFile) {
       tree.files.push(new BIDSFileDeno(rootPath, join(relativePath, dirEntry.name)))

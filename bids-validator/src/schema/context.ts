@@ -9,6 +9,6 @@ export class BIDSContext {
   constructor(dataset: FileTree, file: BIDSFile) {
     this.dataset = dataset
     this.file = file
-    //this.entities = readEntities(dataset, file)
+    this.entities = readEntities(file)
   }
 }
