@@ -1,3 +1,4 @@
+import { SEP } from '../deps/path.ts'
 import { Issue, ignore } from '../types/issues.ts'
 import { Schema } from '../types/schema.ts'
 import { BIDSContext } from './context.ts'
@@ -52,7 +53,7 @@ export function checkDatatypes(schema: Schema, context: BIDSContext): Issue[] {
 
 function checkDatatype(rule, schema: Schema, context: BIDSContext) {
   const issues: Issue[] = [];
-  const { suffix, extension, entities } = context.entities;
+  const { suffix, extension, entities } = context;
   if (rule.suffixies && !rule.suffixes.includes(suffix)) {
     return issues;
   }
@@ -75,7 +76,7 @@ function checkDatatype(rule, schema: Schema, context: BIDSContext) {
   const entityNotInRule = fileEntities.filter(fileEntity => !ruleEntities.includes(fileEntity))
 
   if (missingRequired.length) {
-    issues.push(tempError("missingRequired", missingRequired.join(', ')))
+    issues.push(tempError("missingRequired", missingRequired.join(', ') + context.file.path))
   }
 
   if (entityNotInRule.length) {
@@ -107,9 +108,11 @@ function tempError(key: string, reason: string): Issue {
 }
 
 function isTopLevel(schema: Schema, context: BIDSContext) {
-  if (!context.path === '/') {
+  if (context.file.path.split(SEP).length !== 2) {
     return false
   }
+
   const top_level_files = schema.rules.top_level_files
-  return top_level_files.hasOwnProperty(context.entities.suffix)
+  const name = context.file.name.split(".")[0]
+  return top_level_files.hasOwnProperty(name)
 }
