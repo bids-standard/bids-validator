@@ -12,7 +12,11 @@
     "type",
     "units",
     "reference",
-    "group"
+    "group",
+    "tracking_system",
+    "tracked_point",
+    "component",
+    "placement"
   ],
   "electrodes": [
     "name",
@@ -44,5 +48,11 @@
   "scans": ["acq_time", "filename"],
   "sessions": ["acq_time", "session_id"],
   "aslcontext": ["volume_type"],
-  "blood": ["time", "plasma_radioactivity", "whole_blood_radioactivity", "metabolite_parent_fraction", "hplc_recovery_fractions"]
+  "blood": [
+    "time",
+    "plasma_radioactivity",
+    "whole_blood_radioactivity",
+    "metabolite_parent_fraction",
+    "hplc_recovery_fractions"
+  ]
 }
