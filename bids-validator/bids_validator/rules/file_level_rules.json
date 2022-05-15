@@ -530,7 +530,7 @@
       "@@@_pet_ext_@@@": ["blood\\.tsv\\.gz", "blood\\.tsv", "blood\\.json"]
     }
   },
- "motion": {
+  "motion": {
     "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?motion[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_task-[a-zA-Z0-9]+)?((_tracksys-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_motion.tsv)|(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(@@@_motion_ext_@@@))$",
     "tokens": {
       "@@@_motion_ext_@@@": [
@@ -538,8 +538,7 @@
         "events\\.tsv",
         "channels\\.json",
         "channels\\.tsv",
-        "motion\\.json",
-        "coordsystem\\.json"
+        "motion\\.json"
       ]
     }
   },
@@ -565,22 +564,13 @@
         "_OCT",
         "_SPIM"
       ],
-      "@@@_microscopy_ext_@@@": [
-        ".ome\\.tif",
-        ".ome\\.btf",
-        ".tif",
-        ".png"
-      ]
+      "@@@_microscopy_ext_@@@": [".ome\\.tif", ".ome\\.btf", ".tif", ".png"]
     }
   },
   "microscopy_photo": {
     "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?micr[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_sample-[a-zA-Z0-9]+)(?:_acq-[a-zA-Z0-9]+)?(@@@_photo_ext_@@@)$",
-    "tokens":{
-      "@@@_photo_ext_@@@": [
-        "_photo\\.jpg",
-        "_photo\\.png",
-        "_photo\\.tif"
-      ]
+    "tokens": {
+      "@@@_photo_ext_@@@": ["_photo\\.jpg", "_photo\\.png", "_photo\\.tif"]
     }
   },
   "microscopy_json": {
