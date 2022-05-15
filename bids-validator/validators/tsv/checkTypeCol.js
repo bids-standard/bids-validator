@@ -77,7 +77,7 @@ const checkTypeCol = function(rows, file, issues) {
         issues.push(
           new Issue({
             file: file,
-            evidence: line,
+            evidence: line.join(', '),
             line: i + 1,
             reason:
               'the type column values should only consist of values specified for *_channels.tsv file',
@@ -89,7 +89,7 @@ const checkTypeCol = function(rows, file, issues) {
         issues.push(
           new Issue({
             file: file,
-            evidence: line,
+            evidence: line.join(', '),
             line: i + 1,
             reason: 'the type column values upper-cased',
             code: 130,

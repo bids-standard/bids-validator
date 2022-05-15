@@ -377,7 +377,9 @@
         "_channels\\.tsv",
         "_eeg\\.json",
         "_coordsystem\\.json",
-        "_photo\\.jpg"
+        "_photo\\.jpg",
+        "_photo\\.png",
+        "_photo\\.tif"
       ],
       "@@@_cont_ext_@@@": [
         "_physio\\.tsv\\.gz",
@@ -451,7 +453,9 @@
         "_channels\\.tsv",
         "_ieeg\\.json",
         "_coordsystem\\.json",
-        "_photo\\.jpg"
+        "_photo\\.jpg",
+        "_photo\\.png",
+        "_photo\\.tif"
       ],
       "@@@_cont_ext_@@@": [
         "_physio\\.tsv\\.gz",
@@ -481,6 +485,8 @@
         "_meg\\.json",
         "_coordsystem\\.json",
         "_photo\\.jpg",
+        "_photo\\.png",
+        "_photo\\.tif",
         "_headshape\\.pos",
         "_markers\\.(?:mrk|sqd)"
       ],

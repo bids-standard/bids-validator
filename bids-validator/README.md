@@ -1,5 +1,7 @@
+[![Node Tests](https://github.com/bids-standard/bids-validator/actions/workflows/node_tests.yml/badge.svg)](https://github.com/bids-standard/bids-validator/actions/workflows/node_tests.yml)
+[![Python tests](https://github.com/bids-standard/bids-validator/actions/workflows/python_tests.yml/badge.svg)](https://github.com/bids-standard/bids-validator/actions/workflows/python_tests.yml)
+[![bids-examples tests](https://github.com/bids-standard/bids-validator/actions/workflows/test-bids-examples.yml/badge.svg)](https://github.com/bids-standard/bids-validator/actions/workflows/test-bids-examples.yml)
 [![CircleCI](https://circleci.com/gh/bids-standard/bids-validator.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/bids-standard/bids-validator)
-[![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/bids-standard/bids-validator?logo=GitLab)](https://gitlab.com/bids-standard/bids-validator/pipelines)
 [![Codecov](https://codecov.io/gh/bids-standard/bids-validator/branch/master/graph/badge.svg)](https://codecov.io/gh/bids-standard/bids-validator)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3688707.svg)](https://doi.org/10.5281/zenodo.3688707)
 
@@ -31,7 +33,7 @@
    1. Open [Google Chrome](https://www.google.com/chrome/) or
       [Mozilla Firefox](https://mozilla.org/firefox) (currently the only
       supported browsers)
-   1. Go to http://bids-standard.github.io/bids-validator/ and select a folder
+   1. Go to https://bids-standard.github.io/bids-validator/ and select a folder
       with your BIDS dataset. If the validator seems to be working longer than
       couple of minutes please open [developer tools ](https://developer.chrome.com/devtools)
       and report the error at [https://github.com/bids-standard/bids-validator/issues](https://github.com/bids-standard/bids-validator/issues).
@@ -325,7 +327,7 @@ contents as described above.
 
 ### In the Browser
 
-The BIDS Validator currently works in the browser with [browserify](http://browserify.org/)
+The BIDS Validator currently works in the browser with [browserify](https://browserify.org/)
 or [webpack](https://webpack.js.org/). You can add it to a project by cloning
 the validator and requiring it with browserify syntax
 `const validate = require('bids-validator');` or an ES2015 webpack import
@@ -468,7 +470,7 @@ below.
 Development and contributions were supported through the following federally
 funded projects/grants:
 
-- [BIDS Derivatives (NIMH: R24MH114705, PI: Poldrack)](http://grantome.com/grant/NIH/R24-MH114705-01)
-- [OpenNeuro (NIMH: R24MH117179, PI: Poldrack)](http://grantome.com/grant/NIH/R24-MH117179-01)
-- [Spokes: MEDIUM: WEST (NSF: 1760950, PI: Poldrack & Gorgolewski)](http://grantome.com/grant/NSF/IIS-1760950)
+- [BIDS Derivatives (NIMH: R24MH114705, PI: Poldrack)](https://grantome.com/grant/NIH/R24-MH114705-01)
+- [OpenNeuro (NIMH: R24MH117179, PI: Poldrack)](https://grantome.com/grant/NIH/R24-MH117179-01)
+- [Spokes: MEDIUM: WEST (NSF: 1760950, PI: Poldrack & Gorgolewski)](https://grantome.com/grant/NSF/IIS-1760950)
 - [ReproNim](http://repronim.org) [(NIH-NIBIB P41 EB019936, PI: Kennedy)](https://projectreporter.nih.gov/project_info_description.cfm?aid=8999833)
