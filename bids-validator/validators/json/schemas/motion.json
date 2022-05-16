@@ -19,9 +19,13 @@
     "InstitutionalDepartmentName": {
       "$ref": "common_definitions.json#/definitions/InstitutionalDepartmentName"
     },
+    "EpochLength": {
+      "$ref": "common_definitions.json#/definitions/EpochLength"
+    },
     "RecordingType": {
       "$ref": "common_definitions.json#/definitions/RecordingType"
     },
+    "SubjectArtefactDescription": { "type": "string" },
     "MotionChannelCount": { "type": "number" },
     "TrackingSystemCount": { "type": "number" },
     "TrackingSystems": {
@@ -36,11 +40,13 @@
           "SoftwareVersions": {
             "$ref": "common_definitions.json#/definitions/SoftwareVersions"
           },
+          "ExternalSoftwareVersions": {
+             "type": "number"
+          },
           "Manufacturer": {
             "$ref": "common_definitions.json#/definitions/Manufacturer"
           },
           "ManufacturersModelName": { "type": "string", "minLength": 1 },
-          "TrackedPointsCount": { "type": "number" },
           "RecordingDuration": {
             "$ref": "common_definitions.json#/definitions/RecordingDuration"
           },
@@ -48,9 +54,8 @@
             "$ref": "common_definitions.json#/definitions/SamplingFrequency"
           },
           "SamplingFrequencyEffective": { "type": "number" },
-          "SoftwareFilters": {
-            "$ref": "common_definitions.json#/definitions/SoftwareFilters"
-          },
+          "MissingValues": { "type": "string" },
+          "TrackedPointsCount": { "type": "number" },
           "POSChannelCount": { "type": "number" },
           "ORNTChannelCount": { "type": "number" },
           "VELChannelCount": { "type": "number" },
@@ -58,7 +63,10 @@
           "ACCChannelCount": { "type": "number" },
           "ANGACCChannelCount": { "type": "number" },
           "MAGNChannelCount": { "type": "number" },
-          "JNTANGChannelCount": { "type": "number" }
+          "JNTANGChannelCount": { "type": "number" },
+          "SpatialAxes": { "type": "string" },
+          "RotationRule": { "type": "string" },
+          "RotationOrder": { "type": "string" }
         },
         "required": [
           "TrackingSystemName",
