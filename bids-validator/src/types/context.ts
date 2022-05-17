@@ -54,24 +54,24 @@ export interface ContextAssociations {
   bval: ContextAssociationsBval
   bvec: ContextAssociationsBvec
 }
-export interface ContextNifti_headerDim_info {
+export interface ContextNiftiHeaderDimInfo {
   freq: number
   phase: number
   slice: number
 }
-export interface ContextNifti_headerXyzt_units {
+export interface ContextNiftiHeaderXyztUnits {
   xyz: 'unknown' | 'meter' | 'mm' | 'um'
   t: 'unknown' | 'sec' | 'msec' | 'usec'
 }
-export interface ContextNifti_header {
-  dim_info: ContextNifti_headerDim_info
+export interface ContextNiftiHeader {
+  dim_info: ContextNiftiHeaderDimInfo
   dim: number[]
   pixdim: number[]
-  xyzt_units: ContextNifti_headerXyzt_units
+  xyzt_units: ContextNiftiHeaderXyztUnits
   qform_code: number
   sform_code: number
 }
-export interface context {
+export interface Context {
   dataset: ContextDataset
   subject: ContextSubject
   path: string
@@ -84,5 +84,5 @@ export interface context {
   associations: ContextAssociations
   columns: object
   json: object
-  nifti_header: ContextNifti_header
+  nifti_header: ContextNiftiHeader
 }
