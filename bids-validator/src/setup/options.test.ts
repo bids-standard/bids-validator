@@ -1,7 +1,7 @@
 import { assertEquals } from '../deps/asserts.ts'
 import { parseOptions } from './options.ts'
 
-Deno.test('options parsing', async t => {
+Deno.test('options parsing', async (t) => {
   await t.step('config.ignore', () => {
     const options = parseOptions([
       '--config.ignore=99',

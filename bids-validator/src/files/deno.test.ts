@@ -9,7 +9,7 @@ const testPath = testUrl.slice('file://'.length)
 const testDir = dirname(testPath)
 const testFilename = basename(testPath)
 
-Deno.test('Deno implementation of BIDSFile', async t => {
+Deno.test('Deno implementation of BIDSFile', async (t) => {
   await t.step('implements basic file properties', async () => {
     const file = new BIDSFileDeno(testDir, testFilename)
     assertEquals(join(testDir, file.path), testPath)

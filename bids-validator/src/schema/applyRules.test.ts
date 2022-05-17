@@ -47,12 +47,12 @@ const schemaDefs = {
 }
 
 Deno.test('evalCheck test', () => {
-  ruleContextData.map(rcd => {
+  ruleContextData.map((rcd) => {
     const rule = rcd.path.reduce((obj, key) => obj[key], schemaDefs)
-    rule.selectors.map(selector => {
+    rule.selectors.map((selector) => {
       assert(evalCheck(selector, rcd.context), `${selector}, ${rcd.context}`)
     })
-    rule.checks.map(check => {
+    rule.checks.map((check) => {
       assert(evalCheck(check, rcd.context), `${check}, ${rcd.context}`)
     })
   })

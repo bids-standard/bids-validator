@@ -68,7 +68,7 @@ function checkDatatype(rule, schema: Schema, context: BIDSContext) {
   const fileEntities = Object.keys(entities)
 
   // we need to convert schema centric name to what shows up in filenames
-  const ruleEntities = Object.keys(rule.entities).map(key =>
+  const ruleEntities = Object.keys(rule.entities).map((key) =>
     lookupEntityLiteral(key, schema),
   )
   const ruleEntitiesRequired = Object.entries(rule.entities)
@@ -76,11 +76,11 @@ function checkDatatype(rule, schema: Schema, context: BIDSContext) {
     .map(([k, _]) => lookupEntityLiteral(k, schema))
 
   const missingRequired = ruleEntitiesRequired.filter(
-    required => !fileEntities.includes(required),
+    (required) => !fileEntities.includes(required),
   )
 
   const entityNotInRule = fileEntities.filter(
-    fileEntity => !ruleEntities.includes(fileEntity),
+    (fileEntity) => !ruleEntities.includes(fileEntity),
   )
 
   if (missingRequired.length) {
