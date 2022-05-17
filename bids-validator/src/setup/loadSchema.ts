@@ -1,5 +1,11 @@
 // Loading schema yaml files from local filesystem
-import { join, fromFileUrl, relative, parse as pathParse, SEP } from '../deps/path.ts'
+import {
+  join,
+  fromFileUrl,
+  relative,
+  parse as pathParse,
+  SEP,
+} from '../deps/path.ts'
 import { parse as yamlParse } from '../deps/yaml.ts'
 import { walk } from '../deps/fs.ts'
 import { Schema } from '../types/schema.ts'
@@ -28,12 +34,14 @@ export async function loadSchema(): Promise<Schema> {
 
     let lastLevel = schemaObj
     for (const level of yamlPathComponents) {
-      (lastLevel as any)[level] = (lastLevel as any)[level] || {}
+      ;(lastLevel as any)[level] = (lastLevel as any)[level] || {}
       lastLevel = (lastLevel as any)[level]
     }
 
     // Parse and load the schema definition
-    (lastLevel as any)[yamlPathName] = await yamlParse(await Deno.readTextFile(entry.path))
+    ;(lastLevel as any)[yamlPathName] = await yamlParse(
+      await Deno.readTextFile(entry.path),
+    )
   }
-  return (schemaObj as Schema)
+  return schemaObj as Schema
 }

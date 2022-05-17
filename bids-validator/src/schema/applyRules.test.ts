@@ -9,17 +9,17 @@ const ruleContextData = [
       suffix: 'dwi',
       associations: {
         bvec: {
-          n_cols: 4
+          n_cols: 4,
         },
         bval: {
-          n_cols: 4
+          n_cols: 4,
         },
       },
       nifti_header: {
-        dim: [0, 0, 0, 0, 4]
-      }
-    }
-  }
+        dim: [0, 0, 0, 0, 4],
+      },
+    },
+  },
 ]
 
 const schemaDefs = {
@@ -27,21 +27,26 @@ const schemaDefs = {
     checks: {
       dwi: {
         DWIVolumeCount: {
-          code: "VOLUME_COUNT_MISMATCH",
-          description: "The number of volumes in this scan does not match the number of volumes in the\ncorresponding .bvec a...",
-          level: "error",
-          selectors: [ 'suffix == "dwi"', '"bval" in associations', '"bvec" in associations' ],
+          code: 'VOLUME_COUNT_MISMATCH',
+          description:
+            'The number of volumes in this scan does not match the number of volumes in the\ncorresponding .bvec a...',
+          level: 'error',
+          selectors: [
+            'suffix == "dwi"',
+            '"bval" in associations',
+            '"bvec" in associations',
+          ],
           checks: [
-            "associations.bval.n_cols == nifti_header.dim[4]",
-            "associations.bvec.n_cols == nifti_header.dim[4]"
-          ]
-        }
-      }
-    }
-  }
+            'associations.bval.n_cols == nifti_header.dim[4]',
+            'associations.bvec.n_cols == nifti_header.dim[4]',
+          ],
+        },
+      },
+    },
+  },
 }
 
-Deno.test("evalCheck test", () => {
+Deno.test('evalCheck test', () => {
   ruleContextData.map(rcd => {
     const rule = rcd.path.reduce((obj, key) => obj[key], schemaDefs)
     rule.selectors.map(selector => {
@@ -53,10 +58,13 @@ Deno.test("evalCheck test", () => {
   })
 })
 
-Deno.test("evalCheck ensure constructor access", () => {
-  assert(evalCheck('foo.constructor.isArray(foo)', {foo: [1]}), 'cant access Array protoype via consturctor')
+Deno.test('evalCheck ensure constructor access', () => {
+  assert(
+    evalCheck('foo.constructor.isArray(foo)', { foo: [1] }),
+    'cant access Array protoype via consturctor',
+  )
 })
 
-Deno.test("evalCheck built in apis fail", () => {
+Deno.test('evalCheck built in apis fail', () => {
   assert(evalCheck('fetch', {}) === undefined, 'fetch in evalCheck namespace')
 })

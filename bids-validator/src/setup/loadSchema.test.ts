@@ -14,7 +14,6 @@ Deno.test('schema yaml loader', async t => {
         assertObjectMatch(top_level.README, {
           required: true,
           extensions: ['None', '.md', '.rst', '.txt'],
-
         })
       }
     } else {
@@ -23,7 +22,10 @@ Deno.test('schema yaml loader', async t => {
   })
   await t.step('loads all schema files', async () => {
     const schemaDefs = await loadSchema()
-    if (!(typeof schemaDefs.objects === 'object') || !(typeof schemaDefs.rules === 'object')) {
+    if (
+      !(typeof schemaDefs.objects === 'object') ||
+      !(typeof schemaDefs.rules === 'object')
+    ) {
       assert(false, 'failed to load objects/rules')
     }
   })
