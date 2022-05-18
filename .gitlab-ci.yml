@@ -1,6 +1,6 @@
 variables:
   GIT_STRATEGY: fetch
-  GIT_CHECKOUT: "false"
+  GIT_CHECKOUT: 'false'
   GIT_SUBMODULE_STRATEGY: normal
   NODE_OPTIONS: --no-warnings
 stages:

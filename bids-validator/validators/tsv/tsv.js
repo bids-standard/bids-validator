@@ -12,14 +12,14 @@ var path = require('path')
  * @param {Array[string]} headers
  * @returns {string}
  */
-const headersEvidence = headers => `Column headers: ${headers.join(', ')}`
+const headersEvidence = (headers) => `Column headers: ${headers.join(', ')}`
 
 /**
  * Format TSV filename for evidence string
  * @param {Array[string]} filename
  * @returns {string}
  */
-const filenameEvidence = filename => `Filename: ${filename}`
+const filenameEvidence = (filename) => `Filename: ${filename}`
 
 /**
  * TSV

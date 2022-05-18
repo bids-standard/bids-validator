@@ -4,7 +4,7 @@ const Issue = utils.issues.Issue
 const checkJSONAndField = (files, jsonContentsDict) => {
   let issues = []
   if (files.ome) {
-    files.ome.forEach(file => {
+    files.ome.forEach((file) => {
       let possibleJsonPath = file.relativePath
         .replace('.tif', '')
         .replace('.btf', '')
@@ -15,7 +15,7 @@ const checkJSONAndField = (files, jsonContentsDict) => {
     })
   }
   if (files.png) {
-    files.png.forEach(file => {
+    files.png.forEach((file) => {
       if (!file.relativePath.includes('_photo')) {
         let possibleJsonPath = file.relativePath.replace('.png', '.json')
         issues = issues.concat(
@@ -25,7 +25,7 @@ const checkJSONAndField = (files, jsonContentsDict) => {
     })
   }
   if (files.tif) {
-    files.tif.forEach(file => {
+    files.tif.forEach((file) => {
       if (!file.relativePath.includes('_photo')) {
         let possibleJsonPath = file.relativePath.replace('.tif', '.json')
         issues = issues.concat(
@@ -42,7 +42,7 @@ const ifJsonExist = (file, possibleJsonPath, jsonContentsDict) => {
   const chunkRegex = new RegExp('_chunk-[0-9]+')
 
   const jsonChunkFiles = potentialSidecars.filter(
-    name => jsonContentsDict.hasOwnProperty(name) && chunkRegex.exec(name),
+    (name) => jsonContentsDict.hasOwnProperty(name) && chunkRegex.exec(name),
   )
   const chunkPresent =
     jsonChunkFiles.length || chunkRegex.exec(file.relativePath)
@@ -65,7 +65,7 @@ const ifJsonExist = (file, possibleJsonPath, jsonContentsDict) => {
   if (chunkPresent) {
     return checkMatrixField(file, mergedDictionary)
   }
-  
+
   return []
 }
 

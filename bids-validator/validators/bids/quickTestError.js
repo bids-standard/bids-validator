@@ -6,7 +6,7 @@ import isNode from '../../utils/isNode'
 /*
  * Generates an error for quickTest failures
  */
-const quickTestError = function(dir) {
+const quickTestError = function (dir) {
   let filename
   if (isNode) {
     // For Node, grab the path from the dir string
@@ -25,7 +25,7 @@ const quickTestError = function(dir) {
   return issue
 }
 
-const constructFileName = dir => {
+const constructFileName = (dir) => {
   try {
     return dir[0].webkitRelativePath.split(path.sep).pop()
   } catch (err) {
