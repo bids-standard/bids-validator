@@ -50,12 +50,16 @@ export class BIDSFileDeno implements BIDSFile {
 export class FileTreeDeno extends FileTree {
   // System specific dataset path
   private _datasetRootPath?: string
-  constructor(path: string, name: string, parent?: FileTree, rootPath?: string) {
+  constructor(
+    path: string,
+    name: string,
+    parent?: FileTree,
+    rootPath?: string,
+  ) {
     super(path, name, parent)
     this._datasetRootPath = rootPath
   }
 }
-
 
 export async function _readFileTree(
   rootPath: string,
@@ -72,10 +76,16 @@ export async function _readFileTree(
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     if (dirEntry.isFile) {
-      tree.files.push(new BIDSFileDeno(rootPath, join(relativePath, dirEntry.name)))
+      tree.files.push(
+        new BIDSFileDeno(rootPath, join(relativePath, dirEntry.name)),
+      )
     }
     if (dirEntry.isDirectory) {
-      const dirTree = await _readFileTree(rootPath, join(relativePath, dirEntry.name), tree)
+      const dirTree = await _readFileTree(
+        rootPath,
+        join(relativePath, dirEntry.name),
+        tree,
+      )
       tree.directories.push(dirTree)
     }
   }

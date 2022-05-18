@@ -11,7 +11,7 @@ export async function validate(fileTree: FileTree): Promise<Issue[]> {
   const issues = []
   const schemaDefs = await loadSchema()
   for await (const context of walkFileTree(fileTree)) {
-    issues.push(...applyRules(schemaDefs, context))    
+    issues.push(...applyRules(schemaDefs, context))
   }
   return issues
 }

@@ -6,7 +6,7 @@ import {
   simpleDatasetFileCount,
 } from '../tests/simple-dataset.ts'
 
-Deno.test('file tree walking', async t => {
+Deno.test('file tree walking', async (t) => {
   await t.step('visits each file and creates a BIDSContext', async () => {
     for await (const context of walkFileTree(simpleDataset)) {
       assert(
