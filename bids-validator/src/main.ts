@@ -3,7 +3,7 @@ import { readFileTree } from './files/deno.ts'
 import { resolve } from './deps/path.ts'
 import { fullTestAdapter } from './compat/fulltest.ts'
 import { validate } from './validators/bids.ts'
-import { issues } from './issues/list.ts'
+import { issues } from './issues/index.ts'
 
 async function main() {
   const options = parseOptions(Deno.args)
