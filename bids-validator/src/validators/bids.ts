@@ -7,11 +7,10 @@ import { applyRules } from '../schema/applyRules.ts'
 /**
  * Full BIDS schema validation entrypoint
  */
-export async function validate(fileTree: FileTree): Promise<Issue[]> {
+export async function validate(fileTree: FileTree): Promise<> {
   const issues = []
   const schemaDefs = await loadSchema()
   for await (const context of walkFileTree(fileTree)) {
-    issues.push(...applyRules(schemaDefs, context))
+    applyRules(schemaDefs, context)
   }
-  return issues
 }

@@ -1,19 +1,21 @@
 import { SEP } from '../deps/path.ts'
-import { Issue, ignore } from '../types/issues.ts'
 import { Schema } from '../types/schema.ts'
 import { BIDSContext } from './context.ts'
+import { lookupModality } from './modalities.ts'
+import { addIssue } from '../issues/list.ts'
+
+const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 /**
  * Given a schema and context, evaluate which rules match and test them
  * @param schema
  * @param context
  */
-export function applyRules(schema: Schema, context: BIDSContext): Issue[] {
-  const issues: Issue[] = []
+export function applyRules(schema: Schema, context: BIDSContext) {
   if (!isTopLevel(schema, context)) {
-    issues.push(...checkDatatypes(schema, context))
+    checkDatatypes(schema, context)
+    checkLabelFormat(schema, context)
   }
-  return issues
 }
 
 const evalConstructor = (src: string): Function =>
@@ -32,13 +34,12 @@ export function evalCheck(src: string, context: Record<string, any>) {
   }
 }
 
-export function checkDatatypes(schema: Schema, context: BIDSContext): Issue[] {
-  const issues: Issue[] = []
+export function checkDatatypes(schema: Schema, context: BIDSContext)  {
   delete schema.rules.datatypes.derivatives
   const datatypes = Object.values(schema.rules.datatypes)
   for (const rules of datatypes) {
     for (const key of Object.keys(rules)) {
-      issues.push(...checkDatatype(rules[key], schema, context))
+      checkDatatype(rules[key], schema, context)
       if (context.datatype) {
         break
       }
@@ -48,54 +49,75 @@ export function checkDatatypes(schema: Schema, context: BIDSContext): Issue[] {
       break
     }
   }
-  return issues
 }
 
 function checkDatatype(rule, schema: Schema, context: BIDSContext) {
-  const issues: Issue[] = []
   const { suffix, extension, entities } = context
+  const fileIsAtRoot = isAtRoot(context)
+  const fileIsSideCar = sidecarExtensions.includes(extension)
+
   if (rule.suffixies && !rule.suffixes.includes(suffix)) {
-    return issues
+    return
   }
 
   if (rule.extensions && !rule.extensions.includes(extension)) {
-    return issues
+    return
   }
 
   context.datatype = rule.datatypes[0]
+  context.modality = lookupModality(schema, context.datatype)
 
   // context entities are key-value pairs from filename.
-  const fileEntities = Object.keys(entities)
+  const fileNoLabelEntities = Object.keys(entities).filter(key => entities[key] === 'NOENTITY')
+  const fileEntities = Object.keys(entities).filter(key => !fileNoLabelEntities.includes(key))
+
+  if (fileNoLabelEntities.length) {
+    addIssue(
+      { file: context.file.path, evidence: fileNoLabelEntities.join(', ') },
+      ENTITY_WITH_NO_LABEL
+    )
+  }
 
   // we need to convert schema centric name to what shows up in filenames
   const ruleEntities = Object.keys(rule.entities).map((key) =>
     lookupEntityLiteral(key, schema),
   )
-  const ruleEntitiesRequired = Object.entries(rule.entities)
-    .filter(([_, v]) => v === 'required')
-    .map(([k, _]) => lookupEntityLiteral(k, schema))
 
-  const missingRequired = ruleEntitiesRequired.filter(
-    (required) => !fileEntities.includes(required),
-  )
+  // skip required entity checks if file is at root.
+  // No requirements for inherited sidecars at this level.
+  if (!fileIsAtRoot) {
+    let ruleEntitiesRequired = Object.entries(rule.entities)
+      .filter(([_, v]) => v === 'required')
+      .map(([k, _]) => lookupEntityLiteral(k, schema))
+
+    const missingRequired = ruleEntitiesRequired.filter(
+      (required) => !fileEntities.includes(required),
+    )
+
+    if (missingRequired.length) {
+      addIssue(
+        {file: context.file.path, evidence: missingRequired.join(', ')},
+        'MISSING_REQUIRED_ENTITY'
+      )
+    }
+  }
+
+  if (fileIsAtRoot && !fileIsSidecar) {
+    // create issue for data file in root of dataset
+  }
+
 
   const entityNotInRule = fileEntities.filter(
     (fileEntity) => !ruleEntities.includes(fileEntity),
   )
 
-  if (missingRequired.length) {
-    issues.push(
-      tempError(
-        'missingRequired',
-        missingRequired.join(', ') + context.file.path,
-      ),
+  if (entityNotInRule.length) {
+    addIssue(
+      {file: context.file.path, evidence: entityNotInRule.join(', ')},
+      'ENTITY_NOT_IN_RULE'
     )
   }
-
-  if (entityNotInRule.length) {
-    issues.push(tempError('entityNotInRule', entityNotInRule.join(', ')))
-  }
-  return issues
+  return
 }
 
 function lookupEntityLiteral(name: string, schema: Schema) {
@@ -108,16 +130,48 @@ function lookupEntityLiteral(name: string, schema: Schema) {
   }
 }
 
-function tempError(key: string, reason: string): Issue {
-  return {
-    severity: 'error',
-    key: key,
-    code: 0,
-    reason: reason,
-    files: [],
-    additionalFileCount: 0,
-    helpUrl: 'http://example.com',
+function getEntityByLiteral(fileEntity: string, schema: Schema) {
+  const entities = schema.objects.entities
+  const key = Object.keys(entities).find((key) => {
+    return entities[key].entity === fileEntity
+  })
+  if (key) {
+    return entities[key]
   }
+  return null
+}
+
+function checkLabelFormat(schema: Schema, context: BIDSContext) {
+  const formats = schema.objects.formats
+  const entities = schema.objects.entities
+  Object.keys(context.entities).map((fileEntity) => {
+    const entity = getEntityByLiteral(fileEntity, schema)
+    if (entity) {
+      // assuming all formats are well defined in objects
+      const pattern = formats[entity.format].pattern
+      const rePattern = new RegExp(`^${pattern}$`)
+      const label = context.entities[fileEntity]
+      if (!rePattern.test(label)) {
+        addIssue(
+          {
+            file: context.file.path,
+            evidence: `entity: ${fileEntity} label: ${label} pattern: ${pattern}`
+          },
+          'INVALID_ENTITY_LABEL'
+        )
+      }
+    } else {
+      // unknown entity
+    }
+  })
+  return
+}
+
+function isAtRoot(context: BIDSContext) {
+  if (context.file.path.split(SEP).length !== 2) {
+    return false
+  }
+  return true
 }
 
 function isTopLevel(schema: Schema, context: BIDSContext) {

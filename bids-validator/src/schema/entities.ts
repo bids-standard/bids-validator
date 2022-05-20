@@ -17,7 +17,7 @@ export function readEntities(file: BIDSFile): BIDSEntities {
     if (entity && label) {
       entities[entity] = label
     } else {
-      // should we do something with parts that fail here
+      entities[entity] = 'NOENTITY'
     }
   }
 
