@@ -11,7 +11,7 @@ async function main() {
   const tree = await readFileTree(absolutePath)
 
   // Run the schema based validator
-  validate(tree)
+  await validate(tree)
 
   // const { issues, summary } = await fullTestAdapter(tree, options)
   const inspectOpts = {

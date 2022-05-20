@@ -2,7 +2,7 @@ import { SEP } from '../deps/path.ts'
 import { Schema } from '../types/schema.ts'
 import { BIDSContext } from './context.ts'
 import { lookupModality } from './modalities.ts'
-import { addIssue } from '../issues/list.ts'
+import { addIssue } from '../issues/index.ts'
 
 const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
@@ -34,7 +34,7 @@ export function evalCheck(src: string, context: Record<string, any>) {
   }
 }
 
-export function checkDatatypes(schema: Schema, context: BIDSContext)  {
+export function checkDatatypes(schema: Schema, context: BIDSContext) {
   delete schema.rules.datatypes.derivatives
   const datatypes = Object.values(schema.rules.datatypes)
   for (const rules of datatypes) {
@@ -54,7 +54,7 @@ export function checkDatatypes(schema: Schema, context: BIDSContext)  {
 function checkDatatype(rule, schema: Schema, context: BIDSContext) {
   const { suffix, extension, entities } = context
   const fileIsAtRoot = isAtRoot(context)
-  const fileIsSideCar = sidecarExtensions.includes(extension)
+  const fileIsSidecar = sidecarExtensions.includes(extension)
 
   if (rule.suffixies && !rule.suffixes.includes(suffix)) {
     return
@@ -68,18 +68,22 @@ function checkDatatype(rule, schema: Schema, context: BIDSContext) {
   context.modality = lookupModality(schema, context.datatype)
 
   // context entities are key-value pairs from filename.
-  const fileNoLabelEntities = Object.keys(entities).filter(key => entities[key] === 'NOENTITY')
-  const fileEntities = Object.keys(entities).filter(key => !fileNoLabelEntities.includes(key))
+  const fileNoLabelEntities = Object.keys(entities).filter(
+    key => entities[key] === 'NOENTITY',
+  )
+  const fileEntities = Object.keys(entities).filter(
+    key => !fileNoLabelEntities.includes(key),
+  )
 
   if (fileNoLabelEntities.length) {
     addIssue(
       { file: context.file.path, evidence: fileNoLabelEntities.join(', ') },
-      ENTITY_WITH_NO_LABEL
+      'ENTITY_WITH_NO_LABEL',
     )
   }
 
   // we need to convert schema centric name to what shows up in filenames
-  const ruleEntities = Object.keys(rule.entities).map((key) =>
+  const ruleEntities = Object.keys(rule.entities).map(key =>
     lookupEntityLiteral(key, schema),
   )
 
@@ -91,13 +95,13 @@ function checkDatatype(rule, schema: Schema, context: BIDSContext) {
       .map(([k, _]) => lookupEntityLiteral(k, schema))
 
     const missingRequired = ruleEntitiesRequired.filter(
-      (required) => !fileEntities.includes(required),
+      required => !fileEntities.includes(required),
     )
 
     if (missingRequired.length) {
       addIssue(
-        {file: context.file.path, evidence: missingRequired.join(', ')},
-        'MISSING_REQUIRED_ENTITY'
+        { file: context.file.path, evidence: missingRequired.join(', ') },
+        'MISSING_REQUIRED_ENTITY',
       )
     }
   }
@@ -106,15 +110,14 @@ function checkDatatype(rule, schema: Schema, context: BIDSContext) {
     // create issue for data file in root of dataset
   }
 
-
   const entityNotInRule = fileEntities.filter(
-    (fileEntity) => !ruleEntities.includes(fileEntity),
+    fileEntity => !ruleEntities.includes(fileEntity),
   )
 
   if (entityNotInRule.length) {
     addIssue(
-      {file: context.file.path, evidence: entityNotInRule.join(', ')},
-      'ENTITY_NOT_IN_RULE'
+      { file: context.file.path, evidence: entityNotInRule.join(', ') },
+      'ENTITY_NOT_IN_RULE',
     )
   }
   return
@@ -132,7 +135,7 @@ function lookupEntityLiteral(name: string, schema: Schema) {
 
 function getEntityByLiteral(fileEntity: string, schema: Schema) {
   const entities = schema.objects.entities
-  const key = Object.keys(entities).find((key) => {
+  const key = Object.keys(entities).find(key => {
     return entities[key].entity === fileEntity
   })
   if (key) {
@@ -144,7 +147,7 @@ function getEntityByLiteral(fileEntity: string, schema: Schema) {
 function checkLabelFormat(schema: Schema, context: BIDSContext) {
   const formats = schema.objects.formats
   const entities = schema.objects.entities
-  Object.keys(context.entities).map((fileEntity) => {
+  Object.keys(context.entities).map(fileEntity => {
     const entity = getEntityByLiteral(fileEntity, schema)
     if (entity) {
       // assuming all formats are well defined in objects
@@ -155,9 +158,9 @@ function checkLabelFormat(schema: Schema, context: BIDSContext) {
         addIssue(
           {
             file: context.file.path,
-            evidence: `entity: ${fileEntity} label: ${label} pattern: ${pattern}`
+            evidence: `entity: ${fileEntity} label: ${label} pattern: ${pattern}`,
           },
-          'INVALID_ENTITY_LABEL'
+          'INVALID_ENTITY_LABEL',
         )
       }
     } else {
