@@ -21,7 +21,6 @@ export function addIssue(
   level?: string,
   message?: string,
 ) {
-  console.log('adding issue')
   if (issues.hasOwnProperty(code)) {
     issues[issue.code].files.append(issue)
   } else {
@@ -38,4 +37,16 @@ export function addIssue(
       files: [issue],
     }
   }
+}
+
+export function fileInIssues(file: string): boolean {
+  return Object.keys(issues).some(key =>
+    issues[key].files.some(fileIssue => fileIssue.file === file),
+  )
+}
+
+export function getFileCodes(file: string): [string] {
+  return Object.keys(issues)
+    .filter(key => issues[key].files.some(fileIssue => fileIssue.file === file))
+    .map(key => issues[key].code)
 }

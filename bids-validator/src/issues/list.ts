@@ -17,6 +17,11 @@ export const filenameIssues = {
     message:
       'Entity not listed as required or optional for files with this suffix',
   },
+  DATATYPE_MISMATCH: {
+    level: 'error',
+    message:
+      'The datatype directory does not match datatype of found suffix and extension',
+  },
 }
 
 export const nonSchemaIssues = { ...filenameIssues }

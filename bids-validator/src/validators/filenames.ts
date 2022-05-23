@@ -9,36 +9,58 @@ const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 export function checkDatatypes(schema: Schema, context: BIDSContext) {
   delete schema.rules.datatypes.derivatives
-  const datatypes = Object.values(schema.rules.datatypes)
-  for (const rules of datatypes) {
+  let matchedRule = ''
+  datatypeFromDirectory(schema, context)
+  if (schema.rules.datatypes.hasOwnProperty(context.datatype)) {
+    const rules = schema.rules.datatypes[context.datatype]
     for (const key of Object.keys(rules)) {
-      checkDatatype(rules[key], schema, context)
-      if (context.datatype) {
+      if (checkDatatype(rules[key], schema, context)) {
+        matchedRule = key
         break
       }
-      // we may want to save key into context, gives exact rule name matched
     }
-    if (context.datatype) {
-      break
+  }
+  if (matchedRule === '') {
+    const datatypes = Object.values(schema.rules.datatypes)
+    for (const rules of datatypes) {
+      for (const key of Object.keys(rules)) {
+        if (checkDatatype(rules[key], schema, context)) {
+          matchedRule = key
+        }
+      }
+      if (matchedRule) {
+        break
+      }
     }
   }
 }
 
-function checkDatatype(rule, schema: Schema, context: BIDSContext) {
+export function checkDatatype(
+  rule,
+  schema: Schema,
+  context: BIDSContext,
+): boolean {
   const { suffix, extension, entities } = context
   const fileIsAtRoot = isAtRoot(context)
   const fileIsSidecar = sidecarExtensions.includes(extension)
 
   if (rule.suffixies && !rule.suffixes.includes(suffix)) {
-    return
+    return false
   }
 
   if (rule.extensions && !rule.extensions.includes(extension)) {
-    return
+    return false
   }
 
-  context.datatype = rule.datatypes[0]
-  context.modality = lookupModality(schema, context.datatype)
+  if (!rule.datatypes.includes(context.datatype)) {
+    addIssue(
+      {
+        file: context.file.path,
+        evidence: `Datatype rule being applied: ${rule}`,
+      },
+      'DATATYPE_MISMATCH',
+    )
+  }
 
   // context entities are key-value pairs from filename.
   const fileNoLabelEntities = Object.keys(entities).filter(
@@ -93,7 +115,7 @@ function checkDatatype(rule, schema: Schema, context: BIDSContext) {
       'ENTITY_NOT_IN_RULE',
     )
   }
-  return
+  return true
 }
 
 function lookupEntityLiteral(name: string, schema: Schema) {
@@ -117,13 +139,42 @@ function getEntityByLiteral(fileEntity: string, schema: Schema) {
   return null
 }
 
+export function datatypeFromDirectory(schema: Schema, context: BIDSContext) {
+  const subEntity = schema.objects.entities.subject.entity
+  const subFormat = schema.objects.formats[subEntity.format]
+  const sesEntity = schema.objects.entities.session.entity
+  const sesFormat = schema.objects.formats[sesEntity.format]
+  const parts = context.file.path.split(SEP)
+  let datatypeIndex = 2
+  if (parts[0] !== '') {
+    // we assume paths have leading '/'
+  }
+  // Ignoring associated data for now
+  const subParts = parts[1].split('-')
+  if (!(subParts.length === 2 && subParts[0] === subEntity)) {
+    // first directory must be subject
+  }
+  const sesParts = parts[2].split('-')
+  if (sesParts.length === 2 && sesParts[0] === sesEntity) {
+    datatypeIndex = 3
+  }
+  let dirDatatype = parts[datatypeIndex]
+  for (let key in schema.rules.modalities) {
+    if (schema.rules.modalities[key].datatypes.includes(dirDatatype)) {
+      context.modality = key
+      context.datatype = dirDatatype
+      return
+    }
+  }
+}
+
 export function checkLabelFormat(schema: Schema, context: BIDSContext) {
   const formats = schema.objects.formats
   const entities = schema.objects.entities
   Object.keys(context.entities).map(fileEntity => {
     const entity = getEntityByLiteral(fileEntity, schema)
     if (entity) {
-      // assuming all formats are well defined in objects
+      // assuming all formats are well defined in schema.objects
       const pattern = formats[entity.format].pattern
       const rePattern = new RegExp(`^${pattern}$`)
       const label = context.entities[fileEntity]
