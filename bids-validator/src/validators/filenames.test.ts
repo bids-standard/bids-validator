@@ -28,22 +28,22 @@ const newContext = (path: string) => {
   }
 }
 
-Deno.test('test datatypeFromDirectory', (t) => {
+Deno.test('test datatypeFromDirectory', t => {
   const filesToTest = [
     ['/sub-01/func/bad_filename.txt', 'func'],
     ['/sub-02/ses-01/anat/bad_filename.txt', 'anat'],
     ['/sub-02/ses-01/bad/bad_filename.txt', ''],
   ]
-  filesToTest.map((test) => {
+  filesToTest.map(test => {
     const context = newContext(test[0])
     datatypeFromDirectory(schema, context)
     assertEquals(context.datatype, test[1])
   })
 })
 
-Deno.test('test checkDatatype', (t) => {
+Deno.test('test checkDatatype', t => {
   const filesToTest = [['/sub-01/func/sub-01_task-taskname_bold.json', []]]
-  filesToTest.map((test) => {
+  filesToTest.map(test => {
     let context = newContext(test[0])
     context = { ...context, ...readEntities(context.file) }
     checkDatatypes(schema, context)
@@ -51,13 +51,13 @@ Deno.test('test checkDatatype', (t) => {
   })
 })
 
-Deno.test('test checkLabelFormat', (t) => {
+Deno.test('test checkLabelFormat', t => {
   const code = 'INVALID_ENTITY_LABEL'
   const filesToTest = [
     ['/sub-01/func/sub-01_task-taskname_bold.json', false],
     ['/sub-01/func/sub-01_task-+1_bold.json', true],
   ]
-  filesToTest.map((test) => {
+  filesToTest.map(test => {
     let context = newContext(test[0])
     context = { ...context, ...readEntities(context.file) }
     checkLabelFormat(schema, context)

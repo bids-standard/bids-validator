@@ -21,16 +21,23 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
       }
     }
   }
+  /** 
+   * If we can't find a datatype in the directory names, and match a rule
+   * for that datatype we might want to see if there are any rules for any
+   * datatype that we may be able to match against. Certain suffixes are
+   * used across datatypes so its conievable we could have multiple possible
+   * matches.
+   */
   if (matchedRule === '') {
+    const possibleDatatypes = new Set()
     const datatypes = Object.values(schema.rules.datatypes)
     for (const rules of datatypes) {
       for (const key of Object.keys(rules)) {
         if (checkDatatype(rules[key], schema, context)) {
           matchedRule = key
+          possibleDatatypes.add(rules[key].datatype)
+          break
         }
-      }
-      if (matchedRule) {
-        break
       }
     }
   }
@@ -61,10 +68,10 @@ export function checkDatatype(
 
   // context entities are key-value pairs from filename.
   const fileNoLabelEntities = Object.keys(entities).filter(
-    (key) => entities[key] === 'NOENTITY',
+    key => entities[key] === 'NOENTITY',
   )
   const fileEntities = Object.keys(entities).filter(
-    (key) => !fileNoLabelEntities.includes(key),
+    key => !fileNoLabelEntities.includes(key),
   )
 
   if (fileNoLabelEntities.length) {
@@ -74,7 +81,7 @@ export function checkDatatype(
   }
 
   // we need to convert schema centric name to what shows up in filenames
-  const ruleEntities = Object.keys(rule.entities).map((key) =>
+  const ruleEntities = Object.keys(rule.entities).map(key =>
     lookupEntityLiteral(key, schema),
   )
 
@@ -86,7 +93,7 @@ export function checkDatatype(
       .map(([k, _]) => lookupEntityLiteral(k, schema))
 
     const missingRequired = ruleEntitiesRequired.filter(
-      (required) => !fileEntities.includes(required),
+      required => !fileEntities.includes(required),
     )
 
     if (missingRequired.length) {
@@ -101,7 +108,7 @@ export function checkDatatype(
   }
 
   const entityNotInRule = fileEntities.filter(
-    (fileEntity) => !ruleEntities.includes(fileEntity),
+    fileEntity => !ruleEntities.includes(fileEntity),
   )
 
   if (entityNotInRule.length) {
@@ -124,7 +131,7 @@ function lookupEntityLiteral(name: string, schema: Schema) {
 
 function getEntityByLiteral(fileEntity: string, schema: Schema) {
   const entities = schema.objects.entities
-  const key = Object.keys(entities).find((key) => {
+  const key = Object.keys(entities).find(key => {
     return entities[key].entity === fileEntity
   })
   if (key) {
@@ -165,7 +172,7 @@ export function datatypeFromDirectory(schema: Schema, context: BIDSContext) {
 export function checkLabelFormat(schema: Schema, context: BIDSContext) {
   const formats = schema.objects.formats
   const entities = schema.objects.entities
-  Object.keys(context.entities).map((fileEntity) => {
+  Object.keys(context.entities).map(fileEntity => {
     const entity = getEntityByLiteral(fileEntity, schema)
     if (entity) {
       // assuming all formats are well defined in schema.objects
