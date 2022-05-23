@@ -15,25 +15,24 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
   if (schema.rules.datatypes.hasOwnProperty(context.datatype)) {
     const rules = schema.rules.datatypes[context.datatype]
     for (const key of Object.keys(rules)) {
-      if (checkDatatype(rules[key], schema, context)) {
+      if (validateFilenameAgainstRule(rules[key], schema, context)) {
         matchedRule = key
         break
       }
     }
   }
-  /** 
-   * If we can't find a datatype in the directory names, and match a rule
+  /* If we can't find a datatype in the directory names, and match a rule
    * for that datatype we might want to see if there are any rules for any
    * datatype that we may be able to match against. Certain suffixes are
    * used across datatypes so its conievable we could have multiple possible
-   * matches.
+   * matches. Sidecars at root of dataset also fall into this category.
    */
   if (matchedRule === '') {
     const possibleDatatypes = new Set()
     const datatypes = Object.values(schema.rules.datatypes)
     for (const rules of datatypes) {
       for (const key of Object.keys(rules)) {
-        if (checkDatatype(rules[key], schema, context)) {
+        if (validateFilenameAgainstRule(rules[key], schema, context)) {
           matchedRule = key
           possibleDatatypes.add(rules[key].datatype)
           break
@@ -43,7 +42,10 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
   }
 }
 
-export function checkDatatype(
+/* Returns false if the rule doesn't match the suffix or extension.
+ * Returns true otherwise, generating issues as applicable
+ */
+export function validateFilenameAgainstRule(
   rule,
   schema: Schema,
   context: BIDSContext,
@@ -209,4 +211,10 @@ export function isTopLevel(schema: Schema, context: BIDSContext) {
   const top_level_files = schema.rules.top_level_files
   const name = context.file.name.split('.')[0]
   return top_level_files.hasOwnProperty(name)
+}
+
+export function isAssociatedData(schema: Schema, path: string): boolean {
+  associatedData = schema.rules.associated_data
+  const parts = path.split(SEP)
+  return associatedData.hasOwnProperty(parts[1])
 }
