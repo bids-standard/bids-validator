@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { SEP } from '../deps/path.ts'
 import { Schema } from '../types/schema.ts'
 import { BIDSContext } from '../schema/context.ts'
@@ -64,10 +65,10 @@ export function checkDatatype(
 
   // context entities are key-value pairs from filename.
   const fileNoLabelEntities = Object.keys(entities).filter(
-    key => entities[key] === 'NOENTITY',
+    (key) => entities[key] === 'NOENTITY',
   )
   const fileEntities = Object.keys(entities).filter(
-    key => !fileNoLabelEntities.includes(key),
+    (key) => !fileNoLabelEntities.includes(key),
   )
 
   if (fileNoLabelEntities.length) {
@@ -78,7 +79,7 @@ export function checkDatatype(
   }
 
   // we need to convert schema centric name to what shows up in filenames
-  const ruleEntities = Object.keys(rule.entities).map(key =>
+  const ruleEntities = Object.keys(rule.entities).map((key) =>
     lookupEntityLiteral(key, schema),
   )
 
@@ -90,7 +91,7 @@ export function checkDatatype(
       .map(([k, _]) => lookupEntityLiteral(k, schema))
 
     const missingRequired = ruleEntitiesRequired.filter(
-      required => !fileEntities.includes(required),
+      (required) => !fileEntities.includes(required),
     )
 
     if (missingRequired.length) {
@@ -106,7 +107,7 @@ export function checkDatatype(
   }
 
   const entityNotInRule = fileEntities.filter(
-    fileEntity => !ruleEntities.includes(fileEntity),
+    (fileEntity) => !ruleEntities.includes(fileEntity),
   )
 
   if (entityNotInRule.length) {
@@ -130,7 +131,7 @@ function lookupEntityLiteral(name: string, schema: Schema) {
 
 function getEntityByLiteral(fileEntity: string, schema: Schema) {
   const entities = schema.objects.entities
-  const key = Object.keys(entities).find(key => {
+  const key = Object.keys(entities).find((key) => {
     return entities[key].entity === fileEntity
   })
   if (key) {
@@ -171,7 +172,7 @@ export function datatypeFromDirectory(schema: Schema, context: BIDSContext) {
 export function checkLabelFormat(schema: Schema, context: BIDSContext) {
   const formats = schema.objects.formats
   const entities = schema.objects.entities
-  Object.keys(context.entities).map(fileEntity => {
+  Object.keys(context.entities).map((fileEntity) => {
     const entity = getEntityByLiteral(fileEntity, schema)
     if (entity) {
       // assuming all formats are well defined in schema.objects
