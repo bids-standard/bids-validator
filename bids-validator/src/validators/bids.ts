@@ -18,7 +18,7 @@ export async function validate(fileTree: FileTree): Promise<void> {
   const issues = []
   const schema = await loadSchema()
   for await (const context of walkFileTree(fileTree)) {
-    if (isAssociatedData(context.file.path)) {
+    if (isAssociatedData(schema, context.file.path)) {
       continue
     }
     if (!isTopLevel(schema, context)) {

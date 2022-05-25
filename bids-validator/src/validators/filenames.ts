@@ -54,7 +54,7 @@ export function validateFilenameAgainstRule(
   const fileIsAtRoot = isAtRoot(context)
   const fileIsSidecar = sidecarExtensions.includes(extension)
 
-  if (rule.suffixies && !rule.suffixes.includes(suffix)) {
+  if (rule.suffixes && !rule.suffixes.includes(suffix)) {
     return false
   }
 
@@ -62,7 +62,11 @@ export function validateFilenameAgainstRule(
     return false
   }
 
-  if (!rule.datatypes.includes(context.datatype)) {
+  if (
+    !!context.datatype &&
+    rule.datatypes &&
+    !rule.datatypes.includes(context.datatype)
+  ) {
     issues.addNonSchemaIssue('DATATYPE_MISMATCH', [
       { ...context.file, evidence: `Datatype rule being applied: ${rule}` },
     ])
@@ -157,6 +161,9 @@ export function datatypeFromDirectory(schema: Schema, context: BIDSContext) {
   if (!(subParts.length === 2 && subParts[0] === subEntity)) {
     // first directory must be subject
   }
+  if (parts.length < 3) {
+    return
+  }
   const sesParts = parts[2].split('-')
   if (sesParts.length === 2 && sesParts[0] === sesEntity) {
     datatypeIndex = 3
@@ -214,7 +221,14 @@ export function isTopLevel(schema: Schema, context: BIDSContext) {
 }
 
 export function isAssociatedData(schema: Schema, path: string): boolean {
-  associatedData = schema.rules.associated_data
+  const associatedData = schema.rules.associated_data
   const parts = path.split(SEP)
   return associatedData.hasOwnProperty(parts[1])
 }
+
+/*
+export function isTabularMetadata(schema: Schema, context: BIDSContext): boolean {
+  const tabularMetadata = schema.rules.tabular_metadata
+  return Object.values(tabularMetadata).some(rule => validateFilenameAgainstRule(rule, context))
+}
+*/
