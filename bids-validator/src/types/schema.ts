@@ -8,6 +8,7 @@ export interface SchemaObjects {
 export interface SchemaRules {
   top_level_files: unknown
   datatypes: unknown
+  modalities: unknown
 }
 
 export interface Schema {

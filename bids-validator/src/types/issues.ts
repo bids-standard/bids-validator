@@ -1,7 +1,4 @@
-export const warning = Symbol('warning')
-export const error = Symbol('error')
-export const ignore = Symbol('ignore')
-type Severity = typeof warning | typeof error | typeof ignore
+export type Severity = 'warning' | 'error' | 'ignore'
 
 export interface IssueFileDetail {
   name: string
@@ -13,7 +10,7 @@ export interface IssueFile {
   key: string
   code: number
   file: IssueFileDetail
-  evidence: String
+  evidence: string
   line: number
   character: number
   severity: Severity
@@ -29,7 +26,16 @@ export interface Issue {
   key: string
   code: number
   reason: string
-  files: [IssueFile?]
+  files: IssueFile[]
   additionalFileCount: number
   helpUrl: string
 }
+
+/**
+ * For defining internal issues quickly
+ */
+export interface IssueDefinition {
+  severity: Severity
+  reason: string
+}
+export type IssueDefinitionRecord = Record<string, IssueDefinition>

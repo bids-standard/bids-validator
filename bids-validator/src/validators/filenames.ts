@@ -1,8 +1,9 @@
+// @ts-nocheck
 import { SEP } from '../deps/path.ts'
 import { Schema } from '../types/schema.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { lookupModality } from '../schema/modalities.ts'
-import { addIssue } from '../issues/index.ts'
+import { issues } from '../issues/index.ts'
 
 // This should be defined in the schema
 const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
@@ -53,32 +54,27 @@ export function checkDatatype(
   }
 
   if (!rule.datatypes.includes(context.datatype)) {
-    addIssue(
-      {
-        file: context.file.path,
-        evidence: `Datatype rule being applied: ${rule}`,
-      },
-      'DATATYPE_MISMATCH',
-    )
+    issues.addNonSchemaIssue('DATATYPE_MISMATCH', [
+      { ...context.file, evidence: `Datatype rule being applied: ${rule}` },
+    ])
   }
 
   // context entities are key-value pairs from filename.
   const fileNoLabelEntities = Object.keys(entities).filter(
-    key => entities[key] === 'NOENTITY',
+    (key) => entities[key] === 'NOENTITY',
   )
   const fileEntities = Object.keys(entities).filter(
-    key => !fileNoLabelEntities.includes(key),
+    (key) => !fileNoLabelEntities.includes(key),
   )
 
   if (fileNoLabelEntities.length) {
-    addIssue(
-      { file: context.file.path, evidence: fileNoLabelEntities.join(', ') },
-      'ENTITY_WITH_NO_LABEL',
-    )
+    issues.addNonSchemaIssue('ENTITY_WITH_NO_LABEL', [
+      { ...context.file, evidence: fileNoLabelEntities.join(', ') },
+    ])
   }
 
   // we need to convert schema centric name to what shows up in filenames
-  const ruleEntities = Object.keys(rule.entities).map(key =>
+  const ruleEntities = Object.keys(rule.entities).map((key) =>
     lookupEntityLiteral(key, schema),
   )
 
@@ -90,14 +86,13 @@ export function checkDatatype(
       .map(([k, _]) => lookupEntityLiteral(k, schema))
 
     const missingRequired = ruleEntitiesRequired.filter(
-      required => !fileEntities.includes(required),
+      (required) => !fileEntities.includes(required),
     )
 
     if (missingRequired.length) {
-      addIssue(
-        { file: context.file.path, evidence: missingRequired.join(', ') },
-        'MISSING_REQUIRED_ENTITY',
-      )
+      issues.addNonSchemaIssue('MISSING_REQUIRED_ENTITY', [
+        { ...context.file, evidence: missingRequired.join(', ') },
+      ])
     }
   }
 
@@ -106,14 +101,13 @@ export function checkDatatype(
   }
 
   const entityNotInRule = fileEntities.filter(
-    fileEntity => !ruleEntities.includes(fileEntity),
+    (fileEntity) => !ruleEntities.includes(fileEntity),
   )
 
   if (entityNotInRule.length) {
-    addIssue(
-      { file: context.file.path, evidence: entityNotInRule.join(', ') },
-      'ENTITY_NOT_IN_RULE',
-    )
+    issues.addNonSchemaIssue('ENTITY_NOT_IN_RULE', [
+      { ...context.file, evidence: entityNotInRule.join(', ') },
+    ])
   }
   return true
 }
@@ -130,7 +124,7 @@ function lookupEntityLiteral(name: string, schema: Schema) {
 
 function getEntityByLiteral(fileEntity: string, schema: Schema) {
   const entities = schema.objects.entities
-  const key = Object.keys(entities).find(key => {
+  const key = Object.keys(entities).find((key) => {
     return entities[key].entity === fileEntity
   })
   if (key) {
@@ -171,7 +165,7 @@ export function datatypeFromDirectory(schema: Schema, context: BIDSContext) {
 export function checkLabelFormat(schema: Schema, context: BIDSContext) {
   const formats = schema.objects.formats
   const entities = schema.objects.entities
-  Object.keys(context.entities).map(fileEntity => {
+  Object.keys(context.entities).map((fileEntity) => {
     const entity = getEntityByLiteral(fileEntity, schema)
     if (entity) {
       // assuming all formats are well defined in schema.objects
@@ -179,13 +173,12 @@ export function checkLabelFormat(schema: Schema, context: BIDSContext) {
       const rePattern = new RegExp(`^${pattern}$`)
       const label = context.entities[fileEntity]
       if (!rePattern.test(label)) {
-        addIssue(
+        issues.addNonSchemaIssue('INVALID_ENTITY_LABEL', [
           {
-            file: context.file.path,
+            ...context.file,
             evidence: `entity: ${fileEntity} label: ${label} pattern: ${pattern}`,
           },
-          'INVALID_ENTITY_LABEL',
-        )
+        ])
       }
     } else {
       // unknown entity

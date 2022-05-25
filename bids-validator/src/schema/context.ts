@@ -1,4 +1,10 @@
-import { Context } from '../types/context.ts'
+import {
+  Context,
+  ContextDataset,
+  ContextSubject,
+  ContextAssociations,
+  ContextNiftiHeader,
+} from '../types/context.ts'
 import { FileTree, BIDSFile } from '../files/filetree.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 
@@ -8,7 +14,16 @@ export class BIDSContext implements Context {
   file: BIDSFile
   suffix: string
   extension: string
-  entities: Record<string, string>
+  entities: object
+  dataset: ContextDataset
+  subject: ContextSubject
+  datatype: string
+  modality: string
+  sidecar: object
+  associations: ContextAssociations
+  columns: object
+  json: object
+  nifti_header: ContextNiftiHeader
 
   constructor(fileTree: FileTree, file: BIDSFile) {
     this.#fileTree = fileTree
@@ -17,6 +32,19 @@ export class BIDSContext implements Context {
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
+    this.dataset = {} as ContextDataset
+    this.subject = {} as ContextSubject
+    this.datatype = 'unimplemented'
+    this.modality = 'unimplemented'
+    this.sidecar = {}
+    this.associations = {} as ContextAssociations
+    this.columns = {}
+    this.json = {}
+    this.nifti_header = {} as ContextNiftiHeader
+  }
+
+  get path(): string {
+    return this.datasetPath
   }
 
   /**

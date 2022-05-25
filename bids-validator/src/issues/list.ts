@@ -1,25 +1,27 @@
-export const filenameIssues = {
+import { IssueDefinitionRecord } from '../types/issues.ts'
+
+export const filenameIssues: IssueDefinitionRecord = {
   INVALID_ENTITY_LABEL: {
-    level: 'error',
-    message:
+    severity: 'error',
+    reason:
       "entity label doesn't match format found for files with this suffix",
   },
   ENTITY_WITH_NO_LABEL: {
-    level: 'error',
-    message: 'Found an entity with no label.',
+    severity: 'error',
+    reason: 'Found an entity with no label.',
   },
   MISSING_REQUIRED_ENTITY: {
-    level: 'error',
-    message: 'Missing required entity for files with this suffix.',
+    severity: 'error',
+    reason: 'Missing required entity for files with this suffix.',
   },
   ENTITY_NOT_IN_RULE: {
-    level: 'error',
-    message:
+    severity: 'error',
+    reason:
       'Entity not listed as required or optional for files with this suffix',
   },
   DATATYPE_MISMATCH: {
-    level: 'error',
-    message:
+    severity: 'error',
+    reason:
       'The datatype directory does not match datatype of found suffix and extension',
   },
 }

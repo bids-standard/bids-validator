@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { assert, assertEquals, assertObjectMatch } from '../deps/asserts.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { evalCheck } from './applyRules.ts'
@@ -49,10 +50,10 @@ const schemaDefs = {
 Deno.test('evalCheck test', () => {
   ruleContextData.map((rcd) => {
     const rule = rcd.path.reduce((obj, key) => obj[key], schemaDefs)
-    rule.selectors.map((selector) => {
+    rule.selectors.map((selector: string) => {
       assert(evalCheck(selector, rcd.context), `${selector}, ${rcd.context}`)
     })
-    rule.checks.map((check) => {
+    rule.checks.map((check: string) => {
       assert(evalCheck(check, rcd.context), `${check}, ${rcd.context}`)
     })
   })
