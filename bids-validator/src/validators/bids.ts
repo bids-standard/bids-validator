@@ -13,7 +13,7 @@ import {
 /**
  * Full BIDS schema validation entrypoint
  */
-export async function validate(fileTree: FileTree): Promise<> {
+export async function validate(fileTree: FileTree): Promise<void> {
   const issues = []
   const schema = await loadSchema()
   for await (const context of walkFileTree(fileTree)) {
