@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { assert, assertEquals, assertObjectMatch } from '../deps/asserts.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { evalCheck } from './applyRules.ts'

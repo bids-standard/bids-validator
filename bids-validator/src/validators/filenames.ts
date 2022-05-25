@@ -3,7 +3,7 @@ import { SEP } from '../deps/path.ts'
 import { Schema } from '../types/schema.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { lookupModality } from '../schema/modalities.ts'
-import { addIssue } from '../issues/index.ts'
+import { issues } from '../issues/index.ts'
 
 // This should be defined in the schema
 const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
@@ -54,13 +54,9 @@ export function checkDatatype(
   }
 
   if (!rule.datatypes.includes(context.datatype)) {
-    addIssue(
-      {
-        file: context.file.path,
-        evidence: `Datatype rule being applied: ${rule}`,
-      },
-      'DATATYPE_MISMATCH',
-    )
+    issues.addNonSchemaIssue('DATATYPE_MISMATCH', [
+      { ...context.file, evidence: `Datatype rule being applied: ${rule}` },
+    ])
   }
 
   // context entities are key-value pairs from filename.
@@ -72,10 +68,9 @@ export function checkDatatype(
   )
 
   if (fileNoLabelEntities.length) {
-    addIssue(
-      { file: context.file.path, evidence: fileNoLabelEntities.join(', ') },
-      'ENTITY_WITH_NO_LABEL',
-    )
+    issues.addNonSchemaIssue('ENTITY_WITH_NO_LABEL', [
+      { ...context.file, evidence: fileNoLabelEntities.join(', ') },
+    ])
   }
 
   // we need to convert schema centric name to what shows up in filenames
@@ -95,10 +90,9 @@ export function checkDatatype(
     )
 
     if (missingRequired.length) {
-      addIssue(
-        { file: context.file.path, evidence: missingRequired.join(', ') },
-        'MISSING_REQUIRED_ENTITY',
-      )
+      issues.addNonSchemaIssue('MISSING_REQUIRED_ENTITY', [
+        { ...context.file, evidence: missingRequired.join(', ') },
+      ])
     }
   }
 
@@ -111,10 +105,9 @@ export function checkDatatype(
   )
 
   if (entityNotInRule.length) {
-    addIssue(
-      { file: context.file.path, evidence: entityNotInRule.join(', ') },
-      'ENTITY_NOT_IN_RULE',
-    )
+    issues.addNonSchemaIssue('ENTITY_NOT_IN_RULE', [
+      { ...context.file, evidence: entityNotInRule.join(', ') },
+    ])
   }
   return true
 }
@@ -180,13 +173,12 @@ export function checkLabelFormat(schema: Schema, context: BIDSContext) {
       const rePattern = new RegExp(`^${pattern}$`)
       const label = context.entities[fileEntity]
       if (!rePattern.test(label)) {
-        addIssue(
+        issues.addNonSchemaIssue('INVALID_ENTITY_LABEL', [
           {
-            file: context.file.path,
+            ...context.file,
             evidence: `entity: ${fileEntity} label: ${label} pattern: ${pattern}`,
           },
-          'INVALID_ENTITY_LABEL',
-        )
+        ])
       }
     } else {
       // unknown entity

@@ -1,7 +1,63 @@
-import { BIDSFile, isBIDSFile } from '../files/filetree.ts'
+import { BIDSFile } from '../files/filetree.ts'
 import { nonSchemaIssues } from './list.ts'
 import { constructHelpUrl } from './formatting.ts'
 import { Issue, IssueFile, Severity } from '../types/issues.ts'
+
+// Code is deprecated, return something unusual but JSON serializable
+const CODE_DEPRECATED = Number.MIN_SAFE_INTEGER
+
+// Extended BIDSFile to add Issue related context
+export type BIDSFileIssue = BIDSFile & {
+  evidence?: string
+  reason?: string
+  line?: number
+  character?: number
+}
+
+type DatasetIssueFile = IssueFile | BIDSFileIssue
+
+// Guard to test for anything except IssueFile
+function isNotIssueFile(f: DatasetIssueFile): f is BIDSFileIssue {
+  return (
+    (f as BIDSFileIssue).path !== undefined &&
+    (f as BIDSFileIssue).name !== undefined
+  )
+}
+
+/**
+ * Format an internal file reference with context as the output IssueFile type
+ */
+const issueFile =
+  (key: string, severity: Severity) =>
+  (f: DatasetIssueFile): IssueFile => {
+    if (isNotIssueFile(f)) {
+      const evidence = f.evidence || ''
+      const reason = f.reason || ''
+      const line = f.line || 0
+      const character = f.character || 0
+      return {
+        key,
+        code: CODE_DEPRECATED,
+        file: { path: f.path, name: f.name, relativePath: f.path },
+        evidence,
+        line,
+        character,
+        severity: severity,
+        reason,
+        helpUrl: constructHelpUrl(key),
+      }
+    } else {
+      return f
+    }
+  }
+
+interface DatasetIssuesAddParams {
+  key: string
+  reason: string
+  severity?: Severity
+  additionalFileCount?: number
+  files?: Array<DatasetIssueFile>
+}
 
 /**
  * Management class for dataset issues
@@ -9,43 +65,25 @@ import { Issue, IssueFile, Severity } from '../types/issues.ts'
 export class DatasetIssues {
   // Issue key to issue mapping
   issues: Map<string, Issue>
+
   constructor() {
     this.issues = new Map()
   }
 
-  add(
-    key: string,
-    severity: Severity = 'warning',
-    reason: string,
+  add({
+    key,
+    reason,
+    severity = 'error',
     additionalFileCount = 0,
-    files?: Array<BIDSFile | IssueFile>,
-  ): Issue {
+    files,
+  }: DatasetIssuesAddParams): Issue {
     const existingIssue = this.issues.get(key)
-    // Code is deprecated, return something unusual but JSON serializable
-    const code = Number.MIN_SAFE_INTEGER
+    const code = CODE_DEPRECATED
     // Provide a link to NeuroStars
     const helpUrl = constructHelpUrl(key)
     // Handle both the shorthand BIDSFile array or full IssueFile
     const relatedFiles =
-      files && files.length > 0
-        ? files.map((f) => {
-            if (isBIDSFile(f)) {
-              return {
-                key,
-                code,
-                file: { path: f.path, name: f.name, relativePath: f.path },
-                evidence: '',
-                line: 0,
-                character: 0,
-                severity: severity,
-                reason: '',
-                helpUrl,
-              }
-            } else {
-              return f
-            }
-          })
-        : []
+      files && files.length > 0 ? files.map(issueFile(key, severity)) : []
     if (existingIssue) {
       existingIssue.files.push(...relatedFiles)
       // Should we drop the additionalFileCount concept?
@@ -66,19 +104,27 @@ export class DatasetIssues {
     }
   }
 
+  // Shorthand to test if an issue has occurred
+  hasIssue({ key }: { key: string }): boolean {
+    if (this.issues.has(key)) {
+      return true
+    }
+    return false
+  }
+
   addNonSchemaIssue(
     key: string,
-    files: Array<BIDSFile | IssueFile>,
-    additionalFileCount?: number,
+    files: Array<DatasetIssueFile>,
+    additionalFileCount: number = 0,
   ) {
     if (nonSchemaIssues.hasOwnProperty(key)) {
-      this.add(
+      this.add({
         key,
-        nonSchemaIssues[key].severity,
-        nonSchemaIssues[key].reason,
+        reason: nonSchemaIssues[key].reason,
+        severity: nonSchemaIssues[key].severity,
         additionalFileCount,
         files,
-      )
+      })
     } else {
       throw new Error('key does not exist in non-schema issues definitions')
     }
