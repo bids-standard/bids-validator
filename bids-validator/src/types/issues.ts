@@ -1,3 +1,5 @@
+import { BIDSFile } from './file.ts'
+
 export type Severity = 'warning' | 'error' | 'ignore'
 
 export interface IssueFileDetail {

@@ -1,4 +1,4 @@
-import { BIDSFile } from '../files/filetree.ts'
+import { BIDSFile } from '../types/file.ts'
 
 export interface BIDSEntities {
   suffix: string

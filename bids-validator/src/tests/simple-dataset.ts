@@ -1,4 +1,4 @@
-import { FileTree } from '../files/filetree.ts'
+import { FileTree } from '../types/filetree.ts'
 
 // Very basic dataset modeled for tests
 const rootFileTree = new FileTree('/', '')

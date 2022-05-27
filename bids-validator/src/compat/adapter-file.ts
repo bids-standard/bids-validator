@@ -1,5 +1,5 @@
 import { relative, resolve } from '../deps/path.ts'
-import { BIDSFile } from '../files/filetree.ts'
+import { BIDSFile } from '../types/file.ts'
 
 /**
  * File class modeled off browser File for validator

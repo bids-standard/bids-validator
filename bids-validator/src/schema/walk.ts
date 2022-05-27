@@ -1,5 +1,5 @@
 import { BIDSContext } from './context.ts'
-import { FileTree } from '../files/filetree.ts'
+import { FileTree } from '../types/filetree.ts'
 
 /** Recursive algorithm for visiting each file in the dataset, creating a context */
 export async function* _walkFileTree(

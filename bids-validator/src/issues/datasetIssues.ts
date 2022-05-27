@@ -1,4 +1,4 @@
-import { BIDSFile } from '../files/filetree.ts'
+import { BIDSFile } from '../types/file.ts'
 import { nonSchemaIssues } from './list.ts'
 import { constructHelpUrl } from './formatting.ts'
 import { Issue, IssueFile, Severity } from '../types/issues.ts'

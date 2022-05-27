@@ -5,7 +5,8 @@ import {
   ContextAssociations,
   ContextNiftiHeader,
 } from '../types/context.ts'
-import { FileTree, BIDSFile } from '../files/filetree.ts'
+import { BIDSFile } from '../types/file.ts'
+import { FileTree } from '../types/filetree.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 
 export class BIDSContext implements Context {
