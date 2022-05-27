@@ -104,6 +104,21 @@ export class DatasetIssues {
     }
   }
 
+  /**
+   * Add an existing issue or merge if the same key already exists from an array of Issue objects
+   * @param issues
+   */
+  merge(issues: Issue[]) {
+    for (const issue of issues) {
+      const exists = this.issues.get(issue.key)
+      if (exists) {
+        exists.files.push(...issue.files)
+      } else {
+        this.issues.set(issue.key, issue)
+      }
+    }
+  }
+
   // Shorthand to test if an issue has occurred
   hasIssue({ key }: { key: string }): boolean {
     if (this.issues.has(key)) {

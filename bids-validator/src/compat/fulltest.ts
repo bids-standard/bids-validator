@@ -6,8 +6,13 @@ import { Issue } from '../types/issues.ts'
 import validate from '../../dist/esm/index.js'
 import { AdapterFile } from './adapter-file.ts'
 
+interface FullTestIssuesReturn {
+  errors: Issue[]
+  warnings: Issue[]
+}
+
 export interface FullTestAdapterReturn {
-  issues: Issue[]
+  issues: FullTestIssuesReturn
   summary: Record<string, any>
 }
 
@@ -25,7 +30,7 @@ export async function fullTestAdapter(
     validate.BIDS(
       fileList,
       options,
-      (issues: Issue[], summary: Record<string, any>) => {
+      (issues: FullTestIssuesReturn, summary: Record<string, any>) => {
         resolve({ issues, summary })
       },
     )
