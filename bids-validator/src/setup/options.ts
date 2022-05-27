@@ -4,7 +4,7 @@ import { yargs } from '../deps/yargs.ts'
 export interface ValidatorOptions {
   _: string[]
   config: any
-  schema: any
+  schemaOnly: boolean
 }
 
 /**
@@ -73,13 +73,9 @@ export function parseOptions(
       'A less accurate check that reads filenames one per line from stdin.',
     )
     .hide('filenames')
-    .option('schema', {
-      alias: 's',
-      describe:
-        'BIDS specification schema version to use for validation, e.g. "v1.6.0" (beta)',
-      default: 'disable',
-      choices: ['disable', 'v1.6.0', 'master'],
-    })
+    .boolean('schemaOnly')
+    .default('schemaOnly', false)
+    .describe('schemaOnly', 'Run only schema based validation.')
     .epilogue(
       'This tool checks if a dataset in a given directory is \
 compatible with the Brain Imaging Data Structure specification. To learn \

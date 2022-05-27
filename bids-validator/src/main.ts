@@ -5,6 +5,15 @@ import { fullTestAdapter } from './compat/fulltest.ts'
 import { validate } from './validators/bids.ts'
 import { issues } from './issues/index.ts'
 
+function inspect(obj: any) {
+  console.log(
+    Deno.inspect(obj, {
+      depth: 6,
+      colors: true,
+    }),
+  )
+}
+
 async function main() {
   const options = parseOptions(Deno.args)
   const absolutePath = resolve(options._[0])
@@ -13,14 +22,16 @@ async function main() {
   // Run the schema based validator
   await validate(tree)
 
-  // const { issues, summary } = await fullTestAdapter(tree, options)
-  const inspectOpts = {
-    depth: 6,
-    colors: true,
+  if (options.schemaOnly) {
+    inspect(issues.issues)
+    // TODO - generate a summary without the old validator
+  } else {
+    const result = await fullTestAdapter(tree, options)
+    issues.merge(result.issues.errors)
+    issues.merge(result.issues.warnings)
+    inspect(issues.issues)
+    inspect(result.summary)
   }
-  // console.log(Deno.inspect(schemaIssues.concat(issues), inspectOpts))
-  console.log(Deno.inspect(issues, inspectOpts))
-  // console.log(Deno.inspect(summary, inspectOpts))
 }
 
 await main()
