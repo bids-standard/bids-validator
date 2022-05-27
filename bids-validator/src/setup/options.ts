@@ -4,6 +4,7 @@ import { yargs } from '../deps/yargs.ts'
 export interface ValidatorOptions {
   _: string[]
   config: any
+  schema: any
   schemaOnly: boolean
 }
 
