@@ -1,6 +1,5 @@
 Deno validator examples.
 
-
 ```shell
 # Run tests:
 deno test --allow-env --allow-read src/

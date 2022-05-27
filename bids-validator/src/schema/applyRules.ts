@@ -1,4 +1,3 @@
-import { Issue, ignore } from '../types/issues.ts'
 import { Schema } from '../types/schema.ts'
 import { BIDSContext } from './context.ts'
 
@@ -7,10 +6,8 @@ import { BIDSContext } from './context.ts'
  * @param schema
  * @param context
  */
-export function applyRules(schema: Schema, context: BIDSContext): Issue[] {
-  const issues: Issue[] = []
-  console.log(context)
-  return issues
+export function applyRules(schema: Schema, context: BIDSContext) {
+  return
 }
 
 const evalConstructor = (src: string): Function =>

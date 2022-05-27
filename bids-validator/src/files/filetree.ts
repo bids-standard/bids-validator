@@ -16,6 +16,10 @@ export interface BIDSFile {
   stream: Promise<ReadableStream<Uint8Array>>
 }
 
+export function isBIDSFile(file: object): file is BIDSFile {
+  return (file as BIDSFile).stream !== undefined
+}
+
 export class FileTree {
   // Relative path to this FileTree location
   path: string

@@ -18,10 +18,10 @@ export async function fullTestAdapter(
   const fileList: Array<AdapterFile> = []
   for await (const context of walkFileTree(tree)) {
     const stream = await context.file.stream
-    const file = new AdapterFile(context.dataset.path, context.file, stream)
+    const file = new AdapterFile(context.datasetPath, context.file, stream)
     fileList.push(file)
   }
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     validate.BIDS(
       fileList,
       options,

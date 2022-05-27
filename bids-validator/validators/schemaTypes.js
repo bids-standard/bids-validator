@@ -138,7 +138,7 @@ export async function generateRegex(schema, pythonRegex = false) {
       }
       const suffix_regex = `_(?${P}<suffix>${datatype.suffixes.join('|')})`
       // Workaround v1.6.0 MEG extension "*"
-      const wildcard_extensions = datatype.extensions.map(ext =>
+      const wildcard_extensions = datatype.extensions.map((ext) =>
         ext === '*' ? '.*?' : ext,
       )
       const ext_regex = `(?${P}<ext>${wildcard_extensions.join('|')})`

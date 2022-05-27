@@ -20,7 +20,7 @@ function readNiftiHeader(file, annexed, dir, callback) {
 }
 
 function nodeNiftiTest(file, annexed, dir, callback) {
-  testFile(file, annexed, dir, function(issue, stats, remoteBuffer) {
+  testFile(file, annexed, dir, function (issue, stats, remoteBuffer) {
     file.stats = stats
     if (issue) {
       callback({ error: issue })
@@ -44,12 +44,12 @@ function extractNiftiFile(file, callback) {
   const bytesRead = 1024
   const buffer = Buffer.alloc(bytesRead)
 
-  fs.open(file.path, 'r', function(err, fd) {
+  fs.open(file.path, 'r', function (err, fd) {
     if (err) {
       callback({ error: new Issue({ code: 44, file: file }) })
       return
     } else {
-      fs.read(fd, buffer, 0, bytesRead, 0, function() {
+      fs.read(fd, buffer, 0, bytesRead, 0, function () {
         if (file.name.endsWith('.nii')) {
           callback(parseNIfTIHeader(buffer, file))
         } else {
@@ -85,7 +85,7 @@ function browserNiftiTest(file, callback) {
 function constructBrowserFileReader(file, callback) {
   let fileReader = new FileReader()
 
-  fileReader.onloadend = function() {
+  fileReader.onloadend = function () {
     var buffer = new Uint8Array(fileReader.result)
     var unzipped
 

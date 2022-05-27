@@ -26,7 +26,7 @@ describe('type.js', () => {
     })
 
     const physio_task_modalities = ['eeg', 'ieeg', 'meg', 'func', 'beh']
-    physio_task_modalities.map(mod => {
+    physio_task_modalities.map((mod) => {
       it(`does not throw an error for recording entity in ${mod} physio data`, () => {
         expect(
           type.isBIDS(

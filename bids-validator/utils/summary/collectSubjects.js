@@ -3,7 +3,7 @@ import type from '../type'
 const collectSubjects = (fileList, options) => {
   const subjects = []
   const fileKeys = Object.keys(fileList)
-  fileKeys.forEach(key => {
+  fileKeys.forEach((key) => {
     const file = fileList[key]
     if (
       !type.file.isStimuliData(file.relativePath) &&

@@ -2,10 +2,10 @@ import isNode from '../../utils/isNode'
 
 const Issue = require('../../utils').issues.Issue
 
-const checkReadme = fileList => {
+const checkReadme = (fileList) => {
   const issues = []
   const readmeFile = Array.from(Object.values(fileList)).find(
-    file => file.relativePath && file.relativePath == '/README',
+    (file) => file.relativePath && file.relativePath == '/README',
   )
   if (readmeFile) {
     const size = !isNode ? readmeFile.size : readmeFile.stats.size
