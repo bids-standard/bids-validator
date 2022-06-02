@@ -26,10 +26,11 @@ async function main() {
     inspect(issues.issues)
     // TODO - generate a summary without the old validator
   } else {
+    const output = issues.formatOutput()
     const result = await fullTestAdapter(tree, options)
-    issues.merge(result.issues.errors)
-    issues.merge(result.issues.warnings)
-    inspect(issues.issues)
+    output.errors.push(...result.issues.errors)
+    output.warnings.push(...result.issues.warnings)
+    inspect(output)
     inspect(result.summary)
   }
 }

@@ -1,62 +1,44 @@
-import { BIDSFile } from '../files/filetree.ts'
 import { nonSchemaIssues } from './list.ts'
-import { constructHelpUrl } from './formatting.ts'
-import { Issue, IssueFile, Severity } from '../types/issues.ts'
+import {
+  Issue,
+  IssueFile,
+  IssueOutput,
+  IssueFileOutput,
+  Severity,
+  FullTestIssuesReturn,
+} from '../types/issues.ts'
 
 // Code is deprecated, return something unusual but JSON serializable
 const CODE_DEPRECATED = Number.MIN_SAFE_INTEGER
 
-// Extended BIDSFile to add Issue related context
-export type BIDSFileIssue = BIDSFile & {
-  evidence?: string
-  reason?: string
-  line?: number
-  character?: number
-}
-
-type DatasetIssueFile = IssueFile | BIDSFileIssue
-
-// Guard to test for anything except IssueFile
-function isNotIssueFile(f: DatasetIssueFile): f is BIDSFileIssue {
-  return (
-    (f as BIDSFileIssue).path !== undefined &&
-    (f as BIDSFileIssue).name !== undefined
-  )
-}
-
 /**
- * Format an internal file reference with context as the output IssueFile type
+ * Format an internal file reference with context as IssueFileOutput
  */
-const issueFile =
-  (key: string, severity: Severity) =>
-  (f: DatasetIssueFile): IssueFile => {
-    if (isNotIssueFile(f)) {
-      const evidence = f.evidence || ''
-      const reason = f.reason || ''
-      const line = f.line || 0
-      const character = f.character || 0
-      return {
-        key,
-        code: CODE_DEPRECATED,
-        file: { path: f.path, name: f.name, relativePath: f.path },
-        evidence,
-        line,
-        character,
-        severity: severity,
-        reason,
-        helpUrl: constructHelpUrl(key),
-      }
-    } else {
-      return f
-    }
+const issueFile = (issue: Issue, f: IssueFile): IssueFileOutput => {
+  const evidence = f.evidence || ''
+  const reason = issue.reason || ''
+  const line = f.line || 0
+  const character = f.character || 0
+  return {
+    key: issue.key,
+    code: CODE_DEPRECATED,
+    file: { path: f.path, name: f.name, relativePath: f.path },
+    evidence,
+    line,
+    character,
+    severity: issue.severity,
+    reason,
+    helpUrl: issue.helpUrl,
   }
+}
 
 interface DatasetIssuesAddParams {
   key: string
   reason: string
+  // Defaults to error
   severity?: Severity
-  additionalFileCount?: number
-  files?: Array<DatasetIssueFile>
+  // Defaults to an empty array if no files are provided
+  files?: Array<IssueFile>
 }
 
 /**
@@ -74,48 +56,24 @@ export class DatasetIssues {
     key,
     reason,
     severity = 'error',
-    additionalFileCount = 0,
-    files,
+    files = [],
   }: DatasetIssuesAddParams): Issue {
     const existingIssue = this.issues.get(key)
-    const code = CODE_DEPRECATED
-    // Provide a link to NeuroStars
-    const helpUrl = constructHelpUrl(key)
     // Handle both the shorthand BIDSFile array or full IssueFile
-    const relatedFiles =
-      files && files.length > 0 ? files.map(issueFile(key, severity)) : []
     if (existingIssue) {
-      existingIssue.files.push(...relatedFiles)
-      // Should we drop the additionalFileCount concept?
-      existingIssue.additionalFileCount += additionalFileCount
+      for (const f of files) {
+        existingIssue.files.set(f.path, f)
+      }
       return existingIssue
     } else {
-      const newIssue: Issue = {
-        severity,
+      const newIssue = new Issue({
         key,
-        code,
+        severity,
         reason,
-        files: relatedFiles,
-        additionalFileCount,
-        helpUrl,
-      }
+        files,
+      })
       this.issues.set(key, newIssue)
       return newIssue
-    }
-  }
-
-  /**
-   * Add an existing issue or merge if the same key already exists from an array of Issue objects
-   * @param issues
-   */
-  merge(issues: Issue[]) {
-    for (const issue of issues) {
-      const exists = this.issues.get(issue.key)
-      if (exists) {
-        exists.files.push(...issue.files)
-      } else {
-        this.issues.set(issue.key, issue)
-      }
     }
   }
 
@@ -127,17 +85,12 @@ export class DatasetIssues {
     return false
   }
 
-  addNonSchemaIssue(
-    key: string,
-    files: Array<DatasetIssueFile>,
-    additionalFileCount: number = 0,
-  ) {
-    if (nonSchemaIssues.hasOwnProperty(key)) {
+  addNonSchemaIssue(key: string, files: Array<IssueFile>) {
+    if (key in nonSchemaIssues) {
       this.add({
         key,
         reason: nonSchemaIssues[key].reason,
         severity: nonSchemaIssues[key].severity,
-        additionalFileCount,
         files,
       })
     } else {
@@ -148,7 +101,7 @@ export class DatasetIssues {
   fileInIssues(path: string): Issue[] {
     const matchingIssues = []
     for (const [key, issue] of this.issues) {
-      if (issue.files.some((f) => f.file.path === path)) {
+      if (issue.files.get(path)) {
         matchingIssues.push(issue)
       }
     }
@@ -162,5 +115,34 @@ export class DatasetIssues {
    */
   getFileIssueKeys(path: string): string[] {
     return this.fileInIssues(path).map((issue) => issue.key)
+  }
+
+  /**
+   * Format output
+   *
+   * Converts from new internal representation to old IssueOutput structure
+   */
+  formatOutput(): FullTestIssuesReturn {
+    const output: FullTestIssuesReturn = {
+      errors: [],
+      warnings: [],
+    }
+    for (const [key, issue] of this.issues) {
+      const outputIssue: IssueOutput = {
+        severity: issue.severity,
+        key: issue.key,
+        code: CODE_DEPRECATED,
+        additionalFileCount: 0,
+        reason: issue.reason,
+        files: Array.from(issue.files.values()).map((f) => issueFile(issue, f)),
+        helpUrl: issue.helpUrl,
+      }
+      if (issue.severity === 'warning') {
+        output.warnings.push(outputIssue)
+      } else {
+        output.errors.push(outputIssue)
+      }
+    }
+    return output
   }
 }

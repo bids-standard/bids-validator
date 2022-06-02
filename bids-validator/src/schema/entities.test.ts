@@ -1,5 +1,5 @@
 import { assert, assertEquals } from '../deps/asserts.ts'
-import { BIDSFile } from '../files/filetree.ts'
+import { BIDSFile } from '../types/file.ts'
 import { readEntities } from './entities.ts'
 
 Deno.test('test readEntities', async (t) => {

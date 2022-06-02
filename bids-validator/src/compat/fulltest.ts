@@ -1,15 +1,10 @@
 /** Adapter to run Node.js bids-validator fullTest with minimal changes from Deno */
 import { ValidatorOptions } from '../setup/options.ts'
-import { FileTree } from '../files/filetree.ts'
+import { FileTree } from '../types/filetree.ts'
 import { walkFileTree } from '../schema/walk.ts'
-import { Issue } from '../types/issues.ts'
+import { FullTestIssuesReturn } from '../types/issues.ts'
 import validate from '../../dist/esm/index.js'
 import { AdapterFile } from './adapter-file.ts'
-
-interface FullTestIssuesReturn {
-  errors: Issue[]
-  warnings: Issue[]
-}
 
 export interface FullTestAdapterReturn {
   issues: FullTestIssuesReturn

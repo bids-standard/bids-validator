@@ -2,7 +2,8 @@
  * Deno specific implementation for reading files
  */
 import { join, basename } from '../deps/path.ts'
-import { FileTree, BIDSFile } from './filetree.ts'
+import { BIDSFile } from '../types/file.ts'
+import { FileTree } from '../types/filetree.ts'
 
 /**
  * Deno implementation of BIDSFile
