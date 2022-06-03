@@ -245,10 +245,9 @@ describe('Events', function() {
         jsonFiles,
         '',
       ).then(issues => {
-        assert.strictEqual(issues.length, 3)
+        assert.strictEqual(issues.length, 2)
         assert.strictEqual(issues[0].code, 105)
         assert.strictEqual(issues[1].code, 105)
-        assert.strictEqual(issues[2].code, 105)
       })
     })
   })
