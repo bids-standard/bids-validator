@@ -564,7 +564,13 @@
         "_OCT",
         "_SPIM"
       ],
-      "@@@_microscopy_ext_@@@": [".ome\\.tif", ".ome\\.btf", ".tif", ".png"]
+      "@@@_microscopy_ext_@@@": [
+        ".ome\\.tif",
+        ".ome\\.btf",
+        ".ome\\.zarr[\\/\\\\].*",
+        ".tif",
+        ".png"
+      ]
     }
   },
   "microscopy_photo": {
