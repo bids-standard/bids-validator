@@ -614,18 +614,14 @@ describe('TSV', function() {
   }
 
   it('should allow NIRS optodes.tsv files with correct columns', function() {
-    var tsv =
-      'name\ttype\tx\ty\tz\n' +
-      'S1\tsource\t-0.04\t0.02\t0.5\n'
+    var tsv = 'name\ttype\tx\ty\tz\n' + 'S1\tsource\t-0.04\t0.02\t0.5\n'
     validate.TSV.TSV(optodesFileNIRS, tsv, [], function(issues) {
       assert(issues.length === 0)
     })
   })
 
   it('should not allow NIRS optodes.tsv files with out name columns', function() {
-    var tsv =
-      'type\tx\ty\tz\n' +
-      'source\t-0.04\t0.02\t0.5\n'
+    var tsv = 'type\tx\ty\tz\n' + 'source\t-0.04\t0.02\t0.5\n'
     validate.TSV.TSV(optodesFileNIRS, tsv, [], function(issues) {
       assert(issues[0].code === 228)
     })
