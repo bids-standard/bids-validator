@@ -524,7 +524,6 @@
         "_photo\\.jpg"
       ],
       "@@@_nirs_optodes_@@@": [
-        "_optodes\\.json",
         "_optodes\\.tsv",
         "_coordsystem\\.json"
       ]
