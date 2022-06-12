@@ -724,7 +724,7 @@ describe('JSON', function() {
     relativePath: '/sub-01/nirs/sub-01_task-testing_coordsystem.json',
   }
 
-  it('nirs *_coordsystem.json files should have required key/value pairs', function() {
+  it('NIRS *_coordsystem.json files should have required key/value pairs', function() {
     var jsonObj = {
       NIRSCoordinateSystem: 'fsaverage',
       NIRSCoordinateUnits: 'mm',
@@ -735,7 +735,7 @@ describe('JSON', function() {
     })
   })
 
-  it('iEEG *_coordsystem.json schema should require *Description if *Coordsystem is "Other"', function() {
+  it('NIRS *_coordsystem.json schema should require *Description if *Coordsystem is "Other"', function() {
     var jsonObj = {
       NIRSCoordinateSystem: 'Other',
       NIRSCoordinateUnits: 'mm',

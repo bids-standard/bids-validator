@@ -582,6 +582,20 @@ describe('TSV', function() {
       assert(issues.length === 0)
     })
   })
+  var channelsFileNIRS = {
+    name: 'sub-01_ses-001_task-rest_run-01_channels.tsv',
+    relativePath:
+      '/sub-01/ses-001/nirs/sub-01_ses-001_task-rest_run-01_channels.tsv',
+  }
+
+  it('should not allow NIRS channels.tsv files without name column', function() {
+    var tsv =
+      'name\ttype\tsource\tdetector\twavelength_nominal\tunits\n' +
+      'testch\tNIRSCWAMPLITUDE\tS1\tD1\t760.0\tV'
+    validate.TSV.TSV(channelsFileNIRS, tsv, [], function(issues) {
+      assert(issues.length === 0)
+    })
+  })
 
   // electrodes checks ---------------------------------------------------------
   var electrodesFileEEG = {
