@@ -67,6 +67,7 @@
     "CapManufacturer": { "type": "string" },
     "CapManufacturersModelName": { "type": "string" },
     "HeadCircumference": { "type": "number", "exclusiveMinimum": 0 },
+    "SourceType": { "type": "string" },
     "ShortChannelCount": {
       "type": "number",
       "exclusiveMinimum": 0,
