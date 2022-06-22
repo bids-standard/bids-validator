@@ -9,6 +9,7 @@ import {
 import { parse as yamlParse } from '../deps/yaml.ts'
 import { walk } from '../deps/fs.ts'
 import { Schema } from '../types/schema.ts'
+import { requestReadPermission } from './requestPermissions.ts'
 
 // TODO - This can't depend on Deno later, must support all environments
 const yamlBasePath = join(
@@ -22,6 +23,7 @@ const yamlBasePath = join(
 )
 
 export async function loadSchema(): Promise<Schema> {
+  await requestReadPermission()
   const schemaObj = {}
   for await (const entry of walk(yamlBasePath, {
     includeDirs: false,
