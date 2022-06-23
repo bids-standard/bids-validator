@@ -4,6 +4,7 @@
 import { join, basename } from '../deps/path.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
+import { requestReadPermission } from '../setup/requestPermissions.ts'
 
 /**
  * Deno implementation of BIDSFile
@@ -67,6 +68,7 @@ export async function _readFileTree(
   relativePath: string,
   parent?: FileTreeDeno,
 ): Promise<FileTree> {
+  await requestReadPermission()
   const name = basename(relativePath)
   const tree = new FileTreeDeno(relativePath, name, parent, rootPath)
 

@@ -2,6 +2,9 @@ import { assertEquals } from '../deps/asserts.ts'
 import { readAll, readerFromStreamReader } from '../deps/stream.ts'
 import { dirname, basename, join } from '../deps/path.ts'
 import { BIDSFileDeno } from './deno.ts'
+import { requestReadPermission } from '../setup/requestPermissions.ts'
+
+await requestReadPermission()
 
 // Use this file for testing file behavior
 const testUrl = import.meta.url
@@ -10,7 +13,7 @@ const testDir = dirname(testPath)
 const testFilename = basename(testPath)
 
 Deno.test('Deno implementation of BIDSFile', async (t) => {
-  await t.step('implements basic file properties', async () => {
+  await t.step('implements basic file properties', () => {
     const file = new BIDSFileDeno(testDir, testFilename)
     assertEquals(join(testDir, file.path), testPath)
   })

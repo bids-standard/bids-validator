@@ -1,4 +1,4 @@
-import { assert, assertEquals, assertObjectMatch } from '../deps/asserts.ts'
+import { assert, assertObjectMatch } from '../deps/asserts.ts'
 import { loadSchema } from './loadSchema.ts'
 
 Deno.test('schema yaml loader', async (t) => {
