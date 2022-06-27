@@ -38,8 +38,8 @@ export class BIDSContext implements Context {
     this.entities = bidsEntities.entities
     this.dataset = {} as ContextDataset
     this.subject = {} as ContextSubject
-    this.datatype = 'unimplemented'
-    this.modality = 'unimplemented'
+    this.datatype = ''
+    this.modality = ''
     this.sidecar = {}
     this.associations = {} as ContextAssociations
     this.columns = {}
