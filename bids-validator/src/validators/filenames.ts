@@ -23,7 +23,7 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
   /* If we can't find a datatype in the directory names, and match a rule
    * for that datatype we might want to see if there are any rules for any
    * datatype that we may be able to match against. Certain suffixes are
-   * used across datatypes so its conievable we could have multiple possible
+   * used across datatypes so its conceivable we could have multiple possible
    * matches. Sidecars at root of dataset also fall into this category.
    */
   if (matchedRule === '') {
@@ -93,7 +93,7 @@ export function validateFilenameAgainstRule(
   // skip required entity checks if file is at root.
   // No requirements for inherited sidecars at this level.
   if (!fileIsAtRoot) {
-    let ruleEntitiesRequired = Object.entries(rule.entities)
+    const ruleEntitiesRequired = Object.entries(rule.entities)
       .filter(([_, v]) => v === 'required')
       .map(([k, _]) => lookupEntityLiteral(k, schema))
 
