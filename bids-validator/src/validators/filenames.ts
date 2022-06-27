@@ -9,7 +9,7 @@ const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 export function checkDatatypes(schema: Schema, context: BIDSContext) {
   delete schema.rules.datatypes.derivatives
-  let matchedRule = ''
+  let matchedRule
   datatypeFromDirectory(schema, context)
   if (schema.rules.datatypes.hasOwnProperty(context.datatype)) {
     const rules = schema.rules.datatypes[context.datatype]
@@ -26,7 +26,7 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
    * used across datatypes so its conceivable we could have multiple possible
    * matches. Sidecars at root of dataset also fall into this category.
    */
-  if (matchedRule === '') {
+  if (matchedRule === undefined) {
     const possibleDatatypes = new Set()
     const datatypes = Object.values(schema.rules.datatypes)
     for (const rules of datatypes) {
@@ -37,6 +37,12 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
           break
         }
       }
+    }
+    /**
+     * If nothing matches, this is an unrecognizable filename and should throw the general error
+     */
+    if (matchedRule === undefined && context.file.path !== '/.bidsignore') {
+      context.issues.addNonSchemaIssue('NOT_INCLUDED', [context.file])
     }
   }
 }
