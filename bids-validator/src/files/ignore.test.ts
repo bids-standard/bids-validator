@@ -14,7 +14,7 @@ Deno.test('Deno implementation of FileIgnoreRules', async (t) => {
     ]
     const rules = ['.git', '**/*.xyz']
     const ignore = new FileIgnoreRulesDeno(rules)
-    const filtered = files.filter((path) => ignore.test(path))
+    const filtered = files.filter((path) => !ignore.test(path))
     assertEquals(filtered, [
       '/sub-01/anat/sub-01_T1w.nii.gz',
       '/dataset_description.json',
