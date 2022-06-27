@@ -3,7 +3,6 @@ import { SEP } from '../deps/path.ts'
 import { Schema } from '../types/schema.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { lookupModality } from '../schema/modalities.ts'
-import { issues } from '../issues/index.ts'
 
 // This should be defined in the schema
 const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
@@ -67,7 +66,7 @@ export function validateFilenameAgainstRule(
     rule.datatypes &&
     !rule.datatypes.includes(context.datatype)
   ) {
-    issues.addNonSchemaIssue('DATATYPE_MISMATCH', [
+    context.issues.addNonSchemaIssue('DATATYPE_MISMATCH', [
       { ...context.file, evidence: `Datatype rule being applied: ${rule}` },
     ])
   }
@@ -81,7 +80,7 @@ export function validateFilenameAgainstRule(
   )
 
   if (fileNoLabelEntities.length) {
-    issues.addNonSchemaIssue('ENTITY_WITH_NO_LABEL', [
+    context.issues.addNonSchemaIssue('ENTITY_WITH_NO_LABEL', [
       { ...context.file, evidence: fileNoLabelEntities.join(', ') },
     ])
   }
@@ -103,7 +102,7 @@ export function validateFilenameAgainstRule(
     )
 
     if (missingRequired.length) {
-      issues.addNonSchemaIssue('MISSING_REQUIRED_ENTITY', [
+      context.issues.addNonSchemaIssue('MISSING_REQUIRED_ENTITY', [
         { ...context.file, evidence: missingRequired.join(', ') },
       ])
     }
@@ -118,7 +117,7 @@ export function validateFilenameAgainstRule(
   )
 
   if (entityNotInRule.length) {
-    issues.addNonSchemaIssue('ENTITY_NOT_IN_RULE', [
+    context.issues.addNonSchemaIssue('ENTITY_NOT_IN_RULE', [
       { ...context.file, evidence: entityNotInRule.join(', ') },
     ])
   }
@@ -189,7 +188,7 @@ export function checkLabelFormat(schema: Schema, context: BIDSContext) {
       const rePattern = new RegExp(`^${pattern}$`)
       const label = context.entities[fileEntity]
       if (!rePattern.test(label)) {
-        issues.addNonSchemaIssue('INVALID_ENTITY_LABEL', [
+        context.issues.addNonSchemaIssue('INVALID_ENTITY_LABEL', [
           {
             ...context.file,
             evidence: `entity: ${fileEntity} label: ${label} pattern: ${pattern}`,

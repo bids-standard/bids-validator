@@ -8,7 +8,7 @@ import {
 } from './filenames.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { readEntities } from '../schema/entities.ts'
-import { issues } from '../issues/index.ts'
+import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 const schema = await loadSchema()
 
@@ -16,6 +16,7 @@ const newContext = (path: string) => {
   const parts = path.split(SEP)
   const name = parts[parts.length - 1]
   return {
+    issues: new DatasetIssues(),
     file: {
       path: path,
       name: name,
@@ -47,7 +48,7 @@ Deno.test('test checkDatatype', (t) => {
     let context = newContext(test[0])
     context = { ...context, ...readEntities(context.file) }
     checkDatatypes(schema, context)
-    assertEquals(issues.fileInIssues(test[0]), test[1])
+    assertEquals(context.issues.fileInIssues(test[0]), test[1])
   })
 })
 
@@ -61,6 +62,9 @@ Deno.test('test checkLabelFormat', (t) => {
     let context = newContext(test[0])
     context = { ...context, ...readEntities(context.file) }
     checkLabelFormat(schema, context)
-    assertEquals(issues.getFileIssueKeys(test[0]).includes(code), test[1])
+    assertEquals(
+      context.issues.getFileIssueKeys(test[0]).includes(code),
+      test[1],
+    )
   })
 })

@@ -9,14 +9,18 @@ import {
   isAtRoot,
   isTopLevel,
 } from './filenames.ts'
+import { DatasetIssues } from '../issues/datasetIssues.ts'
+import { ValidationResult } from '../types/validation-result.ts'
 
 /**
  * Full BIDS schema validation entrypoint
  */
-export async function validate(fileTree: FileTree): Promise<void> {
-  const issues = []
+export async function validate(fileTree: FileTree): Promise<ValidationResult> {
+  const issues = new DatasetIssues()
+  // TODO - summary should be implemented in pure schema mode
+  const summary = {}
   const schema = await loadSchema()
-  for await (const context of walkFileTree(fileTree)) {
+  for await (const context of walkFileTree(fileTree, issues)) {
     if (isAssociatedData(schema, context.file.path)) {
       continue
     }
@@ -25,5 +29,9 @@ export async function validate(fileTree: FileTree): Promise<void> {
       checkLabelFormat(schema, context)
     }
     applyRules(schema, context)
+  }
+  return {
+    issues,
+    summary,
   }
 }
