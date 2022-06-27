@@ -40,6 +40,8 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
     }
     /**
      * If nothing matches, this is an unrecognizable filename and should throw the general error
+     *
+     * Special case for .bidsignore which is not defined by the specification schema
      */
     if (matchedRule === undefined && context.file.path !== '/.bidsignore') {
       context.issues.addNonSchemaIssue('NOT_INCLUDED', [context.file])
