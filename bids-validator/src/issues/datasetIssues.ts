@@ -77,6 +77,13 @@ export class DatasetIssues {
     }
   }
 
+  /**
+   * Proxy to internal issues map
+   */
+  get(key: string): Issue | undefined {
+    return this.issues.get(key)
+  }
+
   // Shorthand to test if an issue has occurred
   hasIssue({ key }: { key: string }): boolean {
     if (this.issues.has(key)) {
