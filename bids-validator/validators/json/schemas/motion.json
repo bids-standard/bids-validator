@@ -28,55 +28,39 @@
     "SubjectArtefactDescription": { "type": "string" },
     "MotionChannelCount": { "type": "number" },
     "TrackingSystemCount": { "type": "number" },
-    "TrackingSystems": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "TrackingSystemName": { "type": "string" },
-          "DeviceSerialNumber": {
-            "$ref": "common_definitions.json#/definitions/DeviceSerialNumber"
-          },
-          "SoftwareVersions": {
-            "$ref": "common_definitions.json#/definitions/SoftwareVersions"
-          },
-          "ExternalSoftwareVersions": {
-             "type": "number"
-          },
-          "Manufacturer": {
-            "$ref": "common_definitions.json#/definitions/Manufacturer"
-          },
-          "ManufacturersModelName": { "type": "string", "minLength": 1 },
-          "RecordingDuration": {
-            "$ref": "common_definitions.json#/definitions/RecordingDuration"
-          },
-          "SamplingFrequency": {
-            "$ref": "common_definitions.json#/definitions/SamplingFrequency"
-          },
-          "SamplingFrequencyEffective": { "type": "number" },
-          "MissingValues": { "type": "string" },
-          "TrackedPointsCount": { "type": "number" },
-          "POSChannelCount": { "type": "number" },
-          "ORNTChannelCount": { "type": "number" },
-          "VELChannelCount": { "type": "number" },
-          "ANGVELChannelCount": { "type": "number" },
-          "ACCChannelCount": { "type": "number" },
-          "ANGACCChannelCount": { "type": "number" },
-          "MAGNChannelCount": { "type": "number" },
-          "JNTANGChannelCount": { "type": "number" },
-          "SpatialAxes": { "type": "string" },
-          "RotationRule": { "type": "string" },
-          "RotationOrder": { "type": "string" }
-        },
-        "required": [
-          "TrackingSystemName",
-          "SamplingFrequency",
-          "SamplingFrequencyEffective"
-        ],
-        "additionalProperties": true
-      }
-    }
+    "TrackingSystemName": { "type": "string" },
+    "DeviceSerialNumber": {
+      "$ref": "common_definitions.json#/definitions/DeviceSerialNumber"
+    },
+    "SoftwareVersions": {
+      "$ref": "common_definitions.json#/definitions/SoftwareVersions"
+    },
+    "Manufacturer": {
+      "$ref": "common_definitions.json#/definitions/Manufacturer"
+    },
+    "ManufacturersModelName": { "type": "string", "minLength": 1 },
+    "TrackedPointsCount": { "type": "number" },
+    "RecordingDuration": {
+      "$ref": "common_definitions.json#/definitions/RecordingDuration"
+    },
+    "SamplingFrequency": {
+      "$ref": "common_definitions.json#/definitions/SamplingFrequency"
+    },
+    "SamplingFrequencyEffective": { "type": "number" },
+    "SoftwareFilters": {
+      "$ref": "common_definitions.json#/definitions/SoftwareFilters"
+    },
+    "POSChannelCount": { "type": "number" },
+    "ORNTChannelCount": { "type": "number" },
+    "VELChannelCount": { "type": "number" },
+    "ANGVELChannelCount": { "type": "number" },
+    "ACCChannelCount": { "type": "number" },
+    "ANGACCChannelCount": { "type": "number" },
+    "MAGNChannelCount": { "type": "number" },
+    "JNTANGChannelCount": { "type": "number" }
   },
-  "required": ["TrackingSystems", "TrackingSystemCount", "TaskName"],
+  "required": ["TrackingSystemCount", "TaskName","TrackingSystemName","SamplingFrequency","SamplingFrequencyEffective"
+],
   "additionalProperties": false
 }
+
