@@ -3,7 +3,6 @@ import { readFileTree } from './files/deno.ts'
 import { resolve } from './deps/path.ts'
 import { fullTestAdapter } from './compat/fulltest.ts'
 import { validate } from './validators/bids.ts'
-import { issues } from './issues/index.ts'
 
 function inspect(obj: any) {
   console.log(
@@ -20,18 +19,18 @@ async function main() {
   const tree = await readFileTree(absolutePath)
 
   // Run the schema based validator
-  await validate(tree)
+  const schemaResult = await validate(tree)
 
   if (options.schemaOnly) {
-    inspect(issues.issues)
+    inspect(schemaResult.issues.issues)
     // TODO - generate a summary without the old validator
   } else {
-    const output = issues.formatOutput()
-    const result = await fullTestAdapter(tree, options)
-    output.errors.push(...result.issues.errors)
-    output.warnings.push(...result.issues.warnings)
+    const output = schemaResult.issues.formatOutput()
+    const legacyResult = await fullTestAdapter(tree, options)
+    output.errors.push(...legacyResult.issues.errors)
+    output.warnings.push(...legacyResult.issues.warnings)
     inspect(output)
-    inspect(result.summary)
+    inspect(legacyResult.summary)
   }
 }
 

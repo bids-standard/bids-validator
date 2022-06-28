@@ -8,10 +8,12 @@ import {
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
+import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 export class BIDSContext implements Context {
   // Internal representation of the file tree
   #fileTree: FileTree
+  issues: DatasetIssues
   file: BIDSFile
   suffix: string
   extension: string
@@ -26,8 +28,9 @@ export class BIDSContext implements Context {
   json: object
   nifti_header: ContextNiftiHeader
 
-  constructor(fileTree: FileTree, file: BIDSFile) {
+  constructor(fileTree: FileTree, file: BIDSFile, issues: DatasetIssues) {
     this.#fileTree = fileTree
+    this.issues = issues
     this.file = file
     const bidsEntities = readEntities(file)
     this.suffix = bidsEntities.suffix
@@ -35,8 +38,8 @@ export class BIDSContext implements Context {
     this.entities = bidsEntities.entities
     this.dataset = {} as ContextDataset
     this.subject = {} as ContextSubject
-    this.datatype = 'unimplemented'
-    this.modality = 'unimplemented'
+    this.datatype = ''
+    this.modality = ''
     this.sidecar = {}
     this.associations = {} as ContextAssociations
     this.columns = {}

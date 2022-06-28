@@ -3,14 +3,13 @@ import { SEP } from '../deps/path.ts'
 import { Schema } from '../types/schema.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { lookupModality } from '../schema/modalities.ts'
-import { issues } from '../issues/index.ts'
 
 // This should be defined in the schema
 const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 export function checkDatatypes(schema: Schema, context: BIDSContext) {
   delete schema.rules.datatypes.derivatives
-  let matchedRule = ''
+  let matchedRule
   datatypeFromDirectory(schema, context)
   if (schema.rules.datatypes.hasOwnProperty(context.datatype)) {
     const rules = schema.rules.datatypes[context.datatype]
@@ -24,10 +23,10 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
   /* If we can't find a datatype in the directory names, and match a rule
    * for that datatype we might want to see if there are any rules for any
    * datatype that we may be able to match against. Certain suffixes are
-   * used across datatypes so its conievable we could have multiple possible
+   * used across datatypes so its conceivable we could have multiple possible
    * matches. Sidecars at root of dataset also fall into this category.
    */
-  if (matchedRule === '') {
+  if (matchedRule === undefined) {
     const possibleDatatypes = new Set()
     const datatypes = Object.values(schema.rules.datatypes)
     for (const rules of datatypes) {
@@ -38,6 +37,14 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
           break
         }
       }
+    }
+    /**
+     * If nothing matches, this is an unrecognizable filename and should throw the general error
+     *
+     * Special case for .bidsignore which is not defined by the specification schema
+     */
+    if (matchedRule === undefined && context.file.path !== '/.bidsignore') {
+      context.issues.addNonSchemaIssue('NOT_INCLUDED', [context.file])
     }
   }
 }
@@ -67,7 +74,7 @@ export function validateFilenameAgainstRule(
     rule.datatypes &&
     !rule.datatypes.includes(context.datatype)
   ) {
-    issues.addNonSchemaIssue('DATATYPE_MISMATCH', [
+    context.issues.addNonSchemaIssue('DATATYPE_MISMATCH', [
       { ...context.file, evidence: `Datatype rule being applied: ${rule}` },
     ])
   }
@@ -81,7 +88,7 @@ export function validateFilenameAgainstRule(
   )
 
   if (fileNoLabelEntities.length) {
-    issues.addNonSchemaIssue('ENTITY_WITH_NO_LABEL', [
+    context.issues.addNonSchemaIssue('ENTITY_WITH_NO_LABEL', [
       { ...context.file, evidence: fileNoLabelEntities.join(', ') },
     ])
   }
@@ -94,7 +101,7 @@ export function validateFilenameAgainstRule(
   // skip required entity checks if file is at root.
   // No requirements for inherited sidecars at this level.
   if (!fileIsAtRoot) {
-    let ruleEntitiesRequired = Object.entries(rule.entities)
+    const ruleEntitiesRequired = Object.entries(rule.entities)
       .filter(([_, v]) => v === 'required')
       .map(([k, _]) => lookupEntityLiteral(k, schema))
 
@@ -103,7 +110,7 @@ export function validateFilenameAgainstRule(
     )
 
     if (missingRequired.length) {
-      issues.addNonSchemaIssue('MISSING_REQUIRED_ENTITY', [
+      context.issues.addNonSchemaIssue('MISSING_REQUIRED_ENTITY', [
         { ...context.file, evidence: missingRequired.join(', ') },
       ])
     }
@@ -118,7 +125,7 @@ export function validateFilenameAgainstRule(
   )
 
   if (entityNotInRule.length) {
-    issues.addNonSchemaIssue('ENTITY_NOT_IN_RULE', [
+    context.issues.addNonSchemaIssue('ENTITY_NOT_IN_RULE', [
       { ...context.file, evidence: entityNotInRule.join(', ') },
     ])
   }
@@ -189,7 +196,7 @@ export function checkLabelFormat(schema: Schema, context: BIDSContext) {
       const rePattern = new RegExp(`^${pattern}$`)
       const label = context.entities[fileEntity]
       if (!rePattern.test(label)) {
-        issues.addNonSchemaIssue('INVALID_ENTITY_LABEL', [
+        context.issues.addNonSchemaIssue('INVALID_ENTITY_LABEL', [
           {
             ...context.file,
             evidence: `entity: ${fileEntity} label: ${label} pattern: ${pattern}`,
