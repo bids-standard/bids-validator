@@ -5,22 +5,23 @@ import { join, basename } from '../deps/path.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
+import { readBidsIgnore, FileIgnoreRulesDeno } from './ignore.ts'
 
 /**
  * Deno implementation of BIDSFile
  */
 export class BIDSFileDeno implements BIDSFile {
+  #ignore: FileIgnoreRulesDeno
   name: string
   path: string
-  ignored: boolean
   private _fileInfo: Deno.FileInfo | undefined
   private _datasetAbsPath: string
 
-  constructor(datasetPath: string, path: string) {
+  constructor(datasetPath: string, path: string, ignore: FileIgnoreRulesDeno) {
     this._datasetAbsPath = datasetPath
     this.path = path
     this.name = basename(path)
-    this.ignored = false
+    this.#ignore = ignore
   }
 
   private _getPath(): string {
@@ -47,6 +48,10 @@ export class BIDSFileDeno implements BIDSFile {
   get stream(): Promise<ReadableStream<Uint8Array>> {
     return this._getStream()
   }
+
+  get ignored(): boolean {
+    return this.#ignore.test(this.path)
+  }
 }
 
 export class FileTreeDeno extends FileTree {
@@ -66,27 +71,31 @@ export class FileTreeDeno extends FileTree {
 export async function _readFileTree(
   rootPath: string,
   relativePath: string,
+  ignore: FileIgnoreRulesDeno,
   parent?: FileTreeDeno,
 ): Promise<FileTree> {
   await requestReadPermission()
   const name = basename(relativePath)
   const tree = new FileTreeDeno(relativePath, name, parent, rootPath)
 
-  // stop-gap until bidsIgnore implemented
-  if (relativePath.includes('.git')) {
-    return tree
-  }
-
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     if (dirEntry.isFile) {
-      tree.files.push(
-        new BIDSFileDeno(rootPath, join(relativePath, dirEntry.name)),
+      const file = new BIDSFileDeno(
+        rootPath,
+        join(relativePath, dirEntry.name),
+        ignore,
       )
+      // For .bidsignore, read in immediately and add the rules
+      if (dirEntry.name === '.bidsignore') {
+        ignore.add(await readBidsIgnore(file))
+      }
+      tree.files.push(file)
     }
     if (dirEntry.isDirectory) {
       const dirTree = await _readFileTree(
         rootPath,
         join(relativePath, dirEntry.name),
+        ignore,
         tree,
       )
       tree.directories.push(dirTree)
@@ -99,5 +108,6 @@ export async function _readFileTree(
  * Read in the target directory structure and return a FileTree
  */
 export function readFileTree(rootPath: string): Promise<FileTree> {
-  return _readFileTree(rootPath, '/')
+  const ignore = new FileIgnoreRulesDeno([])
+  return _readFileTree(rootPath, '/', ignore)
 }

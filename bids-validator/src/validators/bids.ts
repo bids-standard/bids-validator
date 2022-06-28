@@ -21,6 +21,10 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   const summary = {}
   const schema = await loadSchema()
   for await (const context of walkFileTree(fileTree, issues)) {
+    // TODO - Skip ignored files for now (some tests may reference ignored files)
+    if (context.file.ignored) {
+      continue
+    }
     if (isAssociatedData(schema, context.file.path)) {
       continue
     }
