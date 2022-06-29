@@ -22,7 +22,7 @@ Deno.test('valid_headers dataset', async (t) => {
     assertEquals(result.summary.dataProcessed, false)
   })
 
-  await t.step('summary has correct dataProcessed', () => {
+  await t.step('summary has correct modalities', () => {
     assertEquals(result.summary.modalities, ['MRI'])
   })
 
