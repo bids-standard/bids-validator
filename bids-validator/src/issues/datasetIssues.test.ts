@@ -16,20 +16,23 @@ Deno.test('DatasetIssues management class', async (t) => {
     // This mostly tests the issueFile mapping function
     const issues = new DatasetIssues()
     const testStream = new ReadableStream()
+    const text = () => Promise.resolve('')
     const files = [
       {
+        text,
         name: 'dataset_description.json',
         path: '/dataset_description.json',
-        size: Promise.resolve(500),
+        size: 500,
         ignored: false,
-        stream: Promise.resolve(testStream),
+        stream: testStream,
       } as BIDSFile,
       {
+        text,
         name: 'README',
         path: '/README',
-        size: Promise.resolve(500),
+        size: 500,
         ignored: false,
-        stream: Promise.resolve(testStream),
+        stream: testStream,
         line: 1,
         character: 5,
         severity: 'warning',

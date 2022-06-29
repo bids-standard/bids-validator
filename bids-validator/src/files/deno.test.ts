@@ -26,10 +26,15 @@ Deno.test('Deno implementation of BIDSFile', async (t) => {
   })
   await t.step('can be read as ReadableStream', async () => {
     const file = new BIDSFileDeno(testDir, testFilename, ignore)
-    const stream = await file.stream
+    const stream = file.stream
     const streamReader = stream.getReader()
     const denoReader = readerFromStreamReader(streamReader)
     const fileBuffer = await readAll(denoReader)
     assertEquals(await file.size, fileBuffer.length)
+  })
+  await t.step('can be read with .text() method', async () => {
+    const file = new BIDSFileDeno(testDir, testFilename, ignore)
+    const text = await file.text()
+    assertEquals(await file.size, text.length)
   })
 })

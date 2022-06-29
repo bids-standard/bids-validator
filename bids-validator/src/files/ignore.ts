@@ -3,11 +3,7 @@ import { ignore, Ignore } from '../deps/ignore.ts'
 import { FileIgnoreRules } from '../types/ignore.ts'
 
 export async function readBidsIgnore(file: BIDSFile) {
-  const fileStream = await file.stream
-  const reader = fileStream
-    .pipeThrough(new TextDecoderStream('utf-8'))
-    .getReader()
-  const { value } = await reader.read()
+  const value = await file.text()
   if (value) {
     const lines = value.split('\n')
     return lines
