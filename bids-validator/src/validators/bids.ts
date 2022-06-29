@@ -33,7 +33,7 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
       checkLabelFormat(schema, context)
     }
     applyRules(schema, context)
-    updateSummary(context)
+    await updateSummary(context)
   }
   return {
     issues,
