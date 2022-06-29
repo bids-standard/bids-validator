@@ -14,7 +14,7 @@ export class BIDSFileDeno implements BIDSFile {
   #ignore: FileIgnoreRulesDeno
   name: string
   path: string
-  private _fileInfo: Deno.FileInfo | undefined
+  #fileInfo: Deno.FileInfo | undefined
   private _datasetAbsPath: string
 
   constructor(datasetPath: string, path: string, ignore: FileIgnoreRulesDeno) {
@@ -28,29 +28,43 @@ export class BIDSFileDeno implements BIDSFile {
     return join(this._datasetAbsPath, this.path)
   }
 
-  private async _getSize(): Promise<number> {
-    if (!this._fileInfo) {
-      this._fileInfo = await Deno.stat(this._getPath())
-    }
-    return this._fileInfo.size
+  /**
+   * Deferred stat to get size
+   */
+  get size(): number {
+    return (
+      this.#fileInfo?.size ||
+      (this.#fileInfo = Deno.statSync(this._getPath())).size
+    )
   }
 
-  get size(): Promise<number> {
-    return this._getSize()
-  }
-
-  private async _getStream(): Promise<ReadableStream<Uint8Array>> {
+  get stream(): ReadableStream<Uint8Array> {
     // Avoid asking for write access
     const openOptions = { read: true, write: false }
-    return (await Deno.open(this._getPath(), openOptions)).readable
-  }
-
-  get stream(): Promise<ReadableStream<Uint8Array>> {
-    return this._getStream()
+    return Deno.openSync(this._getPath(), openOptions).readable
   }
 
   get ignored(): boolean {
     return this.#ignore.test(this.path)
+  }
+
+  /**
+   * Read the entire file and decode as utf-8 text
+   */
+  async text(): Promise<string> {
+    const streamReader = this.stream
+      .pipeThrough(new TextDecoderStream('utf-8'))
+      .getReader()
+    let data = ''
+    try {
+      while (true) {
+        const { done, value } = await streamReader.read()
+        if (done) return data
+        data += value
+      }
+    } finally {
+      streamReader.releaseLock()
+    }
   }
 }
 
