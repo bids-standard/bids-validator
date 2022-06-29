@@ -1,8 +1,8 @@
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 
-interface SubjectMetadata {
+export interface SubjectMetadata {
   PARTICIPANT_ID: string
-  age: string
+  age: number
   sex: string
   group: string
 }
@@ -15,10 +15,10 @@ interface SubjectMetadata {
 */
 
 export interface Summary {
-  sessions: string[]
-  subjects: string[]
-  subjectMetadata: SubjectMetaData[]
-  tasks: string[]
+  sessions: Set<string>
+  subjects: Set<string>
+  subjectMetadata: SubjectMetadata[]
+  tasks: Set<string>
   modalities: string[]
   secondaryModalities: string[]
   totalFiles: number

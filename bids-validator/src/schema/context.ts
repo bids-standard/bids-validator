@@ -17,7 +17,7 @@ export class BIDSContext implements Context {
   file: BIDSFile
   suffix: string
   extension: string
-  entities: object
+  entities: Record<string, string>
   dataset: ContextDataset
   subject: ContextSubject
   datatype: string
@@ -25,7 +25,7 @@ export class BIDSContext implements Context {
   sidecar: object
   associations: ContextAssociations
   columns: object
-  json: object
+  json: Record<string, any>
   nifti_header: ContextNiftiHeader
 
   constructor(fileTree: FileTree, file: BIDSFile, issues: DatasetIssues) {

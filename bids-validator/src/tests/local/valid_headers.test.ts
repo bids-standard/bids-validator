@@ -19,7 +19,7 @@ Deno.test('valid_headers dataset', async (t) => {
   })
 
   await t.step('summary has correct dataProcessed', () => {
-    assertEquals(result.summary.dataProcessed, ['rhyme judgment'])
+    assertEquals(result.summary.dataProcessed, false)
   })
 
   await t.step('summary has correct dataProcessed', () => {

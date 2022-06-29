@@ -3,7 +3,6 @@ import { readFileTree } from './files/deno.ts'
 import { resolve } from './deps/path.ts'
 import { fullTestAdapter } from './compat/fulltest.ts'
 import { validate } from './validators/bids.ts'
-import { summary } from './summary.ts'
 
 function inspect(obj: any) {
   console.log(
