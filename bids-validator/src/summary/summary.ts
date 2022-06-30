@@ -105,7 +105,7 @@ export async function updateSummary(context: BIDSContext): Promise<void> {
     summary.sessions.add(context.entities.ses)
   }
   if (context.extension === '.json') {
-    const parsedJson = JSON.parse(await context.file.text())
+    const parsedJson = await context.json
     if ('TaskName' in parsedJson) {
       summary.tasks.add(parsedJson.TaskName)
     }
