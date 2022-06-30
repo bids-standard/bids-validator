@@ -20,14 +20,13 @@ const PARTICIPANT_ID = 'participantId'
  * @param {string} participantsTsvContent
  */
 export const collectSubjectMetadata = (
-  participantsTsvContent: Uint8Array,
+  participantsTsvContent: string,
 ): SubjectMetadata[] => {
   if (!participantsTsvContent) {
     return []
   }
 
-  const contentTable = new TextDecoder()
-    .decode(participantsTsvContent)
+  const contentTable = participantsTsvContent
     .split(/\r?\n/)
     .filter((row) => row !== '')
     .map((row) => row.split('\t'))

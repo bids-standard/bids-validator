@@ -104,8 +104,11 @@ export async function updateSummary(context: BIDSContext): Promise<void> {
   if ('ses' in context.entities) {
     summary.sessions.add(context.entities.ses)
   }
-  if ('TaskName' in context.json) {
-    summary.tasks.add(context.json.TaskName)
+  if (context.extension === '.json') {
+    const parsedJson = JSON.parse(await context.file.text())
+    if ('TaskName' in parsedJson) {
+      summary.tasks.add(parsedJson.TaskName)
+    }
   }
   if (context.modality) {
     modalitiesCount[context.modality]++
@@ -123,10 +126,7 @@ export async function updateSummary(context: BIDSContext): Promise<void> {
   }
 
   if (context.file.path.includes('participants.tsv')) {
-    const stream = await context.file.stream
-    const streamReader = stream.getReader()
-    const denoReader = readerFromStreamReader(streamReader)
-    const fileBuffer = await readAll(denoReader)
-    summary.subjectMetadata = collectSubjectMetadata(fileBuffer)
+    let tsvContents = await context.file.text()
+    summary.subjectMetadata = collectSubjectMetadata(tsvContents)
   }
 }

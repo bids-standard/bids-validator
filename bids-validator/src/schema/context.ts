@@ -42,8 +42,8 @@ export class BIDSContext implements Context {
     this.modality = ''
     this.sidecar = {}
     this.associations = {} as ContextAssociations
-    this.columns = {}
     this.json = {}
+    this.columns = {}
     this.nifti_header = {} as ContextNiftiHeader
   }
 
