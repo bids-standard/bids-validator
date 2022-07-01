@@ -3,7 +3,7 @@ import { readAll, readerFromStreamReader } from '../deps/stream.ts'
 import { SummaryOutput, SubjectMetadata } from '../types/validation-result.ts'
 import { BIDSContext } from '../schema/context.ts'
 
-const modalityPrettyLookup: Record<string, string> = {
+export const modalityPrettyLookup: Record<string, string> = {
   mri: 'MRI',
   pet: 'PET',
   meg: 'MEG',
@@ -19,7 +19,9 @@ const secondaryLookup: Record<string, string> = {
   perf: 'MRI_Perfusion',
 }
 
-function computeModalities(modalities: Record<string, number>): string[] {
+export function computeModalities(
+  modalities: Record<string, number>,
+): string[] {
   // Order by matching file count
   const nonZero = Object.keys(modalities).filter((a) => modalities[a] !== 0)
   if (nonZero.length === 0) {
@@ -28,7 +30,7 @@ function computeModalities(modalities: Record<string, number>): string[] {
   const sortedModalities = nonZero.sort((a, b) => {
     if (modalities[b] === modalities[a]) {
       // On a tie, hand it to the non-MRI modality
-      if (b === 'MRI') {
+      if (b === 'mri') {
         return -1
       } else {
         return 0
@@ -41,7 +43,7 @@ function computeModalities(modalities: Record<string, number>): string[] {
   )
 }
 
-function computeSecondaryModalities(
+export function computeSecondaryModalities(
   secondary: Record<string, number>,
 ): string[] {
   const nonZeroSecondary = Object.keys(secondary).filter(
@@ -53,7 +55,7 @@ function computeSecondaryModalities(
   return sortedSecondary
 }
 
-class Summary {
+export class Summary {
   sessions: Set<string>
   subjects: Set<string>
   subjectMetadata: SubjectMetadata[]
