@@ -93,7 +93,7 @@ export async function _readFileTree(
   const tree = new FileTreeDeno(relativePath, name, parent, rootPath)
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
-    if (dirEntry.isFile) {
+    if (dirEntry.isFile || dirEntry.isSymlink) {
       const file = new BIDSFileDeno(
         rootPath,
         join(relativePath, dirEntry.name),
@@ -122,6 +122,6 @@ export async function _readFileTree(
  * Read in the target directory structure and return a FileTree
  */
 export function readFileTree(rootPath: string): Promise<FileTree> {
-  const ignore = new FileIgnoreRulesDeno([])
+  const ignore = new FileIgnoreRulesDeno(['.git**'])
   return _readFileTree(rootPath, '/', ignore)
 }

@@ -1,6 +1,6 @@
 import { collectSubjectMetadata } from './collectSubjectMetadata.ts'
 import { readAll, readerFromStreamReader } from '../deps/stream.ts'
-import { Summary } from '../types/validation-result.ts'
+import { Summary, SummaryOutput } from '../types/validation-result.ts'
 import { BIDSContext } from '../schema/context.ts'
 
 const modalitiesCount: Record<string, number> = {
@@ -35,7 +35,7 @@ const modalityPrettyLookup: Record<string, string> = {
 const secondaryLookup: Record<string, string> = {
   dwi: 'MRI_Diffusion',
   anat: 'MRI_Structural',
-  bold: 'MRI_Functional',
+  func: 'MRI_Functional',
   perf: 'MRI_Perfusion',
 }
 
@@ -128,5 +128,16 @@ export async function updateSummary(context: BIDSContext): Promise<void> {
   if (context.file.path.includes('participants.tsv')) {
     let tsvContents = await context.file.text()
     summary.subjectMetadata = collectSubjectMetadata(tsvContents)
+  }
+}
+
+export function formatSummary(summary: Summary): SummaryOutput {
+  return {
+    ...summary,
+    sessions: Array.from(summary.sessions),
+    subjects: Array.from(summary.subjects),
+    tasks: Array.from(summary.tasks),
+    modalities: summary.modalities,
+    secondaryModalities: summary.secondaryModalities,
   }
 }

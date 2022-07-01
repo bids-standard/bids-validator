@@ -3,7 +3,7 @@ import { FileTree } from '../../types/filetree.ts'
 import { validate } from '../../validators/bids.ts'
 import { ValidationResult } from '../../types/validation-result.ts'
 import { DatasetIssues } from '../../issues/datasetIssues.ts'
-import { summary } from '../../summary/summary.ts'
+import { summary, formatSummary } from '../../summary/summary.ts'
 
 export async function validatePath(
   t: Deno.TestContext,
@@ -12,7 +12,7 @@ export async function validatePath(
   let tree: FileTree = new FileTree('', '')
   let result: ValidationResult = {
     issues: new DatasetIssues(),
-    summary: summary,
+    summary: formatSummary(summary),
   }
 
   await t.step('file tree is read', async () => {

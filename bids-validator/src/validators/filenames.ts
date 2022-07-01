@@ -13,6 +13,7 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
   datatypeFromDirectory(schema, context)
   if (schema.rules.datatypes.hasOwnProperty(context.datatype)) {
     const rules = schema.rules.datatypes[context.datatype]
+
     for (const key of Object.keys(rules)) {
       if (validateFilenameAgainstRule(rules[key], schema, context)) {
         matchedRule = key
@@ -180,6 +181,7 @@ export function datatypeFromDirectory(schema: Schema, context: BIDSContext) {
     if (schema.rules.modalities[key].datatypes.includes(dirDatatype)) {
       context.modality = key
       context.datatype = dirDatatype
+
       return
     }
   }

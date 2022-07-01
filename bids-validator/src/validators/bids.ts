@@ -11,7 +11,7 @@ import {
 } from './filenames.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { ValidationResult } from '../types/validation-result.ts'
-import { summary, updateSummary } from '../summary/summary.ts'
+import { summary, formatSummary, updateSummary } from '../summary/summary.ts'
 
 /**
  * Full BIDS schema validation entrypoint
@@ -37,6 +37,6 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   }
   return {
     issues,
-    summary,
+    summary: formatSummary(summary),
   }
 }

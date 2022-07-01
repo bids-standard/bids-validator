@@ -27,10 +27,23 @@ export interface Summary {
   pet: Record<string, any>
 }
 
+export interface SummaryOutput {
+  sessions: string[]
+  subjects: string[]
+  subjectMetadata: SubjectMetadata[]
+  tasks: string[]
+  modalities: string[]
+  secondaryModalities: string[]
+  totalFiles: number
+  size: number
+  dataProcessed: boolean
+  pet: Record<string, any>
+}
+
 /**
  * The output of a validation run
  */
 export interface ValidationResult {
   issues: DatasetIssues
-  summary: Summary
+  summary: SummaryOutput
 }
