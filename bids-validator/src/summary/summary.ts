@@ -1,27 +1,7 @@
 import { collectSubjectMetadata } from './collectSubjectMetadata.ts'
 import { readAll, readerFromStreamReader } from '../deps/stream.ts'
-import { Summary, SummaryOutput } from '../types/validation-result.ts'
+import { SummaryOutput, SubjectMetadata } from '../types/validation-result.ts'
 import { BIDSContext } from '../schema/context.ts'
-
-const modalitiesCount: Record<string, number> = {
-  mri: 0,
-  pet: 0,
-  meg: 0,
-  eeg: 0,
-  ieeg: 0,
-  microscopy: 0,
-}
-
-const secondaryModalitiesCount: Record<string, number> = {
-  MRI_Diffusion: 0,
-  MRI_Structural: 0,
-  MRI_Functional: 0,
-  MRI_Perfusion: 0,
-  PET_Static: 0,
-  PET_Dynamic: 0,
-  iEEG_ECoG: 0,
-  iEEG_SEEG: 0,
-}
 
 const modalityPrettyLookup: Record<string, string> = {
   mri: 'MRI',
@@ -73,71 +53,113 @@ function computeSecondaryModalities(
   return sortedSecondary
 }
 
-export const summary: Summary = {
-  dataProcessed: false,
-  totalFiles: -1,
-  size: 0,
-  sessions: new Set(),
-  subjects: new Set(),
-  subjectMetadata: [],
-  tasks: new Set(),
-  pet: {},
+class Summary {
+  sessions: Set<string>
+  subjects: Set<string>
+  subjectMetadata: SubjectMetadata[]
+  tasks: Set<string>
+  totalFiles: number
+  size: number
+  dataProcessed: boolean
+  pet: Record<string, any>
+  modalitiesCount: Record<string, number>
+  secondaryModalitiesCount: Record<string, number>
+  datatypes: Set<string>
+  constructor() {
+    this.dataProcessed = false
+    this.totalFiles = -1
+    this.size = 0
+    this.sessions = new Set()
+    this.subjects = new Set()
+    this.subjectMetadata = []
+    this.tasks = new Set()
+    this.pet = {}
+    this.datatypes = new Set()
+    this.modalitiesCount = {
+      mri: 0,
+      pet: 0,
+      meg: 0,
+      eeg: 0,
+      ieeg: 0,
+      microscopy: 0,
+    }
+    this.secondaryModalitiesCount = {
+      MRI_Diffusion: 0,
+      MRI_Structural: 0,
+      MRI_Functional: 0,
+      MRI_Perfusion: 0,
+      PET_Static: 0,
+      PET_Dynamic: 0,
+      iEEG_ECoG: 0,
+      iEEG_SEEG: 0,
+    }
+  }
   get modalities() {
-    return computeModalities(modalitiesCount)
-  },
+    return computeModalities(this.modalitiesCount)
+  }
   get secondaryModalities() {
-    return computeSecondaryModalities(secondaryModalitiesCount)
-  },
-}
-
-export async function updateSummary(context: BIDSContext): Promise<void> {
-  if (context.file.path.startsWith('/derivatives')) {
-    return
+    return computeSecondaryModalities(this.secondaryModalitiesCount)
   }
+  async update(context: BIDSContext): Promise<void> {
+    if (context.file.path.startsWith('/derivatives')) {
+      return
+    }
 
-  summary.totalFiles++
-  summary.size += await context.file.size
+    this.totalFiles++
+    this.size += await context.file.size
 
-  if ('sub' in context.entities) {
-    summary.subjects.add(context.entities.sub)
-  }
-  if ('ses' in context.entities) {
-    summary.sessions.add(context.entities.ses)
-  }
-  if (context.extension === '.json') {
-    const parsedJson = await context.json
-    if ('TaskName' in parsedJson) {
-      summary.tasks.add(parsedJson.TaskName)
+    if ('sub' in context.entities) {
+      this.subjects.add(context.entities.sub)
+    }
+    if ('ses' in context.entities) {
+      this.sessions.add(context.entities.ses)
+    }
+
+    if (context.datatype) {
+      this.datatypes.add(context.datatype)
+    }
+    if (context.extension === '.json') {
+      const parsedJson = await context.json
+      if ('TaskName' in parsedJson) {
+        this.tasks.add(parsedJson.TaskName)
+      }
+    }
+    if (context.modality) {
+      this.modalitiesCount[context.modality]++
+    }
+
+    if (context.datatype in secondaryLookup) {
+      const key = secondaryLookup[context.datatype]
+      this.secondaryModalitiesCount[key]++
+    } else if (context.datatype === 'pet' && 'rec' in context.entities) {
+      if (['acstat', 'nacstat'].includes(context.entities.rec)) {
+        this.secondaryModalitiesCount.PET_Static++
+      } else if (['acdyn', 'nacdyn'].includes(context.entities.rec)) {
+        this.secondaryModalitiesCount.PET_Dynamic++
+      }
+    }
+
+    if (context.file.path.includes('participants.tsv')) {
+      let tsvContents = await context.file.text()
+      this.subjectMetadata = collectSubjectMetadata(tsvContents)
     }
   }
-  if (context.modality) {
-    modalitiesCount[context.modality]++
-  }
 
-  if (context.datatype in secondaryLookup) {
-    const key = secondaryLookup[context.datatype]
-    secondaryModalitiesCount[key]++
-  } else if (context.datatype === 'pet' && 'rec' in context.entities) {
-    if (['acstat', 'nacstat'].includes(context.entities.rec)) {
-      secondaryModalitiesCount.PET_Static++
-    } else if (['acdyn', 'nacdyn'].includes(context.entities.rec)) {
-      secondaryModalitiesCount.PET_Dynamic++
+  formatOutput(): SummaryOutput {
+    return {
+      sessions: Array.from(this.sessions),
+      subjects: Array.from(this.subjects),
+      subjectMetadata: this.subjectMetadata,
+      tasks: Array.from(this.tasks),
+      modalities: this.modalities,
+      secondaryModalities: this.secondaryModalities,
+      totalFiles: this.totalFiles,
+      size: this.size,
+      dataProcessed: this.dataProcessed,
+      pet: this.pet,
+      datatypes: Array.from(this.datatypes),
     }
   }
-
-  if (context.file.path.includes('participants.tsv')) {
-    let tsvContents = await context.file.text()
-    summary.subjectMetadata = collectSubjectMetadata(tsvContents)
-  }
 }
 
-export function formatSummary(summary: Summary): SummaryOutput {
-  return {
-    ...summary,
-    sessions: Array.from(summary.sessions),
-    subjects: Array.from(summary.subjects),
-    tasks: Array.from(summary.tasks),
-    modalities: summary.modalities,
-    secondaryModalities: summary.secondaryModalities,
-  }
-}
+export const summary = new Summary()

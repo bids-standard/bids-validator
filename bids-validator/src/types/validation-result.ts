@@ -14,19 +14,6 @@ export interface SubjectMetadata {
     TracerRadionuclide: {},
 */
 
-export interface Summary {
-  sessions: Set<string>
-  subjects: Set<string>
-  subjectMetadata: SubjectMetadata[]
-  tasks: Set<string>
-  modalities: string[]
-  secondaryModalities: string[]
-  totalFiles: number
-  size: number
-  dataProcessed: boolean
-  pet: Record<string, any>
-}
-
 export interface SummaryOutput {
   sessions: string[]
   subjects: string[]
@@ -38,6 +25,7 @@ export interface SummaryOutput {
   size: number
   dataProcessed: boolean
   pet: Record<string, any>
+  datatypes: string[]
 }
 
 /**

@@ -11,7 +11,7 @@ import {
 } from './filenames.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { ValidationResult } from '../types/validation-result.ts'
-import { summary, formatSummary, updateSummary } from '../summary/summary.ts'
+import { summary } from '../summary/summary.ts'
 
 /**
  * Full BIDS schema validation entrypoint
@@ -33,10 +33,10 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
       checkLabelFormat(schema, context)
     }
     applyRules(schema, context)
-    await updateSummary(context)
+    await summary.update(context)
   }
   return {
     issues,
-    summary: formatSummary(summary),
+    summary: summary.formatOutput(),
   }
 }
