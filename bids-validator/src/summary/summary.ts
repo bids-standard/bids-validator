@@ -117,9 +117,10 @@ export class Summary {
       this.sessions.add(context.entities.ses)
     }
 
-    if (context.datatype) {
+    if (context.datatype.length) {
       this.datatypes.add(context.datatype)
     }
+
     if (context.extension === '.json') {
       const parsedJson = await context.json
       if ('TaskName' in parsedJson) {
@@ -141,8 +142,8 @@ export class Summary {
       }
     }
 
-    if (context.file.path.includes('participants.tsv')) {
-      let tsvContents = await context.file.text()
+    if (context.file.path.endsWith('participants.tsv')) {
+      const tsvContents = await context.file.text()
       this.subjectMetadata = collectSubjectMetadata(tsvContents)
     }
   }
@@ -163,5 +164,3 @@ export class Summary {
     }
   }
 }
-
-export const summary = new Summary()

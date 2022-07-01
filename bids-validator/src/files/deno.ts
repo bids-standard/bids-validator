@@ -122,6 +122,6 @@ export async function _readFileTree(
  * Read in the target directory structure and return a FileTree
  */
 export function readFileTree(rootPath: string): Promise<FileTree> {
-  const ignore = new FileIgnoreRulesDeno(['.git**'])
+  const ignore = new FileIgnoreRulesDeno([])
   return _readFileTree(rootPath, '/', ignore)
 }

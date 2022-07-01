@@ -11,13 +11,14 @@ import {
 } from './filenames.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { ValidationResult } from '../types/validation-result.ts'
-import { summary } from '../summary/summary.ts'
+import { Summary } from '../summary/summary.ts'
 
 /**
  * Full BIDS schema validation entrypoint
  */
 export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   const issues = new DatasetIssues()
+  const summary = new Summary()
   // TODO - summary should be implemented in pure schema mode
   const schema = await loadSchema()
   for await (const context of walkFileTree(fileTree, issues)) {

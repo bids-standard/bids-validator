@@ -12,6 +12,8 @@ export async function readBidsIgnore(file: BIDSFile) {
   }
 }
 
+const defaultIgnores = ['.git**', '.datalad']
+
 /**
  * Deno implementation of .bidsignore style rules
  */
@@ -20,6 +22,7 @@ export class FileIgnoreRulesDeno implements FileIgnoreRules {
 
   constructor(config: string[]) {
     this.#ignore = ignore({ allowRelativePaths: true })
+    this.#ignore.add(defaultIgnores)
     this.#ignore.add(config)
   }
 
