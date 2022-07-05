@@ -5,7 +5,7 @@ const Issue = require('../../utils').issues.Issue
 const checkReadme = fileList => {
   const issues = []
   const readmeFiles = Array.from(Object.values(fileList)).filter(
-    file => file.relativePath && file.relativePath.startsWith('/README')
+    file => file.relativePath && file.relativePath.startsWith('/README'),
   )
 
   readmeFiles.map(readmeFile => {
@@ -19,7 +19,7 @@ const checkReadme = fileList => {
     issues.push(new Issue({ code: 228 }))
   } else if (readmeFiles.length === 0) {
     issues.push(new Issue({ code: 101 }))
-  } 
+  }
   return issues
 }
 export default checkReadme

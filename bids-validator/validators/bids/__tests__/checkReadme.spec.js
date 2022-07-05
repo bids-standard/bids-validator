@@ -8,13 +8,13 @@ describe('checkReadme', () => {
         name: 'README',
         path: '/ds-999/README',
         relativePath: '/README',
-        stats: { size: 155 }
+        stats: { size: 155 },
       },
       '/README.md': {
         name: 'README.md',
         path: '/ds-999/README.md',
         relativePath: '/README.md',
-        stats: { size: 155 }
+        stats: { size: 155 },
       },
     }
     const issues = checkReadme(fileList)
@@ -27,20 +27,20 @@ describe('checkReadme', () => {
         name: 'README',
         path: '/ds-999/README',
         relativePath: '/README',
-        stats: { size: 100 }
+        stats: { size: 100 },
       },
       '/README.md': {
         name: 'README.md',
         path: '/ds-999/README.md',
         relativePath: '/README.md',
-        stats: { size: 100 }
+        stats: { size: 100 },
       },
     }
     const issues = checkReadme(fileList)
     assert.lengthOf(issues, 3)
     const codes = issues.map(issue => issue.code)
-    assert.equal(codes.filter(x => x === 213).length , 2)
-    assert.equal(codes.filter(x => x === 228).length , 1)
+    assert.equal(codes.filter(x => x === 213).length, 2)
+    assert.equal(codes.filter(x => x === 228).length, 1)
   })
   it('returns no issues on readme with extension', () => {
     const fileList = {
@@ -48,7 +48,7 @@ describe('checkReadme', () => {
         name: 'README.md',
         path: '/ds-999/README.md',
         relativePath: '/README.md',
-        stats: { size: 155 }
+        stats: { size: 155 },
       },
     }
     const issues = checkReadme(fileList)
@@ -60,7 +60,7 @@ describe('checkReadme', () => {
         name: 'bad.md',
         path: '/ds-999/bad.md',
         relativePath: '/bad.md',
-        stats: { size: 155 }
+        stats: { size: 155 },
       },
     }
     const issues = checkReadme(fileList)
@@ -68,4 +68,3 @@ describe('checkReadme', () => {
     assert.equal(issues[0].code, 101)
   })
 })
-
