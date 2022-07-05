@@ -1122,6 +1122,7 @@ export default {
   228: {
     key: 'MULTIPLE_README_FILES',
     severity: 'error',
-    reason: 'A BIDS dataset MUST NOT contain more than one `README` file (with or without extension) at its root directory.'
-  }
+    reason:
+      'A BIDS dataset MUST NOT contain more than one `README` file (with or without extension) at its root directory.',
+  },
 }
