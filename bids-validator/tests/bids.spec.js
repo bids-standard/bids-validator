@@ -31,7 +31,7 @@ var missing_session_files = [
   'ds000247',
   'ieeg_motorMiller2007',
   'ieeg_visual',
-  'eeg_ds003654s_hed_inheritance'
+  'eeg_ds003654s_hed_inheritance',
 ]
 
 const dataDirectory = path.join('bids-validator', 'tests', 'data')
