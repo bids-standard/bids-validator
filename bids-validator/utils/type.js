@@ -351,11 +351,15 @@ export default {
     },
 
     isMicroscopy: function(path) {
-      return conditionalMatch(microscopyData, path)
+      return (
+        conditionalMatch(microscopyData, path)
+      )
     },
 
     isMicroscopyPhoto: function(path) {
-      return conditionalMatch(microscopyPhotoData, path)
+      return (
+        conditionalMatch(microscopyPhotoData, path)
+      )
     },
 
     isMicroscopyJSON: function(path) {
