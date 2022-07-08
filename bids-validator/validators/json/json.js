@@ -119,7 +119,7 @@ const selectSchema = file => {
     } else if (
       file.relativePath.includes('/micr') &&
       file.name.endsWith('photo.json')
-      ) {
+    ) {
       schema = require('./schemas/microscopy_photo.json')
     } else if (
       file.relativePath.includes('/meg/') &&

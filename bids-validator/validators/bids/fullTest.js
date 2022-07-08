@@ -166,7 +166,7 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
         const jsonAndFieldIssues = microscopy.checkJSONAndField(
           files,
           jsonContentsDict,
-          fileList
+          fileList,
         )
         self.issues = self.issues
           .concat(samplesIssues)

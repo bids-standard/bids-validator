@@ -50,15 +50,21 @@ describe('checkJSONAndField()', () => {
 
   it('intededfor check detects non existant file', () => {
     const files = {
-      png: [{ relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_photo.png' }],
+      png: [
+        {
+          relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_photo.png',
+        },
+      ],
     }
 
     const jsonContentsDict = {
-      '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_photo.json': { IntendedFor: 'ses-01/micr/sub-01_ses-01_sample-A_SEM.png' },
+      '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_photo.json': {
+        IntendedFor: 'ses-01/micr/sub-01_ses-01_sample-A_SEM.png',
+      },
     }
 
     const fileList = [
-      { relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-B_SEM.png' }
+      { relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-B_SEM.png' },
     ]
 
     const issues = checkJSONAndField(files, jsonContentsDict, fileList)
@@ -68,19 +74,22 @@ describe('checkJSONAndField()', () => {
 
   it('intededfor check detects existing file', () => {
     const files = {
-      png: [{ relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_SEM.png' }],
+      png: [
+        { relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_SEM.png' },
+      ],
     }
 
     const jsonContentsDict = {
-      '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_SEM.json': { IntendedFor: 'ses-01/micr/sub-01_ses-01_sample-A_SEM.png' },
+      '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_SEM.json': {
+        IntendedFor: 'ses-01/micr/sub-01_ses-01_sample-A_SEM.png',
+      },
     }
 
     const fileList = [
-      { relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_SEM.png' }
+      { relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_SEM.png' },
     ]
 
     const issues = checkJSONAndField(files, jsonContentsDict, fileList)
     expect(issues.length).toBe(0)
   })
-
 })
