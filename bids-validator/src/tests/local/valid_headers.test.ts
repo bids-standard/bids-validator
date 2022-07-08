@@ -15,7 +15,7 @@ Deno.test('valid_headers dataset', async (t) => {
   })
 
   await t.step('summary has correct tasks', () => {
-    assertEquals(result.summary.tasks, ['rhyme judgment'])
+    assertEquals(Array.from(result.summary.tasks), ['rhyme judgment'])
   })
 
   await t.step('summary has correct dataProcessed', () => {

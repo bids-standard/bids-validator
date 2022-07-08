@@ -42,13 +42,35 @@ Deno.test('test datatypeFromDirectory', (t) => {
   })
 })
 
-Deno.test('test checkDatatype', (t) => {
-  const filesToTest = [['/sub-01/func/sub-01_task-taskname_bold.json', []]]
-  filesToTest.map((test) => {
-    let context = newContext(test[0])
-    context = { ...context, ...readEntities(context.file) }
-    checkDatatypes(schema, context)
-    assertEquals(context.issues.fileInIssues(test[0]), test[1])
+Deno.test('test checkDatatype', async (t) => {
+  await t.step('Check no errors on good file', () => {
+    const filesToTest = [['/sub-01/func/sub-01_task-taskname_bold.json', []]]
+    filesToTest.map((test) => {
+      let context = newContext(test[0])
+      context = { ...context, ...readEntities(context.file) }
+      checkDatatypes(schema, context)
+      assertEquals(context.issues.fileInIssues(test[0]), test[1])
+    })
+  })
+
+  await t.step('Check for correct issues generated', () => {
+    const filesToTest = [
+      ['/sub-01/anat/sub-01_task-taskname_bold.json', 'DATATYPE_MISMATCH'],
+      ['/sub-01/func/task-taskname_bold.json', 'MISSING_REQUIRED_ENTITY'],
+      [
+        '/sub-01/func/sub-01_task-taskname_bad-ent_bold.json',
+        'ENTITY_NOT_IN_RULE',
+      ],
+    ]
+    filesToTest.map((test) => {
+      let context = newContext(test[0])
+      context = { ...context, ...readEntities(context.file) }
+      checkDatatypes(schema, context)
+      assertEquals(
+        context.issues.getFileIssueKeys(test[0]).includes(test[1]),
+        true,
+      )
+    })
   })
 })
 

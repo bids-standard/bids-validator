@@ -11,14 +11,15 @@ import {
 } from './filenames.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { ValidationResult } from '../types/validation-result.ts'
+import { Summary } from '../summary/summary.ts'
 
 /**
  * Full BIDS schema validation entrypoint
  */
 export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   const issues = new DatasetIssues()
+  const summary = new Summary()
   // TODO - summary should be implemented in pure schema mode
-  const summary = {}
   const schema = await loadSchema()
   for await (const context of walkFileTree(fileTree, issues)) {
     // TODO - Skip ignored files for now (some tests may reference ignored files)
@@ -33,9 +34,10 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
       checkLabelFormat(schema, context)
     }
     applyRules(schema, context)
+    await summary.update(context)
   }
   return {
     issues,
-    summary,
+    summary: summary.formatOutput(),
   }
 }

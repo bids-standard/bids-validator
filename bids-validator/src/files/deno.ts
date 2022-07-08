@@ -93,7 +93,7 @@ export async function _readFileTree(
   const tree = new FileTreeDeno(relativePath, name, parent, rootPath)
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
-    if (dirEntry.isFile) {
+    if (dirEntry.isFile || dirEntry.isSymlink) {
       const file = new BIDSFileDeno(
         rootPath,
         join(relativePath, dirEntry.name),

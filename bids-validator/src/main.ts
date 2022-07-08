@@ -22,7 +22,7 @@ async function main() {
   const schemaResult = await validate(tree)
 
   if (options.schemaOnly) {
-    inspect(schemaResult.issues.issues)
+    inspect(schemaResult)
     // TODO - generate a summary without the old validator
   } else {
     const output = schemaResult.issues.formatOutput()
