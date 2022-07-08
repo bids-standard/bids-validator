@@ -34,7 +34,7 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
       for (const key of Object.keys(rules)) {
         if (validateFilenameAgainstRule(rules[key], schema, context)) {
           matchedRule = key
-          possibleDatatypes.add(rules[key].datatype)
+          possibleDatatypes.add(rules[key].datatypes)
           break
         }
       }
