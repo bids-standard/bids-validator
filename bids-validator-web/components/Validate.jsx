@@ -25,7 +25,7 @@ class Validate extends React.Component {
       <div className="card-header">
         <h3>
           Select a{' '}
-          <a href="http://bids.neuroimaging.io" target="_blank">
+          <a href="https://bids.neuroimaging.io" target="_blank">
             BIDS dataset
           </a>{' '}
           to validate

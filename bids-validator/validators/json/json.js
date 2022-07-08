@@ -114,12 +114,13 @@ const selectSchema = file => {
       file.name.endsWith('NLO.json') ||
       file.name.endsWith('OCT.json') ||
       file.name.endsWith('SPIM.json')
-      ) {
+    ) {
       schema = require('./schemas/microscopy.json')
     } else if (
       file.relativePath.includes('/micr') &&
       file.name.endsWith('photo.json')
-      ) {
+    ) {
+
       schema = require('./schemas/microscopy_photo.json')
     } else if (
       file.relativePath.includes('/meg/') &&

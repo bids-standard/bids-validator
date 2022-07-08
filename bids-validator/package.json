@@ -1,6 +1,6 @@
 {
   "name": "bids-validator",
-  "version": "1.8.10-dev.0",
+  "version": "1.9.5-dev.0",
   "description": "",
   "main": "./dist/commonjs/index.js",
   "exports": {
@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "node ./esbuild.mjs",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -43,7 +43,8 @@
     "cross-fetch": "^3.0.6",
     "date-fns": "^2.7.0",
     "events": "^3.3.0",
-    "hed-validator": "^3.5.0",
+    "exifreader": "^4.1.0",
+    "hed-validator": "^3.7.1",
     "ignore": "^4.0.2",
     "is-utf8": "^0.2.1",
     "jshint": "^2.9.6",
@@ -57,10 +58,9 @@
     "semver": "^7.3.2",
     "stream-browserify": "^3.0.0",
     "table": "^5.2.3",
+    "xml2js": "^0.4.23",
     "yaml": "^1.10.2",
-    "yargs": "^16.2.0",
-    "exifreader": "^4.1.0",
-    "xml2js": "^0.4.23"
+    "yargs": "^16.2.0"
   },
   "devDependencies": {
     "adm-zip": "",
@@ -69,7 +69,7 @@
     "esbuild": "^0.11.5",
     "esbuild-plugin-globals": "^0.1.1",
     "esbuild-runner": "^2.2.1",
-    "eslint": "^5.2.0",
+    "eslint": "^8.17.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.2",
     "husky": "^1.0.0-rc.13",

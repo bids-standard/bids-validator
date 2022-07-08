@@ -710,9 +710,10 @@ export default {
       "It is recommended to define 'PulseSequenceDetails' for this file. 'PulseSequenceDetails' is the information beyond pulse sequence type that identifies the specific pulse sequence used (for example, 'Standard Siemens Sequence distributed with the VB17 software', 'Siemens WIP ### version #.##', or 'Sequence written by X using a version compiled on MM/DD/YYYY').",
   },
   139: {
-    key: '139_EMPTY',
-    severity: 'warning',
-    reason: '',
+    key: 'BLACKLISTED_MODALITY',
+    severity: 'error',
+    reason:
+      'Found a modality that has been blacklisted through validator configuration.',
   },
   140: {
     key: '140_EMPTY',
@@ -1117,5 +1118,11 @@ export default {
     key: 'INCONSISTENT_TIFF_EXTENSION',
     severity: 'error',
     reason: 'Inconsistent TIFF file type and extension',
+  },
+  228: {
+    key: 'MULTIPLE_README_FILES',
+    severity: 'error',
+    reason:
+      'A BIDS dataset MUST NOT contain more than one `README` file (with or without extension) at its root directory.',
   },
 }

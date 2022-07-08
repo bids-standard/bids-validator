@@ -114,7 +114,7 @@ async function preprocessNode(dir, ig, options) {
  * @returns {string[]}
  */
 const getGitLsTree = (cwd, gitRef) =>
-  new Promise((resolve, reject) => {
+  new Promise(resolve => {
     let output = ''
     const gitProcess = child_proccess.spawn(
       'git',
@@ -181,10 +181,14 @@ const readLsTreeLines = gitTreeLines =>
 const getGitCatFile = (cwd, input) =>
   new Promise(resolve => {
     let output = ''
-    const gitProcess = spawn('git', ['cat-file', '--batch', '--buffer'], {
-      cwd,
-      encoding: 'utf-8',
-    })
+    const gitProcess = child_proccess.spawn(
+      'git',
+      ['cat-file', '--batch', '--buffer'],
+      {
+        cwd,
+        encoding: 'utf-8',
+      },
+    )
 
     // pass in symlink objects
     gitProcess.stdin.write(input)
@@ -256,56 +260,56 @@ async function getFilesFromGitTree(dir, ig, options) {
 /**
  * Recursive helper function for 'preprocessNode'
  */
-async function getFilesFromFs(dir, rootPath, ig, options) {
+async function getFilesFromFs(dir, rootPath, ig, options, parent = []) {
   const files = await fs.promises.readdir(dir, { withFileTypes: true })
-  const filesAccumulator = []
-  // Closure to merge the next file depth into this one
-  const recursiveMerge = async nextRoot => {
-    Array.prototype.push.apply(
-      filesAccumulator,
-      await getFilesFromFs(nextRoot, rootPath, ig, options),
-    )
-  }
+  const filesAccumulator = parent
   for (const file of files) {
     const fullPath = path.join(dir, file.name)
     const relativePath = harmonizeRelativePath(
       path.relative(rootPath, fullPath),
     )
     const ignore = ig.ignores(path.relative('/', relativePath))
-    if (!ignore) {
-      const fileObj = {
-        name: file.name,
-        path: fullPath,
-        relativePath,
-      }
-      // Three cases to consider: directories, files, symlinks
-      if (file.isDirectory()) {
-        await recursiveMerge(fullPath)
-      } else if (file.isSymbolicLink()) {
-        // Allow skipping symbolic links which lead to recursion
-        // Disabling this is a big performance advantage on high latency
-        // storage but it's a good default for versatility
-        if (!options.ignoreSymlinks) {
-          try {
-            const targetPath = await fs.promises.realpath(fullPath)
-            const targetStat = await fs.promises.stat(targetPath)
-            // Either add or recurse from the target depending
-            if (targetStat.isDirectory()) {
-              await recursiveMerge(targetPath)
-            } else {
-              filesAccumulator.push(fileObj)
-            }
-          } catch (err) {
-            // Symlink points at an invalid target, skip it
-            return
+    const fileObj = {
+      name: file.name,
+      path: fullPath,
+      relativePath,
+    }
+    if (ignore) {
+      fileObj.ignore = true
+    }
+    // Three cases to consider: directories, files, symlinks
+    if (file.isDirectory()) {
+      await getFilesFromFs(fullPath, rootPath, ig, options, filesAccumulator)
+    } else if (file.isSymbolicLink()) {
+      // Allow skipping symbolic links which lead to recursion
+      // Disabling this is a big performance advantage on high latency
+      // storage but it's a good default for versatility
+      if (!options.ignoreSymlinks) {
+        try {
+          const targetPath = await fs.promises.realpath(fullPath)
+          const targetStat = await fs.promises.stat(targetPath)
+          // Either add or recurse from the target depending
+          if (targetStat.isDirectory()) {
+            await getFilesFromFs(
+              targetPath,
+              rootPath,
+              ig,
+              options,
+              filesAccumulator,
+            )
+          } else {
+            filesAccumulator.push(fileObj)
           }
-        } else {
-          // This branch assumes all symbolic links are not directories
-          filesAccumulator.push(fileObj)
+        } catch (err) {
+          // Symlink points at an invalid target, skip it
+          return
         }
       } else {
+        // This branch assumes all symbolic links are not directories
         filesAccumulator.push(fileObj)
       }
+    } else {
+      filesAccumulator.push(fileObj)
     }
   }
   return filesAccumulator

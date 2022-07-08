@@ -19,6 +19,7 @@ import checkReadme from './checkReadme'
 import validateMisc from '../../utils/files/validateMisc'
 import collectSubjectMetadata from '../../utils/summary/collectSubjectMetadata'
 import collectPetFields from '../../utils/summary/collectPetFields'
+import collectModalities from '../../utils/summary/collectModalities'
 
 /**
  * Full Test
@@ -43,6 +44,24 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
   const phenotypeParticipants = []
 
   const tsvs = []
+
+  if (self.options.blacklistModalities) {
+    const relativePaths = Object.keys(fileList).map(
+      file => fileList[file].relativePath,
+    )
+    const preIgnoreModalities = collectModalities(relativePaths)
+    self.options.blacklistModalities.map(mod => {
+      if (preIgnoreModalities.primary.includes(mod)) {
+        self.issues.push(
+          new Issue({
+            file: mod,
+            evidence: `found ${mod} files`,
+            code: 139,
+          }),
+        )
+      }
+    })
+  }
 
   const summary = utils.collectSummary(fileList, self.options, schema)
 
@@ -147,7 +166,7 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
         const jsonAndFieldIssues = microscopy.checkJSONAndField(
           files,
           jsonContentsDict,
-          fileList
+          fileList,
         )
         self.issues = self.issues
           .concat(samplesIssues)

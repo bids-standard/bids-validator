@@ -1,4 +1,3 @@
-import utils from '../../utils'
 import Issue from '../../utils/issues/issue'
 import checkAcqTimeFormat from './checkAcqTimeFormat'
 import checkAge89 from './checkAge89'
@@ -149,7 +148,9 @@ const TSV = (file, contents, fileList, callback) => {
     // create full dataset path list
     const pathList = []
     for (let f in fileList) {
-      pathList.push(fileList[f].relativePath)
+      if (fileList.hasOwnProperty(f)) {
+        pathList.push(fileList[f].relativePath)
+      }
     }
 
     // check for stimuli file

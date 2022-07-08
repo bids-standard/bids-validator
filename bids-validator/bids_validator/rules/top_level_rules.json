@@ -4,6 +4,9 @@
     "tokens": {
       "@@@_root_files_@@@": [
         "README",
+        "README.md",
+        "README.rst",
+        "README.txt",
         "CHANGES",
         "LICENSE",
         "dataset_description.json",
@@ -51,9 +54,7 @@
   "pet_top": {
     "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:trc-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(@@@_pet_suffixes_@@@)\\.json$",
     "tokens": {
-      "@@@_pet_suffixes_@@@": [
-        "pet"
-      ]
+      "@@@_pet_suffixes_@@@": ["pet"]
     }
   },
 
@@ -97,6 +98,8 @@
         "_electrodes\\.tsv",
         "_electrodes\\.json",
         "_photo\\.jpg",
+        "_photo\\.png",
+        "_photo\\.tif",
         "_coordsystem\\.json"
       ]
     }
@@ -111,6 +114,8 @@
         "_electrodes\\.tsv",
         "_electrodes\\.json",
         "_photo\\.jpg",
+        "_photo\\.png",
+        "_photo\\.tif",
         "_coordsystem\\.json"
       ]
     }
@@ -123,6 +128,8 @@
         "_channels\\.tsv",
         "_channels\\.json",
         "_photo\\.jpg",
+        "_photo\\.png",
+        "_photo\\.tif",
         "_coordsystem\\.json"
       ]
     }

@@ -31,6 +31,7 @@ var missing_session_files = [
   'ds000247',
   'ieeg_motorMiller2007',
   'ieeg_visual',
+  'eeg_ds003654s_hed_inheritance',
 ]
 
 const dataDirectory = path.join('bids-validator', 'tests', 'data')
@@ -214,6 +215,34 @@ describe('BIDS example datasets ', function() {
         warnings.findIndex(warning => warning.code === 13) > -1,
         'warnings do not contain a code 13',
       )
+      isdone()
+    })
+  })
+
+  it('blacklists modalities specified', function(isdone) {
+    const _options = { ...options, blacklistModalities: ['MRI'] }
+    validate.BIDS(createExampleFileList('ds001'), _options, function(
+      issues,
+      summary,
+    ) {
+      var errors = issues.errors
+      var warnings = issues.warnings
+      assert(summary.sessions.length === 0)
+      assert(summary.subjects.length === 16)
+      assert.deepEqual(summary.tasks, ['balloon analog risk task'])
+      assert(summary.modalities.includes('MRI'))
+      assert(summary.totalFiles === 134)
+      assert.deepEqual(errors.length, 2)
+      assert(warnings.length === 2)
+      assert(
+        warnings.findIndex(warning => warning.code === 13) > -1,
+        'warnings do not contain a code 13',
+      )
+      assert(
+        errors.findIndex(error => error.code === 139) > -1,
+        'errors do contain a code 139',
+      )
+
       isdone()
     })
   })

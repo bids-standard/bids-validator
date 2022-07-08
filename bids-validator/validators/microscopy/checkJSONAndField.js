@@ -42,7 +42,6 @@ const checkJSONAndField = (files, jsonContentsDict, fileList) => {
 }
 
 const ifJsonExist = (file, possibleJsonPath, jsonContentsDict, fileList) => {
-
   let potentialSidecars = utils.files.potentialLocations(possibleJsonPath)
   const chunkRegex = new RegExp('_chunk-[0-9]+')
 
@@ -65,8 +64,7 @@ const ifJsonExist = (file, possibleJsonPath, jsonContentsDict, fileList) => {
           : mergedDictionary['IntendedFor']
       return checkIfIntendedExists(intendedFor, fileList, file)
     }
-  }
-  else {
+  } else {
     // check if the given file has a corresponding JSON file
     if (Object.keys(mergedDictionary).length === 0) {
       return [
@@ -98,37 +96,39 @@ const checkMatrixField = (file, mergedDictionary) => {
 }
 
 const checkIfIntendedExists = (intendedFor, fileList, file) => {
-    let issues = []
-    for (let key = 0; key < intendedFor.length; key++) {
-        const intendedForFile = intendedFor[key]
-        const intendedForFileFull =
-          '/' + file.relativePath.split('/')[1] + '/' + intendedForFile
-        let onTheList = false
-        for (let key2 in fileList) {
-          if (key2) {
-            const filePath = fileList[key2].relativePath
-            if (filePath === intendedForFileFull) {
-              onTheList = true
-            }
-          }
+  let issues = []
+  for (let key = 0; key < intendedFor.length; key++) {
+    const intendedForFile = intendedFor[key]
+    const intendedForFileFull =
+      '/' + file.relativePath.split('/')[1] + '/' + intendedForFile
+    let onTheList = false
+    for (let key2 in fileList) {
+      if (key2) {
+        const filePath = fileList[key2].relativePath
+        if (filePath === intendedForFileFull) {
+          onTheList = true
         }
-        if (!onTheList) {
-          issues.push(
-            new Issue({
-              file: file,
-              code: 37,
-              reason:
-              "'IntendedFor' property of this photo ('" +
-              file.relativePath +
-              "') does not point to an existing file ('" +
-              intendedForFile +
-              "'). Please mind that this value should not include subject level directory " +
-              "('/" + file.relativePath.split('/')[1] + "/').",
-              evidence: intendedForFile,
-            }),
-          )
       }
     }
+    if (!onTheList) {
+      issues.push(
+        new Issue({
+          file: file,
+          code: 37,
+          reason:
+            "'IntendedFor' property of this photo ('" +
+            file.relativePath +
+            "') does not point to an existing file ('" +
+            intendedForFile +
+            "'). Please mind that this value should not include subject level directory " +
+            "('/" +
+            file.relativePath.split('/')[1] +
+            "/').",
+          evidence: intendedForFile,
+        }),
+      )
+    }
+  }
   return issues
 }
 
