@@ -63,3 +63,32 @@ export class BIDSContext implements Context {
     return this.#fileTree.path
   }
 }
+
+async function loadSidecar(context, fileTree) {
+  const validSidecars = fileTree.files.map((file) => {
+    const { suffix, extension, entitites } = readEntities(file)
+    return (
+      extension === '.json' &&
+      suffix === context.suffix &&
+      Object.keys(entities).every((entity) => {
+        entity in context.entities &&
+          entities[entity] === context.entities[entity]
+      })
+    )
+  })
+  if (validSidecars.length > 1) {
+    // two matching in one dir not allowed
+  } else if (validSidecars.length === 1) {
+    const json = await validSidecars[0]
+      .text()
+      .then((text) => JSON.parse(text))
+      .catch((error) => {})
+    context.sidecar = { ...context.sidecar, ...json }
+  }
+  nextDir = fileTree.directories.find((directory) => {
+    dataFile.path.startsWith(directory.path)
+  })
+  if (nextDir) {
+    loadSidecars(dataFile, dataSuffix, dataEntities, nextDir)
+  }
+}
