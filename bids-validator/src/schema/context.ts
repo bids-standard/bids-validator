@@ -62,33 +62,41 @@ export class BIDSContext implements Context {
   get datasetPath(): string {
     return this.#fileTree.path
   }
-}
-
-export async function loadSidecar(context, fileTree) {
-  const validSidecars = fileTree.files.map((file) => {
-    const { suffix, extension, entities } = readEntities(file)
-    return (
-      extension === '.json' &&
-      suffix === context.suffix &&
-      Object.keys(entities).every((entity) => {
-        entity in context.entities &&
-          entities[entity] === context.entities[entity]
-      })
-    )
-  })
-  if (validSidecars.length > 1) {
-    // two matching in one dir not allowed
-  } else if (validSidecars.length === 1) {
-    const json = await validSidecars[0]
-      .text()
-      .then((text) => JSON.parse(text))
-      .catch((error) => {})
-    context.sidecar = { ...context.sidecar, ...json }
-  }
-  nextDir = fileTree.directories.find((directory) => {
-    dataFile.path.startsWith(directory.path)
-  })
-  if (nextDir) {
-    loadSidecars(dataFile, dataSuffix, dataEntities, nextDir)
+  /**
+   * Crawls fileTree from root to current context file, loading any valid
+   * json sidecars found.
+   */
+  async loadSidecar(fileTree?: FileTree) {
+    if (!fileTree) {
+      fileTree = this.#fileTree
+    }
+    const validSidecars = fileTree.files.filter((file) => {
+      const { suffix, extension, entities } = readEntities(file)
+      return (
+        extension === '.json' &&
+        suffix === this.suffix &&
+        Object.keys(entities).every((entity) => {
+          return (
+            entity in this.entities &&
+            entities[entity] === this.entities[entity]
+          )
+        })
+      )
+    })
+    if (validSidecars.length > 1) {
+      // two matching in one dir not allowed
+    } else if (validSidecars.length === 1) {
+      const json = await validSidecars[0]
+        .text()
+        .then((text) => JSON.parse(text))
+        .catch((error) => {})
+      this.sidecar = { ...this.sidecar, ...json }
+    }
+    const nextDir = fileTree.directories.find((directory) => {
+      this.file.path.startsWith(directory.path)
+    })
+    if (nextDir) {
+      loadSidecar(nextDir)
+    }
   }
 }
