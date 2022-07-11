@@ -64,9 +64,9 @@ export class BIDSContext implements Context {
   }
 }
 
-async function loadSidecar(context, fileTree) {
+export async function loadSidecar(context, fileTree) {
   const validSidecars = fileTree.files.map((file) => {
-    const { suffix, extension, entitites } = readEntities(file)
+    const { suffix, extension, entities } = readEntities(file)
     return (
       extension === '.json' &&
       suffix === context.suffix &&
