@@ -35,6 +35,10 @@ export function evalCheck(src: string, context: Record<string, any>) {
   }
 }
 
+/**
+ * Different keys in a rule have different interpretations.
+ * We associate theys keys from a rule object to a function that returns a boolean representing if the rules have been met.
+ */
 const evalMap = {
   checks: evalRuleChecks,
   columns: evalColumns,
@@ -43,6 +47,12 @@ const evalMap = {
   fields: evalJsonCheck,
 }
 
+/**
+ * Entrypoint for evaluating a individual rule.
+ * We see if every selector applies to this context,
+ * Then we attempt to interpret every other key in the rule
+ * obect.
+ */
 function evalRule(rule, context) {
   if (!mapEvalCheck(rule.selectors, context)) {
     return
@@ -58,6 +68,10 @@ function mapEvalCheck(statements, context): boolean {
   return statements.every((x) => evalCheck(x, context))
 }
 
+/**
+ * Classic rules interpreted like selectors. Examples in specification:
+ * schema/rules/checks/*
+ */
 function evalRuleChecks(rule, context): boolean {
   if (!mapEvalCheck(rule.checks, context)) {
     context.issues.add({
@@ -69,6 +83,10 @@ function evalRuleChecks(rule, context): boolean {
   return true
 }
 
+/**
+ * Columns in schema rules are assertions about the requirement level of what headers should be present in a tsv file. Examples in specification:
+ * schema/rules/tabular_data/*
+ */
 function evalColumns(rule, context): void {
   const headers = Object.keys(context.columns)
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
@@ -82,6 +100,10 @@ function evalColumns(rule, context): void {
   }
 }
 
+/**
+ * A small subset of tsv schema rules enforce a specific order of columns.
+ * No error is currently provided by the rule itself.
+ */
 function evalInitialColumns(rule, context): void {
   rule.initial_columns.map((ruleHeader, ruleIndex) => {
     const contextIndex = headers.findIndex(ruleHeader)
@@ -101,6 +123,11 @@ function evalAdditionalColumns(rule, context): void {
   }
 }
 
+/**
+ * For evaluating field requirements and values that should exist in a json sidecar for a file.
+ * Will need to implement an additional check/error for `prohibitied` fields. Examples in specification:
+ * schema/rules/sidecars/*
+ */
 function evalJsonCheck(rule, context): void {
   for (const [key, requirement] of Object.entries(rule.fields)) {
     if (!(key in context.sidecar)) {
