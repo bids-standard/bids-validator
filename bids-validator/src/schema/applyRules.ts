@@ -2,7 +2,13 @@ import { GenericRule, GenericSchema } from '../types/schema.ts'
 import { BIDSContext } from './context.ts'
 
 /**
- * Given a schema and context, evaluate which rules match and test them
+ * Given a schema and context, evaluate which rules match and test them.
+ * Recursively descend into schema object and iterate over each levels keys.
+ * If we find a child of the object that isn't an Object ignore it, this will
+ * be things that show up in meta and objects directories. If an an object
+ * has a selectors key we know that this is an actual rule that we know how
+ * to evaluate. Finally if what we have is an Object recurse on it to see if
+ * its children have any rules.
  * @param schema
  * @param context
  */
