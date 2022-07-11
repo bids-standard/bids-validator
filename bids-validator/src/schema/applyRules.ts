@@ -1,4 +1,4 @@
-import { Schema } from '../types/schema.ts'
+import { GenericRule, GenericSchema } from '../types/schema.ts'
 import { BIDSContext } from './context.ts'
 
 /**
@@ -6,15 +6,15 @@ import { BIDSContext } from './context.ts'
  * @param schema
  * @param context
  */
-export function applyRules(schema: Schema, context: BIDSContext) {
+export function applyRules(schema: GenericSchema, context: BIDSContext) {
   for (const key in schema) {
     if (!(schema[key].constructor === Object)) {
       continue
     }
     if ('selectors' in schema[key]) {
-      evalRule(schema[key], context)
+      evalRule(schema[key] as GenericRule, context)
     } else if (schema[key].constructor === Object) {
-      applyRules(schema[key], context)
+      applyRules(schema[key] as GenericSchema, context)
     }
   }
 }
@@ -25,7 +25,7 @@ const safeHas = () => true
 const safeGet = (target: any, prop: any) =>
   prop === Symbol.unscopables ? undefined : target[prop]
 
-export function evalCheck(src: string, context: Record<string, any>) {
+export function evalCheck(src: string, context: BIDSContext) {
   const test = evalConstructor(src)
   const safeContext = new Proxy(context, { has: safeHas, get: safeGet })
   try {
@@ -37,9 +37,13 @@ export function evalCheck(src: string, context: Record<string, any>) {
 
 /**
  * Different keys in a rule have different interpretations.
- * We associate theys keys from a rule object to a function that returns a boolean representing if the rules have been met.
+ * We associate theys keys from a rule object to a function adds an
+ * issue to the context if the rule evaluation fails.
  */
-const evalMap = {
+const evalMap: Record<
+  keyof Omit<GenericRule, 'selectors'>,
+  (rule: GenericRule, context: BIDSContext) => boolean | void
+> = {
   checks: evalRuleChecks,
   columns: evalColumns,
   additional_columns: evalAdditionalColumns,
@@ -53,18 +57,19 @@ const evalMap = {
  * Then we attempt to interpret every other key in the rule
  * obect.
  */
-function evalRule(rule, context) {
+function evalRule(rule: GenericRule, context: BIDSContext) {
   if (!mapEvalCheck(rule.selectors, context)) {
     return
   }
   Object.keys(rule)
     .filter((key) => key in evalMap)
     .map((key) => {
+      // @ts-expect-error
       evalMap[key](rule, context)
     })
 }
 
-function mapEvalCheck(statements, context): boolean {
+function mapEvalCheck(statements: string[], context: BIDSContext): boolean {
   return statements.every((x) => evalCheck(x, context))
 }
 
@@ -72,7 +77,7 @@ function mapEvalCheck(statements, context): boolean {
  * Classic rules interpreted like selectors. Examples in specification:
  * schema/rules/checks/*
  */
-function evalRuleChecks(rule, context): boolean {
+function evalRuleChecks(rule: GenericRule, context: BIDSContext): boolean {
   if (!mapEvalCheck(rule.checks, context)) {
     context.issues.add({
       key: 'CHECK_ERROR',
@@ -84,13 +89,14 @@ function evalRuleChecks(rule, context): boolean {
 }
 
 /**
- * Columns in schema rules are assertions about the requirement level of what headers should be present in a tsv file. Examples in specification:
+ * Columns in schema rules are assertions about the requirement level of what
+ * headers should be present in a tsv file. Examples in specification:
  * schema/rules/tabular_data/*
  */
-function evalColumns(rule, context): void {
+function evalColumns(rule: GenericRule, context: BIDSContext): void {
   const headers = Object.keys(context.columns)
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
-    if (!ruleHeader in headers) {
+    if (!(ruleHeader in headers)) {
       context.issues.add({
         key: 'TSV_ERROR',
         reason: JSON.stringify(rule),
@@ -104,34 +110,49 @@ function evalColumns(rule, context): void {
  * A small subset of tsv schema rules enforce a specific order of columns.
  * No error is currently provided by the rule itself.
  */
-function evalInitialColumns(rule, context): void {
-  rule.initial_columns.map((ruleHeader, ruleIndex) => {
-    const contextIndex = headers.findIndex(ruleHeader)
+function evalInitialColumns(rule: GenericRule, context: BIDSContext): void {
+  const headers = Object.keys(context.columns)
+  rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
+    const contextIndex = headers.findIndex((x) => x === ruleHeader)
     if (contextIndex === -1) {
-      context.issues.add('TSV_ERROR', JSON.stringify(rule))
+      context.issues.add({
+        key: 'TSV_ERROR',
+        reason: JSON.stringify(rule),
+        files: [context.file],
+      })
     } else if (ruleIndex !== contextIndex) {
-      context.issues.add('TSV_ERROR', JSON.stringify(rule))
+      context.issues.add({
+        key: 'TSV_ERROR',
+        reason: JSON.stringify(rule),
+        files: [context.file],
+      })
     }
   })
 }
 
-function evalAdditionalColumns(rule, context): void {
+function evalAdditionalColumns(rule: GenericRule, context: BIDSContext): void {
+  const headers = Object.keys(context.columns)
   // hard coding allowed here feels bad
-  if (!rule.additional_columns === 'allowed') {
-    const extraCols = headers.filter((header) => !header in rule.columns)
-    context.issues.add('TSV_ERROR', JSON.stringify(rule))
+  if (!(rule.additional_columns === 'allowed')) {
+    const extraCols = headers.filter((header) => !(header in rule.columns))
+    context.issues.add({
+      key: 'TSV_ERROR',
+      reason: JSON.stringify(rule),
+      files: [context.file],
+    })
   }
 }
 
 /**
- * For evaluating field requirements and values that should exist in a json sidecar for a file.
- * Will need to implement an additional check/error for `prohibitied` fields. Examples in specification:
+ * For evaluating field requirements and values that should exist in a json
+ * sidecar for a file. Will need to implement an additional check/error for
+ * `prohibitied` fields. Examples in specification:
  * schema/rules/sidecars/*
  */
-function evalJsonCheck(rule, context): void {
+function evalJsonCheck(rule: GenericRule, context: BIDSContext): void {
   for (const [key, requirement] of Object.entries(rule.fields)) {
     if (!(key in context.sidecar)) {
-      context.issues.add('JSON_ERROR', JSON.stringify(rule))
+      context.issues.add({ key: 'JSON_ERROR', reason: JSON.stringify(rule) })
     }
   }
 }

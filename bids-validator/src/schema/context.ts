@@ -96,7 +96,7 @@ export class BIDSContext implements Context {
       this.file.path.startsWith(directory.path)
     })
     if (nextDir) {
-      loadSidecar(nextDir)
+      this.loadSidecar(nextDir)
     }
   }
 }
