@@ -11,14 +11,18 @@ describe('TSV', function() {
   }
 
   it('should not allow empty values saved as empty cells.', function() {
-    var tsv = '1.0\t\t0.2\tresponse 1\t12.32'
+    var tsv =
+      'header-one\theader-two\theader-three\theader-four\theader-five\n' +
+      '1.0\t\t0.2\tresponse 1\t12.32'
     validate.TSV.TSV(file, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 23)
     })
   })
 
   it('should not allow missing values that are specified by something other than "n/a".', function() {
-    var tsv = '1.0\tNA\t0.2\tresponse 1\t12.32'
+    var tsv =
+      'header-one\theader-two\theader-three\theader-four\theader-five\n' +
+      'n1.0\tNA\t0.2\tresponse 1\t12.32'
     validate.TSV.TSV(file, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 24)
     })
