@@ -56,7 +56,7 @@ const TSV = (file, contents, fileList, callback) => {
 
   checkHeaders(headers, file, issues)
 
-  for (let i = 0; i < rows.length; i++) {
+  for (let i = 1; i < rows.length; i++) {
     const values = rows[i]
     const evidence = `row ${i}: ${values.join('\t')}`
     if (values.length === 1 && /^\s*$/.test(values[0])) continue
