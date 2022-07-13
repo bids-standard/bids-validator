@@ -467,7 +467,7 @@
   },
 
   "meg": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?meg[\\/\\\\]\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_split-[0-9]+)?(_digitizer.txt|_meg(@@@_meg_type_@@@[\\/\\\\](.(?!\\.(sqd|con|fif|raw|raw\\.mhd|trg|kdf|chn)$))*|[\\/\\\\](.(?!\\.(sqd|con|fif|raw|raw\\.mhd|trg|kdf|chn)$))*)|(@@@_meg_ext_@@@)|(?:_recording-[a-zA-Z0-9]+)?(?:@@@_cont_ext_@@@))$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?meg[\\/\\\\]\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_split-[0-9]+)?(_digitizer\\.txt|_meg(@@@_meg_type_@@@[\\/\\\\](.(?!\\.(sqd|con|fif|raw|raw\\.mhd|trg|kdf|chn)$))*|[\\/\\\\](.(?!\\.(sqd|con|fif|raw|raw\\.mhd|trg|kdf|chn)$))*)|(@@@_meg_ext_@@@)|(?:_recording-[a-zA-Z0-9]+)?(?:@@@_cont_ext_@@@))$",
     "tokens": {
       "@@@_meg_type_@@@": [
         "\\.ds[\\/\\\\].*",
@@ -565,11 +565,11 @@
         "_SPIM"
       ],
       "@@@_microscopy_ext_@@@": [
-        ".ome\\.tif",
-        ".ome\\.btf",
-        ".ome\\.zarr[\\/\\\\].*",
-        ".tif",
-        ".png"
+        "\\.ome\\.tif",
+        "\\.ome\\.btf",
+        "\\.ome\\.zarr[\\/\\\\].*",
+        "\\.tif",
+        "\\.png"
       ]
     }
   },

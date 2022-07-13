@@ -4,23 +4,23 @@
     "tokens": {
       "@@@_root_files_@@@": [
         "README",
-        "README.md",
-        "README.rst",
-        "README.txt",
+        "README\\.md",
+        "README\\.rst",
+        "README\\.txt",
         "CHANGES",
         "LICENSE",
-        "dataset_description.json",
-        "genetic_info.json",
-        "participants.tsv",
-        "participants.json",
+        "dataset_description\\.json",
+        "genetic_info\\.json",
+        "participants\\.tsv",
+        "participants\\.json",
         "phasediff.json",
-        "phase1.json",
-        "phase2.json",
-        "fieldmap.json",
-        "events.json",
-        "scans.json",
-        "samples.json",
-        "samples.tsv"
+        "phase1\\.json",
+        "phase2\\.json",
+        "fieldmap\\.json",
+        "events\\.json",
+        "scans\\.json",
+        "samples\\.json",
+        "samples\\.tsv"
       ]
     }
   },
