@@ -1,13 +1,13 @@
 name: update submodules
 
 # This workflow will checkout the tracked branch of all submodules
-# and will update the submodule pull the latest commit of that submodule branch 
+# and will update the submodule pull the latest commit of that submodule branch
 
 # If the branch was not up to date this will then open a PR against the base branch
 # in the repo this submodule belongs to.
 
 # ----  WARNING ----
-# Currently if the submodule is not tracking the default branch, 
+# Currently if the submodule is not tracking the default branch,
 # this will workflow will fail.
 #
 
@@ -102,3 +102,5 @@ jobs:
         with:
           commit-message: Update submodules
           delete-branch: true
+          title: "[BOT] Updating git submodules"
+          body: "Update git submodules via [CI](https://github.com/bids-standard/bids-validator/blob/master/.github/workflows/update_submodules.yml)."
