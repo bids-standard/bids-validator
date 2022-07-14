@@ -59,7 +59,6 @@ const megCrosstalkData = buildRegExp(file_level_rules.meg_crosstalk)
 const stimuliData = buildRegExp(file_level_rules.stimuli)
 const petData = buildRegExp(file_level_rules.pet)
 const petBlood = buildRegExp(file_level_rules.pet_blood)
-const motion = buildRegExp(file_level_rules.motion)
 const microscopyData = buildRegExp(file_level_rules.microscopy)
 const microscopyPhotoData = buildRegExp(file_level_rules.microscopy_photo)
 const microscopyJSON = buildRegExp(file_level_rules.microscopy_json)
@@ -78,7 +77,6 @@ const scansSes = buildRegExp(session_level_rules.scans)
 const petSes = buildRegExp(session_level_rules.pet_ses)
 const motionSes = buildRegExp(session_level_rules.motion_ses)
 const microscopySes = buildRegExp(session_level_rules.microscopy_ses)
-const motionSes = buildRegExp(session_level_rules.motion_ses)
 // Subject level
 const subjectLevel = buildRegExp(subject_level_rules.subject_level)
 // Top level
@@ -95,7 +93,6 @@ const megTop = buildRegExp(top_level_rules.meg_top)
 const petTop = buildRegExp(top_level_rules.pet_top)
 const motionTop = buildRegExp(top_level_rules.motion_top)
 const microscopyTop = buildRegExp(top_level_rules.microscopy_top)
-const motionTop = buildRegExp(top_level_rules.motion_top)
 
 export default {
   /**
@@ -413,7 +410,6 @@ export default {
         this.isFuncBold(path) ||
         this.isPET(path) ||
         this.isPETBlood(path) ||
-        this.isMOTION(path) ||
         this.isMicroscopy(path) ||
         this.isMicroscopyJSON(path) ||
         this.isMOTION(path) 
