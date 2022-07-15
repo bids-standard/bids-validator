@@ -16,13 +16,26 @@ export interface Schema {
   rules: SchemaRules
 }
 
+export interface SchemaIssue {
+  code: string
+  message: string
+  level?: string
+}
+
 export type GenericSchema = { [key: string]: GenericRule | GenericSchema }
 
 export interface GenericRule {
   selectors: string[]
-  checks: string[]
-  columns: Record<string, string>
-  additional_columns: string
-  initial_columns: string[]
-  fields: Record<string, Record<string, string>>
+  checks?: string[]
+  columns?: Record<string, string>
+  additional_columns?: string
+  initial_columns?: string[]
+  fields?: Record<string, string | SchemaFields>
+  issue?: SchemaIssue
+}
+
+export interface SchemaFields {
+  level: string
+  level_addendum?: string
+  issue?: SchemaIssue
 }

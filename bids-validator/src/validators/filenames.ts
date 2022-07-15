@@ -135,8 +135,8 @@ export function validateFilenameAgainstRule(
 
 function lookupEntityLiteral(name: string, schema: Schema) {
   const entityObj = schema.objects.entities[name]
-  if (entityObj && entityObj['entity']) {
-    return entityObj['entity']
+  if (entityObj && entityObj['name']) {
+    return entityObj['name']
   } else {
     // if this happens theres an issue with the schema?
     return ''
@@ -146,7 +146,7 @@ function lookupEntityLiteral(name: string, schema: Schema) {
 function getEntityByLiteral(fileEntity: string, schema: Schema) {
   const entities = schema.objects.entities
   const key = Object.keys(entities).find((key) => {
-    return entities[key].entity === fileEntity
+    return entities[key].name === fileEntity
   })
   if (key) {
     return entities[key]
@@ -155,9 +155,9 @@ function getEntityByLiteral(fileEntity: string, schema: Schema) {
 }
 
 export function datatypeFromDirectory(schema: Schema, context: BIDSContext) {
-  const subEntity = schema.objects.entities.subject.entity
+  const subEntity = schema.objects.entities.subject.name
   const subFormat = schema.objects.formats[subEntity.format]
-  const sesEntity = schema.objects.entities.session.entity
+  const sesEntity = schema.objects.entities.session.name
   const sesFormat = schema.objects.formats[sesEntity.format]
   const parts = context.file.path.split(SEP)
   let datatypeIndex = 2

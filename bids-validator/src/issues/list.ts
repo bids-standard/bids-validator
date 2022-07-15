@@ -24,6 +24,23 @@ export const filenameIssues: IssueDefinitionRecord = {
     reason:
       'The datatype directory does not match datatype of found suffix and extension',
   },
+  JSON_KEY_REQUIRED: {
+    severity: 'error',
+    reason: "A data file's JSON sidecar is missing a key listed as required.",
+  },
+  JSON_KEY_RECOMMENDED: {
+    severity: 'warning',
+    reason: 'A data files JSON sidecar is missing a key listed as recommended.',
+  },
+  TSV_ERROR: {
+    severity: 'error',
+    reason: 'generic place holder for errors from tsv files',
+  },
+  CHECK_ERROR: {
+    severity: 'error',
+    reason:
+      'generic place holder for errors from failed `checks` evaluated from schema.',
+  },
   NOT_INCLUDED: {
     severity: 'error',
     reason:
