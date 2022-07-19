@@ -568,7 +568,8 @@
       "@@@_photo_ext_@@@": [
         "_photo\\.jpg",
         "_photo\\.png",
-        "_photo\\.tif"
+        "_photo\\.tif",
+        "_photo\\.json"
       ]
     }
   },
