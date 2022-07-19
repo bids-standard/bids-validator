@@ -48,7 +48,7 @@ describe('checkJSONAndField()', () => {
     expect(issues[0].code).toBe(223)
   })
 
-  it('intededfor check detects non existant file', () => {
+  it('IntendedFor check detects non-existent file', () => {
     const files = {
       png: [
         {
