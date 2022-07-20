@@ -34,7 +34,7 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
       checkDatatypes(schema, context)
       checkLabelFormat(schema, context)
     }
-    await context.loadSidecar()
+    await context.asyncLoads()
     // @ts-expect-error
     applyRules(schema, context)
     await summary.update(context)

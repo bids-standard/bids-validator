@@ -9,6 +9,7 @@ import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
+import { parseTSV } from '../files/tsv.ts'
 
 export class BIDSContext implements Context {
   // Internal representation of the file tree
@@ -23,8 +24,8 @@ export class BIDSContext implements Context {
   datatype: string
   modality: string
   sidecar: object
+  columns: Record<string, string[]>
   associations: ContextAssociations
-  columns: object
   nifti_header: ContextNiftiHeader
 
   constructor(fileTree: FileTree, file: BIDSFile, issues: DatasetIssues) {
@@ -40,10 +41,11 @@ export class BIDSContext implements Context {
     this.datatype = ''
     this.modality = ''
     this.sidecar = {}
-    this.associations = {} as ContextAssociations
     this.columns = {}
+    this.associations = {} as ContextAssociations
     this.nifti_header = {} as ContextNiftiHeader
   }
+
   get json(): Promise<Record<string, any>> {
     return this.file
       .text()
@@ -62,6 +64,7 @@ export class BIDSContext implements Context {
   get datasetPath(): string {
     return this.#fileTree.path
   }
+
   /**
    * Crawls fileTree from root to current context file, loading any valid
    * json sidecars found.
@@ -98,5 +101,24 @@ export class BIDSContext implements Context {
     if (nextDir) {
       this.loadSidecar(nextDir)
     }
+  }
+
+  async loadColumns(): Promise<void> {
+    if (this.extension !== '.tsv') {
+      return
+    }
+    this.columns = await this.file
+      .text()
+      .then((text) => parseTSV(text))
+      .catch((error) => {
+        console.log(error)
+        return {}
+      })
+    return this.columns
+  }
+
+  async asyncLoads() {
+    await this.loadSidecar()
+    await this.loadColumns()
   }
 }
