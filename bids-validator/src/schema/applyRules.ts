@@ -102,7 +102,7 @@ function evalColumns(rule: GenericRule, context: BIDSContext): void {
   if (!rule.columns) return
   const headers = Object.keys(context.columns)
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
-    if (!(ruleHeader in headers)) {
+    if (!headers.includes(ruleHeader) && requirement === 'required') {
       context.issues.addNonSchemaIssue('TSV_ERROR', [
         { ...context.file, evidence: JSON.stringify(rule) },
       ])
