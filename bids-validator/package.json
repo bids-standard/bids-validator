@@ -1,6 +1,6 @@
 {
   "name": "bids-validator",
-  "version": "1.9.4-dev.0",
+  "version": "1.9.7-dev.0",
   "description": "",
   "main": "./dist/commonjs/index.js",
   "exports": {
@@ -44,7 +44,7 @@
     "date-fns": "^2.7.0",
     "events": "^3.3.0",
     "exifreader": "^4.1.0",
-    "hed-validator": "^3.5.0",
+    "hed-validator": "^3.7.1",
     "ignore": "^4.0.2",
     "is-utf8": "^0.2.1",
     "jshint": "^2.9.6",
@@ -69,7 +69,7 @@
     "esbuild": "^0.11.5",
     "esbuild-plugin-globals": "^0.1.1",
     "esbuild-runner": "^2.2.1",
-    "eslint": "^5.2.0",
+    "eslint": "^8.17.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.2",
     "husky": "^1.0.0-rc.13",

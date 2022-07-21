@@ -1120,15 +1120,21 @@ export default {
     reason: 'Inconsistent TIFF file type and extension',
   },
   228: {
-    key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS',
+    key: 'MULTIPLE_README_FILES',
     severity: 'error',
     reason:
-      "The column names of the EEG channels file must be in the following order ['name', 'type', 'units']",
+      'A BIDS dataset MUST NOT contain more than one `README` file (with or without extension) at its root directory.',
   },
   229: {
     key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS',
     severity: 'error',
     reason:
       "The column names of the IEEG channels file must be in the following order ['name', 'type', 'units', 'low_cutoff', 'high_cutoff']",
+  },
+  230: {
+    key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS',
+    severity: 'error',
+    reason:
+      "The column names of the EEG channels file must be in the following order ['name', 'type', 'units']",
   },
 }
