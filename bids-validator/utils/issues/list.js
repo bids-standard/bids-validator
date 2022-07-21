@@ -1126,7 +1126,7 @@ export default {
       'A BIDS dataset MUST NOT contain more than one `README` file (with or without extension) at its root directory.',
   },
   229: {
-    key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS',
+    key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS_IEEG',
     severity: 'error',
     reason:
       "The column names of the IEEG channels file must be in the following order ['name', 'type', 'units', 'low_cutoff', 'high_cutoff']",
