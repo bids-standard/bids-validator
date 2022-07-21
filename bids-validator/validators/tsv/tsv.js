@@ -1,6 +1,7 @@
 import Issue from '../../utils/issues/issue'
 import checkAcqTimeFormat from './checkAcqTimeFormat'
 import checkAge89 from './checkAge89'
+import checkHeaders from './checkHeaders'
 import checkStatusCol from './checkStatusCol'
 import checkTypecol from './checkTypeCol'
 import parseTSV from './tsvParser'
@@ -11,7 +12,8 @@ var path = require('path')
  * @param {Array[string]} headers
  * @returns {string}
  */
-const headersEvidence = headers => `Column headers: ${headers.join(', ')}`
+export const headersEvidence = headers =>
+  `Column headers: ${headers.join(', ')}`
 
 /**
  * Format TSV filename for evidence string
@@ -52,7 +54,9 @@ const TSV = (file, contents, fileList, callback) => {
   let emptyCells = false
   let NACells = false
 
-  for (let i = 0; i < rows.length; i++) {
+  checkHeaders(headers, file, issues)
+
+  for (let i = 1; i < rows.length; i++) {
     const values = rows[i]
     const evidence = `row ${i}: ${values.join('\t')}`
     if (values.length === 1 && /^\s*$/.test(values[0])) continue

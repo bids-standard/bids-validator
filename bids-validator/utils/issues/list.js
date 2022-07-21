@@ -1137,4 +1137,16 @@ export default {
     reason:
       "The column names of the EEG channels file must be in the following order ['name', 'type', 'units']",
   },
+  231: {
+    key: 'TSV_COLUMN_HEADER_DUPLICATE',
+    severity: 'error',
+    reason:
+      'Two elements in the first row of a TSV are the same. Each column header must be unique.',
+  },
+  232: {
+    key: 'TSV_COLUMN_HEADER_NA',
+    severity: 'error',
+    reason:
+      'An element in a tsv header is "n/a". A different header name should be chosen.',
+  },
 }
