@@ -1132,7 +1132,7 @@ export default {
       "The column names of the IEEG channels file must be in the following order ['name', 'type', 'units', 'low_cutoff', 'high_cutoff']",
   },
   230: {
-    key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS',
+    key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS_EEG',
     severity: 'error',
     reason:
       "The column names of the EEG channels file must be in the following order ['name', 'type', 'units']",
