@@ -419,9 +419,9 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/meg/') &&
     file.name.endsWith('_channels.tsv')
   ) {
-    checkheader('name', 0, file, 71, 228)
-    checkheader('type', 1, file, 71, 228)
-    checkheader('units', 2, file, 71, 228)
+    checkheader('name', 0, file, 71, 230)
+    checkheader('type', 1, file, 71, 230)
+    checkheader('units', 2, file, 71, 230)
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
   }
@@ -430,9 +430,9 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/eeg/') &&
     file.name.endsWith('_channels.tsv')
   ) {
-    checkheader('name', 0, file, 71, 228)
-    checkheader('type', 1, file, 71, 228)
-    checkheader('units', 2, file, 71, 228)
+    checkheader('name', 0, file, 71, 230)
+    checkheader('type', 1, file, 71, 230)
+    checkheader('units', 2, file, 71, 230)
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
   }

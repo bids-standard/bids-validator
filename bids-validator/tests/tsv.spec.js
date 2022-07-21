@@ -458,7 +458,7 @@ describe('TSV', function() {
     var tsv =
       'header-one\ttype\tunits\tname\n' + 'value-one\tEEG\tmV\tvalue-name'
     validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
-      assert(issues.length === 1 && issues[0].code === 228)
+      assert(issues.length === 1 && issues[0].code === 230)
     })
   })
 
