@@ -3,14 +3,16 @@
  * Module for parsing TSV
  */
 
-const stripBOM = (str) => str.replace(/^\uFEFF/, '')
-const normalizeEOL = (str) => str.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
-const isContentfulRow = (row) => row && !/^\s*$/.test(row)
+const stripBOM = (str: string): string => str.replace(/^\uFEFF/, '')
+const normalizeEOL = (str: string): string =>
+  str.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+// Typescript resolved `row && !/^\s*$/.test(row)` as `string | boolean`
+const isContentfulRow = (row: string): boolean => !!(row && !/^\s*$/.test(row))
 
 export function parseTSV(contents: string) {
-  const columns = {}
+  const columns: Record<string, string[]> = {}
   contents = stripBOM(contents)
-  const rows = normalizeEOL(contents)
+  const rows: string[][] = normalizeEOL(contents)
     .split('\n')
     .filter(isContentfulRow)
     .map((str) => str.split('\t'))
