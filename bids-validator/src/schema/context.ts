@@ -10,6 +10,7 @@ import { FileTree } from '../types/filetree.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { parseTSV } from '../files/tsv.ts'
+import { buildAssociations } from './associations.ts'
 
 export class BIDSContext implements Context {
   // Internal representation of the file tree
@@ -96,10 +97,10 @@ export class BIDSContext implements Context {
       this.sidecar = { ...this.sidecar, ...json }
     }
     const nextDir = fileTree.directories.find((directory) => {
-      this.file.path.startsWith(directory.path)
+      return this.file.path.startsWith(directory.path)
     })
     if (nextDir) {
-      this.loadSidecar(nextDir)
+      await this.loadSidecar(nextDir)
     }
   }
 
@@ -114,11 +115,17 @@ export class BIDSContext implements Context {
         console.log(error)
         return {}
       })
-    return this.columns
+    return
+  }
+
+  async loadAssociations(): Promise<void> {
+    this.associations = await buildAssociations(this.#fileTree, this)
+    return
   }
 
   async asyncLoads() {
     await this.loadSidecar()
     await this.loadColumns()
+    await this.loadAssociations()
   }
 }
