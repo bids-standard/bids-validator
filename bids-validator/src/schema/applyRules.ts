@@ -86,9 +86,17 @@ function mapEvalCheck(statements: string[], context: BIDSContext): boolean {
  */
 function evalRuleChecks(rule: GenericRule, context: BIDSContext): boolean {
   if (rule.checks && !mapEvalCheck(rule.checks, context)) {
-    context.issues.addNonSchemaIssue('CHECK_ERROR', [
-      { ...context.file, evidence: JSON.stringify(rule) },
-    ])
+    if (rule.issue?.code && rule.issue?.message) {
+      context.issues.add({
+        key: rule.issue.code,
+        reason: rule.issue.message,
+        files: [{ ...context.file }],
+      })
+    } else {
+      context.issues.addNonSchemaIssue('CHECK_ERROR', [
+        { ...context.file, evidence: JSON.stringify(rule) },
+      ])
+    }
   }
   return true
 }
@@ -120,12 +128,14 @@ function evalInitialColumns(rule: GenericRule, context: BIDSContext): void {
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     const contextIndex = headers.findIndex((x) => x === ruleHeader)
     if (contextIndex === -1) {
-      context.issues.addNonSchemaIssue('TSV_ERROR', [
-        { ...context.file, evidence: JSON.stringify(rule) },
+      const evidence = `Column with header ${ruleHeader} not found, indexed from 0 it should appear in column ${contextIndex}`
+      context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
+        { ...context.file, evidence: evidence },
       ])
     } else if (ruleIndex !== contextIndex) {
-      context.issues.addNonSchemaIssue('TSV_ERROR', [
-        { ...context.file, evidence: JSON.stringify(rule) },
+      const evidence = `Column with header ${ruleHeader} found at index ${ruleIndex} while rule specifies, indexed form 0 it should be in column ${contextIndex}`
+      context.issues.addNonSchemaIssue('TSV_COLUMN_ORDER_INCORRECT', [
+        { ...context.file, evidence: evidence },
       ])
     }
   })
@@ -139,8 +149,8 @@ function evalAdditionalColumns(rule: GenericRule, context: BIDSContext): void {
       (header) => rule.columns && !(header in rule.columns),
     )
     if (extraCols.length) {
-      context.issues.addNonSchemaIssue('TSV_ERROR', [
-        { ...context.file, evidence: JSON.stringify(rule) },
+      context.issues.addNonSchemaIssue('TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED', [
+        { ...context.file, evidence: `Disallowed columns found ${extraCols}` },
       ])
     }
   }
@@ -158,16 +168,12 @@ function evalJsonCheck(rule: GenericRule, context: BIDSContext): void {
   for (const [key, requirement] of Object.entries(rule.fields)) {
     const severity = getFieldSeverity(requirement, context)
     if (severity && severity !== 'ignore' && !(key in context.sidecar)) {
-      if (
-        typeof requirement !== 'string' &&
-        requirement.issue &&
-        requirement.issue.code &&
-        requirement.issue.message
-      ) {
+      if (requirement.issue?.code && requirement.issue?.message) {
         context.issues.add({
           key: requirement.issue.code,
           reason: requirement.issue.message,
           severity,
+          files: [{ ...context.file }],
         })
       } else {
         context.issues.addNonSchemaIssue('JSON_KEY_REQUIRED', [

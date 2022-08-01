@@ -36,6 +36,19 @@ export const filenameIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'generic place holder for errors from tsv files',
   },
+  TSV_COLUMN_MISSING: {
+    severity: 'error',
+    reason: 'A required column is missing',
+  },
+  TSV_COLUMN_ORDER_INCORRECT: {
+    severity: 'error',
+    reason: 'Some TSV columns are in the incorrect order',
+  },
+  TSV_ADDITONAL_COLUMNS_NOT_ALLOWED: {
+    severity: 'error',
+    reason:
+      'A TSV file has extra columns which are not allowed for its file type',
+  },
   CHECK_ERROR: {
     severity: 'error',
     reason:
