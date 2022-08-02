@@ -77,7 +77,7 @@ export async function buildAssociations(
   for (const key in associationLookup as typeof associationLookup) {
     const { extensions, inherit } =
       associationLookup[key as keyof typeof associationLookup]
-    const paths = getPaths(fileTree, source, key, extensions, inherit)
+    const paths = getPaths(fileTree, source, key, extensions)
     if (paths.length === 0) {
       continue
     }
@@ -95,7 +95,6 @@ function getPaths(
   source: BIDSContext,
   targetSuffix: string,
   targetExtensions: string[],
-  inherit: boolean,
 ) {
   const validAssociations = fileTree.files.filter((file) => {
     const { suffix, extension, entities } = readEntities(file)
@@ -112,12 +111,12 @@ function getPaths(
   })
 
   const nextDir = fileTree.directories.find((directory) => {
-    source.file.path.startsWith(directory.path)
+    return source.file.path.startsWith(directory.path)
   })
 
-  if (nextDir && inherit) {
+  if (nextDir) {
     validAssociations.push(
-      ...getPaths(nextDir, source, targetSuffix, targetExtensions, inherit),
+      ...getPaths(nextDir, source, targetSuffix, targetExtensions),
     )
   }
   return validAssociations
