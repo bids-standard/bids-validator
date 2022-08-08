@@ -50,7 +50,13 @@
     "SoftwareFilters": {
       "$ref": "common_definitions.json#/definitions/SoftwareFilters"
     },
-    "StartTime": {"type": "number" },
+    "StartTime": {
+      anyOf: [
+        {"type": "number" },
+        { "type": "string", "pattern": "^n/a$" }
+      ]
+    },
+
     "ACCChannelCount": { "type": "number" },
     "ANGACCChannelCount": { "type": "number" },
     "ANGVELChannelCount": { "type": "number" },
@@ -71,7 +77,7 @@
     },
     "SpatialAxes": { "type": "string" }
   },
-  "required": ["TrackingSystemCount", "TaskName","TrackingSystemName","SamplingFrequency","SamplingFrequencyEffective"
+  "required": ["TaskName","TrackingSystemName","SamplingFrequency","SamplingFrequencyEffective"
 ],
   "additionalProperties": false
 }
