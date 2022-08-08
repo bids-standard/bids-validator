@@ -123,7 +123,7 @@ export default {
       this.file.isMicroscopy(path) ||
       this.file.isMicroscopyPhoto(path) ||
       this.file.isMicroscopyJSON(path)
-          )
+    )
   },
 
   /**
@@ -377,14 +377,6 @@ export default {
     isMicroscopyJSON: function(path) {
       return conditionalMatch(microscopyJSON, path)
     },
-    isMOTION: function(path) {
-      if (bids_schema) {
-        return bids_schema.datatypes['motion'].some(regex => regex.exec(path))
-      } else {
-        return conditionalMatch(motion, path)
-      }
-    },
-
     isBehavioral: function(path) {
       if (bids_schema) {
         return bids_schema.datatypes['beh'].some(regex => regex.exec(path))
@@ -415,7 +407,7 @@ export default {
         this.isMicroscopy(path) ||
         this.isMicroscopyPhoto(path) ||
         this.isMicroscopyJSON(path) ||
-        this.isMOTION(path) 
+        this.isMOTION(path)
       )
     },
   },

@@ -458,7 +458,7 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/motion/') &&
     file.name.endsWith('_channels.tsv')
   ) {
-    const required = ["component", "name", "tracked_point", "type", "units"]
+    const required = ['component', 'name', 'tracked_point', 'type', 'units']
     const missing = required.filter(x => !headers.includes(x))
     if (missing.length) {
       issues.push(
@@ -466,8 +466,8 @@ const TSV = (file, contents, fileList, callback) => {
           line: 1,
           file: file,
           code: 129,
-          evidence: `Missing Columns: ${missing.joing(', ')}`
-        })
+          evidence: `Missing Columns: ${missing.joing(', ')}`,
+        }),
       )
     }
     checkStatusCol(rows, file, issues)
