@@ -8,6 +8,16 @@ import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { readBidsIgnore, FileIgnoreRulesDeno } from './ignore.ts'
 
 /**
+ * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters
+ */
+export class UnicodeDecodeError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = "UnicodeDecode"
+  }
+}
+
+/**
  * Deno implementation of BIDSFile
  */
 export class BIDSFileDeno implements BIDSFile {
@@ -57,6 +67,15 @@ export class BIDSFileDeno implements BIDSFile {
       .getReader()
     let data = ''
     try {
+      // Read once to check for unicode issues
+      const { done, value } = await streamReader.read()
+      // Check for UTF-16 BOM
+      if (value && (value.startsWith('\uFFFD'))) {
+        throw new UnicodeDecodeError('This file appears to be UTF-16')
+      }
+      if (done) return data
+      data += value
+      // Continue reading the rest of the file if no unicode issues were found
       while (true) {
         const { done, value } = await streamReader.read()
         if (done) return data
