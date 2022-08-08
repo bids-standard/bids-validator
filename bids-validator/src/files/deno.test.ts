@@ -14,7 +14,7 @@ const testDir = dirname(testPath)
 const testFilename = basename(testPath)
 const ignore = new FileIgnoreRulesDeno([])
 
-Deno.test('Deno implementation of BIDSFile', async (t) => {
+Deno.test('Deno implementation of BIDSFile', async t => {
   await t.step('implements basic file properties', () => {
     const file = new BIDSFileDeno(testDir, testFilename, ignore)
     assertEquals(join(testDir, file.path), testPath)
@@ -37,4 +37,15 @@ Deno.test('Deno implementation of BIDSFile', async (t) => {
     const text = await file.text()
     assertEquals(await file.size, text.length)
   })
+  await t.step(
+    'strips BOM characters when reading UTF-8 via .text()',
+    async () => {
+      // BOM is invalid in JSON but shows up often from certain tools, so abstract handling it
+      const bomDir = join(testPath, '..', '..', 'tests')
+      const bomFilename = 'bom-utf8.json'
+      const file = new BIDSFileDeno(bomDir, bomFilename, ignore)
+      const text = await file.text()
+      assertEquals(text, '{\n  "example": "JSON for test suite"\n}\n')
+    },
+  )
 })
