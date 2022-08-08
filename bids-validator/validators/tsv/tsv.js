@@ -439,6 +439,26 @@ const TSV = (file, contents, fileList, callback) => {
     checkTypecol(rows, file, issues)
   }
 
+  if (
+    file.relativePath.includes('/motion/') &&
+    file.name.endsWith('_channels.tsv')
+  ) {
+    const required = ["component", "name", "tracked_point", "type", "units"]
+    const missing = required.filter(x => !headers.includes(x))
+    if (missing.length) {
+      issues.push(
+        new Issue({
+          line: 1,
+          file: file,
+          code: 129,
+          evidence: `Missing Columns: ${missing.joing(', ')}`
+        })
+      )
+    }
+    checkStatusCol(rows, file, issues)
+    checkTypecol(rows, file, issues)
+  }
+
   // electrodes.tsv
   if (
     file.relativePath.includes('/eeg/') &&

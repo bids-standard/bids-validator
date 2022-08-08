@@ -50,14 +50,26 @@
     "SoftwareFilters": {
       "$ref": "common_definitions.json#/definitions/SoftwareFilters"
     },
-    "POSChannelCount": { "type": "number" },
-    "ORNTChannelCount": { "type": "number" },
-    "VELChannelCount": { "type": "number" },
-    "ANGVELChannelCount": { "type": "number" },
+    "StartTime": {"type": "number" },
     "ACCChannelCount": { "type": "number" },
     "ANGACCChannelCount": { "type": "number" },
+    "ANGVELChannelCount": { "type": "number" },
+    "JNTANGChannelCount": { "type": "number" },
     "MAGNChannelCount": { "type": "number" },
-    "JNTANGChannelCount": { "type": "number" }
+    "MISChannelCount": { "type": "number" },
+    "ORNTChannelCount": { "type": "number" },
+    "POSChannelCount": { "type": "number" },
+    "VELChannelCount": { "type": "number" },
+    "MissingValues": { "type": "string" },
+    "RotationOrder": {
+      "type": "string",
+      "enum": ["XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"]
+    },
+    "RotationRule": {
+      "type": "string",
+      "enum": ["left-hand", "right-hand"]
+    },
+    "SpatialAxes": { "type": "string" }
   },
   "required": ["TrackingSystemCount", "TaskName","TrackingSystemName","SamplingFrequency","SamplingFrequencyEffective"
 ],
