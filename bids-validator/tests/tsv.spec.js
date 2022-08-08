@@ -11,14 +11,18 @@ describe('TSV', function() {
   }
 
   it('should not allow empty values saved as empty cells.', function() {
-    var tsv = '1.0\t\t0.2\tresponse 1\t12.32'
+    var tsv =
+      'header-one\theader-two\theader-three\theader-four\theader-five\n' +
+      '1.0\t\t0.2\tresponse 1\t12.32'
     validate.TSV.TSV(file, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 23)
     })
   })
 
   it('should not allow missing values that are specified by something other than "n/a".', function() {
-    var tsv = '1.0\tNA\t0.2\tresponse 1\t12.32'
+    var tsv =
+      'header-one\theader-two\theader-three\theader-four\theader-five\n' +
+      'n1.0\tNA\t0.2\tresponse 1\t12.32'
     validate.TSV.TSV(file, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 24)
     })
@@ -454,6 +458,14 @@ describe('TSV', function() {
     })
   })
 
+  it('should not allow EEG channels.tsv files with name column in wrong place', function() {
+    var tsv =
+      'header-one\ttype\tunits\tname\n' + 'value-one\tEEG\tmV\tvalue-name'
+    validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
+      assert(issues.length === 1 && issues[0].code === 230)
+    })
+  })
+
   it('should not allow EEG channels.tsv files without type column', function() {
     var tsv = 'name\theader-two\tunits\n' + 'value-one\tEEG\tmV'
     validate.TSV.TSV(channelsFileEEG, tsv, [], function(issues) {
@@ -488,6 +500,17 @@ describe('TSV', function() {
       'value-name\tECOG\tmV\tvalue-fake\tvalue-highcut'
     validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
       assert(issues.length === 1 && issues[0].code === 72)
+    })
+  })
+
+  it('should not allow iEEG channels.tsv files with low_cutoff column in wrong place', function() {
+    var tsv =
+      'name\ttype\tunits\thigh_cutoff\tlow_cutoff\n' +
+      'value-name\tECOG\tmV\tvalue-highcut\tvalue-lowcut'
+    validate.TSV.TSV(channelsFileIEEG, tsv, [], function(issues) {
+      assert(
+        issues.length === 2 && issues[0].code === 229 && issues[1].code === 229,
+      )
     })
   })
 

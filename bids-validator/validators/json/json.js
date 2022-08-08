@@ -117,6 +117,11 @@ const selectSchema = file => {
     ) {
       schema = require('./schemas/microscopy.json')
     } else if (
+      file.relativePath.includes('/micr') &&
+      file.name.endsWith('photo.json')
+    ) {
+      schema = require('./schemas/microscopy_photo.json')
+    } else if (
       file.relativePath.includes('/meg/') &&
       file.name.endsWith('coordsystem.json')
     ) {
