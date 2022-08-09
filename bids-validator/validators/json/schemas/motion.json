@@ -51,7 +51,7 @@
       "$ref": "common_definitions.json#/definitions/SoftwareFilters"
     },
     "StartTime": {
-      anyOf: [
+      "anyOf": [
         {"type": "number" },
         { "type": "string", "pattern": "^n/a$" }
       ]
