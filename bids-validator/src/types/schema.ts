@@ -30,7 +30,7 @@ export interface GenericRule {
   columns?: Record<string, string>
   additional_columns?: string
   initial_columns?: string[]
-  fields?: Record<string, string | SchemaFields>
+  fields: Record<string, SchemaFields>
   issue?: SchemaIssue
 }
 

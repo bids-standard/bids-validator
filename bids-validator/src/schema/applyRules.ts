@@ -164,7 +164,6 @@ function evalAdditionalColumns(rule: GenericRule, context: BIDSContext): void {
  *
  */
 function evalJsonCheck(rule: GenericRule, context: BIDSContext): void {
-  // @ts-expect-error
   for (const [key, requirement] of Object.entries(rule.fields)) {
     const severity = getFieldSeverity(requirement, context)
     if (severity && severity !== 'ignore' && !(key in context.sidecar)) {
