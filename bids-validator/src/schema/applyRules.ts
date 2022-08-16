@@ -24,6 +24,7 @@ export function applyRules(schema: GenericSchema, context: BIDSContext) {
       applyRules(schema[key] as GenericSchema, context)
     }
   }
+  return Promise.resolve()
 }
 
 const evalConstructor = (src: string): Function =>

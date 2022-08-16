@@ -7,12 +7,18 @@ import {
   checkDatatypes,
   checkLabelFormat,
   isAssociatedData,
-  isAtRoot,
   isTopLevel,
 } from './filenames.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { ValidationResult } from '../types/validation-result.ts'
 import { Summary } from '../summary/summary.ts'
+import { CheckFunction } from '../types/check.ts'
+import { emptyFile } from './internal/emptyFile.ts'
+
+/**
+ * Ordering of checks to apply
+ */
+const CHECKS: CheckFunction[] = [emptyFile, applyRules]
 
 /**
  * Full BIDS schema validation entrypoint
@@ -34,8 +40,11 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
       checkLabelFormat(schema, context)
     }
     await context.asyncLoads()
-    // @ts-expect-error
-    applyRules(schema, context)
+    // Run majority of checks
+    for (const check of CHECKS) {
+      // TODO - Resolve this double casting?
+      await check(schema as unknown as GenericSchema, context)
+    }
     await summary.update(context)
   }
   return {
