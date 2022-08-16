@@ -20,7 +20,6 @@ import { Summary } from '../summary/summary.ts'
 export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   const issues = new DatasetIssues()
   const summary = new Summary()
-  // TODO - summary should be implemented in pure schema mode
   const schema = await loadSchema()
   for await (const context of walkFileTree(fileTree, issues)) {
     // TODO - Skip ignored files for now (some tests may reference ignored files)
