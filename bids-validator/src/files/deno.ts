@@ -13,7 +13,7 @@ import { readBidsIgnore, FileIgnoreRulesDeno } from './ignore.ts'
 export class UnicodeDecodeError extends Error {
   constructor(message: string) {
     super(message)
-    this.name = "UnicodeDecode"
+    this.name = 'UnicodeDecode'
   }
 }
 
@@ -32,20 +32,15 @@ export class BIDSFileDeno implements BIDSFile {
     this.path = path
     this.name = basename(path)
     this.#ignore = ignore
+    this.#fileInfo = Deno.statSync(this._getPath())
   }
 
   private _getPath(): string {
     return join(this._datasetAbsPath, this.path)
   }
 
-  /**
-   * Deferred stat to get size
-   */
   get size(): number {
-    return (
-      this.#fileInfo?.size ||
-      (this.#fileInfo = Deno.statSync(this._getPath())).size
-    )
+    return this.#fileInfo.size
   }
 
   get stream(): ReadableStream<Uint8Array> {
@@ -70,7 +65,7 @@ export class BIDSFileDeno implements BIDSFile {
       // Read once to check for unicode issues
       const { done, value } = await streamReader.read()
       // Check for UTF-16 BOM
-      if (value && (value.startsWith('\uFFFD'))) {
+      if (value && value.startsWith('\uFFFD')) {
         throw new UnicodeDecodeError('This file appears to be UTF-16')
       }
       if (done) return data
