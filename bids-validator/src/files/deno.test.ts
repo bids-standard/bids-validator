@@ -45,6 +45,16 @@ Deno.test('Deno implementation of BIDSFile', async t => {
       const bomFilename = 'bom-utf16.tsv'
       const file = new BIDSFileDeno(bomDir, bomFilename, ignore)
       await assertRejects(async () => file.text(), UnicodeDecodeError)
+  })
+  await t.step(
+    'strips BOM characters when reading UTF-8 via .text()',
+    async () => {
+      // BOM is invalid in JSON but shows up often from certain tools, so abstract handling it
+      const bomDir = join(testPath, '..', '..', 'tests')
+      const bomFilename = 'bom-utf8.json'
+      const file = new BIDSFileDeno(bomDir, bomFilename, ignore)
+      const text = await file.text()
+      assertEquals(text, '{\n  "example": "JSON for test suite"\n}\n')
     },
   )
 })
