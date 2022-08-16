@@ -46,13 +46,13 @@ export interface ContextAssociationsBvec {
   n_cols: number
 }
 export interface ContextAssociations {
-  events: ContextAssociationsEvents
-  aslcontext: ContextAssociationsAslcontext
-  m0scan: ContextAssociationsM0scan
-  magnitude: ContextAssociationsMagnitude
-  magnitude1: ContextAssociationsMagnitude1
-  bval: ContextAssociationsBval
-  bvec: ContextAssociationsBvec
+  events?: ContextAssociationsEvents
+  aslcontext?: ContextAssociationsAslcontext
+  m0scan?: ContextAssociationsM0scan
+  magnitude?: ContextAssociationsMagnitude
+  magnitude1?: ContextAssociationsMagnitude1
+  bval?: ContextAssociationsBval
+  bvec?: ContextAssociationsBvec
 }
 export interface ContextNiftiHeaderDimInfo {
   freq: number

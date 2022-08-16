@@ -1,4 +1,5 @@
 import { FileTree } from '../types/filetree.ts'
+import { GenericSchema } from '../types/schema.ts'
 import { walkFileTree } from '../schema/walk.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { applyRules } from '../schema/applyRules.ts'
@@ -33,6 +34,8 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
       checkDatatypes(schema, context)
       checkLabelFormat(schema, context)
     }
+    await context.asyncLoads()
+    // @ts-expect-error
     applyRules(schema, context)
     await summary.update(context)
   }

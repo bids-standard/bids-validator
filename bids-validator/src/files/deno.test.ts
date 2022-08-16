@@ -1,7 +1,7 @@
-import { assertEquals } from '../deps/asserts.ts'
+import { assertEquals, assertRejects } from '../deps/asserts.ts'
 import { readAll, readerFromStreamReader } from '../deps/stream.ts'
 import { dirname, basename, join } from '../deps/path.ts'
-import { BIDSFileDeno } from './deno.ts'
+import { BIDSFileDeno, UnicodeDecodeError } from './deno.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRulesDeno } from './ignore.ts'
 
@@ -36,6 +36,15 @@ Deno.test('Deno implementation of BIDSFile', async t => {
     const file = new BIDSFileDeno(testDir, testFilename, ignore)
     const text = await file.text()
     assertEquals(await file.size, text.length)
+  })
+  await t.step(
+    'throws UnicodeDecodeError when reading a UTF-16 file with text() method',
+    async () => {
+      // BOM is invalid in JSON but shows up often from certain tools, so abstract handling it
+      const bomDir = join(testPath, '..', '..', 'tests')
+      const bomFilename = 'bom-utf16.tsv'
+      const file = new BIDSFileDeno(bomDir, bomFilename, ignore)
+      await assertRejects(async () => file.text(), UnicodeDecodeError)
   })
   await t.step(
     'strips BOM characters when reading UTF-8 via .text()',
