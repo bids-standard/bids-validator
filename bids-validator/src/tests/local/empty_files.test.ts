@@ -9,7 +9,7 @@ const PATH = 'tests/data/empty_files'
  * bad.segments files can be empty and still valid. Everything else must
  * not be empty.
  */
-Deno.test('empty_files dataset', async t => {
+Deno.test('empty_files dataset', async (t) => {
   const { tree, result } = await validatePath(t, PATH)
 
   await t.step('correctly ignores .bidsignore files', () => {
@@ -34,7 +34,7 @@ Deno.test('empty_files dataset', async t => {
       })
       assert(
         issue.files.get(
-          'sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/sub-0001_task-AEF_run-01_meg.meg4',
+          '/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/sub-0001_task-AEF_run-01_meg.meg4',
         ),
         'sub-0001_task-AEF_run-01_meg.meg4 is empty but not present in EMPTY_FILE issue',
       )
