@@ -24,7 +24,7 @@ export class BIDSFileDeno implements BIDSFile {
   #ignore: FileIgnoreRulesDeno
   name: string
   path: string
-  #fileInfo: Deno.FileInfo | undefined
+  #fileInfo: Deno.FileInfo
   private _datasetAbsPath: string
 
   constructor(datasetPath: string, path: string, ignore: FileIgnoreRulesDeno) {
