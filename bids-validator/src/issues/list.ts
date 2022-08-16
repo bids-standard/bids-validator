@@ -65,6 +65,10 @@ export const filenameIssues: IssueDefinitionRecord = {
       'note that derived (processed) data should be placed in /derivatives folder and source data (such as DICOMS ' +
       'or behavioural logs in proprietary formats) should be placed in the /sourcedata folder.',
   },
+  EMPTY_FILE: {
+    severity: 'error',
+    reason: 'Empty files not allowed.',
+  },
 }
 
 export const nonSchemaIssues = { ...filenameIssues }
