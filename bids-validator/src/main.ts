@@ -3,6 +3,7 @@ import { readFileTree } from './files/deno.ts'
 import { resolve } from './deps/path.ts'
 import { fullTestAdapter } from './compat/fulltest.ts'
 import { validate } from './validators/bids.ts'
+import { consoleFormat } from './utils/output.ts'
 
 function inspect(obj: any) {
   console.log(
@@ -22,8 +23,7 @@ async function main() {
   const schemaResult = await validate(tree)
 
   if (options.schemaOnly) {
-    inspect(schemaResult)
-    // TODO - generate a summary without the old validator
+    console.log(consoleFormat(schemaResult))
   } else {
     const output = schemaResult.issues.formatOutput()
     const legacyResult = await fullTestAdapter(tree, options)
