@@ -44,12 +44,9 @@ interface DatasetIssuesAddParams {
 /**
  * Management class for dataset issues
  */
-export class DatasetIssues {
-  // Issue key to issue mapping
-  issues: Map<string, Issue>
-
+export class DatasetIssues extends Map<string, Issue> {
   constructor() {
-    this.issues = new Map()
+    super()
   }
 
   add({
@@ -58,7 +55,7 @@ export class DatasetIssues {
     severity = 'error',
     files = [],
   }: DatasetIssuesAddParams): Issue {
-    const existingIssue = this.issues.get(key)
+    const existingIssue = this.get(key)
     // Handle both the shorthand BIDSFile array or full IssueFile
     if (existingIssue) {
       for (const f of files) {
@@ -72,21 +69,14 @@ export class DatasetIssues {
         reason,
         files,
       })
-      this.issues.set(key, newIssue)
+      this.set(key, newIssue)
       return newIssue
     }
   }
 
-  /**
-   * Proxy to internal issues map
-   */
-  get(key: string): Issue | undefined {
-    return this.issues.get(key)
-  }
-
   // Shorthand to test if an issue has occurred
   hasIssue({ key }: { key: string }): boolean {
-    if (this.issues.has(key)) {
+    if (this.has(key)) {
       return true
     }
     return false
@@ -107,7 +97,7 @@ export class DatasetIssues {
 
   fileInIssues(path: string): Issue[] {
     const matchingIssues = []
-    for (const [key, issue] of this.issues) {
+    for (const [key, issue] of this) {
       if (issue.files.get(path)) {
         matchingIssues.push(issue)
       }
@@ -134,7 +124,7 @@ export class DatasetIssues {
       errors: [],
       warnings: [],
     }
-    for (const [key, issue] of this.issues) {
+    for (const [key, issue] of this) {
       const outputIssue: IssueOutput = {
         severity: issue.severity,
         key: issue.key,

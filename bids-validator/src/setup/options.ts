@@ -6,6 +6,7 @@ export interface ValidatorOptions {
   config: any
   schema: any
   schemaOnly: boolean
+  json: boolean
 }
 
 /**
