@@ -23,7 +23,11 @@ async function main() {
   const schemaResult = await validate(tree)
 
   if (options.schemaOnly) {
-    console.log(consoleFormat(schemaResult))
+    if (options.json) {
+      console.log(inspect(schemaResult))
+    } else {
+      console.log(consoleFormat(schemaResult))
+    }
   } else {
     const output = schemaResult.issues.formatOutput()
     const legacyResult = await fullTestAdapter(tree, options)
