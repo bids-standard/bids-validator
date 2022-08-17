@@ -41,7 +41,7 @@ Deno.test('DatasetIssues management class', async (t) => {
     ]
     issues.add({ key: 'TEST_FILES_ERROR', reason: 'Test issue', files })
     assertEquals(issues.getFileIssueKeys('/README'), ['TEST_FILES_ERROR'])
-    for (const [key, issue] of issues.issues) {
+    for (const [key, issue] of issues) {
       assertObjectMatch(issue, { key: 'TEST_FILES_ERROR' })
       for (const f of issue.files.values()) {
         // Checking all files for the key assures they are in IssueFile format
