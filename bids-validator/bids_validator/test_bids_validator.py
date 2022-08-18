@@ -26,7 +26,7 @@ def _download_test_data(test_data_dict, dsname):
     """Download test data using datalad."""
     url = test_data_dict[dsname]
     dspath = os.path.join(HOME, dsname)
-    datalad.api.install(dspath, url)
+    datalad.api.clone(source=url, path=dspath)
     return dspath
 
 

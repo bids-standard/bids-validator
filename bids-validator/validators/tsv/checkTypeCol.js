@@ -2,12 +2,14 @@ const Issue = require('../../utils').issues.Issue
 
 // allowable 'type' values from the BIDS specification
 const allowedMEEGTypes = [
+  /* (i)EEG */
   'EEG',
   'ECOG',
   'SEEG',
   'DBS',
   'PD',
-  'OTHER', // (i)EEG
+  'OTHER',
+  /* physio */
   'EOG',
   'ECG',
   'EMG',
@@ -19,13 +21,15 @@ const allowedMEEGTypes = [
   'RESP',
   'TEMP',
   'VEOG',
-  'PPG', // physio
+  'PPG',
+  /* system */
   'AUDIO',
   'REF',
   'SYSCLOCK',
   'TRIG',
   'ADC',
-  'DAC', // system
+  'DAC',
+  /* MEG */
   'MEGMAG',
   'MEGGRADAXIAL',
   'MEGGRADPLANAR',
@@ -34,7 +38,7 @@ const allowedMEEGTypes = [
   'MEGREFGRADPLANAR',
   'MEGOTHER',
   'HLU',
-  'FITERR', // MEG
+  'FITERR',
 ]
 
 /**
@@ -73,7 +77,7 @@ const checkTypeCol = function (rows, file, issues) {
         issues.push(
           new Issue({
             file: file,
-            evidence: line,
+            evidence: line.join(', '),
             line: i + 1,
             reason:
               'the type column values should only consist of values specified for *_channels.tsv file',
@@ -85,7 +89,7 @@ const checkTypeCol = function (rows, file, issues) {
         issues.push(
           new Issue({
             file: file,
-            evidence: line,
+            evidence: line.join(', '),
             line: i + 1,
             reason: 'the type column values upper-cased',
             code: 130,

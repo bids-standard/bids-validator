@@ -90,9 +90,7 @@
       "items": { "type": "string" }
     }
   },
-
   "required": ["PixelSize", "PixelSizeUnits"],
-
   "recommended": [
     "Manufacturer",
     "ManufacturersModelName",

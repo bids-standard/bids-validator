@@ -1,7 +1,7 @@
-import utils from '../../utils'
 import Issue from '../../utils/issues/issue'
 import checkAcqTimeFormat from './checkAcqTimeFormat'
 import checkAge89 from './checkAge89'
+import checkHeaders from './checkHeaders'
 import checkStatusCol from './checkStatusCol'
 import checkTypecol from './checkTypeCol'
 import parseTSV from './tsvParser'
@@ -12,7 +12,8 @@ var path = require('path')
  * @param {Array[string]} headers
  * @returns {string}
  */
-const headersEvidence = (headers) => `Column headers: ${headers.join(', ')}`
+export const headersEvidence = (headers) =>
+  `Column headers: ${headers.join(', ')}`
 
 /**
  * Format TSV filename for evidence string
@@ -53,7 +54,9 @@ const TSV = (file, contents, fileList, callback) => {
   let emptyCells = false
   let NACells = false
 
-  for (let i = 0; i < rows.length; i++) {
+  checkHeaders(headers, file, issues)
+
+  for (let i = 1; i < rows.length; i++) {
     const values = rows[i]
     const evidence = `row ${i}: ${values.join('\t')}`
     if (values.length === 1 && /^\s*$/.test(values[0])) continue
@@ -109,7 +112,18 @@ const TSV = (file, contents, fileList, callback) => {
   }
 
   // specific file checks -----------------------------------------------------
-  const checkheader = function checkheader(headername, idx, file, code) {
+  const checkheader = function checkheader(
+    headername,
+    idx,
+    file,
+    missingCode,
+    orderCode = null,
+  ) {
+    let code = missingCode
+    if (headers.includes(headername) && orderCode) {
+      code = orderCode
+    }
+
     if (headers[idx] !== headername) {
       issues.push(
         new Issue({
@@ -149,7 +163,9 @@ const TSV = (file, contents, fileList, callback) => {
     // create full dataset path list
     const pathList = []
     for (let f in fileList) {
-      pathList.push(fileList[f].relativePath)
+      if (fileList.hasOwnProperty(f)) {
+        pathList.push(fileList[f].relativePath)
+      }
     }
 
     // check for stimuli file
@@ -407,9 +423,9 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/meg/') &&
     file.name.endsWith('_channels.tsv')
   ) {
-    checkheader('name', 0, file, 71)
-    checkheader('type', 1, file, 71)
-    checkheader('units', 2, file, 71)
+    checkheader('name', 0, file, 71, 230)
+    checkheader('type', 1, file, 71, 230)
+    checkheader('units', 2, file, 71, 230)
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
   }
@@ -418,9 +434,9 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/eeg/') &&
     file.name.endsWith('_channels.tsv')
   ) {
-    checkheader('name', 0, file, 71)
-    checkheader('type', 1, file, 71)
-    checkheader('units', 2, file, 71)
+    checkheader('name', 0, file, 71, 230)
+    checkheader('type', 1, file, 71, 230)
+    checkheader('units', 2, file, 71, 230)
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
   }
@@ -429,11 +445,11 @@ const TSV = (file, contents, fileList, callback) => {
     file.relativePath.includes('/ieeg/') &&
     file.name.endsWith('_channels.tsv')
   ) {
-    checkheader('name', 0, file, 72)
-    checkheader('type', 1, file, 72)
-    checkheader('units', 2, file, 72)
-    checkheader('low_cutoff', 3, file, 72)
-    checkheader('high_cutoff', 4, file, 72)
+    checkheader('name', 0, file, 72, 229)
+    checkheader('type', 1, file, 72, 229)
+    checkheader('units', 2, file, 72, 229)
+    checkheader('low_cutoff', 3, file, 72, 229)
+    checkheader('high_cutoff', 4, file, 72, 229)
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
   }

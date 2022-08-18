@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import checkJSONAndField from '../checkJSONAndField'
 
 describe('checkJSONAndField()', () => {
@@ -30,7 +29,7 @@ describe('checkJSONAndField()', () => {
 
   it('returns issue 225 with no json for png files', () => {
     const files = {
-      png: [{ relativePath: 'test.png' }],
+      png: [{ relativePath: '/test.png' }],
     }
     const issues = checkJSONAndField(files, emptyJsonContentsDict)
     expect(issues.length).toBe(1)
@@ -47,5 +46,50 @@ describe('checkJSONAndField()', () => {
     const issues = checkJSONAndField(files, jsonContentsDict)
     expect(issues.length).toBe(1)
     expect(issues[0].code).toBe(223)
+  })
+
+  it('IntendedFor check detects non-existent file', () => {
+    const files = {
+      png: [
+        {
+          relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_photo.png',
+        },
+      ],
+    }
+
+    const jsonContentsDict = {
+      '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_photo.json': {
+        IntendedFor: 'ses-01/micr/sub-01_ses-01_sample-A_SEM.png',
+      },
+    }
+
+    const fileList = [
+      { relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-B_SEM.png' },
+    ]
+
+    const issues = checkJSONAndField(files, jsonContentsDict, fileList)
+    expect(issues.length).toBe(1)
+    expect(issues[0].code).toBe(37)
+  })
+
+  it('intededfor check detects existing file', () => {
+    const files = {
+      png: [
+        { relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_SEM.png' },
+      ],
+    }
+
+    const jsonContentsDict = {
+      '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_SEM.json': {
+        IntendedFor: 'ses-01/micr/sub-01_ses-01_sample-A_SEM.png',
+      },
+    }
+
+    const fileList = [
+      { relativePath: '/sub-01/ses-01/micr/sub-01_ses-01_sample-A_SEM.png' },
+    ]
+
+    const issues = checkJSONAndField(files, jsonContentsDict, fileList)
+    expect(issues.length).toBe(0)
   })
 })
