@@ -23,7 +23,8 @@
     },
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/bids-validator/src/"
+      "/bids-validator/src/",
+      "/bids-validator/spec/"
     ]
   },
   "devDependencies": {
