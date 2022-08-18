@@ -66,7 +66,6 @@ function extractNiftiFile(file, callback) {
 }
 
 function browserNiftiTest(file, callback) {
-  const bytesRead = 1024
   if (file.size == 0) {
     callback({ error: new Issue({ code: 44, file: file }) })
     return
@@ -77,17 +76,15 @@ function browserNiftiTest(file, callback) {
     callback({ error: new Issue({ code: 36, file: file }) })
     return
   }
-
   const fileReader = constructBrowserFileReader(file, callback)
   fileReader.readAsArrayBuffer(file)
 }
 
 function constructBrowserFileReader(file, callback) {
-  let fileReader = new FileReader()
-
+  const fileReader = new FileReader()
   fileReader.onloadend = function () {
-    var buffer = new Uint8Array(fileReader.result)
-    var unzipped
+    const buffer = new Uint8Array(fileReader.result)
+    let unzipped
 
     try {
       unzipped = file.name.endsWith('.nii') ? buffer : pako.inflate(buffer)
