@@ -267,7 +267,6 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
         self.options,
       )
       callback(issues, summary)
-      throw err
     })
 }
 
