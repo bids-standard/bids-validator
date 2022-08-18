@@ -17,7 +17,7 @@ function getDirectories(srcpath) {
   })
 }
 
-var missing_session_files = [
+const missing_session_files = [
   '7t_trt',
   'ds006',
   'ds007',
@@ -52,7 +52,7 @@ function createExampleFileList(inputPath) {
 }
 
 function assertErrorCode(errors, expected_error_code) {
-  var matchingErrors = errors.filter(function (error) {
+  const matchingErrors = errors.filter(function (error) {
     return error.code === expected_error_code
   })
   assert(matchingErrors.length > 0)
@@ -73,7 +73,7 @@ describe('BIDS example datasets ', function () {
           function (issues) {
             let warnings = issues.warnings
             let session_flag = false
-            for (var warning in warnings) {
+            for (const warning in warnings) {
               if (warnings[warning]['code'] === 38) {
                 session_flag = true
                 break
@@ -97,8 +97,8 @@ describe('BIDS example datasets ', function () {
       createExampleFileList('ds001'),
       options,
       function (issues, summary) {
-        var errors = issues.errors
-        var warnings = issues.warnings
+        const errors = issues.errors
+        const warnings = issues.warnings
         assert(summary.sessions.length === 0)
         assert(summary.subjects.length === 16)
         assert.deepEqual(summary.tasks, ['balloon analog risk task'])
@@ -117,13 +117,13 @@ describe('BIDS example datasets ', function () {
 
   // we need to have at least one non-dynamic test
   it('validates dataset with valid nifti headers', function (isdone) {
-    var options = { ignoreNiftiHeaders: false }
+    const options = { ignoreNiftiHeaders: false }
     validate.BIDS(
       createDatasetFileList('valid_headers'),
       options,
       function (issues, summary) {
-        var errors = issues.errors
-        var warnings = issues.warnings
+        const errors = issues.errors
+        const warnings = issues.warnings
         assert(summary.sessions.length === 0)
         assert(summary.subjects.length === 1)
         assert.deepEqual(summary.tasks, ['rhyme judgment'])

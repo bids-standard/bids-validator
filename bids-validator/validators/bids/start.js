@@ -22,8 +22,6 @@ const start = (dir, options, callback) => {
   if (!options.json) {
     // eslint-disable-next-line
     console.log(`bids-validator@${version}`)
-    // eslint-disable-next-line
-    console.log(`bids-specification@${options.schema}`)
   }
 
   utils.options.parse(dir, options, async function (issues, options) {

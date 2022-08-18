@@ -260,7 +260,6 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
     .catch((err) => {
       // take internal exceptions and push to issues
       // note: exceptions caught here may have skipped subsequent validations
-      throw err
       const issues = utils.issues.exceptionHandler(
         err,
         self.issues,
