@@ -1,59 +1,23 @@
-// Loading schema yaml files from local filesystem
-import {
-  join,
-  fromFileUrl,
-  relative,
-  parse as pathParse,
-  SEP,
-} from '../deps/path.ts'
-import { parse as yamlParse } from '../deps/yaml.ts'
-import { walk } from '../deps/fs.ts'
 import { Schema } from '../types/schema.ts'
-import { requestReadPermission } from './requestPermissions.ts'
+import * as schemaDefault from 'https://bids-specification.readthedocs.io/en/latest/schema.json' assert { type: 'json' }
 
-// TODO - This can't depend on Deno later, must support all environments
-const yamlBasePath = join(
-  fromFileUrl(import.meta.url),
-  '..',
-  '..',
-  '..',
-  'spec',
-  'src',
-  'schema',
-)
-
-const defaultSchemaURL =
-  'https://bids-specification.readthedocs.io/en/latest/schema.json'
-
-export async function loadSchemaFromSpecification(): Promise<Schema> {
-  await requestReadPermission()
-  const schemaObj = {}
-  for await (const entry of walk(yamlBasePath, {
-    includeDirs: false,
-    exts: ['yaml'],
-  })) {
-    const yamlPath = relative(yamlBasePath, entry.path)
-    const yamlPathParsed = pathParse(yamlPath)
-    const yamlPathComponents = yamlPathParsed.dir.split(SEP)
-    const yamlPathName = yamlPathParsed.name
-
-    let lastLevel = schemaObj
-    for (const level of yamlPathComponents) {
-      ;(lastLevel as any)[level] = (lastLevel as any)[level] || {}
-      lastLevel = (lastLevel as any)[level]
-    }
-
-    // Parse and load the schema definition
-    ;(lastLevel as any)[yamlPathName] = await yamlParse(
-      await Deno.readTextFile(entry.path),
+/**
+ * Load the schema from the specification
+ *
+ * version is ignored when the network cannot be accessed
+ */
+export async function loadSchema(version = 'latest'): Promise<Schema> {
+  const schemaUrl = `https://bids-specification.readthedocs.io/en/${version}/schema.json`
+  try {
+    const schemaModule = await import(schemaUrl, {
+      assert: { type: 'json' },
+    })
+    return schemaModule.default as Schema
+  } catch {
+    // No network access or other errors
+    console.error(
+      `Warning, could not load schema from ${schemaUrl}, falling back to internal version`,
     )
+    return schemaDefault as Schema
   }
-  return schemaObj as Schema
-}
-
-export async function loadSchema(): Promise<Schema> {
-  let schemaObj = {}
-  const jsonResponse = await fetch(defaultSchemaURL)
-  schemaObj = await jsonResponse.json()
-  return schemaObj as Schema
 }
