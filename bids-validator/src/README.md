@@ -35,7 +35,7 @@ cd bids-validator
 deno run --allow-env --allow-read src/main.ts path/to/dataset
 ```
 
-By default both the new schema derived validation rules and the legacy JavaScript rules are run to ensure full coverage. The validator can be limited to run only the schema dervied rules with the flag `--schemaOnly`.
+By default both the new schema derived validation rules and the legacy JavaScript rules are run to ensure full coverage. The validator can be limited to run only the schema derived rules with the flag `--schemaOnly`.
 
 ```shell
 deno run --allow-env --allow-read src/main.ts --schemaOnly path/to/dataset

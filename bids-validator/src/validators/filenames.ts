@@ -138,7 +138,7 @@ function lookupEntityLiteral(name: string, schema: Schema) {
   if (entityObj && entityObj['name']) {
     return entityObj['name']
   } else {
-    // if this happens theres an issue with the schema?
+    // if this happens there is an issue with the schema?
     return ''
   }
 }

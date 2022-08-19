@@ -63,7 +63,7 @@ const evalMap: Record<
  * Entrypoint for evaluating a individual rule.
  * We see if every selector applies to this context,
  * Then we attempt to interpret every other key in the rule
- * obect.
+ * object.
  */
 function evalRule(rule: GenericRule, context: BIDSContext) {
   if (!mapEvalCheck(rule.selectors, context)) {

@@ -62,7 +62,7 @@ Deno.test('evalCheck test', () => {
 Deno.test('evalCheck ensure constructor access', () => {
   assert(
     evalCheck('foo.constructor.isArray(foo)', { foo: [1] }),
-    'cant access Array protoype via consturctor',
+    'can not access Array prototype via constructor',
   )
 })
 
