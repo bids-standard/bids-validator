@@ -22,7 +22,10 @@ const yamlBasePath = join(
   'schema',
 )
 
-export async function loadSchema(): Promise<Schema> {
+const defaultSchemaURL =
+  'https://bids-specification.readthedocs.io/en/latest/schema.json'
+
+export async function loadSchemaFromSpecification(): Promise<Schema> {
   await requestReadPermission()
   const schemaObj = {}
   for await (const entry of walk(yamlBasePath, {
@@ -45,5 +48,12 @@ export async function loadSchema(): Promise<Schema> {
       await Deno.readTextFile(entry.path),
     )
   }
+  return schemaObj as Schema
+}
+
+export async function loadSchema(): Promise<Schema> {
+  let schemaObj = {}
+  const jsonResponse = await fetch(defaultSchemaURL)
+  schemaObj = await jsonResponse.json()
   return schemaObj as Schema
 }
