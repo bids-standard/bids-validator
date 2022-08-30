@@ -523,7 +523,11 @@
         "_nirs\\.json",
         "_photo\\.jpg"
       ],
-      "@@@_nirs_optodes_@@@": ["_optodes\\.tsv", "_coordsystem\\.json"]
+      "@@@_nirs_optodes_@@@": [
+        "_optodes\\.tsv",
+        "_optodes\\.json",
+        "_coordsystem\\.json"
+      ]
     }
   },
 
