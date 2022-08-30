@@ -1120,15 +1120,45 @@ export default {
     reason: 'Inconsistent TIFF file type and extension',
   },
   228: {
+    key: 'MULTIPLE_README_FILES',
+    severity: 'error',
+    reason:
+      'A BIDS dataset MUST NOT contain more than one `README` file (with or without extension) at its root directory.',
+  },
+  229: {
+    key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS_IEEG',
+    severity: 'error',
+    reason:
+      "The column names of the IEEG channels file must be in the following order ['name', 'type', 'units', 'low_cutoff', 'high_cutoff']",
+  },
+  230: {
+    key: 'INCORRECT_ORDER_TSV_COLUMN_CHANNELS_EEG',
+    severity: 'error',
+    reason:
+      "The column names of the EEG channels file must be in the following order ['name', 'type', 'units']",
+  },
+  231: {
+    key: 'TSV_COLUMN_HEADER_DUPLICATE',
+    severity: 'error',
+    reason:
+      'Two elements in the first row of a TSV are the same. Each column header must be unique.',
+  },
+  232: {
+    key: 'TSV_COLUMN_HEADER_NA',
+    severity: 'error',
+    reason:
+      'An element in a tsv header is "n/a". A different header name should be chosen.',
+  },
+  233: {
     key: 'MISSING_TSV_COLUMN_NIRS_OPTODES',
     severity: 'error',
     reason:
       "The column names of the optodes file must begin with ['name', 'type', 'x', 'y', 'z']",
   },
-  229: {
+  234: {
     key: 'MISSING_TSV_COLUMN_NIRS_CHANNELS',
     severity: 'error',
     reason:
-      "The column names of the channels file must begin with ['name', 'type', 'source', 'detector', 'wavelength_nominal', 'units':]",
+      "The column names of the channels file must begin with ['name', 'type', 'source', 'detector', 'wavelength_nominal', 'units']",
   },
 }

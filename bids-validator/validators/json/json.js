@@ -13,7 +13,7 @@ const Issue = utils.issues.Issue
  * it finds while validating against the BIDS
  * specification.
  */
-export default function(file, jsonContentsDict, callback) {
+export default function (file, jsonContentsDict, callback) {
   // primary flow --------------------------------------------------------------------
   let issues = []
   const potentialSidecars = utils.files.potentialLocations(file.relativePath)
@@ -74,7 +74,7 @@ const compareSidecarProperties = (file, sidecar) => {
   return issues
 }
 
-const selectSchema = file => {
+const selectSchema = (file) => {
   let schema = null
   if (file.name) {
     if (file.name.endsWith('participants.json')) {
@@ -118,6 +118,11 @@ const selectSchema = file => {
       file.name.endsWith('SPIM.json')
     ) {
       schema = require('./schemas/microscopy.json')
+    } else if (
+      file.relativePath.includes('/micr') &&
+      file.name.endsWith('photo.json')
+    ) {
+      schema = require('./schemas/microscopy_photo.json')
     } else if (
       file.relativePath.includes('/meg/') &&
       file.name.endsWith('coordsystem.json')
@@ -165,7 +170,7 @@ const validateSchema = (file, sidecar, schema) => {
     const validate = ajv.compile(schema)
     const valid = validate(sidecar)
     if (!valid) {
-      validate.errors.map(error =>
+      validate.errors.map((error) =>
         issues.push(
           new Issue({
             file: file,
