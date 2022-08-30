@@ -135,15 +135,14 @@
     }
   },
   "nirs_top": {
-    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:@@@_nirs_top_ext_@@@)$",
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(((?:_acq-[a-zA-Z0-9]+)?@@@_nirs_optodes_@@@)?|(task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:@@@_nirs_top_ext_@@@)))$",
     "tokens": {
       "@@@_nirs_top_ext_@@@": [
         "_nirs\\.json",
         "_channels\\.tsv",
-        "_optodes\\.tsv",
-        "_photo\\.jpg",
-        "_coordsystem\\.json"
-      ]
+        "_photo\\.jpg"
+      ],
+      "@@@_nirs_optodes_@@@": ["_optodes\\.tsv", "_coordsystem\\.json"]
     }
   },
   "multi_dir_fieldmap": {
