@@ -14,7 +14,7 @@ const testDir = dirname(testPath)
 const testFilename = basename(testPath)
 const ignore = new FileIgnoreRulesDeno([])
 
-Deno.test('Deno implementation of BIDSFile', async t => {
+Deno.test('Deno implementation of BIDSFile', async (t) => {
   await t.step('implements basic file properties', () => {
     const file = new BIDSFileDeno(testDir, testFilename, ignore)
     assertEquals(join(testDir, file.path), testPath)
@@ -45,7 +45,8 @@ Deno.test('Deno implementation of BIDSFile', async t => {
       const bomFilename = 'bom-utf16.tsv'
       const file = new BIDSFileDeno(bomDir, bomFilename, ignore)
       await assertRejects(async () => file.text(), UnicodeDecodeError)
-  })
+    },
+  )
   await t.step(
     'strips BOM characters when reading UTF-8 via .text()',
     async () => {

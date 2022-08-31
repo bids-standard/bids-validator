@@ -13,10 +13,10 @@ export function parseTSV(contents: string) {
   const rows: string[][] = normalizeEOL(contents)
     .split('\n')
     .filter(isContentfulRow)
-    .map(str => str.split('\t'))
+    .map((str) => str.split('\t'))
   const headers = rows.length ? rows[0] : []
 
-  headers.map(x => (columns[x] = []))
+  headers.map((x) => (columns[x] = []))
   for (let i = 1; i < rows.length; i++) {
     for (let j = 0; j < headers.length; j++) {
       columns[headers[j]].push(rows[i][j])

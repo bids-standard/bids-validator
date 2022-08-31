@@ -4,7 +4,7 @@ import { validatePath, formatAssertIssue } from './common.ts'
 
 const PATH = 'tests/data/valid_headers'
 
-Deno.test('valid_headers dataset', async t => {
+Deno.test('valid_headers dataset', async (t) => {
   const { tree, result } = await validatePath(t, PATH)
 
   await t.step('correctly ignores .bidsignore files', () => {
