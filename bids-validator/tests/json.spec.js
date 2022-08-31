@@ -692,4 +692,62 @@ describe('JSON', function () {
       assert(issues.length === 0)
     })
   })
+
+  var nirs_file = {
+    name: 'sub-01_run-01_nirs.json',
+    relativePath: '/sub-01_run-01_nirs.json',
+  }
+
+  it('*_nirs.json sidecars should have required key/value pairs', function () {
+    var jsonObj = {
+      TaskName: 'Audiovis',
+      SamplingFrequency: 7,
+      NIRSChannelCount: 7,
+      NIRSSourceOptodeCount: 7,
+      NIRSDetectorOptodeCount: 7,
+      CapManufacturer: 'EasyCap',
+      CapManufacturersModelName: 'actiCAP 64 Ch Standard-2',
+    }
+    jsonDict[nirs_file.relativePath] = jsonObj
+    validate.JSON(nirs_file, jsonDict, function (issues) {
+      assert(issues.length === 0)
+    })
+    var jsonObjInval = jsonObj
+    jsonObjInval['BadKey'] = ''
+    jsonDict[nirs_file.relativePath] = jsonObjInval
+    validate.JSON(nirs_file, jsonDict, function (issues) {
+      assert(issues && issues.length === 1)
+    })
+  })
+  var nirs_coordsystem_file = {
+    name: 'sub-01/nirs/sub-01_task-testing_coordsystem.json',
+    relativePath: '/sub-01/nirs/sub-01_task-testing_coordsystem.json',
+  }
+
+  it('NIRS *_coordsystem.json files should have required key/value pairs', function () {
+    var jsonObj = {
+      NIRSCoordinateSystem: 'fsaverage',
+      NIRSCoordinateUnits: 'mm',
+    }
+    jsonDict[nirs_coordsystem_file.relativePath] = jsonObj
+    validate.JSON(nirs_coordsystem_file, jsonDict, function (issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  it('NIRS *_coordsystem.json schema should require *Description if *Coordsystem is "Other"', function () {
+    var jsonObj = {
+      NIRSCoordinateSystem: 'Other',
+      NIRSCoordinateUnits: 'mm',
+    }
+    jsonDict[nirs_coordsystem_file.relativePath] = jsonObj
+    validate.JSON(nirs_coordsystem_file, jsonDict, function (issues) {
+      assert(issues.length === 2)
+      assert(
+        issues[0].evidence ==
+          " should have required property 'NIRSCoordinateSystemDescription'",
+      )
+      assert(issues[1].evidence == ' should match "then" schema')
+    })
+  })
 })

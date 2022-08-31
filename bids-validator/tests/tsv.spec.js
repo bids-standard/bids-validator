@@ -606,6 +606,50 @@ describe('TSV', function () {
       assert(issues.length === 0)
     })
   })
+  var channelsFileNIRS = {
+    name: 'sub-01_ses-001_task-rest_run-01_channels.tsv',
+    relativePath:
+      '/sub-01/ses-001/nirs/sub-01_ses-001_task-rest_run-01_channels.tsv',
+  }
+
+  it('NIRS channels.tsv with correct columns should throw no error', function () {
+    var tsv =
+      'name\ttype\tsource\tdetector\twavelength_nominal\tunits\n' +
+      'testch\tNIRSCWAMPLITUDE\tS1\tD1\t760.0\tV'
+    validate.TSV.TSV(channelsFileNIRS, tsv, [], function (issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  it('should not allow NIRS channels.tsv files without name column', function () {
+    var tsv =
+      'type\tsource\tdetector\twavelength_nominal\tunits\n' +
+      'NIRSCWAMPLITUDE\tS1\tD1\t760.0\tV'
+    validate.TSV.TSV(channelsFileNIRS, tsv, [], function (issues) {
+      assert(issues[0].code === 234)
+    })
+  })
+
+  // optodes checks ---------------------------------------------------------
+  var optodesFileNIRS = {
+    name: 'sub-01_ses-001_task-rest_run-01_optodes.tsv',
+    relativePath:
+      '/sub-01/ses-001/nirs/sub-01_ses-001_task-rest_run-01_optodes.tsv',
+  }
+
+  it('should allow NIRS optodes.tsv files with correct columns', function () {
+    var tsv = 'name\ttype\tx\ty\tz\n' + 'S1\tsource\t-0.04\t0.02\t0.5\n'
+    validate.TSV.TSV(optodesFileNIRS, tsv, [], function (issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  it('should not allow NIRS optodes.tsv files with out name columns', function () {
+    var tsv = 'type\tx\ty\tz\n' + 'source\t-0.04\t0.02\t0.5\n'
+    validate.TSV.TSV(optodesFileNIRS, tsv, [], function (issues) {
+      assert(issues[0].code === 233)
+    })
+  })
 
   // electrodes checks ---------------------------------------------------------
   var electrodesFileEEG = {

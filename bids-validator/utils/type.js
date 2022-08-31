@@ -62,6 +62,7 @@ const petBlood = buildRegExp(file_level_rules.pet_blood)
 const microscopyData = buildRegExp(file_level_rules.microscopy)
 const microscopyPhotoData = buildRegExp(file_level_rules.microscopy_photo)
 const microscopyJSON = buildRegExp(file_level_rules.microscopy_json)
+const nirsData = buildRegExp(file_level_rules.nirs)
 // Phenotypic data
 const phenotypicData = buildRegExp(phenotypic_rules.phenotypic_data)
 // Session level
@@ -75,6 +76,7 @@ const megSes = buildRegExp(session_level_rules.meg_ses)
 const scansSes = buildRegExp(session_level_rules.scans)
 const petSes = buildRegExp(session_level_rules.pet_ses)
 const microscopySes = buildRegExp(session_level_rules.microscopy_ses)
+const nirsSes = buildRegExp(session_level_rules.nirs_ses)
 // Subject level
 const subjectLevel = buildRegExp(subject_level_rules.subject_level)
 // Top level
@@ -90,6 +92,7 @@ const otherTopFiles = buildRegExp(top_level_rules.other_top_files)
 const megTop = buildRegExp(top_level_rules.meg_top)
 const petTop = buildRegExp(top_level_rules.pet_top)
 const microscopyTop = buildRegExp(top_level_rules.microscopy_top)
+const nirsTop = buildRegExp(top_level_rules.nirs_top)
 
 export default {
   /**
@@ -109,6 +112,7 @@ export default {
       this.file.isFunc(path) ||
       this.file.isAsl(path) ||
       this.file.isMeg(path) ||
+      this.file.isNIRS(path) ||
       this.file.isIEEG(path) ||
       this.file.isEEG(path) ||
       this.file.isBehavioral(path) ||
@@ -143,6 +147,7 @@ export default {
           eegTop.test(path) ||
           ieegTop.test(path) ||
           petTop.test(path) ||
+          nirsTop.test(path) ||
           microscopyTop.test(path)
         )
       } else {
@@ -158,6 +163,7 @@ export default {
           eegTop.test(path) ||
           ieegTop.test(path) ||
           petTop.test(path) ||
+          nirsTop.test(path) ||
           microscopyTop.test(path)
         )
       }
@@ -211,6 +217,7 @@ export default {
         conditionalMatch(anatSes, path) ||
         conditionalMatch(dwiSes, path) ||
         conditionalMatch(megSes, path) ||
+        conditionalMatch(nirsSes, path) ||
         conditionalMatch(eegSes, path) ||
         conditionalMatch(ieegSes, path) ||
         conditionalMatch(petSes, path) ||
@@ -333,6 +340,9 @@ export default {
         )
       }
     },
+    isNIRS: function (path) {
+      return conditionalMatch(nirsData, path)
+    },
 
     isEEG: function (path) {
       if (bids_schema) {
@@ -383,6 +393,7 @@ export default {
         this.isFunc(path) ||
         this.isAsl(path) ||
         this.isMeg(path) ||
+        this.isNIRS(path) ||
         this.isEEG(path) ||
         this.isIEEG(path) ||
         this.isBehavioral(path) ||
