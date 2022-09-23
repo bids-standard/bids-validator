@@ -147,7 +147,7 @@ export class BIDSContext implements Context {
   }
 
   async asyncLoads() {
-    await Promise.all([
+    await Promise.allSettled([
       this.loadSidecar(),
       this.loadColumns(),
       this.loadAssociations(),
