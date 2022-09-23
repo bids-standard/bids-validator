@@ -6,6 +6,7 @@ import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { readBidsIgnore, FileIgnoreRulesDeno } from './ignore.ts'
+import { assert } from 'https://deno.land/std@0.130.0/_util/assert.ts'
 
 /**
  * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters
@@ -44,9 +45,8 @@ export class BIDSFileDeno implements BIDSFile {
   }
 
   get stream(): ReadableStream<Uint8Array> {
-    // Avoid asking for write access
-    const openOptions = { read: true, write: false }
-    return Deno.openSync(this._getPath(), openOptions).readable
+    const handle = this.#openHandle()
+    return handle.readable
   }
 
   get ignored(): boolean {
@@ -79,6 +79,27 @@ export class BIDSFileDeno implements BIDSFile {
     } finally {
       streamReader.releaseLock()
     }
+  }
+
+  /**
+   * Read bytes in a range efficiently from a given file
+   */
+  readBytes(size: number, offset = 0): Uint8Array {
+    const handle = this.#openHandle()
+    const buf = new Uint8Array(size)
+    handle.seekSync(offset, Deno.SeekMode.Start)
+    handle.readSync(buf)
+    Deno.close(handle.rid)
+    return buf
+  }
+
+  /**
+   * Return a Deno file handle
+   */
+  #openHandle(): Deno.FsFile {
+    // Avoid asking for write access
+    const openOptions = { read: true, write: false }
+    return Deno.openSync(this._getPath(), openOptions)
   }
 }
 
