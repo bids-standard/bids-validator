@@ -2,7 +2,8 @@ import 'https://raw.githubusercontent.com/rii-mango/NIFTI-Reader-JS/master/relea
 import { BIDSFileDeno } from './deno.ts'
 
 export function loadHeader(file: BIDSFileDeno) {
-  const header = nifti.readHeader(Deno.readFileSync(file._getPath()).buffer)
+  const buf = file.readBytes(1024)
+  const header = globalThis.nifti.readHeader(buf.buffer)
   // normalize between nifti-reader and spec schema
   // https://github.com/bids-standard/bids-specification/blob/master/src/schema/meta/context.yaml#L200
   header.pixdim = header.pixDims
