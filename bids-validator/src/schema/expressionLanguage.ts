@@ -2,7 +2,7 @@ export const expressionFunctions = {
   intersects: <T>(a: T[], b: T[]): boolean => {
     return a.some((x) => b.includes(x))
   },
-  match: (target: string, regex: sting): boolean => {
+  match: (target: string, regex: string): boolean => {
     return target.match(regex)
   },
   type: <T>(operand: T): string => {
