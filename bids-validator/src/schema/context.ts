@@ -1,6 +1,7 @@
 import {
   Context,
   ContextDataset,
+  ContextDatasetSubjects,
   ContextSubject,
   ContextAssociations,
   ContextNiftiHeader,
@@ -10,7 +11,21 @@ import { FileTree } from '../types/filetree.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { parseTSV } from '../files/tsv.ts'
+import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
+
+class BIDSContextDataset implements ContextDataset {
+  constructor() {
+    this.dataset_description = {}
+    this.files = []
+    this.tree = {}
+    this.ignored = []
+    this.modalities = []
+    this.subjects = [] as ContextDatasetSubjects[]
+  }
+}
+
+const contextDataset = new BIDSContextDataset()
 
 export class BIDSContext implements Context {
   // Internal representation of the file tree
@@ -37,14 +52,14 @@ export class BIDSContext implements Context {
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
-    this.dataset = {} as ContextDataset
+    this.dataset = contextDataset
     this.subject = {} as ContextSubject
     this.datatype = ''
     this.modality = ''
     this.sidecar = {}
     this.columns = {}
     this.associations = {} as ContextAssociations
-    this.nifti_header = {} as ContextNiftiHeader
+    this.nifti_header = {}
   }
 
   get json(): Promise<Record<string, any>> {
@@ -104,6 +119,14 @@ export class BIDSContext implements Context {
     }
   }
 
+  loadNiftiHeader(): Promise<void> {
+    if (!this.extension.startsWith('.nii')) {
+      this.nifti_header = {}
+      return
+    }
+    this.nifti_header = loadHeader(this.file)
+  }
+
   async loadColumns(): Promise<void> {
     if (this.extension !== '.tsv') {
       return
@@ -124,8 +147,11 @@ export class BIDSContext implements Context {
   }
 
   async asyncLoads() {
-    await this.loadSidecar()
-    await this.loadColumns()
-    await this.loadAssociations()
+    await Promise.all([
+      this.loadSidecar(),
+      this.loadColumns(),
+      this.loadAssociations(),
+    ])
+    this.loadNiftiHeader()
   }
 }
