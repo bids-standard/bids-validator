@@ -1,12 +1,15 @@
 export const expressionFunctions = {
   intersects: <T>(a: T[], b: T[]): boolean => {
-    return a.any((x) => b.includes(x))
+    return a.some((x) => b.includes(x))
   },
   match: (target: string, regex: sting): boolean => {
     return target.match(regex)
   },
   type: <T>(operand: T): string => {
-    return
+    if (Array.isArray(operand)) {
+      return 'array'
+    }
+    return typeof operand
   },
   min: (list: number[]): number => {
     return Math.min(...list)
