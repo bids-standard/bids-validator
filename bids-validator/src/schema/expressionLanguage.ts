@@ -3,7 +3,8 @@ export const expressionFunctions = {
     return a.some((x) => b.includes(x))
   },
   match: (target: string, regex: string): boolean => {
-    return target.match(regex)
+    let re = RegExp(regex)
+    return target.match(re) !== null
   },
   type: <T>(operand: T): string => {
     if (Array.isArray(operand)) {

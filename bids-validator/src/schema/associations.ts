@@ -3,6 +3,7 @@ import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { BIDSContext } from './context.ts'
 import { readEntities } from './entities.ts'
+import { BIDSFileDeno } from '../files/deno.ts'
 import { parseTSV } from '../files/tsv.ts'
 
 // type AssociationsLookup = Record<keyof ContextAssociations, { extensions: string[], inherit: boolean, load: ... }
@@ -23,7 +24,7 @@ const associationLookup = {
     extensions: ['.tsv'],
     inherit: true,
     load: (file: BIDSFile): Promise<ContextAssociations['events']> => {
-      return Deno.readTextFile(file._getPath()).then((text) => parseTSV(text))
+      return file.text().then((text) => parseTSV(text))
     },
   },
   aslcontext: {

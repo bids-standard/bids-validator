@@ -10,11 +10,19 @@ import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
+import { BIDSFileDeno } from '../files/deno.ts'
 import { parseTSV } from '../files/tsv.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 
 class BIDSContextDataset implements ContextDataset {
+  dataset_description: object
+  files: any[]
+  tree: object
+  ignored: any[]
+  modalities: any[]
+  subjects: ContextDatasetSubjects[]
+
   constructor() {
     this.dataset_description = {}
     this.files = []
@@ -42,7 +50,7 @@ export class BIDSContext implements Context {
   sidecar: object
   columns: Record<string, string[]>
   associations: ContextAssociations
-  nifti_header: ContextNiftiHeader
+  nifti_header?: ContextNiftiHeader
 
   constructor(fileTree: FileTree, file: BIDSFile, issues: DatasetIssues) {
     this.#fileTree = fileTree
@@ -59,7 +67,6 @@ export class BIDSContext implements Context {
     this.sidecar = {}
     this.columns = {}
     this.associations = {} as ContextAssociations
-    this.nifti_header = {}
   }
 
   get json(): Promise<Record<string, any>> {
@@ -120,11 +127,10 @@ export class BIDSContext implements Context {
   }
 
   loadNiftiHeader(): Promise<void> {
-    if (!this.extension.startsWith('.nii')) {
-      this.nifti_header = {}
-      return
+    if (this.extension.startsWith('.nii')) {
+      this.nifti_header = loadHeader(this.file as BIDSFileDeno)
     }
-    this.nifti_header = loadHeader(this.file)
+    return Promise.resolve()
   }
 
   async loadColumns(): Promise<void> {

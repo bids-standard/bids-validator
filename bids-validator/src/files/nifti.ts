@@ -3,6 +3,7 @@ import { BIDSFileDeno } from './deno.ts'
 
 export function loadHeader(file: BIDSFileDeno) {
   const buf = file.readBytes(1024)
+  // @ts-expect-error
   const header = globalThis.nifti.readHeader(buf.buffer)
   // normalize between nifti-reader and spec schema
   // https://github.com/bids-standard/bids-specification/blob/master/src/schema/meta/context.yaml#L200
