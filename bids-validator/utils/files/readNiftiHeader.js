@@ -66,6 +66,8 @@ function extractNiftiFile(file, callback) {
 }
 
 function browserNiftiTest(file, callback) {
+  const bytesRead = 1024
+  const blob = file.slice(0, bytesRead)
   if (file.size == 0) {
     callback({ error: new Issue({ code: 44, file: file }) })
     return
@@ -77,7 +79,7 @@ function browserNiftiTest(file, callback) {
     return
   }
   const fileReader = constructBrowserFileReader(file, callback)
-  fileReader.readAsArrayBuffer(file)
+  fileReader.readAsArrayBuffer(blob)
 }
 
 function constructBrowserFileReader(file, callback) {
