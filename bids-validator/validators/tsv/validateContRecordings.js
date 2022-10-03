@@ -29,7 +29,7 @@ const validateContRec = function (contRecordings, jsonContentsDict) {
       issues.push(
         new Issue({
           file: contRecording,
-          code: 133,
+          code: 170,
         }),
       )
     }

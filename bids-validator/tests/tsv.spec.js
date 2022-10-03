@@ -771,7 +771,7 @@ describe('TSV', function () {
 
   it('should not allow physio.tsv.gz file without some associated json', function () {
     let issues = validate.TSV.validateContRec([physio_file], {})
-    assert(issues.length === 1 && issues[0].code === 133)
+    assert(issues.length === 1 && issues[0].code === 170)
   })
 
   // samples checks -----------------------------------------------------------

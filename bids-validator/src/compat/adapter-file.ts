@@ -6,14 +6,16 @@ import { BIDSFile } from '../types/file.ts'
  * implementing only what the validator currently uses.
  */
 export class AdapterFile {
-  private _stream: ReadableStream // File contents stream
+  #file: BIDSFile
+  #stream: ReadableStream // File contents stream
   name: string // Filename
   path: string // Absolute path
   relativePath: string // Dataset relative path (prefixed /)
   webkitRelativePath: string // Duplicate name for relativePath
 
   constructor(rootPath: string, file: BIDSFile, stream: ReadableStream) {
-    this._stream = stream
+    this.#file = file
+    this.#stream = stream
     this.name = file.name
     // JS validator expects dataset-dir/contents filenames
     const relativePath = relative(rootPath, file.path)
@@ -23,6 +25,11 @@ export class AdapterFile {
   }
 
   stream(): ReadableStream {
-    return this._stream
+    return this.#stream
+  }
+
+  slice(start: number, end = 0): Blob {
+    const size = end - start
+    return new Blob([this.#file.readBytes(size, start).buffer])
   }
 }

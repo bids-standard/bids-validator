@@ -44,6 +44,9 @@
         "type": "number",
         "minimum": 0
       }
+    },
+    "PartialFourier": {
+      "type": "number"
     }
   }
 }
