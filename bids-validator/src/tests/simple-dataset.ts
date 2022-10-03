@@ -1,4 +1,5 @@
 import { FileTree } from '../types/filetree.ts'
+import { nullReadBytes } from './nullReadBytes.ts'
 
 const text = () => Promise.resolve('')
 
@@ -14,6 +15,7 @@ anatFileTree.files = [
     size: 311112,
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
+    readBytes: nullReadBytes,
   },
 ]
 subjectFileTree.files = []
@@ -26,6 +28,7 @@ rootFileTree.files = [
     size: 240,
     ignored: false,
     stream: new ReadableStream(),
+    readBytes: nullReadBytes,
   },
   {
     text,
@@ -34,6 +37,7 @@ rootFileTree.files = [
     size: 709,
     ignored: false,
     stream: new ReadableStream(),
+    readBytes: nullReadBytes,
   },
   {
     text,
@@ -42,6 +46,7 @@ rootFileTree.files = [
     size: 39,
     ignored: false,
     stream: new ReadableStream(),
+    readBytes: nullReadBytes,
   },
   {
     text,
@@ -50,6 +55,7 @@ rootFileTree.files = [
     size: 36,
     ignored: false,
     stream: new ReadableStream(),
+    readBytes: nullReadBytes,
   },
 ]
 rootFileTree.directories = [subjectFileTree]

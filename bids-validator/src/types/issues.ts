@@ -53,7 +53,7 @@ export type IssueDefinitionRecord = Record<string, IssueDefinition>
 /**
  * File allowing extra context for the issue found
  */
-export type IssueFile = BIDSFile & {
+export type IssueFile = Omit<BIDSFile, 'readBytes'> & {
   evidence?: string
   line?: number
   character?: number
