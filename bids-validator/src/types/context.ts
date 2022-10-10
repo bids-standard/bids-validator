@@ -85,4 +85,5 @@ export interface Context {
   columns: object
   json: object
   nifti_header?: ContextNiftiHeader
+  derivative: boolean
 }

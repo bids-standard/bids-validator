@@ -9,6 +9,8 @@ import {
   isAssociatedData,
   isTopLevel,
 } from './filenames.ts'
+import { filenameIdentify } from './filenameIdentify.ts'
+import { filenameValidate } from './filenameValidate.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { ValidationResult } from '../types/validation-result.ts'
 import { Summary } from '../summary/summary.ts'
@@ -18,7 +20,12 @@ import { emptyFile } from './internal/emptyFile.ts'
 /**
  * Ordering of checks to apply
  */
-const CHECKS: CheckFunction[] = [emptyFile, applyRules]
+const CHECKS: CheckFunction[] = [
+  emptyFile,
+  filenameIdentify,
+  filenameValidate,
+  applyRules,
+]
 
 /**
  * Full BIDS schema validation entrypoint
@@ -28,11 +35,30 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   const summary = new Summary()
   const schema = await loadSchema()
 
+  /* There should be a dataset_description in root, this will tell us if we
+   * are dealing with a derivative dataset
+   */
+  const ddFile = fileTree.files.find(
+    (file) => file.name === 'dataset_description.json',
+  )
+  let isDeriv
+  if (ddFile) {
+    const description = await ddFile.text().then((text) => JSON.parse(text))
+    if (!'GeneratedBy' in description) {
+      delete schema.rules.datatypes.derivatives
+      isDeriv = false
+    } else {
+      isDeriv = true
+    }
+  }
+
   for await (const context of walkFileTree(fileTree, issues)) {
     // TODO - Skip ignored files for now (some tests may reference ignored files)
     if (context.file.ignored) {
       continue
     }
+
+    /* new filename validation
     if (isAssociatedData(schema, context.file.path)) {
       continue
     }
@@ -41,6 +67,7 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
       checkDatatypes(schema, context)
       checkLabelFormat(schema, context)
     }
+    */
 
     await context.asyncLoads()
     // Run majority of checks
@@ -50,6 +77,7 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
     }
     await summary.update(context)
   }
+
   return {
     issues,
     summary: summary.formatOutput(),

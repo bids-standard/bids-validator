@@ -38,6 +38,7 @@ const contextDataset = new BIDSContextDataset()
 export class BIDSContext implements Context {
   // Internal representation of the file tree
   #fileTree: FileTree
+  filenameRules: string[]
   issues: DatasetIssues
   file: BIDSFile
   suffix: string
@@ -51,9 +52,11 @@ export class BIDSContext implements Context {
   columns: Record<string, string[]>
   associations: ContextAssociations
   nifti_header?: ContextNiftiHeader
+  derivative: boolean
 
   constructor(fileTree: FileTree, file: BIDSFile, issues: DatasetIssues) {
     this.#fileTree = fileTree
+    this.filenameRules = []
     this.issues = issues
     this.file = file
     const bidsEntities = readEntities(file)
@@ -67,6 +70,7 @@ export class BIDSContext implements Context {
     this.sidecar = {}
     this.columns = {}
     this.associations = {} as ContextAssociations
+    this.derivative = false
   }
 
   get json(): Promise<Record<string, any>> {

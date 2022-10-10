@@ -5,19 +5,25 @@ import { BIDSContext } from '../schema/context.ts'
 import { lookupModality } from '../schema/modalities.ts'
 
 // This should be defined in the schema
-const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
+export const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 export function checkDatatypes(schema: Schema, context: BIDSContext) {
-  delete schema.rules.datatypes.derivatives
   let matchedRule
   datatypeFromDirectory(schema, context)
   if (schema.rules.datatypes.hasOwnProperty(context.datatype)) {
     const rules = schema.rules.datatypes[context.datatype]
 
     for (const key of Object.keys(rules)) {
-      if (validateFilenameAgainstRule(rules[key], schema, context)) {
-        matchedRule = key
-        break
+      if (!'entities' in rules[key]) {
+        Object.assign(rules, rules[key])
+        delete rules[key]
+        continue
+      }
+      if ('entities' in rules[key]) {
+        if (validateFilenameAgainstRule(rules[key], schema, context)) {
+          matchedRule = key
+          break
+        }
       }
     }
   }
@@ -32,10 +38,17 @@ export function checkDatatypes(schema: Schema, context: BIDSContext) {
     const datatypes = Object.values(schema.rules.datatypes)
     for (const rules of datatypes) {
       for (const key of Object.keys(rules)) {
-        if (validateFilenameAgainstRule(rules[key], schema, context)) {
-          matchedRule = key
-          possibleDatatypes.add(rules[key].datatypes)
-          break
+        if (!'entities' in rules[key]) {
+          Object.assign(rules, rules[key])
+          delete rules[key]
+          continue
+        }
+        if ('entities' in rules[key]) {
+          if (validateFilenameAgainstRule(rules[key], schema, context)) {
+            matchedRule = key
+            possibleDatatypes.add(rules[key].datatypes)
+            break
+          }
         }
       }
     }
