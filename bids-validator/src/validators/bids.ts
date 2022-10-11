@@ -39,6 +39,8 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
     const description = await ddFile.text().then((text) => JSON.parse(text))
     if (!'GeneratedBy' in description) {
       delete schema.rules.files.deriv
+    } else {
+      delete schema.rules.files.raw
     }
   }
 

@@ -4,19 +4,11 @@ import { SEP } from '../deps/path.ts'
 const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 const CHECKS: CheckFunction[] = [
-  hasMatch,
   missingLabel,
   atRoot,
   entityLabelCheck,
   checkRules,
 ]
-
-export function isAtRoot(context: BIDSContext) {
-  if (context.file.path.split(SEP).length !== 2) {
-    return false
-  }
-  return true
-}
 
 export async function filenameValidate(schema, context) {
   for (const check of CHECKS) {
@@ -25,33 +17,11 @@ export async function filenameValidate(schema, context) {
   return Promise.resolve()
 }
 
-async function hasMatch(schema, context) {
-  if (
-    context.filenameRules.length === 0 &&
-    context.file.path !== '/.bidsignore'
-  ) {
-    context.issues.addNonSchemaIssue('NOT_INCLUDED', [context.file])
+export function isAtRoot(context: BIDSContext) {
+  if (context.file.path.split(SEP).length !== 2) {
+    return false
   }
-
-  /* we have matched multiple rules and a datatype, lets see if we have one
-   *   rule with the same datatype, if so just use that one.
-   */
-  if (context.filenameRules.length > 1) {
-    const datatypeMatch = context.filenameRules.filter((rulePath) => {
-      if (Array.isArray(schema[rulePath].datatypes)) {
-        return schema[rulePath].datatypes.includes(context.datatype)
-      } else {
-        return false
-      }
-    })
-    if (datatypeMatch.length === 1) {
-      // validate this rule and no others
-      context.filenameRules = datatypeMatch
-    } else {
-      // error showing potential rule matches, validate against one or all?
-    }
-  }
-  return Promise.resolve()
+  return true
 }
 
 async function missingLabel(schema, context) {
@@ -79,7 +49,7 @@ function atRoot(schema, context) {
   */
 }
 
-function lookupEntityLiteral(name: string, schema: Schema) {
+export function lookupEntityLiteral(name: string, schema: Schema) {
   const entityObj = schema.objects.entities[name]
   if (entityObj && entityObj['name']) {
     return entityObj['name']
