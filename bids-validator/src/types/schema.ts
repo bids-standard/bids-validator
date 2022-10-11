@@ -6,9 +6,15 @@ export interface SchemaObjects {
 }
 
 export interface SchemaRules {
-  top_level_files: Record<string, unknown>
+  files: SchemaFiles
   datatypes: Record<string, unknown>
   modalities: Record<string, unknown>
+}
+
+export interface SchemaFiles {
+  common: Record<string, unknown>
+  deriv: Record<string, unknown>
+  raw: Record<string, unknown>
 }
 
 export interface Schema {

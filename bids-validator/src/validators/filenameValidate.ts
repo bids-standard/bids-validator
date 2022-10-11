@@ -1,24 +1,31 @@
-import { isAtRoot, sidecarExtensions } from './filenames.ts'
-import { CheckFunction } from '../types/check.ts'
-import { objectPathHandler } from '../utils/objectPathHandler.ts'
+import { CheckFunction, RuleCheckFunction } from '../types/check.ts'
+import { SEP } from '../deps/path.ts'
+
+const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 const CHECKS: CheckFunction[] = [
   hasMatch,
   missingLabel,
   atRoot,
   entityLabelCheck,
+  checkRules,
 ]
 
-function filenameValidate(schema, context) {
+export function isAtRoot(context: BIDSContext) {
+  if (context.file.path.split(SEP).length !== 2) {
+    return false
+  }
+  return true
+}
+
+export async function filenameValidate(schema, context) {
   for (const check of CHECKS) {
-    // TODO - Resolve this double casting?
     await check(schema as unknown as GenericSchema, context)
   }
   return Promise.resolve()
 }
 
-function hasMatch(schema, context) {
-  schema = new Proxy(schema, objectPathHandler)
+async function hasMatch(schema, context) {
   if (
     context.filenameRules.length === 0 &&
     context.file.path !== '/.bidsignore'
@@ -39,6 +46,7 @@ function hasMatch(schema, context) {
     })
     if (datatypeMatch.length === 1) {
       // validate this rule and no others
+      context.filenameRules = datatypeMatch
     } else {
       // error showing potential rule matches, validate against one or all?
     }
@@ -46,9 +54,9 @@ function hasMatch(schema, context) {
   return Promise.resolve()
 }
 
-function missingLabel(schema, context) {
+async function missingLabel(schema, context) {
   const fileNoLabelEntities = Object.keys(context.entities).filter(
-    (key) => entities[key] === 'NOENTITY',
+    (key) => context.entities[key] === 'NOENTITY',
   )
 
   const fileEntities = Object.keys(context.entities).filter(
@@ -60,6 +68,7 @@ function missingLabel(schema, context) {
       { ...context.file, evidence: fileNoLabelEntities.join(', ') },
     ])
   }
+  return Promise.resolve()
 }
 
 function atRoot(schema, context) {
@@ -91,7 +100,7 @@ function getEntityByLiteral(fileEntity: string, schema: Schema) {
   return null
 }
 
-function entityLabelCheck(schema: Schema, context: BIDSContext) {
+async function entityLabelCheck(schema: Schema, context: BIDSContext) {
   const formats = schema.objects.formats
   const entities = schema.objects.entities
   Object.keys(context.entities).map((fileEntity) => {
@@ -113,16 +122,41 @@ function entityLabelCheck(schema: Schema, context: BIDSContext) {
       // unknown entity
     }
   })
-  return
+  return Promise.resolve()
 }
 
-function entityRuleIssue(rule, schema, context) {
+const ruleChecks: RuleCheckFunction[] = [
+  entityRuleIssue,
+  datatypeMismatch,
+  extensionMismatch,
+]
+
+async function checkRules(schema, context) {
+  for (const path of context.filenameRules) {
+    for (const check of ruleChecks) {
+      check(path, schema as unknown as GenericSchema, context)
+    }
+  }
+  return Promise.resolve()
+}
+
+function entityRuleIssue(path, schema, context) {
+  const rule = schema[path]
+  if (!('entities' in rule)) {
+    if (Object.keys(context.entities).length > 0) {
+      // Throw issue for entity in file but not rule
+    }
+    return
+  }
+
+  const fileEntities = Object.keys(context.entities)
   const ruleEntities = Object.keys(rule.entities).map((key) =>
     lookupEntityLiteral(key, schema),
   )
+
   // skip required entity checks if file is at root.
   // No requirements for inherited sidecars at this level.
-  if (!fileIsAtRoot) {
+  if (!isAtRoot(context)) {
     const ruleEntitiesRequired = Object.entries(rule.entities)
       .filter(([_, v]) => v === 'required')
       .map(([k, _]) => lookupEntityLiteral(k, schema))
@@ -149,7 +183,8 @@ function entityRuleIssue(rule, schema, context) {
   }
 }
 
-function datatypeMismatch(rule, schema, context) {
+function datatypeMismatch(path, schema, context) {
+  const rule = schema[path]
   if (
     !!context.datatype &&
     rule.datatypes &&
@@ -161,9 +196,10 @@ function datatypeMismatch(rule, schema, context) {
   }
 }
 
-function extensionMismatch(rule, schema, context) {
+async function extensionMismatch(path, schema, context) {
+  const rule = schema[path]
   if (rule.extensions && !rule.extensions.includes(context.extension)) {
-    context.issues.addNonSchemaIssue('SUFFIX_MISMATCH', [
+    context.issues.addNonSchemaIssue('EXTENSION_MISMATCH', [
       { ...context.file, evidence: `Rule: ${rule}` },
     ])
   }

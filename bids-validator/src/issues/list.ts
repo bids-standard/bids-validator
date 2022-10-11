@@ -24,6 +24,11 @@ export const filenameIssues: IssueDefinitionRecord = {
     reason:
       'The datatype directory does not match datatype of found suffix and extension',
   },
+  EXTENSION_MISMATCH: {
+    severity: 'error',
+    reason:
+      'Extension used by file does not match allowed extensions for its suffix',
+  },
   JSON_KEY_REQUIRED: {
     severity: 'error',
     reason: "A data file's JSON sidecar is missing a key listed as required.",

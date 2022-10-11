@@ -1,20 +1,14 @@
+import { CheckFunction } from '../types/check.ts'
 import { FileTree } from '../types/filetree.ts'
 import { GenericSchema } from '../types/schema.ts'
+import { ValidationResult } from '../types/validation-result.ts'
+import { applyRules } from '../schema/applyRules.ts'
 import { walkFileTree } from '../schema/walk.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
-import { applyRules } from '../schema/applyRules.ts'
-import {
-  checkDatatypes,
-  checkLabelFormat,
-  isAssociatedData,
-  isTopLevel,
-} from './filenames.ts'
+import { Summary } from '../summary/summary.ts'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
-import { ValidationResult } from '../types/validation-result.ts'
-import { Summary } from '../summary/summary.ts'
-import { CheckFunction } from '../types/check.ts'
 import { emptyFile } from './internal/emptyFile.ts'
 
 /**
@@ -41,14 +35,10 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   const ddFile = fileTree.files.find(
     (file) => file.name === 'dataset_description.json',
   )
-  let isDeriv
   if (ddFile) {
     const description = await ddFile.text().then((text) => JSON.parse(text))
     if (!'GeneratedBy' in description) {
-      delete schema.rules.datatypes.derivatives
-      isDeriv = false
-    } else {
-      isDeriv = true
+      delete schema.rules.files.deriv
     }
   }
 
@@ -57,17 +47,6 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
     if (context.file.ignored) {
       continue
     }
-
-    /* new filename validation
-    if (isAssociatedData(schema, context.file.path)) {
-      continue
-    }
-
-    if (!isTopLevel(schema, context)) {
-      checkDatatypes(schema, context)
-      checkLabelFormat(schema, context)
-    }
-    */
 
     await context.asyncLoads()
     // Run majority of checks
