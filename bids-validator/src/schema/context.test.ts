@@ -2,6 +2,7 @@ import { assert } from '../deps/asserts.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { FileTree } from '../types/filetree.ts'
 import { BIDSContext } from './context.ts'
+import { nullReadBytes } from '../tests/nullReadBytes.ts'
 
 const issues = new DatasetIssues()
 
@@ -42,6 +43,7 @@ const dataFile = {
   size: 311112,
   ignored: false,
   stream: new ReadableStream<Uint8Array>(),
+  readBytes: nullReadBytes,
 }
 
 anatFileTree.files = [
@@ -53,6 +55,7 @@ anatFileTree.files = [
     size: 311112,
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
+    readBytes: nullReadBytes,
   },
 ]
 
@@ -67,6 +70,7 @@ subjectFileTree.files = [
     size: 311112,
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
+    readBytes: nullReadBytes,
   },
 ]
 subjectFileTree.directories = [sessionFileTree]
@@ -79,6 +83,7 @@ rootFileTree.files = [
     size: 311112,
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
+    readBytes: nullReadBytes,
   },
 ]
 rootFileTree.directories = [subjectFileTree]

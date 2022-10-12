@@ -9,7 +9,7 @@ export interface ContextDataset {
   tree: object
   ignored: any[]
   modalities: any[]
-  subjects: ContextDatasetSubjects
+  subjects: ContextDatasetSubjects[]
 }
 export interface ContextSubjectSessions {
   ses_dirs: string[]
@@ -20,8 +20,8 @@ export interface ContextSubject {
   sessions: ContextSubjectSessions
 }
 export interface ContextAssociationsEvents {
-  path: string
-  onset: string[]
+  path?: string
+  onset?: string[]
 }
 export interface ContextAssociationsAslcontext {
   path: string
@@ -84,5 +84,5 @@ export interface Context {
   associations: ContextAssociations
   columns: object
   json: object
-  nifti_header: ContextNiftiHeader
+  nifti_header?: ContextNiftiHeader
 }

@@ -1,6 +1,7 @@
 import {
   Context,
   ContextDataset,
+  ContextDatasetSubjects,
   ContextSubject,
   ContextAssociations,
   ContextNiftiHeader,
@@ -9,8 +10,30 @@ import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
+import { BIDSFileDeno } from '../files/deno.ts'
 import { parseTSV } from '../files/tsv.ts'
+import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
+
+class BIDSContextDataset implements ContextDataset {
+  dataset_description: object
+  files: any[]
+  tree: object
+  ignored: any[]
+  modalities: any[]
+  subjects: ContextDatasetSubjects[]
+
+  constructor() {
+    this.dataset_description = {}
+    this.files = []
+    this.tree = {}
+    this.ignored = []
+    this.modalities = []
+    this.subjects = [] as ContextDatasetSubjects[]
+  }
+}
+
+const contextDataset = new BIDSContextDataset()
 
 export class BIDSContext implements Context {
   // Internal representation of the file tree
@@ -27,7 +50,7 @@ export class BIDSContext implements Context {
   sidecar: object
   columns: Record<string, string[]>
   associations: ContextAssociations
-  nifti_header: ContextNiftiHeader
+  nifti_header?: ContextNiftiHeader
 
   constructor(fileTree: FileTree, file: BIDSFile, issues: DatasetIssues) {
     this.#fileTree = fileTree
@@ -37,14 +60,13 @@ export class BIDSContext implements Context {
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
-    this.dataset = {} as ContextDataset
+    this.dataset = contextDataset
     this.subject = {} as ContextSubject
     this.datatype = ''
     this.modality = ''
     this.sidecar = {}
     this.columns = {}
     this.associations = {} as ContextAssociations
-    this.nifti_header = {} as ContextNiftiHeader
   }
 
   get json(): Promise<Record<string, any>> {
@@ -104,6 +126,13 @@ export class BIDSContext implements Context {
     }
   }
 
+  loadNiftiHeader(): Promise<void> {
+    if (this.extension.startsWith('.nii')) {
+      this.nifti_header = loadHeader(this.file as BIDSFileDeno)
+    }
+    return Promise.resolve()
+  }
+
   async loadColumns(): Promise<void> {
     if (this.extension !== '.tsv') {
       return
@@ -124,8 +153,11 @@ export class BIDSContext implements Context {
   }
 
   async asyncLoads() {
-    await this.loadSidecar()
-    await this.loadColumns()
-    await this.loadAssociations()
+    await Promise.allSettled([
+      this.loadSidecar(),
+      this.loadColumns(),
+      this.loadAssociations(),
+    ])
+    this.loadNiftiHeader()
   }
 }

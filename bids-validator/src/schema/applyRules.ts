@@ -1,6 +1,7 @@
 import { GenericRule, GenericSchema, SchemaFields } from '../types/schema.ts'
 import { Severity } from '../types/issues.ts'
 import { BIDSContext } from './context.ts'
+import { expressionFunctions } from './expressionLanguage.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
@@ -14,6 +15,7 @@ import { BIDSContext } from './context.ts'
  * @param context
  */
 export function applyRules(schema: GenericSchema, context: BIDSContext) {
+  Object.assign(context, expressionFunctions)
   for (const key in schema) {
     if (!(schema[key].constructor === Object)) {
       continue

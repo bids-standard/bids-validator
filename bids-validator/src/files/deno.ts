@@ -25,7 +25,7 @@ export class BIDSFileDeno implements BIDSFile {
   #ignore: FileIgnoreRulesDeno
   name: string
   path: string
-  #fileInfo: Deno.FileInfo
+  #fileInfo?: Deno.FileInfo
   private _datasetAbsPath: string
 
   constructor(datasetPath: string, path: string, ignore: FileIgnoreRulesDeno) {
@@ -33,7 +33,13 @@ export class BIDSFileDeno implements BIDSFile {
     this.path = path
     this.name = basename(path)
     this.#ignore = ignore
-    this.#fileInfo = Deno.statSync(this._getPath())
+    try {
+      this.#fileInfo = Deno.statSync(this._getPath())
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        this.#fileInfo = Deno.lstatSync(this._getPath())
+      }
+    }
   }
 
   private _getPath(): string {
@@ -41,7 +47,7 @@ export class BIDSFileDeno implements BIDSFile {
   }
 
   get size(): number {
-    return this.#fileInfo.size
+    return this.#fileInfo ? this.#fileInfo.size : -1
   }
 
   get stream(): ReadableStream<Uint8Array> {
