@@ -10,6 +10,7 @@ import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { emptyFile } from './internal/emptyFile.ts'
+import { BIDSContext } from './../schema/context.ts'
 
 /**
  * Ordering of checks to apply
@@ -35,14 +36,17 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   const ddFile = fileTree.files.find(
     (file) => file.name === 'dataset_description.json',
   )
+  let isDeriv = false
   if (ddFile) {
     const description = await ddFile.text().then((text) => JSON.parse(text))
     if (!'GeneratedBy' in description) {
       delete schema.rules.files.deriv
     } else {
       delete schema.rules.files.raw
+      isDeriv = true
     }
   }
+  Object.assign(BIDSContext, { isDeriv: isDeriv })
 
   for await (const context of walkFileTree(fileTree, issues)) {
     // TODO - Skip ignored files for now (some tests may reference ignored files)

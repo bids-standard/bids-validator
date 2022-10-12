@@ -128,7 +128,8 @@ async function hasMatch(schema, context) {
     }
   }
   /* If we end up with multiple rules we should generate an error? */
-
+  if (context.filenameRules.length > 1) {
+  }
   return Promise.resolve()
 }
 
@@ -138,13 +139,14 @@ function entitiesExtensionsInRule(schema, context, path) {
   const ruleEntities = Object.keys(rule.entities).map((key) =>
     lookupEntityLiteral(key, schema),
   )
-
-  return (
-    rule.extensions &&
-    rule.extensions.includes(context.extension) &&
-    rule.entities &&
-    fileEntities.every((ent) => {
-      return ruleEntities.includes(ent)
-    })
-  )
+  const extInRule =
+    !rule.extensions ||
+    (rule.extensions && rule.extensions.includes(context.extension))
+  const entInRule =
+    !rule.entities ||
+    (rule.entities &&
+      fileEntities.every((ent) => {
+        return ruleEntities.includes(ent)
+      }))
+  return extInRule && entInRule
 }
