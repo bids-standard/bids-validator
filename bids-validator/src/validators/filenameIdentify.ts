@@ -13,7 +13,7 @@
  */
 // @ts-nocheck
 import { SEP } from '../deps/path.ts'
-import { Schema } from '../types/schema.ts'
+import { GenericSchema, Schema } from '../types/schema.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { lookupModality } from '../schema/modalities.ts'
 import { CheckFunction } from '../types/check.ts'
@@ -41,6 +41,12 @@ async function findRuleMatches(schema, context) {
   return Promise.resolve()
 }
 
+/* Schema rules specifying valid filenames follow a variety of patterns.
+ * 'path', 'stem' or 'suffixies' contain the most unique identifying
+ * information for a rule. We don't know what kind of filename the context is,
+ * so if one of these three match the respective value in the context lets
+ * assume that this schema rule is applicable to this file.
+ */
 function _findRuleMatches(node, path, context) {
   if (
     ('path' in node && context.file.name.endsWith(node.path)) ||
@@ -116,8 +122,8 @@ async function hasMatch(schema, context) {
     }
   }
 
-  /* Reduction based on datatype failed, lets see if the entities and
-   * extensions are enough to find a single rule.
+  /* Filtering applicable rules based on datatypes failed, lets see if the
+   * entities and extensions are enough to find a single rule to use.
    */
   if (context.filenameRules.length > 1) {
     const entExtMatch = context.filenameRules.filter((rulePath) => {
@@ -133,7 +139,15 @@ async function hasMatch(schema, context) {
   return Promise.resolve()
 }
 
-function entitiesExtensionsInRule(schema, context, path) {
+/* Test if all of a given context's extension and entities are present in a
+ * given rule. Only used to see if one rule is more applicable than another
+ * after suffix and datatype matches couldn't find only one rule.
+ */
+function entitiesExtensionsInRule(
+  schema: GenericSchema,
+  context: BIDSContext,
+  path: string,
+): boolean {
   const rule = schema[path]
   const fileEntities = Object.keys(context.entities)
   const ruleEntities = Object.keys(rule.entities).map((key) =>
