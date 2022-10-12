@@ -137,7 +137,10 @@ function entityRuleIssue(path, schema, context) {
 
     if (missingRequired.length) {
       context.issues.addNonSchemaIssue('MISSING_REQUIRED_ENTITY', [
-        { ...context.file, evidence: missingRequired.join(', ') },
+        {
+          ...context.file,
+          evidence: `${missingRequired.join(', ')} missing from rule ${path}`,
+        },
       ])
     }
   }
@@ -148,7 +151,10 @@ function entityRuleIssue(path, schema, context) {
 
   if (entityNotInRule.length) {
     context.issues.addNonSchemaIssue('ENTITY_NOT_IN_RULE', [
-      { ...context.file, evidence: entityNotInRule.join(', ') },
+      {
+        ...context.file,
+        evidence: `${entityNotInRule.join(', ')} not in rule ${path}`,
+      },
     ])
   }
 }
@@ -161,7 +167,7 @@ function datatypeMismatch(path, schema, context) {
     !rule.datatypes.includes(context.datatype)
   ) {
     context.issues.addNonSchemaIssue('DATATYPE_MISMATCH', [
-      { ...context.file, evidence: `Datatype rule being applied: ${rule}` },
+      { ...context.file, evidence: `Datatype rule being applied: ${path}` },
     ])
   }
 }
@@ -170,7 +176,7 @@ async function extensionMismatch(path, schema, context) {
   const rule = schema[path]
   if (rule.extensions && !rule.extensions.includes(context.extension)) {
     context.issues.addNonSchemaIssue('EXTENSION_MISMATCH', [
-      { ...context.file, evidence: `Rule: ${rule}` },
+      { ...context.file, evidence: `Rule: ${path}` },
     ])
   }
 }
