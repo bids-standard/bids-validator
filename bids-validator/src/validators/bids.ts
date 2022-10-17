@@ -39,12 +39,24 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   let dsContext = {}
   if (ddFile) {
     const description = await ddFile.text().then((text) => JSON.parse(text))
-    // index of `derivatives` directory is greater than `sourcedata` or `rawdata` in filetree path
-    // if fileTree.path.contains('/derivatives/')
     dsContext = new BIDSContextDataset(description)
   } else {
     dsContext = new BIDSContextDataset()
   }
+
+  let derivativesSummary = {}
+  fileTree.directories = fileTree.directories.filter((dir) => {
+    if (dir.name === 'derivatives') {
+      dir.directories.map((deriv) => {
+        if (deriv.files.any((file) => file.name === dataset_description.json)) {
+          const tempSummary = validate(deriv)
+          derivativesSummary[deriv.name] = tempSummary
+        }
+      })
+      return false
+    }
+    return true
+  })
 
   for await (const context of walkFileTree(fileTree, issues, dsContext)) {
     // TODO - Skip ignored files for now (some tests may reference ignored files)
