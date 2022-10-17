@@ -20,13 +20,13 @@ async function main() {
   const tree = await readFileTree(absolutePath)
 
   // Run the schema based validator
-  const schemaResult = await validate(tree)
+  const schemaResult = await validate(tree, options)
 
   if (options.schemaOnly) {
     if (options.json) {
       console.log(inspect(schemaResult))
     } else {
-      console.log(consoleFormat(schemaResult, {verbose: options.verbose}))
+      console.log(consoleFormat(schemaResult, { verbose: options.verbose }))
     }
   } else {
     const output = schemaResult.issues.formatOutput()

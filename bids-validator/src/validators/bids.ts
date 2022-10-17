@@ -5,6 +5,7 @@ import { ValidationResult } from '../types/validation-result.ts'
 import { applyRules } from '../schema/applyRules.ts'
 import { walkFileTree } from '../schema/walk.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
+import { ValidatorOptions } from '../setup/options.ts'
 import { Summary } from '../summary/summary.ts'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
@@ -25,7 +26,10 @@ const CHECKS: CheckFunction[] = [
 /**
  * Full BIDS schema validation entrypoint
  */
-export async function validate(fileTree: FileTree): Promise<ValidationResult> {
+export async function validate(
+  fileTree: FileTree,
+  options: ValidatorOptions,
+): Promise<ValidationResult> {
   const issues = new DatasetIssues()
   const summary = new Summary()
   const schema = await loadSchema()
@@ -39,9 +43,9 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   let dsContext = {}
   if (ddFile) {
     const description = await ddFile.text().then((text) => JSON.parse(text))
-    dsContext = new BIDSContextDataset(description)
+    dsContext = new BIDSContextDataset(options, description)
   } else {
-    dsContext = new BIDSContextDataset()
+    dsContext = new BIDSContextDataset(options)
   }
 
   let derivativesSummary = {}

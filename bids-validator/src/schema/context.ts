@@ -14,17 +14,20 @@ import { BIDSFileDeno } from '../files/deno.ts'
 import { parseTSV } from '../files/tsv.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
+import { ValidatorOptions } from '../setup/options.ts'
 
 export class BIDSContextDataset implements ContextDataset {
   dataset_description: object
+  options: ValidatorOptions
   files: any[]
   tree: object
   ignored: any[]
   modalities: any[]
   subjects: ContextDatasetSubjects[]
 
-  constructor() {
-    this.dataset_description = {}
+  constructor(options, description = {}) {
+    this.dataset_description = description
+    this.options = options
     this.files = []
     this.tree = {}
     this.ignored = []

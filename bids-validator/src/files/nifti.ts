@@ -7,7 +7,9 @@ export function loadHeader(file: BIDSFileDeno) {
   const header = globalThis.nifti.readHeader(buf.buffer)
   // normalize between nifti-reader and spec schema
   // https://github.com/bids-standard/bids-specification/blob/master/src/schema/meta/context.yaml#L200
-  header.pixdim = header.pixDims
-  header.dim = header.dims
+  if (header) {
+    header.pixdim = header.pixDims
+    header.dim = header.dims
+  }
   return header
 }
