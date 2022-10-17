@@ -52,9 +52,6 @@ function formatIssue(issue: Issue, options?: LoggingOptions): string {
       return
     }
     output.push('\t\t.' + file.path)
-    if (options?.verbose) {
-      output.push('\t\t\t' + file.evidence)
-    }
     if (file.line) {
       let msg = '\t\t\t@ line: ' + file.line
       if (file.character) {
@@ -67,8 +64,10 @@ function formatIssue(issue: Issue, options?: LoggingOptions): string {
     }
     fileOutCount++
   })
-  output.push('')
-  output.push('\t\t' + issue.files.size + ' more files with the same issue')
+  if (!options?.verbose) {
+    output.push('')
+    output.push('\t\t' + issue.files.size + ' more files with the same issue')
+  }
   output.push('')
   if (issue.helpUrl) {
     output.push(

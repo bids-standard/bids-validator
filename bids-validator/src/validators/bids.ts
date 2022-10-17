@@ -36,19 +36,16 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   const ddFile = fileTree.files.find(
     (file) => file.name === 'dataset_description.json',
   )
-  let isDeriv = false
   if (ddFile) {
     const description = await ddFile.text().then((text) => JSON.parse(text))
-    if (!'GeneratedBy' in description) {
-      delete schema.rules.files.deriv
-    } else {
-      delete schema.rules.files.raw
-      isDeriv = true
-    }
+    // index of `derivatives` directory is greater than `sourcedata` or `rawdata` in filetree path
+    // if fileTree.path.contains('/derivatives/')
+    const dsContext = new BIDSContextDataset(description)
+  } else {
+    const dsContext = new BIDSContextDataset()
   }
-  Object.assign(BIDSContext, { isDeriv: isDeriv })
 
-  for await (const context of walkFileTree(fileTree, issues)) {
+  for await (const context of walkFileTree(fileTree, issues, dsContext)) {
     // TODO - Skip ignored files for now (some tests may reference ignored files)
     if (context.file.ignored) {
       continue

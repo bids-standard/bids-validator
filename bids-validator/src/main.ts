@@ -26,7 +26,7 @@ async function main() {
     if (options.json) {
       console.log(inspect(schemaResult))
     } else {
-      console.log(consoleFormat(schemaResult))
+      console.log(consoleFormat(schemaResult, {verbose: options.verbose}))
     }
   } else {
     const output = schemaResult.issues.formatOutput()

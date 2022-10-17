@@ -1,43 +1,4 @@
-/**
- * Deno specific implementation for reading files
- */
-import { join, basename } from '../deps/path.ts'
-import { BIDSFile } from '../types/file.ts'
-import { FileTree } from '../types/filetree.ts'
-import { requestReadPermission } from '../setup/requestPermissions.ts'
-import { readBidsIgnore, FileIgnoreRulesDeno } from './ignore.ts'
-import { assert } from 'https://deno.land/std@0.130.0/_util/assert.ts'
-
-/**
- * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters
- */
-export class UnicodeDecodeError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'UnicodeDecode'
-  }
-}
-
-/**
- * Deno implementation of BIDSFile
- */
-export class BIDSFileDeno implements BIDSFile {
-  #ignore: FileIgnoreRulesDeno
-  name: string
-  path: string
-  #fileInfo?: Deno.FileInfo
-  private _datasetAbsPath: string
-
-  constructor(datasetPath: string, path: string, ignore: FileIgnoreRulesDeno) {
-    this._datasetAbsPath = datasetPath
-    this.path = path
-    this.name = basename(path)
-    this.#ignore = ignore
-    try {
-      this.#fileInfo = Deno.statSync(this._getPath())
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        this.#fileInfo = Deno.lstatSync(this._getPath())
+s._getPath())
       }
     }
   }

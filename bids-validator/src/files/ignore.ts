@@ -14,10 +14,12 @@ export async function readBidsIgnore(file: BIDSFile) {
 
 const defaultIgnores = [
   '.git**',
-  '.datalad',
-  'sourcedata**',
-  'code**',
-  'stimuli**',
+  '.datalad/',
+  '.reproman/',
+  'sourcedata/',
+  'code/',
+  'stimuli/',
+  'log/'
 ]
 
 /**

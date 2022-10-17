@@ -23,6 +23,7 @@ const CHECKS: CheckFunction[] = [
   datatypeFromDirectory,
   findRuleMatches,
   hasMatch,
+  cleanContext,
 ]
 
 export async function filenameIdentify(schema, context) {
@@ -136,6 +137,7 @@ async function hasMatch(schema, context) {
   /* If we end up with multiple rules we should generate an error? */
   if (context.filenameRules.length > 1) {
   }
+
   return Promise.resolve()
 }
 
@@ -163,4 +165,25 @@ function entitiesExtensionsInRule(
         return ruleEntities.includes(ent)
       }))
   return extInRule && entInRule
+}
+
+/* If none of the rules applicable to a filename use entities or what not,
+ * lets remove them from the context so we don't trigger any unintended rules
+ */
+function cleanContext(schema, context) {
+  const rules = context.filenameRules
+    .map((path) => schema[path])
+    [
+      (['entities', 'entities', {}],
+      ['extensions', 'extension', ''],
+      ['suffixes', 'suffix', ''])
+    ].map((part) => {
+      if (
+        rules.every(
+          (rule) => !rule[part[0]] && Object.keys(rule[part[0]]).length === 0,
+        )
+      ) {
+        context[part[1]] = part[2]
+      }
+    })
 }

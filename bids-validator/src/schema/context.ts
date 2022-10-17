@@ -15,7 +15,7 @@ import { parseTSV } from '../files/tsv.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 
-class BIDSContextDataset implements ContextDataset {
+export class BIDSContextDataset implements ContextDataset {
   dataset_description: object
   files: any[]
   tree: object
@@ -30,10 +30,15 @@ class BIDSContextDataset implements ContextDataset {
     this.ignored = []
     this.modalities = []
     this.subjects = [] as ContextDatasetSubjects[]
+    if (!this.dataset_description.DatasetType && this.dataset_description.GeneratedBy) {
+      this.datasets_description.DatasetType = 'derivative'
+    } else if (!this.dataset_description.Datatype) {
+      this.datasets_description.DatasetType = 'raw'
+    }
   }
 }
 
-const contextDataset = new BIDSContextDataset()
+const defaultDsContext = new BIDSContextDataset()
 
 export class BIDSContext implements Context {
   // Internal representation of the file tree
@@ -52,9 +57,8 @@ export class BIDSContext implements Context {
   columns: Record<string, string[]>
   associations: ContextAssociations
   nifti_header?: ContextNiftiHeader
-  isDeriv: boolean
 
-  constructor(fileTree: FileTree, file: BIDSFile, issues: DatasetIssues) {
+  constructor(fileTree: FileTree, file: BIDSFile, issues: DatasetIssues, dsContext?: BIDSContextDataset) {
     this.#fileTree = fileTree
     this.filenameRules = []
     this.issues = issues
@@ -63,14 +67,13 @@ export class BIDSContext implements Context {
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
-    this.dataset = contextDataset
+    this.dataset = dsContext ? dsContext : defaultDsContext
     this.subject = {} as ContextSubject
     this.datatype = ''
     this.modality = ''
     this.sidecar = {}
     this.columns = {}
     this.associations = {} as ContextAssociations
-    this.isDeriv = this.constructor.isDeriv ? this.constructor.isDeriv : false
   }
 
   get json(): Promise<Record<string, any>> {

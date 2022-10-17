@@ -1,4 +1,4 @@
-import { BIDSContext } from './context.ts'
+import { BIDSContext, BIDSContextDataset } from './context.ts'
 import { FileTree } from '../types/filetree.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 
@@ -7,9 +7,10 @@ export async function* _walkFileTree(
   fileTree: FileTree,
   root: FileTree,
   issues: DatasetIssues,
+  dsContext?: BIDSContextDataset
 ): AsyncIterable<BIDSContext> {
   for (const file of fileTree.files) {
-    yield new BIDSContext(root, file, issues)
+    yield new BIDSContext(root, file, issues, dsContext)
   }
   for (const dir of fileTree.directories) {
     yield* _walkFileTree(dir, root, issues)
@@ -20,6 +21,7 @@ export async function* _walkFileTree(
 export async function* walkFileTree(
   fileTree: FileTree,
   issues: DatasetIssues,
+  dsContext?: BIDSContextDataset
 ): AsyncIterable<BIDSContext> {
-  yield* _walkFileTree(fileTree, fileTree, issues)
+  yield* _walkFileTree(fileTree, fileTree, issues, dsContext)
 }
