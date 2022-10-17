@@ -171,19 +171,19 @@ function entitiesExtensionsInRule(
  * lets remove them from the context so we don't trigger any unintended rules
  */
 function cleanContext(schema, context) {
-  const rules = context.filenameRules
-    .map((path) => schema[path])
-    [
-      (['entities', 'entities', {}],
-      ['extensions', 'extension', ''],
-      ['suffixes', 'suffix', ''])
-    ].map((part) => {
-      if (
-        rules.every(
-          (rule) => !rule[part[0]] && Object.keys(rule[part[0]]).length === 0,
-        )
-      ) {
-        context[part[1]] = part[2]
-      }
-    })
+  const rules = context.filenameRules.map((path) => schema[path])
+  const filenameParts = [
+    ['entities', 'entities', {}],
+    ['extensions', 'extension', ''],
+    ['suffixes', 'suffix', ''],
+  ]
+  filenameParts.map((part) => {
+    if (
+      rules.every(
+        (rule) => !rule[part[0]] || Object.keys(rule[part[0]]).length === 0,
+      )
+    ) {
+      context[part[1]] = part[2]
+    }
+  })
 }

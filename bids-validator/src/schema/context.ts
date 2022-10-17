@@ -30,10 +30,13 @@ export class BIDSContextDataset implements ContextDataset {
     this.ignored = []
     this.modalities = []
     this.subjects = [] as ContextDatasetSubjects[]
-    if (!this.dataset_description.DatasetType && this.dataset_description.GeneratedBy) {
-      this.datasets_description.DatasetType = 'derivative'
-    } else if (!this.dataset_description.Datatype) {
-      this.datasets_description.DatasetType = 'raw'
+    if (
+      !this.dataset_description.DatasetType &&
+      this.dataset_description.GeneratedBy
+    ) {
+      this.dataset_description.DatasetType = 'derivative'
+    } else if (!this.dataset_description.DatasetType) {
+      this.dataset_description.DatasetType = 'raw'
     }
   }
 }
@@ -58,7 +61,12 @@ export class BIDSContext implements Context {
   associations: ContextAssociations
   nifti_header?: ContextNiftiHeader
 
-  constructor(fileTree: FileTree, file: BIDSFile, issues: DatasetIssues, dsContext?: BIDSContextDataset) {
+  constructor(
+    fileTree: FileTree,
+    file: BIDSFile,
+    issues: DatasetIssues,
+    dsContext?: BIDSContextDataset,
+  ) {
     this.#fileTree = fileTree
     this.filenameRules = []
     this.issues = issues

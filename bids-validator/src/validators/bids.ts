@@ -10,7 +10,7 @@ import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { emptyFile } from './internal/emptyFile.ts'
-import { BIDSContext } from './../schema/context.ts'
+import { BIDSContext, BIDSContextDataset } from './../schema/context.ts'
 
 /**
  * Ordering of checks to apply
@@ -36,13 +36,14 @@ export async function validate(fileTree: FileTree): Promise<ValidationResult> {
   const ddFile = fileTree.files.find(
     (file) => file.name === 'dataset_description.json',
   )
+  let dsContext = {}
   if (ddFile) {
     const description = await ddFile.text().then((text) => JSON.parse(text))
     // index of `derivatives` directory is greater than `sourcedata` or `rawdata` in filetree path
     // if fileTree.path.contains('/derivatives/')
-    const dsContext = new BIDSContextDataset(description)
+    dsContext = new BIDSContextDataset(description)
   } else {
-    const dsContext = new BIDSContextDataset()
+    dsContext = new BIDSContextDataset()
   }
 
   for await (const context of walkFileTree(fileTree, issues, dsContext)) {
