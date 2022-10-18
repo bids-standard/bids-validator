@@ -12,6 +12,8 @@ import { filenameValidate } from './filenameValidate.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { emptyFile } from './internal/emptyFile.ts'
 import { BIDSContext, BIDSContextDataset } from './../schema/context.ts'
+import { BIDSFile } from '../types/file.ts'
+import { parseOptions } from '../setup/options.ts'
 
 /**
  * Ordering of checks to apply
@@ -28,7 +30,7 @@ const CHECKS: CheckFunction[] = [
  */
 export async function validate(
   fileTree: FileTree,
-  options: ValidatorOptions,
+  options: ValidatorOptions = parseOptions(undefined),
 ): Promise<ValidationResult> {
   const issues = new DatasetIssues()
   const summary = new Summary()
@@ -38,9 +40,10 @@ export async function validate(
    * are dealing with a derivative dataset
    */
   const ddFile = fileTree.files.find(
-    (file) => file.name === 'dataset_description.json',
+    (file: BIDSFile) => file.name === 'dataset_description.json',
   )
-  let dsContext = {}
+
+  let dsContext
   if (ddFile) {
     const description = await ddFile.text().then((text) => JSON.parse(text))
     dsContext = new BIDSContextDataset(options, description)
@@ -48,11 +51,15 @@ export async function validate(
     dsContext = new BIDSContextDataset(options)
   }
 
-  let derivativesSummary = {}
+  let derivativesSummary: Record<string, unknown> = {}
   fileTree.directories = fileTree.directories.filter((dir) => {
     if (dir.name === 'derivatives') {
       dir.directories.map((deriv) => {
-        if (deriv.files.any((file) => file.name === dataset_description.json)) {
+        if (
+          deriv.files.some(
+            (file: BIDSFile) => file.name === 'dataset_description.json',
+          )
+        ) {
           const tempSummary = validate(deriv)
           derivativesSummary[deriv.name] = tempSummary
         }

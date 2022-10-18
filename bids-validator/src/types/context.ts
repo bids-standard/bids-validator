@@ -4,7 +4,7 @@ export interface ContextDatasetSubjects {
   phenotype: string[]
 }
 export interface ContextDataset {
-  dataset_description: object
+  dataset_description: Record<string, unknown>
   files: any[]
   tree: object
   ignored: any[]
@@ -85,5 +85,4 @@ export interface Context {
   columns: object
   json: object
   nifti_header?: ContextNiftiHeader
-  derivative: boolean
 }

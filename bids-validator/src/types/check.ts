@@ -8,8 +8,8 @@ export type CheckFunction = (
 ) => Promise<void>
 
 /** Function interface for a check of context against a specific rule as accessed by its path in the schema.  */
-export type CheckFunction = (
+export type RuleCheckFunction = (
   path: string,
   schema: GenericSchema,
   context: BIDSContext,
-) => Promise<void>
+) => void

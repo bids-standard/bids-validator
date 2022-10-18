@@ -51,7 +51,7 @@ export function evalCheck(src: string, context: BIDSContext) {
  * issue to the context if the rule evaluation fails.
  */
 const evalMap: Record<
-  keyof Omit<GenericRule, 'selectors' | 'issue'>,
+  keyof GenericRule,
   (rule: GenericRule, context: BIDSContext) => boolean | void
 > = {
   checks: evalRuleChecks,

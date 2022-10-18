@@ -48,7 +48,7 @@ async function findRuleMatches(schema, context) {
  * so if one of these three match the respective value in the context lets
  * assume that this schema rule is applicable to this file.
  */
-function _findRuleMatches(node, path, context) {
+export function _findRuleMatches(node, path, context) {
   if (
     ('path' in node && context.file.name.endsWith(node.path)) ||
     ('stem' in node && context.file.name.startsWith(node.stem)) ||
@@ -67,7 +67,7 @@ function _findRuleMatches(node, path, context) {
   }
 }
 
-async function datatypeFromDirectory(schema, context) {
+export async function datatypeFromDirectory(schema, context) {
   const subEntity = schema.objects.entities.subject.name
   const subFormat = schema.objects.formats[subEntity.format]
   const sesEntity = schema.objects.entities.session.name
@@ -99,7 +99,7 @@ async function datatypeFromDirectory(schema, context) {
   }
 }
 
-async function hasMatch(schema, context) {
+export async function hasMatch(schema, context) {
   if (
     context.filenameRules.length === 0 &&
     context.file.path !== '/.bidsignore'

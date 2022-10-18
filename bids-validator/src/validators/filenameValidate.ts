@@ -1,5 +1,8 @@
 import { CheckFunction, RuleCheckFunction } from '../types/check.ts'
+import { BIDSContext } from '../schema/context.ts'
+import { GenericSchema, Schema } from '../types/schema.ts'
 import { SEP } from '../deps/path.ts'
+import { hasProp } from '../utils/objectPathHandler.ts'
 
 const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
@@ -10,9 +13,12 @@ const CHECKS: CheckFunction[] = [
   checkRules,
 ]
 
-export async function filenameValidate(schema, context) {
+export async function filenameValidate(
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
   for (const check of CHECKS) {
-    await check(schema as unknown as GenericSchema, context)
+    await check(schema, context)
   }
   return Promise.resolve()
 }
@@ -24,7 +30,7 @@ export function isAtRoot(context: BIDSContext) {
   return true
 }
 
-async function missingLabel(schema, context) {
+async function missingLabel(schema: GenericSchema, context: BIDSContext) {
   const fileNoLabelEntities = Object.keys(context.entities).filter(
     (key) => context.entities[key] === 'NOENTITY',
   )
@@ -41,41 +47,60 @@ async function missingLabel(schema, context) {
   return Promise.resolve()
 }
 
-function atRoot(schema, context) {
+function atRoot(schema: GenericSchema, context: BIDSContext) {
   /*
   if (fileIsAtRoot && !sidecarExtensions.includes(context.extension)) {
     // create issue for data file in root of dataset
   }
   */
+  return Promise.resolve()
 }
 
-export function lookupEntityLiteral(name: string, schema: Schema) {
-  const entityObj = schema.objects.entities[name]
-  if (entityObj && entityObj['name']) {
-    return entityObj['name']
-  } else {
-    // if this happens there is an issue with the schema?
-    return ''
+export function lookupEntityLiteral(name: string, schema: GenericSchema) {
+  if (
+    schema.objects &&
+    hasProp(schema.objects, 'entities') &&
+    hasProp(schema.objects.entities, name)
+  ) {
+    const entityObj = schema.objects.entities[name]
+    if (hasProp(entityObj, 'name')) {
+      return entityObj.name
+    }
   }
+  // if this happens there is an issue with the schema?
+  return ''
 }
 
-function getEntityByLiteral(fileEntity: string, schema: Schema) {
-  const entities = schema.objects.entities
-  const key = Object.keys(entities).find((key) => {
-    return entities[key].name === fileEntity
-  })
-  if (key) {
-    return entities[key]
+function getEntityByLiteral(fileEntity: string, schema: GenericSchema) {
+  if (
+    'entities' in schema.objects &&
+    typeof schema.objects.entities === 'object'
+  ) {
+    const entities = schema.objects.entities
+    const key = Object.keys(entities).find((key) => {
+      return hasProp(entities, key) && entities[key].name === fileEntity
+    })
+    if (key && hasProp(entities, key)) {
+      return entities[key]
+    }
   }
   return null
 }
 
-async function entityLabelCheck(schema: Schema, context: BIDSContext) {
+async function entityLabelCheck(schema: GenericSchema, context: BIDSContext) {
+  if (!('formats' in schema.objects) || !('entities' in schema.objects)) {
+    throw new Error('schema missing keys')
+  }
   const formats = schema.objects.formats
   const entities = schema.objects.entities
   Object.keys(context.entities).map((fileEntity) => {
     const entity = getEntityByLiteral(fileEntity, schema)
-    if (entity) {
+    if (
+      entity &&
+      entity.format &&
+      typeof entity.format === 'string' &&
+      hasProp(formats, entity.format)
+    ) {
       // assuming all formats are well defined in schema.objects
       const pattern = formats[entity.format].pattern
       const rePattern = new RegExp(`^${pattern}$`)
@@ -101,7 +126,7 @@ const ruleChecks: RuleCheckFunction[] = [
   extensionMismatch,
 ]
 
-async function checkRules(schema, context) {
+async function checkRules(schema: GenericSchema, context: BIDSContext) {
   for (const path of context.filenameRules) {
     for (const check of ruleChecks) {
       check(path, schema as unknown as GenericSchema, context)
@@ -110,7 +135,11 @@ async function checkRules(schema, context) {
   return Promise.resolve()
 }
 
-function entityRuleIssue(path, schema, context) {
+function entityRuleIssue(
+  path: string,
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
   const rule = schema[path]
   if (!('entities' in rule)) {
     if (Object.keys(context.entities).length > 0) {
@@ -132,7 +161,7 @@ function entityRuleIssue(path, schema, context) {
       .map(([k, _]) => lookupEntityLiteral(k, schema))
 
     const missingRequired = ruleEntitiesRequired.filter(
-      (required) => !fileEntities.includes(required),
+      (required) => !fileEntities.includes(required as string),
     )
 
     if (missingRequired.length) {
@@ -159,11 +188,15 @@ function entityRuleIssue(path, schema, context) {
   }
 }
 
-function datatypeMismatch(path, schema, context) {
+function datatypeMismatch(
+  path: string,
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
   const rule = schema[path]
   if (
     !!context.datatype &&
-    rule.datatypes &&
+    Array.isArray(rule.datatypes) &&
     !rule.datatypes.includes(context.datatype)
   ) {
     context.issues.addNonSchemaIssue('DATATYPE_MISMATCH', [
@@ -172,9 +205,16 @@ function datatypeMismatch(path, schema, context) {
   }
 }
 
-async function extensionMismatch(path, schema, context) {
+async function extensionMismatch(
+  path: string,
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
   const rule = schema[path]
-  if (rule.extensions && !rule.extensions.includes(context.extension)) {
+  if (
+    Array.isArray(rule.extensions) &&
+    !rule.extensions.includes(context.extension)
+  ) {
     context.issues.addNonSchemaIssue('EXTENSION_MISMATCH', [
       { ...context.file, evidence: `Rule: ${path}` },
     ])

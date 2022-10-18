@@ -2,12 +2,11 @@
  * Schema structure returned by loadSchema
  */
 export interface SchemaObjects {
-  top_level_files: Record<string, unknown>
+  files: Record<string, unknown>
 }
 
 export interface SchemaRules {
   files: SchemaFiles
-  datatypes: Record<string, unknown>
   modalities: Record<string, unknown>
 }
 
@@ -38,6 +37,15 @@ export interface GenericRule {
   initial_columns?: string[]
   fields: Record<string, SchemaFields>
   issue?: SchemaIssue
+  extensions?: string[]
+  suffixes?: string[]
+  stem?: string
+  path?: string
+  datatypes?: string[]
+  pattern?: string
+  name?: string
+  format?: string
+  required?: string
 }
 
 export interface SchemaFields {
