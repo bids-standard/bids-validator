@@ -30,7 +30,10 @@ export function isAtRoot(context: BIDSContext) {
   return true
 }
 
-async function missingLabel(schema: GenericSchema, context: BIDSContext) {
+export async function missingLabel(
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
   const fileNoLabelEntities = Object.keys(context.entities).filter(
     (key) => context.entities[key] === 'NOENTITY',
   )
@@ -47,7 +50,7 @@ async function missingLabel(schema: GenericSchema, context: BIDSContext) {
   return Promise.resolve()
 }
 
-function atRoot(schema: GenericSchema, context: BIDSContext) {
+export function atRoot(schema: GenericSchema, context: BIDSContext) {
   /*
   if (fileIsAtRoot && !sidecarExtensions.includes(context.extension)) {
     // create issue for data file in root of dataset
@@ -87,7 +90,10 @@ function getEntityByLiteral(fileEntity: string, schema: GenericSchema) {
   return null
 }
 
-async function entityLabelCheck(schema: GenericSchema, context: BIDSContext) {
+export async function entityLabelCheck(
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
   if (!('formats' in schema.objects) || !('entities' in schema.objects)) {
     throw new Error('schema missing keys')
   }

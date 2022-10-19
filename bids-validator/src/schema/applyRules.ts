@@ -50,6 +50,7 @@ export function evalCheck(src: string, context: BIDSContext) {
  * We associate theys keys from a rule object to a function adds an
  * issue to the context if the rule evaluation fails.
  */
+// @ts-expect-error
 const evalMap: Record<
   keyof GenericRule,
   (rule: GenericRule, context: BIDSContext) => boolean | void
