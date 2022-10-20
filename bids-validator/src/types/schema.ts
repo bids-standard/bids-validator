@@ -30,7 +30,7 @@ export interface SchemaIssue {
 export type GenericSchema = { [key: string]: GenericRule | GenericSchema }
 
 export interface GenericRule {
-  selectors: string[]
+  selectors?: string[]
   checks?: string[]
   columns?: Record<string, string>
   additional_columns?: string

@@ -14,7 +14,10 @@ const ignore = new FileIgnoreRulesDeno([])
 
 Deno.test('test missingLabel', async (t) => {
   await t.step('file with underscore and no hyphens errors out', async () => {
-    let file = new BIDSFileDeno('/tmp', 'we_should_have_entites.wav', ignore)
+    let file = {
+      name: 'we_should_have_entites.wav',
+      path: '/tmp/',
+    } as BIDSFileDeno
     let context = new BIDSContext(fileTree, file, issues)
     await missingLabel(schema, context)
     assertEquals(
