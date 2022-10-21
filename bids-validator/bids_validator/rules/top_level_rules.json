@@ -83,6 +83,15 @@
   },
 
 
+  "VFA_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:echo-[0-9]+_)?flip-[0-9]+_(?:part-(mag|phase|real|imag)_)?(@@@_mese_megre_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_mese_megre_suffixes_@@@": [
+        "VFA"
+      ]
+    }
+  }, 
+
   "megre_mese_top": {
     "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?echo-[0-9]+_(?:part-(mag|phase|real|imag)_)?(@@@_mese_megre_suffixes_@@@)\\.json$",
     "tokens": {
