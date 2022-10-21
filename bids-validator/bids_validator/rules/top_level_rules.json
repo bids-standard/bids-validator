@@ -82,6 +82,14 @@
     }
   },
 
+  "mtr_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?mt-(on|off)_(?:part-(mag|phase|real|imag)_)?(@@@_mp2rage_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_mp2rage_suffixes_@@@": [
+        "MTR"
+      ]
+    }
+  },  
 
   "mp2rage_top": {
     "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:echo-[0-9]+_)?(?:flip-[0-9]+_)?(?:inv-[0-9]+_)(?:part-(mag|phase|real|imag)_)?(@@@_mp2rage_suffixes_@@@)\\.json$",
