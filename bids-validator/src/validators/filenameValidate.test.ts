@@ -13,7 +13,7 @@ const issues = new DatasetIssues()
 const ignore = new FileIgnoreRulesDeno([])
 
 Deno.test('test missingLabel', async (t) => {
-  await t.step('file with underscore and no hyphens errors out', async () => {
+  await t.step('File with underscore and no hyphens errors out.', async () => {
     let file = {
       name: 'we_should_have_entites.wav',
       path: '/tmp/',
@@ -29,7 +29,7 @@ Deno.test('test missingLabel', async (t) => {
   })
 
   await t.step(
-    'file with underscores and hyphens doesnt error out',
+    "File with underscores and hyphens doesn't error out.",
     async () => {
       let file = new BIDSFileDeno(
         '/tmp',
