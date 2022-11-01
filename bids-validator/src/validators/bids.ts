@@ -11,7 +11,7 @@ import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { emptyFile } from './internal/emptyFile.ts'
-import { BIDSContext, BIDSContextDataset } from './../schema/context.ts'
+import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { parseOptions } from '../setup/options.ts'
 

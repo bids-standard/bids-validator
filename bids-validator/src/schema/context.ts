@@ -25,7 +25,7 @@ export class BIDSContextDataset implements ContextDataset {
   modalities: any[]
   subjects: ContextDatasetSubjects[]
 
-  constructor(options: ValidatorOptions = parseOptions(), description = {}) {
+  constructor(options: ValidatorOptions, description = {}) {
     this.dataset_description = description
     this.options = options
     this.files = []
