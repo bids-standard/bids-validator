@@ -54,6 +54,11 @@ export const filenameIssues: IssueDefinitionRecord = {
     reason:
       'A TSV file has extra columns which are not allowed for its file type',
   },
+  TSV_INDEX_VALUE_NOT_UNIQUE: {
+    severity: 'error',
+    reason:
+      'An index column(s) was specified for the tsv file and not all of the values for it are unique.',
+  },
   CHECK_ERROR: {
     severity: 'error',
     reason:

@@ -14,16 +14,23 @@ import { expressionFunctions } from './expressionLanguage.ts'
  * @param schema
  * @param context
  */
-export function applyRules(schema: GenericSchema, context: BIDSContext) {
+export function applyRules(
+  schema: GenericSchema,
+  context: BIDSContext,
+  rootSchema?: GenericSchema,
+) {
+  if (!rootSchema) {
+    rootSchema = schema
+  }
   Object.assign(context, expressionFunctions)
   for (const key in schema) {
     if (!(schema[key].constructor === Object)) {
       continue
     }
     if ('selectors' in schema[key]) {
-      evalRule(schema[key] as GenericRule, context)
+      evalRule(schema[key] as GenericRule, context, rootSchema)
     } else if (schema[key].constructor === Object) {
-      applyRules(schema[key] as GenericSchema, context)
+      applyRules(schema[key] as GenericSchema, context, rootSchema)
     }
   }
   return Promise.resolve()
@@ -59,6 +66,7 @@ const evalMap: Record<
   columns: evalColumns,
   additional_columns: evalAdditionalColumns,
   initial_columns: evalInitialColumns,
+  index_columns: evalIndexColumns,
   fields: evalJsonCheck,
 }
 
@@ -68,7 +76,11 @@ const evalMap: Record<
  * Then we attempt to interpret every other key in the rule
  * object.
  */
-function evalRule(rule: GenericRule, context: BIDSContext) {
+function evalRule(
+  rule: GenericRule,
+  context: BIDSContext,
+  schema: GenericSchema,
+) {
   if (!mapEvalCheck(rule.selectors, context)) {
     return
   }
@@ -76,7 +88,7 @@ function evalRule(rule: GenericRule, context: BIDSContext) {
     .filter((key) => key in evalMap)
     .map((key) => {
       // @ts-expect-error
-      evalMap[key](rule, context)
+      evalMap[key](rule, context, schema)
     })
 }
 
@@ -88,7 +100,11 @@ function mapEvalCheck(statements: string[], context: BIDSContext): boolean {
  * Classic rules interpreted like selectors. Examples in specification:
  * schema/rules/checks/*
  */
-function evalRuleChecks(rule: GenericRule, context: BIDSContext): boolean {
+function evalRuleChecks(
+  rule: GenericRule,
+  context: BIDSContext,
+  schema: GenericSchema,
+): boolean {
   if (rule.checks && !mapEvalCheck(rule.checks, context)) {
     if (rule.issue?.code && rule.issue?.message) {
       context.issues.add({
@@ -110,11 +126,16 @@ function evalRuleChecks(rule: GenericRule, context: BIDSContext): boolean {
  * headers should be present in a tsv file. Examples in specification:
  * schema/rules/tabular_data/*
  */
-function evalColumns(rule: GenericRule, context: BIDSContext): void {
-  if (!rule.columns) return
+function evalColumns(
+  rule: GenericRule,
+  context: BIDSContext,
+  schema: GenericSchema,
+): void {
+  if (!rule.columns || context.extension !== '.tsv') return
   const headers = Object.keys(context.columns)
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
-    if (!headers.includes(ruleHeader) && requirement === 'required') {
+    const name = schema.objects.columns[ruleHeader].name
+    if (!headers.includes(name) && requirement === 'required') {
       context.issues.addNonSchemaIssue('TSV_ERROR', [
         { ...context.file, evidence: JSON.stringify(rule) },
       ])
@@ -126,8 +147,13 @@ function evalColumns(rule: GenericRule, context: BIDSContext): void {
  * A small subset of tsv schema rules enforce a specific order of columns.
  * No error is currently provided by the rule itself.
  */
-function evalInitialColumns(rule: GenericRule, context: BIDSContext): void {
-  if (!rule?.columns || !rule?.initial_columns) return
+function evalInitialColumns(
+  rule: GenericRule,
+  context: BIDSContext,
+  schema: GenericSchema,
+): void {
+  if (!rule?.columns || !rule?.initial_columns || context.extension !== '.tsv')
+    return
   const headers = Object.keys(context.columns)
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     const contextIndex = headers.findIndex((x) => x === ruleHeader)
@@ -145,7 +171,12 @@ function evalInitialColumns(rule: GenericRule, context: BIDSContext): void {
   })
 }
 
-function evalAdditionalColumns(rule: GenericRule, context: BIDSContext): void {
+function evalAdditionalColumns(
+  rule: GenericRule,
+  context: BIDSContext,
+  schema: GenericSchema,
+): void {
+  if (context.extension !== '.tsv') return
   const headers = Object.keys(context?.columns)
   // hard coding allowed here feels bad
   if (!(rule.additional_columns === 'allowed')) {
@@ -160,6 +191,49 @@ function evalAdditionalColumns(rule: GenericRule, context: BIDSContext): void {
   }
 }
 
+function evalIndexColumns(
+  rule: GenericRule,
+  context: BIDSContext,
+  schema: GenericSchema,
+): void {
+  if (
+    !rule?.columns ||
+    !rule?.index_columns ||
+    !rule?.index_columns.length ||
+    context.extension !== '.tsv'
+  )
+    return
+  const headers = Object.keys(context?.columns)
+  const uniqueIndexValues = new Set()
+  const index_columns = rule.index_columns.map((col) => {
+    return schema.objects.columns[col].name
+  })
+  const missing = index_columns.filter((col) => !headers.includes(col))
+  if (missing.length) {
+    context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
+      {
+        ...context.file,
+        evidence: `Columns cited as index columns not in file: ${missing}`,
+      },
+    ])
+    return
+  }
+  const rowCount = context.columns[index_columns[0]].length
+  for (let i = 0; i < rowCount; i++) {
+    let indexValue = ''
+    index_columns.map((col) => {
+      indexValue = indexValue.concat(context.columns[col][i])
+    })
+    if (uniqueIndexValues.has(indexValue)) {
+      context.issues.addNonSchemaIssue('TSV_INDEX_VALUE_NOT_UNIQUE', [
+        { ...context.file, evidence: `Row: ${i + 2}, Value: ${indexValue}` },
+      ])
+    } else {
+      uniqueIndexValues.add(indexValue)
+    }
+  }
+}
+
 /**
  * For evaluating field requirements and values that should exist in a json
  * sidecar for a file. Will need to implement an additional check/error for
@@ -167,7 +241,11 @@ function evalAdditionalColumns(rule: GenericRule, context: BIDSContext): void {
  * schema/rules/sidecars/*
  *
  */
-function evalJsonCheck(rule: GenericRule, context: BIDSContext): void {
+function evalJsonCheck(
+  rule: GenericRule,
+  context: BIDSContext,
+  schema: GenericSchema,
+): void {
   for (const [key, requirement] of Object.entries(rule.fields)) {
     const severity = getFieldSeverity(requirement, context)
     if (severity && severity !== 'ignore' && !(key in context.sidecar)) {
