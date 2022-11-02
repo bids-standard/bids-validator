@@ -60,7 +60,11 @@ export function evalCheck(src: string, context: BIDSContext) {
 // @ts-expect-error
 const evalMap: Record<
   keyof GenericRule,
-  (rule: GenericRule, context: BIDSContext) => boolean | void
+  (
+    rule: GenericRule,
+    context: BIDSContext,
+    schema: GenericSchema,
+  ) => boolean | void
 > = {
   checks: evalRuleChecks,
   columns: evalColumns,
@@ -205,10 +209,10 @@ function evalIndexColumns(
     return
   const headers = Object.keys(context?.columns)
   const uniqueIndexValues = new Set()
-  const index_columns = rule.index_columns.map((col) => {
+  const index_columns = rule.index_columns.map((col: string) => {
     return schema.objects.columns[col].name
   })
-  const missing = index_columns.filter((col) => !headers.includes(col))
+  const missing = index_columns.filter((col: string) => !headers.includes(col))
   if (missing.length) {
     context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
       {
@@ -221,7 +225,7 @@ function evalIndexColumns(
   const rowCount = context.columns[index_columns[0]].length
   for (let i = 0; i < rowCount; i++) {
     let indexValue = ''
-    index_columns.map((col) => {
+    index_columns.map((col: string) => {
       indexValue = indexValue.concat(context.columns[col][i])
     })
     if (uniqueIndexValues.has(indexValue)) {
