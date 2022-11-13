@@ -538,14 +538,20 @@
   },
 
   "pet": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?pet[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_task-[a-zA-Z0-9]+)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(@@@_pet_ext_@@@)$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?pet[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_task-[a-zA-Z0-9]+)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:(?:@@@_pet_ext_@@@)|(?:_recording-[a-zA-Z0-9]+)?(?:@@@_cont_ext_@@@))$",
     "tokens": {
       "@@@_pet_ext_@@@": [
-        "pet\\.nii\\.gz",
-        "pet\\.nii",
-        "pet\\.json",
-        "events\\.json",
-        "events\\.tsv"
+        "_pet\\.nii\\.gz",
+        "_pet\\.nii",
+        "_pet\\.json",
+        "_events\\.json",
+        "_events\\.tsv"
+      ],
+      "@@@_cont_ext_@@@": [
+        "_physio\\.tsv\\.gz",
+        "_stim\\.tsv\\.gz",
+        "_physio\\.json",
+        "_stim\\.json"
       ]
     }
   },
