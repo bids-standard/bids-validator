@@ -51,7 +51,8 @@
    1. Install [Pip](https://pip.pypa.io/en/stable/installing/) package manager for Python, if
       not already installed.
    1. From a terminal run `pip install bids_validator` to acquire the
-      [BIDS Validator PyPi package](https://pypi.org/project/bids-validator/)
+      [BIDS Validator PyPi package](https://pypi.org/project/bids-validator/) 
+      or `conda install bids-validator` for the conda recipe.
    1. Open a Python terminal and type: `python`
    1. Import the BIDS Validator package `from bids_validator import BIDSValidator`
    1. Check if a file is BIDS compatible `BIDSValidator().is_bids('path/to/a/bids/file')`
@@ -384,12 +385,13 @@ See here for a brief explanation of the commands:
 ## Python Library
 
 [![PyPI version](https://badge.fury.io/py/bids-validator.svg)](https://badge.fury.io/py/bids-validator)
+[![Conda version](https://img.shields.io/conda/vn/conda-forge/bids-validator)](https://anaconda.org/conda-forge/bids-validator)
 
 There are is a limited library of helper functions written in Python. The main function
 determines if a file extension is compliant with the BIDS specification. You can find
 the available functions in the library, as well as their descriptions,
 [here](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/bids_validator/bids_validator.py).
-To install, run `pip install -U bids_validator` (requires python and pip).
+To install, run `pip install -U bids_validator` (requires python and pip) or `conda install bids-validator` (requires a conda python environment).
 
 ### Example
 
