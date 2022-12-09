@@ -51,8 +51,9 @@
    1. Install [Pip](https://pip.pypa.io/en/stable/installing/) package manager for Python, if
       not already installed.
    1. From a terminal run `pip install bids_validator` to acquire the
-      [BIDS Validator PyPi package](https://pypi.org/project/bids-validator/) 
-      or `conda install bids-validator` for the conda recipe.
+      [BIDS Validator PyPI package](https://pypi.org/project/bids-validator/) 
+      or `conda install bids-validator` for the
+      [Conda package](https://anaconda.org/conda-forge/bids-validator).
    1. Open a Python terminal and type: `python`
    1. Import the BIDS Validator package `from bids_validator import BIDSValidator`
    1. Check if a file is BIDS compatible `BIDSValidator().is_bids('path/to/a/bids/file')`
