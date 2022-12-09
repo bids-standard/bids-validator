@@ -392,7 +392,8 @@ There are is a limited library of helper functions written in Python. The main f
 determines if a file extension is compliant with the BIDS specification. You can find
 the available functions in the library, as well as their descriptions,
 [here](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/bids_validator/bids_validator.py).
-To install, run `pip install -U bids_validator` (requires python and pip) or `conda install bids-validator` (requires a conda python environment).
+To install, run `pip install -U bids_validator` (requires python and pip) or
+`conda install bids-validator` (requires a Conda environment).
 
 ### Example
 
