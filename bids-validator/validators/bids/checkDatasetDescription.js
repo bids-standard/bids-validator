@@ -37,7 +37,7 @@ const checkDatasetDescription = (jsonContentsDict) => {
 const checkNameField = (name) => {
   const issues = []
   // missing name will be caught by validation (later)
-  if (name !== null) {
+  if (name !== undefined) {
     const nonws = /\S/
     if (!name.match(nonws)) {
       issues.push(new Issue({ code: 115 }))
