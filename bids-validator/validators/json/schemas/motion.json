@@ -57,9 +57,9 @@
       ]
     },
 
-    "ACCChannelCount": { "type": "number" },
+    "ACCELChannelCount": { "type": "number" },
     "ANGACCChannelCount": { "type": "number" },
-    "ANGVELChannelCount": { "type": "number" },
+    "GYROChannelCount": { "type": "number" },
     "JNTANGChannelCount": { "type": "number" },
     "MAGNChannelCount": { "type": "number" },
     "MISChannelCount": { "type": "number" },
