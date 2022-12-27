@@ -1,5 +1,5 @@
 import hedValidator from 'hed-validator'
-import union from 'lodash/union'
+import intersection from 'lodash/intersection'
 import utils from '../../utils'
 import parseTsv from '../tsv/tsvParser'
 
@@ -72,7 +72,10 @@ function constructSidecarData(eventData, jsonContents, jsonFiles) {
       eventFileData.potentialSidecars,
     )
   }
-  const actualEventSidecars = union(actualSidecarNames, potentialEventSidecars)
+  const actualEventSidecars = intersection(
+    actualSidecarNames,
+    potentialEventSidecars,
+  )
   return actualEventSidecars.map((sidecarName) => {
     return new hedValidator.validator.BidsSidecar(
       sidecarName,
