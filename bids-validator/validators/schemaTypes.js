@@ -136,12 +136,7 @@ export async function generateRegex(schema, pythonRegex = false) {
           if (entity === 'subject' || entity === 'session') {
             continue
           }
-          let entityKey = undefined
-          if (entityDefinion.hasOwnProperty('entity')) {
-            entityKey = entityDefinion.entity // v1.6.0 and v1.7.0
-          } else {
-            entityKey = entityDefinion.name // v1.8.0
-          }
+          const entityKey = entityDefinion.entity
           const format = regex[schema.entities[entity].format]
           if (format) {
             // Limitation here is that if format is missing an essential entity may be skipped
