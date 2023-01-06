@@ -124,30 +124,40 @@ export async function generateRegex(schema, pythonRegex = false) {
 
   for (const mod of modalities) {
     const modality_datatype_schema = schema.datatypes[mod]
-    for (const datatype of modality_datatype_schema) {
+    for (const datatype of Object.keys(modality_datatype_schema)) {
       let file_regex = `${regex.sub_ses_dirs}${mod}${regex.type_dir}${regex.sub_ses_entity}`
-      for (const entity of Object.keys(schema.entities)) {
-        const entityDefinion = schema.entities[entity]
-        if (entity in datatype.entities) {
+      let entities = Object.keys(schema.entities)
+      for (const entity of Object.keys(
+        modality_datatype_schema[datatype].entities,
+      )) {
+        if (entities.includes(entity)) {
+          const entityDefinion = schema.entities[entity]
           // sub and ses entities in file name handled by directory pattern matching groups
           if (entity === 'subject' || entity === 'session') {
             continue
           }
-          const entityKey = entityDefinion.entity
+          let entityKey = undefined
+          if (entityDefinion.hasOwnProperty('entity')) {
+            entityKey = entityDefinion.entity // v1.6.0 and v1.7.0
+          } else {
+            entityKey = entityDefinion.name // v1.8.0
+          }
           const format = regex[schema.entities[entity].format]
           if (format) {
             // Limitation here is that if format is missing an essential entity may be skipped
             file_regex += `(?${P}<${entity}>_${entityKey}-${format})${
-              regex[datatype.entities[entity]]
+              regex[modality_datatype_schema[datatype].entities[entity]]
             }`
           }
         }
       }
-      const suffix_regex = `_(?${P}<suffix>${datatype.suffixes.join('|')})`
+      const suffix_regex = `_(?${P}<suffix>${modality_datatype_schema[
+        datatype
+      ].suffixes.join('|')})`
       // Workaround v1.6.0 MEG extension "*"
-      const wildcard_extensions = datatype.extensions.map((ext) =>
-        ext === '*' ? '.*?' : ext,
-      )
+      const wildcard_extensions = modality_datatype_schema[
+        datatype
+      ].extensions.map((ext) => (ext === '*' ? '.*?' : ext))
       const ext_regex = `(?${P}<ext>${wildcard_extensions.join('|')})`
       exportRegex.datatypes[mod].push(
         new RegExp(file_regex + suffix_regex + ext_regex + '$'),
