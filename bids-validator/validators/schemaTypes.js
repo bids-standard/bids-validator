@@ -52,21 +52,28 @@ async function loadYaml(base, path, local) {
  * @param {boolean} local Avoid any network access
  */
 async function loadSchema(base, local = false) {
-  const top = 'rules/top_level_files.yaml'
-  const entities = 'rules/entities.yaml'
+  // Define path prefix depending on the BIDS schema version
+  const prefix_objects = base.includes('v1.6.0') ? '' : 'objects/'
+  const prefix_rules = base.includes('v1.6.0') ? '' : 'rules/'
+  const prefix_datatypes = prefix_rules + 'datatypes/'
+
+  // Define schema files for top level files and entities
+  const top = prefix_rules + 'top_level_files.yaml'
+  const entities = prefix_objects + 'entities.yaml'
+
   return {
     top_level_files: await loadYaml(base, top, local),
     entities: await loadYaml(base, entities, local),
     datatypes: {
-      anat: await loadYaml(base, `rules/datatypes/anat.yaml`, local),
-      beh: await loadYaml(base, `rules/datatypes/beh.yaml`, local),
-      dwi: await loadYaml(base, `rules/datatypes/dwi.yaml`, local),
-      eeg: await loadYaml(base, `rules/datatypes/eeg.yaml`, local),
-      fmap: await loadYaml(base, `rules/datatypes/fmap.yaml`, local),
-      func: await loadYaml(base, `rules/datatypes/func.yaml`, local),
-      ieeg: await loadYaml(base, 'rules/datatypes/ieeg.yaml', local),
-      meg: await loadYaml(base, 'rules/datatypes/meg.yaml', local),
-      pet: await loadYaml(base, 'rules/datatypes/pet.yaml', local),
+      anat: await loadYaml(base, prefix_datatypes + 'anat.yaml', local),
+      beh: await loadYaml(base, prefix_datatypes + 'beh.yaml', local),
+      dwi: await loadYaml(base, prefix_datatypes + 'dwi.yaml', local),
+      eeg: await loadYaml(base, prefix_datatypes + 'eeg.yaml', local),
+      fmap: await loadYaml(base, prefix_datatypes + 'fmap.yaml', local),
+      func: await loadYaml(base, prefix_datatypes + 'func.yaml', local),
+      ieeg: await loadYaml(base, prefix_datatypes + 'ieeg.yaml', local),
+      meg: await loadYaml(base, prefix_datatypes + 'meg.yaml', local),
+      pet: await loadYaml(base, prefix_datatypes + 'pet.yaml', local),
     },
   }
 }
