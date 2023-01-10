@@ -39,6 +39,17 @@ const allowedMEEGTypes = [
   'MEGOTHER',
   'HLU',
   'FITERR',
+  /* MOTION */
+  'POS',
+  'ORNT',
+  'VEL',
+  'GYRO',
+  'ACCEL',
+  'ANGACC',
+  'JNTANG',
+  'MAGN',
+  'LATENCY',
+  'MISC',
 ]
 
 /**
