@@ -20,7 +20,7 @@ function readNiftiHeader(file, annexed, dir, callback) {
 }
 
 function nodeNiftiTest(file, annexed, dir, callback) {
-  testFile(file, annexed, dir, function(issue, stats, remoteBuffer) {
+  testFile(file, annexed, dir, function (issue, stats, remoteBuffer) {
     file.stats = stats
     if (issue) {
       callback({ error: issue })
@@ -44,12 +44,12 @@ function extractNiftiFile(file, callback) {
   const bytesRead = 1024
   const buffer = Buffer.alloc(bytesRead)
 
-  fs.open(file.path, 'r', function(err, fd) {
+  fs.open(file.path, 'r', function (err, fd) {
     if (err) {
       callback({ error: new Issue({ code: 44, file: file }) })
       return
     } else {
-      fs.read(fd, buffer, 0, bytesRead, 0, function() {
+      fs.read(fd, buffer, 0, bytesRead, 0, function () {
         if (file.name.endsWith('.nii')) {
           callback(parseNIfTIHeader(buffer, file))
         } else {
@@ -67,6 +67,7 @@ function extractNiftiFile(file, callback) {
 
 function browserNiftiTest(file, callback) {
   const bytesRead = 1024
+  const blob = file.slice(0, bytesRead)
   if (file.size == 0) {
     callback({ error: new Issue({ code: 44, file: file }) })
     return
@@ -77,23 +78,15 @@ function browserNiftiTest(file, callback) {
     callback({ error: new Issue({ code: 36, file: file }) })
     return
   }
-
-  var blobSlice =
-    File.prototype.slice ||
-    File.prototype.mozSlice ||
-    File.prototype.webkitSlice
-
-  let fileReader = constructBrowserFileReader(file, callback)
-
-  fileReader.readAsArrayBuffer(blobSlice.call(file, 0, bytesRead))
+  const fileReader = constructBrowserFileReader(file, callback)
+  fileReader.readAsArrayBuffer(blob)
 }
 
 function constructBrowserFileReader(file, callback) {
-  let fileReader = new FileReader()
-
-  fileReader.onloadend = function() {
-    var buffer = new Uint8Array(fileReader.result)
-    var unzipped
+  const fileReader = new FileReader()
+  fileReader.onloadend = function () {
+    const buffer = new Uint8Array(fileReader.result)
+    let unzipped
 
     try {
       unzipped = file.name.endsWith('.nii') ? buffer : pako.inflate(buffer)

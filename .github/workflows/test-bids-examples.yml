@@ -2,9 +2,13 @@ name: test-bids-examples
 
 on:
   push:
-    branches: ["*"]
+    branches: ['*']
   pull_request:
-    branches: ["*"]
+    branches: ['*']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -22,10 +26,10 @@ jobs:
 
     steps:
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 12
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
 
@@ -40,7 +44,7 @@ jobs:
 
       - name: Get bids-examples data
         run: |
-          git clone --depth 1 https://github.com/bids-standard/bids-examples -b ${{ matrix.bids-examples-branch }}
+          git clone --depth 1 https://github.com/bids-standard/bids-examples
 
       - name: Display versions and environment information
         run: |

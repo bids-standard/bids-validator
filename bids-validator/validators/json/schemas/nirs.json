@@ -1,0 +1,106 @@
+{
+  "type": "object",
+  "properties": {
+    "TaskName": { "$ref": "common_definitions.json#/definitions/TaskName" },
+    "TaskDescription": {
+      "$ref": "common_definitions.json#/definitions/TaskDescription"
+    },
+    "Instructions": {
+      "$ref": "common_definitions.json#/definitions/Instructions"
+    },
+    "CogAtlasID": { "$ref": "common_definitions.json#/definitions/CogAtlasID" },
+    "CogPOID": { "$ref": "common_definitions.json#/definitions/CogPOID" },
+    "InstitutionName": {
+      "$ref": "common_definitions.json#/definitions/InstitutionName"
+    },
+    "InstitutionalDepartmentName": { "type": "string" },
+    "InstitutionAddress": {
+      "$ref": "common_definitions.json#/definitions/InstitutionAddress"
+    },
+    "Manufacturer": {
+      "$ref": "common_definitions.json#/definitions/Manufacturer"
+    },
+    "ManufacturersModelName": { "type": "string", "minLength": 1 },
+    "DeviceSerialNumber": {
+      "$ref": "common_definitions.json#/definitions/DeviceSerialNumber"
+    },
+    "SoftwareVersions": {
+      "$ref": "common_definitions.json#/definitions/SoftwareVersions"
+    },
+    "PowerLineFrequency": {
+      "$ref": "common_definitions.json#/definitions/PowerLineFrequency"
+    },
+    "SamplingFrequency": {
+      "anyOf": [
+        { "$ref": "common_definitions.json#/definitions/SamplingFrequency" },
+        { "enum": ["n/a"] }
+      ]
+    },
+    "NIRSChannelCount": {
+      "$ref": "common_definitions.json#/definitions/NIRSChannelCount"
+    },
+    "NIRSSourceOptodeCount": {
+      "$ref": "common_definitions.json#/definitions/NIRSSourceOptodeCount"
+    },
+    "NIRSDetectorOptodeCount": {
+      "$ref": "common_definitions.json#/definitions/NIRSDetectorOptodeCount"
+    },
+    "EEGChannelCount": {
+      "$ref": "common_definitions.json#/definitions/EEGChannelCount"
+    },
+    "EOGChannelCount": {
+      "$ref": "common_definitions.json#/definitions/EOGChannelCount"
+    },
+    "ECGChannelCount": {
+      "$ref": "common_definitions.json#/definitions/ECGChannelCount"
+    },
+    "EMGChannelCount": {
+      "$ref": "common_definitions.json#/definitions/EMGChannelCount"
+    },
+    "MiscChannelCount": {
+      "$ref": "common_definitions.json#/definitions/MiscChannelCount"
+    },
+    "TriggerChannelCount": {
+      "$ref": "common_definitions.json#/definitions/TriggerChannelCount"
+    },
+    "NIRSPlacementScheme": { "type": "string" },
+    "CapManufacturer": { "type": "string" },
+    "CapManufacturersModelName": { "type": "string" },
+    "HeadCircumference": { "type": "number", "exclusiveMinimum": 0 },
+    "SourceType": { "type": "string" },
+    "ShortChannelCount": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "recommends_tsv_non_custom_columns": ["short_channel"]
+    },
+    "HardwareFilters": {
+      "$ref": "common_definitions.json#/definitions/HardwareFilters"
+    },
+    "SoftwareFilters": {
+      "$ref": "common_definitions.json#/definitions/SoftwareFilters"
+    },
+    "RecordingDuration": {
+      "$ref": "common_definitions.json#/definitions/RecordingDuration"
+    },
+    "RecordingType": {
+      "$ref": "common_definitions.json#/definitions/RecordingType"
+    },
+    "SubjectArtefactDescription": { "type": "string" },
+    "ACCELChannelCount": { "type": "number" },
+    "GYROChannelCount": { "type": "number" },
+    "MAGNChannelCount": { "type": "number" }
+  },
+  "required": [
+    "TaskName",
+    "SamplingFrequency",
+    "NIRSChannelCount",
+    "NIRSSourceOptodeCount",
+    "NIRSDetectorOptodeCount"
+  ],
+  "required_if_tsv_value_present": {
+    "ACCELChannelCount": { "header": "type", "value": "ACC" },
+    "MAGNChannelCount": { "header": "type", "value": "MAGN" },
+    "GYROChannelCount": { "header": "type", "value": "GYRO" }
+  },
+  "additionalProperties": false
+}

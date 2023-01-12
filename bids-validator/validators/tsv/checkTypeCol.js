@@ -50,6 +50,13 @@ const allowedMEEGTypes = [
   'MAGN',
   'LATENCY',
   'MISC',
+  /* NIRS */
+  'NIRSCWAMPLITUDE',
+  'NIRSCWFLUORESCENSEAMPLITUDE',
+  'NIRSCWOPTICALDENSITY',
+  'NIRSCWHBO',
+  'NIRSCWHBR',
+  'NIRSCWMUA',
 ]
 
 /**
@@ -63,7 +70,7 @@ const allowedMEEGTypes = [
  *     found.
  * @returns {null} Results of this function are stored in issues.
  */
-const checkTypeCol = function(rows, file, issues) {
+const checkTypeCol = function (rows, file, issues) {
   const header = rows[0]
   const typeColumn = header.indexOf('type')
   if (typeColumn !== -1) {

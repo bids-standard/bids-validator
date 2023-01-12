@@ -15,8 +15,14 @@
         "Other"
       ]
     },
-    "EEGCoordSys": { "type": "string", "enum": ["CapTrak", "EEGLAB", "EEGLAB-HJ", "Other"] },
-    "iEEGCoordSys": { "type": "string", "enum": ["Pixels", "ACPC", "ScanRAS", "Other"] },
+    "EEGCoordSys": {
+      "type": "string",
+      "enum": ["CapTrak", "EEGLAB", "EEGLAB-HJ", "Other"]
+    },
+    "iEEGCoordSys": {
+      "type": "string",
+      "enum": ["Pixels", "ACPC", "ScanRAS", "Other"]
+    },
     "StandardTemplateCoordSys": {
       "type": "string",
       "enum": [
@@ -66,6 +72,9 @@
     "DeviceSerialNumber": { "type": "string" },
     "ECGChannelCount": { "type": "integer", "minimum": 0 },
     "EEGChannelCount": { "type": "integer", "minimum": 0 },
+    "NIRSChannelCount": { "type": "integer", "minimum": 0 },
+    "NIRSSourceOptodeCount": { "type": "integer", "minimum": 0 },
+    "NIRSDetectorOptodeCount": { "type": "integer", "minimum": 0 },
     "EMGChannelCount": { "type": "integer", "minimum": 0 },
     "EOGChannelCount": { "type": "integer", "minimum": 0 },
     "EpochLength": { "type": "number", "minimum": 0 },
@@ -78,7 +87,7 @@
     "InstitutionAddress": { "type": "string" },
     "InstitutionName": { "type": "string" },
     "Instructions": { "type": "string" },
-    "InstitutionalDepartmentName": { "type": "string", "minLength": 1},
+    "InstitutionalDepartmentName": { "type": "string", "minLength": 1 },
     "LandmarkCoordinates": {
       "type": "object",
       "additionalProperties": {

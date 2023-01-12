@@ -12,7 +12,7 @@ var path = require('path')
  * @param {Array[string]} headers
  * @returns {string}
  */
-export const headersEvidence = headers =>
+export const headersEvidence = (headers) =>
   `Column headers: ${headers.join(', ')}`
 
 /**
@@ -20,7 +20,7 @@ export const headersEvidence = headers =>
  * @param {Array[string]} filename
  * @returns {string}
  */
-const filenameEvidence = filename => `Filename: ${filename}`
+const filenameEvidence = (filename) => `Filename: ${filename}`
 
 /**
  * TSV
@@ -459,7 +459,7 @@ const TSV = (file, contents, fileList, callback) => {
     file.name.endsWith('_channels.tsv')
   ) {
     const required = ['component', 'name', 'tracked_point', 'type', 'units']
-    const missing = required.filter(x => !headers.includes(x))
+    const missing = required.filter((x) => !headers.includes(x))
     if (missing.length) {
       issues.push(
         new Issue({
@@ -470,6 +470,19 @@ const TSV = (file, contents, fileList, callback) => {
         }),
       )
     }
+    checkStatusCol(rows, file, issues)
+    checkTypecol(rows, file, issues)
+  }
+  if (
+    file.relativePath.includes('/nirs/') &&
+    file.name.endsWith('_channels.tsv')
+  ) {
+    checkheader('name', 0, file, 234)
+    checkheader('type', 1, file, 234)
+    checkheader('source', 2, file, 234)
+    checkheader('detector', 3, file, 234)
+    checkheader('wavelength_nominal', 4, file, 234)
+    checkheader('units', 5, file, 234)
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
   }
@@ -494,6 +507,17 @@ const TSV = (file, contents, fileList, callback) => {
     checkheader('y', 2, file, 73)
     checkheader('z', 3, file, 73)
     checkheader('size', 4, file, 73)
+  }
+
+  if (
+    file.relativePath.includes('/nirs/') &&
+    file.name.endsWith('_optodes.tsv')
+  ) {
+    checkheader('name', 0, file, 233)
+    checkheader('type', 1, file, 233)
+    checkheader('x', 2, file, 233)
+    checkheader('y', 3, file, 233)
+    checkheader('z', 4, file, 233)
   }
 
   // blood.tsv

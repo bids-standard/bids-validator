@@ -6,7 +6,7 @@ import nonCustomColumns from '../../bids_validator/tsv/non_custom_columns.json'
  * @param {Object} file - BIDS file object
  * Accepts file object and returns a type based on file path
  */
-export const getTsvType = function(file) {
+export const getTsvType = function (file) {
   let tsvType = 'misc'
   if (file.relativePath.includes('phenotype/')) {
     tsvType = 'phenotype'
@@ -19,7 +19,8 @@ export const getTsvType = function(file) {
     file.name.endsWith('_scans.tsv') ||
     file.name.endsWith('_sessions.tsv') ||
     file.name.endsWith('_aslcontext.tsv') ||
-    file.name.endsWith('_blood.tsv')
+    file.name.endsWith('_blood.tsv') ||
+    file.name.endsWith('_optodes.tsv')
   ) {
     const split = file.name.split('_')
     tsvType = split[split.length - 1].replace('.tsv', '')
@@ -27,7 +28,7 @@ export const getTsvType = function(file) {
   return tsvType
 }
 
-const getHeaders = tsvContents =>
+const getHeaders = (tsvContents) =>
   tsvContents
     .replace(/^\uefff/, '')
     .split('\n')[0]
@@ -41,7 +42,7 @@ const getHeaders = tsvContents =>
  * Checks TSV column names to determine if they're core or custom
  * Returns array of custom column names
  */
-const getCustomColumns = function(headers, type) {
+const getCustomColumns = function (headers, type) {
   const customCols = []
   // Iterate column headers
   for (let col of headers) {
@@ -52,8 +53,8 @@ const getCustomColumns = function(headers, type) {
   }
   return customCols
 }
-const commaSeparatedStringOf = items =>
-  items.map(item => `"${item}"`).join(', ')
+const commaSeparatedStringOf = (items) =>
+  items.map((item) => `"${item}"`).join(', ')
 
 /**
  * Loads relevant JSON schema for given tsv modalities.
@@ -61,13 +62,13 @@ const commaSeparatedStringOf = items =>
  * @param {*} tsvs
  * @returns
  */
-const loadSchemas = tsvs => {
+const loadSchemas = (tsvs) => {
   const schemas = {}
   const getSchemaByType = {
     blood: () => require('../json/schemas/pet_blood.json'),
   }
-  const types = new Set(tsvs.map(tsv => getTsvType(tsv.file)))
-  types.forEach(type => {
+  const types = new Set(tsvs.map((tsv) => getTsvType(tsv.file)))
+  types.forEach((type) => {
     if (getSchemaByType.hasOwnProperty(type)) {
       schemas[type] = getSchemaByType[type]()
     }
@@ -80,11 +81,11 @@ const loadSchemas = tsvs => {
  * @param {array} tsvs - Array of objects containing TSV file objects and contents
  * @param {Object} jsonContentsDict
  */
-const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
+const validateTsvColumns = function (tsvs, jsonContentsDict, headers) {
   const tsvIssues = []
   const schemas = loadSchemas(tsvs)
 
-  tsvs.map(tsv => {
+  tsvs.map((tsv) => {
     const tsvType = getTsvType(tsv.file)
     const customColumns = getCustomColumns(getHeaders(tsv.contents), tsvType)
     const isPetBlood = tsvType === 'blood'
@@ -99,7 +100,7 @@ const validateTsvColumns = function(tsvs, jsonContentsDict, headers) {
       )
       const keys = Object.keys(mergedDict)
       // Gather undefined columns for the file
-      const undefinedCols = customColumns.filter(col => !keys.includes(col))
+      const undefinedCols = customColumns.filter((col) => !keys.includes(col))
       // Create an issue for all undefined columns in this file
       undefinedCols.length &&
         tsvIssues.push(
@@ -148,7 +149,7 @@ export const validatePetBloodHeaders = (tsv, mergedDict, schema) => {
       subSchema.hasOwnProperty('requires_tsv_non_custom_columns') &&
       mergedDict[property] === true
     ) {
-      subSchema.requires_tsv_non_custom_columns.forEach(header => {
+      subSchema.requires_tsv_non_custom_columns.forEach((header) => {
         if (header in requiredHeaders) {
           requiredHeaders[header].push(property)
         } else {
@@ -179,13 +180,13 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
   const tsvIssues = []
   // Manage custom instances from asl_context tsv files
   // get all headers associated with asl_context data
-  tsvs.map(tsv => {
-    const aslHeaders = headers.filter(header => {
+  tsvs.map((tsv) => {
+    const aslHeaders = headers.filter((header) => {
       const file = header[0]
       return file.relativePath.includes('_asl')
     })
 
-    aslHeaders.forEach(aslHeader => {
+    aslHeaders.forEach((aslHeader) => {
       // extract the fourth element of 'dim' field of header - this is the
       // number of volumes that were obtained during scan (numVols)
       const file = aslHeader[0]
@@ -207,10 +208,10 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
         const rows = tsv.contents
           .replace(/[\r]+/g, '')
           .split('\n')
-          .filter(row => !(!row || /^\s*$/.test(row)))
+          .filter((row) => !(!row || /^\s*$/.test(row)))
 
         const m0scan_filters = ['m0scan']
-        const filtered_m0scan_rows = rows.filter(row =>
+        const filtered_m0scan_rows = rows.filter((row) =>
           m0scan_filters.includes(row),
         )
 
@@ -222,7 +223,9 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
           'deltam',
           'volume_type',
         ]
-        const filtered_tsv_rows = rows.filter(row => asl_filters.includes(row))
+        const filtered_tsv_rows = rows.filter((row) =>
+          asl_filters.includes(row),
+        )
         if (rows.length != filtered_tsv_rows.length) {
           tsvIssues.push(
             new Issue({
@@ -401,7 +404,7 @@ const validateASL = (tsvs, jsonContentsDict, headers) => {
   return tsvIssues
 }
 
-const customColumnIssue = function(file, col, locations) {
+const customColumnIssue = function (file, col, locations) {
   return new Issue({
     code: 82,
     file: file,

@@ -63,6 +63,7 @@ const microscopyData = buildRegExp(file_level_rules.microscopy)
 const microscopyPhotoData = buildRegExp(file_level_rules.microscopy_photo)
 const microscopyJSON = buildRegExp(file_level_rules.microscopy_json)
 const motion = buildRegExp(file_level_rules.motion)
+const nirsData = buildRegExp(file_level_rules.nirs)
 // Phenotypic data
 const phenotypicData = buildRegExp(phenotypic_rules.phenotypic_data)
 // Session level
@@ -77,6 +78,7 @@ const scansSes = buildRegExp(session_level_rules.scans)
 const petSes = buildRegExp(session_level_rules.pet_ses)
 const motionSes = buildRegExp(session_level_rules.motion_ses)
 const microscopySes = buildRegExp(session_level_rules.microscopy_ses)
+const nirsSes = buildRegExp(session_level_rules.nirs_ses)
 // Subject level
 const subjectLevel = buildRegExp(subject_level_rules.subject_level)
 // Top level
@@ -93,6 +95,7 @@ const megTop = buildRegExp(top_level_rules.meg_top)
 const petTop = buildRegExp(top_level_rules.pet_top)
 const motionTop = buildRegExp(top_level_rules.motion_top)
 const microscopyTop = buildRegExp(top_level_rules.microscopy_top)
+const nirsTop = buildRegExp(top_level_rules.nirs_top)
 
 export default {
   /**
@@ -101,7 +104,7 @@ export default {
    * Check if a given path is valid within the
    * bids spec.
    */
-  isBIDS: function(path) {
+  isBIDS: function (path) {
     return (
       this.file.isTopLevel(path) ||
       this.file.isStimuliData(path) ||
@@ -112,6 +115,7 @@ export default {
       this.file.isFunc(path) ||
       this.file.isAsl(path) ||
       this.file.isMeg(path) ||
+      this.file.isNIRS(path) ||
       this.file.isIEEG(path) ||
       this.file.isEEG(path) ||
       this.file.isBehavioral(path) ||
@@ -133,10 +137,10 @@ export default {
     /**
      * Check if the file has appropriate name for a top level file
      */
-    isTopLevel: function(path) {
+    isTopLevel: function (path) {
       if (bids_schema) {
         return (
-          bids_schema.top_level_files.some(regex => regex.exec(path)) ||
+          bids_schema.top_level_files.some((regex) => regex.exec(path)) ||
           funcTop.test(path) ||
           aslTop.test(path) ||
           dwiTop.test(path) ||
@@ -148,6 +152,7 @@ export default {
           ieegTop.test(path) ||
           petTop.test(path) ||
           motionTop.test(path) ||
+          nirsTop.test(path) ||
           microscopyTop.test(path)
         )
       } else {
@@ -164,6 +169,7 @@ export default {
           ieegTop.test(path) ||
           petTop.test(path) ||
           motionTop.test(path) ||
+          nirsTop.test(path) ||
           microscopyTop.test(path)
         )
       }
@@ -172,7 +178,7 @@ export default {
     /**
      * Check if file is a data file
      */
-    isDatafile: function(path) {
+    isDatafile: function (path) {
       return (
         this.isAssociatedData(path) ||
         this.isTSV(path) ||
@@ -184,32 +190,32 @@ export default {
     /**
      * Check if file is appropriate associated data.
      */
-    isAssociatedData: function(path) {
+    isAssociatedData: function (path) {
       return associatedData.test(path)
     },
 
-    isTSV: function(path) {
+    isTSV: function (path) {
       return path.endsWith('.tsv')
     },
 
-    isContinousRecording: function(path) {
+    isContinousRecording: function (path) {
       return path.endsWith('.tsv.gz')
     },
 
-    isStimuliData: function(path) {
+    isStimuliData: function (path) {
       return stimuliData.test(path)
     },
 
     /**
      * Check if file is phenotypic data.
      */
-    isPhenotypic: function(path) {
+    isPhenotypic: function (path) {
       return phenotypicData.test(path)
     },
     /**
      * Check if the file has appropriate name for a session level
      */
-    isSessionLevel: function(path) {
+    isSessionLevel: function (path) {
       return (
         conditionalMatch(scansSes, path) ||
         conditionalMatch(funcSes, path) ||
@@ -217,6 +223,7 @@ export default {
         conditionalMatch(anatSes, path) ||
         conditionalMatch(dwiSes, path) ||
         conditionalMatch(megSes, path) ||
+        conditionalMatch(nirsSes, path) ||
         conditionalMatch(eegSes, path) ||
         conditionalMatch(ieegSes, path) ||
         conditionalMatch(petSes, path) ||
@@ -228,16 +235,16 @@ export default {
     /**
      * Check if the file has appropriate name for a subject level
      */
-    isSubjectLevel: function(path) {
+    isSubjectLevel: function (path) {
       return subjectLevel.test(path)
     },
 
     /**
      * Check if the file has a name appropriate for an anatomical scan
      */
-    isAnat: function(path) {
+    isAnat: function (path) {
       if (bids_schema) {
-        return bids_schema.datatypes['anat'].some(regex => regex.exec(path))
+        return bids_schema.datatypes['anat'].some((regex) => regex.exec(path))
       } else {
         return (
           conditionalMatch(anatNonparametric, path) ||
@@ -256,9 +263,9 @@ export default {
     /**
      * Check if the file has a name appropriate for a diffusion scan
      */
-    isDWI: function(path) {
+    isDWI: function (path) {
       if (bids_schema) {
-        return bids_schema.datatypes['dwi'].some(regex => regex.exec(path))
+        return bids_schema.datatypes['dwi'].some((regex) => regex.exec(path))
       } else {
         return conditionalMatch(dwiData, path)
       }
@@ -267,9 +274,9 @@ export default {
     /**
      * Check if the file has a name appropriate for a fieldmap scan
      */
-    isFieldMap: function(path) {
+    isFieldMap: function (path) {
       if (bids_schema) {
-        return bids_schema.datatypes['fmap'].some(regex => regex.exec(path))
+        return bids_schema.datatypes['fmap'].some((regex) => regex.exec(path))
       } else {
         return (
           conditionalMatch(fmapGre, path) ||
@@ -283,7 +290,7 @@ export default {
       }
     },
 
-    isFieldMapMainNii: function(path) {
+    isFieldMapMainNii: function (path) {
       return (
         !path.endsWith('.json') &&
         /* isFieldMap */
@@ -300,9 +307,9 @@ export default {
     /**
      * Check if the file has a name appropriate for a functional scan
      */
-    isFunc: function(path) {
+    isFunc: function (path) {
       if (bids_schema) {
-        return bids_schema.datatypes['func'].some(regex => regex.exec(path))
+        return bids_schema.datatypes['func'].some((regex) => regex.exec(path))
       } else {
         return (
           conditionalMatch(func, path) ||
@@ -313,25 +320,25 @@ export default {
       }
     },
 
-    isAsl: function(path) {
+    isAsl: function (path) {
       return conditionalMatch(aslData, path)
     },
 
-    isPET: function(path) {
+    isPET: function (path) {
       if (bids_schema) {
-        return bids_schema.datatypes['pet'].some(regex => regex.exec(path))
+        return bids_schema.datatypes['pet'].some((regex) => regex.exec(path))
       } else {
         return conditionalMatch(petData, path)
       }
     },
 
-    isPETBlood: function(path) {
+    isPETBlood: function (path) {
       return conditionalMatch(petBlood, path)
     },
 
-    isMeg: function(path) {
+    isMeg: function (path) {
       if (bids_schema) {
-        return bids_schema.datatypes['meg'].some(regex => regex.exec(path))
+        return bids_schema.datatypes['meg'].some((regex) => regex.exec(path))
       } else {
         return (
           conditionalMatch(megData, path) ||
@@ -340,24 +347,27 @@ export default {
         )
       }
     },
+    isNIRS: function (path) {
+      return conditionalMatch(nirsData, path)
+    },
 
-    isEEG: function(path) {
+    isEEG: function (path) {
       if (bids_schema) {
-        return bids_schema.datatypes['eeg'].some(regex => regex.exec(path))
+        return bids_schema.datatypes['eeg'].some((regex) => regex.exec(path))
       } else {
         return conditionalMatch(eegData, path)
       }
     },
 
-    isIEEG: function(path) {
+    isIEEG: function (path) {
       if (bids_schema) {
-        return bids_schema.datatypes['ieeg'].some(regex => regex.exec(path))
+        return bids_schema.datatypes['ieeg'].some((regex) => regex.exec(path))
       } else {
         return conditionalMatch(ieegData, path)
       }
     },
 
-    isMOTION: function(path) {
+    isMOTION: function (path) {
       if (bids_schema) {
         // Motion not currently in schema
         // return bids_schema.datatypes['motion'].some(regex => regex.exec(path))
@@ -366,30 +376,32 @@ export default {
         return conditionalMatch(motion, path)
       }
     },
-    isMicroscopy: function(path) {
+
+    isMicroscopy: function (path) {
       return conditionalMatch(microscopyData, path)
     },
 
-    isMicroscopyPhoto: function(path) {
+    isMicroscopyPhoto: function (path) {
       return conditionalMatch(microscopyPhotoData, path)
     },
 
-    isMicroscopyJSON: function(path) {
+    isMicroscopyJSON: function (path) {
       return conditionalMatch(microscopyJSON, path)
     },
-    isBehavioral: function(path) {
+
+    isBehavioral: function (path) {
       if (bids_schema) {
-        return bids_schema.datatypes['beh'].some(regex => regex.exec(path))
+        return bids_schema.datatypes['beh'].some((regex) => regex.exec(path))
       } else {
         return conditionalMatch(behavioralData, path)
       }
     },
 
-    isFuncBold: function(path) {
+    isFuncBold: function (path) {
       return conditionalMatch(funcBoldData, path)
     },
 
-    hasModality: function(path) {
+    hasModality: function (path) {
       return (
         this.isAnat(path) ||
         this.isDWI(path) ||
@@ -398,6 +410,7 @@ export default {
         this.isFunc(path) ||
         this.isAsl(path) ||
         this.isMeg(path) ||
+        this.isNIRS(path) ||
         this.isEEG(path) ||
         this.isIEEG(path) ||
         this.isBehavioral(path) ||
@@ -428,7 +441,7 @@ export default {
    * sub-
    * ses-
    */
-  getPathValues: function(path) {
+  getPathValues: function (path) {
     var values = {},
       match
 

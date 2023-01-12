@@ -1,6 +1,6 @@
 {
   "name": "bids-validator",
-  "version": "1.9.8-dev.0",
+  "version": "1.9.10-dev.0",
   "description": "",
   "main": "./dist/commonjs/index.js",
   "exports": {
@@ -44,12 +44,12 @@
     "date-fns": "^2.7.0",
     "events": "^3.3.0",
     "exifreader": "^4.1.0",
-    "hed-validator": "^3.7.1",
+    "hed-validator": "^3.8.0",
     "ignore": "^4.0.2",
     "is-utf8": "^0.2.1",
     "jshint": "^2.9.6",
     "lodash": "^4.17.21",
-    "minimatch": "3.0.4",
+    "minimatch": "3.0.5",
     "nifti-js": "^1.0.1",
     "p-limit": "^2.1.0",
     "pako": "^1.0.6",
@@ -65,7 +65,6 @@
   "devDependencies": {
     "adm-zip": "",
     "chai": "",
-    "codecov": "^3.1.0",
     "esbuild": "^0.11.5",
     "esbuild-plugin-globals": "^0.1.1",
     "esbuild-runner": "^2.2.1",
@@ -74,14 +73,7 @@
     "eslint-plugin-prettier": "^2.6.2",
     "husky": "^1.0.0-rc.13",
     "lockfile": "^1.0.4",
-    "prettier": "^1.14.2",
-    "pretty-quick": "^1.6.0",
     "sync-request": "6.0.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
   },
   "browser": {
     "fs": false,

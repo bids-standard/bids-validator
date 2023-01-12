@@ -13,7 +13,7 @@ const Issue = utils.issues.Issue
  * it finds while validating against the BIDS
  * specification.
  */
-export default function(file, jsonContentsDict, callback) {
+export default function (file, jsonContentsDict, callback) {
   // primary flow --------------------------------------------------------------------
   let issues = []
   const potentialSidecars = utils.files.potentialLocations(file.relativePath)
@@ -74,7 +74,7 @@ const compareSidecarProperties = (file, sidecar) => {
   return issues
 }
 
-const selectSchema = file => {
+const selectSchema = (file) => {
   let schema = null
   if (file.name) {
     if (file.name.endsWith('participants.json')) {
@@ -88,6 +88,8 @@ const selectSchema = file => {
       schema = require('./schemas/asl.json')
     } else if (file.name.endsWith('pet.json')) {
       schema = require('./schemas/pet.json')
+    } else if (file.name.endsWith('nirs.json')) {
+      schema = require('./schemas/nirs.json')
     } else if (file.relativePath === '/dataset_description.json') {
       schema = require('./schemas/dataset_description.json')
     } else if (file.name.endsWith('meg.json')) {
@@ -137,12 +139,17 @@ const selectSchema = file => {
     ) {
       schema = require('./schemas/coordsystem_eeg.json')
     } else if (
+      file.relativePath.includes('/nirs/') &&
+      file.name.endsWith('coordsystem.json')
+    ) {
+      schema = require('./schemas/coordsystem_nirs.json')
+    } else if (file.name.endsWith('genetic_info.json')) {
+      schema = require('./schemas/genetic_info.json')
+    } else if (
       file.relativePath.includes('/pet/') &&
       file.name.endsWith('blood.json')
     ) {
       schema = require('./schemas/pet_blood.json')
-    } else if (file.name.endsWith('genetic_info.json')) {
-      schema = require('./schemas/genetic_info.json')
     } else if (
       file.name.endsWith('physio.json') ||
       file.name.endsWith('stim.json')
@@ -165,7 +172,7 @@ const validateSchema = (file, sidecar, schema) => {
     const validate = ajv.compile(schema)
     const valid = validate(sidecar)
     if (!valid) {
-      validate.errors.map(error =>
+      validate.errors.map((error) =>
         issues.push(
           new Issue({
             file: file,

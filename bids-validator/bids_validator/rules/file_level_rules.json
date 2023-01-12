@@ -302,17 +302,23 @@
   },
 
   "asl": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?perf[\\/\\\\]\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(?:@@@_asl_type_@@@)$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?perf[\\/\\\\]\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_dir-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:(?:@@@_asl_type_@@@)|(?:_recording-[a-zA-Z0-9]+)?(?:@@@_cont_ext_@@@))$",
     "tokens": {
       "@@@_asl_type_@@@": [
-        "asl\\.nii\\.gz",
-        "asl\\.nii",
-        "asl\\.json",
-        "m0scan\\.nii\\.gz",
-        "m0scan\\.nii",
-        "m0scan\\.json",
-        "aslcontext\\.tsv",
-        "asllabeling\\.jpg"
+        "_asl\\.nii\\.gz",
+        "_asl\\.nii",
+        "_asl\\.json",
+        "_m0scan\\.nii\\.gz",
+        "_m0scan\\.nii",
+        "_m0scan\\.json",
+        "_aslcontext\\.tsv",
+        "_asllabeling\\.jpg"
+      ],
+      "@@@_cont_ext_@@@": [
+        "_physio\\.tsv\\.gz",
+        "_stim\\.tsv\\.gz",
+        "_physio\\.json",
+        "_stim\\.json"
       ]
     }
   },
@@ -511,21 +517,47 @@
     "regexp": "^[\\/\\\\](?:stimuli)[\\/\\\\](?:.*)$"
   },
 
+  "nirs": {
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?nirs[\\/\\\\]\\1(_\\2)?(((?:_acq-[a-zA-Z0-9]+)?(@@@_nirs_optodes_@@@))|((?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_proc-[a-zA-Z0-9]+)?(?:_part-[0-9]+)?(_nirs\\.(@@@_nirs_type_@@@)|(@@@_nirs_ext_@@@))))$",
+    "tokens": {
+      "@@@_nirs_type_@@@": ["snirf"],
+      "@@@_nirs_ext_@@@": [
+        "_events\\.json",
+        "_events\\.tsv",
+        "_channels\\.json",
+        "_channels\\.tsv",
+        "_nirs\\.json",
+        "_photo\\.jpg"
+      ],
+      "@@@_nirs_optodes_@@@": [
+        "_optodes\\.tsv",
+        "_optodes\\.json",
+        "_coordsystem\\.json"
+      ]
+    }
+  },
+
   "pet": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?pet[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_task-[a-zA-Z0-9]+)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(@@@_pet_ext_@@@)$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?pet[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_task-[a-zA-Z0-9]+)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:(?:@@@_pet_ext_@@@)|(?:_recording-[a-zA-Z0-9]+)?(?:@@@_cont_ext_@@@))$",
     "tokens": {
       "@@@_pet_ext_@@@": [
-        "pet\\.nii\\.gz",
-        "pet\\.nii",
-        "pet\\.json",
-        "events\\.json",
-        "events\\.tsv"
+        "_pet\\.nii\\.gz",
+        "_pet\\.nii",
+        "_pet\\.json",
+        "_events\\.json",
+        "_events\\.tsv"
+      ],
+      "@@@_cont_ext_@@@": [
+        "_physio\\.tsv\\.gz",
+        "_stim\\.tsv\\.gz",
+        "_physio\\.json",
+        "_stim\\.json"
       ]
     }
   },
 
   "pet_blood": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?pet[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_task-[a-zA-Z0-9]+)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_recording-[a-zA-Z0-9]+)?_(@@@_pet_ext_@@@)$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?pet[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_task-[a-zA-Z0-9]+)?(?:_trc-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_recording-[a-zA-Z0-9]+)_(@@@_pet_ext_@@@)$",
     "tokens": {
       "@@@_pet_ext_@@@": ["blood\\.tsv\\.gz", "blood\\.tsv", "blood\\.json"]
     }
@@ -576,7 +608,7 @@
   },
   "microscopy_photo": {
     "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?micr[\\/\\\\](sub-[a-zA-Z0-9]+)(?:(_ses-[a-zA-Z0-9]+))?(?:_sample-[a-zA-Z0-9]+)(?:_acq-[a-zA-Z0-9]+)?(@@@_photo_ext_@@@)$",
-    "tokens":{
+    "tokens": {
       "@@@_photo_ext_@@@": [
         "_photo\\.jpg",
         "_photo\\.png",

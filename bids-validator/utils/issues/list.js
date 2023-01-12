@@ -622,6 +622,12 @@ export default {
     reason:
       'This dataset contains remote files. If you would like to validate with remote files, use the --remoteFiles option.',
   },
+  115: {
+    key: 'EMPTY_DATASET_NAME',
+    severity: 'warning',
+    reason:
+      'The Name field of dataset_description.json is present but empty of visible characters.',
+  },
   123: {
     key: 'INVALID JSON ENCODING',
     severity: 'error',
@@ -1148,5 +1154,17 @@ export default {
     severity: 'error',
     reason:
       'An element in a tsv header is "n/a". A different header name should be chosen.',
+  },
+  233: {
+    key: 'MISSING_TSV_COLUMN_NIRS_OPTODES',
+    severity: 'error',
+    reason:
+      "The column names of the optodes file must begin with ['name', 'type', 'x', 'y', 'z']",
+  },
+  234: {
+    key: 'MISSING_TSV_COLUMN_NIRS_CHANNELS',
+    severity: 'error',
+    reason:
+      "The column names of the channels file must begin with ['name', 'type', 'source', 'detector', 'wavelength_nominal', 'units']",
   },
 }
