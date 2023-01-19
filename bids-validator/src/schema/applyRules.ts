@@ -116,6 +116,7 @@ function evalRuleChecks(
         key: rule.issue.code,
         reason: rule.issue.message,
         files: [{ ...context.file }],
+        severity: rule.issue.level,
       })
     } else {
       context.issues.addNonSchemaIssue('CHECK_ERROR', [
