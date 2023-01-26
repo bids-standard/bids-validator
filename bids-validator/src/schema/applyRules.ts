@@ -17,21 +17,20 @@ import { expressionFunctions } from './expressionLanguage.ts'
 export function applyRules(
   schema: GenericSchema,
   context: BIDSContext,
-  path?: string,
+  rootSchema?: GenericSchema,
 ) {
-  if (!path) {
-    path = 'rules'
+  if (!rootSchema) {
+    rootSchema = schema
   }
   Object.assign(context, expressionFunctions)
-  for (const key in schema[path]) {
-    const newPath = `${path}.${key}`
-    if (!(schema[newPath].constructor === Object)) {
+  for (const key in schema) {
+    if (!(schema[key].constructor === Object)) {
       continue
     }
-    if ('selectors' in schema[newPath]) {
-      evalRule(schema[newPath] as GenericRule, context, schema)
-    } else if (schema[newPath].constructor === Object) {
-      applyRules(schema, context, newPath)
+    if ('selectors' in schema[key]) {
+      evalRule(schema[key] as GenericRule, context, rootSchema)
+    } else if (schema[key].constructor === Object) {
+      applyRules(schema[key] as GenericSchema, context, rootSchema)
     }
   }
   return Promise.resolve()
