@@ -54,14 +54,14 @@ export async function validate(
   let derivativesSummary: Record<string, unknown> = {}
   fileTree.directories = fileTree.directories.filter((dir) => {
     if (dir.name === 'derivatives') {
-      dir.directories.map((deriv) => {
+      dir.directories.map(async (deriv) => {
         if (
           deriv.files.some(
             (file: BIDSFile) => file.name === 'dataset_description.json',
           )
         ) {
           const tempSummary = validate(deriv)
-          derivativesSummary[deriv.name] = tempSummary
+          derivativesSummary[deriv.name] = await tempSummary
         }
       })
       return false
@@ -84,8 +84,12 @@ export async function validate(
     await summary.update(context)
   }
 
-  return {
+  let output = {
     issues,
     summary: summary.formatOutput(),
   }
+  if (Object.keys(derivativesSummary).length) {
+    output['derivativesSummary'] = derivativesSummary
+  }
+  return output
 }

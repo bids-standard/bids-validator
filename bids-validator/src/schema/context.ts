@@ -145,7 +145,10 @@ export class BIDSContext implements Context {
   }
 
   loadNiftiHeader(): Promise<void> {
-    if (this.extension.startsWith('.nii')) {
+    if (
+      this.extension.startsWith('.nii') &&
+      !this.dataset.options.ignoreNiftiHeaders
+    ) {
       this.nifti_header = loadHeader(this.file as BIDSFileDeno)
     }
     return Promise.resolve()
