@@ -15,8 +15,9 @@ const checkDatasetDescription = (jsonContentsDict) => {
   } else {
     const datasetDescription = jsonContentsDict['/dataset_description.json']
 
-    // check to ensure that the dataset description Authors are
+    // check to ensure that the dataset description fields are
     // properly formatted
+    issues = issues.concat(checkNameField(datasetDescription.Name))
     issues = issues.concat(checkAuthorField(datasetDescription.Authors))
 
     // if genetic info json present ensure mandatory GeneticDataset present
@@ -28,6 +29,18 @@ const checkDatasetDescription = (jsonContentsDict) => {
       )
     ) {
       issues.push(new Issue({ code: 128 }))
+    }
+  }
+  return issues
+}
+
+const checkNameField = (name) => {
+  const issues = []
+  // missing name will be caught by validation (later)
+  if (name !== undefined) {
+    const nonws = /\S/
+    if (!name.match(nonws)) {
+      issues.push(new Issue({ code: 115 }))
     }
   }
   return issues

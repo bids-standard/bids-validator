@@ -2,16 +2,55 @@ import { assert } from 'chai'
 import checkDatasetDescription from '../checkDatasetDescription'
 
 describe('checkDatasetDescription', () => {
-  describe('checkAuthorField', () => {
-    it('returns no issues with valid Authors field', () => {
+  describe('checkNameAndAuthorsFields', () => {
+    it('returns no issues with valid Name and Authors field', () => {
       const validJsonContentsDict = {
         '/dataset_description.json': {
+          Name: 'Electric Boots',
           Authors: ['Benny', 'the Jets'],
         },
       }
       const issues = checkDatasetDescription(validJsonContentsDict)
       assert.lengthOf(issues, 0)
     })
+  })
+  describe('checkNameField', () => {
+    it('returns code 115 when Name is empty', () => {
+      const invalidJsonContentsDict = {
+        '/dataset_description.json': {
+          Name: '',
+        },
+      }
+      const issues = checkDatasetDescription(invalidJsonContentsDict)
+      assert(
+        issues.findIndex((issue) => issue.code === 115) > -1,
+        'issues include a code 115',
+      )
+    })
+    it('returns code 115 when name only contains whitespace', () => {
+      const invalidJsonContentsDict = {
+        '/dataset_description.json': {
+          Name: ' \t\r\n\f\v\u2003',
+        },
+      }
+      const issues = checkDatasetDescription(invalidJsonContentsDict)
+      assert(
+        issues.findIndex((issue) => issue.code === 115) > -1,
+        'issues include a code 115',
+      )
+    })
+    it('returns no issues with one non-whitespace character', () => {
+      const validJsonContentsDict = {
+        '/dataset_description.json': {
+          Name: '     \u2708     ',
+          Authors: ['Benny', 'the Jets'],
+        },
+      }
+      const issues = checkDatasetDescription(validJsonContentsDict)
+      assert.lengthOf(issues, 0)
+    })
+  })
+  describe('checkAuthorField', () => {
     it('returns code 102 when there is only one author present', () => {
       const invalidJsonContentsDict = {
         '/dataset_description.json': {
