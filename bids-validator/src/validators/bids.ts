@@ -46,6 +46,7 @@ export async function validate(
   let dsContext
   if (ddFile) {
     const description = await ddFile.text().then((text) => JSON.parse(text))
+    summary.dataProcessed = description.DatasetType === 'derivative'
     dsContext = new BIDSContextDataset(options, description)
   } else {
     dsContext = new BIDSContextDataset(options)
@@ -88,6 +89,7 @@ export async function validate(
     issues,
     summary: summary.formatOutput(),
   }
+
   if (Object.keys(derivativesSummary).length) {
     output['derivativesSummary'] = derivativesSummary
   }

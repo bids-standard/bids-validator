@@ -8,7 +8,7 @@ import { consoleFormat } from './utils/output.ts'
 function inspect(obj: any) {
   console.log(
     Deno.inspect(obj, {
-      depth: 6,
+      depth: 8,
       colors: true,
     }),
   )

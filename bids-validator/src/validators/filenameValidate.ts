@@ -1,4 +1,5 @@
 import { CheckFunction, RuleCheckFunction } from '../types/check.ts'
+import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { GenericSchema, Schema } from '../types/schema.ts'
 import { SEP } from '../deps/path.ts'
@@ -133,9 +134,42 @@ const ruleChecks: RuleCheckFunction[] = [
 ]
 
 async function checkRules(schema: GenericSchema, context: BIDSContext) {
-  for (const path of context.filenameRules) {
+  if (context.filenameRules.length === 1) {
     for (const check of ruleChecks) {
-      check(path, schema as unknown as GenericSchema, context)
+      check(
+        context.filenameRules[0],
+        schema as unknown as GenericSchema,
+        context,
+      )
+    }
+  } else {
+    const ogIssues = context.issues
+    const noIssues = []
+    const someIssues = []
+    for (const path of context.filenameRules) {
+      const tempIssues = new DatasetIssues()
+      context.issues = tempIssues
+      for (const check of ruleChecks) {
+        check(path, schema as unknown as GenericSchema, context)
+      }
+      tempIssues.size
+        ? someIssues.push([path, tempIssues])
+        : noIssues([path, tempIssues])
+    }
+    if (noIssues.length) {
+      context.issues = ogIssues
+      context.filenameRules = [noIssues[0][0]]
+    } else if (someIssues.length) {
+      // What would we want to do with each rules issues? Add all?
+      context.issues = ogIssues
+      context.issues.addNonSchemaIssue('ALL_FILENAME_RULES_HAVE_ISSUES', [
+        {
+          ...context.file,
+          evidence: `Rules that matched with issues: ${someIssues
+            .map((x) => x[0])
+            .join(', ')}`,
+        },
+      ])
     }
   }
   return Promise.resolve()

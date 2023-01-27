@@ -24,6 +24,11 @@ export const filenameIssues: IssueDefinitionRecord = {
     reason:
       'The datatype directory does not match datatype of found suffix and extension',
   },
+  ALL_FILENAME_RULES_HAVE_ISSUES: {
+    severity: 'error',
+    reason:
+      'Multiple filename rules were found as potential matches. All of them had at least one issue during filename validation.',
+  },
   EXTENSION_MISMATCH: {
     severity: 'error',
     reason:
