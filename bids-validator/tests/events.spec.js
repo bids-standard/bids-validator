@@ -310,7 +310,7 @@ describe('Events', function () {
           },
         },
         '/dataset_description.json': {
-          HEDVersion: ['8.0.0', 'ts:testlib_1.0.2', 'sc:score_0.0.1'],
+          HEDVersion: ['8.0.0', 'ts:testlib_1.0.2', 'sc:score_1.0.0'],
         },
       }
 
