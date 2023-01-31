@@ -18,21 +18,23 @@ import { parseOptions, ValidatorOptions } from '../setup/options.ts'
 
 export class BIDSContextDataset implements ContextDataset {
   dataset_description: Record<string, unknown>
-  options: ValidatorOptions
+  options?: ValidatorOptions
   files: any[]
   tree: object
   ignored: any[]
   modalities: any[]
   subjects: ContextDatasetSubjects[]
 
-  constructor(options: ValidatorOptions, description = {}) {
+  constructor(options?: ValidatorOptions, description = {}) {
     this.dataset_description = description
-    this.options = options
     this.files = []
     this.tree = {}
     this.ignored = []
     this.modalities = []
     this.subjects = [] as ContextDatasetSubjects[]
+    if (options) {
+      this.options = options
+    }
     if (
       !this.dataset_description.DatasetType &&
       this.dataset_description.GeneratedBy
@@ -147,6 +149,7 @@ export class BIDSContext implements Context {
   loadNiftiHeader(): Promise<void> {
     if (
       this.extension.startsWith('.nii') &&
+      this.dataset.options &&
       !this.dataset.options.ignoreNiftiHeaders
     ) {
       this.nifti_header = loadHeader(this.file as BIDSFileDeno)

@@ -1,8 +1,21 @@
 /**
  * Schema structure returned by loadSchema
  */
+
+export interface Format {
+  pattern: string
+}
+
+export interface Entity {
+  name: string
+  type: string
+  format: string
+}
+
 export interface SchemaObjects {
   files: Record<string, unknown>
+  formats: Record<string, Format>
+  entities: Record<string, Entity>
 }
 
 export interface SchemaRules {
@@ -46,6 +59,7 @@ export interface GenericRule {
   name?: string
   format?: string
   required?: string
+  index_columns?: string[]
 }
 
 export interface SchemaFields {

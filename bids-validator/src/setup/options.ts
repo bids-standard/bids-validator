@@ -7,6 +7,8 @@ export interface ValidatorOptions {
   schema: any
   schemaOnly: boolean
   json: boolean
+  verbose: boolean
+  ignoreNiftiHeaders: boolean
 }
 
 /**

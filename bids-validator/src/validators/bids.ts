@@ -52,7 +52,7 @@ export async function validate(
     dsContext = new BIDSContextDataset(options)
   }
 
-  let derivativesSummary: Record<string, unknown> = {}
+  let derivativesSummary: Record<string, ValidationResult> = {}
   fileTree.directories = fileTree.directories.filter((dir) => {
     if (dir.name === 'derivatives') {
       dir.directories.map(async (deriv) => {
@@ -85,7 +85,7 @@ export async function validate(
     await summary.update(context)
   }
 
-  let output = {
+  let output: ValidationResult = {
     issues,
     summary: summary.formatOutput(),
   }

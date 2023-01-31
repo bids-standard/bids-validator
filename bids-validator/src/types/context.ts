@@ -1,3 +1,5 @@
+import { ValidatorOptions } from '../setup/options.ts'
+
 export interface ContextDatasetSubjects {
   sub_dirs: string[]
   participant_id: string[]
@@ -10,6 +12,7 @@ export interface ContextDataset {
   ignored: any[]
   modalities: any[]
   subjects: ContextDatasetSubjects[]
+  options?: ValidatorOptions
 }
 export interface ContextSubjectSessions {
   ses_dirs: string[]

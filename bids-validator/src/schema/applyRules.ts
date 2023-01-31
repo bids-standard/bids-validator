@@ -85,7 +85,7 @@ function evalRule(
   context: BIDSContext,
   schema: GenericSchema,
 ) {
-  if (!mapEvalCheck(rule.selectors, context)) {
+  if (rule.selectors && !mapEvalCheck(rule.selectors, context)) {
     return
   }
   Object.keys(rule)
@@ -115,7 +115,7 @@ function evalRuleChecks(
         key: rule.issue.code,
         reason: rule.issue.message,
         files: [{ ...context.file }],
-        severity: rule.issue.level,
+        severity: rule.issue.level as Severity,
       })
     } else {
       context.issues.addNonSchemaIssue('CHECK_ERROR', [
@@ -139,6 +139,7 @@ function evalColumns(
   if (!rule.columns || context.extension !== '.tsv') return
   const headers = Object.keys(context.columns)
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
+    // @ts-expect-error
     const name = schema.objects.columns[ruleHeader].name
     if (!headers.includes(name) && requirement === 'required') {
       context.issues.addNonSchemaIssue('TSV_ERROR', [
@@ -211,6 +212,7 @@ function evalIndexColumns(
   const headers = Object.keys(context?.columns)
   const uniqueIndexValues = new Set()
   const index_columns = rule.index_columns.map((col: string) => {
+    // @ts-expect-error
     return schema.objects.columns[col].name
   })
   const missing = index_columns.filter((col: string) => !headers.includes(col))

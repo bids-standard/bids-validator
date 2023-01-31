@@ -34,4 +34,5 @@ export interface SummaryOutput {
 export interface ValidationResult {
   issues: DatasetIssues
   summary: SummaryOutput
+  derivativesSummary?: Record<string, ValidationResult>
 }

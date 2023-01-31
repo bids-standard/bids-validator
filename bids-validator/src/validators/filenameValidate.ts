@@ -1,7 +1,7 @@
 import { CheckFunction, RuleCheckFunction } from '../types/check.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { BIDSContext } from '../schema/context.ts'
-import { GenericSchema, Schema } from '../types/schema.ts'
+import { GenericSchema, Schema, Entity, Format } from '../types/schema.ts'
 import { SEP } from '../deps/path.ts'
 import { hasProp } from '../utils/objectPathHandler.ts'
 
@@ -75,17 +75,25 @@ export function lookupEntityLiteral(name: string, schema: GenericSchema) {
   return ''
 }
 
-function getEntityByLiteral(fileEntity: string, schema: GenericSchema) {
+function getEntityByLiteral(
+  fileEntity: string,
+  schema: GenericSchema,
+): null | Entity {
   if (
     'entities' in schema.objects &&
     typeof schema.objects.entities === 'object'
   ) {
     const entities = schema.objects.entities
     const key = Object.keys(entities).find((key) => {
-      return hasProp(entities, key) && entities[key].name === fileEntity
+      // @ts-expect-error
+      return (
+        hasProp(entities, key) &&
+        hasProp(entities[key], 'name') &&
+        entities[key].name === fileEntity
+      )
     })
     if (key && hasProp(entities, key)) {
-      return entities[key]
+      return entities[key] as Entity
     }
   }
   return null
@@ -98,8 +106,8 @@ export async function entityLabelCheck(
   if (!('formats' in schema.objects) || !('entities' in schema.objects)) {
     throw new Error('schema missing keys')
   }
-  const formats = schema.objects.formats
-  const entities = schema.objects.entities
+  const formats = schema.objects.formats as unknown as Record<string, Format>
+  const entities = schema.objects.entities as unknown as Record<string, Entity>
   Object.keys(context.entities).map((fileEntity) => {
     const entity = getEntityByLiteral(fileEntity, schema)
     if (
@@ -144,8 +152,8 @@ async function checkRules(schema: GenericSchema, context: BIDSContext) {
     }
   } else {
     const ogIssues = context.issues
-    const noIssues = []
-    const someIssues = []
+    const noIssues: [string, DatasetIssues][] = []
+    const someIssues: [string, DatasetIssues][] = []
     for (const path of context.filenameRules) {
       const tempIssues = new DatasetIssues()
       context.issues = tempIssues
@@ -154,7 +162,7 @@ async function checkRules(schema: GenericSchema, context: BIDSContext) {
       }
       tempIssues.size
         ? someIssues.push([path, tempIssues])
-        : noIssues([path, tempIssues])
+        : noIssues.push([path, tempIssues])
     }
     if (noIssues.length) {
       context.issues = ogIssues
