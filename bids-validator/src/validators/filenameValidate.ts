@@ -85,10 +85,10 @@ function getEntityByLiteral(
   ) {
     const entities = schema.objects.entities
     const key = Object.keys(entities).find((key) => {
-      // @ts-expect-error
       return (
         hasProp(entities, key) &&
         hasProp(entities[key], 'name') &&
+        // @ts-expect-error
         entities[key].name === fileEntity
       )
     })

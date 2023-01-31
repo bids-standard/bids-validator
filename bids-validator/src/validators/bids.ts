@@ -52,7 +52,7 @@ export async function validate(
     dsContext = new BIDSContextDataset(options)
   }
 
-  let derivatives = []
+  let derivatives: FileTree[] = []
   fileTree.directories = fileTree.directories.filter((dir) => {
     if (dir.name === 'derivatives') {
       dir.directories.map((deriv) => {
