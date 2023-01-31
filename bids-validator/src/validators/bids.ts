@@ -52,17 +52,16 @@ export async function validate(
     dsContext = new BIDSContextDataset(options)
   }
 
-  let derivativesSummary: Record<string, ValidationResult> = {}
+  let derivatives = []
   fileTree.directories = fileTree.directories.filter((dir) => {
     if (dir.name === 'derivatives') {
-      dir.directories.map(async (deriv) => {
+      dir.directories.map((deriv) => {
         if (
           deriv.files.some(
             (file: BIDSFile) => file.name === 'dataset_description.json',
           )
         ) {
-          const tempSummary = validate(deriv)
-          derivativesSummary[deriv.name] = await tempSummary
+          derivatives.push(deriv)
         }
       })
       return false
@@ -75,7 +74,6 @@ export async function validate(
     if (context.file.ignored) {
       continue
     }
-
     await context.asyncLoads()
     // Run majority of checks
     for (const check of CHECKS) {
@@ -84,6 +82,14 @@ export async function validate(
     }
     await summary.update(context)
   }
+
+  let derivativesSummary: Record<string, ValidationResult> = {}
+  await Promise.allSettled(
+    derivatives.map(async (deriv) => {
+      derivativesSummary[deriv.name] = await validate(deriv, options)
+      return derivativesSummary[deriv.name]
+    }),
+  )
 
   let output: ValidationResult = {
     issues,
