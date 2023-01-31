@@ -1,3 +1,4 @@
+#!/bin/env -S deno run --allow-read --allow-write --allow-env --allow-net --allow-run
 import { parseOptions } from './setup/options.ts'
 import { readFileTree } from './files/deno.ts'
 import { resolve } from './deps/path.ts'
