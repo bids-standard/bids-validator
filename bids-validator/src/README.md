@@ -47,3 +47,9 @@ deno run --allow-env --allow-read src/main.ts --schemaOnly path/to/dataset
 # Run tests:
 deno test --allow-env --allow-read src/
 ```
+
+# Refreshing latest specification
+
+If you are validating with the latest specification instead of a specific version, the validator will hold onto a cached version for up to one year. You can request the newest version by adding the `--reload` argument to obtain the newest specification definition.
+
+`deno run --reload=https://bids-specification.readthedocs.io/en/latest/schema.json src/main.ts`
