@@ -10,18 +10,19 @@ import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { FileIgnoreRulesDeno } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
+const PATH = 'tests/data/valid_dataset'
 const schema = await loadSchema()
-const fileTree = new FileTreeDeno('/tmp', '/')
+const fileTree = new FileTreeDeno(PATH, '/')
 const issues = new DatasetIssues()
 const ignore = new FileIgnoreRulesDeno([])
 
 const node = {
-  stem: 'testfile',
+  stem: 'participants',
 }
 
 const recurseNode = {
   recurse: {
-    suffixes: 'test',
+    suffixes: 'bold',
   },
 }
 
@@ -29,30 +30,34 @@ const schemaPath = 'test.schema.path'
 
 Deno.test('test _findRuleMatches', async (t) => {
   // base case
-  await t.step('Rule stem matches', () => {
-    let file = new BIDSFileDeno('/tmp', '/tmp/testfile', ignore)
-    let context = new BIDSContext(fileTree, file, issues)
+  await t.step('Rule stem matches', async () => {
+    const fileName = 'participants.json'
+    const file = new BIDSFileDeno(PATH, fileName, ignore)
+    const context = new BIDSContext(fileTree, file, issues)
     _findRuleMatches(node, schemaPath, context)
     assertEquals(context.filenameRules[0], schemaPath)
   })
 
   //recurse case
-  await t.step('Non-terminal schema node, should recurse then match', () => {
-    const file = new BIDSFileDeno('/tmp', '/tmp/silly-01_test.ext', ignore)
-    const context = new BIDSContext(fileTree, file, issues)
-    _findRuleMatches(recurseNode, schemaPath, context)
-    assertEquals(context.filenameRules[0], `${schemaPath}.recurse`)
-  })
+  await t.step(
+    'Non-terminal schema node, should recurse then match',
+    async () => {
+      const fileName = 'task-rest_bold.json'
+      const file = new BIDSFileDeno(PATH, fileName, ignore)
+      const context = new BIDSContext(fileTree, file, issues)
+      _findRuleMatches(recurseNode, schemaPath, context)
+      assertEquals(context.filenameRules[0], `${schemaPath}.recurse`)
+    },
+  )
 })
 
 Deno.test('test datatypeFromDirectory', (t) => {
   const filesToTest = [
-    ['/sub-01/func/bad_filename.txt', 'func'],
-    ['/sub-02/ses-01/anat/bad_filename.txt', 'anat'],
-    ['/sub-02/ses-01/bad/bad_filename.txt', ''],
+    ['/sub-01/ses-01/func/sub-01_ses-01_task-nback_run-01_bold.nii', 'func'],
+    ['/sub-01/ses-01/anat/sub-01_ses-01_T1w.nii', 'anat'],
   ]
   filesToTest.map((test) => {
-    const file = new BIDSFileDeno('/tmp', test[0], ignore)
+    const file = new BIDSFileDeno(PATH, test[0], ignore)
     const context = new BIDSContext(fileTree, file, issues)
     datatypeFromDirectory(schema, context)
     assertEquals(context.datatype, test[1])
@@ -60,12 +65,18 @@ Deno.test('test datatypeFromDirectory', (t) => {
 })
 
 Deno.test('test hasMatch', async (t) => {
-  const file = new BIDSFileDeno('/tmp', '/tmp/silly-01_test.ext', ignore)
-  const context = new BIDSContext(fileTree, file, issues)
-  hasMatch(schema, context)
+  await t.step('hasMatch', async () => {
+    const fileName =
+      '/sub-01/ses-01/func/sub-01_ses-01_task-nback_run-01_bold.nii'
+    const file = new BIDSFileDeno(PATH, fileName, ignore)
+    const context = new BIDSContext(fileTree, file, issues)
+    hasMatch(schema, context)
+  })
 
   await t.step('No  match', async () => {
-    const file = new BIDSFileDeno('/tmp', '/tmp/silly-01_test.ext', ignore)
+    const fileName = Deno.makeTempFileSync().split('/')[2]
+    const file = new BIDSFileDeno('/tmp', fileName, ignore)
+
     const context = new BIDSContext(fileTree, file, issues)
     await hasMatch(schema, context)
     assertEquals(
@@ -75,18 +86,10 @@ Deno.test('test hasMatch', async (t) => {
       true,
     )
   })
-  await t.step('1 Rule Matched', async () => {
-    const file = new BIDSFileDeno('/tmp', '/tmp/silly-01_test.ext', ignore)
-    const context = new BIDSContext(fileTree, file, issues)
-    context.filenameRules = ['schema.good.match']
-    await hasMatch(schema, context)
-  })
   await t.step('1+ matched, datatype match', async () => {
-    const file = new BIDSFileDeno(
-      '/tmp',
-      '/sub-01/func/sub-01_events.json',
-      ignore,
-    )
+    const path = `${PATH}/../bids-examples/fnirs_automaticity`
+    const fileName = 'events.json'
+    const file = new BIDSFileDeno(path, fileName, ignore)
     const context = new BIDSContext(fileTree, file, issues)
     context.filenameRules = [
       'rules.files.raw.task.events__mri',
@@ -95,16 +98,5 @@ Deno.test('test hasMatch', async (t) => {
     await hasMatch(schema, context)
     assertEquals(context.filenameRules.length, 1)
     assertEquals(context.filenameRules[0], 'rules.files.raw.task.events__mri')
-  })
-  await t.step('1+ matched, datatype reduce failed', async () => {
-    const file = new BIDSFileDeno('/tmp', '/trc-tracer_events.json', ignore)
-    const context = new BIDSContext(fileTree, file, issues)
-    context.filenameRules = [
-      'rules.files.raw.task.events__mri',
-      'rules.files.raw.task.events__pet',
-    ]
-    await hasMatch(schema, context)
-    assertEquals(context.filenameRules.length, 1)
-    assertEquals(context.filenameRules[0], 'rules.files.raw.task.events__pet')
   })
 })

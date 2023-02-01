@@ -5,6 +5,7 @@ import { ValidationResult } from '../../types/validation-result.ts'
 import { Issue } from '../../types/issues.ts'
 import { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { Summary } from '../../summary/summary.ts'
+import { parseOptions } from '../../setup/options.ts'
 
 export async function validatePath(
   t: Deno.TestContext,
@@ -22,7 +23,7 @@ export async function validatePath(
   })
 
   await t.step('completes validation', async () => {
-    result = await validate(tree)
+    result = await validate(tree, parseOptions([path]))
   })
 
   return { tree, result }

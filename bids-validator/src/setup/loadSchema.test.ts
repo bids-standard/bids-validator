@@ -15,7 +15,7 @@ Deno.test('schema yaml loader', async (t) => {
       >
       if (top_level.hasOwnProperty('README')) {
         assertObjectMatch(top_level.README, {
-          required: true,
+          level: 'recommended',
           stem: 'README',
           extensions: ['', '.md', '.rst', '.txt'],
         })
