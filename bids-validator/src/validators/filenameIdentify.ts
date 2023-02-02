@@ -99,7 +99,7 @@ export async function datatypeFromDirectory(schema, context) {
   }
 }
 
-export async function hasMatch(schema, context) {
+export function hasMatch(schema, context) {
   if (
     context.filenameRules.length === 0 &&
     context.file.path !== '/.bidsignore'
