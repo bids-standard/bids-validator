@@ -103,7 +103,7 @@ export class Summary {
     return computeSecondaryModalities(this.secondaryModalitiesCount)
   }
   async update(context: BIDSContext): Promise<void> {
-    if (context.file.path.startsWith('/derivatives')) {
+    if (context.file.path.startsWith('/derivatives') && !this.dataProcessed) {
       return
     }
 

@@ -12,7 +12,15 @@ export async function readBidsIgnore(file: BIDSFile) {
   }
 }
 
-const defaultIgnores = ['.git**', '.datalad']
+const defaultIgnores = [
+  '.git**',
+  '.datalad/',
+  '.reproman/',
+  'sourcedata/',
+  'code/',
+  'stimuli/',
+  'log/'
+]
 
 /**
  * Deno implementation of .bidsignore style rules

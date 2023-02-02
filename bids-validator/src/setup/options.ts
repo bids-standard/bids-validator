@@ -7,6 +7,8 @@ export interface ValidatorOptions {
   schema: any
   schemaOnly: boolean
   json: boolean
+  verbose: boolean
+  ignoreNiftiHeaders: boolean
 }
 
 /**
@@ -15,7 +17,7 @@ export interface ValidatorOptions {
  * @returns {void}
  */
 export function parseOptions(
-  argumentOverride: any[] | undefined,
+  argumentOverride: any[] | undefined = undefined,
 ): ValidatorOptions {
   return yargs(argumentOverride)
     .usage('Usage: $0 <dataset_directory> [options]')
