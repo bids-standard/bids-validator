@@ -7,14 +7,14 @@ import {
 } from './filenameIdentify.ts'
 import { BIDSFileDeno, FileTreeDeno } from '../files/deno.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
-import { FileIgnoreRulesDeno } from '../files/ignore.ts'
+import { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
 const PATH = 'tests/data/valid_dataset'
 const schema = await loadSchema()
 const fileTree = new FileTreeDeno(PATH, '/')
 const issues = new DatasetIssues()
-const ignore = new FileIgnoreRulesDeno([])
+const ignore = new FileIgnoreRules([])
 
 const node = {
   stem: 'participants',
