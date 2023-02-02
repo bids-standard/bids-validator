@@ -89,7 +89,7 @@ export async function datatypeFromDirectory(schema, context) {
   if (sesParts.length === 2 && sesParts[0] === sesEntity) {
     datatypeIndex = 3
   }
-  let dirDatatype = parts[datatypeIndex]
+  const dirDatatype = parts[datatypeIndex]
   for (let key in schema.rules.modalities) {
     if (schema.rules.modalities[key].datatypes.includes(dirDatatype)) {
       context.modality = key
