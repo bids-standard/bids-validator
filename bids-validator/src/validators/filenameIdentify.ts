@@ -34,7 +34,7 @@ export async function filenameIdentify(schema, context) {
 }
 
 async function findRuleMatches(schema, context) {
-  let schemaPath = 'rules.files'
+  const schemaPath = 'rules.files'
   Object.keys(schema[schemaPath]).map((key) => {
     const path = `${schemaPath}.${key}`
     _findRuleMatches(schema[path], path, context)
