@@ -30,7 +30,6 @@ export async function filenameIdentify(schema, context) {
   for (const check of CHECKS) {
     await check(schema as unknown as GenericSchema, context)
   }
-  return Promise.resolve()
 }
 
 function findRuleMatches(schema, context) {
