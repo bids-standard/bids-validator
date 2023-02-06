@@ -1,5 +1,6 @@
 import { parseOptions } from './setup/options.ts'
 import { readFileTree } from './files/deno.ts'
+import { fileListToTree } from './files/browser.ts'
 import { resolve } from './deps/path.ts'
 import { fullTestAdapter } from './compat/fulltest.ts'
 import { validate } from './validators/bids.ts'
@@ -38,4 +39,4 @@ export async function main() {
   }
 }
 
-export { validate }
+export { validate, fileListToTree }
