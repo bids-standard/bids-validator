@@ -32,6 +32,7 @@ export interface SchemaFiles {
 export interface Schema {
   objects: SchemaObjects
   rules: SchemaRules
+  schema_version: string
 }
 
 export interface SchemaIssue {
