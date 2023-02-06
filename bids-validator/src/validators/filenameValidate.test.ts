@@ -4,13 +4,13 @@ import { BIDSContext } from '../schema/context.ts'
 import { missingLabel, atRoot, entityLabelCheck } from './filenameValidate.ts'
 import { BIDSFileDeno, FileTreeDeno } from '../files/deno.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
-import { FileIgnoreRulesDeno } from '../files/ignore.ts'
+import { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
 const schema = (await loadSchema()) as unknown as GenericSchema
 const fileTree = new FileTreeDeno('/tmp', '/')
 const issues = new DatasetIssues()
-const ignore = new FileIgnoreRulesDeno([])
+const ignore = new FileIgnoreRules([])
 
 Deno.test('test missingLabel', async (t) => {
   await t.step('File with underscore and no hyphens errors out.', async () => {

@@ -152,7 +152,7 @@ export class BIDSContext implements Context {
       this.dataset.options &&
       !this.dataset.options.ignoreNiftiHeaders
     ) {
-      this.nifti_header = loadHeader(this.file as BIDSFileDeno)
+      this.nifti_header = loadHeader(this.file)
     }
     return Promise.resolve()
   }

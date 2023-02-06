@@ -5,7 +5,7 @@ import { join, basename } from '../deps/path.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
-import { readBidsIgnore, FileIgnoreRulesDeno } from './ignore.ts'
+import { readBidsIgnore, FileIgnoreRules } from './ignore.ts'
 import { assert } from 'https://deno.land/std@0.130.0/_util/assert.ts'
 
 /**
@@ -22,13 +22,13 @@ export class UnicodeDecodeError extends Error {
  * Deno implementation of BIDSFile
  */
 export class BIDSFileDeno implements BIDSFile {
-  #ignore: FileIgnoreRulesDeno
+  #ignore: FileIgnoreRules
   name: string
   path: string
   #fileInfo?: Deno.FileInfo
   private _datasetAbsPath: string
 
-  constructor(datasetPath: string, path: string, ignore: FileIgnoreRulesDeno) {
+  constructor(datasetPath: string, path: string, ignore: FileIgnoreRules) {
     this._datasetAbsPath = datasetPath
     this.path = path
     this.name = basename(path)
@@ -126,7 +126,7 @@ export class FileTreeDeno extends FileTree {
 export async function _readFileTree(
   rootPath: string,
   relativePath: string,
-  ignore: FileIgnoreRulesDeno,
+  ignore: FileIgnoreRules,
   parent?: FileTreeDeno,
 ): Promise<FileTree> {
   await requestReadPermission()
@@ -163,6 +163,6 @@ export async function _readFileTree(
  * Read in the target directory structure and return a FileTree
  */
 export function readFileTree(rootPath: string): Promise<FileTree> {
-  const ignore = new FileIgnoreRulesDeno([])
+  const ignore = new FileIgnoreRules([])
   return _readFileTree(rootPath, '/', ignore)
 }

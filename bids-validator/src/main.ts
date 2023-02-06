@@ -14,7 +14,7 @@ function inspect(obj: any) {
   )
 }
 
-async function main() {
+export async function main() {
   const options = parseOptions(Deno.args)
   const absolutePath = resolve(options._[0])
   const tree = await readFileTree(absolutePath)
@@ -38,4 +38,4 @@ async function main() {
   }
 }
 
-await main()
+export { validate }

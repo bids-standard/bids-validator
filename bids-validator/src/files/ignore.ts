@@ -1,6 +1,5 @@
 import { BIDSFile } from '../types/file.ts'
 import { ignore, Ignore } from '../deps/ignore.ts'
-import { FileIgnoreRules } from '../types/ignore.ts'
 
 export async function readBidsIgnore(file: BIDSFile) {
   const value = await file.text()
@@ -19,13 +18,13 @@ const defaultIgnores = [
   'sourcedata/',
   'code/',
   'stimuli/',
-  'log/'
+  'log/',
 ]
 
 /**
  * Deno implementation of .bidsignore style rules
  */
-export class FileIgnoreRulesDeno implements FileIgnoreRules {
+export class FileIgnoreRules {
   #ignore: Ignore
 
   constructor(config: string[]) {
