@@ -32,13 +32,13 @@ Deno by default sandboxes applications like a web browser. To validate datasets 
 # Run from within the /bids-validator directory
 cd bids-validator
 # Run validator:
-./bids-validator path/to/dataset
+./bids-validator-deno path/to/dataset
 ```
 
 By default both the new schema derived validation rules and the legacy JavaScript rules are run to ensure full coverage. The validator can be limited to run only the schema derived rules with the flag `--schemaOnly`.
 
 ```shell
-./bids-validator --schemaOnly path/to/dataset
+./bids-validator-deno --schemaOnly path/to/dataset
 ```
 
 # Schema validator test suite
