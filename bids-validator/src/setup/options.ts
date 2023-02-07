@@ -77,6 +77,10 @@ export function parseOptions(
       'A less accurate check that reads filenames one per line from stdin.',
     )
     .hide('filenames')
+    .option('schema', {
+      alias: 's',
+      describe: 'Schema Version or Path or URL to schema json file.',
+    })
     .boolean('schemaOnly')
     .default('schemaOnly', false)
     .describe('schemaOnly', 'Run only schema based validation.')

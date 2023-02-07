@@ -25,6 +25,7 @@ export interface SummaryOutput {
   dataProcessed: boolean
   pet: Record<string, any>
   datatypes: string[]
+  schemaVersion: string
 }
 
 /**
