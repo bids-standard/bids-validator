@@ -6,7 +6,6 @@ import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { readBidsIgnore, FileIgnoreRules } from './ignore.ts'
-import { assert } from 'https://deno.land/std@0.130.0/_util/assert.ts'
 
 /**
  * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters
@@ -90,11 +89,11 @@ export class BIDSFileDeno implements BIDSFile {
   /**
    * Read bytes in a range efficiently from a given file
    */
-  readBytes(size: number, offset = 0): Uint8Array {
+  async readBytes(size: number, offset = 0): Promise<Uint8Array> {
     const handle = this.#openHandle()
     const buf = new Uint8Array(size)
-    handle.seekSync(offset, Deno.SeekMode.Start)
-    handle.readSync(buf)
+    await handle.seek(offset, Deno.SeekMode.Start)
+    await handle.read(buf)
     Deno.close(handle.rid)
     return buf
   }
@@ -109,29 +108,15 @@ export class BIDSFileDeno implements BIDSFile {
   }
 }
 
-export class FileTreeDeno extends FileTree {
-  // System specific dataset path
-  private _datasetRootPath?: string
-  constructor(
-    path: string,
-    name: string,
-    parent?: FileTree,
-    rootPath?: string,
-  ) {
-    super(path, name, parent)
-    this._datasetRootPath = rootPath
-  }
-}
-
 export async function _readFileTree(
   rootPath: string,
   relativePath: string,
   ignore: FileIgnoreRules,
-  parent?: FileTreeDeno,
+  parent?: FileTree,
 ): Promise<FileTree> {
   await requestReadPermission()
   const name = basename(relativePath)
-  const tree = new FileTreeDeno(relativePath, name, parent, rootPath)
+  const tree = new FileTree(relativePath, name, parent)
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     if (dirEntry.isFile || dirEntry.isSymlink) {
