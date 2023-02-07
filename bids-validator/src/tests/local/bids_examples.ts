@@ -22,7 +22,7 @@ function formatBEIssue(issue: IssueOutput, dsPath: string) {
 Deno.test('validate bids-examples', async (t) => {
   const prefix = 'tests/data/bids-examples'
   for (const dirEntry of Deno.readDirSync(prefix)) {
-    if (!dirEntry.isDirectory) {
+    if (!dirEntry.isDirectory || dirEntry.name.startsWith('.')) {
       continue
     }
     const path = `${prefix}/${dirEntry.name}`
