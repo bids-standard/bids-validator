@@ -62,7 +62,6 @@ Deno.test('Browser implementation of FileTree', async (t) => {
     expectedTree.directories.push(sub01Tree)
     anatTree.files = [new BIDSFileBrowser(files[3], ignore)]
     sub01Tree.directories.push(anatTree)
-    // TODO - Stack size exceeded
     assertEquals(tree, expectedTree)
   })
 })
