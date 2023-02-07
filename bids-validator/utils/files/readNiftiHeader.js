@@ -65,9 +65,16 @@ function extractNiftiFile(file, callback) {
   })
 }
 
-function browserNiftiTest(file, callback) {
+async function browserNiftiTest(file, callback) {
   const bytesRead = 1024
-  const blob = file.slice(0, bytesRead)
+  let blob
+  if ('slice' in file) {
+    // This is a real browser
+    blob = file.slice(0, bytesRead)
+  } else {
+    // Slice is undefined by the Deno adapter, this is likely Deno or a very confused browser
+    blob = await file.readBytes(0, bytesRead)
+  }
   if (file.size == 0) {
     callback({ error: new Issue({ code: 44, file: file }) })
     return
