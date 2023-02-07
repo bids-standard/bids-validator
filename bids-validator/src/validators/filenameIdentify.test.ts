@@ -5,14 +5,15 @@ import {
   datatypeFromDirectory,
   hasMatch,
 } from './filenameIdentify.ts'
-import { BIDSFileDeno, FileTreeDeno } from '../files/deno.ts'
+import { BIDSFileDeno } from '../files/deno.ts'
+import { FileTree } from '../types/filetree.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
 const PATH = 'tests/data/valid_dataset'
 const schema = await loadSchema()
-const fileTree = new FileTreeDeno(PATH, '/')
+const fileTree = new FileTree(PATH, '/')
 const issues = new DatasetIssues()
 const ignore = new FileIgnoreRules([])
 
