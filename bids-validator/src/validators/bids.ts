@@ -34,7 +34,8 @@ export async function validate(
 ): Promise<ValidationResult> {
   const issues = new DatasetIssues()
   const summary = new Summary()
-  const schema = await loadSchema()
+  const schema = await loadSchema(options.schema)
+  summary.schemaVersion = schema.schema_version
 
   /* There should be a dataset_description in root, this will tell us if we
    * are dealing with a derivative dataset

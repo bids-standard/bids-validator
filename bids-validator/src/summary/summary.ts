@@ -67,6 +67,7 @@ export class Summary {
   modalitiesCount: Record<string, number>
   secondaryModalitiesCount: Record<string, number>
   datatypes: Set<string>
+  schemaVersion: string
   constructor() {
     this.dataProcessed = false
     this.totalFiles = -1
@@ -95,6 +96,7 @@ export class Summary {
       iEEG_ECoG: 0,
       iEEG_SEEG: 0,
     }
+    this.schemaVersion = ''
   }
   get modalities() {
     return computeModalities(this.modalitiesCount)
@@ -161,6 +163,7 @@ export class Summary {
       dataProcessed: this.dataProcessed,
       pet: this.pet,
       datatypes: Array.from(this.datatypes),
+      schemaVersion: this.schemaVersion,
     }
   }
 }

@@ -1,14 +1,15 @@
+import { FileTree } from '../types/filetree.ts'
 import { GenericSchema } from '../types/schema.ts'
 import { assertEquals } from '../deps/asserts.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { missingLabel, atRoot, entityLabelCheck } from './filenameValidate.ts'
-import { BIDSFileDeno, FileTreeDeno } from '../files/deno.ts'
+import { BIDSFileDeno } from '../files/deno.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
 const schema = (await loadSchema()) as unknown as GenericSchema
-const fileTree = new FileTreeDeno('/tmp', '/')
+const fileTree = new FileTree('/tmp', '/')
 const issues = new DatasetIssues()
 const ignore = new FileIgnoreRules([])
 

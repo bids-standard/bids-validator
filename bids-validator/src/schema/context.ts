@@ -146,15 +146,14 @@ export class BIDSContext implements Context {
     }
   }
 
-  loadNiftiHeader(): Promise<void> {
+  async loadNiftiHeader(): Promise<void> {
     if (
       this.extension.startsWith('.nii') &&
       this.dataset.options &&
       !this.dataset.options.ignoreNiftiHeaders
     ) {
-      this.nifti_header = loadHeader(this.file)
+      this.nifti_header = await loadHeader(this.file)
     }
-    return Promise.resolve()
   }
 
   async loadColumns(): Promise<void> {

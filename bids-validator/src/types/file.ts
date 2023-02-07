@@ -17,5 +17,5 @@ export interface BIDSFile {
   // Resolve stream to decoded utf-8 text
   text: () => Promise<string>
   // Synchronously read a range of bytes
-  readBytes: (size: number, offset?: number) => Uint8Array
+  readBytes: (size: number, offset?: number) => Promise<Uint8Array>
 }

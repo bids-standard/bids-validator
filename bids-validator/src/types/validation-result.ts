@@ -1,10 +1,9 @@
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 export interface SubjectMetadata {
-  PARTICIPANT_ID: string
+  participantId: string
   age: number
   sex: string
-  group: string
 }
 /*
     BodyPart: {},
@@ -26,6 +25,7 @@ export interface SummaryOutput {
   dataProcessed: boolean
   pet: Record<string, any>
   datatypes: string[]
+  schemaVersion: string
 }
 
 /**
