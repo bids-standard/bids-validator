@@ -183,12 +183,12 @@ function evalInitialColumns(
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     const contextIndex = headers.findIndex((x) => x === ruleHeader)
     if (contextIndex === -1) {
-      const evidence = `Column with header ${ruleHeader} not found, indexed from 0 it should appear in column ${contextIndex}`
+      const evidence = `Column with header ${ruleHeader} not found, indexed from 0 it should appear in column ${ruleIndex}`
       context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
         { ...context.file, evidence: evidence },
       ])
     } else if (ruleIndex !== contextIndex) {
-      const evidence = `Column with header ${ruleHeader} found at index ${ruleIndex} while rule specifies, indexed form 0 it should be in column ${contextIndex}`
+      const evidence = `Column with header ${ruleHeader} found at index ${contextIndex} while rule specifies, indexed form 0 it should be in column ${ruleIndex}`
       context.issues.addNonSchemaIssue('TSV_COLUMN_ORDER_INCORRECT', [
         { ...context.file, evidence: evidence },
       ])
