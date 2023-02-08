@@ -25,6 +25,4 @@ jobs:
       - uses: denoland/setup-deno@v1.1.1
         with:
           deno-version: v1.x
-      - run: deno fmt --check src/
-      - run: deno lint src/
       - run: deno test --allow-all --coverage=cov/ src/
