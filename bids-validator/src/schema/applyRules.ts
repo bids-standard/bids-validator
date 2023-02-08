@@ -18,9 +18,13 @@ export function applyRules(
   schema: GenericSchema,
   context: BIDSContext,
   rootSchema?: GenericSchema,
+  schemaPath?: string,
 ) {
   if (!rootSchema) {
     rootSchema = schema
+  }
+  if (!schemaPath) {
+    schemaPath = 'schema'
   }
   Object.assign(context, expressionFunctions)
   for (const key in schema) {
@@ -28,9 +32,19 @@ export function applyRules(
       continue
     }
     if ('selectors' in schema[key]) {
-      evalRule(schema[key] as GenericRule, context, rootSchema)
+      evalRule(
+        schema[key] as GenericRule,
+        context,
+        rootSchema,
+        `${schemaPath}.${key}`,
+      )
     } else if (schema[key].constructor === Object) {
-      applyRules(schema[key] as GenericSchema, context, rootSchema)
+      applyRules(
+        schema[key] as GenericSchema,
+        context,
+        rootSchema,
+        `${schemaPath}.${key}`,
+      )
     }
   }
   return Promise.resolve()
@@ -64,6 +78,7 @@ const evalMap: Record<
     rule: GenericRule,
     context: BIDSContext,
     schema: GenericSchema,
+    schemaPath: string,
   ) => boolean | void
 > = {
   checks: evalRuleChecks,
@@ -84,6 +99,7 @@ function evalRule(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
+  schemaPath: string,
 ) {
   if (rule.selectors && !mapEvalCheck(rule.selectors, context)) {
     return
@@ -92,7 +108,7 @@ function evalRule(
     .filter((key) => key in evalMap)
     .map((key) => {
       // @ts-expect-error
-      evalMap[key](rule, context, schema)
+      evalMap[key](rule, context, schema, schemaPath)
     })
 }
 
@@ -108,18 +124,19 @@ function evalRuleChecks(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
+  schemaPath: string,
 ): boolean {
   if (rule.checks && !mapEvalCheck(rule.checks, context)) {
     if (rule.issue?.code && rule.issue?.message) {
       context.issues.add({
         key: rule.issue.code,
         reason: rule.issue.message,
-        files: [{ ...context.file }],
+        files: [{ ...context.file, evidence: schemaPath }],
         severity: rule.issue.level as Severity,
       })
     } else {
       context.issues.addNonSchemaIssue('CHECK_ERROR', [
-        { ...context.file, evidence: JSON.stringify(rule) },
+        { ...context.file, evidence: schemaPath },
       ])
     }
   }
@@ -135,6 +152,7 @@ function evalColumns(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
+  schemaPath: string,
 ): void {
   if (!rule.columns || context.extension !== '.tsv') return
   const headers = Object.keys(context.columns)
@@ -157,6 +175,7 @@ function evalInitialColumns(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
+  schemaPath: string,
 ): void {
   if (!rule?.columns || !rule?.initial_columns || context.extension !== '.tsv')
     return
@@ -164,12 +183,12 @@ function evalInitialColumns(
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     const contextIndex = headers.findIndex((x) => x === ruleHeader)
     if (contextIndex === -1) {
-      const evidence = `Column with header ${ruleHeader} not found, indexed from 0 it should appear in column ${contextIndex}`
+      const evidence = `Column with header ${ruleHeader} not found, indexed from 0 it should appear in column ${ruleIndex}`
       context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
         { ...context.file, evidence: evidence },
       ])
     } else if (ruleIndex !== contextIndex) {
-      const evidence = `Column with header ${ruleHeader} found at index ${ruleIndex} while rule specifies, indexed form 0 it should be in column ${contextIndex}`
+      const evidence = `Column with header ${ruleHeader} found at index ${contextIndex} while rule specifies, indexed form 0 it should be in column ${ruleIndex}`
       context.issues.addNonSchemaIssue('TSV_COLUMN_ORDER_INCORRECT', [
         { ...context.file, evidence: evidence },
       ])
@@ -181,6 +200,7 @@ function evalAdditionalColumns(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
+  schemaPath: string,
 ): void {
   if (context.extension !== '.tsv') return
   const headers = Object.keys(context?.columns)
@@ -201,6 +221,7 @@ function evalIndexColumns(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
+  schemaPath: string,
 ): void {
   if (
     !rule?.columns ||
@@ -252,6 +273,7 @@ function evalJsonCheck(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
+  schemaPath: string,
 ): void {
   for (const [key, requirement] of Object.entries(rule.fields)) {
     const severity = getFieldSeverity(requirement, context)
@@ -265,7 +287,7 @@ function evalJsonCheck(
         })
       } else {
         context.issues.addNonSchemaIssue('JSON_KEY_REQUIRED', [
-          { ...context.file, evidence: `missing ${key}` },
+          { ...context.file, evidence: `missing ${key} as per ${schemaPath}` },
         ])
       }
     }

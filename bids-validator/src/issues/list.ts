@@ -54,7 +54,7 @@ export const filenameIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'Some TSV columns are in the incorrect order',
   },
-  TSV_ADDITONAL_COLUMNS_NOT_ALLOWED: {
+  TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED: {
     severity: 'error',
     reason:
       'A TSV file has extra columns which are not allowed for its file type',
