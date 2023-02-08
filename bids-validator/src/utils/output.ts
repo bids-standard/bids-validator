@@ -2,7 +2,7 @@
  * Utilities for formatting human readable output (CLI or other UIs)
  */
 import { prettyBytes } from '../deps/prettyBytes.ts'
-import { cliffy } from '../deps/cliffy.ts'
+import { Table } from '../deps/cliffy.ts'
 import { colors } from '../deps/fmt.ts'
 import { ValidationResult, SummaryOutput } from '../types/validation-result.ts'
 import { Issue } from '../types/issues.ts'
@@ -122,7 +122,7 @@ function formatSummary(summary: SummaryOutput): string {
     const val3 = column3[i] ? column3[i] : ''
     rows.push([pad, val1, val2, val3])
   }
-  const table = new cliffy.Table()
+  const table = new Table()
     .header(headers)
     .body(rows)
     .border(false)
