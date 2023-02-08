@@ -28,6 +28,7 @@ export async function loadSchema(version = 'latest'): Promise<Schema> {
       `Warning, could not load schema from ${schemaUrl}, falling back to internal version`,
     )
     return new Proxy(
+      // @ts-expect-error
       schemaDefault.default as object,
       objectPathHandler,
     ) as Schema
