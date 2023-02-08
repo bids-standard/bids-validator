@@ -30,7 +30,7 @@ const CHECKS: CheckFunction[] = [
  */
 export async function validate(
   fileTree: FileTree,
-  options: ValidatorOptions = parseOptions(undefined),
+  options: ValidatorOptions,
 ): Promise<ValidationResult> {
   const issues = new DatasetIssues()
   const summary = new Summary()

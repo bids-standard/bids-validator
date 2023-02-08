@@ -23,7 +23,7 @@ export async function validatePath(
   })
 
   await t.step('completes validation', async () => {
-    result = await validate(tree, parseOptions([path]))
+    result = await validate(tree, await parseOptions([path]))
   })
 
   return { tree, result }
