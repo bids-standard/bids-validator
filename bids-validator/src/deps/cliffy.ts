@@ -1,1 +1,1 @@
-export * as cliffy from 'https://deno.land/x/cliffy@v0.16.0/table/mod.ts'
+export { Table } from 'https://deno.land/x/cliffy@v0.25.7/table/mod.ts'
