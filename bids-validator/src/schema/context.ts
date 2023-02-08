@@ -10,11 +10,10 @@ import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
-import { BIDSFileDeno } from '../files/deno.ts'
 import { parseTSV } from '../files/tsv.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
-import { parseOptions, ValidatorOptions } from '../setup/options.ts'
+import { ValidatorOptions } from '../setup/options.ts'
 
 export class BIDSContextDataset implements ContextDataset {
   dataset_description: Record<string, unknown>

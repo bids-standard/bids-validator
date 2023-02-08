@@ -16,26 +16,26 @@ function inspect(obj: any) {
 }
 
 export async function main() {
-  const options = parseOptions(Deno.args)
-  const absolutePath = resolve(options._[0])
+  const options = await parseOptions(Deno.args)
+  const absolutePath = resolve(options.datasetPath)
   const tree = await readFileTree(absolutePath)
 
   // Run the schema based validator
   const schemaResult = await validate(tree, options)
 
-  if (options.schemaOnly) {
-    if (options.json) {
-      console.log(inspect(schemaResult))
-    } else {
-      console.log(consoleFormat(schemaResult, { verbose: options.verbose }))
-    }
-  } else {
+  if (options.legacy) {
     const output = schemaResult.issues.formatOutput()
     const legacyResult = await fullTestAdapter(tree, options)
     output.errors.push(...legacyResult.issues.errors)
     output.warnings.push(...legacyResult.issues.warnings)
     inspect(output)
     inspect(legacyResult.summary)
+  } else {
+    if (options.json) {
+      console.log(inspect(schemaResult))
+    } else {
+      console.log(consoleFormat(schemaResult, { verbose: options.verbose }))
+    }
   }
 }
 
