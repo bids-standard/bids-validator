@@ -34,7 +34,11 @@ export async function main() {
     if (options.json) {
       console.log(inspect(schemaResult))
     } else {
-      console.log(consoleFormat(schemaResult, { verbose: options.verbose }))
+      console.log(
+        consoleFormat(schemaResult, {
+          verbose: options.verbose ? options.verbose : false,
+        }),
+      )
     }
   }
 }
