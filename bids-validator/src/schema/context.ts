@@ -8,12 +8,13 @@ import {
 } from '../types/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
-import { BIDSEntities, readEntities } from './entities.ts'
+import { readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { parseTSV } from '../files/tsv.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import { ValidatorOptions } from '../setup/options.ts'
+import { logger } from '../utils/logger.ts'
 
 export class BIDSContextDataset implements ContextDataset {
   dataset_description: Record<string, unknown>
@@ -163,7 +164,10 @@ export class BIDSContext implements Context {
       .text()
       .then((text) => parseTSV(text))
       .catch((error) => {
-        console.log(error)
+        logger.warn(
+          `tsv file could not be opened by loadColumns '${this.file.path}'`,
+        )
+        logger.error(error)
         return {}
       })
     return

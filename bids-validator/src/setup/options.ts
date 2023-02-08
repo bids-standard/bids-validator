@@ -1,6 +1,5 @@
+import { LevelName, LogLevels } from '../deps/logger.ts'
 import { Command, EnumType } from '../deps/cliffy.ts'
-
-export type DebugLevels = 'debug' | 'info' | 'warning' | 'error' | 'critical'
 
 export type ValidatorOptions = {
   datasetPath: string
@@ -10,7 +9,7 @@ export type ValidatorOptions = {
   verbose?: boolean
   ignoreNiftiHeaders?: boolean
   filenameMode?: boolean
-  debug: string
+  debug: LevelName
 }
 
 /**
@@ -22,10 +21,7 @@ export async function parseOptions(
 ): Promise<ValidatorOptions> {
   const { args, options } = await new Command()
     .name('bids-validator')
-    .type(
-      'debugLevel',
-      new EnumType(['debug', 'info', 'warning', 'error', 'critical']),
-    )
+    .type('debugLevel', new EnumType(Object.keys(LogLevels)))
     .description(
       'This tool checks if a dataset in a given directory is compatible with the Brain Imaging Data Structure specification. To learn more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
     )
@@ -46,7 +42,7 @@ export async function parseOptions(
       'Disregard NIfTI header content during validation',
     )
     .option('--debug <type:debugLevel>', 'Enable debug output', {
-      default: 'error',
+      default: 'ERROR',
       hidden: true,
     })
     .option(
@@ -57,5 +53,6 @@ export async function parseOptions(
   return {
     datasetPath: args[0],
     ...options,
+    debug: options.debug as LevelName,
   }
 }
