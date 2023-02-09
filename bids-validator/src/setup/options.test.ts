@@ -6,7 +6,7 @@ Deno.test('options parsing', async (t) => {
     const options = await parseOptions(['my_dataset', '--json'])
     assertEquals(options, {
       datasetPath: 'my_dataset',
-      debug: 'error',
+      debug: 'ERROR',
       json: true,
       schema: 'latest',
     })

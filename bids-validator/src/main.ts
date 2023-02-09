@@ -5,6 +5,7 @@ import { resolve } from './deps/path.ts'
 import { fullTestAdapter } from './compat/fulltest.ts'
 import { validate } from './validators/bids.ts'
 import { consoleFormat } from './utils/output.ts'
+import { setupLogging } from './utils/logger.ts'
 
 function inspect(obj: any) {
   console.log(
@@ -17,6 +18,7 @@ function inspect(obj: any) {
 
 export async function main() {
   const options = await parseOptions(Deno.args)
+  setupLogging(options.debug)
   const absolutePath = resolve(options.datasetPath)
   const tree = await readFileTree(absolutePath)
 
