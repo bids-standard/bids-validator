@@ -2,6 +2,7 @@ import { GenericRule, GenericSchema, SchemaFields } from '../types/schema.ts'
 import { Severity } from '../types/issues.ts'
 import { BIDSContext } from './context.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
+import { logger } from '../utils/logger.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
@@ -62,6 +63,7 @@ export function evalCheck(src: string, context: BIDSContext) {
   try {
     return test(safeContext)
   } catch (error) {
+    logger.debug(error)
     return false
   }
 }
@@ -179,7 +181,7 @@ function evalInitialColumns(
 ): void {
   if (!rule?.columns || !rule?.initial_columns || context.extension !== '.tsv')
     return
-  const headers = Object.keys(context.columns)
+  const headers = context.columns._original_order
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     // @ts-expect-error
     const ruleHeaderName = schema.objects.columns[ruleHeader].name

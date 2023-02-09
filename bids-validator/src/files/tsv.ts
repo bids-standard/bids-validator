@@ -2,6 +2,7 @@
  * TSV
  * Module for parsing TSV
  */
+import { logger } from '../utils/logger.ts'
 
 const normalizeEOL = (str: string): string =>
   str.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
@@ -16,7 +17,9 @@ export function parseTSV(contents: string) {
     .map((str) => str.split('\t'))
   const headers = rows.length ? rows[0] : []
 
-  headers.map((x) => (columns[x] = []))
+  headers.map((x) => {
+    columns[x] = []
+  })
   for (let i = 1; i < rows.length; i++) {
     for (let j = 0; j < headers.length; j++) {
       columns[headers[j]].push(rows[i][j])
