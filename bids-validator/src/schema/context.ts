@@ -164,10 +164,10 @@ export class BIDSContext implements Context {
       .text()
       .then((text) => parseTSV(text))
       .catch((error) => {
-        logger.warn(
+        logger.warning(
           `tsv file could not be opened by loadColumns '${this.file.path}'`,
         )
-        logger.error(error)
+        logger.debug(error)
         return {}
       })
     return
