@@ -1,4 +1,4 @@
-import { LevelName, LogLevels } from '../deps/logger.ts'
+import { LevelName, LogLevelNames } from '../deps/logger.ts'
 import { Command, EnumType } from '../deps/cliffy.ts'
 
 export type ValidatorOptions = {
@@ -21,7 +21,7 @@ export async function parseOptions(
 ): Promise<ValidatorOptions> {
   const { args, options } = await new Command()
     .name('bids-validator')
-    .type('debugLevel', new EnumType(Object.keys(LogLevels)))
+    .type('debugLevel', new EnumType(LogLevelNames))
     .description(
       'This tool checks if a dataset in a given directory is compatible with the Brain Imaging Data Structure specification. To learn more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
     )
@@ -43,7 +43,6 @@ export async function parseOptions(
     )
     .option('--debug <type:debugLevel>', 'Enable debug output', {
       default: 'ERROR',
-      hidden: true,
     })
     .option(
       '--filenameMode',
