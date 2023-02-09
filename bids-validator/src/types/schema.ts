@@ -29,10 +29,20 @@ export interface SchemaFiles {
   raw: Record<string, unknown>
 }
 
+export interface ExpressionTest {
+  expression: string
+  result: string
+}
+
+export interface SchemaMeta {
+  expression_tests: ExpressionTest[]
+}
+
 export interface Schema {
   objects: SchemaObjects
   rules: SchemaRules
   schema_version: string
+  meta: SchemaMeta
 }
 
 export interface SchemaIssue {
