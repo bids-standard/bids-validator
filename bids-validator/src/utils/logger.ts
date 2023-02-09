@@ -24,13 +24,20 @@ export function setupLogging(level: LevelName) {
   })
 }
 
+export function parseStack(stack: string) {
+  const lines = stack.split('\n')
+  const caller = lines[2].trim()
+  const token = caller.split('at ')
+  return token[1]
+}
+
 const loggerProxyHandler = {
   // deno-lint-ignore no-explicit-any
   get: function (_: any, prop: keyof Logger) {
     const logger = getLogger('@bids/validator')
     const stack = new Error().stack
     if (stack) {
-      const callerLocation = stack.split('\n')[2].trim().split(' ')[1]
+      const callerLocation = parseStack(stack)
       logger.debug(`Logger invoked at "${callerLocation}"`)
     }
     const logFunc = logger[prop] as typeof logger.warning

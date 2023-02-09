@@ -96,7 +96,7 @@ export class BIDSContext implements Context {
       .catch((error) => {})
   }
   get path(): string {
-    return this.datasetPath
+    return this.file.path
   }
 
   /**
