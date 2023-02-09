@@ -181,14 +181,16 @@ function evalInitialColumns(
     return
   const headers = Object.keys(context.columns)
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
-    const contextIndex = headers.findIndex((x) => x === ruleHeader)
+    // @ts-expect-error
+    const ruleHeaderName = schema.objects.columns[ruleHeader].name
+    const contextIndex = headers.findIndex((x) => x === ruleHeaderName)
     if (contextIndex === -1) {
-      const evidence = `Column with header ${ruleHeader} not found, indexed from 0 it should appear in column ${ruleIndex}`
+      const evidence = `Column with header ${ruleHeaderName} not found, indexed from 0 it should appear in column ${ruleIndex}`
       context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
         { ...context.file, evidence: evidence },
       ])
     } else if (ruleIndex !== contextIndex) {
-      const evidence = `Column with header ${ruleHeader} found at index ${contextIndex} while rule specifies, indexed form 0 it should be in column ${ruleIndex}`
+      const evidence = `Column with header ${ruleHeaderName} found at index ${contextIndex} while rule specifies, indexed from 0, it should be in column ${ruleIndex}`
       context.issues.addNonSchemaIssue('TSV_COLUMN_ORDER_INCORRECT', [
         { ...context.file, evidence: evidence },
       ])
@@ -206,9 +208,16 @@ function evalAdditionalColumns(
   const headers = Object.keys(context?.columns)
   // hard coding allowed here feels bad
   if (!(rule.additional_columns === 'allowed')) {
-    const extraCols = headers.filter(
-      (header) => rule.columns && !(header in rule.columns),
+    // @ts-expect-error
+    const ruleHeadersNames = Object.keys(rule.columns).map(
+      (x) => schema.objects.columns[x].name,
     )
+    let extraCols = headers.filter(
+      (header) => !ruleHeadersNames.includes(header),
+    )
+    if (rule.additional_columns === 'allowed_if_defined') {
+      extraCols = extraCols.filter((header) => !(header in context.sidecar))
+    }
     if (extraCols.length) {
       context.issues.addNonSchemaIssue('TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED', [
         { ...context.file, evidence: `Disallowed columns found ${extraCols}` },
@@ -277,7 +286,9 @@ function evalJsonCheck(
 ): void {
   for (const [key, requirement] of Object.entries(rule.fields)) {
     const severity = getFieldSeverity(requirement, context)
-    if (severity && severity !== 'ignore' && !(key in context.sidecar)) {
+    // @ts-expect-error
+    const keyName = schema.objects.metadata[key].name
+    if (severity && severity !== 'ignore' && !(keyName in context.sidecar)) {
       if (requirement.issue?.code && requirement.issue?.message) {
         context.issues.add({
           key: requirement.issue.code,
@@ -287,7 +298,10 @@ function evalJsonCheck(
         })
       } else {
         context.issues.addNonSchemaIssue('JSON_KEY_REQUIRED', [
-          { ...context.file, evidence: `missing ${key} as per ${schemaPath}` },
+          {
+            ...context.file,
+            evidence: `missing ${keyName} as per ${schemaPath}`,
+          },
         ])
       }
     }
