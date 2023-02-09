@@ -25,7 +25,7 @@ export function setupLogging(level: LevelName) {
 }
 
 const loggerProxyHandler = {
-  get: function (_: void, prop: keyof Logger) {
+  get: function (_: any, prop: keyof Logger) {
     const logger = getLogger('@bids/validator')
     const stack = new Error().stack
     if (stack) {
