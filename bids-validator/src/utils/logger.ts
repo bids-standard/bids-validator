@@ -25,6 +25,7 @@ export function setupLogging(level: LevelName) {
 }
 
 const loggerProxyHandler = {
+  // deno-lint-ignore no-explicit-any
   get: function (_: any, prop: keyof Logger) {
     const logger = getLogger('@bids/validator')
     const stack = new Error().stack
