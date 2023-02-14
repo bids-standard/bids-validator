@@ -59,7 +59,7 @@ export function applyRules(
 const evalConstructor = (src: string): Function =>
   new Function('context', `with (context) { return ${src} }`)
 const safeHas = () => true
-const safeGet = (target: unknown, prop: unknown) =>
+const safeGet = (target: any, prop: any) =>
   prop === Symbol.unscopables ? undefined : target[prop]
 
 export function evalCheck(src: string, context: BIDSContext) {
