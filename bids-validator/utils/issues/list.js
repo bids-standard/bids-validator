@@ -1167,4 +1167,16 @@ export default {
     reason:
       "The column names of the channels file must begin with ['name', 'type', 'source', 'detector', 'wavelength_nominal', 'units']",
   },
+  235: {
+    key: 'MOTION_COMPONENT_IN_WRONG_COLUMN',
+    severity: 'error',
+    reason:
+      "The 'component' column must be the second column in the channels.tsv file.",
+  },
+  236: {
+    key: 'MOTION_COMPONENT_INVLAID_VALUE',
+    severity: 'error',
+    reason:
+      "Values in the 'component' column must be one of ['x', 'y', 'z', 'quat_x', 'quat_y', 'quat_z', 'quat_w', 'n/a'].",
+  },
 }
