@@ -50,6 +50,7 @@ const result = await esbuild.build({
   target: ['chrome109', 'firefox109', 'safari16'],
   plugins: [httpPlugin],
   allowOverwrite: true,
+  sourcemap: flags.minify ? false : 'inline',
 })
 
 if (result.warnings.length > 0) {
