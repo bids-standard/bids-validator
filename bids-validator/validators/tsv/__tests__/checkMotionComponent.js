@@ -2,7 +2,7 @@ import { assert } from 'chai'
 import checkMotionComponent from '../checkMotionComponent'
 
 describe('checkMotionComponent', () => {
-  it('returns no issue if components is in correct locaiton and values are valid', () => {
+  it('returns no issue if components is in correct location and values are valid', () => {
     const issues = []
     checkMotionComponent(
       [
