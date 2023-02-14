@@ -24,6 +24,16 @@ export const filenameIssues: IssueDefinitionRecord = {
     reason:
       'The datatype directory does not match datatype of found suffix and extension',
   },
+  ALL_FILENAME_RULES_HAVE_ISSUES: {
+    severity: 'error',
+    reason:
+      'Multiple filename rules were found as potential matches. All of them had at least one issue during filename validation.',
+  },
+  EXTENSION_MISMATCH: {
+    severity: 'error',
+    reason:
+      'Extension used by file does not match allowed extensions for its suffix',
+  },
   JSON_KEY_REQUIRED: {
     severity: 'error',
     reason: "A data file's JSON sidecar is missing a key listed as required.",
@@ -44,10 +54,15 @@ export const filenameIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'Some TSV columns are in the incorrect order',
   },
-  TSV_ADDITONAL_COLUMNS_NOT_ALLOWED: {
+  TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED: {
     severity: 'error',
     reason:
       'A TSV file has extra columns which are not allowed for its file type',
+  },
+  TSV_INDEX_VALUE_NOT_UNIQUE: {
+    severity: 'error',
+    reason:
+      'An index column(s) was specified for the tsv file and not all of the values for it are unique.',
   },
   CHECK_ERROR: {
     severity: 'error',

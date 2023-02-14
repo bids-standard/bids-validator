@@ -28,8 +28,9 @@ export class AdapterFile {
     return this.#stream
   }
 
-  slice(start: number, end = 0): Blob {
+  async readBytes(start: number, end = 0): Promise<Blob> {
     const size = end - start
-    return new Blob([this.#file.readBytes(size, start).buffer])
+    const u8array = await this.#file.readBytes(size, start)
+    return new Blob([u8array.buffer])
   }
 }

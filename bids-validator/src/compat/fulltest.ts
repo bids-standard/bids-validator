@@ -5,6 +5,7 @@ import { walkFileTree } from '../schema/walk.ts'
 import { FullTestIssuesReturn } from '../types/issues.ts'
 import validate from '../../dist/esm/index.js'
 import { AdapterFile } from './adapter-file.ts'
+import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 export interface FullTestAdapterReturn {
   issues: FullTestIssuesReturn
@@ -16,7 +17,8 @@ export async function fullTestAdapter(
   options: ValidatorOptions,
 ): Promise<FullTestAdapterReturn> {
   const fileList: Array<AdapterFile> = []
-  for await (const context of walkFileTree(tree, undefined)) {
+  const issues = new DatasetIssues()
+  for await (const context of walkFileTree(tree, issues)) {
     const stream = await context.file.stream
     const file = new AdapterFile(context.datasetPath, context.file, stream)
     fileList.push(file)

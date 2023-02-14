@@ -1,87 +1,57 @@
-// ESM import for yargs does not work for mysterious reasons
-import { yargs } from '../deps/yargs.ts'
+import { LevelName, LogLevelNames } from '../deps/logger.ts'
+import { Command, EnumType } from '../deps/cliffy.ts'
 
-export interface ValidatorOptions {
-  _: string[]
-  config: any
-  schema: any
-  schemaOnly: boolean
-  json: boolean
+export type ValidatorOptions = {
+  datasetPath: string
+  schema?: string
+  legacy?: boolean
+  json?: boolean
+  verbose?: boolean
+  ignoreNiftiHeaders?: boolean
+  filenameMode?: boolean
+  debug: LevelName
 }
 
 /**
- *
- * @param argumentOverride
- * @returns {void}
+ * Parse command line options and return a ValidatorOptions config
+ * @param argumentOverride Override the arguments instead of using Deno.args
  */
-export function parseOptions(
-  argumentOverride: any[] | undefined,
-): ValidatorOptions {
-  return yargs(argumentOverride)
-    .usage('Usage: $0 <dataset_directory> [options]')
-    .help('help')
-    .alias('help', 'h')
-    .version('TODO: make version work in Deno')
-    .alias('version', 'v')
-    .demand(1, 1)
-    .boolean('ignoreWarnings')
-    .describe('ignoreWarnings', 'Disregard non-critical issues')
-    .boolean('ignoreNiftiHeaders')
-    .describe(
-      'ignoreNiftiHeaders',
+export async function parseOptions(
+  argumentOverride: string[] = Deno.args,
+): Promise<ValidatorOptions> {
+  const { args, options } = await new Command()
+    .name('bids-validator')
+    .type('debugLevel', new EnumType(LogLevelNames))
+    .description(
+      'This tool checks if a dataset in a given directory is compatible with the Brain Imaging Data Structure specification. To learn more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
+    )
+    .arguments('<dataset_directory>')
+    .version('alpha')
+    .option('--legacy', 'Enable running both validators together')
+    .option('--json', 'Output machine readable JSON')
+    .option(
+      '-s, --schema <type:string>',
+      'Specify a schema version to use for validation',
+      {
+        default: 'latest',
+      },
+    )
+    .option('-v, --verbose', 'Log more extensive information about issues')
+    .option(
+      '--ignoreNiftiHeaders',
       'Disregard NIfTI header content during validation',
     )
-    .boolean('ignoreSubjectConsistency')
-    .describe(
-      'ignoreSubjectConsistency',
-      'Skip checking that any given file for one subject is present for all other subjects.',
-    )
-    .boolean('verbose')
-    .describe('verbose', 'Log more extensive information about issues')
-    .boolean('json')
-    .describe('json', 'Output results as JSON')
-    .boolean('no-color')
-    .describe('no-color', 'Disable colors in output text.')
-    .default('no-color', false)
-    .boolean('ignoreSymlinks')
-    .describe(
-      'ignoreSymlinks',
-      'Skip any symlinked directories when validating a dataset',
-    )
-    .boolean('remoteFiles')
-    .describe('remoteFiles', 'Validate remote files.')
-    .default('remoteFiles', false)
-    .boolean('gitTreeMode')
-    .describe(
-      'gitTreeMode',
-      'Improve performance using git metadata. Does not capture changes not known to git.',
-    )
-    .option('gitRef', {
-      describe:
-        'Targets files at a given branch, tag, or commit hash. Use with --gitTreeMode.  [default: "HEAD"]',
-      type: 'string',
+    .option('--debug <type:debugLevel>', 'Enable debug output', {
+      default: 'ERROR',
     })
-    .implies('gitRef', 'gitTreeMode')
-    .option('config', {
-      alias: 'c',
-      describe:
-        'Optional configuration file. See https://github.com/bids-standard/bids-validator for more info',
-      default: '.bids-validator-config.json',
-    })
-    .boolean('filenames')
-    .default('filenames', false)
-    .describe(
-      'filenames',
-      'A less accurate check that reads filenames one per line from stdin.',
+    .option(
+      '--filenameMode',
+      'Enable filename checks for newline separated filenames read from stdin',
     )
-    .hide('filenames')
-    .boolean('schemaOnly')
-    .default('schemaOnly', false)
-    .describe('schemaOnly', 'Run only schema based validation.')
-    .epilogue(
-      'This tool checks if a dataset in a given directory is \
-compatible with the Brain Imaging Data Structure specification. To learn \
-more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
-    )
-    .parseSync()
+    .parse(argumentOverride)
+  return {
+    datasetPath: args[0],
+    ...options,
+    debug: options.debug as LevelName,
+  }
 }

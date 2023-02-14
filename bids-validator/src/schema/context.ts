@@ -8,36 +8,50 @@ import {
 } from '../types/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
-import { BIDSEntities, readEntities } from './entities.ts'
+import { readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
-import { BIDSFileDeno } from '../files/deno.ts'
 import { parseTSV } from '../files/tsv.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
+import { ValidatorOptions } from '../setup/options.ts'
+import { logger } from '../utils/logger.ts'
 
-class BIDSContextDataset implements ContextDataset {
-  dataset_description: object
+export class BIDSContextDataset implements ContextDataset {
+  dataset_description: Record<string, unknown>
+  options?: ValidatorOptions
   files: any[]
   tree: object
   ignored: any[]
   modalities: any[]
   subjects: ContextDatasetSubjects[]
 
-  constructor() {
-    this.dataset_description = {}
+  constructor(options?: ValidatorOptions, description = {}) {
+    this.dataset_description = description
     this.files = []
     this.tree = {}
     this.ignored = []
     this.modalities = []
     this.subjects = [] as ContextDatasetSubjects[]
+    if (options) {
+      this.options = options
+    }
+    if (
+      !this.dataset_description.DatasetType &&
+      this.dataset_description.GeneratedBy
+    ) {
+      this.dataset_description.DatasetType = 'derivative'
+    } else if (!this.dataset_description.DatasetType) {
+      this.dataset_description.DatasetType = 'raw'
+    }
   }
 }
 
-const contextDataset = new BIDSContextDataset()
+const defaultDsContext = new BIDSContextDataset()
 
 export class BIDSContext implements Context {
   // Internal representation of the file tree
   #fileTree: FileTree
+  filenameRules: string[]
   issues: DatasetIssues
   file: BIDSFile
   suffix: string
@@ -52,15 +66,21 @@ export class BIDSContext implements Context {
   associations: ContextAssociations
   nifti_header?: ContextNiftiHeader
 
-  constructor(fileTree: FileTree, file: BIDSFile, issues: DatasetIssues) {
+  constructor(
+    fileTree: FileTree,
+    file: BIDSFile,
+    issues: DatasetIssues,
+    dsContext?: BIDSContextDataset,
+  ) {
     this.#fileTree = fileTree
+    this.filenameRules = []
     this.issues = issues
     this.file = file
     const bidsEntities = readEntities(file)
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
-    this.dataset = contextDataset
+    this.dataset = dsContext ? dsContext : defaultDsContext
     this.subject = {} as ContextSubject
     this.datatype = ''
     this.modality = ''
@@ -76,7 +96,7 @@ export class BIDSContext implements Context {
       .catch((error) => {})
   }
   get path(): string {
-    return this.datasetPath
+    return this.file.path
   }
 
   /**
@@ -126,11 +146,14 @@ export class BIDSContext implements Context {
     }
   }
 
-  loadNiftiHeader(): Promise<void> {
-    if (this.extension.startsWith('.nii')) {
-      this.nifti_header = loadHeader(this.file as BIDSFileDeno)
+  async loadNiftiHeader(): Promise<void> {
+    if (
+      this.extension.startsWith('.nii') &&
+      this.dataset.options &&
+      !this.dataset.options.ignoreNiftiHeaders
+    ) {
+      this.nifti_header = await loadHeader(this.file)
     }
-    return Promise.resolve()
   }
 
   async loadColumns(): Promise<void> {
@@ -141,7 +164,10 @@ export class BIDSContext implements Context {
       .text()
       .then((text) => parseTSV(text))
       .catch((error) => {
-        console.log(error)
+        logger.warning(
+          `tsv file could not be opened by loadColumns '${this.file.path}'`,
+        )
+        logger.debug(error)
         return {}
       })
     return

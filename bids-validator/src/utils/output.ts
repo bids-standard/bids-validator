@@ -2,7 +2,7 @@
  * Utilities for formatting human readable output (CLI or other UIs)
  */
 import { prettyBytes } from '../deps/prettyBytes.ts'
-import { cliffy } from '../deps/cliffy.ts'
+import { Table } from '../deps/cliffy.ts'
 import { colors } from '../deps/fmt.ts'
 import { ValidationResult, SummaryOutput } from '../types/validation-result.ts'
 import { Issue } from '../types/issues.ts'
@@ -46,11 +46,12 @@ function formatIssue(issue: Issue, options?: LoggingOptions): string {
       ),
   )
   output.push('')
+  let fileOutCount = 0
   issue.files.forEach((file) => {
-    output.push('\t\t.' + file.path)
-    if (options?.verbose) {
-      output.push('\t\t\t' + file.evidence)
+    if (!options?.verbose && fileOutCount > 2) {
+      return
     }
+    output.push('\t\t.' + file.path)
     if (file.line) {
       let msg = '\t\t\t@ line: ' + file.line
       if (file.character) {
@@ -61,7 +62,12 @@ function formatIssue(issue: Issue, options?: LoggingOptions): string {
     if (file.evidence) {
       output.push('\t\t\tEvidence: ' + file.evidence)
     }
+    fileOutCount++
   })
+  if (!options?.verbose) {
+    output.push('')
+    output.push('\t\t' + issue.files.size + ' more files with the same issue')
+  }
   output.push('')
   if (issue.helpUrl) {
     output.push(
@@ -116,7 +122,7 @@ function formatSummary(summary: SummaryOutput): string {
     const val3 = column3[i] ? column3[i] : ''
     rows.push([pad, val1, val2, val3])
   }
-  const table = new cliffy.Table()
+  const table = new Table()
     .header(headers)
     .body(rows)
     .border(false)

@@ -6,13 +6,17 @@ Deno.test('schema yaml loader', async (t) => {
     const schemaDefs = await loadSchema()
     // Look for some stable fields in top level files
     if (
-      typeof schemaDefs.rules.top_level_files === 'object' &&
-      schemaDefs.rules.top_level_files !== null
+      typeof schemaDefs.rules.files.common === 'object' &&
+      schemaDefs.rules.files.common.core !== null
     ) {
-      const top_level = schemaDefs.rules.top_level_files as Record<string, any>
+      const top_level = schemaDefs.rules.files.common.core as Record<
+        string,
+        any
+      >
       if (top_level.hasOwnProperty('README')) {
         assertObjectMatch(top_level.README, {
-          required: true,
+          level: 'recommended',
+          stem: 'README',
           extensions: ['', '.md', '.rst', '.txt'],
         })
       }
