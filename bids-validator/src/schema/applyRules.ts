@@ -59,7 +59,7 @@ export function applyRules(
 const evalConstructor = (src: string): Function =>
   new Function('context', `with (context) { return ${src} }`)
 const safeHas = () => true
-const safeGet = (target: any, prop: any) =>
+const safeGet = (target: unknown, prop: unknown) =>
   prop === Symbol.unscopables ? undefined : target[prop]
 
 export function evalCheck(src: string, context: BIDSContext) {
@@ -241,12 +241,12 @@ function evalInitialColumns(
     const ruleHeaderName = schema.objects.columns[ruleHeader].name
     const contextIndex = headers.findIndex((x) => x === ruleHeaderName)
     if (contextIndex === -1) {
-      const evidence = `Column with header ${ruleHeaderName} not found, indexed from 0 it should appear in column ${ruleIndex}`
+      const evidence = `Column with header ${ruleHeaderName} not found, indexed from 0 it should appear in column ${ruleIndex}. ${schemaPath}`
       context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
         { ...context.file, evidence: evidence },
       ])
     } else if (ruleIndex !== contextIndex) {
-      const evidence = `Column with header ${ruleHeaderName} found at index ${contextIndex} while rule specifies, indexed from 0, it should be in column ${ruleIndex}`
+      const evidence = `Column with header ${ruleHeaderName} found at index ${contextIndex} while rule specifies, indexed from 0, it should be in column ${ruleIndex}. ${schemaPath}`
       context.issues.addNonSchemaIssue('TSV_COLUMN_ORDER_INCORRECT', [
         { ...context.file, evidence: evidence },
       ])
@@ -306,7 +306,7 @@ function evalIndexColumns(
     context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
       {
         ...context.file,
-        evidence: `Columns cited as index columns not in file: ${missing}`,
+        evidence: `Columns cited as index columns not in file: ${missing}. ${schemaPath}`,
       },
     ])
     return
@@ -390,7 +390,7 @@ function getFieldSeverity(
     if (requirement.level_addendum) {
       const match = addendumRegex.exec(requirement.level_addendum)
       if (match && match.length === 4) {
-        const [addendum, addendumLevel, key, value] = match
+        const [_, addendumLevel, key, value] = match
         // @ts-expect-error
         if (key in context.sidecar && context.sidecar[key] === value) {
           severity = levelToSeverity[addendumLevel]
