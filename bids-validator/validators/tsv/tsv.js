@@ -5,6 +5,7 @@ import checkHeaders from './checkHeaders'
 import checkStatusCol from './checkStatusCol'
 import checkTypecol from './checkTypeCol'
 import parseTSV from './tsvParser'
+import checkMotionComponent from './checkMotionComponent'
 var path = require('path')
 
 /**
@@ -472,6 +473,7 @@ const TSV = (file, contents, fileList, callback) => {
     }
     checkStatusCol(rows, file, issues)
     checkTypecol(rows, file, issues)
+    checkMotionComponent(rows, file, issues)
   }
   if (
     file.relativePath.includes('/nirs/') &&
