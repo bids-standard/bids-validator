@@ -2,8 +2,6 @@ import { assert } from 'chai'
 import checkMotionComponent from '../checkMotionComponent'
 
 describe('checkMotionComponent', () => {
-  const summary = { subjects: ['01', '02'] }
-
   it('returns no issue if components is in correct locaiton and values are valid', () => {
     const issues = []
     checkMotionComponent(
