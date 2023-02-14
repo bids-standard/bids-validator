@@ -1,4 +1,9 @@
-import { GenericRule, GenericSchema, SchemaFields } from '../types/schema.ts'
+import {
+  GenericRule,
+  GenericSchema,
+  SchemaFields,
+  SchemaTypeLike,
+} from '../types/schema.ts'
 import { Severity } from '../types/issues.ts'
 import { BIDSContext } from './context.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
@@ -146,6 +151,36 @@ function evalRuleChecks(
 }
 
 /**
+ * schema.formats contains named types with patterns. Many entries in
+ * schema.objects have a format to constrain its possible values. Presently
+ * this is written with tsv's in mind. The blanket n/a pass may be inappropriate
+ * for other type checks. filenameValidate predates this but does similar type
+ * checking for entities.
+ */
+function schemaObjectTypeCheck(
+  schemaObject: SchemaTypeLike,
+  value: string,
+  schema: GenericSchema,
+): boolean {
+  if ('anyOf' in schemaObject) {
+    return schemaObject.anyOf.some((x) =>
+      schemaObjectTypeCheck(x, value, schema),
+    )
+  }
+  if ('enum' in schemaObject && schemaObject.enum) {
+    return schemaObject.enum.some((x) => x === value)
+  }
+  // always allow n/a?
+  if (value === 'n/a') {
+    return true
+  }
+  // @ts-expect-error
+  const format = schema.objects.formats[schemaObject.type]
+  const re = new RegExp(`^${format.pattern}$`)
+  return re.test(value)
+}
+
+/**
  * Columns in schema rules are assertions about the requirement level of what
  * headers should be present in a tsv file. Examples in specification:
  * schema/rules/tabular_data/*
@@ -160,11 +195,30 @@ function evalColumns(
   const headers = Object.keys(context.columns)
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
     // @ts-expect-error
-    const name = schema.objects.columns[ruleHeader].name
+    const columnObject = schema.objects.columns[ruleHeader]
+    const name = columnObject.name
     if (!headers.includes(name) && requirement === 'required') {
-      context.issues.addNonSchemaIssue('TSV_ERROR', [
-        { ...context.file, evidence: JSON.stringify(rule) },
+      context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
+        {
+          ...context.file,
+          evidence: `Column with header ${name} listed as required. ${schemaPath}`,
+        },
       ])
+    }
+    if (headers.includes(name)) {
+      for (const value of context.columns[name]) {
+        if (
+          !schemaObjectTypeCheck(columnObject as SchemaTypeLike, value, schema)
+        ) {
+          context.issues.addNonSchemaIssue('TSV_VALUE_INCORRECT_TYPE', [
+            {
+              ...context.file,
+              evidence: `'${value}' ${Deno.inspect(columnObject)}`,
+            },
+          ])
+          break
+        }
+      }
     }
   }
 }
@@ -181,7 +235,7 @@ function evalInitialColumns(
 ): void {
   if (!rule?.columns || !rule?.initial_columns || context.extension !== '.tsv')
     return
-  const headers = context.columns._original_order
+  const headers = Object.keys(context.columns)
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     // @ts-expect-error
     const ruleHeaderName = schema.objects.columns[ruleHeader].name

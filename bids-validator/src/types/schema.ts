@@ -78,3 +78,14 @@ export interface SchemaFields {
   level_addendum?: string
   issue?: SchemaIssue
 }
+
+interface SchemaType {
+  type: string
+  enum?: string[]
+}
+
+interface AnyOf {
+  anyOf: SchemaType[]
+}
+
+export type SchemaTypeLike = AnyOf | SchemaType
