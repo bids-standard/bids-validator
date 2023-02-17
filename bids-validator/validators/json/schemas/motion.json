@@ -51,10 +51,7 @@
       "$ref": "common_definitions.json#/definitions/SoftwareFilters"
     },
     "StartTime": {
-      "anyOf": [
-        {"type": "number" },
-        { "type": "string", "pattern": "^n/a$" }
-      ]
+      "anyOf": [{ "type": "number" }, { "type": "string", "pattern": "^n/a$" }]
     },
 
     "ACCELChannelCount": { "type": "number" },
@@ -66,6 +63,7 @@
     "ORNTChannelCount": { "type": "number" },
     "POSChannelCount": { "type": "number" },
     "VELChannelCount": { "type": "number" },
+    "LATENCYChannelCount": { "type": "number" },
     "MissingValues": { "type": "string" },
     "RotationOrder": {
       "type": "string",
@@ -77,8 +75,11 @@
     },
     "SpatialAxes": { "type": "string" }
   },
-  "required": ["TaskName","TrackingSystemName","SamplingFrequency","SamplingFrequencyEffective"
-],
+  "required": [
+    "TaskName",
+    "TrackingSystemName",
+    "SamplingFrequency",
+    "SamplingFrequencyEffective"
+  ],
   "additionalProperties": false
 }
-
