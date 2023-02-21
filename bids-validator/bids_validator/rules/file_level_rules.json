@@ -563,16 +563,15 @@
     }
   },
   "motion": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?motion[\\/\\\\]\\1(_\\2)?_task-[a-zA-Z0-9]+_tracksys-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(@@@_motion_ext_@@@)$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?motion[\\/\\\\]\\1(_\\2)?_task-[a-zA-Z0-9]+(_tracksys-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(@@@_motion_ext_@@@))|((?:_tracksys-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?_(@@@_cont_ext_@@@))$",
     "tokens": {
       "@@@_motion_ext_@@@": [
-        "events\\.json",
-        "events\\.tsv",
         "channels\\.json",
         "channels\\.tsv",
         "motion\\.json",
         "motion\\.tsv"
-      ]
+      ],
+      "@@@_cont_ext_@@@": ["events\\.json", "events\\.tsv"]
     }
   },
   "microscopy": {
