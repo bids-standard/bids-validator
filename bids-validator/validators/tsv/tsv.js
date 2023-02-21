@@ -13,7 +13,7 @@ var path = require('path')
  * @param {Array[string]} headers
  * @returns {string}
  */
-export const headersEvidence = (headers) =>
+export const headersEvidence = headers =>
   `Column headers: ${headers.join(', ')}`
 
 /**
@@ -21,7 +21,7 @@ export const headersEvidence = (headers) =>
  * @param {Array[string]} filename
  * @returns {string}
  */
-const filenameEvidence = (filename) => `Filename: ${filename}`
+const filenameEvidence = filename => `Filename: ${filename}`
 
 /**
  * TSV
@@ -460,14 +460,14 @@ const TSV = (file, contents, fileList, callback) => {
     file.name.endsWith('_channels.tsv')
   ) {
     const required = ['component', 'name', 'tracked_point', 'type', 'units']
-    const missing = required.filter((x) => !headers.includes(x))
+    const missing = required.filter(x => !headers.includes(x))
     if (missing.length) {
       issues.push(
         new Issue({
           line: 1,
           file: file,
           code: 129,
-          evidence: `Missing Columns: ${missing.joing(', ')}`,
+          evidence: `Missing Columns: ${missing.join(', ')}`,
         }),
       )
     }
