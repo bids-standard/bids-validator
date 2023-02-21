@@ -631,9 +631,9 @@ describe('TSV', function() {
   })
 
   var channelsFileMOTION = {
-    name: 'sub-01_ses-walk_task-navigation_run-01_channels.tsv',
+    name: 'sub-01_ses-walk_task-navigation_tracksys-IMU1_run-01_channels.tsv',
     relativePath:
-      '/sub-01/ses-walk/motion/sub-01_ses-walk_task-navigation_run-01_channels.tsv',
+      '/sub-01/ses-walk/motion/sub-01_ses-walk_task-navigation_tracksys-IMU1_run-01_channels.tsv',
   }
 
   it('MOTION channels.tsv with correct columns should throw no error', function() {
