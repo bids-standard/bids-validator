@@ -32,18 +32,24 @@ Deno by default sandboxes applications like a web browser. To validate datasets 
 # Run from within the /bids-validator directory
 cd bids-validator
 # Run validator:
-deno run --allow-env --allow-read src/main.ts path/to/dataset
+./bids-validator-deno path/to/dataset
 ```
 
-By default both the new schema derived validation rules and the legacy JavaScript rules are run to ensure full coverage. The validator can be limited to run only the schema derived rules with the flag `--schemaOnly`.
+By default only schema derived validation rules are run. The legacy validator can be run at the same time with `--legacy` and this may improve coverage for issues not yet implemented in the schema variant.
 
 ```shell
-deno run --allow-env --allow-read src/main.ts --schemaOnly path/to/dataset
+./bids-validator-deno --legacy path/to/dataset
 ```
 
 # Schema validator test suite
 
 ```shell
 # Run tests:
-deno test --allow-env --allow-read src/
+deno test --allow-env --allow-read --allow-write src/
 ```
+
+# Refreshing latest specification
+
+If you are validating with the latest specification instead of a specific version, the validator will hold onto a cached version for up to one year. You can request the newest version by adding the `--reload` argument to obtain the newest specification definition.
+
+`deno run --reload=https://bids-specification.readthedocs.io/en/latest/schema.json src/main.ts`

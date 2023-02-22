@@ -52,21 +52,28 @@ async function loadYaml(base, path, local) {
  * @param {boolean} local Avoid any network access
  */
 async function loadSchema(base, local = false) {
-  const top = 'rules/top_level_files.yaml'
-  const entities = 'rules/entities.yaml'
+  // Define path prefix depending on the BIDS schema version
+  const prefix_objects = base.includes('v1.6.0') ? '' : 'objects/'
+  const prefix_rules = base.includes('v1.6.0') ? '' : 'rules/'
+  const prefix_datatypes = prefix_rules + 'datatypes/'
+
+  // Define schema files for top level files and entities
+  const top = prefix_rules + 'top_level_files.yaml'
+  const entities = prefix_objects + 'entities.yaml'
+
   return {
     top_level_files: await loadYaml(base, top, local),
     entities: await loadYaml(base, entities, local),
     datatypes: {
-      anat: await loadYaml(base, `rules/datatypes/anat.yaml`, local),
-      beh: await loadYaml(base, `rules/datatypes/beh.yaml`, local),
-      dwi: await loadYaml(base, `rules/datatypes/dwi.yaml`, local),
-      eeg: await loadYaml(base, `rules/datatypes/eeg.yaml`, local),
-      fmap: await loadYaml(base, `rules/datatypes/fmap.yaml`, local),
-      func: await loadYaml(base, `rules/datatypes/func.yaml`, local),
-      ieeg: await loadYaml(base, 'rules/datatypes/ieeg.yaml', local),
-      meg: await loadYaml(base, 'rules/datatypes/meg.yaml', local),
-      pet: await loadYaml(base, 'rules/datatypes/pet.yaml', local),
+      anat: await loadYaml(base, prefix_datatypes + 'anat.yaml', local),
+      beh: await loadYaml(base, prefix_datatypes + 'beh.yaml', local),
+      dwi: await loadYaml(base, prefix_datatypes + 'dwi.yaml', local),
+      eeg: await loadYaml(base, prefix_datatypes + 'eeg.yaml', local),
+      fmap: await loadYaml(base, prefix_datatypes + 'fmap.yaml', local),
+      func: await loadYaml(base, prefix_datatypes + 'func.yaml', local),
+      ieeg: await loadYaml(base, prefix_datatypes + 'ieeg.yaml', local),
+      meg: await loadYaml(base, prefix_datatypes + 'meg.yaml', local),
+      pet: await loadYaml(base, prefix_datatypes + 'pet.yaml', local),
     },
   }
 }
@@ -117,11 +124,14 @@ export async function generateRegex(schema, pythonRegex = false) {
 
   for (const mod of modalities) {
     const modality_datatype_schema = schema.datatypes[mod]
-    for (const datatype of modality_datatype_schema) {
+    for (const datatype of Object.keys(modality_datatype_schema)) {
       let file_regex = `${regex.sub_ses_dirs}${mod}${regex.type_dir}${regex.sub_ses_entity}`
-      for (const entity of Object.keys(schema.entities)) {
-        const entityDefinion = schema.entities[entity]
-        if (entity in datatype.entities) {
+      let entities = Object.keys(schema.entities)
+      for (const entity of Object.keys(
+        modality_datatype_schema[datatype].entities,
+      )) {
+        if (entities.includes(entity)) {
+          const entityDefinion = schema.entities[entity]
           // sub and ses entities in file name handled by directory pattern matching groups
           if (entity === 'subject' || entity === 'session') {
             continue
@@ -131,16 +141,18 @@ export async function generateRegex(schema, pythonRegex = false) {
           if (format) {
             // Limitation here is that if format is missing an essential entity may be skipped
             file_regex += `(?${P}<${entity}>_${entityKey}-${format})${
-              regex[datatype.entities[entity]]
+              regex[modality_datatype_schema[datatype].entities[entity]]
             }`
           }
         }
       }
-      const suffix_regex = `_(?${P}<suffix>${datatype.suffixes.join('|')})`
+      const suffix_regex = `_(?${P}<suffix>${modality_datatype_schema[
+        datatype
+      ].suffixes.join('|')})`
       // Workaround v1.6.0 MEG extension "*"
-      const wildcard_extensions = datatype.extensions.map((ext) =>
-        ext === '*' ? '.*?' : ext,
-      )
+      const wildcard_extensions = modality_datatype_schema[
+        datatype
+      ].extensions.map((ext) => (ext === '*' ? '.*?' : ext))
       const ext_regex = `(?${P}<ext>${wildcard_extensions.join('|')})`
       exportRegex.datatypes[mod].push(
         new RegExp(file_regex + suffix_regex + ext_regex + '$'),

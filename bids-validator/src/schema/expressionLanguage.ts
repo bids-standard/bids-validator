@@ -24,4 +24,7 @@ export const expressionFunctions = {
   count: <T>(list: T[], val: T): number => {
     return list.filter((x) => x === val).length
   },
+  exists: <T>(list: T[], val: T): boolean => {
+    return true
+  },
 }
