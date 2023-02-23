@@ -1,4 +1,5 @@
 import { Schema } from '../types/schema.ts'
+import { objectPathHandler } from '../utils/objectPathHandler.ts'
 import * as schemaDefault from 'https://bids-specification.readthedocs.io/en/latest/schema.json' assert { type: 'json' }
 
 /**
@@ -7,17 +8,28 @@ import * as schemaDefault from 'https://bids-specification.readthedocs.io/en/lat
  * version is ignored when the network cannot be accessed
  */
 export async function loadSchema(version = 'latest'): Promise<Schema> {
-  const schemaUrl = `https://bids-specification.readthedocs.io/en/${version}/schema.json`
+  const versionRegex = /^v\d/
+  let schemaUrl = version
+  if (version === 'latest' || versionRegex.test(version)) {
+    schemaUrl = `https://bids-specification.readthedocs.io/en/${version}/schema.json`
+  }
   try {
     const schemaModule = await import(schemaUrl, {
       assert: { type: 'json' },
     })
-    return schemaModule.default as Schema
-  } catch {
+    return new Proxy(
+      schemaModule.default as object,
+      objectPathHandler,
+    ) as Schema
+  } catch (error) {
     // No network access or other errors
+    console.error(error)
     console.error(
       `Warning, could not load schema from ${schemaUrl}, falling back to internal version`,
     )
-    return schemaDefault as Schema
+    return new Proxy(
+      schemaDefault.default as object,
+      objectPathHandler,
+    ) as Schema
   }
 }

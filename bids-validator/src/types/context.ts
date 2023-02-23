@@ -1,15 +1,18 @@
+import { ValidatorOptions } from '../setup/options.ts'
+
 export interface ContextDatasetSubjects {
   sub_dirs: string[]
   participant_id: string[]
   phenotype: string[]
 }
 export interface ContextDataset {
-  dataset_description: object
+  dataset_description: Record<string, unknown>
   files: any[]
   tree: object
   ignored: any[]
   modalities: any[]
-  subjects: ContextDatasetSubjects
+  subjects: ContextDatasetSubjects[]
+  options?: ValidatorOptions
 }
 export interface ContextSubjectSessions {
   ses_dirs: string[]
@@ -20,8 +23,8 @@ export interface ContextSubject {
   sessions: ContextSubjectSessions
 }
 export interface ContextAssociationsEvents {
-  path: string
-  onset: string[]
+  path?: string
+  onset?: string[]
 }
 export interface ContextAssociationsAslcontext {
   path: string
@@ -84,5 +87,5 @@ export interface Context {
   associations: ContextAssociations
   columns: object
   json: object
-  nifti_header: ContextNiftiHeader
+  nifti_header?: ContextNiftiHeader
 }

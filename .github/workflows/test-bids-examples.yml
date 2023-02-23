@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: ['*']
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     strategy:
@@ -40,7 +44,7 @@ jobs:
 
       - name: Get bids-examples data
         run: |
-          git clone --depth 1 https://github.com/rob-luke/bids-examples --branch fnirstapping
+          git clone --depth 1 https://github.com/bids-standard/bids-examples
 
       - name: Display versions and environment information
         run: |

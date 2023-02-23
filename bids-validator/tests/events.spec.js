@@ -310,7 +310,7 @@ describe('Events', function () {
           },
         },
         '/dataset_description.json': {
-          HEDVersion: ['8.0.0', 'ts:testlib_1.0.2', 'sc:score_0.0.1'],
+          HEDVersion: ['8.0.0', 'ts:testlib_1.0.2', 'sc:score_1.0.0'],
         },
       }
 
@@ -355,9 +355,8 @@ describe('Events', function () {
         jsonFiles,
         '',
       ).then((issues) => {
-        assert.strictEqual(issues.length, 2)
+        assert.strictEqual(issues.length, 1)
         assert.strictEqual(issues[0].code, 105)
-        assert.strictEqual(issues[1].code, 105)
       })
     })
   })

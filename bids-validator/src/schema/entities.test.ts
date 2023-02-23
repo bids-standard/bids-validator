@@ -1,6 +1,7 @@
 import { assert, assertEquals } from '../deps/asserts.ts'
 import { BIDSFile } from '../types/file.ts'
 import { readEntities } from './entities.ts'
+import { nullReadBytes } from '../tests/nullReadBytes.ts'
 
 Deno.test('test readEntities', async (t) => {
   const testFile = {
@@ -10,6 +11,7 @@ Deno.test('test readEntities', async (t) => {
     ignored: false,
     stream: null as unknown as ReadableStream<Uint8Array>,
     text: () => Promise.resolve(''),
+    readBytes: nullReadBytes,
   }
   const context = readEntities(testFile)
   assert(context.suffix === 'bold', 'failed to match suffix')

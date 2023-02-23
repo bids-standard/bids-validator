@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { assert, assertEquals, assertObjectMatch } from '../deps/asserts.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
-import { evalCheck } from './applyRules.ts'
+import { applyRules, evalCheck } from './applyRules.ts'
+import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 const ruleContextData = [
   {
@@ -69,3 +70,40 @@ Deno.test('evalCheck ensure constructor access', () => {
 Deno.test('evalCheck built in apis fail', () => {
   assert(evalCheck('fetch', {}) === undefined, 'fetch in evalCheck namespace')
 })
+
+Deno.test('evalCheck ensure expression language functions work', () => {
+  const context = {
+    x: [1, 2, 3, 4],
+    y: [1, 1, 1, 1],
+    issues: new DatasetIssues(),
+  }
+  const rule = [
+    {
+      selectors: ['true'],
+      checks: [
+        'intersects(x, y)',
+        'match("teststr", "est")',
+        'type(x) == "array" && type(5) == "number"',
+        'max(x) == 4',
+        'min(x) == min(y)',
+        'length(y) == count(y, 1)',
+      ],
+    },
+  ]
+  applyRules(rule, context)
+  assert(!context.issues.hasIssue({ key: 'CHECK_ERROR' }))
+})
+Deno.test(
+  'evalCheck ensure expression language will fail appropriately',
+  () => {
+    const context = { issues: new DatasetIssues() }
+    const rule = [
+      {
+        selectors: ['true'],
+        checks: ['length(1)'],
+      },
+    ]
+    applyRules(rule, context)
+    assert(context.issues.hasIssue({ key: 'CHECK_ERROR' }))
+  },
+)

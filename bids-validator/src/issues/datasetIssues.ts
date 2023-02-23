@@ -91,7 +91,9 @@ export class DatasetIssues extends Map<string, Issue> {
         files,
       })
     } else {
-      throw new Error('key does not exist in non-schema issues definitions')
+      throw new Error(
+        `key: ${key} does not exist in non-schema issues definitions`,
+      )
     }
   }
 
