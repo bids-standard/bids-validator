@@ -17,6 +17,13 @@
         "phase1\\.json",
         "phase2\\.json",
         "fieldmap\\.json",
+        "TB1DAM\\.json",
+        "TB1EPI\\.json",
+        "TB1AFI\\.json",
+        "TB1TFL\\.json",
+        "TB1RFM\\.json",
+        "TB1SRGE\\.json",
+        "RB1COR\\.json",
         "events\\.json",
         "scans\\.json",
         "samples\\.json",
@@ -79,6 +86,55 @@
         "PDmap",
         "photo"
       ]
+    }
+  },
+
+  "VFA_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:echo-[0-9]+_)?(?:flip-[0-9]+_)?(?:part-(mag|phase|real|imag)_)?(@@@_mese_megre_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_mese_megre_suffixes_@@@": ["VFA"]
+    }
+  },
+
+  "megre_mese_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:echo-[0-9]+_)?(?:part-(mag|phase|real|imag)_)?(@@@_mese_megre_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_mese_megre_suffixes_@@@": ["MEGRE", "MESE"]
+    }
+  },
+
+  "irt1_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:inv-[0-9]+_)?(?:part-(mag|phase|real|imag)_)?(@@@_irt1_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_irt1_suffixes_@@@": ["IRT1"]
+    }
+  },
+
+  "mpm_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:echo-[0-9]+_)?(?:flip-[0-9]+_)?(?:mt-(on|off)_)(?:part-(mag|phase|real|imag)_)?(@@@_mpm_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_mpm_suffixes_@@@": ["MPM"]
+    }
+  },
+
+  "mts_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:echo-[0-9]+_)?(?:flip-[0-9]+_mt-(on|off)_)?(?:part-(mag|phase|real|imag)_)?(@@@_mts_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_mts_suffixes_@@@": ["MTS"]
+    }
+  },
+
+  "mtr_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:mt-(on|off)_)?(?:part-(mag|phase|real|imag)_)?(@@@_mtr_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_mtr_suffixes_@@@": ["MTR"]
+    }
+  },
+
+  "mp2rage_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:echo-[0-9]+_)?(?:flip-[0-9]+_)?(?:inv-[0-9]+_)?(?:part-(mag|phase|real|imag)_)?(@@@_mp2rage_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_mp2rage_suffixes_@@@": ["MP2RAGE"]
     }
   },
 
