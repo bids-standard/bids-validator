@@ -64,6 +64,11 @@ export const filenameIssues: IssueDefinitionRecord = {
     reason:
       'An index column(s) was specified for the tsv file and not all of the values for it are unique.',
   },
+  TSV_VALUE_INCORRECT_TYPE: {
+    severity: 'error',
+    reason:
+      'A value in a column did match the acceptable type for that column headers specified format.',
+  },
   CHECK_ERROR: {
     severity: 'error',
     reason:
