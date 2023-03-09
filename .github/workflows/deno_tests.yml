@@ -25,4 +25,8 @@ jobs:
       - uses: denoland/setup-deno@v1.1.1
         with:
           deno-version: v1.x
+      - name: Get bids-examples
+        run: |
+          git submodule update --init --recursive
+          git submodule update --recursive --remote
       - run: deno test --allow-all --coverage=cov/ src/

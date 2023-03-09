@@ -1,7 +1,13 @@
-import { GenericRule, GenericSchema, SchemaFields } from '../types/schema.ts'
+import {
+  GenericRule,
+  GenericSchema,
+  SchemaFields,
+  SchemaTypeLike,
+} from '../types/schema.ts'
 import { Severity } from '../types/issues.ts'
 import { BIDSContext } from './context.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
+import { logger } from '../utils/logger.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
@@ -62,6 +68,7 @@ export function evalCheck(src: string, context: BIDSContext) {
   try {
     return test(safeContext)
   } catch (error) {
+    logger.debug(error)
     return false
   }
 }
@@ -144,6 +151,36 @@ function evalRuleChecks(
 }
 
 /**
+ * schema.formats contains named types with patterns. Many entries in
+ * schema.objects have a format to constrain its possible values. Presently
+ * this is written with tsv's in mind. The blanket n/a pass may be inappropriate
+ * for other type checks. filenameValidate predates this but does similar type
+ * checking for entities.
+ */
+function schemaObjectTypeCheck(
+  schemaObject: SchemaTypeLike,
+  value: string,
+  schema: GenericSchema,
+): boolean {
+  if ('anyOf' in schemaObject) {
+    return schemaObject.anyOf.some((x) =>
+      schemaObjectTypeCheck(x, value, schema),
+    )
+  }
+  if ('enum' in schemaObject && schemaObject.enum) {
+    return schemaObject.enum.some((x) => x === value)
+  }
+  // always allow n/a?
+  if (value === 'n/a') {
+    return true
+  }
+  // @ts-expect-error
+  const format = schema.objects.formats[schemaObject.type]
+  const re = new RegExp(`^${format.pattern}$`)
+  return re.test(value)
+}
+
+/**
  * Columns in schema rules are assertions about the requirement level of what
  * headers should be present in a tsv file. Examples in specification:
  * schema/rules/tabular_data/*
@@ -158,11 +195,30 @@ function evalColumns(
   const headers = Object.keys(context.columns)
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
     // @ts-expect-error
-    const name = schema.objects.columns[ruleHeader].name
+    const columnObject = schema.objects.columns[ruleHeader]
+    const name = columnObject.name
     if (!headers.includes(name) && requirement === 'required') {
-      context.issues.addNonSchemaIssue('TSV_ERROR', [
-        { ...context.file, evidence: JSON.stringify(rule) },
+      context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
+        {
+          ...context.file,
+          evidence: `Column with header ${name} listed as required. ${schemaPath}`,
+        },
       ])
+    }
+    if (headers.includes(name)) {
+      for (const value of context.columns[name]) {
+        if (
+          !schemaObjectTypeCheck(columnObject as SchemaTypeLike, value, schema)
+        ) {
+          context.issues.addNonSchemaIssue('TSV_VALUE_INCORRECT_TYPE', [
+            {
+              ...context.file,
+              evidence: `'${value}' ${Deno.inspect(columnObject)}`,
+            },
+          ])
+          break
+        }
+      }
     }
   }
 }
@@ -181,14 +237,16 @@ function evalInitialColumns(
     return
   const headers = Object.keys(context.columns)
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
-    const contextIndex = headers.findIndex((x) => x === ruleHeader)
+    // @ts-expect-error
+    const ruleHeaderName = schema.objects.columns[ruleHeader].name
+    const contextIndex = headers.findIndex((x) => x === ruleHeaderName)
     if (contextIndex === -1) {
-      const evidence = `Column with header ${ruleHeader} not found, indexed from 0 it should appear in column ${ruleIndex}`
+      const evidence = `Column with header ${ruleHeaderName} not found, indexed from 0 it should appear in column ${ruleIndex}. ${schemaPath}`
       context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
         { ...context.file, evidence: evidence },
       ])
     } else if (ruleIndex !== contextIndex) {
-      const evidence = `Column with header ${ruleHeader} found at index ${contextIndex} while rule specifies, indexed form 0 it should be in column ${ruleIndex}`
+      const evidence = `Column with header ${ruleHeaderName} found at index ${contextIndex} while rule specifies, indexed from 0, it should be in column ${ruleIndex}. ${schemaPath}`
       context.issues.addNonSchemaIssue('TSV_COLUMN_ORDER_INCORRECT', [
         { ...context.file, evidence: evidence },
       ])
@@ -205,10 +263,17 @@ function evalAdditionalColumns(
   if (context.extension !== '.tsv') return
   const headers = Object.keys(context?.columns)
   // hard coding allowed here feels bad
-  if (!(rule.additional_columns === 'allowed')) {
-    const extraCols = headers.filter(
-      (header) => rule.columns && !(header in rule.columns),
+  if (!(rule.additional_columns === 'allowed') && rule.columns) {
+    const ruleHeadersNames = Object.keys(rule.columns).map(
+      // @ts-expect-error
+      (x) => schema.objects.columns[x].name,
     )
+    let extraCols = headers.filter(
+      (header) => !ruleHeadersNames.includes(header),
+    )
+    if (rule.additional_columns === 'allowed_if_defined') {
+      extraCols = extraCols.filter((header) => !(header in context.sidecar))
+    }
     if (extraCols.length) {
       context.issues.addNonSchemaIssue('TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED', [
         { ...context.file, evidence: `Disallowed columns found ${extraCols}` },
@@ -241,7 +306,7 @@ function evalIndexColumns(
     context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
       {
         ...context.file,
-        evidence: `Columns cited as index columns not in file: ${missing}`,
+        evidence: `Columns cited as index columns not in file: ${missing}. ${schemaPath}`,
       },
     ])
     return
@@ -277,7 +342,9 @@ function evalJsonCheck(
 ): void {
   for (const [key, requirement] of Object.entries(rule.fields)) {
     const severity = getFieldSeverity(requirement, context)
-    if (severity && severity !== 'ignore' && !(key in context.sidecar)) {
+    // @ts-expect-error
+    const keyName = schema.objects.metadata[key].name
+    if (severity && severity !== 'ignore' && !(keyName in context.sidecar)) {
       if (requirement.issue?.code && requirement.issue?.message) {
         context.issues.add({
           key: requirement.issue.code,
@@ -287,7 +354,10 @@ function evalJsonCheck(
         })
       } else {
         context.issues.addNonSchemaIssue('JSON_KEY_REQUIRED', [
-          { ...context.file, evidence: `missing ${key} as per ${schemaPath}` },
+          {
+            ...context.file,
+            evidence: `missing ${keyName} as per ${schemaPath}`,
+          },
         ])
       }
     }
@@ -320,7 +390,7 @@ function getFieldSeverity(
     if (requirement.level_addendum) {
       const match = addendumRegex.exec(requirement.level_addendum)
       if (match && match.length === 4) {
-        const [addendum, addendumLevel, key, value] = match
+        const [_, addendumLevel, key, value] = match
         // @ts-expect-error
         if (key in context.sidecar && context.sidecar[key] === value) {
           severity = levelToSeverity[addendumLevel]

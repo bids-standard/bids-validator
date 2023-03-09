@@ -68,6 +68,13 @@ const associationLookup = {
       return Promise.resolve({ path: file.path, n_cols: 0 })
     },
   },
+  channels: {
+    extensions: ['.tsv'],
+    inherit: true,
+    load: (file: BIDSFile): Promise<ContextAssociations['events']> => {
+      return file.text().then((text) => parseTSV(text))
+    },
+  },
 }
 
 export async function buildAssociations(

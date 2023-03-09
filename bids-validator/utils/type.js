@@ -86,6 +86,13 @@ const rootTop = buildRegExp(top_level_rules.root_top)
 const funcTop = buildRegExp(top_level_rules.func_top)
 const aslTop = buildRegExp(top_level_rules.asl_top)
 const anatTop = buildRegExp(top_level_rules.anat_top)
+const vfaTop = buildRegExp(top_level_rules.VFA_top)
+const megreTop = buildRegExp(top_level_rules.megre_mese_top)
+const irt1Top = buildRegExp(top_level_rules.irt1_top)
+const mpmTop = buildRegExp(top_level_rules.mpm_top)
+const mtsTop = buildRegExp(top_level_rules.mts_top)
+const mtrTop = buildRegExp(top_level_rules.mtr_top)
+const mp2rageTop = buildRegExp(top_level_rules.mp2rage_top)
 const dwiTop = buildRegExp(top_level_rules.dwi_top)
 const eegTop = buildRegExp(top_level_rules.eeg_top)
 const ieegTop = buildRegExp(top_level_rules.ieeg_top)
@@ -145,6 +152,13 @@ export default {
           aslTop.test(path) ||
           dwiTop.test(path) ||
           anatTop.test(path) ||
+          vfaTop.test(path) ||
+          megreTop.test(path) ||
+          irt1Top.test(path) ||
+          mpmTop.test(path) ||
+          mtsTop.test(path) ||
+          mtrTop.test(path) ||
+          mp2rageTop.test(path) ||
           multiDirFieldmap.test(path) ||
           otherTopFiles.test(path) ||
           megTop.test(path) ||
@@ -162,6 +176,13 @@ export default {
           aslTop.test(path) ||
           dwiTop.test(path) ||
           anatTop.test(path) ||
+          vfaTop.test(path) ||
+          megreTop.test(path) ||
+          irt1Top.test(path) ||
+          mpmTop.test(path) ||
+          mtsTop.test(path) ||
+          mtrTop.test(path) ||
+          mp2rageTop.test(path) ||
           multiDirFieldmap.test(path) ||
           otherTopFiles.test(path) ||
           megTop.test(path) ||
