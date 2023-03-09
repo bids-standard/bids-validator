@@ -39,13 +39,13 @@ describe('TSV', function () {
   })
 
   /* See utils.unit.validate for comment
-  it('should not allow non-SI units', function() {
+  it('should not allow non-SI units', function () {
     var tsv =
       'header-one\tunits\theader-three\n' +
       'value-one\tµV\tvalue-three\n' +
       'value-one\tuV\tvalue-three'
 
-    validate.TSV.TSV(file, tsv, [], function(issues) {
+    validate.TSV.TSV(file, tsv, [], function (issues) {
       assert(issues.length === 1 && issues[0].key === 'INVALID_TSV_UNITS')
     })
   })
@@ -627,6 +627,29 @@ describe('TSV', function () {
       'NIRSCWAMPLITUDE\tS1\tD1\t760.0\tV'
     validate.TSV.TSV(channelsFileNIRS, tsv, [], function (issues) {
       assert(issues[0].code === 234)
+    })
+  })
+
+  var channelsFileMOTION = {
+    name: 'sub-01_ses-walk_task-navigation_tracksys-IMU1_run-01_channels.tsv',
+    relativePath:
+      '/sub-01/ses-walk/motion/sub-01_ses-walk_task-navigation_tracksys-IMU1_run-01_channels.tsv',
+  }
+
+  it('MOTION channels.tsv with correct columns should throw no error', function () {
+    var tsv =
+      'name\tcomponent\ttype\ttracked_point\tunits\n' +
+      't1_acc_x\tx\tACCEL\tLeftFoot\tm/s^2'
+    validate.TSV.TSV(channelsFileMOTION, tsv, [], function (issues) {
+      assert(issues.length === 0)
+    })
+  })
+
+  it('should not allow MOTION channels.tsv files without component column', function () {
+    var tsv =
+      'name\ttype\ttracked_point\tunits\n' + 't1_acc_x\tACCEL\tLeftFoot\tm/s^2'
+    validate.TSV.TSV(channelsFileMOTION, tsv, [], function (issues) {
+      assert(issues[0].code === 129)
     })
   })
 

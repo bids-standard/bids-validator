@@ -569,6 +569,39 @@ describe('utils.type.file.isPETBlood', function () {
   })
 })
 
+describe('utils.type.file.isMOTION', function () {
+  const goodFilenames = [
+    '/sub-01/motion/sub-01_task-rest_tracksys-unity_run-01_motion.tsv',
+    '/sub-01/ses-walk/motion/sub-01_ses-walk_task-visual_tracksys-unity_motion.tsv',
+    '/sub-01/ses-walk/motion/sub-01_ses-walk_task-visual_tracksys-unity_motion.json',
+    '/sub-01/ses-walk/motion/sub-01_ses-walk_task-visual_tracksys-unity_channels.tsv',
+    '/sub-01/ses-desktop/motion/sub-01_ses-desktop_task-rest_tracksys-unity_run-01_events.tsv',
+    '/sub-01/ses-desktop/motion/sub-01_ses-desktop_task-rest_events.tsv',
+  ]
+
+  goodFilenames.forEach(function (path) {
+    it("isMOTION('" + path + "') === true", function (isdone) {
+      assert.equal(utils.type.file.isMOTION(path), true)
+      isdone()
+    })
+  })
+
+  const badFilenames = [
+    '/sub-01/motion/sub-01_ses-001_tracksys-unity_task-rest_run-01_motion.json',
+    '/sub-01/ses-001/motion/sub-12_ses-001_task-rest_run-01_motion.tsv',
+    '/sub-01/ses-walk/motion/sub-01_ses-walk_task-visual_channels.tsv',
+    '/sub-01/ses-001/motion/sub-01_ses-001_run-01_motion.tsv',
+    '/sub-01/motion/sub-01_task-walk_run-01_motion.tsv',
+  ]
+
+  badFilenames.forEach(function (path) {
+    it("isMOTION('" + path + "') === false", function (isdone) {
+      assert.equal(utils.type.file.isMOTION(path), false)
+      isdone()
+    })
+  })
+})
+
 describe('BIDS.subIDsesIDmismatchtest', function () {
   it("should return if sub and ses doesn't match", function () {
     const files = {

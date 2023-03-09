@@ -51,7 +51,7 @@
    1. Install [Pip](https://pip.pypa.io/en/stable/installing/) package manager for Python, if
       not already installed.
    1. From a terminal run `pip install bids_validator` to acquire the
-      [BIDS Validator PyPI package](https://pypi.org/project/bids-validator/) 
+      [BIDS Validator PyPI package](https://pypi.org/project/bids-validator/)
       or `conda install bids-validator` for the
       [Conda package](https://anaconda.org/conda-forge/bids-validator).
    1. Open a Python terminal and type: `python`

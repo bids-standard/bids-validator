@@ -750,4 +750,29 @@ describe('JSON', function () {
       assert(issues[1].evidence == ' should match "then" schema')
     })
   })
+
+  var motion_file = {
+    name: 'sub-01_ses-VR_task-dance_tracksys-Unity_motion.json',
+    relativePath: '/sub-01_ses-VR_task-dance_tracksys-Unity_motion.json',
+  }
+
+  it('*_motion.json sidecars should have required key/value pairs', function () {
+    var jsonObj = {
+      TaskName: 'Dance',
+      SamplingFrequency: 90,
+      MotionChannelCount: 7,
+      POSChannelCount: 3,
+      ORNTChannelCount: 4,
+    }
+    jsonDict[motion_file.relativePath] = jsonObj
+    validate.JSON(motion_file, jsonDict, function (issues) {
+      assert(issues.length === 0)
+    })
+    var jsonObjInval = jsonObj
+    jsonObjInval['BadKey'] = ''
+    jsonDict[motion_file.relativePath] = jsonObjInval
+    validate.JSON(motion_file, jsonDict, function (issues) {
+      assert(issues && issues.length === 1)
+    })
+  })
 })

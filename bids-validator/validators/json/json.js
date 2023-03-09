@@ -159,6 +159,8 @@ const selectSchema = (file) => {
       schema = require('./schemas/events.json')
     } else if (file.name.endsWith('beh.json')) {
       schema = require('./schemas/beh.json')
+    } else if (file.name.endsWith('_motion.json')) {
+      schema = require('./schemas/motion.json')
     }
   }
   return schema
