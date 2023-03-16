@@ -6,17 +6,6 @@ Deno is a JavaScript and TypeScript runtime that is used to run the schema based
 
 At the root of the repository there are two directories, `bids-validator` and `bids-validator-web`. These are separate npm packages, the Deno validator lives within the bids-validator package within the `src` directory.
 
-Install NPM dependencies and create a Deno compatible build of the legacy JavaScript validator. This allows you to run schema based validation and the existing validator implementation together with the `--legacy` flag if needed. This mode mainly intended for development and may be removed in the future.
-
-```shell
-# Install legacy validator's dependencies and build tools for this step
-npm install
-# Build is run from within the bids-validator package
-cd bids-validator
-# Creates a build of the legacy validator in /bids-validator/dist
-npm run build
-```
-
 # Schema validator examples
 
 Deno by default sandboxes applications like a web browser. To validate datasets located on your local system, you need to use the --allow-read flag to read local files. --allow-env is also required to allow for detection of OS specific features. These flags are included in the script line of the `./bids-validator-deno` script.
