@@ -27,7 +27,6 @@ export async function parseOptions(
     )
     .arguments('<dataset_directory>')
     .version('alpha')
-    .option('--legacy', 'Enable running both validators together')
     .option('--json', 'Output machine readable JSON')
     .option(
       '-s, --schema <type:string>',
