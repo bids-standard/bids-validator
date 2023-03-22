@@ -46,7 +46,7 @@ jobs:
         run: |
           git submodule update --init --recursive
           git submodule update --recursive --remote
-      - run: deno test --allow-all src/
+      - run: deno test --allow-all --coverage=cov/ src/
 
   deploy:
     needs: [build]
