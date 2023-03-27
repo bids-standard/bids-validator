@@ -1,4 +1,4 @@
-import { CheckFunction } from '../types/check.ts'
+import { DSCheckFunction, ContextCheckFunction } from '../types/check.ts'
 import { FileTree } from '../types/filetree.ts'
 import { GenericSchema } from '../types/schema.ts'
 import { ValidationResult } from '../types/validation-result.ts'
@@ -14,16 +14,20 @@ import { emptyFile } from './internal/emptyFile.ts'
 import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { parseOptions } from '../setup/options.ts'
+import { hedAccumulator, hedValidate } from './hed.ts'
 
 /**
  * Ordering of checks to apply
  */
-const CHECKS: CheckFunction[] = [
+const perContextChecks: CheckFunction[] = [
   emptyFile,
   filenameIdentify,
   filenameValidate,
   applyRules,
+  hedAccumulator,
 ]
+
+const perDSChecks: DSCheckFunction[] = [hedValidate]
 
 /**
  * Full BIDS schema validation entrypoint
@@ -77,11 +81,14 @@ export async function validate(
     }
     await context.asyncLoads()
     // Run majority of checks
-    for (const check of CHECKS) {
+    for (const check of perContextChecks) {
       // TODO - Resolve this double casting?
       await check(schema as unknown as GenericSchema, context)
     }
     await summary.update(context)
+  }
+  for (const check of perDSChecks) {
+    check(schema, dsContext, issues)
   }
 
   let derivativesSummary: Record<string, ValidationResult> = {}

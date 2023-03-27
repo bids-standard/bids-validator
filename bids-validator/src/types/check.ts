@@ -1,8 +1,9 @@
 import { GenericSchema } from './schema.ts'
-import { BIDSContext } from '../schema/context.ts'
+import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
+import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 /** Function interface for writing a check */
-export type CheckFunction = (
+export type ContextCheckFunction = (
   schema: GenericSchema,
   context: BIDSContext,
 ) => Promise<void>
@@ -13,3 +14,9 @@ export type RuleCheckFunction = (
   schema: GenericSchema,
   context: BIDSContext,
 ) => void
+
+DSCheckFunction = (
+  schema: GenericSchema,
+  dsContext: BIDSContextDataset,
+  issues: DatasetIssues,
+) => Promise<void>
