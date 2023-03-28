@@ -3,7 +3,7 @@ import hedValidator from '../deps/hed-validator/index.js'
 const hedArgs = {
   eventData: [],
   sidecarData: [],
-  datasetDescriptionData: '',
+  datasetDescription: '',
   dir: '',
 }
 
@@ -26,7 +26,7 @@ function columnsToContent(columns): tsvContent {
 
 export async function hedAccumulator(schema, context) {
   if (context.file.name == 'dataset_description.json') {
-    hedArgs.datasetDescriptionData = new hedValidator.validator.BidsJsonFile(
+    hedArgs.datasetDescription = new hedValidator.validator.BidsJsonFile(
       '/dataset_description.json',
       await context.json,
       context.file,
@@ -57,7 +57,7 @@ export async function hedAccumulator(schema, context) {
 }
 
 export async function hedValidate(schema, dsContext, issues) {
-  let hedDs = new hedValidator.validator.BidsDataset(hedArgs)
+  let hedDs = new hedValidator.validator.BidsDataset(...Object.values(hedArgs))
   await hedValidator.validator
     .validateBidsDataset(hedDs)
     .then((hedValidationIssues) => {
