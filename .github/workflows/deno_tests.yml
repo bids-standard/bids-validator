@@ -1,9 +1,10 @@
 ---
-name: Deno Tests
+name: Deno build
 
 on:
   push:
     branches: [master]
+    tags: ['*']
   pull_request:
     branches: [master]
 
@@ -13,6 +14,20 @@ concurrency:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - run: ./build.ts
+        working-directory: ./bids-validator
+      - uses: actions/upload-artifact@v3
+        with:
+          name: main
+          path: bids-validator/dist/validator/main.js
+
+  test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -21,6 +36,7 @@ jobs:
     defaults:
       run:
         working-directory: ./bids-validator
+
     steps:
       - uses: actions/checkout@v3
       - uses: denoland/setup-deno@v1.1.1
@@ -31,3 +47,34 @@ jobs:
           git submodule update --init --recursive
           git submodule update --recursive --remote
       - run: deno test --allow-all src/
+
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' && github.repository_owner == 'bids-standard'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PUSH_TOKEN }}
+      - name: Set credentials
+        run: |
+          git config --global user.name "BIDS-Bot"
+          git config --global user.email "bids-maintenance@users.noreply.github.com"
+      - name: Save describe stamp
+        run: echo VERSION=$( git describe ) >> $GITHUB_ENV
+      - name: Checkout orphan
+        run: |
+          git checkout --orphan deno-build
+          git rm -rf .
+      - uses: actions/download-artifact@v3
+        with:
+          name: main
+          path: main
+      - name: Commit to new branch
+        run: |
+          mv main/main.js .
+          git add main.js
+          git commit -m "BLD: $VERSION [skip ci]"
+      - name: Force push
+        run: git push origin --force deno-build
