@@ -65,7 +65,7 @@ jobs:
         run: echo VERSION=$( git describe ) >> $GITHUB_ENV
       - name: Checkout orphan
         run: |
-          git checkout --orphan deno-build
+          git checkout deno-build
           git rm -rf .
       - uses: actions/download-artifact@v3
         with:
@@ -76,5 +76,5 @@ jobs:
           mv main/main.js .
           git add main.js
           git commit -m "BLD: $VERSION [skip ci]"
-      - name: Force push
-        run: git push origin --force deno-build
+      - name: Push
+        run: git push origin deno-build
