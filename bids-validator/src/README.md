@@ -37,3 +37,11 @@ This test suite includes running expected output from bids-examples and may thro
 If you are validating with the latest specification instead of a specific version, the validator will hold onto a cached version. You can request the newest version by adding the `--reload` argument to obtain the newest specification definition.
 
 `deno run --reload=https://bids-specification.readthedocs.io/en/latest/schema.json src/main.ts`
+
+# Modifying and building a new schema
+
+To modify the schema a clone of bids-standard/bids-specification will need to be made. README and schema itself live here https://github.com/bids-standard/bids-specification/tree/master/src/schema.
+
+After changes to the schema have been made to a local copy the compiled single json file used by the valdiator will need to be built. The `bidsschematools` python package does this. It can be installed from pypi via pip or a local installation can be made. It lives in the specification repository here https://github.com/bids-standard/bids-specification/tree/master/tools/schemacode
+
+Command to compile schema is `bst -v export --output src/schema.json` (this assumes you are in the root of the bids-specificaiton repo). Once compiled it can be pased to the validator via the `-s` flag, `./bids-validator-deno -s <path to schema> <path to dataset>`
