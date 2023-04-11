@@ -10,6 +10,9 @@ export const expressionFunctions = {
     if (Array.isArray(operand)) {
       return 'array'
     }
+    if (typeof operand === 'undefined') {
+      return 'null'
+    }
     return typeof operand
   },
   min: (list: number[]): number => {
@@ -18,8 +21,11 @@ export const expressionFunctions = {
   max: (list: number[]): number => {
     return Math.max(...list)
   },
-  length: <T>(list: T[]): number => {
-    return list.length
+  length: <T>(list: T[]): number | null => {
+    if (Array.isArray(list) || typeof list == 'string') {
+      return list.length
+    }
+    return null
   },
   count: <T>(list: T[], val: T): number => {
     return list.filter((x) => x === val).length
