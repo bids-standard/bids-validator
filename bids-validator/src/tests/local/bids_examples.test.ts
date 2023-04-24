@@ -4,8 +4,10 @@ import { Cell, Row, Table } from '../../deps/cliffy.ts'
 import { colors } from '../../deps/fmt.ts'
 import { IssueOutput } from '../../types/issues.ts'
 import { validatePath, formatAssertIssue } from './common.ts'
+import { parseOptions } from '../../setup/options.ts'
 
-const options = { ignoreNiftiHeaders: true }
+const options = await parseOptions(['fake_dataset_arg', ...Deno.args])
+options.ignoreNiftiHeaders = true
 
 // Stand in for old validator config that could ignore issues
 function useIssue(issue: IssueOutput): boolean {
