@@ -74,7 +74,8 @@ jobs:
       - name: Commit to new branch
         run: |
           mv main/main.js .
-          git add main.js
+          mv main/bids-validator.js .
+          git add main.js bids-validator.js
           git commit -m "BLD: $VERSION [skip ci]" || true
       - name: Push
         run: git push origin deno-build
