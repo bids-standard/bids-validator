@@ -25,7 +25,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: main
-          path: bids-validator/dist/validator/main.js
+          path: bids-validator/dist/validator
 
   test:
     runs-on: ${{ matrix.os }}
