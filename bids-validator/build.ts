@@ -8,6 +8,7 @@ import * as esbuild from 'https://deno.land/x/esbuild@v0.17.5/mod.js'
 import { parse } from 'https://deno.land/std@0.175.0/flags/mod.ts'
 
 const MAIN_ENTRY = 'src/main.ts'
+const CLI_ENTRY = 'src/bids-validator.ts'
 
 const httpPlugin = {
   name: 'http',
@@ -43,7 +44,7 @@ const flags = parse(Deno.args, {
 
 const result = await esbuild.build({
   format: 'esm',
-  entryPoints: [MAIN_ENTRY],
+  entryPoints: [MAIN_ENTRY, CLI_ENTRY],
   bundle: true,
   outdir: 'dist/validator',
   minify: flags.minify,
