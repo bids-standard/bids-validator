@@ -162,6 +162,10 @@ function schemaObjectTypeCheck(
   value: string,
   schema: GenericSchema,
 ): boolean {
+  // always allow n/a?
+  if (value === 'n/a') {
+    return true
+  }
   if ('anyOf' in schemaObject) {
     return schemaObject.anyOf.some((x) =>
       schemaObjectTypeCheck(x, value, schema),
@@ -169,10 +173,6 @@ function schemaObjectTypeCheck(
   }
   if ('enum' in schemaObject && schemaObject.enum) {
     return schemaObject.enum.some((x) => x === value)
-  }
-  // always allow n/a?
-  if (value === 'n/a') {
-    return true
   }
   // @ts-expect-error
   const format = schema.objects.formats[schemaObject.type]
