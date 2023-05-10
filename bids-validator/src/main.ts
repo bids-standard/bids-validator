@@ -15,7 +15,15 @@ function inspect(obj: any) {
       }),
     )
   } else {
-    console.log(JSON.stringify(obj))
+    console.log(
+      JSON.stringify(obj, (key, value) => {
+        if (value instanceof Map) {
+          return Array.from(value.values())
+        } else {
+          return value
+        }
+      }),
+    )
   }
 }
 
