@@ -7,12 +7,16 @@ import { consoleFormat } from './utils/output.ts'
 import { setupLogging } from './utils/logger.ts'
 
 function inspect(obj: any) {
-  console.log(
-    Deno.inspect(obj, {
-      depth: 6,
-      colors: true,
-    }),
-  )
+  if (Deno.isatty(Deno.stdin.rid)) {
+    console.log(
+      Deno.inspect(obj, {
+        depth: 6,
+        colors: true,
+      }),
+    )
+  } else {
+    console.log(JSON.stringify(obj))
+  }
 }
 
 export async function main() {
