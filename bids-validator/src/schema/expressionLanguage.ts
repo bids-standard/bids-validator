@@ -1,3 +1,14 @@
+function exists(list: string[], val: string): number {
+  if (val == 'stimuli') {
+    return list.filter(
+      // @ts-expect-error
+      (x) => this.fileTree.files.includes('stimuli/' + x.trim()),
+    ).length
+  }
+  // XXX fallback to "always true" until this is actually complete
+  return list.length
+}
+
 export const expressionFunctions = {
   intersects: <T>(a: T[], b: T[]): boolean => {
     return a.some((x) => b.includes(x))
@@ -30,7 +41,5 @@ export const expressionFunctions = {
   count: <T>(list: T[], val: T): number => {
     return list.filter((x) => x === val).length
   },
-  exists: <T>(list: T[], val: T): boolean => {
-    return true
-  },
+  exists: exists,
 }

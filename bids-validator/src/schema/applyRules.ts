@@ -34,6 +34,8 @@ export function applyRules(
     schemaPath = 'schema'
   }
   Object.assign(context, expressionFunctions)
+  // @ts-expect-error
+  context.exists.bind(context)
   for (const key in schema) {
     if (!(schema[key].constructor === Object)) {
       continue
