@@ -7,24 +7,15 @@ import { consoleFormat } from './utils/output.ts'
 import { setupLogging } from './utils/logger.ts'
 
 function inspect(obj: any) {
-  if (Deno.isatty(Deno.stdin.rid)) {
-    console.log(
-      Deno.inspect(obj, {
-        depth: 6,
-        colors: true,
-      }),
-    )
-  } else {
-    console.log(
-      JSON.stringify(obj, (key, value) => {
-        if (value instanceof Map) {
-          return Array.from(value.values())
-        } else {
-          return value
-        }
-      }),
-    )
-  }
+  console.log(
+    JSON.stringify(obj, (key, value) => {
+      if (value instanceof Map) {
+        return Array.from(value.values())
+      } else {
+        return value
+      }
+    }),
+  )
 }
 
 export async function main() {
