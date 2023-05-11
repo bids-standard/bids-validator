@@ -6,18 +6,6 @@ import { validate } from './validators/bids.ts'
 import { consoleFormat } from './utils/output.ts'
 import { setupLogging } from './utils/logger.ts'
 
-function inspect(obj: any) {
-  console.log(
-    JSON.stringify(obj, (key, value) => {
-      if (value instanceof Map) {
-        return Array.from(value.values())
-      } else {
-        return value
-      }
-    }),
-  )
-}
-
 export async function main() {
   const options = await parseOptions(Deno.args)
   setupLogging(options.debug)
@@ -28,7 +16,15 @@ export async function main() {
   const schemaResult = await validate(tree, options)
 
   if (options.json) {
-    console.log(inspect(schemaResult))
+    console.log(
+      JSON.stringify(schemaResult, (key, value) => {
+        if (value instanceof Map) {
+          return Array.from(value.values())
+        } else {
+          return value
+        }
+      }),
+    )
   } else {
     console.log(
       consoleFormat(schemaResult, {
