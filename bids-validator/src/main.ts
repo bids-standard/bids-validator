@@ -8,9 +8,12 @@ import { setupLogging } from './utils/logger.ts'
 
 function inspect(obj: any) {
   console.log(
-    Deno.inspect(obj, {
-      depth: 6,
-      colors: true,
+    JSON.stringify(obj, (key, value) => {
+      if (value instanceof Map) {
+        return Array.from(value.values())
+      } else {
+        return value
+      }
     }),
   )
 }
