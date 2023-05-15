@@ -1,9 +1,10 @@
 function exists(list: string[], val: string): number {
   if (val == 'stimuli') {
-    return list.filter(
+    return list.filter((x) => {
+      const parts = ['stimuli', ...x.split('/')]
       // @ts-expect-error
-      (x) => this.fileTree.files.includes('stimuli/' + x.trim()),
-    ).length
+      return this.fileTree.contains(parts)
+    }).length
   }
   // XXX fallback to "always true" until this is actually complete
   return list.length
