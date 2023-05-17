@@ -8,7 +8,7 @@ import {
 } from '../types/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
-import { readEntities } from './entities.ts'
+import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { parseTSV } from '../files/tsv.ts'
 import { loadHeader } from '../files/nifti.ts'
@@ -76,7 +76,7 @@ export class BIDSContext implements Context {
     this.filenameRules = []
     this.issues = issues
     this.file = file
-    const bidsEntities = readEntities(file)
+    const bidsEntities = readEntities(file.name)
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities

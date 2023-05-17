@@ -105,7 +105,7 @@ function getPaths(
   targetExtensions: string[],
 ) {
   const validAssociations = fileTree.files.filter((file) => {
-    const { suffix, extension, entities } = readEntities(file)
+    const { suffix, extension, entities } = readEntities(file.name)
     return (
       targetExtensions.includes(extension) &&
       suffix === targetSuffix &&

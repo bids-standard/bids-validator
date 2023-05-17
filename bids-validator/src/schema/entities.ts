@@ -1,4 +1,4 @@
-import { BIDSFile } from '../types/file.ts'
+import { memoize } from '../utils/memoize.ts'
 
 export interface BIDSEntities {
   suffix: string
@@ -6,19 +6,15 @@ export interface BIDSEntities {
   entities: Record<string, string>
 }
 
-export function readEntities(file: BIDSFile): BIDSEntities {
+export function _readEntities(filename: string): BIDSEntities {
   let suffix = ''
   let extension = ''
-  let entities: Record<string, string> = {}
+  const entities: Record<string, string> = {}
 
-  let parts = file.name.split('_')
+  const parts = filename.split('_')
   for (let i = 0; i < parts.length - 1; i++) {
-    let [entity, label] = parts[i].split('-')
-    if (entity && label) {
-      entities[entity] = label
-    } else {
-      entities[entity] = 'NOENTITY'
-    }
+    const [entity, label] = parts[i].split('-')
+    entities[entity] = label || 'NOENTITY'
   }
 
   const lastPart = parts[parts.length - 1]
@@ -30,5 +26,7 @@ export function readEntities(file: BIDSFile): BIDSEntities {
     extension = lastPart.slice(extStart)
   }
 
-  return { suffix: suffix, extension: extension, entities: entities }
+  return { suffix, extension, entities }
 }
+
+export const readEntities = memoize(_readEntities)
