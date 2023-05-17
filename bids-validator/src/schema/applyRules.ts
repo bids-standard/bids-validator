@@ -8,6 +8,7 @@ import { Severity } from '../types/issues.ts'
 import { BIDSContext } from './context.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
+import { memoize } from '../utils/memoize.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
@@ -62,8 +63,10 @@ const safeHas = () => true
 const safeGet = (target: any, prop: any) =>
   prop === Symbol.unscopables ? undefined : target[prop]
 
+const memoizedEvalConstructor = memoize(evalConstructor)
+
 export function evalCheck(src: string, context: BIDSContext) {
-  const test = evalConstructor(src)
+  const test = memoizedEvalConstructor(src)
   const safeContext = new Proxy(context, { has: safeHas, get: safeGet })
   try {
     return test(safeContext)
