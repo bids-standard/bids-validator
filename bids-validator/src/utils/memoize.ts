@@ -1,4 +1,6 @@
-export const memoize = <T = any>(fn: Function<T>) => {
+export const memoize = <T>(
+  fn: (...args: any[]) => T,
+): ((...args: any[]) => T) => {
   const cache = new Map()
   const cached = function (this: any, val: T) {
     return cache.has(val)
