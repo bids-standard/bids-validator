@@ -1,10 +1,23 @@
-function exists(list: string[], val: string): number {
+function exists(list: string[], val: string = 'dataset'): number {
+  if (!Array.isArray(list)) {
+    list = [list]
+  }
   if (val == 'stimuli') {
     return list.filter((x) => {
       const parts = ['stimuli', ...x.split('/')]
       // @ts-expect-error
       return this.fileTree.contains(parts)
     }).length
+  }
+  if (val == 'dataset') {
+    let ret = list.filter((x) => {
+      let parts = x.split('/')
+      if (['.', ''].includes(parts[0])) {
+        parts = parts.slice(1, parts.length)
+      }
+      return this.fileTree.contains(parts)
+    })
+    return ret.length
   }
   // XXX fallback to "always true" until this is actually complete
   return list.length
@@ -44,6 +57,6 @@ export const expressionFunctions = {
   },
   exists: exists,
   substr: (arg: string, start: int, end: int): str => {
-    return arg.substr(start, end)
+    return arg.substr(start, end - start)
   },
 }
