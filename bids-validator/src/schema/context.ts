@@ -50,7 +50,7 @@ const defaultDsContext = new BIDSContextDataset()
 
 export class BIDSContext implements Context {
   // Internal representation of the file tree
-  #fileTree: FileTree
+  fileTree: FileTree
   filenameRules: string[]
   issues: DatasetIssues
   file: BIDSFile
@@ -72,7 +72,7 @@ export class BIDSContext implements Context {
     issues: DatasetIssues,
     dsContext?: BIDSContextDataset,
   ) {
-    this.#fileTree = fileTree
+    this.fileTree = fileTree
     this.filenameRules = []
     this.issues = issues
     this.file = file
@@ -105,7 +105,7 @@ export class BIDSContext implements Context {
    * In the browser, this is always at the root
    */
   get datasetPath(): string {
-    return this.#fileTree.path
+    return this.fileTree.path
   }
 
   /**
@@ -114,7 +114,7 @@ export class BIDSContext implements Context {
    */
   async loadSidecar(fileTree?: FileTree) {
     if (!fileTree) {
-      fileTree = this.#fileTree
+      fileTree = this.fileTree
     }
     const validSidecars = fileTree.files.filter((file) => {
       const { suffix, extension, entities } = readEntities(file)
@@ -174,7 +174,7 @@ export class BIDSContext implements Context {
   }
 
   async loadAssociations(): Promise<void> {
-    this.associations = await buildAssociations(this.#fileTree, this)
+    this.associations = await buildAssociations(this.fileTree, this)
     return
   }
 
