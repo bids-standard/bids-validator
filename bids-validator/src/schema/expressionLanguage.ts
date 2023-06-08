@@ -1,26 +1,28 @@
-function exists(list: string[], val: string = 'dataset'): number {
+function exists(list: string[], rule: string = 'dataset'): number {
+  const prefix: string[] = []
+
+  // Stimuli and subject-relative paths get prefixes
+  if (rule == 'stimuli') {
+    prefix.push('stimuli')
+  } else if (rule == 'subject') {
+    // @ts-expect-error
+    prefix.push('sub-' + this.entities.subject)
+  }
+
   if (!Array.isArray(list)) {
     list = [list]
   }
-  if (val == 'stimuli') {
+  if (rule == 'bids-uri') {
+    // XXX To implement
+    return list.length
+  } else {
+    // dataset, subject and stimuli
     return list.filter((x) => {
-      const parts = ['stimuli', ...x.split('/')]
+      const parts = prefix.concat(x.split('/'))
       // @ts-expect-error
       return this.fileTree.contains(parts)
     }).length
   }
-  if (val == 'dataset') {
-    let ret = list.filter((x) => {
-      let parts = x.split('/')
-      if (['.', ''].includes(parts[0])) {
-        parts = parts.slice(1, parts.length)
-      }
-      return this.fileTree.contains(parts)
-    })
-    return ret.length
-  }
-  // XXX fallback to "always true" until this is actually complete
-  return list.length
 }
 
 export const expressionFunctions = {
@@ -56,7 +58,7 @@ export const expressionFunctions = {
     return list.filter((x) => x === val).length
   },
   exists: exists,
-  substr: (arg: string, start: int, end: int): str => {
+  substr: (arg: string, start: number, end: number): string => {
     return arg.substr(start, end - start)
   },
 }
