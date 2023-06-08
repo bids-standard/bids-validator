@@ -43,4 +43,7 @@ export const expressionFunctions = {
     return list.filter((x) => x === val).length
   },
   exists: exists,
+  substr: (arg: string, start: int, end: int): str => {
+    return arg.substr(start, end)
+  },
 }
