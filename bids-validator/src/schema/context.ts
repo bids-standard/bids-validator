@@ -117,7 +117,7 @@ export class BIDSContext implements Context {
       fileTree = this.fileTree
     }
     const validSidecars = fileTree.files.filter((file) => {
-      const { suffix, extension, entities } = readEntities(file)
+      const { suffix, extension, entities } = readEntities(file.name)
       return (
         extension === '.json' &&
         suffix === this.suffix &&
@@ -129,6 +129,7 @@ export class BIDSContext implements Context {
         })
       )
     })
+
     if (validSidecars.length > 1) {
       // two matching in one dir not allowed
     } else if (validSidecars.length === 1) {
