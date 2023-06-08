@@ -26,6 +26,10 @@ function exists(list: string[], rule: string = 'dataset'): number {
 }
 
 export const expressionFunctions = {
+  index: <T>(list: T[], item: T): number | null => {
+    const index = list.indexOf(item)
+    return index != -1 ? index : null
+  },
   intersects: <T>(a: T[], b: T[]): boolean => {
     return a.some((x) => b.includes(x))
   },
@@ -60,5 +64,9 @@ export const expressionFunctions = {
   exists: exists,
   substr: (arg: string, start: number, end: number): string => {
     return arg.substr(start, end - start)
+  },
+  sorted: <T>(list: T[]): T[] => {
+    list.sort()
+    return list
   },
 }
