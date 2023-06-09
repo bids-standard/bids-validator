@@ -1,16 +1,35 @@
-function exists(list: string[], val: string): number {
-  if (val == 'stimuli') {
+function exists(list: string[], rule: string = 'dataset'): number {
+  const prefix: string[] = []
+
+  // Stimuli and subject-relative paths get prefixes
+  if (rule == 'stimuli') {
+    prefix.push('stimuli')
+  } else if (rule == 'subject') {
+    // @ts-expect-error
+    prefix.push('sub-' + this.entities.subject)
+  }
+
+  if (!Array.isArray(list)) {
+    list = [list]
+  }
+  if (rule == 'bids-uri') {
+    // XXX To implement
+    return list.length
+  } else {
+    // dataset, subject and stimuli
     return list.filter((x) => {
-      const parts = ['stimuli', ...x.split('/')]
+      const parts = prefix.concat(x.split('/'))
       // @ts-expect-error
       return this.fileTree.contains(parts)
     }).length
   }
-  // XXX fallback to "always true" until this is actually complete
-  return list.length
 }
 
 export const expressionFunctions = {
+  index: <T>(list: T[], item: T): number | null => {
+    const index = list.indexOf(item)
+    return index != -1 ? index : null
+  },
   intersects: <T>(a: T[], b: T[]): boolean => {
     return a.some((x) => b.includes(x))
   },
@@ -43,4 +62,11 @@ export const expressionFunctions = {
     return list.filter((x) => x === val).length
   },
   exists: exists,
+  substr: (arg: string, start: number, end: number): string => {
+    return arg.substr(start, end - start)
+  },
+  sorted: <T>(list: T[]): T[] => {
+    list.sort()
+    return list
+  },
 }
