@@ -140,7 +140,7 @@ class BIDSValidator():
         """Read regular expressions from a file."""
         regexps = []
 
-        with open(file_name, 'r') as fin:
+        with open(file_name) as fin:
             rules = json.load(fin)
 
         for key in list(rules.keys()):
