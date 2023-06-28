@@ -11,3 +11,13 @@ updates:
     directory: '/'
     schedule:
       interval: 'monthly'
+
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+
+  - package-ecosystem: 'npm'
+    directory: '/bids-validator-web'
+    schedule:
+      interval: 'daily'
