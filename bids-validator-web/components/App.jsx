@@ -85,8 +85,7 @@ export default class App extends React.Component {
   }
 
   render() {
-    let browserUnsupported =
-      !bowser.chrome && !bowser.chromium && !bowser.firefox
+    const browserUnsupported = !bowser.chrome && !bowser.chromium && !bowser.firefox && typeof window !== 'undefined'
     return (
       <div id="root">
         <nav className="navbar navbar-dark bg-dark fixed-top">
