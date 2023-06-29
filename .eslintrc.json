@@ -1,4 +1,5 @@
 {
+  "root": true,
   "plugins": ["prettier"],
   "parserOptions": {
     "ecmaVersion": 2018,
