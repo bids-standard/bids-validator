@@ -81,7 +81,7 @@ jobs:
             - ./image.tar
   githubPagesTest:
     docker:
-      - image: node:18
+      - image: node:18-alpine
     steps:
       - run: npm install --global npm@7
       - run: apk --no-cache add ca-certificates git openssh-client
