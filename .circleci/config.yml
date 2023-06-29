@@ -81,7 +81,7 @@ jobs:
             - ./image.tar
   githubPagesTest:
     docker:
-      - image: mhart/alpine-node:18
+      - image: mhart/alpine-node:16
     steps:
       - run: npm install --global npm@7
       - run: apk --no-cache add ca-certificates git openssh-client
@@ -163,7 +163,7 @@ jobs:
       - run: cd bids-validator && twine upload dist/*
   gh-pages_deployment:
     docker:
-      - image: mhart/alpine-node:18
+      - image: mhart/alpine-node:16
     steps:
       - run: npm install --global npm@7
       - run: apk --no-cache add ca-certificates git openssh-client
