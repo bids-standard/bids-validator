@@ -9,9 +9,12 @@ export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
   const eventData = constructEventData(events, jsonContents)
   const sidecarData = constructSidecarData(events, jsonContents, jsonFiles)
   const hedDataExists = detectHed(eventData, sidecarData)
+  console.log("in hed...")
+  console.log(jsonContents)
   if (!hedDataExists) {
     return Promise.resolve([])
   }
+  console.log("heddata exists...")
 
   const datasetDescription = jsonContents['/dataset_description.json']
   const datasetDescriptionData = new hedValidator.validator.BidsJsonFile(
@@ -106,7 +109,9 @@ function sidecarValueHasHed(sidecarValue) {
   return (
     sidecarValue !== null &&
     typeof sidecarValue === 'object' &&
-    sidecarValue.HED !== undefined
+    Object.values(sidecar).some(x => {
+      return x.HED !== undefined
+    })
   )
 }
 
