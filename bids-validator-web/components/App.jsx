@@ -3,7 +3,7 @@ import bowser from 'bowser'
 import Issues from '../components/Issues'
 import BrowserWarning from './BrowserWarning'
 import Validate from '../components/Validate'
-import validate from 'bids-validator'
+import validate from '../../bids-validator'
 import validatorPackageJson from 'bids-validator/package.json' assert { type: 'json' }
 const version = validatorPackageJson.version
 
