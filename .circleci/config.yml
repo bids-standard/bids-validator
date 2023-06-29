@@ -31,7 +31,7 @@ jobs:
             pydocstyle bids_validator/bids_validator.py
   test:
     docker:
-      - image: node:18
+      - image: node:18-alpine
     steps:
       - checkout
       - restore_cache:
