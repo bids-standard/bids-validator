@@ -84,13 +84,12 @@ jobs:
     docker:
       - image: node:18-alpine
     steps:
-      - run: npm install --global npm@7
+      - run: npm install --global npm
       - run: apk --no-cache add ca-certificates git openssh-client rsync
       - checkout
       - restore_cache:
           keys:
             - npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
-      - run: apk --no-cache add rsync git python3 build-base openssh
       - run:
           name: Install bids-validator and bids-validator-web dependencies
           command: npm install
@@ -164,9 +163,9 @@ jobs:
       - run: cd bids-validator && twine upload dist/*
   gh-pages_deployment:
     docker:
-      - image: mhart/alpine-node:16
+      - image: node:18-alpine
     steps:
-      - run: npm install --global npm@7
+      - run: npm install --global npm
       - run: apk --no-cache add ca-certificates git openssh-client
       - add_ssh_keys:
           fingerprints:
@@ -175,7 +174,6 @@ jobs:
       - restore_cache:
           keys:
             - npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
-      - run: apk --no-cache add rsync git python3 build-base openssh
       - run: git config --global user.email "bids.maintenance@gmail.com"
       - run: git config --global user.name "bids-maintenance"
       - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
