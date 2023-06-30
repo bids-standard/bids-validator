@@ -42,7 +42,7 @@ describe('session', () => {
   })
 
   describe('getDataOrganization', () => {
-    it('should take a fileList of data with subjects and sessions and list and return them', async (done) => {
+    it('should take a fileList of data with subjects and sessions and list and return them', async () => {
       let filelist
       await utils.files.readDir(missing_session_data).then((files) => {
         filelist = files
@@ -55,7 +55,6 @@ describe('session', () => {
       assert.ok(subjKeys.length >= 1)
       assert.ok(subjKeys.every((key) => subjects[key] instanceof Subject))
       assert.ok(sessions.length >= 1)
-      done()
     })
   })
 
@@ -81,7 +80,7 @@ describe('session', () => {
   })
 
   describe('missingSessionWarnings', () => {
-    it('should take a subjects dir and a sessions list and return a list of issues', async (done) => {
+    it('should take a subjects dir and a sessions list and return a list of issues', async () => {
       let filelist
       await utils.files.readDir(missing_session_data).then((files) => {
         filelist = files
@@ -95,12 +94,11 @@ describe('session', () => {
           (warning) => warning instanceof utils.issues.Issue,
         ),
       )
-      done()
     })
   })
 
   describe('getSubjectFiles', () => {
-    it('should take a list of subjects and return a set containing each file', async (done) => {
+    it('should take a list of subjects and return a set containing each file', async () => {
       let filelist
       await utils.files.readDir(missing_session_data).then((files) => {
         filelist = files
@@ -116,7 +114,6 @@ describe('session', () => {
         [],
       )
       assert.ok(allFiles.every((file) => subjFiles.includes(file)))
-      done()
     })
   })
 

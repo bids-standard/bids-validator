@@ -35,12 +35,11 @@ describe('remoteFiles', () => {
         .accessRemoteFile(config)
         .then((res) => expect(res).toBe('buffer'))
     })
-    it('should return the issue of extractGzipBuffer if unzip is unsuccessful', (done) => {
+    it('should return the issue of extractGzipBuffer if unzip is unsuccessful', () => {
       config.file.name = 'something.gz'
-      remoteFiles.accessRemoteFile(config).catch((issue) => {
+      return remoteFiles.accessRemoteFile(config).catch((issue) => {
         expect(issue).toHaveProperty('code')
         config.file.name = 'something'
-        done()
       })
     })
   })
@@ -52,14 +51,13 @@ describe('remoteFiles', () => {
       })
       expect(response).toBeInstanceOf(Promise)
     })
-    it('should return the buffer() property of the fetch response', async (done) => {
+    it('should return the buffer() property of the fetch response', async () => {
       remoteFiles
         .constructAwsRequest({
           s3Params: { Bucket: 'matters not' },
         })
         .then((data) => {
           assert.equal(data, 'buffer')
-          done()
         })
     })
   })

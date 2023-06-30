@@ -18,6 +18,9 @@
   },
   "jest": {
     "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^uuid$": "uuid"
+    },
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
     },
@@ -36,6 +39,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^8.0.3",
     "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
     "jest-environment-node": "^29.5.0",
     "lerna": "^6.4.1",
     "prettier": "^2.7.1",

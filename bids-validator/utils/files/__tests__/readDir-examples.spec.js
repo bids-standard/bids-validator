@@ -2,8 +2,8 @@ import readDir from '../readDir.js'
 
 describe('readDir.js - examples integration', () => {
   describe('readDir()', () => {
-    it('returns expected files', async (done) => {
-      readDir('bids-validator/tests/data/bids-examples/ds002/').then(
+    it('returns expected files', async () => {
+      await readDir('bids-validator/tests/data/bids-examples/ds002/').then(
         (files) => {
           const filenames = Object.values(files).map((f) => f.name)
           filenames.sort()
@@ -15,12 +15,11 @@ describe('readDir.js - examples integration', () => {
           expect(filenames[200]).toBe(
             'sub-14_task-probabilisticclassification_run-02_events.tsv',
           )
-          done()
         },
       )
     })
-    it('correctly follows symlinks for subjects with followSymbolicLink: true', async (done) => {
-      readDir('bids-validator/tests/data/symlinked_subject', {
+    it('correctly follows symlinks for subjects with followSymbolicLink: true', async () => {
+      await readDir('bids-validator/tests/data/symlinked_subject', {
         ignoreSymlinks: false,
       }).then((files) => {
         expect(Object.keys(files)).toHaveLength(12)
@@ -40,11 +39,10 @@ describe('readDir.js - examples integration', () => {
           'sub-01_task-rhyme_judgment_events.tsv',
           'task-rhymejudgment_bold.json',
         ])
-        done()
       })
     })
-    it('correctly does not follow symlinks for subjects with followSymbolicLink: false', async (done) => {
-      readDir('bids-validator/tests/data/symlinked_subject', {
+    it('correctly does not follow symlinks for subjects with followSymbolicLink: false', async () => {
+      await readDir('bids-validator/tests/data/symlinked_subject', {
         ignoreSymlinks: true,
       }).then((files) => {
         expect(Object.keys(files)).toHaveLength(6)
@@ -58,11 +56,10 @@ describe('readDir.js - examples integration', () => {
           'sub-01',
           'task-rhymejudgment_bold.json',
         ])
-        done()
       })
     })
-    it('returns file objects with the expected shape', async (done) => {
-      readDir('bids-validator/tests/data/symlinked_subject', {
+    it('returns file objects with the expected shape', async () => {
+      await readDir('bids-validator/tests/data/symlinked_subject', {
         ignoreSymlinks: true,
       }).then((files) => {
         expect(Object.keys(files)).toHaveLength(6)
@@ -73,7 +70,6 @@ describe('readDir.js - examples integration', () => {
             'relativePath',
           ])
         })
-        done()
       })
     })
   })
