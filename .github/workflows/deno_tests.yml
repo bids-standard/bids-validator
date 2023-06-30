@@ -48,6 +48,13 @@ jobs:
           git submodule update --init --recursive
           git submodule update --recursive --remote
       - run: deno test --allow-all --coverage=cov/ src/
+      - name: Collect coverage
+        run: deno coverage cov/ --lcov --output=coverage.lcov
+        if: ${{ always() }}
+      - uses: codecov/codecov-action@v3
+        if: ${{ always() }}
+        with:
+          files: coverage.lcov
 
   deploy:
     needs: [build]
