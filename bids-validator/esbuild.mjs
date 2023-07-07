@@ -37,7 +37,7 @@ await esbuild.build({
       stdin: '',
       version: 'v12.14.1',
     }),
-    external: ['pluralize'],
+    external: JSON.stringify(['pluralize']),
   },
   plugins: [
     GlobalsPlugin({
