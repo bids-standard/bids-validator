@@ -1,9 +1,9 @@
 FROM node:18-alpine as build
+RUN npm install -g npm
 
 COPY . /src
 WORKDIR /src
 
-RUN npm install -g npm
 RUN npm install 
 RUN npm -w bids-validator run build
 RUN npm -w bids-validator pack
