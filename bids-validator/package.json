@@ -71,7 +71,7 @@
     "adm-zip": "",
     "chai": "",
     "esbuild": "^0.11.5",
-    "esbuild-plugin-globals": "^0.1.1",
+    "esbuild-plugin-globals": "^0.2.0",
     "esbuild-runner": "^2.2.2",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
