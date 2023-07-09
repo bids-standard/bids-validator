@@ -37,8 +37,8 @@ await esbuild.build({
       stdin: '',
       version: 'v12.14.1',
     }),
-    external: ['pluralize'],
   },
+  external: ['pluralize'],
   plugins: [
     GlobalsPlugin({
       crypto: 'globalThis',
