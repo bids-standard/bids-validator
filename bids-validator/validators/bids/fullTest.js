@@ -40,7 +40,7 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
   }
   const jsonFiles = []
   const headers = []
-  const participants = null
+  let participants = null
   const phenotypeParticipants = []
 
   const tsvs = []
@@ -126,7 +126,6 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
     })
     .then(({ tsvIssues, participantsTsvContent }) => {
       self.issues = self.issues.concat(tsvIssues)
-
       // extract metadata on participants to metadata.age and
       // return metadata on each subject from participants.tsv
       summary.subjectMetadata = collectSubjectMetadata(participantsTsvContent)
