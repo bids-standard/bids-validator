@@ -1,28 +1,16 @@
 /* eslint-disable no-unused-vars */
-import hed from './hed'
 
 import utils from '../../utils'
 const Issue = utils.issues.Issue
 
-export default function (
-  events,
-  stimuli,
-  headers,
-  jsonContents,
-  jsonFiles,
-  dir,
-) {
-  const issues = []
+export default function (events, stimuli, headers, jsonContents) {
   // check that all stimuli files present in /stimuli are included in an _events.tsv file
   const stimuliIssues = checkStimuli(stimuli)
 
   // check the events file for suspiciously long or short durations
   const designIssues = checkDesignLength(events, headers, jsonContents)
 
-  // check the HED strings
-  return hed(events, jsonContents, jsonFiles, dir).then((hedIssues) => {
-    return issues.concat(stimuliIssues, designIssues, hedIssues)
-  })
+  return [].concat(stimuliIssues, designIssues)
 }
 
 const checkStimuli = function (stimuli) {
