@@ -79,7 +79,7 @@ function constructSidecarData(tsvData, jsonContents, jsonFiles) {
     potentialSidecars,
   )
   return actualEventSidecars.map((sidecarName) => {
-    return new hedValidator.validator.BidsSidecar(
+    return new hedValidator.bids.BidsSidecar(
       sidecarName,
       cloneDeep(jsonContents[sidecarName]),
       getSidecarFileObject(sidecarName, jsonFiles),
