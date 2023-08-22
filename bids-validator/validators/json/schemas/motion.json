@@ -61,16 +61,7 @@
     "POSChannelCount": { "type": "number" },
     "VELChannelCount": { "type": "number" },
     "LATENCYChannelCount": { "type": "number" },
-    "MissingValues": { "type": "string" },
-    "RotationOrder": {
-      "type": "string",
-      "enum": ["XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"]
-    },
-    "RotationRule": {
-      "type": "string",
-      "enum": ["left-hand", "right-hand"]
-    },
-    "SpatialAxes": { "type": "string" }
+    "MissingValues": { "type": "string" }
   },
   "required": ["TaskName", "SamplingFrequency"],
   "additionalProperties": false
