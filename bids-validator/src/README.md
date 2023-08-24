@@ -18,11 +18,6 @@ $ deno run --allow-read --allow-env https://deno.land/x/bids_validator/bids-vali
 
 Deno by default sandboxes applications like a web browser. `--allow-read` allows the validator to read local files, and `--allow-env` enables OS-specific features.
 
-
-```shell
-$ deno run --allow-read --allow-env https://deno.land/x/bids_validator/bids-validator.ts --legacy path/to/dataset
-```
-
 ### Development tools
 
 From the repository root, use `bids-validator/bids-validator-deno` to run with all permissions enabled by default:
@@ -32,12 +27,6 @@ From the repository root, use `bids-validator/bids-validator-deno` to run with a
 cd bids-validator
 # Run validator:
 ./bids-validator-deno path/to/dataset
-```
-
-Additional flags may be passed, such as `--legacy`:
-
-```shell
-./bids-validator-deno --legacy path/to/dataset
 ```
 
 ## Schema validator test suite
