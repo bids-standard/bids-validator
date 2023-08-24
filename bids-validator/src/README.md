@@ -18,7 +18,6 @@ $ deno run --allow-read --allow-env https://deno.land/x/bids_validator/bids-vali
 
 Deno by default sandboxes applications like a web browser. `--allow-read` allows the validator to read local files, and `--allow-env` enables OS-specific features.
 
-By default only schema derived validation rules are run. The legacy validator can be run at the same time with `--legacy` and this may improve coverage for issues not yet implemented in the schema variant.
 
 ```shell
 $ deno run --allow-read --allow-env https://deno.land/x/bids_validator/bids-validator.ts --legacy path/to/dataset
