@@ -131,8 +131,16 @@ export class BIDSContext implements Context {
     })
 
     if (validSidecars.length > 1) {
-      // two matching in one dir not allowed
-    } else if (validSidecars.length === 1) {
+      const exactMatch = validSidecars.find(sidecar => sidecar.path == this.file.path.replace(this.extension, ".json"));
+      if (exactMatch) {
+        validSidecars.splice(1);
+        validSidecars[0] = exactMatch;
+      } else {
+        logger.warning(`Multiple sidecar files detected for '${this.file.path}'`)
+      }
+    }
+
+    if (validSidecars.length === 1) {
       const json = await validSidecars[0]
         .text()
         .then((text) => JSON.parse(text))
