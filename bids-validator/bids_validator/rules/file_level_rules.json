@@ -488,6 +488,8 @@
         "_events\\.tsv",
         "_channels\\.json",
         "_channels\\.tsv",
+        "_electrodes\\.json",
+        "_electrodes\\.tsv",
         "_meg\\.json",
         "_coordsystem\\.json",
         "_photo\\.jpg",
