@@ -27,7 +27,6 @@
     },
     "SubjectArtefactDescription": { "type": "string" },
     "MotionChannelCount": { "type": "number" },
-    "TrackingSystemCount": { "type": "number" },
     "TrackingSystemName": { "type": "string" },
     "DeviceSerialNumber": {
       "$ref": "common_definitions.json#/definitions/DeviceSerialNumber"
@@ -56,7 +55,7 @@
     "GYROChannelCount": { "type": "number" },
     "JNTANGChannelCount": { "type": "number" },
     "MAGNChannelCount": { "type": "number" },
-    "MISChannelCount": { "type": "number" },
+    "MISCChannelCount": { "type": "number" },
     "ORNTChannelCount": { "type": "number" },
     "POSChannelCount": { "type": "number" },
     "VELChannelCount": { "type": "number" },
