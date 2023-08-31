@@ -31,6 +31,12 @@ export const expressionFunctions = {
     return index != -1 ? index : null
   },
   intersects: <T>(a: T[], b: T[]): boolean => {
+    if (!Array.isArray(a)) {
+      a = [a]
+    }
+    if (!Array.isArray(b)) {
+      b = [b]
+    }
     return a.some((x) => b.includes(x))
   },
   match: (target: string, regex: string): boolean => {
