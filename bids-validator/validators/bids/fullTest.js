@@ -8,6 +8,7 @@ import bval from '../bval'
 import bvec from '../bvec'
 import microscopy from '../microscopy'
 import Events from '../events'
+import hed from '../hed'
 import { session } from '../session'
 import checkAnyDataPresent from '../checkAnyDataPresent'
 import headerFields from '../headerFields'
@@ -215,17 +216,15 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
 
       // Events validation
       stimuli.directory = files.stimuli
-      return Events.validateEvents(
-        events,
-        stimuli,
-        headers,
-        jsonContentsDict,
-        jsonFiles,
-        dir,
+      self.issues = self.issues.concat(
+        Events.validateEvents(events, stimuli, headers, jsonContentsDict),
       )
+
+      // check the HED strings
+      return hed(tsvs, jsonContentsDict, jsonFiles, dir)
     })
-    .then((eventsIssues) => {
-      self.issues = self.issues.concat(eventsIssues)
+    .then((hedIssues) => {
+      self.issues = self.issues.concat(hedIssues)
 
       // Validate custom fields in all TSVs and add any issues to the list
       self.issues = self.issues.concat(
