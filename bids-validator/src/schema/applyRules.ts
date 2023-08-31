@@ -211,7 +211,7 @@ function evalColumns(
       ])
     }
     if (headers.includes(name)) {
-      for (const value of context.columns[name]) {
+      for (const value of context.columns.get(name) as string[]) {
         if (
           !schemaObjectTypeCheck(columnObject as SchemaTypeLike, value, schema)
         ) {
@@ -316,11 +316,11 @@ function evalIndexColumns(
     ])
     return
   }
-  const rowCount = context.columns[index_columns[0]].length
+  const rowCount = context.columns.get(index_columns[0])?.length || 0
   for (let i = 0; i < rowCount; i++) {
     let indexValue = ''
     index_columns.map((col: string) => {
-      indexValue = indexValue.concat(context.columns[col][i])
+      indexValue = indexValue.concat(context.columns.get(col)?.[i] || '')
     })
     if (uniqueIndexValues.has(indexValue)) {
       context.issues.addNonSchemaIssue('TSV_INDEX_VALUE_NOT_UNIQUE', [
