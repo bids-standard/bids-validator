@@ -8,7 +8,7 @@ const normalizeEOL = (str: string): string =>
 const isContentfulRow = (row: string): boolean => !!(row && !/^\s*$/.test(row))
 
 export function parseTSV(contents: string) {
-  const columns: Record<string, string[]> = {}
+  const columns: Record<string, string[]> = new Map()
   const rows: string[][] = normalizeEOL(contents)
     .split('\n')
     .filter(isContentfulRow)
@@ -16,12 +16,15 @@ export function parseTSV(contents: string) {
   const headers = rows.length ? rows[0] : []
 
   headers.map((x) => {
-    columns[x] = []
+    columns.set(x, [])
   })
   for (let i = 1; i < rows.length; i++) {
     for (let j = 0; j < headers.length; j++) {
-      columns[headers[j]].push(rows[i][j])
+      columns.get(headers[j]).push(rows[i][j])
     }
+  }
+  for (let [key, value] of columns) {
+    columns[key] = value
   }
   return columns
 }
