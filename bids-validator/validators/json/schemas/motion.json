@@ -27,7 +27,6 @@
     },
     "SubjectArtefactDescription": { "type": "string" },
     "MotionChannelCount": { "type": "number" },
-    "TrackingSystemCount": { "type": "number" },
     "TrackingSystemName": { "type": "string" },
     "DeviceSerialNumber": {
       "$ref": "common_definitions.json#/definitions/DeviceSerialNumber"
@@ -56,21 +55,12 @@
     "GYROChannelCount": { "type": "number" },
     "JNTANGChannelCount": { "type": "number" },
     "MAGNChannelCount": { "type": "number" },
-    "MISChannelCount": { "type": "number" },
+    "MISCChannelCount": { "type": "number" },
     "ORNTChannelCount": { "type": "number" },
     "POSChannelCount": { "type": "number" },
     "VELChannelCount": { "type": "number" },
     "LATENCYChannelCount": { "type": "number" },
-    "MissingValues": { "type": "string" },
-    "RotationOrder": {
-      "type": "string",
-      "enum": ["XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"]
-    },
-    "RotationRule": {
-      "type": "string",
-      "enum": ["left-hand", "right-hand"]
-    },
-    "SpatialAxes": { "type": "string" }
+    "MissingValues": { "type": "string" }
   },
   "required": ["TaskName", "SamplingFrequency"],
   "additionalProperties": false
