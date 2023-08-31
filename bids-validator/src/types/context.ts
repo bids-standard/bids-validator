@@ -48,6 +48,13 @@ export interface ContextAssociationsBvec {
   path: string
   n_cols: number
 }
+export interface ContextAssociationsChannels {
+  path?: string
+  type?: string[]
+}
+export interface ContextAssociationsCoordsystem {
+  path: string
+}
 export interface ContextAssociations {
   events?: ContextAssociationsEvents
   aslcontext?: ContextAssociationsAslcontext
@@ -56,6 +63,8 @@ export interface ContextAssociations {
   magnitude1?: ContextAssociationsMagnitude1
   bval?: ContextAssociationsBval
   bvec?: ContextAssociationsBvec
+  channels?: ContextAssociationsChannels
+  coordsystem?: ContextAssociationsCoordsystem
 }
 export interface ContextNiftiHeaderDimInfo {
   freq: number

@@ -7,6 +7,7 @@ import { FileTree } from '../types/filetree.ts'
 import { BIDSContext } from './context.ts'
 import { readEntities } from './entities.ts'
 import { parseTSV } from '../files/tsv.ts'
+import { parseBval, parseBvec } from '../files/dwi.ts'
 
 // type AssociationsLookup = Record<keyof ContextAssociations, { extensions: string[], inherit: boolean, load: ... }
 
@@ -28,14 +29,29 @@ const associationLookup = {
     load: (file: BIDSFile): Promise<ContextAssociations['events']> => {
       return file
         .text()
-        .then((text) => parseTSV(text) as ContextAssociationsEvents)
+        .then((text) => parseTSV(text))
+        .then((columns) => {
+          return {
+            path: file.path,
+            onset: columns.get('onset') || [],
+          }
+        })
     },
   },
   aslcontext: {
     extensions: ['.tsv'],
     inherit: true,
     load: (file: BIDSFile): Promise<ContextAssociations['aslcontext']> => {
-      return Promise.resolve({ path: file.path, n_rows: 0, volume_type: [] })
+      return file
+        .text()
+        .then(parseTSV)
+        .then((columns) => {
+          return {
+            path: file.path,
+            n_rows: columns.get('volume_type')?.length || 0,
+            volume_type: columns.get('volume_type') || [],
+          }
+        })
     },
   },
   m0scan: {
@@ -49,7 +65,7 @@ const associationLookup = {
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
     load: (file: BIDSFile): Promise<ContextAssociations['magnitude']> => {
-      return Promise.resolve({ path: file.path, onset: 'silly' })
+      return Promise.resolve({ path: file.path })
     },
   },
   magnitude1: {
@@ -63,23 +79,52 @@ const associationLookup = {
     extensions: ['.nii', '.nii.gz'],
     inherit: true,
     load: (file: BIDSFile): Promise<ContextAssociations['bval']> => {
-      return Promise.resolve({ path: file.path, n_cols: 0 })
+      return file
+        .text()
+        .then(parseBval)
+        .then((columns) => {
+          return {
+            path: file.path,
+            n_cols: columns.length,
+          }
+        })
     },
   },
   bvec: {
     extensions: ['.nii', '.nii.gz'],
     inherit: true,
     load: (file: BIDSFile): Promise<ContextAssociations['bvec']> => {
-      return Promise.resolve({ path: file.path, n_cols: 0 })
+      return file
+        .text()
+        .then(parseBvec)
+        .then((columns) => {
+          return {
+            path: file.path,
+            n_cols: columns.length,
+          }
+        })
     },
   },
   channels: {
     extensions: ['.tsv'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['events']> => {
+    load: (file: BIDSFile): Promise<ContextAssociations['channels']> => {
       return file
         .text()
-        .then((text) => parseTSV(text) as ContextAssociationsEvents)
+        .then(parseTSV)
+        .then((columns) => {
+          return {
+            path: file.path,
+            type: columns.get('type') || [],
+          }
+        })
+    },
+  },
+  coordsystem: {
+    extensions: ['.tsv'],
+    inherit: true,
+    load: (file: BIDSFile): Promise<ContextAssociations['coordsystem']> => {
+      return Promise.resolve({ path: file.path })
     },
   },
 }
