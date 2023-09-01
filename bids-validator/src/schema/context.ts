@@ -131,12 +131,17 @@ export class BIDSContext implements Context {
     })
 
     if (validSidecars.length > 1) {
-      const exactMatch = validSidecars.find(sidecar => sidecar.path == this.file.path.replace(this.extension, ".json"));
+      const exactMatch = validSidecars.find(
+        (sidecar) =>
+          sidecar.path == this.file.path.replace(this.extension, '.json'),
+      )
       if (exactMatch) {
-        validSidecars.splice(1);
-        validSidecars[0] = exactMatch;
+        validSidecars.splice(1)
+        validSidecars[0] = exactMatch
       } else {
-        logger.warning(`Multiple sidecar files detected for '${this.file.path}'`)
+        logger.warning(
+          `Multiple sidecar files detected for '${this.file.path}'`,
+        )
       }
     }
 
