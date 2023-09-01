@@ -26,32 +26,28 @@ const associationLookup = {
   events: {
     extensions: ['.tsv'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['events']> => {
-      return file
-        .text()
-        .then((text) => parseTSV(text))
-        .then((columns) => {
-          return {
-            path: file.path,
-            onset: columns.get('onset') || [],
-          }
-        })
+    load: async (file: BIDSFile): Promise<ContextAssociations['events']> => {
+      const text = await file.text()
+      const columns = parseTSV(text)
+      return {
+        path: file.path,
+        onset: columns.get('onset') || [],
+      }
     },
   },
   aslcontext: {
     extensions: ['.tsv'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['aslcontext']> => {
-      return file
-        .text()
-        .then(parseTSV)
-        .then((columns) => {
-          return {
-            path: file.path,
-            n_rows: columns.get('volume_type')?.length || 0,
-            volume_type: columns.get('volume_type') || [],
-          }
-        })
+    load: async (
+      file: BIDSFile,
+    ): Promise<ContextAssociations['aslcontext']> => {
+      const contents = await file.text()
+      const columns = parseTSV(contents)
+      return {
+        path: file.path,
+        n_rows: columns.get('volume_type')?.length || 0,
+        volume_type: columns.get('volume_type') || [],
+      }
     },
   },
   m0scan: {
@@ -78,46 +74,37 @@ const associationLookup = {
   bval: {
     extensions: ['.bval'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['bval']> => {
-      return file
-        .text()
-        .then(parseBval)
-        .then((columns) => {
-          return {
-            path: file.path,
-            n_cols: columns.length,
-          }
-        })
+    load: async (file: BIDSFile): Promise<ContextAssociations['bval']> => {
+      const contents = await file.text()
+      const columns = parseBval(contents)
+      return {
+        path: file.path,
+        n_cols: parseBval.length,
+      }
     },
   },
   bvec: {
     extensions: ['.bvec'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['bvec']> => {
-      return file
-        .text()
-        .then(parseBvec)
-        .then((columns) => {
-          return {
-            path: file.path,
-            n_cols: columns.length,
-          }
-        })
+    load: async (file: BIDSFile): Promise<ContextAssociations['bvec']> => {
+      const contents = await file.text()
+      const columns = parseBvec(contents)
+      return {
+        path: file.path,
+        n_cols: columns.length,
+      }
     },
   },
   channels: {
     extensions: ['.tsv'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['channels']> => {
-      return file
-        .text()
-        .then(parseTSV)
-        .then((columns) => {
-          return {
-            path: file.path,
-            type: columns.get('type') || [],
-          }
-        })
+    load: async (file: BIDSFile): Promise<ContextAssociations['channels']> => {
+      const contents = await file.text()
+      const columns = parseTSV(contents)
+      return {
+        path: file.path,
+        type: columns.get('type') || [],
+      }
     },
   },
   coordsystem: {
