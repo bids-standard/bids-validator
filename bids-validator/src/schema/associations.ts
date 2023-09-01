@@ -76,7 +76,7 @@ const associationLookup = {
     },
   },
   bval: {
-    extensions: ['.nii', '.nii.gz'],
+    extensions: ['.bval'],
     inherit: true,
     load: (file: BIDSFile): Promise<ContextAssociations['bval']> => {
       return file
@@ -91,7 +91,7 @@ const associationLookup = {
     },
   },
   bvec: {
-    extensions: ['.nii', '.nii.gz'],
+    extensions: ['.bvec'],
     inherit: true,
     load: (file: BIDSFile): Promise<ContextAssociations['bvec']> => {
       return file
@@ -121,7 +121,7 @@ const associationLookup = {
     },
   },
   coordsystem: {
-    extensions: ['.tsv'],
+    extensions: ['.json'],
     inherit: true,
     load: (file: BIDSFile): Promise<ContextAssociations['coordsystem']> => {
       return Promise.resolve({ path: file.path })
