@@ -10,9 +10,9 @@ export class ColumnsMap extends Map<string, string[]> {
 
 // Proxy handler to implement ColumnsMapType
 export const columnMapAccessorProxy = {
-  get: function (target: ColumnsMap, prop: any, receiver: ColumnsMap) {
+  get: function (target: ColumnsMap, prop: any) {
     if (prop === Symbol.iterator) return target[Symbol.iterator].bind(target)
-    else return Reflect.get(target, prop, receiver)
+    else return target.get(prop)
   },
   set: function (target: ColumnsMap, prop: string, value: string[]) {
     target.set(prop, value)

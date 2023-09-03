@@ -15,5 +15,6 @@ Deno.test('ColumnsMap', async (t) => {
       assertEquals(val, [iteration.toString()])
       iteration += 1
     }
+    assertEquals(columns.a, ['0'])
   })
 })
