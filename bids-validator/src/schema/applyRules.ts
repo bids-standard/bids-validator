@@ -197,7 +197,7 @@ function evalColumns(
   schemaPath: string,
 ): void {
   if (!rule.columns || context.extension !== '.tsv') return
-  const headers = [...Object.keys(context.columns)]
+  const headers = [...Map.prototype.keys.bind(context.columns)()]
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
     // @ts-expect-error
     const columnObject = schema.objects.columns[ruleHeader]
@@ -240,7 +240,7 @@ function evalInitialColumns(
 ): void {
   if (!rule?.columns || !rule?.initial_columns || context.extension !== '.tsv')
     return
-  const headers = [...Object.keys(context.columns)]
+  const headers = [...Map.prototype.keys.bind(context.columns)()]
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     // @ts-expect-error
     const ruleHeaderName = schema.objects.columns[ruleHeader].name
