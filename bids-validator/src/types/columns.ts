@@ -1,5 +1,3 @@
-import { PropertyComparer } from 'https://deno.land/x/ts_morph@14.0.0/common/ts_morph_common.js'
-
 // Allow ColumnsMap to be accessed as an object too
 export class ColumnsMap extends Map<string, string[]> {
   [key: string]: Map<string, string[]>[keyof Map<string, string[]>] | string[]
@@ -17,16 +15,26 @@ export const columnMapAccessorProxy = {
     prop: symbol | string,
     receiver: ColumnsMap,
   ) {
-    if (prop === Symbol.iterator) {
-      return target[Symbol.iterator].bind(target)
-    } else {
-      return Reflect.get(target, prop, receiver)
-    }
+    const value = Reflect.get(target, prop, receiver)
+    if (typeof value === 'function') return value.bind(target)
+    if (prop === Symbol.iterator) return target[Symbol.iterator].bind(target)
+    if (value === undefined) return target.get(prop as string)
+    return value
   },
   set: function (target: ColumnsMap, prop: string, value: string[]) {
-    return Reflect.set(target, prop, value)
+    target.set(prop, value)
+    return true
+  },
+  has: function (target: ColumnsMap, prop: string) {
+    return Reflect.has(target, prop)
   },
   ownKeys: function (target: ColumnsMap) {
-    return Reflect.ownKeys(target)
+    return Array.from(target.keys())
+  },
+  getOwnPropertyDescriptor: function (
+    target: ColumnsMap,
+    prop: string,
+  ): PropertyDescriptor {
+    return { enumerable: true, configurable: true, value: target.get(prop) }
   },
 }

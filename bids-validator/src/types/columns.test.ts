@@ -21,12 +21,13 @@ Deno.test('ColumnsMap', async (t) => {
       iteration += 1
     }
     assertEquals(columns.a, ['0'])
-    assertEquals(Object.keys(columns)[0], 'a')
   })
   await t.step('keys are accessible with Object.keys', () => {
     const columns = new ColumnsMap()
     columns['a'] = ['0']
     columns['b'] = ['1']
-    assertEquals(Object.keys(columns), ['a', 'b'])
+    columns[0] = ['2']
+    assertEquals(Object.keys(columns), ['a', 'b', '0'])
+    assertEquals(Object.getOwnPropertyNames(columns), ['a', 'b', '0'])
   })
 })
