@@ -2,6 +2,11 @@ import { assertEquals } from '../deps/asserts.ts'
 import { ColumnsMap } from './columns.ts'
 
 Deno.test('ColumnsMap', async (t) => {
+  await t.step('get is accessible with square bracket notation', () => {
+    const columns = new ColumnsMap()
+    columns['a'] = ['0']
+    assertEquals(columns['a'], ['0'])
+  })
   await t.step('preserves insertion order with property access', () => {
     const columns = new ColumnsMap()
     columns['a'] = ['0']
@@ -16,5 +21,11 @@ Deno.test('ColumnsMap', async (t) => {
       iteration += 1
     }
     assertEquals(columns.a, ['0'])
+  })
+  await t.step('keys are accessible with Object.keys', () => {
+    const columns = new ColumnsMap()
+    columns['a'] = ['0']
+    columns['b'] = ['1']
+    assertEquals(Object.keys(columns), ['a', 'b'])
   })
 })
