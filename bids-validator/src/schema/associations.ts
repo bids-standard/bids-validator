@@ -1,4 +1,7 @@
-import { ContextAssociations } from '../types/context.ts'
+import {
+  ContextAssociations,
+  ContextAssociationsEvents,
+} from '../types/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { BIDSContext } from './context.ts'
@@ -23,7 +26,9 @@ const associationLookup = {
     extensions: ['.tsv'],
     inherit: true,
     load: (file: BIDSFile): Promise<ContextAssociations['events']> => {
-      return file.text().then((text) => parseTSV(text))
+      return file
+        .text()
+        .then((text) => parseTSV(text) as ContextAssociationsEvents)
     },
   },
   aslcontext: {
@@ -72,7 +77,9 @@ const associationLookup = {
     extensions: ['.tsv'],
     inherit: true,
     load: (file: BIDSFile): Promise<ContextAssociations['events']> => {
-      return file.text().then((text) => parseTSV(text))
+      return file
+        .text()
+        .then((text) => parseTSV(text) as ContextAssociationsEvents)
     },
   },
 }

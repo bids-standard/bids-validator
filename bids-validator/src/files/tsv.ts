@@ -2,13 +2,15 @@
  * TSV
  * Module for parsing TSV
  */
+import { ColumnsMap } from '../types/columns.ts'
+
 const normalizeEOL = (str: string): string =>
   str.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 // Typescript resolved `row && !/^\s*$/.test(row)` as `string | boolean`
 const isContentfulRow = (row: string): boolean => !!(row && !/^\s*$/.test(row))
 
 export function parseTSV(contents: string) {
-  const columns: Record<string, string[]> = new Map()
+  const columns = new ColumnsMap()
   const rows: string[][] = normalizeEOL(contents)
     .split('\n')
     .filter(isContentfulRow)
@@ -16,15 +18,13 @@ export function parseTSV(contents: string) {
   const headers = rows.length ? rows[0] : []
 
   headers.map((x) => {
-    columns.set(x, [])
+    columns[x] = []
   })
   for (let i = 1; i < rows.length; i++) {
     for (let j = 0; j < headers.length; j++) {
-      columns.get(headers[j]).push(rows[i][j])
+      const col = columns[headers[j]] as string[]
+      col.push(rows[i][j])
     }
-  }
-  for (let [key, value] of columns) {
-    columns[key] = value
   }
   return columns
 }
