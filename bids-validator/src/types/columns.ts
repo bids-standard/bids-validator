@@ -8,7 +8,7 @@ export class ColumnsMap extends Map<string, string[]> {
   }
 }
 
-// Proxy handler to implement ColumnsMapType
+// Proxy handler to implement ColumnsMap type
 export const columnMapAccessorProxy = {
   get: function (
     target: ColumnsMap,
