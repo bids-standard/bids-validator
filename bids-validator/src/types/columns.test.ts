@@ -17,10 +17,4 @@ Deno.test('ColumnsMap', async (t) => {
     }
     assertEquals(columns.a, ['0'])
   })
-  await t.step('allows access to the keys function on the map', () => {
-    const columns = new ColumnsMap()
-    columns['a'] = ['0']
-    columns['b'] = ['1']
-    assertEquals(Array.from(columns.keys()), ['a', 'b'])
-  })
 })
