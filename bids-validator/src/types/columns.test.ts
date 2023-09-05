@@ -21,6 +21,7 @@ Deno.test('ColumnsMap', async (t) => {
       iteration += 1
     }
     assertEquals(columns.a, ['0'])
+    assertEquals(Object.keys(columns)[0], 'a')
   })
   await t.step('keys are accessible with Object.keys', () => {
     const columns = new ColumnsMap()
