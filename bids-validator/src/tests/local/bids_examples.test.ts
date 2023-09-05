@@ -47,8 +47,7 @@ Deno.test('validate bids-examples', async (t) => {
       if (Deno.statSync(`${path}/.SKIP_VALIDATION`).isFile) {
         continue
       }
-    } catch (e) {
-    }
+    } catch (e) {}
     const { tree, result } = await validatePath(t, path, options)
     const output = result.issues.formatOutput()
     output.errors = output.errors.filter((x) => useIssue(x))
