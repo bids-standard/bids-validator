@@ -11,8 +11,13 @@ export class ColumnsMap extends Map<string, string[]> {
 // Proxy handler to implement ColumnsMapType
 export const columnMapAccessorProxy = {
   get: function (target: ColumnsMap, prop: any) {
-    if (prop === Symbol.iterator) return target[Symbol.iterator].bind(target)
-    else return target.get(prop)
+    if (prop === Symbol.iterator) {
+      return target[Symbol.iterator].bind(target)
+    } else if (prop === 'keys') {
+      return target.keys.bind(target)
+    } else {
+      return target.get(prop)
+    }
   },
   set: function (target: ColumnsMap, prop: string, value: string[]) {
     target.set(prop, value)
