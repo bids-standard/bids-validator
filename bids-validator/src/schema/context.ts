@@ -8,6 +8,7 @@ import {
 } from '../types/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
+import { ColumnsMap } from '../types/columns.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { parseTSV } from '../files/tsv.ts'
@@ -62,7 +63,7 @@ export class BIDSContext implements Context {
   datatype: string
   modality: string
   sidecar: object
-  columns: Record<string, string[]>
+  columns: ColumnsMap
   associations: ContextAssociations
   nifti_header?: ContextNiftiHeader
 
@@ -85,7 +86,7 @@ export class BIDSContext implements Context {
     this.datatype = ''
     this.modality = ''
     this.sidecar = {}
-    this.columns = {}
+    this.columns = new ColumnsMap()
     this.associations = {} as ContextAssociations
   }
 
@@ -182,7 +183,7 @@ export class BIDSContext implements Context {
           `tsv file could not be opened by loadColumns '${this.file.path}'`,
         )
         logger.debug(error)
-        return {}
+        return new Map<string, string[]>() as ColumnsMap
       })
     return
   }

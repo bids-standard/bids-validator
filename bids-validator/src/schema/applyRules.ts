@@ -197,7 +197,7 @@ function evalColumns(
   schemaPath: string,
 ): void {
   if (!rule.columns || context.extension !== '.tsv') return
-  const headers = [...context.columns.keys()]
+  const headers = [...Object.keys(context.columns)]
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
     // @ts-expect-error
     const columnObject = schema.objects.columns[ruleHeader]
@@ -211,7 +211,7 @@ function evalColumns(
       ])
     }
     if (headers.includes(name)) {
-      for (const value of context.columns[name]) {
+      for (const value of context.columns[name] as string[]) {
         if (
           !schemaObjectTypeCheck(columnObject as SchemaTypeLike, value, schema)
         ) {
@@ -240,7 +240,7 @@ function evalInitialColumns(
 ): void {
   if (!rule?.columns || !rule?.initial_columns || context.extension !== '.tsv')
     return
-  const headers = [...context.columns.keys()]
+  const headers = [...Object.keys(context.columns)]
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     // @ts-expect-error
     const ruleHeaderName = schema.objects.columns[ruleHeader].name
@@ -316,11 +316,13 @@ function evalIndexColumns(
     ])
     return
   }
-  const rowCount = context.columns[index_columns[0]].length
+  const rowCount = (context.columns[index_columns[0]] as string[])?.length || 0
   for (let i = 0; i < rowCount; i++) {
     let indexValue = ''
     index_columns.map((col: string) => {
-      indexValue = indexValue.concat(context.columns[col][i])
+      indexValue = indexValue.concat(
+        (context.columns[col] as string[])?.[i] || '',
+      )
     })
     if (uniqueIndexValues.has(indexValue)) {
       context.issues.addNonSchemaIssue('TSV_INDEX_VALUE_NOT_UNIQUE', [
