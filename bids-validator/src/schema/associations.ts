@@ -125,7 +125,8 @@ export async function buildAssociations(
   for (const key in associationLookup as typeof associationLookup) {
     const { extensions, inherit } =
       associationLookup[key as keyof typeof associationLookup]
-    const paths = getPaths(fileTree, source, key, extensions)
+    const targetSuffix = key === 'bval' || key === 'bvec' ? 'dwi' : key
+    const paths = getPaths(fileTree, source, targetSuffix, extensions)
     if (paths.length === 0) {
       continue
     }
