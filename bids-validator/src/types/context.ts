@@ -51,6 +51,7 @@ export interface ContextAssociationsBvec {
 export interface ContextAssociationsChannels {
   path?: string
   type?: string[]
+  short_channel?: string[]
 }
 export interface ContextAssociationsCoordsystem {
   path: string
