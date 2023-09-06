@@ -24,6 +24,7 @@ import { parseBval, parseBvec } from '../files/dwi.ts'
  */
 const associationLookup = {
   events: {
+    suffix: 'events',
     extensions: ['.tsv'],
     inherit: true,
     load: async (file: BIDSFile): Promise<ContextAssociations['events']> => {
@@ -36,6 +37,7 @@ const associationLookup = {
     },
   },
   aslcontext: {
+    suffix: 'aslcontext',
     extensions: ['.tsv'],
     inherit: true,
     load: async (
@@ -51,6 +53,7 @@ const associationLookup = {
     },
   },
   m0scan: {
+    suffix: 'm0scan',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
     load: (file: BIDSFile): Promise<ContextAssociations['m0scan']> => {
@@ -58,6 +61,7 @@ const associationLookup = {
     },
   },
   magnitude: {
+    suffix: 'magnitude',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
     load: (file: BIDSFile): Promise<ContextAssociations['magnitude']> => {
@@ -65,6 +69,7 @@ const associationLookup = {
     },
   },
   magnitude1: {
+    suffix: 'magnitude1',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
     load: (file: BIDSFile): Promise<ContextAssociations['magnitude1']> => {
@@ -72,6 +77,7 @@ const associationLookup = {
     },
   },
   bval: {
+    suffix: 'dwi',
     extensions: ['.bval'],
     inherit: true,
     load: async (file: BIDSFile): Promise<ContextAssociations['bval']> => {
@@ -84,6 +90,7 @@ const associationLookup = {
     },
   },
   bvec: {
+    suffix: 'dwi',
     extensions: ['.bvec'],
     inherit: true,
     load: async (file: BIDSFile): Promise<ContextAssociations['bvec']> => {
@@ -96,6 +103,7 @@ const associationLookup = {
     },
   },
   channels: {
+    suffix: 'channels',
     extensions: ['.tsv'],
     inherit: true,
     load: async (file: BIDSFile): Promise<ContextAssociations['channels']> => {
@@ -109,6 +117,7 @@ const associationLookup = {
     },
   },
   coordsystem: {
+    suffix: 'coordsystem',
     extensions: ['.json'],
     inherit: true,
     load: (file: BIDSFile): Promise<ContextAssociations['coordsystem']> => {
@@ -123,10 +132,9 @@ export async function buildAssociations(
 ): Promise<ContextAssociations> {
   const associations: ContextAssociations = {}
   for (const key in associationLookup as typeof associationLookup) {
-    const { extensions, inherit } =
+    const { suffix, extensions, inherit } =
       associationLookup[key as keyof typeof associationLookup]
-    const targetSuffix = key === 'bval' || key === 'bvec' ? 'dwi' : key
-    const paths = getPaths(fileTree, source, targetSuffix, extensions)
+    const paths = getPaths(fileTree, source, suffix, extensions)
     if (paths.length === 0) {
       continue
     }
