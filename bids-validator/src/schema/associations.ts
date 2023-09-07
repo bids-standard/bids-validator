@@ -85,7 +85,7 @@ const associationLookup = {
       const columns = parseBval(contents)
       return {
         path: file.path,
-        n_cols: columns.length,
+        n_cols: columns ? columns[0].length : 0,
       }
     },
   },
@@ -98,7 +98,7 @@ const associationLookup = {
       const columns = parseBvec(contents)
       return {
         path: file.path,
-        n_cols: columns.length,
+        n_cols: columns ? columns[0].length : 0,
       }
     },
   },

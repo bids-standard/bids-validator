@@ -7,20 +7,21 @@ const normalizeEOL = (str: string): string =>
 // Typescript resolved `row && !/^\s*$/.test(row)` as `string | boolean`
 const isContentfulRow = (row: string): boolean => !!(row && !/^\s*$/.test(row))
 
-export function parseBval(contents: string) {
+export function parseBval(contents: string): number[][] {
   // BVAL files are a single row of numbers, and may contain
   // trailing whitespace
-  return contents
+  return [contents
     .split(/\s+/)
     .filter((x) => x !== '')
-    .map((x) => Number(x))
+    .map((x) => Number(x))]
 }
 
-export function parseBvec(contents: string) {
+export function parseBvec(contents: string): number[][] {
   // BVEC files are a matrix of numbers, with each row being
   // a different axis
   return normalizeEOL(contents)
-    .split('\n')
+    .split(/\s*\n/)
+    .filter((x) => x !== '')
     .map((row) =>
       row
         .split(/\s+/)
