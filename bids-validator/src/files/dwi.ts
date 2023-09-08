@@ -4,8 +4,6 @@
  */
 const normalizeEOL = (str: string): string =>
   str.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
-// Typescript resolved `row && !/^\s*$/.test(row)` as `string | boolean`
-const isContentfulRow = (row: string): boolean => !!(row && !/^\s*$/.test(row))
 
 export function parseBval(contents: string): number[][] {
   // BVAL files are a single row of numbers, and may contain
