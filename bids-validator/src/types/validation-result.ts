@@ -24,7 +24,7 @@ export interface SummaryOutput {
   size: number
   dataProcessed: boolean
   pet: Record<string, any>
-  datatypes: string[]
+  dataTypes: string[]
   schemaVersion: string
 }
 

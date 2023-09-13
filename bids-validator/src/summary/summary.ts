@@ -1,5 +1,4 @@
 import { collectSubjectMetadata } from './collectSubjectMetadata.ts'
-import { readAll, readerFromStreamReader } from '../deps/stream.ts'
 import { SummaryOutput, SubjectMetadata } from '../types/validation-result.ts'
 import { BIDSContext } from '../schema/context.ts'
 
@@ -66,7 +65,7 @@ export class Summary {
   pet: Record<string, any>
   modalitiesCount: Record<string, number>
   secondaryModalitiesCount: Record<string, number>
-  datatypes: Set<string>
+  dataTypes: Set<string>
   schemaVersion: string
   constructor() {
     this.dataProcessed = false
@@ -77,7 +76,7 @@ export class Summary {
     this.subjectMetadata = []
     this.tasks = new Set()
     this.pet = {}
-    this.datatypes = new Set()
+    this.dataTypes = new Set()
     this.modalitiesCount = {
       mri: 0,
       pet: 0,
@@ -120,7 +119,7 @@ export class Summary {
     }
 
     if (context.datatype.length) {
-      this.datatypes.add(context.datatype)
+      this.dataTypes.add(context.datatype)
     }
 
     if (context.extension === '.json') {
@@ -162,7 +161,7 @@ export class Summary {
       size: this.size,
       dataProcessed: this.dataProcessed,
       pet: this.pet,
-      datatypes: Array.from(this.datatypes),
+      dataTypes: Array.from(this.dataTypes),
       schemaVersion: this.schemaVersion,
     }
   }
