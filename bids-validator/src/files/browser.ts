@@ -21,7 +21,9 @@ export class BIDSFileBrowser implements BIDSFile {
 
   get path(): string {
     // @ts-expect-error webkitRelativePath is defined in the browser
-    return this.#file.webkitRelativePath
+    const relativePath = this.#file.webkitRelativePath
+    const prefixLength = relativePath.indexOf('/')
+    return relativePath.substring(prefixLength)
   }
 
   get size(): number {
@@ -54,11 +56,11 @@ export function fileListToTree(files: File[]): Promise<FileTree> {
   for (const f of files) {
     const file = new BIDSFileBrowser(f, ignore)
     const fPath = parse(file.path)
-    const levels = fPath.dir.split(SEP)
-    if (levels[0] === '') {
+    if (fPath.dir === '/') {
       // Top level file
       tree.files.push(file)
     } else {
+      const levels = fPath.dir.split(SEP).slice(1)
       let currentLevelTree = tree
       for (const level of levels) {
         const exists = currentLevelTree.directories.find(

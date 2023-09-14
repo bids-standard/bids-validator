@@ -23,9 +23,9 @@ Deno.test('Browser implementation of FileTree', async (t) => {
       new TestFile(
         ['{}'],
         'dataset_description.json',
-        'dataset_description.json',
+        'ds/dataset_description.json',
       ),
-      new TestFile(['flat test dataset'], 'README.md', 'README.md'),
+      new TestFile(['flat test dataset'], 'README.md', 'ds/README.md'),
     ]
     const tree = await fileListToTree(files)
     const expectedTree = new FileTree('', '/', undefined)
@@ -38,18 +38,22 @@ Deno.test('Browser implementation of FileTree', async (t) => {
       new TestFile(
         ['{}'],
         'dataset_description.json',
-        'dataset_description.json',
+        'ds/dataset_description.json',
       ),
       new TestFile(
         ['tsv headers\n', 'column\tdata'],
         'participants.tsv',
-        'participants.tsv',
+        'ds/participants.tsv',
       ),
-      new TestFile(['single subject test dataset'], 'README.md', 'README.md'),
+      new TestFile(
+        ['single subject test dataset'],
+        'README.md',
+        'ds/README.md',
+      ),
       new TestFile(
         ['nifti file goes here'],
         'sub-01_T1w.nii.gz',
-        'sub-01/anat/sub-01_T1w.nii.gz',
+        'ds/sub-01/anat/sub-01_T1w.nii.gz',
       ),
     ]
     const tree = await fileListToTree(files)
