@@ -5,6 +5,7 @@ import {
   ContextSubject,
   ContextAssociations,
   ContextNiftiHeader,
+  ContextData,
 } from '../types/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
@@ -12,6 +13,7 @@ import { ColumnsMap } from '../types/columns.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { parseTSV } from '../files/tsv.ts'
+import { parseBval, parseBvec } from '../files/dwi.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import { ValidatorOptions } from '../setup/options.ts'
@@ -66,6 +68,7 @@ export class BIDSContext implements Context {
   columns: ColumnsMap
   associations: ContextAssociations
   nifti_header?: ContextNiftiHeader
+  data?: ContextData
 
   constructor(
     fileTree: FileTree,
@@ -171,6 +174,27 @@ export class BIDSContext implements Context {
     }
   }
 
+  // Currently un-specified bit of context needed for bval/bvec
+  async loadData(): Promise<void> {
+    let parser
+    if (this.file.path.endsWith('.bval')) {
+      parser = parseBval
+    } else if (this.file.path.endsWith('.bvec')) {
+      parser = parseBvec
+    }
+    if (parser) {
+      this.data = await this.file
+        .text()
+        .then(parser as (value: string) => number[][])
+        .then((data) => {
+          return {
+            n_rows: data.length,
+            n_cols: data ? data[0].length : 0,
+          }
+        }).then((ret) => {console.log(ret); return ret})
+    }
+  }
+
   async loadColumns(): Promise<void> {
     if (this.extension !== '.tsv') {
       return
@@ -198,6 +222,7 @@ export class BIDSContext implements Context {
       this.loadSidecar(),
       this.loadColumns(),
       this.loadAssociations(),
+      this.loadData(),
     ])
     this.loadNiftiHeader()
   }

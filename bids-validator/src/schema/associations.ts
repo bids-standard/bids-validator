@@ -7,6 +7,7 @@ import { FileTree } from '../types/filetree.ts'
 import { BIDSContext } from './context.ts'
 import { readEntities } from './entities.ts'
 import { parseTSV } from '../files/tsv.ts'
+import { parseBval, parseBvec } from '../files/dwi.ts'
 
 // type AssociationsLookup = Record<keyof ContextAssociations, { extensions: string[], inherit: boolean, load: ... }
 
@@ -23,22 +24,36 @@ import { parseTSV } from '../files/tsv.ts'
  */
 const associationLookup = {
   events: {
+    suffix: 'events',
     extensions: ['.tsv'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['events']> => {
-      return file
-        .text()
-        .then((text) => parseTSV(text) as ContextAssociationsEvents)
+    load: async (file: BIDSFile): Promise<ContextAssociations['events']> => {
+      const text = await file.text()
+      const columns = parseTSV(text)
+      return {
+        path: file.path,
+        onset: columns.get('onset') || [],
+      }
     },
   },
   aslcontext: {
+    suffix: 'aslcontext',
     extensions: ['.tsv'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['aslcontext']> => {
-      return Promise.resolve({ path: file.path, n_rows: 0, volume_type: [] })
+    load: async (
+      file: BIDSFile,
+    ): Promise<ContextAssociations['aslcontext']> => {
+      const contents = await file.text()
+      const columns = parseTSV(contents)
+      return {
+        path: file.path,
+        n_rows: columns.get('volume_type')?.length || 0,
+        volume_type: columns.get('volume_type') || [],
+      }
     },
   },
   m0scan: {
+    suffix: 'm0scan',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
     load: (file: BIDSFile): Promise<ContextAssociations['m0scan']> => {
@@ -46,13 +61,15 @@ const associationLookup = {
     },
   },
   magnitude: {
+    suffix: 'magnitude',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
     load: (file: BIDSFile): Promise<ContextAssociations['magnitude']> => {
-      return Promise.resolve({ path: file.path, onset: 'silly' })
+      return Promise.resolve({ path: file.path })
     },
   },
   magnitude1: {
+    suffix: 'magnitude1',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
     load: (file: BIDSFile): Promise<ContextAssociations['magnitude1']> => {
@@ -60,26 +77,51 @@ const associationLookup = {
     },
   },
   bval: {
-    extensions: ['.nii', '.nii.gz'],
+    suffix: 'dwi',
+    extensions: ['.bval'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['bval']> => {
-      return Promise.resolve({ path: file.path, n_cols: 0 })
+    load: async (file: BIDSFile): Promise<ContextAssociations['bval']> => {
+      const contents = await file.text()
+      const columns = parseBval(contents)
+      return {
+        path: file.path,
+        n_cols: columns ? columns[0].length : 0,
+      }
     },
   },
   bvec: {
-    extensions: ['.nii', '.nii.gz'],
+    suffix: 'dwi',
+    extensions: ['.bvec'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['bvec']> => {
-      return Promise.resolve({ path: file.path, n_cols: 0 })
+    load: async (file: BIDSFile): Promise<ContextAssociations['bvec']> => {
+      const contents = await file.text()
+      const columns = parseBvec(contents)
+      return {
+        path: file.path,
+        n_cols: columns ? columns[0].length : 0,
+      }
     },
   },
   channels: {
+    suffix: 'channels',
     extensions: ['.tsv'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['events']> => {
-      return file
-        .text()
-        .then((text) => parseTSV(text) as ContextAssociationsEvents)
+    load: async (file: BIDSFile): Promise<ContextAssociations['channels']> => {
+      const contents = await file.text()
+      const columns = parseTSV(contents)
+      return {
+        path: file.path,
+        type: columns.get('type') || [],
+        short_channel: columns.get('short_channel') || [],
+      }
+    },
+  },
+  coordsystem: {
+    suffix: 'coordsystem',
+    extensions: ['.json'],
+    inherit: true,
+    load: (file: BIDSFile): Promise<ContextAssociations['coordsystem']> => {
+      return Promise.resolve({ path: file.path })
     },
   },
 }
@@ -90,9 +132,9 @@ export async function buildAssociations(
 ): Promise<ContextAssociations> {
   const associations: ContextAssociations = {}
   for (const key in associationLookup as typeof associationLookup) {
-    const { extensions, inherit } =
+    const { suffix, extensions, inherit } =
       associationLookup[key as keyof typeof associationLookup]
-    const paths = getPaths(fileTree, source, key, extensions)
+    const paths = getPaths(fileTree, source, suffix, extensions)
     if (paths.length === 0) {
       continue
     }
