@@ -121,12 +121,12 @@ const hedIssues = {
 }
 
 export const hedOldToNewLookup = {
-  104: hedIssues['HED_ERROR'],
-  105: hedIssues['HED_WARNING'],
-  106: hedIssues['HED_INTERNAL_ERROR'],
-  107: hedIssues['HED_INTERNAL_WARNING'],
-  108: hedIssues['HED_MISSING_VALUE_IN_SIDECAR'],
-  109: hedIssues['HED_VERSION_NOT_DEFINED']
+  104: 'HED_ERROR',
+  105: 'HED_WARNING',
+  106: 'HED_INTERNAL_ERROR',
+  107: 'HED_INTERNAL_WARNING',
+  108: 'HED_MISSING_VALUE_IN_SIDECAR',
+  109: 'HED_VERSION_NOT_DEFINED'
 }
 
 export const nonSchemaIssues = { ...filenameIssues, ...hedIssues }

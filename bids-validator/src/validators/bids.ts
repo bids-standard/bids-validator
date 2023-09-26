@@ -88,7 +88,7 @@ export async function validate(
     await summary.update(context)
   }
   for (const check of perDSChecks) {
-    check(schema, dsContext, issues)
+    await check(schema, dsContext, issues)
   }
 
   let derivativesSummary: Record<string, ValidationResult> = {}

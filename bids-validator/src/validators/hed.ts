@@ -1,4 +1,6 @@
 import hedValidator from '../deps/hed-validator/index.js'
+import { hedOldToNewLookup } from '../issues/list.ts'
+import { logger } from '../utils/logger.ts'
 
 const hedArgs = {
   eventData: [],
@@ -80,7 +82,13 @@ export async function hedValidate(schema, dsContext, issues) {
   await hedValidator.validator
     .validateBidsDataset(hedDs)
     .then((hedValidationIssues) => {
-      console.log(hedValidationIssues)
+      logger.debug("Issues from hed validator:")
+      logger.debug(hedValidationIssues)
+      const newStyle = hedValidationIssues.map(hedIssue => {
+        issues.addNonSchemaIssue(
+          hedOldToNewLookup[hedIssue.code], [{...hedIssue.file, evidence: hedIssue.evidence}]
+        )
+      })
     })
   return Promise.resolve()
 }
