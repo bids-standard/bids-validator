@@ -21,4 +21,6 @@ jobs:
       - uses: codespell-project/actions-codespell@master
         with:
           ignore_words_list: ro,anser,te,tage,afterall,nwe,nin,nd,falsy
-          skip: package-lock.json
+          skip: 
+            - package-lock.json
+            - deps*
