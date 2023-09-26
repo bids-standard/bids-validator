@@ -557,7 +557,7 @@ const TSV = (file, contents, fileList, callback) => {
   }
   */
 
-  // check partcipants.tsv for age 89+
+  // check participants.tsv for age 89+
   if (file.name === 'participants.tsv') {
     checkAge89(rows, file, issues)
   }
