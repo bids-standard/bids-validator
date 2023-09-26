@@ -8,6 +8,7 @@ import { Severity } from '../types/issues.ts'
 import { BIDSContext } from './context.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
+import { memoize } from '../utils/memoize.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
@@ -33,6 +34,8 @@ export function applyRules(
     schemaPath = 'schema'
   }
   Object.assign(context, expressionFunctions)
+  // @ts-expect-error
+  context.exists.bind(context)
   for (const key in schema) {
     if (!(schema[key].constructor === Object)) {
       continue
@@ -62,8 +65,10 @@ const safeHas = () => true
 const safeGet = (target: any, prop: any) =>
   prop === Symbol.unscopables ? undefined : target[prop]
 
+const memoizedEvalConstructor = memoize(evalConstructor)
+
 export function evalCheck(src: string, context: BIDSContext) {
-  const test = evalConstructor(src)
+  const test = memoizedEvalConstructor(src)
   const safeContext = new Proxy(context, { has: safeHas, get: safeGet })
   try {
     return test(safeContext)
@@ -162,6 +167,10 @@ function schemaObjectTypeCheck(
   value: string,
   schema: GenericSchema,
 ): boolean {
+  // always allow n/a?
+  if (value === 'n/a') {
+    return true
+  }
   if ('anyOf' in schemaObject) {
     return schemaObject.anyOf.some((x) =>
       schemaObjectTypeCheck(x, value, schema),
@@ -169,10 +178,6 @@ function schemaObjectTypeCheck(
   }
   if ('enum' in schemaObject && schemaObject.enum) {
     return schemaObject.enum.some((x) => x === value)
-  }
-  // always allow n/a?
-  if (value === 'n/a') {
-    return true
   }
   // @ts-expect-error
   const format = schema.objects.formats[schemaObject.type]
@@ -192,7 +197,7 @@ function evalColumns(
   schemaPath: string,
 ): void {
   if (!rule.columns || context.extension !== '.tsv') return
-  const headers = Object.keys(context.columns)
+  const headers = [...Object.keys(context.columns)]
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
     // @ts-expect-error
     const columnObject = schema.objects.columns[ruleHeader]
@@ -206,7 +211,7 @@ function evalColumns(
       ])
     }
     if (headers.includes(name)) {
-      for (const value of context.columns[name]) {
+      for (const value of context.columns[name] as string[]) {
         if (
           !schemaObjectTypeCheck(columnObject as SchemaTypeLike, value, schema)
         ) {
@@ -235,7 +240,7 @@ function evalInitialColumns(
 ): void {
   if (!rule?.columns || !rule?.initial_columns || context.extension !== '.tsv')
     return
-  const headers = Object.keys(context.columns)
+  const headers = [...Object.keys(context.columns)]
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     // @ts-expect-error
     const ruleHeaderName = schema.objects.columns[ruleHeader].name
@@ -311,11 +316,13 @@ function evalIndexColumns(
     ])
     return
   }
-  const rowCount = context.columns[index_columns[0]].length
+  const rowCount = (context.columns[index_columns[0]] as string[])?.length || 0
   for (let i = 0; i < rowCount; i++) {
     let indexValue = ''
     index_columns.map((col: string) => {
-      indexValue = indexValue.concat(context.columns[col][i])
+      indexValue = indexValue.concat(
+        (context.columns[col] as string[])?.[i] || '',
+      )
     })
     if (uniqueIndexValues.has(indexValue)) {
       context.issues.addNonSchemaIssue('TSV_INDEX_VALUE_NOT_UNIQUE', [

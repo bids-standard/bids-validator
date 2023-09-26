@@ -10,7 +10,7 @@ await esbuild.build({
     path.join(process.cwd(), 'utils', 'consoleFormat.js'),
   ],
   outdir: path.join(process.cwd(), 'dist', 'commonjs'),
-  target: 'node12',
+  target: 'node18',
   bundle: true,
   sourcemap: true,
   platform: 'node',
@@ -37,8 +37,8 @@ await esbuild.build({
       stdin: '',
       version: 'v12.14.1',
     }),
-    external: ['pluralize'],
   },
+  external: ['pluralize'],
   plugins: [
     GlobalsPlugin({
       crypto: 'globalThis',

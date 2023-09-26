@@ -1,14 +1,11 @@
 import React from 'react'
-import bowser from 'bowser'
 import Issues from '../components/Issues'
-import BrowserWarning from './BrowserWarning'
 import Validate from '../components/Validate'
-import validate from 'bids-validator'
-import validatorPackageJson from 'bids-validator/package.json'
+import validate from '../../bids-validator'
+import validatorPackageJson from 'bids-validator/package.json' assert { type: 'json' }
 const version = validatorPackageJson.version
 
 // component setup -----------------------------------------------------------
-
 const initState = () => ({
   dirName: '',
   list: {},
@@ -86,8 +83,6 @@ export default class App extends React.Component {
   }
 
   render() {
-    let browserUnsupported =
-      !bowser.chrome && !bowser.chromium && !bowser.firefox
     return (
       <div id="root">
         <nav className="navbar navbar-dark bg-dark fixed-top">
@@ -103,18 +98,13 @@ export default class App extends React.Component {
           </div>
         </nav>
         <div className="container page-wrapper">
-          <div className="browser-warning">
-            {browserUnsupported ? <BrowserWarning /> : null}
-          </div>
           <div className="validator">
-            {!browserUnsupported ? (
-              <Validate
-                loading={this.state.status === 'validating'}
-                options={this.state.options}
-                onChange={this.validate}
-                handleOptionToggle={this.handleOptionToggle}
-              />
-            ) : null}
+            <Validate
+              loading={this.state.status === 'validating'}
+              options={this.state.options}
+              onChange={this.validate}
+              handleOptionToggle={this.handleOptionToggle}
+            />
           </div>
           {this.state.status === 'validated' ? (
             <Issues reset={this.reset} {...this.state} />

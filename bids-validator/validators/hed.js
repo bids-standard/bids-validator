@@ -1,14 +1,14 @@
 import hedValidator from 'hed-validator'
+import cloneDeep from 'lodash/cloneDeep'
 import intersection from 'lodash/intersection'
-import utils from '../../utils'
-import parseTsv from '../tsv/tsvParser'
+import utils from '../utils'
 
 const Issue = utils.issues.Issue
 
-export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
-  const eventData = constructEventData(events, jsonContents)
-  const sidecarData = constructSidecarData(events, jsonContents, jsonFiles)
-  const hedDataExists = detectHed(eventData, sidecarData)
+export default function checkHedStrings(tsvs, jsonContents, jsonFiles, dir) {
+  const tsvData = constructTsvData(tsvs, jsonContents)
+  const sidecarData = constructSidecarData(tsvData, jsonContents, jsonFiles)
+  const hedDataExists = detectHed(tsvData, sidecarData)
   if (!hedDataExists) {
     return Promise.resolve([])
   }
@@ -16,11 +16,11 @@ export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
   const datasetDescription = jsonContents['/dataset_description.json']
   const datasetDescriptionData = new hedValidator.validator.BidsJsonFile(
     '/dataset_description.json',
-    datasetDescription,
+    cloneDeep(datasetDescription),
     getSidecarFileObject('/dataset_description.json', jsonFiles),
   )
   const dataset = new hedValidator.validator.BidsDataset(
-    eventData,
+    tsvData,
     sidecarData,
     datasetDescriptionData,
     dir,
@@ -43,61 +43,65 @@ export default function checkHedStrings(events, jsonContents, jsonFiles, dir) {
   }
 }
 
-function constructEventData(events, jsonContents) {
-  return events.map((eventFile) => {
+function constructTsvData(tsvFiles, jsonContents) {
+  return tsvFiles.map((tsvFile) => {
     const potentialSidecars = utils.files.potentialLocations(
-      eventFile.path.replace('.tsv', '.json'),
+      tsvFile.file.relativePath.replace('.tsv', '.json'),
     )
     const mergedDictionary = utils.files.generateMergedSidecarDict(
       potentialSidecars,
       jsonContents,
     )
-    const parsedTsv = parseTsv(eventFile.contents)
-    const file = eventFile.file
-    return new hedValidator.validator.BidsEventFile(
-      eventFile.path,
+    let TsvFileClass
+    if (tsvFile.file.relativePath.endsWith('_events.tsv')) {
+      TsvFileClass = hedValidator.bids.BidsEventFile
+    } else {
+      TsvFileClass = hedValidator.bids.BidsTabularFile
+    }
+    return new TsvFileClass(
+      tsvFile.path,
       potentialSidecars,
       mergedDictionary,
-      parsedTsv,
-      file,
+      tsvFile.contents,
+      tsvFile.file,
     )
   })
 }
 
-function constructSidecarData(eventData, jsonContents, jsonFiles) {
+function constructSidecarData(tsvData, jsonContents, jsonFiles) {
   const actualSidecarNames = Object.keys(jsonContents)
-  let potentialEventSidecars = []
-  for (const eventFileData of eventData) {
-    potentialEventSidecars = potentialEventSidecars.concat(
-      eventFileData.potentialSidecars,
-    )
+  const potentialSidecars = []
+  for (const tsvFileData of tsvData) {
+    potentialSidecars.push(...tsvFileData.potentialSidecars)
   }
   const actualEventSidecars = intersection(
     actualSidecarNames,
-    potentialEventSidecars,
+    potentialSidecars,
   )
   return actualEventSidecars.map((sidecarName) => {
-    return new hedValidator.validator.BidsSidecar(
+    return new hedValidator.bids.BidsSidecar(
       sidecarName,
-      jsonContents[sidecarName],
+      cloneDeep(jsonContents[sidecarName]),
       getSidecarFileObject(sidecarName, jsonFiles),
     )
   })
 }
 
 function getSidecarFileObject(sidecarName, jsonFiles) {
-  return jsonFiles.filter((file) => {
-    return file.relativePath === sidecarName
-  })[0]
+  return cloneDeep(
+    jsonFiles.filter((file) => {
+      return file.relativePath === sidecarName
+    })[0],
+  )
 }
 
-function detectHed(eventData, sidecarData) {
+function detectHed(tsvData, sidecarData) {
   return (
     sidecarData.some((sidecarFileData) => {
       return Object.values(sidecarFileData.sidecarData).some(sidecarValueHasHed)
     }) ||
-    eventData.some((eventFileData) => {
-      return eventFileData.parsedTsv.headers.indexOf('HED') !== -1
+    tsvData.some((tsvFileData) => {
+      return tsvFileData.parsedTsv.headers.indexOf('HED') !== -1
     })
   )
 }

@@ -22,14 +22,15 @@ class Issues extends React.Component {
     let dirName = this.props.dirName
 
     // counts
-    let totalErrors = 0
+    // let totalErrors = 0
     let totalWarnings = 0
-    let warningCount, errorCount
+    let warningCount = 0
+    // let errorCount = 0
     if (errors !== 'Invalid') {
-      totalErrors = errors.length
+      // totalErrors = errors.length
       totalWarnings = warnings.length
       warningCount = totalWarnings + ' ' + pluralize('Warning', totalWarnings)
-      errorCount = totalErrors + ' ' + pluralize('Error', totalErrors)
+      // errorCount = totalErrors + ' ' + pluralize('Error', totalErrors)
     }
     // messages
     let specLink = (

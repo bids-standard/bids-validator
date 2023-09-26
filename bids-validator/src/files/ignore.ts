@@ -19,6 +19,8 @@ const defaultIgnores = [
   'code/',
   'stimuli/',
   'log/',
+  '**/meg/*.ds/**',
+  '**/micr/*.zarr/**',
 ]
 
 /**

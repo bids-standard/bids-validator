@@ -28,13 +28,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 12
+          node-version: 18
       - uses: actions/checkout@v3
         with:
           submodules: recursive
 
-      - name: Install npm@7
-        run: npm install --global npm@7
+      - name: Upgrade npm
+        run: npm install --global npm
 
       - name: Install bids-validator
         run: |

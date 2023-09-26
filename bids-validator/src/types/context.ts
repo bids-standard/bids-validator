@@ -48,6 +48,14 @@ export interface ContextAssociationsBvec {
   path: string
   n_cols: number
 }
+export interface ContextAssociationsChannels {
+  path?: string
+  type?: string[]
+  short_channel?: string[]
+}
+export interface ContextAssociationsCoordsystem {
+  path: string
+}
 export interface ContextAssociations {
   events?: ContextAssociationsEvents
   aslcontext?: ContextAssociationsAslcontext
@@ -56,6 +64,8 @@ export interface ContextAssociations {
   magnitude1?: ContextAssociationsMagnitude1
   bval?: ContextAssociationsBval
   bvec?: ContextAssociationsBvec
+  channels?: ContextAssociationsChannels
+  coordsystem?: ContextAssociationsCoordsystem
 }
 export interface ContextNiftiHeaderDimInfo {
   freq: number
@@ -74,6 +84,10 @@ export interface ContextNiftiHeader {
   qform_code: number
   sform_code: number
 }
+export interface ContextData {
+  n_cols?: number
+  n_rows?: number
+}
 export interface Context {
   dataset: ContextDataset
   subject: ContextSubject
@@ -88,4 +102,5 @@ export interface Context {
   columns: object
   json: object
   nifti_header?: ContextNiftiHeader
+  data?: ContextData
 }

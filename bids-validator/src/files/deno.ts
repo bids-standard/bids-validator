@@ -25,10 +25,10 @@ export class BIDSFileDeno implements BIDSFile {
   name: string
   path: string
   #fileInfo?: Deno.FileInfo
-  private _datasetAbsPath: string
+  #datasetAbsPath: string
 
   constructor(datasetPath: string, path: string, ignore: FileIgnoreRules) {
-    this._datasetAbsPath = datasetPath
+    this.#datasetAbsPath = datasetPath
     this.path = path
     this.name = basename(path)
     this.#ignore = ignore
@@ -42,7 +42,7 @@ export class BIDSFileDeno implements BIDSFile {
   }
 
   private _getPath(): string {
-    return join(this._datasetAbsPath, this.path)
+    return join(this.#datasetAbsPath, this.path)
   }
 
   get size(): number {

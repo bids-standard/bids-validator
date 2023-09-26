@@ -19,5 +19,6 @@ try {
     entry(cli)
   } else {
     console.log(err)
+    process.exitCode = 1
   }
 }

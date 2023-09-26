@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         platform: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.10']
+        python-version: ['3.8', '3.9', '3.10', '3.11']
 
     runs-on: ${{ matrix.platform }}
 
@@ -47,6 +47,7 @@ jobs:
         uses: crazy-max/ghaction-chocolatey@v2
         with:
           args: install git-annex --yes --ignore-checksums
+        continue-on-error: true  # This can fail for stupid reasons ¯\_(ツ)_/¯
 
       - name: Install remaining dependencies
         shell: bash -l {0}

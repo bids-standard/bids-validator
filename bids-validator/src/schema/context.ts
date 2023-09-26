@@ -5,12 +5,15 @@ import {
   ContextSubject,
   ContextAssociations,
   ContextNiftiHeader,
+  ContextData,
 } from '../types/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
-import { readEntities } from './entities.ts'
+import { ColumnsMap } from '../types/columns.ts'
+import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { parseTSV } from '../files/tsv.ts'
+import { parseBval, parseBvec } from '../files/dwi.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import { ValidatorOptions } from '../setup/options.ts'
@@ -50,7 +53,7 @@ const defaultDsContext = new BIDSContextDataset()
 
 export class BIDSContext implements Context {
   // Internal representation of the file tree
-  #fileTree: FileTree
+  fileTree: FileTree
   filenameRules: string[]
   issues: DatasetIssues
   file: BIDSFile
@@ -62,9 +65,10 @@ export class BIDSContext implements Context {
   datatype: string
   modality: string
   sidecar: object
-  columns: Record<string, string[]>
+  columns: ColumnsMap
   associations: ContextAssociations
   nifti_header?: ContextNiftiHeader
+  data?: ContextData
 
   constructor(
     fileTree: FileTree,
@@ -72,11 +76,11 @@ export class BIDSContext implements Context {
     issues: DatasetIssues,
     dsContext?: BIDSContextDataset,
   ) {
-    this.#fileTree = fileTree
+    this.fileTree = fileTree
     this.filenameRules = []
     this.issues = issues
     this.file = file
-    const bidsEntities = readEntities(file)
+    const bidsEntities = readEntities(file.name)
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
@@ -85,7 +89,7 @@ export class BIDSContext implements Context {
     this.datatype = ''
     this.modality = ''
     this.sidecar = {}
-    this.columns = {}
+    this.columns = new ColumnsMap()
     this.associations = {} as ContextAssociations
   }
 
@@ -105,7 +109,7 @@ export class BIDSContext implements Context {
    * In the browser, this is always at the root
    */
   get datasetPath(): string {
-    return this.#fileTree.path
+    return this.fileTree.path
   }
 
   /**
@@ -114,10 +118,10 @@ export class BIDSContext implements Context {
    */
   async loadSidecar(fileTree?: FileTree) {
     if (!fileTree) {
-      fileTree = this.#fileTree
+      fileTree = this.fileTree
     }
     const validSidecars = fileTree.files.filter((file) => {
-      const { suffix, extension, entities } = readEntities(file)
+      const { suffix, extension, entities } = readEntities(file.name)
       return (
         extension === '.json' &&
         suffix === this.suffix &&
@@ -129,9 +133,23 @@ export class BIDSContext implements Context {
         })
       )
     })
+
     if (validSidecars.length > 1) {
-      // two matching in one dir not allowed
-    } else if (validSidecars.length === 1) {
+      const exactMatch = validSidecars.find(
+        (sidecar) =>
+          sidecar.path == this.file.path.replace(this.extension, '.json'),
+      )
+      if (exactMatch) {
+        validSidecars.splice(1)
+        validSidecars[0] = exactMatch
+      } else {
+        logger.warning(
+          `Multiple sidecar files detected for '${this.file.path}'`,
+        )
+      }
+    }
+
+    if (validSidecars.length === 1) {
       const json = await validSidecars[0]
         .text()
         .then((text) => JSON.parse(text))
@@ -156,6 +174,27 @@ export class BIDSContext implements Context {
     }
   }
 
+  // Currently un-specified bit of context needed for bval/bvec
+  async loadData(): Promise<void> {
+    let parser
+    if (this.file.path.endsWith('.bval')) {
+      parser = parseBval
+    } else if (this.file.path.endsWith('.bvec')) {
+      parser = parseBvec
+    }
+    if (parser) {
+      this.data = await this.file
+        .text()
+        .then(parser as (value: string) => number[][])
+        .then((data) => {
+          return {
+            n_rows: data.length,
+            n_cols: data ? data[0].length : 0,
+          }
+        }).then((ret) => {console.log(ret); return ret})
+    }
+  }
+
   async loadColumns(): Promise<void> {
     if (this.extension !== '.tsv') {
       return
@@ -168,13 +207,13 @@ export class BIDSContext implements Context {
           `tsv file could not be opened by loadColumns '${this.file.path}'`,
         )
         logger.debug(error)
-        return {}
+        return new Map<string, string[]>() as ColumnsMap
       })
     return
   }
 
   async loadAssociations(): Promise<void> {
-    this.associations = await buildAssociations(this.#fileTree, this)
+    this.associations = await buildAssociations(this.fileTree, this)
     return
   }
 
@@ -183,6 +222,7 @@ export class BIDSContext implements Context {
       this.loadSidecar(),
       this.loadColumns(),
       this.loadAssociations(),
+      this.loadData(),
     ])
     this.loadNiftiHeader()
   }
