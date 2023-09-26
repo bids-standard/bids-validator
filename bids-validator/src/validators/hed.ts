@@ -24,6 +24,25 @@ function columnsToContent(columns): tsvContent {
   }
 }
 
+function detectHed(tsvData, sidecarData) {
+  return (
+    sidecarData.some((sidecarFileData) => {
+      return Object.values(sidecarFileData.sidecarData).some(sidecarValueHasHed)
+    }) ||
+    tsvData.some((tsvFileData) => {
+      return tsvFileData.parsedTsv.headers.indexOf('HED') !== -1
+    })
+  )
+} 
+  
+function sidecarValueHasHed(sidecarValue) {
+  return ( 
+    sidecarValue !== null &&
+    typeof sidecarValue === 'object' &&
+    sidecarValue.HED !== undefined
+  )
+}
+
 export async function hedAccumulator(schema, context) {
   if (context.file.name == 'dataset_description.json') {
     hedArgs.datasetDescription = new hedValidator.validator.BidsJsonFile(
@@ -65,3 +84,4 @@ export async function hedValidate(schema, dsContext, issues) {
     })
   return Promise.resolve()
 }
+
