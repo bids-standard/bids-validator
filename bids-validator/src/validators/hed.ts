@@ -9,6 +9,9 @@ import { ColumnsMap } from '../types/columns.ts'
 class BidsSidecar extends hedValidator.validator.BidsSidecar {}
 class BidsEventFile extends hedValidator.bids.BidsEventFile {} 
 
+/* This should be moved into the dataset context.  Will not properly work
+ * with derivatives since it persists between validations.
+ */
 const hedArgs = {
   eventData: [] as BidsEventFile[],
   sidecarData: [] as BidsSidecar[],
@@ -34,8 +37,7 @@ function columnsToContent(columns: ColumnsMap) {
   }
 }
 
-/*
-function detectHed(tsvData, sidecarData: Record<string, string>) {
+function detectHed(tsvData: BidsEventFile[], sidecarData: BidsSidecar[]) {
   return (
     sidecarData.some((sidecarFileData) => {
       return Object.values(sidecarFileData.sidecarData).some(sidecarValueHasHed)
@@ -45,7 +47,10 @@ function detectHed(tsvData, sidecarData: Record<string, string>) {
     })
   )
 } 
-*/
+
+export function testDetectHed() {
+  return detectHed(hedArgs.eventData, hedArgs.sidecarData)
+}
   
 function sidecarValueHasHed(sidecarValue: unknown) {
   return ( 
@@ -93,6 +98,9 @@ export interface HedIssue {
 }
 
 export async function hedValidate(schema: GenericSchema, dsContext: BIDSContextDataset, issues: DatasetIssues): Promise<void>{
+  if (!detectHed(hedArgs.eventData, hedArgs.sidecarData)) {
+    return Promise.resolve()
+  }
   let hedDs = new hedValidator.validator.BidsDataset(...Object.values(hedArgs))
   await hedValidator.validator
     .validateBidsDataset(hedDs)
