@@ -19,7 +19,7 @@ import { hedAccumulator, hedValidate } from './hed.ts'
 /**
  * Ordering of checks to apply
  */
-const perContextChecks: CheckFunction[] = [
+const perContextChecks: ContextCheckFunction[] = [
   emptyFile,
   filenameIdentify,
   filenameValidate,
@@ -88,7 +88,7 @@ export async function validate(
     await summary.update(context)
   }
   for (const check of perDSChecks) {
-    await check(schema, dsContext, issues)
+    await check(schema as unknown as GenericSchema, dsContext, issues)
   }
 
   let derivativesSummary: Record<string, ValidationResult> = {}

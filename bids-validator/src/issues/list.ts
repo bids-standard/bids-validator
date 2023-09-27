@@ -91,7 +91,7 @@ export const filenameIssues: IssueDefinitionRecord = {
   },
 }
 
-const hedIssues = {
+const hedIssues: IssueDefinitionRecord = {
   HED_ERROR: {
     severity: 'error',
     reason: 'The validation on this HED string returned an error.',
@@ -120,7 +120,7 @@ const hedIssues = {
   },
 }
 
-export const hedOldToNewLookup = {
+export const hedOldToNewLookup: Record<number, Partial<keyof IssueDefinitionRecord>> = {
   104: 'HED_ERROR',
   105: 'HED_WARNING',
   106: 'HED_INTERNAL_ERROR',

@@ -15,7 +15,7 @@ export type RuleCheckFunction = (
   context: BIDSContext,
 ) => void
 
-DSCheckFunction = (
+export type DSCheckFunction = (
   schema: GenericSchema,
   dsContext: BIDSContextDataset,
   issues: DatasetIssues,
