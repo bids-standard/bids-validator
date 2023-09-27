@@ -1,4 +1,4 @@
-import hedValidator from '../deps/hed-validator/index.js'
+import hedValidator from '../deps/hed-validator.ts'
 import { hedOldToNewLookup } from '../issues/list.ts'
 import { logger } from '../utils/logger.ts'
 
