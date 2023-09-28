@@ -43,10 +43,12 @@ export interface ContextAssociationsMagnitude1 {
 export interface ContextAssociationsBval {
   path: string
   n_cols: number
+  n_rows: number
 }
 export interface ContextAssociationsBvec {
   path: string
   n_cols: number
+  n_rows: number
 }
 export interface ContextAssociationsChannels {
   path?: string
