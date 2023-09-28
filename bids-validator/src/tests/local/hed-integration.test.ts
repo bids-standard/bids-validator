@@ -3,6 +3,7 @@ import { validatePath, formatAssertIssue } from './common.ts'
 import { validate } from '../../validators/bids.ts'
 import { parseOptions } from '../../setup/options.ts'
 import { testDetectHed } from '../../validators/hed.ts'
+import { BIDSContextDataset } from '../../schema/context.ts'
 
 Deno.test('hed-validator not triggered', async (t) => {
   const PATH = 'tests/data/bids-examples/ds003'
@@ -12,12 +13,15 @@ Deno.test('hed-validator not triggered', async (t) => {
     const new_result = await validate(tree, {
       ...(await parseOptions([PATH]))
     })
-    assert(!testDetectHed())
+
+    // Dummy dscontext until I can figure out how to extract a good one from validate
+    const dsContext = new BIDSContextDataset()
+    assert(!testDetectHed(dsContext))
   })
 })
 
 Deno.test('hed-validator integration test', async (t) => {
-  const PATH = 'tests/data/bids-examples/eeg_ds003645s_hed'
+  const PATH = 'tests/data/bids-examples/eeg_ds003645s_hed_inheritance'
   const { tree, result } = await validatePath(t, PATH)
 
   tree.files = tree.files.filter(f => f.name !== 'task-FacePerception_events.json')

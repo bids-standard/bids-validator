@@ -6,18 +6,9 @@ import { IssueFile } from '../types/issues.ts'
 import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { ColumnsMap } from '../types/columns.ts'
-class BidsSidecar extends hedValidator.validator.BidsSidecar {}
-class BidsEventFile extends hedValidator.bids.BidsEventFile {} 
 
-/* This should be moved into the dataset context.  Will not properly work
- * with derivatives since it persists between validations.
- */
-const hedArgs = {
-  eventData: [] as BidsEventFile[],
-  sidecarData: [] as BidsSidecar[],
-  datasetDescription: '',
-  dir: '',
-}
+export class BidsSidecar extends hedValidator.validator.BidsSidecar {}
+export class BidsEventFile extends hedValidator.bids.BidsEventFile {} 
 
 // https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
 function transpose(matrix: string[][]) {
@@ -48,8 +39,8 @@ function detectHed(tsvData: BidsEventFile[], sidecarData: BidsSidecar[]) {
   )
 } 
 
-export function testDetectHed() {
-  return detectHed(hedArgs.eventData, hedArgs.sidecarData)
+export function testDetectHed(dsContext: BIDSContextDataset) {
+  return detectHed(dsContext.hedArgs.eventData, dsContext.hedArgs.sidecarData)
 }
   
 function sidecarValueHasHed(sidecarValue: unknown) {
@@ -63,12 +54,12 @@ function sidecarValueHasHed(sidecarValue: unknown) {
 
 export async function hedAccumulator(schema: GenericSchema, context: BIDSContext) {
   if (context.file.name == 'dataset_description.json') {
-    hedArgs.datasetDescription = String(new hedValidator.validator.BidsJsonFile(
+    context.dataset.hedArgs.datasetDescription = String(new hedValidator.validator.BidsJsonFile(
       '/dataset_description.json',
       await context.json,
       context.file,
     ))
-    hedArgs.dir = context.datasetPath
+    context.dataset.hedArgs.dir = context.datasetPath
   }
   if (context.suffix == 'events' && context.extension == '.tsv') {
     const tsvContent = columnsToContent(context.columns)
@@ -80,12 +71,12 @@ export async function hedAccumulator(schema: GenericSchema, context: BIDSContext
       tsvContent,
       context.file,
     )
-    hedArgs.eventData.push(eventFile)
+    context.dataset.hedArgs.eventData.push(eventFile)
   }
 
   if (context.extension == '.json') {
     const sidecarFile = new BidsSidecar(context.path, await context.json, context.file)
-    hedArgs.sidecarData.push(
+    context.dataset.hedArgs.sidecarData.push(
       sidecarFile
     )
   }
@@ -98,10 +89,10 @@ export interface HedIssue {
 }
 
 export async function hedValidate(schema: GenericSchema, dsContext: BIDSContextDataset, issues: DatasetIssues): Promise<void>{
-  if (!detectHed(hedArgs.eventData, hedArgs.sidecarData)) {
+  if (!detectHed(dsContext.hedArgs.eventData, dsContext.hedArgs.sidecarData)) {
     return Promise.resolve()
   }
-  let hedDs = new hedValidator.validator.BidsDataset(...Object.values(hedArgs))
+  let hedDs = new hedValidator.validator.BidsDataset(...Object.values(dsContext.hedArgs))
   await hedValidator.validator
     .validateBidsDataset(hedDs)
     .then((hedValidationIssues: HedIssue[]) => {

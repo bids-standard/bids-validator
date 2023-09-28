@@ -1,10 +1,12 @@
 import { ValidatorOptions } from '../setup/options.ts'
+import { HEDArgs } from './hed.ts'
 
 export interface ContextDatasetSubjects {
   sub_dirs: string[]
   participant_id: string[]
   phenotype: string[]
 }
+
 export interface ContextDataset {
   dataset_description: Record<string, unknown>
   files: any[]
@@ -13,6 +15,7 @@ export interface ContextDataset {
   modalities: any[]
   subjects: ContextDatasetSubjects[]
   options?: ValidatorOptions
+  hedArgs: HEDArgs
 }
 export interface ContextSubjectSessions {
   ses_dirs: string[]
