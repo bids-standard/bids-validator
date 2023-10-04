@@ -86,10 +86,6 @@ export interface ContextNiftiHeader {
   qform_code: number
   sform_code: number
 }
-export interface ContextData {
-  n_cols?: number
-  n_rows?: number
-}
 export interface Context {
   dataset: ContextDataset
   subject: ContextSubject
@@ -104,5 +100,4 @@ export interface Context {
   columns: object
   json: object
   nifti_header?: ContextNiftiHeader
-  data?: ContextData
 }
