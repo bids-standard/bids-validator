@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools", "versioneer[toml]"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bids-validator"
+dynamic = ["version"]
+description = "Validator for the Brain Imaging Data Structure"
+readme = "README.md"
+license = { text = "MIT License" }
+authors = [
+    { name = "PyBIDS developers", email = "bids-discussion@googlegroups.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.urls]
+Homepage = "https://github.com/bids-standard/bids-validator"
+
+[tool.setuptools.packages.find]
+include = ["bids_validator*"]
+
+[tool.setuptools.package-data]
+bids_validator = ["*/*.json"]
+
+[tool.versioneer]
+VCS = "git"
+style = "pep440"
+versionfile_source = "bids_validator/_version.py"
+versionfile_build = "bids_validator/_version.py"
+tag_prefix = "v"
+parentdir_prefix = ""

@@ -119,25 +119,24 @@ jobs:
           name: Update Python install tools
           command: |
             python3 -m ensurepip
-            python3 -m pip install --upgrade pip setuptools wheel
+            python3 -m pip install --upgrade pip build
       - run:
           name: Install twine, readme renderer
           command: python3 -m pip install twine readme_renderer[md]
       - run:
           name: Check build and readme rendering
           command: |
-            cd bids-validator && python3 setup.py sdist bdist_wheel
-            twine check dist/*
+            python3 -m build bids-validator/
+            twine check bids-validator/dist/*
       - run:
           name: Check sdist installation
           command: |
             cd bids-validator
-            python3 -m pip install -U virtualenv
-            virtualenv venv
-            source venv/bin/activate
-            python --version
-            pip install -U pip setuptools>=27.0 wheel
-            pip install dist/*.tar.gz
+            python3 -m venv .venv
+            source .venv/bin/activate
+            python3 --version
+            python3 -m pip install --upgrade pip
+            python3 -m pip install dist/*.tar.gz
   pypi_deployment:
     docker:
       - image: alpine:3.13
@@ -154,13 +153,13 @@ jobs:
           name: Update Python install tools
           command: |
             python3 -m ensurepip
-            python3 -m pip install --upgrade pip setuptools wheel
+            python3 -m pip install --upgrade pip build
       - run:
           name: Install twine, readme renderer
           command: python3 -m pip install twine readme_renderer[md]
       - run: git checkout -f $CIRCLE_TAG
-      - run: cd bids-validator && python3 setup.py sdist bdist_wheel
-      - run: cd bids-validator && twine upload dist/*
+      - run: python3 -m build bids-validator/
+      - run: python3 -m twine upload bids-validator/dist/*
   gh-pages_deployment:
     docker:
       - image: node:18-alpine
