@@ -4,6 +4,7 @@ import { colors } from '../deps/fmt.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { assert, assertEquals } from '../deps/asserts.ts'
 import { evalCheck } from '../schema/applyRules.ts'
+import { expressionFunctions } from '../schema/expressionLanguage.ts'
 
 const schema = await loadSchema()
 const pretty_null = (x: string | null): string => (x === null ? 'null' : x)
@@ -15,7 +16,9 @@ Deno.test('validate schema expression tests', async (t) => {
   )
   for (const test of schema.meta.expression_tests) {
     await t.step(`${test.expression} evals to ${test.result}`, () => {
-      const actual_result = evalCheck(test.expression, {} as BIDSContext)
+      // @ts-expect-error
+      const context = expressionFunctions as BIDSContext
+      const actual_result = evalCheck(test.expression, context)
       if (actual_result == test.result) {
         results.push([
           colors.cyan(test.expression),
