@@ -52,11 +52,15 @@ export const expressionFunctions = {
     }
     return typeof operand
   },
-  min: (list: number[]): number => {
-    return Math.min(...list)
+  min: (list: number[]): number | null => {
+    return list != null
+      ? Math.min(...list.filter((x) => typeof x === 'number'))
+      : null
   },
-  max: (list: number[]): number => {
-    return Math.max(...list)
+  max: (list: number[]): number | null => {
+    return list != null
+      ? Math.max(...list.filter((x) => typeof x === 'number'))
+      : null
   },
   length: <T>(list: T[]): number | null => {
     if (Array.isArray(list) || typeof list == 'string') {
@@ -68,7 +72,10 @@ export const expressionFunctions = {
     return list.filter((x) => x === val).length
   },
   exists: exists,
-  substr: (arg: string, start: number, end: number): string => {
+  substr: (arg: string, start: number, end: number): string | null => {
+    if (arg == null || start == null || end == null) {
+      return null
+    }
     return arg.substr(start, end - start)
   },
   sorted: <T>(list: T[]): T[] => {
