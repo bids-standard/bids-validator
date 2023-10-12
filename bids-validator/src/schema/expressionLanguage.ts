@@ -1,4 +1,8 @@
 function exists(list: string[], rule: string = 'dataset'): number {
+  if (list == null) {
+    return 0
+  }
+
   const prefix: string[] = []
 
   // Stimuli and subject-relative paths get prefixes
