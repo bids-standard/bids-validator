@@ -9,6 +9,13 @@ import { expressionFunctions } from '../schema/expressionLanguage.ts'
 const schema = await loadSchema()
 const pretty_null = (x: string | null): string => (x === null ? 'null' : x)
 
+const equal = <T>(a: T, b: T): boolean => {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return a.length === b.length && a.every((val, idx) => val === b[idx])
+  }
+  return a === b
+}
+
 Deno.test('validate schema expression tests', async (t) => {
   const results: string[][] = []
   const header = ['expression', 'desired', 'actual', 'result'].map((x) =>
@@ -19,7 +26,7 @@ Deno.test('validate schema expression tests', async (t) => {
       // @ts-expect-error
       const context = expressionFunctions as BIDSContext
       const actual_result = evalCheck(test.expression, context)
-      if (actual_result == test.result) {
+      if (equal(actual_result, test.result)) {
         results.push([
           colors.cyan(test.expression),
           pretty_null(test.result),
