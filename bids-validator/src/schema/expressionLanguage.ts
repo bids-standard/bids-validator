@@ -47,7 +47,7 @@ export const expressionFunctions = {
     if (Array.isArray(operand)) {
       return 'array'
     }
-    if (typeof operand === 'undefined') {
+    if (typeof operand === 'undefined' || operand === null) {
       return 'null'
     }
     return typeof operand
