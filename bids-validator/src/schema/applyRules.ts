@@ -74,7 +74,7 @@ export function evalCheck(src: string, context: BIDSContext) {
     return test(safeContext)
   } catch (error) {
     logger.debug(error)
-    return false
+    return null
   }
 }
 
