@@ -1,4 +1,8 @@
 function exists(list: string[], rule: string = 'dataset'): number {
+  if (list == null) {
+    return 0
+  }
+
   const prefix: string[] = []
 
   // Stimuli and subject-relative paths get prefixes
@@ -47,16 +51,20 @@ export const expressionFunctions = {
     if (Array.isArray(operand)) {
       return 'array'
     }
-    if (typeof operand === 'undefined') {
+    if (typeof operand === 'undefined' || operand === null) {
       return 'null'
     }
     return typeof operand
   },
-  min: (list: number[]): number => {
-    return Math.min(...list)
+  min: (list: number[]): number | null => {
+    return list != null
+      ? Math.min(...list.filter((x) => typeof x === 'number'))
+      : null
   },
-  max: (list: number[]): number => {
-    return Math.max(...list)
+  max: (list: number[]): number | null => {
+    return list != null
+      ? Math.max(...list.filter((x) => typeof x === 'number'))
+      : null
   },
   length: <T>(list: T[]): number | null => {
     if (Array.isArray(list) || typeof list == 'string') {
@@ -68,7 +76,10 @@ export const expressionFunctions = {
     return list.filter((x) => x === val).length
   },
   exists: exists,
-  substr: (arg: string, start: number, end: number): string => {
+  substr: (arg: string, start: number, end: number): string | null => {
+    if (arg == null || start == null || end == null) {
+      return null
+    }
     return arg.substr(start, end - start)
   },
   sorted: <T>(list: T[]): T[] => {

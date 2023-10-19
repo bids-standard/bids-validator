@@ -4,9 +4,17 @@ import { colors } from '../deps/fmt.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { assert, assertEquals } from '../deps/asserts.ts'
 import { evalCheck } from '../schema/applyRules.ts'
+import { expressionFunctions } from '../schema/expressionLanguage.ts'
 
 const schema = await loadSchema()
 const pretty_null = (x: string | null): string => (x === null ? 'null' : x)
+
+const equal = <T>(a: T, b: T): boolean => {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return a.length === b.length && a.every((val, idx) => val === b[idx])
+  }
+  return a === b
+}
 
 Deno.test('validate schema expression tests', async (t) => {
   const results: string[][] = []
@@ -15,8 +23,10 @@ Deno.test('validate schema expression tests', async (t) => {
   )
   for (const test of schema.meta.expression_tests) {
     await t.step(`${test.expression} evals to ${test.result}`, () => {
-      const actual_result = evalCheck(test.expression, {} as BIDSContext)
-      if (actual_result == test.result) {
+      // @ts-expect-error
+      const context = expressionFunctions as BIDSContext
+      const actual_result = evalCheck(test.expression, context)
+      if (equal(actual_result, test.result)) {
         results.push([
           colors.cyan(test.expression),
           pretty_null(test.result),
