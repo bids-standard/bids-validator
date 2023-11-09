@@ -30,7 +30,7 @@ export class FileIgnoreRules {
   #ignore: Ignore
 
   constructor(config: string[]) {
-    this.#ignore = ignore({ allowRelativePaths: true })
+    this.#ignore = ignore()
     this.#ignore.add(defaultIgnores)
     this.#ignore.add(config)
   }
@@ -41,6 +41,7 @@ export class FileIgnoreRules {
 
   /** Test if a dataset relative path should be ignored given configured rules */
   test(path: string): boolean {
-    return this.#ignore.ignores(path)
+    // Paths come in with a leading slash, but ignore expects paths relative to root
+    return this.#ignore.ignores(path.slice(1, path.length))
   }
 }
