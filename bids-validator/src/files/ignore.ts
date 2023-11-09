@@ -1,5 +1,6 @@
 import { BIDSFile } from '../types/file.ts'
-import { ignore, Ignore } from '../deps/ignore.ts'
+import { default as ignore } from 'npm:ignore@5.2.4'
+import type { Ignore } from 'npm:ignore@5.2.4'
 
 export async function readBidsIgnore(file: BIDSFile) {
   const value = await file.text()
@@ -30,6 +31,7 @@ export class FileIgnoreRules {
   #ignore: Ignore
 
   constructor(config: string[]) {
+    // @ts-expect-error
     this.#ignore = ignore()
     this.#ignore.add(defaultIgnores)
     this.#ignore.add(config)
