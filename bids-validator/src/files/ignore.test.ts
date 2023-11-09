@@ -11,8 +11,9 @@ Deno.test('Deno implementation of FileIgnoreRules', async (t) => {
       '/participants.tsv',
       '/.git/HEAD',
       '/sub-01/anat/non-bidsy-file.xyz',
+      '/explicit/full/path.nii',
     ]
-    const rules = ['.git', '**/*.xyz']
+    const rules = ['.git', '**/*.xyz', 'explicit/full/path.nii']
     const ignore = new FileIgnoreRules(rules)
     const filtered = files.filter((path) => !ignore.test(path))
     assertEquals(filtered, [
