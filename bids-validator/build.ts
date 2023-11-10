@@ -52,6 +52,7 @@ const result = await esbuild.build({
   plugins: [httpPlugin],
   allowOverwrite: true,
   sourcemap: flags.minify ? false : 'inline',
+  packages: 'external',
 })
 
 if (result.warnings.length > 0) {
