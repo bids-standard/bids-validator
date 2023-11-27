@@ -14,7 +14,7 @@
     "web-dev": "cd bids-validator-web && npm run dev",
     "web-build": "cd bids-validator-web && npm run build",
     "web-start": "cd bids-validator-web && npm run build && npm start",
-    "web-export": "npm run web-build && cd bids-validator-web && next export"
+    "web-export": "npm run web-build && cd bids-validator-web && next build"
   },
   "jest": {
     "testEnvironment": "node",
