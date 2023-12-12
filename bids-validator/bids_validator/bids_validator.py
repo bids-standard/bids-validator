@@ -30,14 +30,14 @@ class BIDSValidator():
     def is_bids(self, path):
         """Check if file path adheres to BIDS.
 
-        Main method of the validator. uses other class methods for checking
+        Main method of the validator. Uses other class methods for checking
         different aspects of the file path.
 
         Parameters
         ----------
         path : str
             Path of a file to be checked. Must be relative to root of a BIDS
-            dataset.
+            dataset, and must include a leading forward slash `/`.
 
         Notes
         -----
@@ -45,7 +45,7 @@ class BIDSValidator():
         root of the BIDS dataset the file is part of. That is, as soon as the
         file path contains parts outside of the BIDS dataset, the validation
         will fail. For example "home/username/my_dataset/participants.tsv" will
-        fail, although "participants.tsv" is a valid BIDS file.
+        fail, although "/participants.tsv" is a valid BIDS file.
 
         Examples
         --------
