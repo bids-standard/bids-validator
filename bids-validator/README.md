@@ -56,7 +56,9 @@
       [Conda package](https://anaconda.org/conda-forge/bids-validator).
    1. Open a Python terminal and type: `python`
    1. Import the BIDS Validator package `from bids_validator import BIDSValidator`
-   1. Check if a file is BIDS compatible `BIDSValidator().is_bids('path/to/a/bids/file')`
+   1. Check if a file is BIDS compatible `BIDSValidator().is_bids('/relative/path/to/a/bids/file')`
+   1. Note, the file path must be relative to the root of the BIDS dataset, and
+      a leading forward slash `/` must be added to the file path.
 
 ## Support
 
@@ -404,6 +406,9 @@ filepaths = ["/sub-01/anat/sub-01_rec-CSD_T1w.nii.gz", "/sub-01/anat/sub-01_acq-
 for filepath in filepaths:
     print(validator.is_bids(filepath))  # will print True, and then False
 ```
+
+Note, the file path must be relative to the root of the BIDS dataset, and a 
+leading forward slash `/` must be added to the file path.
 
 ## Development
 
