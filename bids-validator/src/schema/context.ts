@@ -198,7 +198,7 @@ export class BIDSContext implements Context {
       this.loadSidecar(),
       this.loadColumns(),
       this.loadAssociations(),
+      this.loadNiftiHeader(),
     ])
-    this.loadNiftiHeader()
   }
 }
