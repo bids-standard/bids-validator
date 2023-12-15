@@ -48,7 +48,13 @@ files = _gather_test_files(dspath, EXCLUDE_KEYWORDS)
 
 
 @pytest.mark.parametrize('fname', files)
-def test_is_bids(fname):
+def test_is_bids(validator, fname):
     """Test that is_bids returns true for each file in a valid BIDS dataset."""
-    validator = BIDSValidator()
     assert validator.is_bids(fname)
+
+
+@pytest.fixture(scope='module')
+def validator():
+    """Return a BIDSValidator instance."""
+    validator = BIDSValidator()
+    return validator
