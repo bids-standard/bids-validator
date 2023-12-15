@@ -2,6 +2,7 @@
 import re
 import os
 import json
+from functools import lru_cache
 
 
 class BIDSValidator():
@@ -136,7 +137,9 @@ class BIDSValidator():
 
         return (any(conditions))
 
-    def get_regular_expressions(self, file_name):
+    @staticmethod
+    @lru_cache
+    def get_regular_expressions(file_name):
         """Read regular expressions from a file."""
         regexps = []
 
@@ -158,15 +161,10 @@ class BIDSValidator():
 
         return regexps
 
-    def conditional_match(self, expression, path):
+    @staticmethod
+    def conditional_match(expression, path):
         """Find conditional match."""
         match = re.compile(expression).findall(path)
         match = match[0] if len(match) >= 1 else False
         # adapted from JS code and JS does not support conditional groups
-        if (match):
-            if ((match[1] == match[2][1:]) | (not match[1])):
-                return True
-            else:
-                return False
-        else:
-            return False
+        return bool(match) and (match[1] == match[2][1:] or not match[1])
