@@ -2,6 +2,7 @@
 import re
 import os
 import json
+from functools import lru_cache
 
 
 class BIDSValidator():
@@ -63,26 +64,23 @@ class BIDSValidator():
         True
 
         """
-        conditions = []
-
-        conditions.append(self.is_top_level(path))
-        conditions.append(self.is_associated_data(path))
-        conditions.append(self.is_session_level(path))
-        conditions.append(self.is_subject_level(path))
-        conditions.append(self.is_phenotypic(path))
-        conditions.append(self.is_file(path))
-
-        return (any(conditions))
+        return any(
+            check(path) for check in (
+                self.is_top_level,
+                self.is_associated_data,
+                self.is_session_level,
+                self.is_subject_level,
+                self.is_phenotypic,
+                self.is_file
+            )
+        )
 
     def is_top_level(self, path):
         """Check if the file has appropriate name for a top-level file."""
         regexps = self.get_regular_expressions(self.dir_rules +
                                                'top_level_rules.json')
 
-        conditions = [False if re.compile(x).search(path) is None else True for
-                      x in regexps]
-
-        return (any(conditions))
+        return any(re.search(regexp, path) for regexp in regexps)
 
     def is_associated_data(self, path):
         """Check if file is appropriate associated data."""
@@ -92,51 +90,39 @@ class BIDSValidator():
         regexps = self.get_regular_expressions(self.dir_rules +
                                                'associated_data_rules.json')
 
-        conditions = [(re.compile(x).search(path) is not None) for
-                      x in regexps]
-
-        return any(conditions)
+        return any(re.search(regexp, path) for regexp in regexps)
 
     def is_session_level(self, path):
         """Check if the file has appropriate name for a session level."""
         regexps = self.get_regular_expressions(self.dir_rules +
                                                'session_level_rules.json')
 
-        conditions = [self.conditional_match(x, path) for x in regexps]
-
-        return (any(conditions))
+        return any(self.conditional_match(regexp, path) for regexp in regexps)
 
     def is_subject_level(self, path):
         """Check if the file has appropriate name for a subject level."""
         regexps = self.get_regular_expressions(self.dir_rules +
                                                'subject_level_rules.json')
 
-        conditions = [(re.compile(x).search(path) is not None) for
-                      x in regexps]
-
-        return (any(conditions))
+        return any(re.search(regexp, path) for regexp in regexps)
 
     def is_phenotypic(self, path):
         """Check if file is phenotypic data."""
         regexps = self.get_regular_expressions(self.dir_rules +
                                                'phenotypic_rules.json')
 
-        conditions = [(re.compile(x).search(path) is not None) for
-                      x in regexps]
-
-        return (any(conditions))
+        return any(re.search(regexp, path) for regexp in regexps)
 
     def is_file(self, path):
         """Check if file is phenotypic data."""
         regexps = self.get_regular_expressions(self.dir_rules +
                                                'file_level_rules.json')
 
-        conditions = [(re.compile(x).search(path) is not None) for
-                      x in regexps]
+        return any(re.search(regexp, path) for regexp in regexps)
 
-        return (any(conditions))
-
-    def get_regular_expressions(self, file_name):
+    @staticmethod
+    @lru_cache
+    def get_regular_expressions(file_name):
         """Read regular expressions from a file."""
         regexps = []
 
@@ -158,15 +144,10 @@ class BIDSValidator():
 
         return regexps
 
-    def conditional_match(self, expression, path):
+    @staticmethod
+    def conditional_match(expression, path):
         """Find conditional match."""
         match = re.compile(expression).findall(path)
         match = match[0] if len(match) >= 1 else False
         # adapted from JS code and JS does not support conditional groups
-        if (match):
-            if ((match[1] == match[2][1:]) | (not match[1])):
-                return True
-            else:
-                return False
-        else:
-            return False
+        return bool(match) and (match[1] == match[2][1:] or not match[1])
