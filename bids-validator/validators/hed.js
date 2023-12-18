@@ -97,12 +97,8 @@ function getSidecarFileObject(sidecarName, jsonFiles) {
 
 function detectHed(tsvData, sidecarData) {
   return (
-    sidecarData.some((sidecarFileData) => {
-      return Object.values(sidecarFileData.sidecarData).some(sidecarValueHasHed)
-    }) ||
-    tsvData.some((tsvFileData) => {
-      return tsvFileData.parsedTsv.headers.indexOf('HED') !== -1
-    })
+    sidecarData.some((sidecarFileData) => sidecarFileData.hasHedData()) ||
+    tsvData.some((tsvFileData) => tsvFileData.hasHedData())
   )
 }
 
