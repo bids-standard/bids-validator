@@ -102,14 +102,6 @@ function detectHed(tsvData, sidecarData) {
   )
 }
 
-function sidecarValueHasHed(sidecarValue) {
-  return (
-    sidecarValue !== null &&
-    typeof sidecarValue === 'object' &&
-    sidecarValue.HED !== undefined
-  )
-}
-
 function parseHedVersion(jsonContents) {
   const datasetDescription = jsonContents['/dataset_description.json']
 
