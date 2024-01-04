@@ -28,6 +28,9 @@
       "/node_modules/",
       "/bids-validator/src/",
       "/bids-validator/spec/"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!chai)"
     ]
   },
   "devDependencies": {
