@@ -33,7 +33,7 @@ function detectHed(tsvData: BidsEventFile[], sidecarData: BidsSidecar[]) {
       return Object.values(sidecarFileData.sidecarData).some(sidecarValueHasHed)
     }) ||
     tsvData.some((tsvFileData) => {
-      return tsvFileData.parsedTsv.headers.indexOf('HED') !== -1
+      return 'HED' in tsvFileData.parsedTsv
     })
   )
 } 
