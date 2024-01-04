@@ -1,6 +1,5 @@
 import hedValidator from '../deps/hed-validator.ts'
 import { hedOldToNewLookup } from '../issues/list.ts'
-import { logger } from '../utils/logger.ts'
 import { GenericSchema } from '../types/schema.ts'
 import { IssueFile } from '../types/issues.ts'
 import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
@@ -54,11 +53,11 @@ function sidecarValueHasHed(sidecarValue: unknown) {
 
 export async function hedAccumulator(schema: GenericSchema, context: BIDSContext) {
   if (context.file.name == 'dataset_description.json') {
-    context.dataset.hedArgs.datasetDescription = String(new hedValidator.validator.BidsJsonFile(
+    context.dataset.hedArgs.datasetDescription = new hedValidator.validator.BidsJsonFile(
       '/dataset_description.json',
       await context.json,
       context.file,
-    ))
+    )
     context.dataset.hedArgs.dir = context.datasetPath
   }
   if (context.suffix == 'events' && context.extension == '.tsv') {
@@ -96,8 +95,6 @@ export async function hedValidate(schema: GenericSchema, dsContext: BIDSContextD
   await hedValidator.validator
     .validateBidsDataset(hedDs)
     .then((hedValidationIssues: HedIssue[]) => {
-      logger.debug("Issues from hed validator:")
-      logger.debug(hedValidationIssues)
       const newStyle = hedValidationIssues.map((hedIssue) => {
         const code = hedIssue.code
         if (code in hedOldToNewLookup) {
