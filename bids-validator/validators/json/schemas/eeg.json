@@ -74,7 +74,9 @@
     "EpochLength": {
       "$ref": "common_definitions.json#/definitions/EpochLength"
     },
-    "SubjectArtefactDescription": { "type": "string" }
+    "SubjectArtefactDescription": { "type": "string" },
+    "ElectricalStimulation": { "type": "boolean" },
+    "ElectricalStimulationParameters": { "type": "string" }
   },
   "required": [
     "TaskName",

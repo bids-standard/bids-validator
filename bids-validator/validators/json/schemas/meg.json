@@ -102,7 +102,9 @@
     "MaxMovement": { "type": "number" },
     "SubjectArtefactDescription": { "type": "string" },
     "DigitizedLandmarks": { "type": "boolean" },
-    "DigitizedHeadPoints": { "type": "boolean" }
+    "DigitizedHeadPoints": { "type": "boolean" },
+    "ElectricalStimulation": { "type": "boolean" },
+    "ElectricalStimulationParameters": { "type": "string" }
   },
   "required": [
     "TaskName",

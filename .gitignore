@@ -12,7 +12,7 @@ __pycache__/
 dist/
 *.egg-info/
 bids-validator-web/out/
-bids-validator-web/.next/
+.next/
 
 # Only use global yarn.lock
 bids-validator/yarn.lock

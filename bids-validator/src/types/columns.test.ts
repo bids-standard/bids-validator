@@ -30,4 +30,17 @@ Deno.test('ColumnsMap', async (t) => {
     assertEquals(Object.keys(columns), ['a', 'b', '0'])
     assertEquals(Object.getOwnPropertyNames(columns), ['a', 'b', '0'])
   })
+  await t.step('size columns are permissible', () => {
+    const columns = new ColumnsMap()
+    // @ts-expect-error
+    columns['size'] = ['0']
+    // @ts-expect-error
+    assertEquals(columns.size, ['0'])
+  })
+  await t.step('missing columns are undefined', () => {
+    const columns = new ColumnsMap()
+    columns['a'] = ['0']
+    assertEquals(columns.b, undefined)
+    assertEquals(columns.size, undefined)
+  })
 })
