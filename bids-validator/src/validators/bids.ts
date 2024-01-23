@@ -27,7 +27,7 @@ const perContextChecks: ContextCheckFunction[] = [
   hedAccumulator,
 ]
 
-const perDSChecks: DSCheckFunction[] = [hedValidate]
+const perDSChecks: DSCheckFunction[] = [] //[hedValidate]
 
 /**
  * Full BIDS schema validation entrypoint
