@@ -96,7 +96,8 @@ const mp2rageTop = buildRegExp(top_level_rules.mp2rage_top)
 const dwiTop = buildRegExp(top_level_rules.dwi_top)
 const eegTop = buildRegExp(top_level_rules.eeg_top)
 const ieegTop = buildRegExp(top_level_rules.ieeg_top)
-const multiDirFieldmap = buildRegExp(top_level_rules.multi_dir_fieldmap)
+const fmapEpiTop = buildRegExp(top_level_rules.fmap_epi_top)
+const fmapGreTop = buildRegExp(top_level_rules.fmap_gre_top)
 const otherTopFiles = buildRegExp(top_level_rules.other_top_files)
 const megTop = buildRegExp(top_level_rules.meg_top)
 const petTop = buildRegExp(top_level_rules.pet_top)
@@ -159,7 +160,8 @@ export default {
           mtsTop.test(path) ||
           mtrTop.test(path) ||
           mp2rageTop.test(path) ||
-          multiDirFieldmap.test(path) ||
+          fmapEpiTop.test(path) ||
+          fmapGreTop.test(path) ||
           otherTopFiles.test(path) ||
           megTop.test(path) ||
           eegTop.test(path) ||
@@ -183,7 +185,8 @@ export default {
           mtsTop.test(path) ||
           mtrTop.test(path) ||
           mp2rageTop.test(path) ||
-          multiDirFieldmap.test(path) ||
+          fmapEpiTop.test(path) ||
+          fmapGreTop.test(path) ||
           otherTopFiles.test(path) ||
           megTop.test(path) ||
           eegTop.test(path) ||
