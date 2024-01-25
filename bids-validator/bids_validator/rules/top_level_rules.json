@@ -218,10 +218,10 @@
     }
   },
   "fmap_epi_top": {
-    "regexp": "^[\\/\\\\](?:acq-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)epi\\.json$"
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)(?:run-[0-9]+_)?(?:chunk-[0-9]+_)?epi\\.json$"
   },
   "fmap_gre_top": {
-    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(@@@_fmap_gre_suffixes_@@@)\\.json$",
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:chunk-[0-9]+_)?(@@@_fmap_gre_suffixes_@@@)\\.json$",
     "tokens": {
       "@@@_fmap_gre_suffixes_@@@": [
         "magnitude1",
