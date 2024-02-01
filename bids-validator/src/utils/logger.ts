@@ -1,6 +1,6 @@
 import {
   setup,
-  handlers,
+  ConsoleHandler,
   LevelName,
   getLogger,
   Logger,
@@ -12,7 +12,7 @@ import {
 export function setupLogging(level: LevelName) {
   setup({
     handlers: {
-      console: new handlers.ConsoleHandler(level),
+      console: new ConsoleHandler(level),
     },
 
     loggers: {
