@@ -218,7 +218,10 @@
     }
   },
   "fmap_epi_top": {
-    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)(?:run-[0-9]+_)?(?:chunk-[0-9]+_)?epi\\.json$"
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:part-(mag|phase|real|imag)_)?(?:chunk-[0-9]+_)?(?:@@@_field_map_type_@@@)\\.json$",
+    "tokens": {
+      "@@@_field_map_type_@@@": ["m0scan", "epi"]
+    }
   },
   "fmap_gre_top": {
     "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:chunk-[0-9]+_)?(@@@_fmap_gre_suffixes_@@@)\\.json$",
