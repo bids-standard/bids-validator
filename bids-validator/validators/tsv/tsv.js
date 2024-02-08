@@ -55,7 +55,10 @@ const TSV = (file, contents, fileList, callback) => {
   let emptyCells = false
   let NACells = false
 
-  checkHeaders(headers, file, issues)
+  // motion tsvs don't have headers
+  if (!file.name.endsWith('_motion.tsv')) {
+    checkHeaders(headers, file, issues)
+  }
 
   for (let i = 1; i < rows.length; i++) {
     const values = rows[i]
