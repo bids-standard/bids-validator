@@ -23,7 +23,8 @@
     "tracking_system",
     "tracked_point",
     "component",
-    "placement"
+    "placement",
+    "HED"
   ],
   "electrodes": [
     "name",
@@ -37,7 +38,8 @@
     "hemisphere",
     "type",
     "impedance",
-    "dimension"
+    "dimension",
+    "HED"
   ],
   "optodes": [
     "name",
@@ -49,7 +51,8 @@
     "template_y",
     "template_z",
     "source_type",
-    "detector_type"
+    "detector_type",
+    "HED"
   ],
   "events": [
     "duration",
@@ -57,20 +60,22 @@
     "onset",
     "trial_type",
     "response_time",
-    "stim_file"
+    "stim_file",
+    "HED"
   ],
   "misc": [],
-  "participants": ["participant_id"],
-  "phenotype": ["participant_id"],
-  "scans": ["acq_time", "filename"],
-  "sessions": ["acq_time", "session_id"],
-  "aslcontext": ["volume_type"],
+  "participants": ["participant_id", "HED"],
+  "phenotype": ["participant_id", "HED"],
+  "scans": ["acq_time", "filename", "HED"],
+  "sessions": ["acq_time", "session_id", "HED"],
+  "aslcontext": ["volume_type", "HED"],
   "blood": [
     "time",
     "plasma_radioactivity",
     "whole_blood_radioactivity",
     "metabolite_parent_fraction",
-    "hplc_recovery_fractions"
+    "hplc_recovery_fractions",
+    "HED"
   ],
   "nirs": [
     "name",
@@ -86,6 +91,7 @@
     "wavelength_emission_actual",
     "short_channel",
     "status",
-    "status_description"
+    "status_description",
+    "HED"
   ]
 }
