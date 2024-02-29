@@ -12,7 +12,7 @@
  * object in the schema for reference.
  */
 // @ts-nocheck
-import { SEP } from '../deps/path.ts'
+import { SEPARATOR } from '../deps/path.ts'
 import { GenericSchema, Schema } from '../types/schema.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { lookupModality } from '../schema/modalities.ts'
@@ -71,7 +71,7 @@ export async function datatypeFromDirectory(schema, context) {
   const subFormat = schema.objects.formats[subEntity.format]
   const sesEntity = schema.objects.entities.session.name
   const sesFormat = schema.objects.formats[sesEntity.format]
-  const parts = context.file.path.split(SEP)
+  const parts = context.file.path.split(SEPARATOR)
   let datatypeIndex = 2
   if (parts[0] !== '') {
     // we assume paths have leading '/'

@@ -7,5 +7,5 @@ export {
   extname,
   fromFileUrl,
   parse,
+  SEPARATOR,
 } from 'std/path/mod.ts'
-export { SEP } from 'std/path/separator.ts'
