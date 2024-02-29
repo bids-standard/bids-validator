@@ -40,7 +40,7 @@ const loggerProxyHandler = {
       const callerLocation = parseStack(stack)
       logger.debug(`Logger invoked at "${callerLocation}"`)
     }
-    const logFunc = logger[prop] as typeof logger.warning
+    const logFunc = logger[prop] as typeof logger.warn
     return logFunc.bind(logger)
   },
 }

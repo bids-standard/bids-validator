@@ -1,4 +1,4 @@
 export {
   readAll,
   readerFromStreamReader,
-} from 'std/streams/mod.ts'
+} from 'std/io/mod.ts'
