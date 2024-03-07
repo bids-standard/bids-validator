@@ -7,5 +7,5 @@ export {
   extname,
   fromFileUrl,
   parse,
-} from 'https://deno.land/std@0.177.0/path/mod.ts'
-export { SEP } from 'https://deno.land/std@0.177.0/path/separator.ts'
+  SEPARATOR,
+} from 'https://deno.land/std@0.217.0/path/mod.ts'

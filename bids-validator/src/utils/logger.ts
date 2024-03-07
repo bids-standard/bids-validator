@@ -1,6 +1,6 @@
 import {
   setup,
-  handlers,
+  ConsoleHandler,
   LevelName,
   getLogger,
   Logger,
@@ -12,7 +12,7 @@ import {
 export function setupLogging(level: LevelName) {
   setup({
     handlers: {
-      console: new handlers.ConsoleHandler(level),
+      console: new ConsoleHandler(level),
     },
 
     loggers: {
@@ -40,7 +40,7 @@ const loggerProxyHandler = {
       const callerLocation = parseStack(stack)
       logger.debug(`Logger invoked at "${callerLocation}"`)
     }
-    const logFunc = logger[prop] as typeof logger.warning
+    const logFunc = logger[prop] as typeof logger.warn
     return logFunc.bind(logger)
   },
 }
