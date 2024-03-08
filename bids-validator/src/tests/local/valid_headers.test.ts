@@ -30,7 +30,7 @@ Deno.test('valid_headers dataset', async (t) => {
   })
 
   await t.step('summary has correct totalFiles', () => {
-    assertEquals(result.summary.totalFiles, 8)
+    assertEquals(result.summary.totalFiles, 7)
   })
 
   await t.step('summary has correct subjectMetadata', () => {

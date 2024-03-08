@@ -1,7 +1,7 @@
-import { CheckFunction } from '../../types/check.ts'
+import { ContextCheckFunction } from '../../types/check.ts'
 
 // Non-schema EMPTY_FILE implementation
-export const emptyFile: CheckFunction = (schema, context) => {
+export const emptyFile: ContextCheckFunction = (schema, context) => {
   if (context.file.size === 0) {
     context.issues.addNonSchemaIssue('EMPTY_FILE', [context.file])
   }
