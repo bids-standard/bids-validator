@@ -16,3 +16,7 @@
 ul.issues-list {
   list-style: none;
 }
+
+button {
+  margin: 1em;
+}

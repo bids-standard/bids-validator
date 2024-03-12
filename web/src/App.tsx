@@ -1,10 +1,7 @@
 import React, { useState } from "react"
 import "./App.css"
 import { directoryOpen } from "https://esm.sh/browser-fs-access@0.35.0"
-import {
-  fileListToTree,
-  validate,
-} from "../dist/validator/main.js"
+import { fileListToTree, validate } from "../dist/validator/main.js"
 import type { ValidationResult } from "../../bids-validator/src/types/validation-result.ts"
 import { Collapse } from "./Collapse.tsx"
 import { Summary } from "./Summary.tsx"
@@ -28,6 +25,11 @@ function Issue({ data }) {
       <Collapse label={`${data.severity}: ${data.key}`}>
         <div>{data.reason}</div>
         {data.files.size && <Files files={data.files}></Files>}
+        <p>
+          <a href={`https://neurostars.org/search?q=${data.key}`}>
+            Search for this issue on Neurostars.
+          </a>
+        </p>
       </Collapse>
     </div>
   )
@@ -60,6 +62,13 @@ function App() {
             {issuesList}
           </ul>
           <Summary data={validation.summary} />
+          <a
+            href={`data:application/json:${JSON.stringify(validation)}`}
+            target="_blank"
+            download="bids-validator-output.json"
+          >
+            Save JSON log.
+          </a>
         </div>
       </>
     )
