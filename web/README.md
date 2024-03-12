@@ -1,4 +1,6 @@
-# Vite + Deno + React + TypeScript
+# BIDS Validator web app
+
+This is a web app for running the schema based BIDS validator in the browser. For local development, this is run using deno and uses an esbuild bundle created from the native deno codebase. A bundle is generated in `dist/validator` and used by the otherwise static vite app.
 
 ## Running
 
