@@ -7,9 +7,16 @@
 import * as esbuild from 'https://deno.land/x/esbuild@v0.20.1/mod.js'
 import { parse } from 'https://deno.land/std@0.175.0/flags/mod.ts'
 import { denoPlugins } from "https://deno.land/x/esbuild_deno_loader@0.8.5/mod.ts"
+import * as path from "https://deno.land/std@0.175.0/path/mod.ts"
 
-const MAIN_ENTRY = 'src/main.ts'
-const CLI_ENTRY = 'src/bids-validator.ts'
+function getModuleDir(importMeta: ImportMeta): string {
+  return path.resolve(path.dirname(path.fromFileUrl(importMeta.url)));
+}
+
+const dir = getModuleDir(import.meta);
+
+const MAIN_ENTRY = path.join(dir, 'src', 'main.ts')
+const CLI_ENTRY = path.join(dir, 'src', 'bids-validator.ts')
 
 const flags = parse(Deno.args, {
   boolean: ['minify'],
@@ -20,7 +27,7 @@ const result = await esbuild.build({
   format: 'esm',
   entryPoints: [MAIN_ENTRY, CLI_ENTRY],
   bundle: true,
-  outdir: 'dist/validator',
+  outdir: path.join('dist','validator'),
   minify: flags.minify,
   target: ['chrome109', 'firefox109', 'safari16'],
   plugins: [...denoPlugins()],
