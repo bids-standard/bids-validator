@@ -9,21 +9,17 @@ import { parse, join, SEPARATOR } from '../deps/path.ts'
 export class BIDSFileBrowser implements BIDSFile {
   #ignore: FileIgnoreRules
   #file: File
+  name: string
+  path: string
 
   constructor(file: File, ignore: FileIgnoreRules) {
     this.#file = file
     this.#ignore = ignore
-  }
-
-  get name(): string {
-    return this.#file.name
-  }
-
-  get path(): string {
-    // @ts-expect-error webkitRelativePath is defined in the browser
+    this.name = file.name
+    // @ts-expect-error webkitRelativePath does exist in the browser
     const relativePath = this.#file.webkitRelativePath
     const prefixLength = relativePath.indexOf('/')
-    return relativePath.substring(prefixLength)
+    this.path = relativePath.substring(prefixLength)
   }
 
   get size(): number {

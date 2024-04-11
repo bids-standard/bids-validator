@@ -1,6 +1,6 @@
 import { FileIgnoreRules } from './ignore.ts'
 import { FileTree } from '../types/filetree.ts'
-import { assertEquals } from '../deps/asserts.ts'
+import { assertEquals, assertObjectMatch } from '../deps/asserts.ts'
 import { BIDSFileBrowser, fileListToTree } from './browser.ts'
 
 class TestFile extends File {
@@ -68,4 +68,22 @@ Deno.test('Browser implementation of FileTree', async (t) => {
     sub01Tree.directories.push(anatTree)
     assertEquals(tree, expectedTree)
   })
+})
+
+Deno.test("Spread copies of BIDSFileBrowser contain name and path properties", async () => {
+  const ignore = new FileIgnoreRules([])
+  const files = [
+    new TestFile(
+      ['{}'],
+      'dataset_description.json',
+      'ds/dataset_description.json',
+    ),
+    new TestFile(['flat test dataset'], 'README.md', 'ds/README.md'),
+  ]
+  const tree = await fileListToTree(files)
+  const expectedTree = new FileTree('', '/', undefined)
+  expectedTree.files = files.map((f) => new BIDSFileBrowser(f, ignore))
+  assertEquals(tree, expectedTree)
+  const spreadFile = {...expectedTree.files[0], evidence: "test evidence"}
+  assertObjectMatch(spreadFile, {name: "dataset_description.json", path: "/dataset_description.json", evidence: "test evidence"})
 })
