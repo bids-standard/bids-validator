@@ -28,7 +28,7 @@ import collectModalities from '../../utils/summary/collectModalities'
  * Takes on an array of files, callback, and boolean indicating if git-annex is used.
  * Starts the validation process for a BIDS package.
  */
-const fullTest = (fileList, options, annexed, dir, schema, callback) => {
+const fullTest = (fileList, options, annexed, dir, callback) => {
   const self = BIDS
   self.options = options
 
@@ -64,7 +64,7 @@ const fullTest = (fileList, options, annexed, dir, schema, callback) => {
     })
   }
 
-  const summary = utils.collectSummary(fileList, self.options, schema)
+  const summary = utils.collectSummary(fileList, self.options)
 
   // remove size redundancies
   for (const key in fileList) {
