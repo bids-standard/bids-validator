@@ -5,8 +5,6 @@ import quickTest from './quickTest'
 import quickTestError from './quickTestError'
 import fullTest from './fullTest'
 import utils from '../../utils'
-import { schemaRegex } from '../../validators/schemaTypes'
-import { schemaSetup } from '../../utils/type'
 
 /**
  * Start
@@ -31,17 +29,11 @@ const start = (dir, options, callback) => {
     } else {
       BIDS.options = options
       reset(BIDS)
-      // Load the bids-spec schema ahead of any validation
-      let schema
-      if (options.schema) {
-        schema = await schemaRegex(options.schema)
-        schemaSetup(schema)
-      }
       const files = await utils.files.readDir(dir, options)
       if (quickTest(files)) {
         // Is the dir using git-annex?
         const annexed = utils.files.remoteFiles.isGitAnnex(dir)
-        fullTest(files, BIDS.options, annexed, dir, schema, callback)
+        fullTest(files, BIDS.options, annexed, dir, callback)
       } else {
         // Return an error immediately if quickTest fails
         const issue = quickTestError(dir)
