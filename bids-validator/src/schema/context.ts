@@ -63,6 +63,7 @@ export class BIDSContext implements Context {
   datatype: string
   modality: string
   sidecar: object
+  json: object
   columns: ColumnsMap
   associations: ContextAssociations
   nifti_header?: ContextNiftiHeader
@@ -87,15 +88,10 @@ export class BIDSContext implements Context {
     this.modality = ''
     this.sidecar = {}
     this.columns = new ColumnsMap()
+    this.json = {}
     this.associations = {} as ContextAssociations
   }
 
-  get json(): Promise<Record<string, any>> {
-    return this.file
-      .text()
-      .then((text) => JSON.parse(text))
-      .catch((error) => {})
-  }
   get path(): string {
     return this.file.path
   }
@@ -193,12 +189,23 @@ export class BIDSContext implements Context {
     return
   }
 
+  async loadJSON(): Promise<void> {
+    if (this.extension !== '.json') {
+      return
+    }
+    this.json = await this.file
+      .text()
+      .then((text) => JSON.parse(text))
+      .catch((error) => {})
+  }
+
   async asyncLoads() {
     await Promise.allSettled([
       this.loadSidecar(),
       this.loadColumns(),
       this.loadAssociations(),
       this.loadNiftiHeader(),
+      this.loadJSON(),
     ])
   }
 }
