@@ -1,5 +1,5 @@
 ---
-name: Deno web build
+name: Schema validator web deploy
 
 on:
   push:
@@ -26,19 +26,3 @@ jobs:
         with:
           name: web
           path: web/dist
-  deploy:
-    needs: build
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    # Deploy to the github-pages environment
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    # Specify runner + deployment step
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
