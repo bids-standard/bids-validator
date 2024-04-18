@@ -35,6 +35,12 @@ export async function filenameIdentify(schema, context) {
 function findRuleMatches(schema, context) {
   const schemaPath = 'rules.files'
   Object.keys(schema[schemaPath]).map((key) => {
+    if (
+      key == 'deriv' && 
+      context.dataset.dataset_description.DatasetType != 'derivative'
+    ) {
+      return
+    }
     const path = `${schemaPath}.${key}`
     _findRuleMatches(schema[path], path, context)
   })
