@@ -4,10 +4,11 @@
  *
  * If you would like to use this package in a Node.js project, you'll need to use native ESM or a transform system
  */
-import * as esbuild from 'https://deno.land/x/esbuild@v0.20.1/mod.js'
-import { parse } from 'https://deno.land/std@0.175.0/flags/mod.ts'
-import { denoPlugins } from "https://deno.land/x/esbuild_deno_loader@0.8.5/mod.ts"
-import * as path from "https://deno.land/std@0.175.0/path/mod.ts"
+import * as esbuild from 'https://deno.land/x/esbuild@v0.20.2/mod.js'
+import { parse } from 'https://deno.land/std@0.223.0/flags/mod.ts'
+import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@0.10"
+import * as path from "https://deno.land/std@0.223.0/path/mod.ts"
+
 
 function getModuleDir(importMeta: ImportMeta): string {
   return path.resolve(path.dirname(path.fromFileUrl(importMeta.url)));
@@ -33,7 +34,6 @@ const result = await esbuild.build({
   plugins: [...denoPlugins()],
   allowOverwrite: true,
   sourcemap: flags.minify ? false : 'inline',
-  packages: 'external',
 })
 
 if (result.warnings.length > 0) {
