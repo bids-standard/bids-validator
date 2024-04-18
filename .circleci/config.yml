@@ -256,3 +256,8 @@ workflows:
             - test
             - test_docker
             - githubPagesTest
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v\d+\.\d+\.\d+$/
