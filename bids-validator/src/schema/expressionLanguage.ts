@@ -10,7 +10,7 @@ function exists(list: string[], rule: string = 'dataset'): number {
     prefix.push('stimuli')
   } else if (rule == 'subject') {
     // @ts-expect-error
-    prefix.push('sub-' + this.entities.subject)
+    prefix.push('sub-' + this.entities.sub)
   }
 
   if (!Array.isArray(list)) {
