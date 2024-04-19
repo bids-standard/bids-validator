@@ -123,9 +123,8 @@ export class Summary {
     }
 
     if (context.extension === '.json') {
-      const parsedJson = await context.json
-      if ('TaskName' in parsedJson) {
-        this.tasks.add(parsedJson.TaskName)
+      if ('TaskName' in context.json) {
+        this.tasks.add(context.json.TaskName as string)
       }
     }
     if (context.modality) {
