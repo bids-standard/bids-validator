@@ -17,8 +17,13 @@ function exists(list: string[], rule: string = 'dataset'): number {
     list = [list]
   }
   if (rule == 'bids-uri') {
-    // XXX To implement
-    return list.length
+    return list.filter((x) => {
+      // XXX To implement
+      if (x.startsWith('bids:')) {
+        return true
+      }
+      return false
+    }).length
   } else {
     // dataset, subject and stimuli
     return list.filter((x) => {
