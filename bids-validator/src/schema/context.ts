@@ -171,6 +171,7 @@ export class BIDSContext implements Context {
     if (this.extension !== '.tsv') {
       return
     }
+
     this.columns = await this.file
       .text()
       .then((text) => parseTSV(text))

@@ -31,7 +31,7 @@ export function applyRules(
     rootSchema = schema
   }
   if (!schemaPath) {
-    schemaPath = 'schema'
+    schemaPath = 'schema.rules'
   }
   Object.assign(context, expressionFunctions)
   // @ts-expect-error
