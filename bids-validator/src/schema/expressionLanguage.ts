@@ -27,15 +27,6 @@ function exists(list: string[], rule: string = 'dataset'): number {
   } else {
     // dataset, subject and stimuli
     return list.filter((x) => {
-      /* local paths must start with slash. This leading slash will 
-       * trip up filetree.contains though so chomp if its present and fail if
-       * it isn't present.
-       */
-      if (x[0] == '/') {
-        x = x.substr(1)
-      } else {
-        return false
-      }
       const parts = prefix.concat(x.split('/'))
       // @ts-expect-error
       return this.fileTree.contains(parts)
