@@ -130,11 +130,8 @@ export function hasMatch(schema, context) {
       return entitiesExtensionsInRule(schema, context, rulePath)
     })
     if (entExtMatch.length > 0) {
-      context.filenameRules = [entExtMatch[0]]
+      context.filenameRules = entExtMatch
     }
-  }
-  /* If we end up with multiple rules we should generate an error? */
-  if (context.filenameRules.length > 1) {
   }
 
   return Promise.resolve()
