@@ -65,7 +65,7 @@ export async function validate(
           derivatives.push(deriv)
         }
       })
-      return false
+      return true
     }
     return true
   })
@@ -73,6 +73,9 @@ export async function validate(
   for await (const context of walkFileTree(fileTree, issues, dsContext)) {
     // TODO - Skip ignored files for now (some tests may reference ignored files)
     if (context.file.ignored) {
+      continue
+    }
+    if (dsContext.dataset_description.DatasetType == 'raw' && context.file.path.includes('derivatives')) {
       continue
     }
     await context.asyncLoads()
