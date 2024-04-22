@@ -129,7 +129,7 @@ export function hasMatch(schema, context) {
     const entExtMatch = context.filenameRules.filter((rulePath) => {
       return entitiesExtensionsInRule(schema, context, rulePath)
     })
-    if (entExtMatch.length == 1) {
+    if (entExtMatch.length > 0) {
       context.filenameRules = entExtMatch
     }
   }
