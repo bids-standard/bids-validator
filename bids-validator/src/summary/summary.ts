@@ -69,7 +69,7 @@ export class Summary {
   schemaVersion: string
   constructor() {
     this.dataProcessed = false
-    this.totalFiles = -1
+    this.totalFiles = 0
     this.size = 0
     this.sessions = new Set()
     this.subjects = new Set()
