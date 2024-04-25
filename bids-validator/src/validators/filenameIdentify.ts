@@ -12,7 +12,7 @@
  * object in the schema for reference.
  */
 // @ts-nocheck
-import { SEPARATOR } from '../deps/path.ts'
+import { SEPARATOR, globToRegExp } from '../deps/path.ts'
 import { GenericSchema, Schema } from '../types/schema.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { lookupModality } from '../schema/modalities.ts'
@@ -56,7 +56,7 @@ function findRuleMatches(schema, context) {
 export function _findRuleMatches(node, path, context) {
   if (
     ('path' in node && context.file.name.endsWith(node.path)) ||
-    ('stem' in node && context.file.name.startsWith(node.stem)) ||
+    ('stem' in node && context.file.name.match(globToRegExp(node.stem + '*'))) ||
     ('suffixes' in node && node.suffixes.includes(context.suffix))
   ) {
     context.filenameRules.push(path)
