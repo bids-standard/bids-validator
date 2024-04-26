@@ -145,9 +145,9 @@ function entitiesExtensionsInRule(
 ): boolean {
   const rule = schema[path]
   const fileEntities = Object.keys(context.entities)
-  const ruleEntities = Object.keys(rule.entities).map((key) =>
+  const ruleEntities = rule.entities ? Object.keys(rule.entities).map((key) =>
     lookupEntityLiteral(key, schema),
-  )
+  ) : []
   const extInRule =
     !rule.extensions ||
     (rule.extensions && rule.extensions.includes(context.extension))
