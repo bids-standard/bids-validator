@@ -1,4 +1,4 @@
-#!/bin/env -S deno run --allow-read --allow-write --allow-env --allow-net --allow-run
+#!/usr/bin/env -S deno run --allow-read --allow-write --allow-env --allow-net --allow-run
 /**
  * Build the schema based validator for distribution (web and npm), targets browser compatible ESM
  *
