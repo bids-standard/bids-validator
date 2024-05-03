@@ -1293,6 +1293,7 @@ export function checkPetRequiredFields(file, mergedDictionary, sidecarMessage) {
     'FrameDuration',
     'AcquisitionMode',
     'ImageDecayCorrected',
+    'ImageDecayCorrectionTime',
     'ReconMethodName',
     'ReconMethodParameterLabels',
     'ReconFilterType',
