@@ -1182,7 +1182,6 @@ export default {
   237: {
     key: 'PET_JSON_KEY_REQUIRED',
     severity: 'error',
-    reason:
-      "A PET image JSON sidecar is missing a required field."
-  }
+    reason: 'A PET image JSON sidecar is missing a required field.',
+  },
 }
