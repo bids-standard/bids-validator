@@ -142,27 +142,63 @@ describe('nifti checks', () => {
         },
         '',
       ),
-    ).toHaveLength(16)
+    ).toHaveLength(17)
   })
   it('returns expected issues count for missing sidecar', () => {
-    expect(checkPetRequiredFields({}, {}, '')).toHaveLength(23)
+    expect(checkPetRequiredFields({}, {}, '')).toHaveLength(24)
   })
   it('returns expected issues count if conditional field ModeOfAdministration is present', () => {
-    expect(
-      checkPetRequiredFields(
-        {},
-        { ModeOfAdministration: 'bolus-infusion' },
-        '',
-      ),
-    ).toHaveLength(27)
+    const fieldIssues = checkPetRequiredFields(
+      {},
+      { ModeOfAdministration: 'bolus-infusion' },
+      '',
+    )
+    expect(fieldIssues).toHaveLength(28)
+    expect(fieldIssues).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: 237,
+          reason: expect.stringContaining(
+            'You must define ReconFilterSize for this file.',
+          ),
+        }),
+      ]),
+    )
   })
   it('returns expected issues count if conditional field ReconFilterType is present', () => {
-    expect(
-      checkPetRequiredFields(
-        {},
-        { ReconFilterType: 'something' },
-        '',
-      ),
-    ).toHaveLength(25)
+    const checkReconFilterType = checkPetRequiredFields(
+      {},
+      { ReconFilterType: 'something' },
+      '',
+    )
+    expect(checkReconFilterType).toHaveLength(26)
+    expect(checkReconFilterType).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: 237,
+          reason: expect.stringContaining(
+            'You must define ReconFilterSize for this file.',
+          ),
+        }),
+      ]),
+    )
+  })
+  it('returns expected issues count if reconFilterType includes ["none"]', () => {
+    const checkReconFilterType = checkPetRequiredFields(
+      {},
+      { ReconFilterType: ['none', 'test'] },
+      '',
+    )
+    expect(checkReconFilterType).toHaveLength(23)
+    expect(checkReconFilterType).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: 237,
+          reason: expect.stringContaining(
+            'You must define ReconFilterSize for this file.',
+          ),
+        }),
+      ]),
+    )
   })
 })

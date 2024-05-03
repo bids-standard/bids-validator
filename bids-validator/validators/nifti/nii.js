@@ -1268,7 +1268,9 @@ export default function NIFTI(
   }
 
   if (path.includes('_pet.nii')) {
-    issues.push(...checkPetRequiredFields(file, mergedDictionary, sidecarMessage))
+    issues.push(
+      ...checkPetRequiredFields(file, mergedDictionary, sidecarMessage),
+    )
   }
 
   callback(issues)
@@ -1314,15 +1316,29 @@ export function checkPetRequiredFields(file, mergedDictionary, sidecarMessage) {
       'InjectedVolume',
     )
   }
-  if (
-    mergedDictionary.hasOwnProperty('ReconFilterType') &&
-    mergedDictionary['ReconFilterType'] !== 'none'
-  ) {
-    requiredFields.push(
-      'ReconMethodParameterUnits',
-      'ReconMethodParameterValues',
-      'ReconFilterSize',
-    )
+  if (mergedDictionary.hasOwnProperty('ReconFilterType')) {
+    if (
+      typeof mergedDictionary['ReconFilterType'] === 'string' &&
+      mergedDictionary['ReconFilterType'] !== 'none'
+    ) {
+      requiredFields.push(
+        'ReconMethodParameterUnits',
+        'ReconMethodParameterValues',
+        'ReconFilterSize',
+      )
+    } else if (
+      typeof mergedDictionary['ReconFilterType'] !== 'string' &&
+      Array.isArray(mergedDictionary['ReconFilterType']) &&
+      mergedDictionary['ReconFilterType'].every(
+        (filterType) => filterType !== 'none',
+      )
+    ) {
+      requiredFields.push(
+        'ReconMethodParameterUnits',
+        'ReconMethodParameterValues',
+        'ReconFilterSize',
+      )
+    }
   }
   for (const field of requiredFields) {
     if (!mergedDictionary.hasOwnProperty(field)) {
