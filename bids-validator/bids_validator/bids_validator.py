@@ -1,5 +1,6 @@
 """Validation class for BIDS projects."""
 import logging
+import os
 import re
 from functools import lru_cache
 from itertools import chain
@@ -133,6 +134,9 @@ class BIDSValidator:
         """
         if cls.regexes is None:
             cls._init_regexes()
+
+        if path.startswith(os.sep):
+            path = path.replace(os.sep, '/')
 
         if not path.startswith('/'):
             raise ValueError("Path must be relative to root of a BIDS dataset,"
