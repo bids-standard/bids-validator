@@ -1,9 +1,6 @@
 """Validation class for BIDS projects."""
 import logging
-import sys
 import re
-import os
-import json
 from functools import lru_cache
 from itertools import chain
 
@@ -106,13 +103,14 @@ class BIDSValidator:
         >>> from bids_validator import BIDSValidator
         >>> validator = BIDSValidator()
         >>> validator.parse("/sub-01/anat/sub-01_rec-CSD_T1w.nii.gz")
-        {'subject': '01', 'datatype': 'anat', 'reconstruction': 'CSD', 'suffix': 'T1w', 'extension': '.nii.gz'}
+        {'subject': '01', 'datatype': 'anat', 'reconstruction': 'CSD', 'suffix': 'T1w',
+         'extension': '.nii.gz'}
         >>> validator.parse("/sub-01/anat/sub-01_acq-23_rec-CSD_T1w.exe")
         {}
         >>> validator.parse("home/username/my_dataset/participants.tsv")
         Traceback (most recent call last):
             ...
-        ValueError: Path must be relative to root of a BIDS dataset, and must include a leading forward slash `/`.
+        ValueError: Path must be relative to root of a BIDS dataset, ...
         >>> validator.parse("/participants.tsv")
         {'stem': 'participants', 'extension': '.tsv'}
 
@@ -157,10 +155,12 @@ class BIDSValidator:
         --------
         >>> from bids_validator import BIDSValidator
         >>> validator = BIDSValidator()
-        >>> filepaths = ["/sub-01/anat/sub-01_rec-CSD_T1w.nii.gz",
-        ...              "/sub-01/anat/sub-01_acq-23_rec-CSD_T1w.exe", # wrong extension
-        ...              "home/username/my_dataset/participants.tsv", # not relative to root
-        ...              "/participants.tsv"]
+        >>> filepaths = [
+        ...   "/sub-01/anat/sub-01_rec-CSD_T1w.nii.gz",
+        ...   "/sub-01/anat/sub-01_acq-23_rec-CSD_T1w.exe", # wrong extension
+        ...   "home/username/my_dataset/participants.tsv", # not relative to root
+        ...   "/participants.tsv",
+        ... ]
         >>> for filepath in filepaths:
         ...     print(validator.is_bids(filepath))
         True
