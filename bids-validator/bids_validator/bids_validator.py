@@ -15,7 +15,23 @@ class LoggingContext:
     # From logging cookbook (CC0):
     # https://docs.python.org/3/howto/logging-cookbook.html#using-a-context-manager-for-selective-logging
     #
-    # Changes: None (2023.10.04)
+    # Changes:
+    #   - Added docstrings (2024.05.06)
+    """Context manager to temporarily modify logging configuration.
+
+    Parameters
+    ----------
+    logger : logging.Logger
+        Logger object to be modified.
+    level : int
+        Logging level to set temporarily. If None, the level is not
+        modified.
+    handler : logging.Handler
+        Handler to add temporarily. If None, no handler is added.
+    close : bool
+        Whether to close the handler after removing it. Defaults to True.
+    """
+
     def __init__(self, logger, level=None, handler=None, close=True):
         self.logger = logger
         self.level = level
@@ -43,8 +59,8 @@ class BIDSValidator:
 
     The main method of this class is `is_bids()`. You should use it for
     checking whether a file path is compatible with BIDS.
-
     """
+
     regexes = None
 
     def __init__(self, index_associated=True):
