@@ -140,7 +140,7 @@
   },
 
   "unit1_top": {
-    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:chunk-[0-9]+_)?(@@@_unit1_suffixes_@@@)\\.json$",
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:chunk-[0-9]+_)?(@@@_unit1_suffixes_@@@)\\.json$",
     "tokens": {
       "@@@_unit1_suffixes_@@@": ["UNIT1"]
     }
