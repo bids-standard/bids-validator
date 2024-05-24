@@ -88,7 +88,10 @@ export const expressionFunctions = {
     return arg.substr(start, end - start)
   },
   sorted: <T>(list: T[]): T[] => {
-    list.sort()
-    return list
+    // Copy, sort, return
+    return list.slice().sort()
+  },
+  allequal: <T>(a: T[], b: T[]): boolean => {
+    return (a != null && b != null) && a.length === b.length && a.every((v, i) => v === b[i])
   },
 }
