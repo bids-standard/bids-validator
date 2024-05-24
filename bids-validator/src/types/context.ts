@@ -11,7 +11,7 @@ export interface ContextDataset {
   tree: object
   ignored: any[]
   modalities: any[]
-  subjects: ContextDatasetSubjects
+  subjects?: ContextDatasetSubjects
   options?: ValidatorOptions
 }
 export interface ContextSubjectSessions {

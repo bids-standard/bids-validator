@@ -24,7 +24,7 @@ export class BIDSContextDataset implements ContextDataset {
   tree: object
   ignored: any[]
   modalities: any[]
-  subjects: ContextDatasetSubjects
+  subjects?: ContextDatasetSubjects
 
   constructor(options?: ValidatorOptions, description = {}) {
     this.dataset_description = description
@@ -32,7 +32,6 @@ export class BIDSContextDataset implements ContextDataset {
     this.tree = {}
     this.ignored = []
     this.modalities = []
-    this.subjects = new BIDSContextDatasetSubjects()
     if (options) {
       this.options = options
     }
@@ -64,7 +63,6 @@ export class BIDSContextDatasetSubjects implements ContextDatasetSubjects {
 }
 
 const defaultDsContext = new BIDSContextDataset()
-defaultDsContext.subjects = new BIDSContextDatasetSubjects()
 
 export class BIDSContext implements Context {
   // Internal representation of the file tree
@@ -219,6 +217,10 @@ export class BIDSContext implements Context {
 
   // This is currently done for every file. It should be done once for the dataset.
   async loadSubjects(): Promise<void> {
+    if (this.dataset.subjects != null) {
+      return
+    }
+    this.dataset.subjects = new BIDSContextDatasetSubjects()
     // Load subject dirs from the file tree
     this.dataset.subjects.sub_dirs = this.fileTree.directories
       .filter((dir) => dir.name.startsWith('sub-'))
