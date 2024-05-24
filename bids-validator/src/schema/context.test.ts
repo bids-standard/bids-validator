@@ -88,7 +88,7 @@ rootFileTree.files = [
 ]
 rootFileTree.directories = [subjectFileTree]
 
-const context = new BIDSContext(anatFileTree, dataFile, issues)
+let context = new BIDSContext(anatFileTree, dataFile, issues)
 
 Deno.test('test context LoadSidecar', async (t) => {
   await context.loadSidecar(rootFileTree)
@@ -104,5 +104,18 @@ Deno.test('test context LoadSidecar', async (t) => {
     assert(rootValue, 'root')
     assert(subValue, 'subject')
     assert(anatValue, 'anat')
+  })
+})
+
+context = new BIDSContext(rootFileTree, dataFile, issues)
+
+Deno.test('test context loadSubjects', async (t) => {
+  await context.loadSubjects()
+  await t.step('context produces correct subjects object', () => {
+    assert(context.dataset.subjects, "subjects object exists")
+    assert(context.dataset.subjects.sub_dirs.length == 1, "there is only one sub dir found")
+    assert(context.dataset.subjects.sub_dirs[0] == 'sub-01', "that sub dir is sub-01")
+    // no participants.tsv so this should be empty
+    assert(context.dataset.subjects.participant_id == undefined, "no participant_id is populated")
   })
 })
