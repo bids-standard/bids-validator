@@ -2,8 +2,8 @@ import { ValidatorOptions } from '../setup/options.ts'
 
 export interface ContextDatasetSubjects {
   sub_dirs: string[]
-  participant_id: string[]
-  phenotype: string[]
+  participant_id?: string[]
+  phenotype?: string[]
 }
 export interface ContextDataset {
   dataset_description: Record<string, unknown>
@@ -11,7 +11,7 @@ export interface ContextDataset {
   tree: object
   ignored: any[]
   modalities: any[]
-  subjects: ContextDatasetSubjects[]
+  subjects: ContextDatasetSubjects
   options?: ValidatorOptions
 }
 export interface ContextSubjectSessions {
