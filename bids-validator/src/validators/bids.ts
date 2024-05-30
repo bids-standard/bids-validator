@@ -1,5 +1,6 @@
 import { CheckFunction } from '../types/check.ts'
 import { FileTree } from '../types/filetree.ts'
+import { IssueFile } from '../types/issues.ts'
 import { GenericSchema } from '../types/schema.ts'
 import { ValidationResult } from '../types/validation-result.ts'
 import { applyRules } from '../schema/applyRules.ts'
@@ -51,6 +52,7 @@ export async function validate(
     dsContext = new BIDSContextDataset(options, description)
   } else {
     dsContext = new BIDSContextDataset(options)
+    issues.addNonSchemaIssue('MISSING_DATASET_DESCRIPTION', [] as IssueFile[])
   }
 
   let derivatives: FileTree[] = []
