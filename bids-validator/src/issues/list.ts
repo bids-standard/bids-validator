@@ -1,6 +1,11 @@
 import { IssueDefinitionRecord } from '../types/issues.ts'
 
 export const filenameIssues: IssueDefinitionRecord = {
+  MISSING_DATASET_DESCRIPTION: {
+    severity: 'error',
+    reason:
+      'A dataset_description.json file is required in the root of the dataset',
+  },
   INVALID_ENTITY_LABEL: {
     severity: 'error',
     reason:
