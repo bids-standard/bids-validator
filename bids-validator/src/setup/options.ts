@@ -1,5 +1,6 @@
 import { LevelName, LogLevelNames } from '../deps/logger.ts'
 import { Command, EnumType } from '../deps/cliffy.ts'
+import { getVersion } from '../version.ts'
 
 export type ValidatorOptions = {
   datasetPath: string
@@ -19,7 +20,7 @@ export const validateCommand = new Command()
     'This tool checks if a dataset in a given directory is compatible with the Brain Imaging Data Structure specification. To learn more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
   )
   .arguments('<dataset_directory>')
-  .version('alpha')
+  .version(getVersion())
   .option('--json', 'Output machine readable JSON')
   .option(
     '-s, --schema <type:string>',
