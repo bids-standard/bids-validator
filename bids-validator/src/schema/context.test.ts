@@ -93,13 +93,11 @@ let context = new BIDSContext(anatFileTree, dataFile, issues)
 Deno.test('test context LoadSidecar', async (t) => {
   await context.loadSidecar(rootFileTree)
   await t.step('sidecar overwrites correct fields', () => {
-    // @ts-expect-error
     const { rootOverwrite, subOverwrite } = context.sidecar
     assert(rootOverwrite, 'anat')
     assert(subOverwrite, 'anat')
   })
   await t.step('sidecar adds new fields at each level', () => {
-    // @ts-expect-error
     const { rootValue, subValue, anatValue } = context.sidecar
     assert(rootValue, 'root')
     assert(subValue, 'subject')

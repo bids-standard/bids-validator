@@ -77,7 +77,7 @@ export class BIDSContext implements Context {
   subject: ContextSubject
   datatype: string
   modality: string
-  sidecar: object
+  sidecar: Record<string, any>
   json: object
   columns: ColumnsMap
   associations: ContextAssociations

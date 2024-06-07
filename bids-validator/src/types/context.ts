@@ -96,7 +96,7 @@ export interface Context {
   suffix: string
   extension: string
   modality: string
-  sidecar: object
+  sidecar: Record<string, any>
   associations: ContextAssociations
   columns: object
   json: object
