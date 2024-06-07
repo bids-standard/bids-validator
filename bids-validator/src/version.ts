@@ -1,34 +1,58 @@
 import gitmeta from './.git-meta.json' with { type: 'json' }
 
-export async function getVersion(): string {
-  const url = import.meta.url
-  if (url.startsWith('file://')) {
-    const archiveVersion = getArchiveVersion()
-    if (archiveVersion) {
-      return archiveVersion
-    }
-    // Get parent directory of current file, without file:/
-    const parent = url.slice(7).split('/').slice(0, -1).join('/')
-    return await getLocalVersion(parent)
-  } else if (url.startsWith('https://deno.land/x/')) {
-    // Retrieve version X from https://deno.land/x/bids-validator@X/version.ts
-    return url.split('@')[1].split('/')[0]
-  } else if (url.startsWith('https://raw.githubusercontent.com')) {
-    // Retrieve version X from https://raw.githubusercontent.com/bids-standard/bids-validator/X/bids-validator/src/version.ts
-    return url.split('/bids-validator/')[1]
+/**
+ * Determine the version of the currently running script.
+ *
+ * The version is determined by the following rules:
+ *
+ * 1. Search for a hard-coded version populated by git-archive or the build.
+ * 2. If the script is running from a local file, the version is determined by
+ *    the output of `git describe --tags --always` in the script's directory.
+ * 3. If the script is running from a remote URL, the version is determined by
+ *    the path of the URL. In case of GitHub, the version can be any git ref.
+ *    In the case of deno.land, the tag name should be available and will be parsed.
+ *
+ * If no version can be determined, the URL of the script is returned.
+ *
+ * @returns The version of the script.
+ *
+ */
+export async function getVersion(): Promise<string> {
+  // Hard-coded JSON wins
+  let version = getArchiveVersion()
+  if (version) { return version }
+
+  const url = new URL(Deno.mainModule)
+  if (url.protocol === 'file:') {
+    version = await getLocalVersion(url.pathname.split('/').slice(0, -1).join('/'))
+    if (version) { return version }
+  } else if (url.protocol === 'https:' || url.protocol === 'http:') {
+    version = getRemoteVersion(url)
+    if (version) { return version }
   }
-  return url
+  return url.href
 }
 
-async function getLocalVersion(path: string): string {
+async function getLocalVersion(path: string): Promise<string> {
   const p = Deno.run({
     cmd: ['git', 'describe', '--tags', '--always'],
     stdout: 'piped',
-    stderr: 'piped',
     cwd: path,
   })
   const description = new TextDecoder().decode(await p.output()).trim()
+  p.close()
   return description
+}
+
+function getRemoteVersion(url: URL): string | undefined {
+  if (url.hostname === 'deno.land') {
+    // https://deno.land/x/bids-validator@<ver>/bids-validator.ts
+    return url.pathname.split('@')[1].split('/')[0]
+  } else if (url.hostname === 'raw.githubusercontent.com') {
+    // https://raw.githubusercontent.com/<org>/bids-validator/<ver>/bids-validator/src/bids-validator.ts
+    return url.pathname.split('/bids-validator/')[1]
+  }
+  return undefined
 }
 
 function getArchiveVersion(): string | undefined {
