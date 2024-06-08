@@ -1,6 +1,6 @@
 import { assertEquals, assertRejects } from '../deps/asserts.ts'
 import { readAll, readerFromStreamReader } from '../deps/stream.ts'
-import { dirname, basename, join } from '../deps/path.ts'
+import { dirname, basename, join, fromFileUrl } from '../deps/path.ts'
 import { BIDSFileDeno, UnicodeDecodeError } from './deno.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules } from './ignore.ts'
@@ -9,7 +9,7 @@ await requestReadPermission()
 
 // Use this file for testing file behavior
 const testUrl = import.meta.url
-const testPath = testUrl.slice('file://'.length)
+const testPath = fromFileUrl(testUrl)
 const testDir = dirname(testPath)
 const testFilename = basename(testPath)
 const ignore = new FileIgnoreRules([])
