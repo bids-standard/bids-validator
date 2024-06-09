@@ -1,4 +1,5 @@
 import gitmeta from './.git-meta.json' with { type: 'json' }
+import { dirname } from './deps/path.ts'
 
 /**
  * Determine the version of the currently running script.
@@ -24,7 +25,7 @@ export async function getVersion(): Promise<string> {
 
   const url = new URL(Deno.mainModule)
   if (url.protocol === 'file:') {
-    version = await getLocalVersion(url.pathname.split('/').slice(0, -1).join('/'))
+    version = await getLocalVersion(dirname(url.pathname))
     if (version) { return version }
   } else if (url.protocol === 'https:' || url.protocol === 'http:') {
     version = getRemoteVersion(url)
