@@ -5,6 +5,7 @@ export {
   basename,
   dirname,
   extname,
+  posix,
   fromFileUrl,
   parse,
   SEPARATOR_PATTERN,
