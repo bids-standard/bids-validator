@@ -1,8 +1,8 @@
-import { assertEquals, assertRejects } from '../deps/asserts.ts'
+import { assert, assertEquals, assertRejects } from '../deps/asserts.ts'
 import { readAll, readerFromStreamReader } from '../deps/stream.ts'
 import { dirname, basename, join, fromFileUrl } from '../deps/path.ts'
 import { EOL } from '../deps/fs.ts'
-import { BIDSFileDeno, UnicodeDecodeError } from './deno.ts'
+import { BIDSFileDeno, readFileTree, UnicodeDecodeError } from './deno.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules } from './ignore.ts'
 
@@ -59,4 +59,19 @@ Deno.test('Deno implementation of BIDSFile', async (t) => {
       assertEquals(text, ['{', '  "example": "JSON for test suite"', '}', ''].join(EOL))
     },
   )
+})
+
+Deno.test('Deno implementation of FileTree', async (t) => {
+  const srcdir = dirname(testDir)
+  const parent = basename(testDir)
+  const tree = await readFileTree(srcdir)
+  await t.step('uses POSIX relative paths', async () => {
+    assertEquals(tree.path, '/')
+    const parentObj = tree.directories.find((dir) => dir.name === parent)
+    assert(parentObj !== undefined)
+    assertEquals(parentObj.path, `/${parent}`)
+    const testObj = parentObj.files.find((file) => file.name === testFilename)
+    assert(testObj !== undefined)
+    assertEquals(testObj.path, `/${parent}/${testFilename}`)
+  })
 })
