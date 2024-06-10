@@ -13,36 +13,33 @@ export type ValidatorOptions = {
   debug: LevelName
 }
 
-async function getValidatorCommand() {
-  return new Command()
-    .name('bids-validator')
-    .type('debugLevel', new EnumType(LogLevelNames))
-    .description(
-      'This tool checks if a dataset in a given directory is compatible with the Brain Imaging Data Structure specification. To learn more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
-    )
-    .arguments('<dataset_directory>')
-    .version(await getVersion())
-    .option('--json', 'Output machine readable JSON')
-    .option(
-      '-s, --schema <type:string>',
-      'Specify a schema version to use for validation',
-      {
-        default: 'latest',
-      },
-    )
-    .option('-v, --verbose', 'Log more extensive information about issues')
-    .option(
-      '--ignoreNiftiHeaders',
-      'Disregard NIfTI header content during validation',
-    )
-    .option('--debug <type:debugLevel>', 'Enable debug output', {
-      default: 'ERROR',
-    })
-    .option(
-      '--filenameMode',
-      'Enable filename checks for newline separated filenames read from stdin',
-    )
-}
+export const validateCommand = new Command()
+  .name('bids-validator')
+  .type('debugLevel', new EnumType(LogLevelNames))
+  .description(
+    'This tool checks if a dataset in a given directory is compatible with the Brain Imaging Data Structure specification. To learn more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
+  )
+  .arguments('<dataset_directory>')
+  .option('--json', 'Output machine readable JSON')
+  .option(
+    '-s, --schema <type:string>',
+    'Specify a schema version to use for validation',
+    {
+      default: 'latest',
+    },
+  )
+  .option('-v, --verbose', 'Log more extensive information about issues')
+  .option(
+    '--ignoreNiftiHeaders',
+    'Disregard NIfTI header content during validation',
+  )
+  .option('--debug <type:debugLevel>', 'Enable debug output', {
+    default: 'ERROR',
+  })
+  .option(
+    '--filenameMode',
+    'Enable filename checks for newline separated filenames read from stdin',
+  )
 
 /**
  * Parse command line options and return a ValidatorOptions config
@@ -51,8 +48,9 @@ async function getValidatorCommand() {
 export async function parseOptions(
   argumentOverride: string[] = Deno.args,
 ): Promise<ValidatorOptions> {
-  const command = await getValidatorCommand()
-  const { args, options } = await command.parse(argumentOverride)
+  const version = await getVersion()
+  const { args, options } = await validateCommand.version(version)
+    .parse(argumentOverride)
   return {
     datasetPath: args[0],
     ...options,
