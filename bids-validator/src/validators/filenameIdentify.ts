@@ -12,7 +12,7 @@
  * object in the schema for reference.
  */
 // @ts-nocheck
-import { SEPARATOR, globToRegExp } from '../deps/path.ts'
+import { SEPARATOR_PATTERN, globToRegExp } from '../deps/path.ts'
 import { GenericSchema, Schema } from '../types/schema.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { lookupModality } from '../schema/modalities.ts'
@@ -75,7 +75,7 @@ export function _findRuleMatches(node, path, context) {
 export async function datatypeFromDirectory(schema, context) {
   const subEntity = schema.objects.entities.subject.name
   const sesEntity = schema.objects.entities.session.name
-  const parts = context.file.path.split(SEPARATOR)
+  const parts = context.file.path.split(SEPARATOR_PATTERN)
   let datatypeIndex = parts.length - 2
   if (datatypeIndex < 1) {
     return Promise.resolve()
