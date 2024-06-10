@@ -36,9 +36,8 @@ export async function getVersion(): Promise<string> {
 
 async function getLocalVersion(path: string): Promise<string> {
   const p = Deno.run({
-    cmd: ['git', 'describe', '--tags', '--always'],
+    cmd: ['git', '-C', path, 'describe', '--tags', '--always'],
     stdout: 'piped',
-    cwd: path,
   })
   const description = new TextDecoder().decode(await p.output()).trim()
   p.close()
