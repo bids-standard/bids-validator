@@ -1,4 +1,4 @@
 export {
   readAll,
   readerFromStreamReader,
-} from 'https://deno.land/std@0.177.0/streams/mod.ts'
+} from 'https://deno.land/std@0.217.0/io/mod.ts'

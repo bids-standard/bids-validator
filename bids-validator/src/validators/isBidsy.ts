@@ -3,7 +3,6 @@
  * derivatives to have the lowest common denomenator of bids like file names.
  */
 // @ts-nocheck
-import { SEP } from '../deps/path.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { ContextCheckFunction } from '../../types/check.ts'
 import { BIDSFile } from '../types/file.ts'

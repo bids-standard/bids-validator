@@ -1,7 +1,7 @@
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
-import { parse, join, SEP } from '../deps/path.ts'
+import { parse, posix, SEPARATOR_PATTERN } from '../deps/path.ts'
 
 /**
  * Browser implement of BIDSFile wrapping native File/FileList types
@@ -9,21 +9,17 @@ import { parse, join, SEP } from '../deps/path.ts'
 export class BIDSFileBrowser implements BIDSFile {
   #ignore: FileIgnoreRules
   #file: File
+  name: string
+  path: string
 
   constructor(file: File, ignore: FileIgnoreRules) {
     this.#file = file
     this.#ignore = ignore
-  }
-
-  get name(): string {
-    return this.#file.name
-  }
-
-  get path(): string {
-    // @ts-expect-error webkitRelativePath is defined in the browser
+    this.name = file.name
+    // @ts-expect-error webkitRelativePath does exist in the browser
     const relativePath = this.#file.webkitRelativePath
     const prefixLength = relativePath.indexOf('/')
-    return relativePath.substring(prefixLength)
+    this.path = relativePath.substring(prefixLength)
   }
 
   get size(): number {
@@ -60,7 +56,7 @@ export function fileListToTree(files: File[]): Promise<FileTree> {
       // Top level file
       tree.files.push(file)
     } else {
-      const levels = fPath.dir.split(SEP).slice(1)
+      const levels = fPath.dir.split(SEPARATOR_PATTERN).slice(1)
       let currentLevelTree = tree
       for (const level of levels) {
         const exists = currentLevelTree.directories.find(
@@ -72,7 +68,7 @@ export function fileListToTree(files: File[]): Promise<FileTree> {
         } else {
           // Otherwise make a new level and continue if needed
           const newTree = new FileTree(
-            join(currentLevelTree.path, level),
+            posix.join(currentLevelTree.path, level),
             level,
             currentLevelTree,
           )

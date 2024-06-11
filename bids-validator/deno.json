@@ -1,0 +1,6 @@
+{
+  "tasks": {
+    "test": "deno test -A src/tests/"
+  },
+  "lock": false
+}

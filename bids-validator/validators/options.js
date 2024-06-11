@@ -66,13 +66,6 @@ export function parseOptions(argumentOverride) {
       'A less accurate check that reads filenames one per line from stdin.',
     )
     .hide('filenames')
-    .option('schema', {
-      alias: 's',
-      describe:
-        'BIDS specification schema version to use for validation, e.g. "v1.6.0" (beta)',
-      default: 'disable',
-      choices: ['disable', 'v1.6.0', 'v1.7.0', 'master'],
-    })
     .epilogue(
       'This tool checks if a dataset in a given directory is \
 compatible with the Brain Imaging Data Structure specification. To learn \

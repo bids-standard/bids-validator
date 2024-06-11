@@ -139,8 +139,15 @@
     }
   },
 
+  "unit1_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:chunk-[0-9]+_)?(@@@_unit1_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_unit1_suffixes_@@@": ["UNIT1"]
+    }
+  },
+
   "dwi_top": {
-    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(dwi\\.(?:@@@_dwi_top_ext_@@@)|sbref\\.json)$",
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:part-(mag|phase|real|imag)_)?(?:chunk-[0-9]+_)?(dwi\\.(?:@@@_dwi_top_ext_@@@)|sbref\\.json)$",
     "tokens": {
       "@@@_dwi_top_ext_@@@": ["json", "bval", "bvec"]
     }
@@ -217,8 +224,25 @@
       ]
     }
   },
-  "multi_dir_fieldmap": {
-    "regexp": "^[\\/\\\\](?:acq-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)epi\\.json$"
+  "fmap_epi_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:ce-[a-zA-Z0-9]+_)?(?:dir-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:part-(mag|phase|real|imag)_)?(?:chunk-[0-9]+_)?(?:@@@_field_map_type_@@@)\\.json$",
+    "tokens": {
+      "@@@_field_map_type_@@@": ["m0scan", "epi"]
+    }
+  },
+  "fmap_gre_top": {
+    "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:chunk-[0-9]+_)?(@@@_fmap_gre_suffixes_@@@)\\.json$",
+    "tokens": {
+      "@@@_fmap_gre_suffixes_@@@": [
+        "magnitude1",
+        "magnitude2",
+        "phasediff",
+        "phase1",
+        "phase2",
+        "magnitude",
+        "fieldmap"
+      ]
+    }
   },
   "other_top_files": {
     "regexp": "^[\\/\\\\](?:ses-[a-zA-Z0-9]+_)?(?:task-[a-zA-Z0-9]+_)?(?:acq-[a-zA-Z0-9]+_)?(?:rec-[a-zA-Z0-9]+_)?(?:run-[0-9]+_)?(?:recording-[a-zA-Z0-9]+_)?(@@@_other_top_files_ext_@@@)$",

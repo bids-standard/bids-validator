@@ -7,5 +7,9 @@ export {
   extname,
   fromFileUrl,
   parse,
-} from 'https://deno.land/std@0.177.0/path/mod.ts'
-export { SEP } from 'https://deno.land/std@0.177.0/path/separator.ts'
+  SEPARATOR_PATTERN,
+} from 'https://deno.land/std@0.217.0/path/mod.ts'
+export {
+  globToRegExp,
+} from 'https://deno.land/std@0.217.0/path/glob_to_regexp.ts'
+export * as posix from 'https://deno.land/std@0.217.0/path/posix/mod.ts'

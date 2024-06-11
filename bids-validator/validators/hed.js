@@ -52,18 +52,12 @@ function constructTsvData(tsvFiles, jsonContents) {
       potentialSidecars,
       jsonContents,
     )
-    let TsvFileClass
-    if (tsvFile.file.relativePath.endsWith('_events.tsv')) {
-      TsvFileClass = hedValidator.bids.BidsEventFile
-    } else {
-      TsvFileClass = hedValidator.bids.BidsTabularFile
-    }
-    return new TsvFileClass(
+    return new hedValidator.bids.BidsTsvFile(
       tsvFile.path,
-      potentialSidecars,
-      mergedDictionary,
       tsvFile.contents,
       tsvFile.file,
+      potentialSidecars,
+      mergedDictionary,
     )
   })
 }

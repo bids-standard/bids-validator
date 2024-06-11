@@ -199,7 +199,7 @@
   },
 
   "fmap_pepolar_asl": {
-    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?fmap[\\/\\\\]\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_ce-[a-zA-Z0-9]+)?_dir-[a-zA-Z0-9]+(?:_run-[0-9]+)?_(?:@@@_field_map_type_@@@)\\.(@@@_field_map_ext_@@@)$",
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?fmap[\\/\\\\]\\1(_\\2)?(?:_acq-[a-zA-Z0-9]+)?(?:_ce-[a-zA-Z0-9]+)?_dir-[a-zA-Z0-9]+(?:_run-[0-9]+)?(?:_part-(mag|phase|real|imag))?(?:_chunk-[0-9]+)?_(?:@@@_field_map_type_@@@)\\.(@@@_field_map_ext_@@@)$",
     "tokens": {
       "@@@_field_map_type_@@@": ["m0scan", "epi"],
       "@@@_field_map_ext_@@@": ["nii\\.gz", "nii", "json"]
