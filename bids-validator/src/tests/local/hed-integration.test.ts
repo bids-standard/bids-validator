@@ -21,7 +21,7 @@ Deno.test('hed-validator not triggered', async (t) => {
 })
 
 Deno.test('hed-validator integration test', async (t) => {
-  const PATH = 'tests/data/bids-examples/eeg_ds003645s_hed_inheritance'
+  const PATH = 'tests/data/bids-examples/eeg_ds003645s_hed_library'
   const { tree, result } = await validatePath(t, PATH)
 
   tree.files = tree.files.filter(f => f.name !== 'task-FacePerception_events.json')

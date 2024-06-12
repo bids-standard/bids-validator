@@ -91,8 +91,6 @@ export async function hedValidate(schema: GenericSchema, dsContext: BIDSContextD
   if (!detectHed(dsContext.hedArgs.eventData, dsContext.hedArgs.sidecarData)) {
     return Promise.resolve()
   }
-  console.log("found hed")
-  console.log(dsContext.hedArgs)
   let hedDs = new hedValidator.validator.BidsDataset(...Object.values(dsContext.hedArgs))
   await hedValidator.validator
     .validateBidsDataset(hedDs)
