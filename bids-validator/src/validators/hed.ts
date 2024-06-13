@@ -6,7 +6,8 @@ import { BIDSContext, BIDSContextDataset } from "../schema/context.ts";
 import { DatasetIssues } from "../issues/datasetIssues.ts";
 import { ColumnsMap } from "../types/columns.ts";
 
-export class BidsSidecar extends hedValidator.validator.BidsSidecar {}
+export class BidsJson extends hedValidator.bids.BidsJsonFile {}
+export class BidsSidecar extends hedValidator.bids.BidsSidecar {}
 export class BidsEventFile extends hedValidator.bids.BidsEventFile {}
 
 // https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
@@ -53,7 +54,6 @@ function sidecarValueHasHed(sidecarValue: unknown) {
   );
 }
 
-
 export interface HedIssue {
   code: number;
   file: IssueFile;
@@ -68,41 +68,76 @@ export async function hedValidate(
     if ((!"HED") in context.columns && !sidecarValueHasHed(context.sidecar)) {
       return;
     }
-    const tsvContent = columnsToContent(context.columns);
-    const eventFile = new BidsEventFile(
-      context.path,
-      [],
-      context.sidecar,
-      tsvContent,
-      context.file,
-    );
-
-    const sidecarFile = new BidsSidecar(
-      context.path,
-      await context.json,
-      context.file,
-    );
-    const ddJsonFile = new BidsSidecar(
-      "dataset_description.json",
-      context.dataset.dataset_description,
-      context.file,
-    );
-    let hedDs = new hedValidator.validator.BidsDataset([eventFile], [
-      sidecarFile,
-    ], ddJsonFile);
-
-    await hedValidator.validator
-      .validateBidsDataset(hedDs)
-      .then((hedValidationIssues: HedIssue[]) => {
-        const newStyle = hedValidationIssues.map((hedIssue) => {
-          const code = hedIssue.code;
-          if (code in hedOldToNewLookup) {
-            context.issues.addNonSchemaIssue(
-              hedOldToNewLookup[code],
-              [{ ...hedIssue.file, evidence: hedIssue.evidence }],
-            );
-          }
-        });
-      });
+    return hedValidateTsv(schema, context);
   }
+  if (context.extension == ".json" && sidecarValueHasHed(context.json)) {
+    return hedValidateJson(schema, context);
+  }
+}
+
+async function hedValidateTsv(
+  schema: GenericSchema,
+  context: BIDSContext,
+): Promise<void> {
+  const tsvContent = columnsToContent(context.columns);
+  const eventFile = new BidsEventFile(
+    context.path,
+    [],
+    context.sidecar,
+    tsvContent,
+    context.file,
+  );
+
+  const sidecarFile = new BidsSidecar(
+    context.path,
+    await context.sidecar,
+    context.file,
+  );
+  const ddJsonFile = new BidsJson(
+    "dataset_description.json",
+    context.dataset.dataset_description,
+    context.file,
+  );
+  let hedDs = new hedValidator.validator.BidsDataset([eventFile], [
+    sidecarFile,
+  ], ddJsonFile);
+  return _hedalidate(hedDs, context);
+}
+
+async function hedValidateJson(
+  schema: GenericSchema,
+  context: BIDSContext,
+): Promise<void> {
+  const sidecarFile = new BidsSidecar(
+    context.path,
+    await context.json,
+    context.file,
+  );
+
+  const ddJsonFile = new BidsJson(
+    "dataset_description.json",
+    context.dataset.dataset_description,
+    context.file,
+  );
+
+  let hedDs = new hedValidator.validator.BidsDataset([], [
+    sidecarFile,
+  ], ddJsonFile);
+  return _hedValidate(hedDs, context);
+}
+
+async function _hedValidate(hedDs, context) {
+  return hedValidator.validator
+    .validateBidsDataset(hedDs)
+    .then((hedValidationIssues: HedIssue[]) => {
+      const newStyle = hedValidationIssues.map((hedIssue) => {
+        const code = hedIssue.code;
+        if (code in hedOldToNewLookup) {
+          context.issues.addNonSchemaIssue(
+            hedOldToNewLookup[code],
+            [{ ...hedIssue.file, evidence: hedIssue.evidence }],
+          );
+        }
+      });
+    });
 }
