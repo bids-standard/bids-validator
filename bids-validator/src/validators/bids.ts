@@ -15,7 +15,7 @@ import { emptyFile } from './internal/emptyFile.ts'
 import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { parseOptions } from '../setup/options.ts'
-import { hedAccumulator, hedValidate } from './hed.ts'
+import { hedValidate } from './hed.ts'
 
 /**
  * Ordering of checks to apply
@@ -25,10 +25,10 @@ const perContextChecks: ContextCheckFunction[] = [
   filenameIdentify,
   filenameValidate,
   applyRules,
-  hedAccumulator,
+  hedValidate
 ]
 
-const perDSChecks: DSCheckFunction[] = [hedValidate]
+const perDSChecks: DSCheckFunction[] = []
 
 /**
  * Full BIDS schema validation entrypoint
