@@ -37,10 +37,10 @@ const validate = (
           function (tsvIssues, participantList, stimFiles) {
             if (participantList) {
               if (file.name.endsWith('participants.tsv')) {
-                participants = {
+                Object.assign(participants, {
                   list: participantList,
                   file: file,
-                }
+                })
                 // save content for metadata extraction
                 participantsTsvContent = contents
               } else if (file.relativePath.includes('phenotype/')) {

@@ -3,7 +3,7 @@ const Issue = utils.issues.Issue
 
 const participantsInSubjects = (participants, subjects) => {
   const issues = []
-  if (participants) {
+  if (participants && participants.file) {
     const participantsFromFile = participants.list.sort()
     const participantsFromFolders = subjects.sort()
     if (
