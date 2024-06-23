@@ -53,7 +53,7 @@
     "lerna": "^8.1.2",
     "lodash": "^4.17.21",
     "minimatch": "3.0.5",
-    "next": "14.2.3",
+    "next": "14.2.4",
     "nifti-js": "^1.0.1",
     "p-limit": "^2.1.0",
     "pako": "^1.0.6",
@@ -70,7 +70,7 @@
   "devDependencies": {
     "adm-zip": "",
     "chai": "",
-    "esbuild": "^0.21.4",
+    "esbuild": "^0.21.5",
     "esbuild-plugin-globals": "^0.2.0",
     "esbuild-runner": "^2.2.2",
     "eslint": "^8.57.0",
