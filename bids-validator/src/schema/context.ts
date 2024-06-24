@@ -16,6 +16,7 @@ import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
+import { HEDArgs } from '../types/hed.ts'
 
 export class BIDSContextDataset implements ContextDataset {
   dataset_description: Record<string, unknown>
@@ -24,6 +25,7 @@ export class BIDSContextDataset implements ContextDataset {
   tree: object
   ignored: any[]
   modalities: any[]
+  hedArgs: HEDArgs
   subjects?: ContextDatasetSubjects
 
   constructor(options?: ValidatorOptions, description = {}) {
@@ -32,6 +34,8 @@ export class BIDSContextDataset implements ContextDataset {
     this.tree = {}
     this.ignored = []
     this.modalities = []
+    this.hedArgs = new HEDArgs()
+
     if (options) {
       this.options = options
     }
