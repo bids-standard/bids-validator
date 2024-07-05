@@ -1,117 +1,141 @@
 import hedValidator from 'hed-validator'
-import cloneDeep from 'lodash/cloneDeep'
-import intersection from 'lodash/intersection'
 import utils from '../utils'
 
 const Issue = utils.issues.Issue
 
-export default function checkHedStrings(tsvs, jsonContents, jsonFiles, dir) {
-  const tsvData = constructTsvData(tsvs, jsonContents)
-  const sidecarData = constructSidecarData(tsvData, jsonContents, jsonFiles)
-  const hedDataExists = detectHed(tsvData, sidecarData)
-  if (!hedDataExists) {
-    return Promise.resolve([])
-  }
-
+export default async function checkHedStrings(tsvs, jsonContents, jsonFiles) {
   const datasetDescription = jsonContents['/dataset_description.json']
-  const datasetDescriptionData = new hedValidator.validator.BidsJsonFile(
+  const datasetDescriptionData = new hedValidator.bids.BidsJsonFile(
     '/dataset_description.json',
-    cloneDeep(datasetDescription),
+    datasetDescription,
     getSidecarFileObject('/dataset_description.json', jsonFiles),
   )
-  const dataset = new hedValidator.validator.BidsDataset(
-    tsvData,
-    sidecarData,
-    datasetDescriptionData,
-    dir,
-  )
-  // New stuff end does parseHedVersion need to be called anymore?
-  const schemaDefinitionIssues = parseHedVersion(jsonContents)
+
+  let hedSchemas
   try {
-    return hedValidator.validator
-      .validateBidsDataset(dataset)
-      .then((hedValidationIssues) => {
-        return schemaDefinitionIssues.concat(
-          convertHedIssuesToBidsIssues(hedValidationIssues),
-        )
-      })
-  } catch (error) {
-    const issues = schemaDefinitionIssues.concat(
-      internalHedValidatorIssue(error),
+    hedSchemas = await hedValidator.bids.buildBidsSchemas(
+      datasetDescriptionData,
+      null,
     )
-    return Promise.resolve(issues)
+  } catch (issueError) {
+    return hedValidator.bids.BidsHedIssue.fromHedIssues(
+      issueError,
+      datasetDescriptionData.file,
+    )
   }
+
+  const [sidecarsByTsv, allSidecars] = generateSidecarNames(tsvs)
+
+  const issues = []
+  for (const sidecarName of allSidecars) {
+    try {
+      issues.push(
+        ...validateSidecar(sidecarName, hedSchemas, jsonContents, jsonFiles),
+      )
+    } catch (e) {
+      issues.push(new Issue({ code: 109 }))
+      return issues
+    }
+  }
+
+  if (issues.some((issue) => issue.isError())) {
+    return issues
+  }
+
+  for (const tsvFile of tsvs) {
+    const tsvSidecars = sidecarsByTsv.get(tsvFile)
+    try {
+      issues.push(
+        ...validateTsv(tsvFile, tsvSidecars, hedSchemas, jsonContents),
+      )
+    } catch (e) {
+      issues.push(new Issue({ code: 109 }))
+      return issues
+    }
+  }
+
+  return issues
 }
 
-function constructTsvData(tsvFiles, jsonContents) {
-  return tsvFiles.map((tsvFile) => {
+function generateSidecarNames(tsvFiles) {
+  const sidecarNamesByTsv = new Map()
+  const allSidecarNames = new Set()
+  for (const tsvFile of tsvFiles) {
     const potentialSidecars = utils.files.potentialLocations(
       tsvFile.file.relativePath.replace('.tsv', '.json'),
     )
-    const mergedDictionary = utils.files.generateMergedSidecarDict(
-      potentialSidecars,
-      jsonContents,
-    )
-    return new hedValidator.bids.BidsTsvFile(
-      tsvFile.path,
-      tsvFile.contents,
-      tsvFile.file,
-      potentialSidecars,
-      mergedDictionary,
-    )
-  })
+    sidecarNamesByTsv.set(tsvFile, potentialSidecars)
+    for (const sidecar of potentialSidecars) {
+      allSidecarNames.add(sidecar)
+    }
+  }
+  return [sidecarNamesByTsv, allSidecarNames]
 }
 
-function constructSidecarData(tsvData, jsonContents, jsonFiles) {
-  const actualSidecarNames = Object.keys(jsonContents)
-  const potentialSidecars = []
-  for (const tsvFileData of tsvData) {
-    potentialSidecars.push(...tsvFileData.potentialSidecars)
-  }
-  const actualEventSidecars = intersection(
-    actualSidecarNames,
-    potentialSidecars,
+function validateSidecar(sidecarName, hedSchemas, jsonContents, jsonFiles) {
+  const contents = jsonContents[sidecarName]
+  const file = getSidecarFileObject(sidecarName, jsonFiles)
+
+  const sidecarFile = new hedValidator.bids.BidsSidecar(
+    sidecarName,
+    contents,
+    file,
   )
-  return actualEventSidecars.map((sidecarName) => {
-    return new hedValidator.bids.BidsSidecar(
-      sidecarName,
-      cloneDeep(jsonContents[sidecarName]),
-      getSidecarFileObject(sidecarName, jsonFiles),
+
+  if (!sidecarFile.hasHedData()) {
+    return []
+  } else if (hedSchemas === null) {
+    throw new Error()
+  }
+
+  try {
+    const sidecarValidator = new hedValidator.bids.BidsHedSidecarValidator(
+      sidecarFile,
+      hedSchemas,
     )
-  })
+    return sidecarValidator.validate()
+  } catch (internalError) {
+    return [
+      new Issue({ code: 106, file: file, evidence: internalError.message }),
+    ]
+  }
+}
+
+function validateTsv(tsv, tsvSidecarNames, hedSchemas, jsonContents) {
+  const mergedDictionary = utils.files.generateMergedSidecarDict(
+    tsvSidecarNames,
+    jsonContents,
+  )
+
+  const tsvFile = new hedValidator.bids.BidsTsvFile(
+    tsv.path,
+    tsv.contents,
+    tsv.file,
+    tsvSidecarNames,
+    mergedDictionary,
+  )
+
+  if (!tsvFile.hasHedData()) {
+    return []
+  } else if (hedSchemas === null) {
+    throw new Error()
+  }
+
+  try {
+    const tsvValidator = new hedValidator.bids.BidsHedTsvValidator(
+      tsvFile,
+      hedSchemas,
+    )
+    return tsvValidator.validate()
+  } catch (internalError) {
+    return [
+      new Issue({ code: 106, file: tsv.file, evidence: internalError.message }),
+    ]
+  }
 }
 
 function getSidecarFileObject(sidecarName, jsonFiles) {
-  return cloneDeep(
-    jsonFiles.filter((file) => {
-      return file.relativePath === sidecarName
-    })[0],
-  )
-}
-
-function detectHed(tsvData, sidecarData) {
-  return (
-    sidecarData.some((sidecarFileData) => sidecarFileData.hasHedData()) ||
-    tsvData.some((tsvFileData) => tsvFileData.hasHedData())
-  )
-}
-
-function parseHedVersion(jsonContents) {
-  const datasetDescription = jsonContents['/dataset_description.json']
-
-  if (!(datasetDescription && datasetDescription.HEDVersion)) {
-    return [new Issue({ code: 109 })]
-  } else {
-    return []
-  }
-}
-
-function internalHedValidatorIssue(error) {
-  return Issue.errorToIssue(error, 107)
-}
-
-function convertHedIssuesToBidsIssues(hedIssues) {
-  return hedIssues.map((hedIssue) => {
-    return new Issue(hedIssue)
-  })
+  return jsonFiles.filter((file) => {
+    return file.relativePath === sidecarName
+  })[0]
 }

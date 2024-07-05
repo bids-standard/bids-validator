@@ -221,7 +221,7 @@ const fullTest = (fileList, options, annexed, dir, callback) => {
       )
 
       // check the HED strings
-      return hed(tsvs, jsonContentsDict, jsonFiles, dir)
+      return hed(tsvs, jsonContentsDict, jsonFiles)
     })
     .then((hedIssues) => {
       self.issues = self.issues.concat(hedIssues)
