@@ -24,14 +24,11 @@ export default async function checkHedStrings(tsvs, jsonContents, jsonFiles) {
     )
   }
 
-  const [sidecarsByTsv, allSidecars] = generateSidecarNames(tsvs)
-
   const issues = []
-  for (const sidecarName of allSidecars) {
+  for (const [sidecarName, sidecarContents] of Object.entries(jsonContents)) {
     try {
-      issues.push(
-        ...validateSidecar(sidecarName, hedSchemas, jsonContents, jsonFiles),
-      )
+      const sidecarFile = buildSidecar(sidecarName, sidecarContents, jsonFiles)
+      issues.push(...validateFile(sidecarFile, hedSchemas))
     } catch (e) {
       issues.push(new Issue({ code: 109 }))
       return issues
@@ -42,12 +39,10 @@ export default async function checkHedStrings(tsvs, jsonContents, jsonFiles) {
     return issues
   }
 
-  for (const tsvFile of tsvs) {
-    const tsvSidecars = sidecarsByTsv.get(tsvFile)
+  for (const tsv of tsvs) {
     try {
-      issues.push(
-        ...validateTsv(tsvFile, tsvSidecars, hedSchemas, jsonContents),
-      )
+      const tsvFile = buildTsv(tsv, jsonContents)
+      issues.push(...validateFile(tsvFile, hedSchemas))
     } catch (e) {
       issues.push(new Issue({ code: 109 }))
       return issues
@@ -57,81 +52,36 @@ export default async function checkHedStrings(tsvs, jsonContents, jsonFiles) {
   return issues
 }
 
-function generateSidecarNames(tsvFiles) {
-  const sidecarNamesByTsv = new Map()
-  const allSidecarNames = new Set()
-  for (const tsvFile of tsvFiles) {
-    const potentialSidecars = utils.files.potentialLocations(
-      tsvFile.file.relativePath.replace('.tsv', '.json'),
-    )
-    sidecarNamesByTsv.set(tsvFile, potentialSidecars)
-    for (const sidecar of potentialSidecars) {
-      allSidecarNames.add(sidecar)
-    }
-  }
-  return [sidecarNamesByTsv, allSidecarNames]
-}
-
-function validateSidecar(sidecarName, hedSchemas, jsonContents, jsonFiles) {
-  const contents = jsonContents[sidecarName]
+function buildSidecar(sidecarName, sidecarContents, jsonFiles) {
   const file = getSidecarFileObject(sidecarName, jsonFiles)
 
-  const sidecarFile = new hedValidator.bids.BidsSidecar(
-    sidecarName,
-    contents,
-    file,
-  )
-
-  if (!sidecarFile.hasHedData()) {
-    return []
-  } else if (hedSchemas === null) {
-    throw new Error()
-  }
-
-  try {
-    const sidecarValidator = new hedValidator.bids.BidsHedSidecarValidator(
-      sidecarFile,
-      hedSchemas,
-    )
-    return sidecarValidator.validate()
-  } catch (internalError) {
-    return [
-      new Issue({ code: 106, file: file, evidence: internalError.message }),
-    ]
-  }
+  return new hedValidator.bids.BidsSidecar(sidecarName, sidecarContents, file)
 }
 
-function validateTsv(tsv, tsvSidecarNames, hedSchemas, jsonContents) {
+function buildTsv(tsv, jsonContents) {
+  const potentialSidecars = utils.files.potentialLocations(
+    tsv.file.relativePath.replace('.tsv', '.json'),
+  )
   const mergedDictionary = utils.files.generateMergedSidecarDict(
-    tsvSidecarNames,
+    potentialSidecars,
     jsonContents,
   )
 
-  const tsvFile = new hedValidator.bids.BidsTsvFile(
+  return new hedValidator.bids.BidsTsvFile(
     tsv.path,
     tsv.contents,
     tsv.file,
-    tsvSidecarNames,
+    potentialSidecars,
     mergedDictionary,
   )
+}
 
-  if (!tsvFile.hasHedData()) {
-    return []
-  } else if (hedSchemas === null) {
+function validateFile(file, hedSchemas) {
+  const issues = file.validate(hedSchemas)
+  if (issues === null) {
     throw new Error()
   }
-
-  try {
-    const tsvValidator = new hedValidator.bids.BidsHedTsvValidator(
-      tsvFile,
-      hedSchemas,
-    )
-    return tsvValidator.validate()
-  } catch (internalError) {
-    return [
-      new Issue({ code: 106, file: tsv.file, evidence: internalError.message }),
-    ]
-  }
+  return issues
 }
 
 function getSidecarFileObject(sidecarName, jsonFiles) {
