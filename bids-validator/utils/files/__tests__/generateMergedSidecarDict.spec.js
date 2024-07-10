@@ -1,3 +1,4 @@
+/*global globalThis*/
 import generateMergedSidecarDict from '../generateMergedSidecarDict.js'
 
 describe('generateMergedSidecarDict.js', () => {
