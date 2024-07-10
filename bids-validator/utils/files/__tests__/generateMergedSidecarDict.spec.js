@@ -18,6 +18,10 @@ describe('generateMergedSidecarDict.js', () => {
       delete Object.prototype.global
     })
 
+    it('trivial check', () => {
+      expect(generateMergedSidecarDict([], {})).toStrictEqual({})
+    })
+
     it('merges objects with global property', () => {
       const potentialSidecars = ['/sidecar1.json', '/sidecar2.json']
       const jsonContents = {
@@ -33,7 +37,7 @@ describe('generateMergedSidecarDict.js', () => {
       }
       expect(
         generateMergedSidecarDict(potentialSidecars, jsonContents),
-      ).toEqual({
+      ).toStrictEqual({
         RegularMetadata1: 'value1',
         RegularMetadata2: 'value2',
         global: {
