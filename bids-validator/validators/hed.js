@@ -68,7 +68,7 @@ function buildTsv(tsv, jsonContents) {
   )
 
   return new hedValidator.bids.BidsTsvFile(
-    tsv.path,
+    tsv.file.relativePath,
     tsv.contents,
     tsv.file,
     potentialSidecars,
