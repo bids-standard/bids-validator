@@ -12,7 +12,7 @@ function generateMergedSidecarDict(potentialSidecars, jsonContents) {
   potentialSidecars.map((sidecarName) => {
     const jsonObject = jsonContents[sidecarName]
     if (jsonObject) {
-      for (var key in jsonObject) {
+      for (const key of Object.keys(jsonObject)) {
         if (jsonObject.hasOwnProperty(key)) {
           mergedDictionary[key] = jsonObject[key]
         }
