@@ -245,4 +245,33 @@ describe('HED', function () {
       assert.strictEqual(issues[0].code, 109)
     })
   })
+
+  it('should throw an issue if HEDVersion is invalid', () => {
+    const events = [
+      {
+        file: {
+          path: '/sub01/sub01_task-test_events.tsv',
+          relativePath: '/sub01/sub01_task-test_events.tsv',
+        },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents:
+          'onset\tduration\ttest\tHED\n' + '7\tsomething\tone\tSpeed/30 mph\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_events.json': {
+        myCodes: {
+          HED: {
+            one: 'Duration/5 s',
+          },
+        },
+      },
+      '/dataset_description.json': { HEDVersion: 'one:two:8.0.0' },
+    }
+
+    return validateHed(events, jsonDictionary, jsonFiles, '').then((issues) => {
+      assert.strictEqual(issues.length, 1)
+      assert.strictEqual(issues[0].code, 104)
+    })
+  })
 })
