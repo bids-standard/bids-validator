@@ -195,4 +195,54 @@ describe('HED', function () {
       assert.strictEqual(issues[1].code, 105)
     })
   })
+
+  it('should properly issue errors if HED data is used in a sidecar without using HEDVersion', () => {
+    const events = [
+      {
+        file: {
+          path: '/sub01/sub01_task-test_events.tsv',
+          relativePath: '/sub01/sub01_task-test_events.tsv',
+        },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents: 'onset\tduration\ttest\n' + '7\tsomething\tone\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_events.json': {
+        test: {
+          HED: {
+            one: 'Train',
+          },
+        },
+      },
+      '/dataset_description.json': {},
+    }
+
+    return validateHed(events, jsonDictionary, jsonFiles, '').then((issues) => {
+      assert.strictEqual(issues.length, 1)
+      assert.strictEqual(issues[0].code, 109)
+    })
+  })
+
+  it('should properly issue errors if HED data is used in a TSV file without using HEDVersion', () => {
+    const events = [
+      {
+        file: {
+          path: '/sub01/sub01_task-test_events.tsv',
+          relativePath: '/sub01/sub01_task-test_events.tsv',
+        },
+        path: '/sub01/sub01_task-test_events.tsv',
+        contents: 'onset\tduration\tHED\n' + '7\tsomething\tHuman\n',
+      },
+    ]
+    const jsonDictionary = {
+      '/sub01/sub01_task-test_events.json': {},
+      '/dataset_description.json': {},
+    }
+
+    return validateHed(events, jsonDictionary, jsonFiles, '').then((issues) => {
+      assert.strictEqual(issues.length, 1)
+      assert.strictEqual(issues[0].code, 109)
+    })
+  })
 })
