@@ -446,7 +446,7 @@ function evalJsonCheck(
     }
     let originFileKey = ''
     if (keyName in context.sidecarKeyOrigin) {
-      originFileKey = `${context.sidecarKeyOrigin[keyName]}.${keyName}`
+      originFileKey = `${context.sidecarKeyOrigin[keyName]}:${keyName}`
     }
     if (context.dataset.sidecarKeyValidated.has(originFileKey)) {
       return
