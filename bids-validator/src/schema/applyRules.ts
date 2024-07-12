@@ -426,7 +426,7 @@ function evalJsonCheck(
   for (const [key, requirement] of Object.entries(rule.fields)) {
     const severity = getFieldSeverity(requirement, context);
     // @ts-expect-error
-    const keyName = schema.objects.metadata[key].name;
+    const keyName: string = schema.objects.metadata[key].name;
     if (severity && severity !== "ignore" && !(keyName in context.sidecar)) {
       if (requirement.issue?.code && requirement.issue?.message) {
         context.issues.add({
@@ -451,18 +451,30 @@ function evalJsonCheck(
     if (context.dataset.sidecarKeyValidated.has(originFileKey)) {
       return
     }
-    if (keyName in context.sidecar) {
-      const validate = context.dataset.ajv.compile(schema.objects.metadata[key])
+
+    if (keyName in context.sidecar && schema.objects.metadata && keyName in schema.objects.metadata) {
+      // @ts-expect-error
+      const validate = context.dataset.ajv.compile(schema.objects.metadata[keyName])
       const result = validate(context.sidecar[keyName])
       if (result === false) {
-        for (let error of validate.errors) {
-          const message = 'message' in error ? `message: ${error['message']}` : ''
-          context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
-            {
-              ...context.file,
-              evidence: `Failed for this file.key: ${originFileKey} ${message}`
-            }
+        let messages = []
+        if (!validate.errors) {
+            context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
+              {
+                ...context.file,
+                evidence: `Failed for this file.key: ${originFileKey}`
+              }
           ])
+        } else {
+          for (let error of validate.errors) {
+            const message = 'message' in error ? `message: ${error['message']}` : ''
+            context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
+              {
+                ...context.file,
+                evidence: `Failed for this file.key: ${originFileKey} ${message}`
+              }
+            ])
+          }
         }
       }
       if (originFileKey) {

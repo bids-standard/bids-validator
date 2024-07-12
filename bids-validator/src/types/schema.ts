@@ -71,6 +71,7 @@ export interface GenericRule {
   format?: string
   required?: string
   index_columns?: string[]
+  metadata?: Record<string, string>
 }
 
 export interface SchemaFields {

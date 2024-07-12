@@ -19,7 +19,7 @@ import { logger } from '../utils/logger.ts'
 import {Ajv, ValidateFunction, JSONSchemaType} from "../deps/ajv.ts";
 import { memoize } from "../utils/memoize.ts";
 import {
-  GenericSchema,
+  Schema
 } from "../types/schema.ts";
 
 export class BIDSContextDataset implements ContextDataset {
@@ -33,13 +33,14 @@ export class BIDSContextDataset implements ContextDataset {
   ajv: Ajv
   sidecarKeyValidated: Set<string>
 
-  constructor(options?: ValidatorOptions, schema?: GenericSchema, description = {}) {
+  constructor(options?: ValidatorOptions, schema?: Schema, description = {}) {
     this.dataset_description = description
     this.files = []
     this.tree = {}
     this.ignored = []
     this.modalities = []
     this.ajv = new Ajv({strictSchema: false})
+    // @ts-expect-error
     this.ajv.compile = memoize(this.ajv.compile)
     this.sidecarKeyValidated = new Set<string>()
     if (schema) {
@@ -58,15 +59,15 @@ export class BIDSContextDataset implements ContextDataset {
     }
   }
 
-  setCustomAjvFormats(schema: GenericSchema): void {
-    if (typeof schema['objects.formats'] !== "object") {
+  setCustomAjvFormats(schema: Schema): void {
+    if (typeof schema.objects.formats !== "object") {
         // logger.warning(
         console.log(
           `schema.objects.formats missing from schema, format validation disabled.`,
         )
         return
     }
-    const schemaFormats = schema['objects.formats']
+    const schemaFormats = schema.objects.formats
     for (let key of Object.keys(schemaFormats)) {
       if (typeof schemaFormats[key]['pattern'] !== 'string') {
         // logger.warning(
