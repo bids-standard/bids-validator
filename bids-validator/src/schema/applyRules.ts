@@ -171,6 +171,7 @@ function schemaObjectTypeCheck(
   if (value === "n/a") {
     return true;
   }
+
   if ("anyOf" in schemaObject) {
     return schemaObject.anyOf.some((x) =>
       schemaObjectTypeCheck(x, value, schema)
@@ -179,6 +180,7 @@ function schemaObjectTypeCheck(
   if ("enum" in schemaObject && schemaObject.enum) {
     return schemaObject.enum.some((x) => x === value);
   }
+
   // @ts-expect-error
   const format = schema.objects.formats[schemaObject.type];
   const re = new RegExp(`^${format.pattern}$`);
@@ -440,6 +442,31 @@ function evalJsonCheck(
             evidence: `missing ${keyName} as per ${schemaPath}`,
           },
         ]);
+      }
+    }
+    let originFileKey = ''
+    if (keyName in context.sidecarKeyOrigin) {
+      originFileKey = `${context.sidecarKeyOrigin[keyName]}.${keyName}`
+    }
+    if (context.dataset.sidecarKeyValidated.has(originFileKey)) {
+      return
+    }
+    if (keyName in context.sidecar) {
+      const validate = context.dataset.ajv.compile(schema.objects.metadata[key])
+      const result = validate(context.sidecar[keyName])
+      if (result === false) {
+        for (let error of validate.errors) {
+          const message = 'message' in error ? `message: ${error['message']}` : ''
+          context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
+            {
+              ...context.file,
+              evidence: `Failed for this file.key: ${originFileKey} ${message}`
+            }
+          ])
+        }
+      }
+      if (originFileKey) {
+        context.dataset.sidecarKeyValidated.add(originFileKey)
       }
     }
   }

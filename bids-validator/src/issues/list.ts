@@ -47,6 +47,10 @@ export const filenameIssues: IssueDefinitionRecord = {
     severity: "warning",
     reason: "A data files JSON sidecar is missing a key listed as recommended.",
   },
+  JSON_SCHEMA_VALIDATION_ERROR: {
+    severity: "error",
+    reason: "Invalid JSON sidecar file. The sidecar is not formatted according the schema.",
+  },
   TSV_ERROR: {
     severity: "error",
     reason: "generic place holder for errors from tsv files",

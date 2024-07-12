@@ -9,6 +9,9 @@ export const hasProp = <K extends PropertyKey, T>(
 export const objectPathHandler = {
   get(target: unknown, property: string) {
     let res = target
+    if (typeof property === "symbol") {
+      return res
+    }
     for (const prop of property.split('.')) {
       if (hasProp(res, prop)) {
         res = res[prop]

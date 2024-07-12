@@ -49,9 +49,9 @@ export async function validate(
   if (ddFile) {
     const description = await ddFile.text().then((text) => JSON.parse(text));
     summary.dataProcessed = description.DatasetType === "derivative";
-    dsContext = new BIDSContextDataset(options, description);
+    dsContext = new BIDSContextDataset(options, schema, description);
   } else {
-    dsContext = new BIDSContextDataset(options);
+    dsContext = new BIDSContextDataset(options, schema);
     issues.addNonSchemaIssue('MISSING_DATASET_DESCRIPTION', [] as IssueFile[]);
   }
 
