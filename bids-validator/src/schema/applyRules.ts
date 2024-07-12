@@ -457,12 +457,13 @@ function evalJsonCheck(
       const validate = context.dataset.ajv.compile(schema.objects.metadata[keyName])
       const result = validate(context.sidecar[keyName])
       if (result === false) {
+        const evidenceBase = `Failed for this file.key: ${originFileKey} Schema path: ${schemaPath}`
         let messages = []
         if (!validate.errors) {
             context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
               {
                 ...context.file,
-                evidence: `Failed for this file.key: ${originFileKey}`
+                evidence: evidenceBase
               }
           ])
         } else {
@@ -471,7 +472,7 @@ function evalJsonCheck(
             context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
               {
                 ...context.file,
-                evidence: `Failed for this file.key: ${originFileKey} ${message}`
+                evidence: `${evidenceBase} ${message}`
               }
             ])
           }
