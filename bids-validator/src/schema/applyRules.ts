@@ -458,7 +458,6 @@ function evalJsonCheck(
       const result = validate(context.sidecar[keyName])
       if (result === false) {
         const evidenceBase = `Failed for this file.key: ${originFileKey} Schema path: ${schemaPath}`
-        let messages = []
         if (!validate.errors) {
             context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
               {
