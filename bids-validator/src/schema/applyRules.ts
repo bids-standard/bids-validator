@@ -444,43 +444,51 @@ function evalJsonCheck(
         ]);
       }
     }
+
+    /* Regardless of if key is required/recommended/optional, we do no
+     * further valdiation if it is not present in sidecar.
+     */
+    if (!(keyName in context.sidecar)) {
+      return
+    }
+
     let originFileKey = ''
     if (keyName in context.sidecarKeyOrigin) {
       originFileKey = `${context.sidecarKeyOrigin[keyName]}:${keyName}`
+    } else {
+      logger.warning(`sidecarKeyOrigin map failed to initialize for ${context.file.path} on key ${keyName}. Validation caching not active for this key.`)
     }
+
     if (context.dataset.sidecarKeyValidated.has(originFileKey)) {
       return
     }
 
-    if (keyName in context.sidecar && schema.objects.metadata && keyName in schema.objects.metadata) {
-      // @ts-expect-error
-      const validate = context.dataset.ajv.compile(schema.objects.metadata[keyName])
-      const result = validate(context.sidecar[keyName])
-      if (result === false) {
-        const evidenceBase = `Failed for this file.key: ${originFileKey} Schema path: ${schemaPath}`
-        let messages = []
-        if (!validate.errors) {
-            context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
-              {
-                ...context.file,
-                evidence: evidenceBase
-              }
+    // @ts-expect-error
+    const validate = context.dataset.ajv.compile(schema.objects.metadata[keyName])
+    const result = validate(context.sidecar[keyName])
+    if (result === false) {
+      const evidenceBase = `Failed for this file.key: ${originFileKey} Schema path: ${schemaPath}`
+      if (!validate.errors) {
+          context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
+            {
+              ...context.file,
+              evidence: evidenceBase
+            }
+        ])
+      } else {
+        for (let error of validate.errors) {
+          const message = 'message' in error ? `message: ${error['message']}` : ''
+          context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
+            {
+              ...context.file,
+              evidence: `${evidenceBase} ${message}`
+            }
           ])
-        } else {
-          for (let error of validate.errors) {
-            const message = 'message' in error ? `message: ${error['message']}` : ''
-            context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
-              {
-                ...context.file,
-                evidence: `${evidenceBase} ${message}`
-              }
-            ])
-          }
         }
       }
-      if (originFileKey) {
-        context.dataset.sidecarKeyValidated.add(originFileKey)
-      }
+    }
+    if (originFileKey) {
+      context.dataset.sidecarKeyValidated.add(originFileKey)
     }
   }
 }
