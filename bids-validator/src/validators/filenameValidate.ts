@@ -88,7 +88,6 @@ function getEntityByLiteral(
       return (
         hasProp(entities, key) &&
         hasProp(entities[key], 'name') &&
-        // @ts-expect-error
         entities[key].name === fileEntity
       )
     })
