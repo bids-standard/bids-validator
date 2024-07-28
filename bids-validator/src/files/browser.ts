@@ -16,7 +16,6 @@ export class BIDSFileBrowser implements BIDSFile {
     this.#file = file
     this.#ignore = ignore
     this.name = file.name
-    // @ts-expect-error webkitRelativePath does exist in the browser
     const relativePath = this.#file.webkitRelativePath
     const prefixLength = relativePath.indexOf('/')
     this.path = relativePath.substring(prefixLength)
