@@ -16,20 +16,19 @@ import { dirname } from './deps/path.ts'
  * If no version can be determined, the URL of the script is returned.
  *
  * @returns The version of the script.
- *
  */
 export async function getVersion(): Promise<string> {
   // Hard-coded JSON wins
   let version = getArchiveVersion()
-  if (version) { return version }
+  if (version) return version
 
   const url = new URL(Deno.mainModule)
   if (url.protocol === 'file:') {
     version = await getLocalVersion(dirname(url.pathname))
-    if (version) { return version }
+    if (version) return version
   } else if (url.protocol === 'https:' || url.protocol === 'http:') {
     version = getRemoteVersion(url)
-    if (version) { return version }
+    if (version) return version
   }
   return url.href
 }

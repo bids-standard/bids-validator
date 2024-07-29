@@ -1,6 +1,6 @@
 import { assert, assertEquals, assertRejects } from '../deps/asserts.ts'
 import { readAll, readerFromStreamReader } from '../deps/stream.ts'
-import { dirname, basename, join, fromFileUrl } from '../deps/path.ts'
+import { basename, dirname, fromFileUrl, join } from '../deps/path.ts'
 import { EOL } from '../deps/fs.ts'
 import { BIDSFileDeno, readFileTree, UnicodeDecodeError } from './deno.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'

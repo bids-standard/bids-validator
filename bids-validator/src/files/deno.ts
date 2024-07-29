@@ -1,11 +1,11 @@
 /**
  * Deno specific implementation for reading files
  */
-import { posix, join, basename } from '../deps/path.ts'
+import { basename, join, posix } from '../deps/path.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
-import { readBidsIgnore, FileIgnoreRules } from './ignore.ts'
+import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 
 /**
  * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters

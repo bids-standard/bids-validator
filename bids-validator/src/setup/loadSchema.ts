@@ -1,6 +1,8 @@
 import { Schema } from '../types/schema.ts'
 import { objectPathHandler } from '../utils/objectPathHandler.ts'
-import * as schemaDefault from 'https://bids-specification.readthedocs.io/en/latest/schema.json' assert { type: 'json' }
+import * as schemaDefault from 'https://bids-specification.readthedocs.io/en/latest/schema.json' assert {
+  type: 'json',
+}
 
 /**
  * Load the schema from the specification
@@ -10,8 +12,7 @@ import * as schemaDefault from 'https://bids-specification.readthedocs.io/en/lat
 export async function loadSchema(version = 'latest'): Promise<Schema> {
   const versionRegex = /^v\d/
   let schemaUrl = version
-  const bidsSchema =
-    typeof Deno !== 'undefined' ? Deno.env.get('BIDS_SCHEMA') : undefined
+  const bidsSchema = typeof Deno !== 'undefined' ? Deno.env.get('BIDS_SCHEMA') : undefined
   if (bidsSchema !== undefined) {
     schemaUrl = bidsSchema
   } else if (version === 'latest' || versionRegex.test(version)) {
