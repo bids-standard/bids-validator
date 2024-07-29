@@ -12,7 +12,7 @@
  * object in the schema for reference.
  */
 // @ts-nocheck
-import { SEPARATOR_PATTERN, globToRegExp } from '../deps/path.ts'
+import { globToRegExp, SEPARATOR_PATTERN } from '../deps/path.ts'
 import { GenericSchema, Schema } from '../types/schema.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { lookupModality } from '../schema/modalities.ts'
@@ -36,7 +36,7 @@ function findRuleMatches(schema, context) {
   const schemaPath = 'rules.files'
   Object.keys(schema[schemaPath]).map((key) => {
     if (
-      key == 'deriv' && 
+      key == 'deriv' &&
       context.dataset.dataset_description.DatasetType != 'derivative'
     ) {
       return
@@ -145,14 +145,12 @@ function entitiesExtensionsInRule(
 ): boolean {
   const rule = schema[path]
   const fileEntities = Object.keys(context.entities)
-  const ruleEntities = rule.entities ? Object.keys(rule.entities).map((key) =>
-    lookupEntityLiteral(key, schema),
-  ) : []
-  const extInRule =
-    !rule.extensions ||
+  const ruleEntities = rule.entities
+    ? Object.keys(rule.entities).map((key) => lookupEntityLiteral(key, schema))
+    : []
+  const extInRule = !rule.extensions ||
     (rule.extensions && rule.extensions.includes(context.extension))
-  const entInRule =
-    !rule.entities ||
+  const entInRule = !rule.entities ||
     (rule.entities &&
       fileEntities.every((ent) => {
         return ruleEntities.includes(ent)

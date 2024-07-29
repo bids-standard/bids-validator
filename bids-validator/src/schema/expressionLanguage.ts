@@ -62,14 +62,10 @@ export const expressionFunctions = {
     return typeof operand
   },
   min: (list: number[]): number | null => {
-    return list != null
-      ? Math.min(...list.filter((x) => typeof x === 'number'))
-      : null
+    return list != null ? Math.min(...list.filter((x) => typeof x === 'number')) : null
   },
   max: (list: number[]): number | null => {
-    return list != null
-      ? Math.max(...list.filter((x) => typeof x === 'number'))
-      : null
+    return list != null ? Math.max(...list.filter((x) => typeof x === 'number')) : null
   },
   length: <T>(list: T[]): number | null => {
     if (Array.isArray(list) || typeof list == 'string') {

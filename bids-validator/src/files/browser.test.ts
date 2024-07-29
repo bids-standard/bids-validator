@@ -70,7 +70,7 @@ Deno.test('Browser implementation of FileTree', async (t) => {
   })
 })
 
-Deno.test("Spread copies of BIDSFileBrowser contain name and path properties", async () => {
+Deno.test('Spread copies of BIDSFileBrowser contain name and path properties', async () => {
   const ignore = new FileIgnoreRules([])
   const files = [
     new TestFile(
@@ -84,6 +84,10 @@ Deno.test("Spread copies of BIDSFileBrowser contain name and path properties", a
   const expectedTree = new FileTree('', '/', undefined)
   expectedTree.files = files.map((f) => new BIDSFileBrowser(f, ignore))
   assertEquals(tree, expectedTree)
-  const spreadFile = {...expectedTree.files[0], evidence: "test evidence"}
-  assertObjectMatch(spreadFile, {name: "dataset_description.json", path: "/dataset_description.json", evidence: "test evidence"})
+  const spreadFile = { ...expectedTree.files[0], evidence: 'test evidence' }
+  assertObjectMatch(spreadFile, {
+    name: 'dataset_description.json',
+    path: '/dataset_description.json',
+    evidence: 'test evidence',
+  })
 })

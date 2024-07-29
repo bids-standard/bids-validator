@@ -3,7 +3,7 @@ import { assert, assertEquals } from '../../deps/asserts.ts'
 import { Cell, Row, Table } from '../../deps/cliffy.ts'
 import { colors } from '../../deps/fmt.ts'
 import { IssueOutput } from '../../types/issues.ts'
-import { validatePath, formatAssertIssue } from './common.ts'
+import { formatAssertIssue, validatePath } from './common.ts'
 import { parseOptions } from '../../setup/options.ts'
 
 const options = await parseOptions(['fake_dataset_arg', ...Deno.args])
@@ -35,9 +35,7 @@ Deno.test('validate bids-examples', async (t) => {
   const prefix = 'tests/data/bids-examples'
   const dirEntries = Array.from(Deno.readDirSync(prefix))
 
-  for (const dirEntry of dirEntries.sort((a, b) =>
-    a.name.localeCompare(b.name),
-  )) {
+  for (const dirEntry of dirEntries.sort((a, b) => a.name.localeCompare(b.name))) {
     if (!dirEntry.isDirectory || dirEntry.name.startsWith('.')) {
       continue
     }

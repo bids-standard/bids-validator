@@ -1,7 +1,7 @@
 import { CheckFunction, RuleCheckFunction } from '../types/check.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { BIDSContext } from '../schema/context.ts'
-import { GenericSchema, Schema, Entity, Format } from '../types/schema.ts'
+import { Entity, Format, GenericSchema, Schema } from '../types/schema.ts'
 import { SEPARATOR_PATTERN } from '../deps/path.ts'
 import { hasProp } from '../utils/objectPathHandler.ts'
 
@@ -159,9 +159,7 @@ async function checkRules(schema: GenericSchema, context: BIDSContext) {
       for (const check of ruleChecks) {
         check(path, schema as unknown as GenericSchema, context)
       }
-      tempIssues.size
-        ? someIssues.push([path, tempIssues])
-        : noIssues.push([path, tempIssues])
+      tempIssues.size ? someIssues.push([path, tempIssues]) : noIssues.push([path, tempIssues])
     }
     if (noIssues.length) {
       context.issues = ogIssues
@@ -172,9 +170,11 @@ async function checkRules(schema: GenericSchema, context: BIDSContext) {
       context.issues.addNonSchemaIssue('ALL_FILENAME_RULES_HAVE_ISSUES', [
         {
           ...context.file,
-          evidence: `Rules that matched with issues: ${someIssues
-            .map((x) => x[0])
-            .join(', ')}`,
+          evidence: `Rules that matched with issues: ${
+            someIssues
+              .map((x) => x[0])
+              .join(', ')
+          }`,
         },
       ])
     }
@@ -196,9 +196,7 @@ function entityRuleIssue(
   }
 
   const fileEntities = Object.keys(context.entities)
-  const ruleEntities = Object.keys(rule.entities).map((key) =>
-    lookupEntityLiteral(key, schema),
-  )
+  const ruleEntities = Object.keys(rule.entities).map((key) => lookupEntityLiteral(key, schema))
 
   // skip required entity checks if file is at root.
   // No requirements for inherited sidecars at this level.

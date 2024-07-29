@@ -1,10 +1,4 @@
-import {
-  setup,
-  ConsoleHandler,
-  LevelName,
-  getLogger,
-  Logger,
-} from '../deps/logger.ts'
+import { ConsoleHandler, getLogger, LevelName, Logger, setup } from '../deps/logger.ts'
 
 /**
  * Setup a console logger used with the --debug flag

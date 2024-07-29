@@ -1,5 +1,5 @@
 import { collectSubjectMetadata } from './collectSubjectMetadata.ts'
-import { SummaryOutput, SubjectMetadata } from '../types/validation-result.ts'
+import { SubjectMetadata, SummaryOutput } from '../types/validation-result.ts'
 import { BIDSContext } from '../schema/context.ts'
 
 export const modalityPrettyLookup: Record<string, string> = {
@@ -38,7 +38,7 @@ export function computeModalities(
     return modalities[b] - modalities[a]
   })
   return sortedModalities.map((mod) =>
-    mod in modalityPrettyLookup ? modalityPrettyLookup[mod] : mod,
+    mod in modalityPrettyLookup ? modalityPrettyLookup[mod] : mod
   )
 }
 

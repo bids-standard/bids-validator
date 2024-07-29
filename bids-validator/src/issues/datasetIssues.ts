@@ -1,11 +1,11 @@
 import { nonSchemaIssues } from './list.ts'
 import {
+  FullTestIssuesReturn,
   Issue,
   IssueFile,
-  IssueOutput,
   IssueFileOutput,
+  IssueOutput,
   Severity,
-  FullTestIssuesReturn,
 } from '../types/issues.ts'
 
 // Code is deprecated, return something unusual but JSON serializable

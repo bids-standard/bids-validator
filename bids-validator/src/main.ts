@@ -37,4 +37,4 @@ export async function main(): Promise<ValidationResult> {
   return schemaResult
 }
 
-export { validate, fileListToTree }
+export { fileListToTree, validate }
