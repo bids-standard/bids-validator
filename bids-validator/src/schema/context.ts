@@ -16,11 +16,9 @@ import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
-import {Ajv, ValidateFunction, JSONSchemaType} from "../deps/ajv.ts";
-import { memoize } from "../utils/memoize.ts";
-import {
-  Schema
-} from "../types/schema.ts";
+import { Ajv, JSONSchemaType, ValidateFunction } from '../deps/ajv.ts'
+import { memoize } from '../utils/memoize.ts'
+import { Schema } from '../types/schema.ts'
 
 export class BIDSContextDataset implements ContextDataset {
   dataset_description: Record<string, unknown>
@@ -39,7 +37,7 @@ export class BIDSContextDataset implements ContextDataset {
     this.tree = {}
     this.ignored = []
     this.modalities = []
-    this.ajv = new Ajv({strictSchema: false})
+    this.ajv = new Ajv({ strictSchema: false })
     // @ts-expect-error
     this.ajv.compile = memoize(this.ajv.compile)
     this.sidecarKeyValidated = new Set<string>()
@@ -60,12 +58,12 @@ export class BIDSContextDataset implements ContextDataset {
   }
 
   setCustomAjvFormats(schema: Schema): void {
-    if (typeof schema.objects.formats !== "object") {
-        // logger.warning(
-        console.log(
-          `schema.objects.formats missing from schema, format validation disabled.`,
-        )
-        return
+    if (typeof schema.objects.formats !== 'object') {
+      // logger.warning(
+      console.log(
+        `schema.objects.formats missing from schema, format validation disabled.`,
+      )
+      return
     }
     const schemaFormats = schema.objects.formats
     for (let key of Object.keys(schemaFormats)) {
@@ -199,7 +197,7 @@ export class BIDSContext implements Context {
         .then((text) => JSON.parse(text))
         .catch((error) => {})
       this.sidecar = { ...this.sidecar, ...json }
-      Object.keys(json).map(x => this.sidecarKeyOrigin[x] = validSidecars[0].path)
+      Object.keys(json).map((x) => this.sidecarKeyOrigin[x] = validSidecars[0].path)
     }
     const nextDir = fileTree.directories.find((directory) => {
       return this.file.path.startsWith(directory.path)

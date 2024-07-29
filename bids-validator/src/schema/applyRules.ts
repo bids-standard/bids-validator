@@ -166,10 +166,8 @@ function schemaObjectTypeCheck(
     return true
   }
 
-  if ("anyOf" in schemaObject) {
-    return schemaObject.anyOf.some((x) =>
-      schemaObjectTypeCheck(x, value, schema)
-    );
+  if ('anyOf' in schemaObject) {
+    return schemaObject.anyOf.some((x) => schemaObjectTypeCheck(x, value, schema))
   }
   if ('enum' in schemaObject && schemaObject.enum) {
     return schemaObject.enum.some((x) => x === value)
@@ -418,9 +416,9 @@ function evalJsonCheck(
   for (const [key, requirement] of Object.entries(rule.fields)) {
     const severity = getFieldSeverity(requirement, context)
     // @ts-expect-error
-    const metadataDef = schema.objects.metadata[key];
-    const keyName: string = metadataDef.name;
-    if (severity && severity !== "ignore" && !(keyName in context.sidecar)) {
+    const metadataDef = schema.objects.metadata[key]
+    const keyName: string = metadataDef.name
+    if (severity && severity !== 'ignore' && !(keyName in context.sidecar)) {
       if (requirement.issue?.code && requirement.issue?.message) {
         context.issues.add({
           key: requirement.issue.code,
@@ -456,7 +454,9 @@ function evalJsonCheck(
     if (keyName in context.sidecarKeyOrigin) {
       originFileKey = `${context.sidecarKeyOrigin[keyName]}:${keyName}`
     } else {
-      logger.warning(`sidecarKeyOrigin map failed to initialize for ${context.file.path} on key ${keyName}. Validation caching not active for this key.`)
+      logger.warning(
+        `sidecarKeyOrigin map failed to initialize for ${context.file.path} on key ${keyName}. Validation caching not active for this key.`,
+      )
     }
 
     if (context.dataset.sidecarKeyValidated.has(originFileKey)) {
@@ -468,20 +468,20 @@ function evalJsonCheck(
     if (result === false) {
       const evidenceBase = `Failed for this file.key: ${originFileKey} Schema path: ${schemaPath}`
       if (!validate.errors) {
-          context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
-            {
-              ...context.file,
-              evidence: evidenceBase
-            }
+        context.issues.addNonSchemaIssue('JSON_SCHEMA_VALIDATION_ERROR', [
+          {
+            ...context.file,
+            evidence: evidenceBase,
+          },
         ])
       } else {
         for (let error of validate.errors) {
           const message = 'message' in error ? `message: ${error['message']}` : ''
-          context.issues.addNonSchemaIssue("JSON_SCHEMA_VALIDATION_ERROR", [
+          context.issues.addNonSchemaIssue('JSON_SCHEMA_VALIDATION_ERROR', [
             {
               ...context.file,
-              evidence: `${evidenceBase} ${message}`
-            }
+              evidence: `${evidenceBase} ${message}`,
+            },
           ])
         }
       }

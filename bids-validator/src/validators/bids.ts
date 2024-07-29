@@ -47,12 +47,12 @@ export async function validate(
 
   let dsContext
   if (ddFile) {
-    const description = await ddFile.text().then((text) => JSON.parse(text));
-    summary.dataProcessed = description.DatasetType === "derivative";
-    dsContext = new BIDSContextDataset(options, schema, description);
+    const description = await ddFile.text().then((text) => JSON.parse(text))
+    summary.dataProcessed = description.DatasetType === 'derivative'
+    dsContext = new BIDSContextDataset(options, schema, description)
   } else {
-    dsContext = new BIDSContextDataset(options, schema);
-    issues.addNonSchemaIssue('MISSING_DATASET_DESCRIPTION', [] as IssueFile[]);
+    dsContext = new BIDSContextDataset(options, schema)
+    issues.addNonSchemaIssue('MISSING_DATASET_DESCRIPTION', [] as IssueFile[])
   }
 
   let derivatives: FileTree[] = []
