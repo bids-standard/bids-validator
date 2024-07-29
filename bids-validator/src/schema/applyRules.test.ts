@@ -65,6 +65,7 @@ const schemaDefs = {
         MadeUp: {
           columns: {
             onset: 'required',
+            strain_rrid: 'optional',
           },
         },
       },
@@ -164,5 +165,21 @@ Deno.test('evalColumns tests', async (t) => {
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assert(context.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE' }))
+  })
+
+  await t.step('verify n/a is allowed', () => {
+    const context = {
+      path: '/sub-01/sub-01_something.tsv',
+      extension: '.tsv',
+      sidecar: {},
+      columns: {
+        onset: ['1', '2', 'n/a'],
+        strain_rrid: ['RRID:SCR_012345', 'RRID:SCR_012345', 'n/a'],
+      },
+      issues: new DatasetIssues(),
+    }
+    const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
+    evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    assert(context.issues.size === 0)
   })
 })
