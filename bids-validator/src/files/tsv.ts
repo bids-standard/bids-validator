@@ -4,8 +4,7 @@
  */
 import { ColumnsMap } from '../types/columns.ts'
 
-const normalizeEOL = (str: string): string =>
-  str.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+const normalizeEOL = (str: string): string => str.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 // Typescript resolved `row && !/^\s*$/.test(row)` as `string | boolean`
 const isContentfulRow = (row: string): boolean => !!(row && !/^\s*$/.test(row))
 

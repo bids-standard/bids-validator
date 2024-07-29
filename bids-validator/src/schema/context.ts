@@ -1,10 +1,10 @@
 import {
   Context,
+  ContextAssociations,
   ContextDataset,
   ContextDatasetSubjects,
-  ContextSubject,
-  ContextAssociations,
   ContextNiftiHeader,
+  ContextSubject,
 } from '../types/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
@@ -181,8 +181,7 @@ export class BIDSContext implements Context {
 
     if (validSidecars.length > 1) {
       const exactMatch = validSidecars.find(
-        (sidecar) =>
-          sidecar.path == this.file.path.replace(this.extension, '.json'),
+        (sidecar) => sidecar.path == this.file.path.replace(this.extension, '.json'),
       )
       if (exactMatch) {
         validSidecars.splice(1)
@@ -281,9 +280,7 @@ export class BIDSContext implements Context {
       (dir) => dir.name === 'phenotype',
     )
     if (phenotype_dir) {
-      const phenotypeFiles = phenotype_dir.files.filter((file) =>
-        file.name.endsWith('.tsv'),
-      )
+      const phenotypeFiles = phenotype_dir.files.filter((file) => file.name.endsWith('.tsv'))
       // Collect observed participant_ids
       const seen = new Set() as Set<string>
       for (const file of phenotypeFiles) {

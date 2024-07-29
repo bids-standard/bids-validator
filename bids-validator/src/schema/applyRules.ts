@@ -1,14 +1,9 @@
-import {
-  GenericRule,
-  GenericSchema,
-  SchemaFields,
-  SchemaTypeLike,
-} from "../types/schema.ts";
-import { Severity } from "../types/issues.ts";
-import { BIDSContext } from "./context.ts";
-import { expressionFunctions } from "./expressionLanguage.ts";
-import { logger } from "../utils/logger.ts";
-import { memoize } from "../utils/memoize.ts";
+import { GenericRule, GenericSchema, SchemaFields, SchemaTypeLike } from '../types/schema.ts'
+import { Severity } from '../types/issues.ts'
+import { BIDSContext } from './context.ts'
+import { expressionFunctions } from './expressionLanguage.ts'
+import { logger } from '../utils/logger.ts'
+import { memoize } from '../utils/memoize.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
@@ -28,53 +23,52 @@ export function applyRules(
   schemaPath?: string,
 ) {
   if (!rootSchema) {
-    rootSchema = schema;
+    rootSchema = schema
   }
   if (!schemaPath) {
-    schemaPath = "schema.rules";
+    schemaPath = 'schema.rules'
   }
-  Object.assign(context, expressionFunctions);
+  Object.assign(context, expressionFunctions)
   // @ts-expect-error
-  context.exists.bind(context);
+  context.exists.bind(context)
   for (const key in schema) {
     if (!(schema[key].constructor === Object)) {
-      continue;
+      continue
     }
-    if ("selectors" in schema[key]) {
+    if ('selectors' in schema[key]) {
       evalRule(
         schema[key] as GenericRule,
         context,
         rootSchema,
         `${schemaPath}.${key}`,
-      );
+      )
     } else if (schema[key].constructor === Object) {
       applyRules(
         schema[key] as GenericSchema,
         context,
         rootSchema,
         `${schemaPath}.${key}`,
-      );
+      )
     }
   }
-  return Promise.resolve();
+  return Promise.resolve()
 }
 
 const evalConstructor = (src: string): Function =>
-  new Function("context", `with (context) { return ${src} }`);
-const safeHas = () => true;
-const safeGet = (target: any, prop: any) =>
-  prop === Symbol.unscopables ? undefined : target[prop];
+  new Function('context', `with (context) { return ${src} }`)
+const safeHas = () => true
+const safeGet = (target: any, prop: any) => prop === Symbol.unscopables ? undefined : target[prop]
 
-const memoizedEvalConstructor = memoize(evalConstructor);
+const memoizedEvalConstructor = memoize(evalConstructor)
 
 export function evalCheck(src: string, context: BIDSContext) {
-  const test = memoizedEvalConstructor(src);
-  const safeContext = new Proxy(context, { has: safeHas, get: safeGet });
+  const test = memoizedEvalConstructor(src)
+  const safeContext = new Proxy(context, { has: safeHas, get: safeGet })
   try {
-    return test(safeContext);
+    return test(safeContext)
   } catch (error) {
-    logger.debug(error);
-    return null;
+    logger.debug(error)
+    return null
   }
 }
 
@@ -99,7 +93,7 @@ const evalMap: Record<
   initial_columns: evalInitialColumns,
   index_columns: evalIndexColumns,
   fields: evalJsonCheck,
-};
+}
 
 /**
  * Entrypoint for evaluating a individual rule.
@@ -114,18 +108,18 @@ function evalRule(
   schemaPath: string,
 ) {
   if (rule.selectors && !mapEvalCheck(rule.selectors, context)) {
-    return;
+    return
   }
   Object.keys(rule)
     .filter((key) => key in evalMap)
     .map((key) => {
       // @ts-expect-error
-      evalMap[key](rule, context, schema, schemaPath);
-    });
+      evalMap[key](rule, context, schema, schemaPath)
+    })
 }
 
 function mapEvalCheck(statements: string[], context: BIDSContext): boolean {
-  return statements.every((x) => evalCheck(x, context));
+  return statements.every((x) => evalCheck(x, context))
 }
 
 /**
@@ -145,14 +139,14 @@ function evalRuleChecks(
         reason: rule.issue.message,
         files: [{ ...context.file, evidence: schemaPath }],
         severity: rule.issue.level as Severity,
-      });
+      })
     } else {
-      context.issues.addNonSchemaIssue("CHECK_ERROR", [
+      context.issues.addNonSchemaIssue('CHECK_ERROR', [
         { ...context.file, evidence: schemaPath },
-      ]);
+      ])
     }
   }
-  return true;
+  return true
 }
 
 /**
@@ -168,8 +162,8 @@ function schemaObjectTypeCheck(
   schema: GenericSchema,
 ): boolean {
   // always allow n/a?
-  if (value === "n/a") {
-    return true;
+  if (value === 'n/a') {
+    return true
   }
 
   if ("anyOf" in schemaObject) {
@@ -177,14 +171,14 @@ function schemaObjectTypeCheck(
       schemaObjectTypeCheck(x, value, schema)
     );
   }
-  if ("enum" in schemaObject && schemaObject.enum) {
-    return schemaObject.enum.some((x) => x === value);
+  if ('enum' in schemaObject && schemaObject.enum) {
+    return schemaObject.enum.some((x) => x === value)
   }
 
   // @ts-expect-error
-  const format = schema.objects.formats[schemaObject.type];
-  const re = new RegExp(`^${format.pattern}$`);
-  return re.test(value);
+  const format = schema.objects.formats[schemaObject.type]
+  const re = new RegExp(`^${format.pattern}$`)
+  return re.test(value)
 }
 
 /**
@@ -196,13 +190,13 @@ function sidecarDefinedTypeCheck(
   schema: GenericSchema,
 ): boolean {
   if (
-    "Levels" in rule && rule["Levels"] && typeof (rule["Levels"]) == "object"
+    'Levels' in rule && rule['Levels'] && typeof (rule['Levels']) == 'object'
   ) {
-    return value == 'n/a' || value in rule["Levels"];
-  } else if ("Units" in rule) {
-    return schemaObjectTypeCheck({ "type": "number" }, value, schema);
+    return value == 'n/a' || value in rule['Levels']
+  } else if ('Units' in rule) {
+    return schemaObjectTypeCheck({ 'type': 'number' }, value, schema)
   } else {
-    return true;
+    return true
   }
 }
 
@@ -224,62 +218,58 @@ function evalColumns(
   schema: GenericSchema,
   schemaPath: string,
 ): void {
-  if (!rule.columns || context.extension !== ".tsv") return;
-  const headers = [...Object.keys(context.columns)];
+  if (!rule.columns || context.extension !== '.tsv') return
+  const headers = [...Object.keys(context.columns)]
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
     // @ts-expect-error
-    const columnObject: GenericRule = schema.objects.columns[ruleHeader];
-    if (!("name" in columnObject) || !columnObject["name"]) {
-      return;
+    const columnObject: GenericRule = schema.objects.columns[ruleHeader]
+    if (!('name' in columnObject) || !columnObject['name']) {
+      return
     }
-    const name = columnObject.name;
+    const name = columnObject.name
     let typeCheck = (value: string) =>
       schemaObjectTypeCheck(
         columnObject as unknown as SchemaTypeLike,
         value,
         schema,
-      );
-    const error_code = (requirement != "required")
-      ? "TSV_VALUE_INCORRECT_TYPE_NONREQUIRED"
-      : "TSV_VALUE_INCORRECT_TYPE";
-    let errorObject = columnObject;
+      )
+    const error_code = (requirement != 'required')
+      ? 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED'
+      : 'TSV_VALUE_INCORRECT_TYPE'
+    let errorObject = columnObject
 
-    if (!headers.includes(name) && requirement === "required") {
-      context.issues.addNonSchemaIssue("TSV_COLUMN_MISSING", [
+    if (!headers.includes(name) && requirement === 'required') {
+      context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
         {
           ...context.file,
-          evidence:
-            `Column with header ${name} listed as required. ${schemaPath}`,
+          evidence: `Column with header ${name} listed as required. ${schemaPath}`,
         },
-      ]);
+      ])
     }
 
-    if ("definition" in columnObject) {
+    if ('definition' in columnObject) {
       typeCheck = (value) =>
         // @ts-expect-error
-        sidecarDefinedTypeCheck(columnObject.definition, value, schema);
+        sidecarDefinedTypeCheck(columnObject.definition, value, schema)
     }
 
     if (
       name in context.sidecar && context.sidecar[name] &&
-      typeof (context.sidecar[name]) === "object"
+      typeof (context.sidecar[name]) === 'object'
     ) {
-      if ("definition" in columnObject) {
-        typeCheck = (value) =>
-          sidecarDefinedTypeCheck(context.sidecar[name], value, schema);
-        errorObject = context.sidecar[name];
+      if ('definition' in columnObject) {
+        typeCheck = (value) => sidecarDefinedTypeCheck(context.sidecar[name], value, schema)
+        errorObject = context.sidecar[name]
       } else {
-        context.issues.addNonSchemaIssue("TSV_COLUMN_TYPE_REDEFINED", [{
+        context.issues.addNonSchemaIssue('TSV_COLUMN_TYPE_REDEFINED', [{
           ...context.file,
-          evidence: `'${name}' redefined with sidecar ${
-            Deno.inspect(context.sidecar[name])
-          }`,
-        }]);
+          evidence: `'${name}' redefined with sidecar ${Deno.inspect(context.sidecar[name])}`,
+        }])
       }
     }
 
     if (!headers.includes(name)) {
-      continue;
+      continue
     }
 
     for (const value of context.columns[name] as string[]) {
@@ -291,8 +281,8 @@ function evalColumns(
             ...context.file,
             evidence: `'${value}' ${Deno.inspect(columnObject)}`,
           },
-        ]);
-        break;
+        ])
+        break
       }
     }
   }
@@ -309,29 +299,29 @@ function evalInitialColumns(
   schemaPath: string,
 ): void {
   if (
-    !rule?.columns || !rule?.initial_columns || context.extension !== ".tsv"
+    !rule?.columns || !rule?.initial_columns || context.extension !== '.tsv'
   ) {
-    return;
+    return
   }
-  const headers = [...Object.keys(context.columns)];
+  const headers = [...Object.keys(context.columns)]
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     // @ts-expect-error
-    const ruleHeaderName = schema.objects.columns[ruleHeader].name;
-    const contextIndex = headers.findIndex((x) => x === ruleHeaderName);
+    const ruleHeaderName = schema.objects.columns[ruleHeader].name
+    const contextIndex = headers.findIndex((x) => x === ruleHeaderName)
     if (contextIndex === -1) {
       const evidence =
-        `Column with header ${ruleHeaderName} not found, indexed from 0 it should appear in column ${ruleIndex}. ${schemaPath}`;
-      context.issues.addNonSchemaIssue("TSV_COLUMN_MISSING", [
+        `Column with header ${ruleHeaderName} not found, indexed from 0 it should appear in column ${ruleIndex}. ${schemaPath}`
+      context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
         { ...context.file, evidence: evidence },
-      ]);
+      ])
     } else if (ruleIndex !== contextIndex) {
       const evidence =
-        `Column with header ${ruleHeaderName} found at index ${contextIndex} while rule specifies, indexed from 0, it should be in column ${ruleIndex}. ${schemaPath}`;
-      context.issues.addNonSchemaIssue("TSV_COLUMN_ORDER_INCORRECT", [
+        `Column with header ${ruleHeaderName} found at index ${contextIndex} while rule specifies, indexed from 0, it should be in column ${ruleIndex}. ${schemaPath}`
+      context.issues.addNonSchemaIssue('TSV_COLUMN_ORDER_INCORRECT', [
         { ...context.file, evidence: evidence },
-      ]);
+      ])
     }
-  });
+  })
 }
 
 function evalAdditionalColumns(
@@ -340,24 +330,24 @@ function evalAdditionalColumns(
   schema: GenericSchema,
   schemaPath: string,
 ): void {
-  if (context.extension !== ".tsv") return;
-  const headers = Object.keys(context?.columns);
+  if (context.extension !== '.tsv') return
+  const headers = Object.keys(context?.columns)
   // hard coding allowed here feels bad
-  if (!(rule.additional_columns === "allowed") && rule.columns) {
+  if (!(rule.additional_columns === 'allowed') && rule.columns) {
     const ruleHeadersNames = Object.keys(rule.columns).map(
       // @ts-expect-error
       (x) => schema.objects.columns[x].name,
-    );
+    )
     let extraCols = headers.filter(
       (header) => !ruleHeadersNames.includes(header),
-    );
-    if (rule.additional_columns === "allowed_if_defined") {
-      extraCols = extraCols.filter((header) => !(header in context.sidecar));
+    )
+    if (rule.additional_columns === 'allowed_if_defined') {
+      extraCols = extraCols.filter((header) => !(header in context.sidecar))
     }
     if (extraCols.length) {
-      context.issues.addNonSchemaIssue("TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED", [
+      context.issues.addNonSchemaIssue('TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED', [
         { ...context.file, evidence: `Disallowed columns found ${extraCols}` },
-      ]);
+      ])
     }
   }
 }
@@ -372,41 +362,40 @@ function evalIndexColumns(
     !rule?.columns ||
     !rule?.index_columns ||
     !rule?.index_columns.length ||
-    context.extension !== ".tsv"
+    context.extension !== '.tsv'
   ) {
-    return;
+    return
   }
-  const headers = Object.keys(context?.columns);
-  const uniqueIndexValues = new Set();
+  const headers = Object.keys(context?.columns)
+  const uniqueIndexValues = new Set()
   const index_columns = rule.index_columns.map((col: string) => {
     // @ts-expect-error
-    return schema.objects.columns[col].name;
-  });
-  const missing = index_columns.filter((col: string) => !headers.includes(col));
+    return schema.objects.columns[col].name
+  })
+  const missing = index_columns.filter((col: string) => !headers.includes(col))
   if (missing.length) {
-    context.issues.addNonSchemaIssue("TSV_COLUMN_MISSING", [
+    context.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
       {
         ...context.file,
-        evidence:
-          `Columns cited as index columns not in file: ${missing}. ${schemaPath}`,
+        evidence: `Columns cited as index columns not in file: ${missing}. ${schemaPath}`,
       },
-    ]);
-    return;
+    ])
+    return
   }
-  const rowCount = (context.columns[index_columns[0]] as string[])?.length || 0;
+  const rowCount = (context.columns[index_columns[0]] as string[])?.length || 0
   for (let i = 0; i < rowCount; i++) {
-    let indexValue = "";
+    let indexValue = ''
     index_columns.map((col: string) => {
       indexValue = indexValue.concat(
-        (context.columns[col] as string[])?.[i] || "",
-      );
-    });
+        (context.columns[col] as string[])?.[i] || '',
+      )
+    })
     if (uniqueIndexValues.has(indexValue)) {
-      context.issues.addNonSchemaIssue("TSV_INDEX_VALUE_NOT_UNIQUE", [
+      context.issues.addNonSchemaIssue('TSV_INDEX_VALUE_NOT_UNIQUE', [
         { ...context.file, evidence: `Row: ${i + 2}, Value: ${indexValue}` },
-      ]);
+      ])
     } else {
-      uniqueIndexValues.add(indexValue);
+      uniqueIndexValues.add(indexValue)
     }
   }
 }
@@ -424,7 +413,7 @@ function evalJsonCheck(
   schemaPath: string,
 ): void {
   for (const [key, requirement] of Object.entries(rule.fields)) {
-    const severity = getFieldSeverity(requirement, context);
+    const severity = getFieldSeverity(requirement, context)
     // @ts-expect-error
     const keyName: string = schema.objects.metadata[key].name;
     if (severity && severity !== "ignore" && !(keyName in context.sidecar)) {
@@ -434,14 +423,14 @@ function evalJsonCheck(
           reason: requirement.issue.message,
           severity,
           files: [{ ...context.file }],
-        });
+        })
       } else {
-        context.issues.addNonSchemaIssue("JSON_KEY_REQUIRED", [
+        context.issues.addNonSchemaIssue('JSON_KEY_REQUIRED', [
           {
             ...context.file,
             evidence: `missing ${keyName} as per ${schemaPath}`,
           },
-        ]);
+        ])
       }
     }
 
@@ -504,27 +493,27 @@ function getFieldSeverity(
 ): Severity {
   // Does this conversion hold for other parts of the schema or just json checks?
   const levelToSeverity: Record<string, Severity> = {
-    recommended: "ignore",
-    required: "error",
-    optional: "ignore",
-    prohibited: "ignore",
-  };
-  let severity: Severity = "ignore";
+    recommended: 'ignore',
+    required: 'error',
+    optional: 'ignore',
+    prohibited: 'ignore',
+  }
+  let severity: Severity = 'ignore'
 
-  if (typeof requirement === "string" && requirement in levelToSeverity) {
-    severity = levelToSeverity[requirement];
-  } else if (typeof requirement === "object" && requirement.level) {
-    severity = levelToSeverity[requirement.level];
-    const addendumRegex = /(required|recommended) if \`(\w+)\` is \`(\w+)\`/;
+  if (typeof requirement === 'string' && requirement in levelToSeverity) {
+    severity = levelToSeverity[requirement]
+  } else if (typeof requirement === 'object' && requirement.level) {
+    severity = levelToSeverity[requirement.level]
+    const addendumRegex = /(required|recommended) if \`(\w+)\` is \`(\w+)\`/
     if (requirement.level_addendum) {
-      const match = addendumRegex.exec(requirement.level_addendum);
+      const match = addendumRegex.exec(requirement.level_addendum)
       if (match && match.length === 4) {
-        const [_, addendumLevel, key, value] = match;
+        const [_, addendumLevel, key, value] = match
         if (key in context.sidecar && context.sidecar[key] === value) {
-          severity = levelToSeverity[addendumLevel];
+          severity = levelToSeverity[addendumLevel]
         }
       }
     }
   }
-  return severity;
+  return severity
 }

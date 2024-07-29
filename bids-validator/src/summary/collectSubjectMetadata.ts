@@ -32,7 +32,7 @@ export const collectSubjectMetadata = (
     .map((row) => row.split('\t'))
   const [snakeCaseHeaders, ...subjectData] = contentTable
   const headers = snakeCaseHeaders.map((header) =>
-    header === 'participant_id' ? PARTICIPANT_ID : header,
+    header === 'participant_id' ? PARTICIPANT_ID : header
   )
   const targetKeys = [PARTICIPANT_ID, 'age', 'sex', 'group']
     .map((key) => ({
@@ -43,7 +43,7 @@ export const collectSubjectMetadata = (
   const participantIdKey = targetKeys.find(({ key }) => key === PARTICIPANT_ID)
   const ageKey = targetKeys.find(({ key }) => key === 'age')
   if (participantIdKey === undefined) return [] as SubjectMetadata[]
-  else
+  else {
     return subjectData
       .map((data) => {
         // this first map is for transforming any data coming out of participants.tsv:
@@ -65,6 +65,7 @@ export const collectSubjectMetadata = (
             [key]: data[index],
           }),
           {},
-        ),
+        )
       ) as SubjectMetadata[]
+  }
 }

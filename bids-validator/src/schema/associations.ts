@@ -1,7 +1,4 @@
-import {
-  ContextAssociations,
-  ContextAssociationsEvents,
-} from '../types/context.ts'
+import { ContextAssociations, ContextAssociationsEvents } from '../types/context.ts'
 import { BIDSFile } from '../types/file.ts'
 import { FileTree } from '../types/filetree.ts'
 import { BIDSContext } from './context.ts'
