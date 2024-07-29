@@ -8,20 +8,26 @@
  * sidecars.
  */
 function generateMergedSidecarDict(potentialSidecars, jsonContents) {
-  let mergedDictionary = {}
+  // Use a map to avoid potential conflicts with keys in Object.prototype
+  const mergedDictionary = new Map()
+  let valid = true
   potentialSidecars.map((sidecarName) => {
     const jsonObject = jsonContents[sidecarName]
     if (jsonObject) {
-      for (var key in jsonObject) {
+      for (const key of Object.keys(jsonObject)) {
         if (jsonObject.hasOwnProperty(key)) {
-          mergedDictionary[key] = jsonObject[key]
+          mergedDictionary.set(key, jsonObject[key])
         }
       }
     } else if (jsonObject === null) {
-      mergedDictionary.invalid = true
+      valid = false
     }
   })
-  return mergedDictionary
+  const mergedDictionaryObj = Object.fromEntries(mergedDictionary)
+  if (!valid) {
+    mergedDictionaryObj.invalid = true
+  }
+  return mergedDictionaryObj
 }
 
 export default generateMergedSidecarDict

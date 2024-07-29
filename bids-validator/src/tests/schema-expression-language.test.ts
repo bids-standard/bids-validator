@@ -18,9 +18,7 @@ const equal = <T>(a: T, b: T): boolean => {
 
 Deno.test('validate schema expression tests', async (t) => {
   const results: string[][] = []
-  const header = ['expression', 'desired', 'actual', 'result'].map((x) =>
-    colors.magenta(x),
-  )
+  const header = ['expression', 'desired', 'actual', 'result'].map((x) => colors.magenta(x))
   for (const test of schema.meta.expression_tests) {
     await t.step(`${test.expression} evals to ${test.result}`, () => {
       // @ts-expect-error

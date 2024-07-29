@@ -2,10 +2,7 @@ import { assert, assertEquals } from '../deps/asserts.ts'
 import { BIDSContext } from './context.ts'
 import { walkFileTree } from './walk.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
-import {
-  simpleDataset,
-  simpleDatasetFileCount,
-} from '../tests/simple-dataset.ts'
+import { simpleDataset, simpleDatasetFileCount } from '../tests/simple-dataset.ts'
 
 Deno.test('file tree walking', async (t) => {
   await t.step('visits each file and creates a BIDSContext', async () => {

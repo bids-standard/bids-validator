@@ -1,10 +1,6 @@
 import { assertEquals } from '../deps/asserts.ts'
 import { BIDSContext } from '../schema/context.ts'
-import {
-  _findRuleMatches,
-  datatypeFromDirectory,
-  hasMatch,
-} from './filenameIdentify.ts'
+import { _findRuleMatches, datatypeFromDirectory, hasMatch } from './filenameIdentify.ts'
 import { BIDSFileDeno } from '../files/deno.ts'
 import { FileTree } from '../types/filetree.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -67,8 +63,7 @@ Deno.test('test datatypeFromDirectory', (t) => {
 
 Deno.test('test hasMatch', async (t) => {
   await t.step('hasMatch', async () => {
-    const fileName =
-      '/sub-01/ses-01/func/sub-01_ses-01_task-nback_run-01_bold.nii'
+    const fileName = '/sub-01/ses-01/func/sub-01_ses-01_task-nback_run-01_bold.nii'
     const file = new BIDSFileDeno(PATH, fileName, ignore)
     const context = new BIDSContext(fileTree, file, issues)
     hasMatch(schema, context)

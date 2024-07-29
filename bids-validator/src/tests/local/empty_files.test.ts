@@ -1,6 +1,6 @@
 // Deno runtime tests for tests/data/empty_files
 import { assert, assertEquals, assertObjectMatch } from '../../deps/asserts.ts'
-import { validatePath, formatAssertIssue } from './common.ts'
+import { formatAssertIssue, validatePath } from './common.ts'
 
 const PATH = 'tests/data/empty_files'
 

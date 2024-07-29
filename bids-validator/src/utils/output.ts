@@ -4,7 +4,7 @@
 import { prettyBytes } from '../deps/prettyBytes.ts'
 import { Table } from '../deps/cliffy.ts'
 import { colors } from '../deps/fmt.ts'
-import { ValidationResult, SummaryOutput } from '../types/validation-result.ts'
+import { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
 import { Issue } from '../types/issues.ts'
 
 interface LoggingOptions {
@@ -94,11 +94,11 @@ function formatSummary(summary: SummaryOutput): string {
   const column1 = [
       summary.totalFiles + ' ' + 'Files' + ', ' + prettyBytes(summary.size),
       summary.subjects.length +
-        ' - ' +
-        'Subjects ' +
-        numSessions +
-        ' - ' +
-        'Sessions',
+      ' - ' +
+      'Subjects ' +
+      numSessions +
+      ' - ' +
+      'Sessions',
     ],
     column2 = summary.tasks,
     column3 = summary.modalities
