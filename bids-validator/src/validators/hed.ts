@@ -9,6 +9,7 @@ import { ColumnsMap } from "../types/columns.ts";
 export class BidsJson extends hedValidator.bids.BidsJsonFile {}
 export class BidsSidecar extends hedValidator.bids.BidsSidecar {}
 export class BidsEventFile extends hedValidator.bids.BidsEventFile {}
+export class SchemasSpec extends hedvalidator.common.schema.types.SchemasSpec {}
 
 // https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
 function transpose(matrix: string[][]) {
@@ -54,6 +55,29 @@ function sidecarValueHasHed(sidecarValue: unknown) {
   );
 }
 
+
+let hedSchemas: SchemasSpec | undefined | null = undefined;
+function setHedSchemas(datasetDescriptionJson) {
+  const datasetDescriptionData = new hedValidator.bids.BidsJsonFile(
+    '/dataset_description.json',
+    datasetDescriptionJson,
+    context.file
+  )
+  try {
+    hedSchemas = await hedValidator.bids.buildBidsSchemas(
+      datasetDescriptionData,
+      null,
+    )
+    return []
+  } catch (issueError) {
+    hedSchemas = null
+    return hedValidator.bids.BidsHedIssue.fromHedIssues(
+      issueError,
+      datasetDescriptionData.file,
+    )
+  }
+}
+
 export interface HedIssue {
   code: number;
   file: IssueFile;
@@ -64,80 +88,69 @@ export async function hedValidate(
   schema: GenericSchema,
   context: BIDSContext,
 ): Promise<void> {
-  if (context.extension == ".tsv" && context.columns.length) {
-    if ((!"HED") in context.columns && !sidecarValueHasHed(context.sidecar)) {
-      return;
+  let file;
+  let hedValidationIssues = []
+
+  try {
+    if (context.extension == ".tsv" && context.columns.length) {
+      if ((!"HED") in context.columns && !sidecarValueHasHed(context.sidecar)) {
+        return;
+      }
+      file = hedValidateTsv(schema, context);
     }
-    return hedValidateTsv(schema, context);
+    if (context.extension == ".json" && sidecarValueHasHed(context.json)) {
+      file = hedValidateJson(schema, context);
+    }
+    if (file === undefined) {
+      return
+    }
+    hedValidationIssues = validateFile(file, headSchemas)
+  } catch {
+    // old code 109
   }
-  if (context.extension == ".json" && sidecarValueHasHed(context.json)) {
-    return hedValidateJson(schema, context);
-  }
+  hedValidationIssues.map((hedIssue) => {
+    const code = hedIssue.code;
+    if (code in hedOldToNewLookup) {
+      context.issues.addNonSchemaIssue(
+        hedOldToNewLookup[code],
+        [{ ...hedIssue.file, evidence: hedIssue.evidence }],
+      );
+    }
+  })
 }
 
-async function hedValidateTsv(
+async function buildHedTsvFile(
   schema: GenericSchema,
   context: BIDSContext,
 ): Promise<void> {
   const tsvContent = columnsToContent(context.columns);
-  const eventFile = new BidsEventFile(
+
+  const eventFile = new hedValidator.bids.BidsTsvFile(
     context.path,
-    [],
-    context.sidecar,
     tsvContent,
     context.file,
+    [],
+    context.sidecar,
   );
-
-  const sidecarFile = new BidsSidecar(
-    context.path,
-    await context.sidecar,
-    context.file,
-  );
-  const ddJsonFile = new BidsJson(
-    "dataset_description.json",
-    context.dataset.dataset_description,
-    context.file,
-  );
-  let hedDs = new hedValidator.validator.BidsDataset([eventFile], [
-    sidecarFile,
-  ], ddJsonFile);
-  return _hedalidate(hedDs, context);
+  return eventFile
 }
 
-async function hedValidateJson(
+async function buildHedSidecarFile(
   schema: GenericSchema,
   context: BIDSContext,
 ): Promise<void> {
-  const sidecarFile = new BidsSidecar(
+  const sidecarFile = new hedValidator.bids.BidsSidecar(
     context.path,
     await context.json,
     context.file,
   );
-
-  const ddJsonFile = new BidsJson(
-    "dataset_description.json",
-    context.dataset.dataset_description,
-    context.file,
-  );
-
-  let hedDs = new hedValidator.validator.BidsDataset([], [
-    sidecarFile,
-  ], ddJsonFile);
-  return _hedValidate(hedDs, context);
+  return sidecarFile
 }
 
-async function _hedValidate(hedDs, context) {
-  return hedValidator.validator
-    .validateBidsDataset(hedDs)
-    .then((hedValidationIssues: HedIssue[]) => {
-      const newStyle = hedValidationIssues.map((hedIssue) => {
-        const code = hedIssue.code;
-        if (code in hedOldToNewLookup) {
-          context.issues.addNonSchemaIssue(
-            hedOldToNewLookup[code],
-            [{ ...hedIssue.file, evidence: hedIssue.evidence }],
-          );
-        }
-      });
-    });
+function validateFile(file, hedSchemas) {
+  const issues = file.validate(hedSchemas)
+  if (issues === null) {
+    throw new Error()
+  }
+  return issues
 }
