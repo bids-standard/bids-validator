@@ -172,7 +172,11 @@ function schemaObjectTypeCheck(
     return schemaObject.enum.some((x) => x === value)
   }
   // @ts-expect-error
-  const format = schema.objects.formats[schemaObject.type]
+  const format = schemaObject.format
+    // @ts-expect-error
+    ? schema.objects.formats[schemaObject.format]
+    // @ts-expect-error
+    : schema.objects.formats[schemaObject.type]
   const re = new RegExp(`^${format.pattern}$`)
   return re.test(value)
 }
@@ -208,7 +212,7 @@ function sidecarDefinedTypeCheck(
  * otherwise we type check each value in the column according to the type
  * specified in the schema rule (or sidecar type information if applicable).
  */
-function evalColumns(
+export function evalColumns(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
