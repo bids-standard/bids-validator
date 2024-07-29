@@ -415,7 +415,8 @@ function evalJsonCheck(
   for (const [key, requirement] of Object.entries(rule.fields)) {
     const severity = getFieldSeverity(requirement, context)
     // @ts-expect-error
-    const keyName: string = schema.objects.metadata[key].name;
+    const metadataDef = schema.objects.metadata[key];
+    const keyName: string = metadataDef.name;
     if (severity && severity !== "ignore" && !(keyName in context.sidecar)) {
       if (requirement.issue?.code && requirement.issue?.message) {
         context.issues.add({
@@ -452,8 +453,7 @@ function evalJsonCheck(
       return
     }
 
-    // @ts-expect-error
-    const validate = context.dataset.ajv.compile(schema.objects.metadata[keyName])
+    const validate = context.dataset.ajv.compile(metadataDef)
     const result = validate(context.sidecar[keyName])
     if (result === false) {
       const evidenceBase = `Failed for this file.key: ${originFileKey} Schema path: ${schemaPath}`
