@@ -61,6 +61,13 @@ const schemaDefs = {
           additional_columns: 'allowed',
         },
       },
+      made_up: {
+        MadeUp: {
+          columns: {
+            onset: 'required',
+          },
+        },
+      },
     },
   },
 }
@@ -125,7 +132,7 @@ Deno.test(
   },
 )
 
-Deno.test('check column contents', async (t) => {
+Deno.test('evalColumns tests', async (t) => {
   const schema = await loadSchema()
 
   await t.step('check invalid datetime (scans.tsv:acq_time)', () => {
@@ -142,5 +149,20 @@ Deno.test('check column contents', async (t) => {
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
     evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
     assert(context.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' }))
+  })
+
+  await t.step('check formatless column', () => {
+    const context = {
+      path: '/sub-01/sub-01_something.tsv',
+      extension: '.tsv',
+      sidecar: {},
+      columns: {
+        onset: ['1', '2', 'not a number'],
+      },
+      issues: new DatasetIssues(),
+    }
+    const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
+    evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    assert(context.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE' }))
   })
 })
