@@ -176,7 +176,11 @@ function schemaObjectTypeCheck(
   }
 
   // @ts-expect-error
-  const format = schema.objects.formats[schemaObject.type]
+  const format = schemaObject.format
+    // @ts-expect-error
+    ? schema.objects.formats[schemaObject.format]
+    // @ts-expect-error
+    : schema.objects.formats[schemaObject.type]
   const re = new RegExp(`^${format.pattern}$`)
   return re.test(value)
 }
@@ -212,7 +216,7 @@ function sidecarDefinedTypeCheck(
  * otherwise we type check each value in the column according to the type
  * specified in the schema rule (or sidecar type information if applicable).
  */
-function evalColumns(
+export function evalColumns(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
@@ -425,8 +429,15 @@ function evalJsonCheck(
           severity,
           files: [{ ...context.file }],
         })
-      } else {
+      } else if (severity === 'error') {
         context.issues.addNonSchemaIssue('JSON_KEY_REQUIRED', [
+          {
+            ...context.file,
+            evidence: `missing ${keyName} as per ${schemaPath}`,
+          },
+        ])
+      } else if (severity === 'warning') {
+        context.issues.addNonSchemaIssue('JSON_KEY_RECOMMENDED', [
           {
             ...context.file,
             evidence: `missing ${keyName} as per ${schemaPath}`,
@@ -493,7 +504,7 @@ function getFieldSeverity(
 ): Severity {
   // Does this conversion hold for other parts of the schema or just json checks?
   const levelToSeverity: Record<string, Severity> = {
-    recommended: 'ignore',
+    recommended: 'warning',
     required: 'error',
     optional: 'ignore',
     prohibited: 'ignore',
