@@ -420,8 +420,15 @@ function evalJsonCheck(
           severity,
           files: [{ ...context.file }],
         })
-      } else {
+      } else if (severity === 'error') {
         context.issues.addNonSchemaIssue('JSON_KEY_REQUIRED', [
+          {
+            ...context.file,
+            evidence: `missing ${keyName} as per ${schemaPath}`,
+          },
+        ])
+      } else if (severity === 'warning') {
+        context.issues.addNonSchemaIssue('JSON_KEY_RECOMMENDED', [
           {
             ...context.file,
             evidence: `missing ${keyName} as per ${schemaPath}`,
@@ -443,7 +450,7 @@ function getFieldSeverity(
 ): Severity {
   // Does this conversion hold for other parts of the schema or just json checks?
   const levelToSeverity: Record<string, Severity> = {
-    recommended: 'ignore',
+    recommended: 'warning',
     required: 'error',
     optional: 'ignore',
     prohibited: 'ignore',
