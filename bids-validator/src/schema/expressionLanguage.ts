@@ -83,9 +83,19 @@ export const expressionFunctions = {
     }
     return arg.substr(start, end - start)
   },
-  sorted: <T>(list: T[]): T[] => {
-    // Use a cmp function that will work for any comparable types
-    return list.toSorted((a, b) => +(a > b) - +(a < b))
+  sorted: <T>(list: T[], method: string = 'auto'): T[] => {
+    const cmp = {
+      numeric: (a: T, b: T) => {
+        return Number(a) - Number(b)
+      },
+      lexical: (a: T, b: T) => {
+        return String(a).localeCompare(String(b))
+      },
+      auto: (a: T, b: T) => {
+        return +(a > b) - +(a < b)
+      },
+    }[method]
+    return list.toSorted(cmp)
   },
   allequal: <T>(a: T[], b: T[]): boolean => {
     return (a != null && b != null) && a.length === b.length && a.every((v, i) => v === b[i])
