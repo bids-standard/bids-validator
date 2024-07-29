@@ -175,7 +175,6 @@ function schemaObjectTypeCheck(
     return schemaObject.enum.some((x) => x === value)
   }
 
-  // @ts-expect-error
   const format = schemaObject.format
     // @ts-expect-error
     ? schema.objects.formats[schemaObject.format]
