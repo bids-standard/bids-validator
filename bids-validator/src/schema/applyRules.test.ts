@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { assert, assertEquals, assertObjectMatch } from '../deps/asserts.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
-import { applyRules, evalCheck } from './applyRules.ts'
+import { applyRules, evalCheck, evalColumns } from './applyRules.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 const ruleContextData = [
@@ -42,6 +42,23 @@ const schemaDefs = {
             'associations.bval.n_cols == nifti_header.dim[4]',
             'associations.bvec.n_cols == nifti_header.dim[4]',
           ],
+        },
+      },
+    },
+    tabular_data: {
+      modality_agnostic: {
+        Scans: {
+          selectors: ['suffix == "scans"', 'extension == ".tsv"'],
+          initial_columns: ['filename'],
+          columns: {
+            filename: {
+              level: 'required',
+              description_addendum: 'There MUST be exactly one row for each file.',
+            },
+            acq_time__scans: 'optional',
+          },
+          index_columns: ['filename'],
+          additional_columns: 'allowed',
         },
       },
     },
@@ -107,3 +124,23 @@ Deno.test(
     assert(context.issues.hasIssue({ key: 'CHECK_ERROR' }))
   },
 )
+
+Deno.test('check column contents', async (t) => {
+  const schema = await loadSchema()
+
+  await t.step('check invalid datetime (scans.tsv:acq_time)', () => {
+    const context = {
+      path: '/sub-01/sub-01_scans.tsv',
+      extension: '.tsv',
+      sidecar: {},
+      columns: {
+        filename: ['func/sub-01_task-rest_bold.nii.gz'],
+        acq_time: ['1900-01-01T00:00:78'],
+      },
+      issues: new DatasetIssues(),
+    }
+    const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
+    evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
+    assert(context.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' }))
+  })
+})

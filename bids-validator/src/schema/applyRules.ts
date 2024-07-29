@@ -212,7 +212,7 @@ function sidecarDefinedTypeCheck(
  * otherwise we type check each value in the column according to the type
  * specified in the schema rule (or sidecar type information if applicable).
  */
-function evalColumns(
+export function evalColumns(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
