@@ -2,5 +2,12 @@
   "tasks": {
     "test": "deno test -A src/tests/"
   },
+  "fmt": {
+    "lineWidth": 99,
+    "semiColons": false,
+    "singleQuote": true,
+    "proseWrap": "preserve",
+    "include": ["src/"]
+  },
   "lock": false
 }
