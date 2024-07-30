@@ -107,6 +107,10 @@ export class BIDSContext implements Context {
     this.associations = {} as ContextAssociations
   }
 
+  get size(): number {
+    return this.file.size
+  }
+
   get path(): string {
     return this.file.path
   }
