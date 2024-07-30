@@ -71,6 +71,7 @@ export interface GenericRule {
   format?: string
   required?: string
   index_columns?: string[]
+  metadata?: Record<string, string>
 }
 
 export interface SchemaFields {
@@ -81,7 +82,11 @@ export interface SchemaFields {
 
 interface SchemaType {
   type: string
+  format?: string
   enum?: string[]
+  items?: SchemaType[]
+  minItems?: number
+  maxItems?: number
 }
 
 interface AnyOf {
