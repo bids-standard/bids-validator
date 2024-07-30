@@ -123,7 +123,7 @@ export class Summary {
     }
 
     if (context.extension === '.json') {
-      if ('TaskName' in context.json) {
+      if (typeof context.json === 'object' && 'TaskName' in context.json) {
         this.tasks.add(context.json.TaskName as string)
       }
     }
