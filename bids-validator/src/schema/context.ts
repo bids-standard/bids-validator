@@ -142,6 +142,10 @@ export class BIDSContext implements Context {
     this.associations = {} as ContextAssociations
   }
 
+  get size(): number {
+    return this.file.size
+  }
+
   get path(): string {
     return this.file.path
   }
@@ -200,7 +204,7 @@ export class BIDSContext implements Context {
       Object.keys(json).map((x) => this.sidecarKeyOrigin[x] = validSidecars[0].path)
     }
     const nextDir = fileTree.directories.find((directory) => {
-      return this.file.path.startsWith(directory.path)
+      return this.file.path.startsWith(`${directory.path}/`)
     })
     if (nextDir) {
       await this.loadSidecar(nextDir)

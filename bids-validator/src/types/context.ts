@@ -94,6 +94,7 @@ export interface Context {
   dataset: ContextDataset
   subject: ContextSubject
   path: string
+  size: number
   entities: object
   datatype: string
   suffix: string

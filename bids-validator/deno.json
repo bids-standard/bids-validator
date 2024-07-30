@@ -8,6 +8,5 @@
     "singleQuote": true,
     "proseWrap": "preserve",
     "include": ["src/"]
-  },
-  "lock": false
+  }
 }
