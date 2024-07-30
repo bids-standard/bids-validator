@@ -1,5 +1,4 @@
 import { ValidatorOptions } from '../setup/options.ts'
-import { Ajv } from '../deps/ajv.ts'
 
 export interface ContextDatasetSubjects {
   sub_dirs: string[]
@@ -14,7 +13,6 @@ export interface ContextDataset {
   modalities: any[]
   subjects?: ContextDatasetSubjects
   options?: ValidatorOptions
-  ajv: Ajv
   sidecarKeyValidated: Set<string>
 }
 export interface ContextSubjectSessions {
