@@ -134,6 +134,9 @@ export class BIDSContext implements Context {
    * Earlier (deeper) sidecars take precedence over later ones.
    */
   async loadSidecar() {
+    if (this.extension === '.json') {
+      return
+    }
     const sidecars = walkBack(this.file)
     for (const file of sidecars) {
       const json = await file
