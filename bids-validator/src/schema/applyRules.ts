@@ -254,7 +254,9 @@ export function evalColumns(
         sidecarDefinedTypeCheck(columnObject.definition, value, schema)
     }
 
-    const inspect = typeof Deno !== 'undefined' ? Deno.inspect : (x: any) => JSON.stringify(x, null, 2)
+    const inspect = typeof Deno !== 'undefined'
+      ? Deno.inspect
+      : (x: any) => JSON.stringify(x, null, 2)
 
     if (
       name in context.sidecar && context.sidecar[name] &&
