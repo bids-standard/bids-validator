@@ -164,7 +164,7 @@ export class BIDSContext implements Context {
       this.sidecar = { ...this.sidecar, ...json }
     }
     const nextDir = fileTree.directories.find((directory) => {
-      return this.file.path.startsWith(directory.path)
+      return this.file.path.startsWith(`${directory.path}/`)
     })
     if (nextDir) {
       await this.loadSidecar(nextDir)
