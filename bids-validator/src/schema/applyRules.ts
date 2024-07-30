@@ -254,6 +254,8 @@ export function evalColumns(
         sidecarDefinedTypeCheck(columnObject.definition, value, schema)
     }
 
+    const inspect = typeof Deno !== 'undefined' ? Deno.inspect : (x: any) => JSON.stringify(x, null, 2)
+
     if (
       name in context.sidecar && context.sidecar[name] &&
       typeof (context.sidecar[name]) === 'object'
@@ -264,7 +266,7 @@ export function evalColumns(
       } else {
         context.issues.addNonSchemaIssue('TSV_COLUMN_TYPE_REDEFINED', [{
           ...context.file,
-          evidence: `'${name}' redefined with sidecar ${Deno.inspect(context.sidecar[name])}`,
+          evidence: `'${name}' redefined with sidecar ${inspect(context.sidecar[name])}`,
         }])
       }
     }
@@ -280,7 +282,7 @@ export function evalColumns(
         context.issues.addNonSchemaIssue(error_code, [
           {
             ...context.file,
-            evidence: `'${value}' ${Deno.inspect(columnObject)}`,
+            evidence: `'${value}' ${inspect(columnObject)}`,
           },
         ])
         break
