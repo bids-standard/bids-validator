@@ -16,7 +16,6 @@ import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
-import { HEDArgs } from '../types/hed.ts'
 import { Ajv, JSONSchemaType, ValidateFunction } from '../deps/ajv.ts'
 import { memoize } from '../utils/memoize.ts'
 import { Schema } from '../types/schema.ts'
@@ -28,7 +27,6 @@ export class BIDSContextDataset implements ContextDataset {
   tree: object
   ignored: any[]
   modalities: any[]
-  hedArgs: HEDArgs
   subjects?: ContextDatasetSubjects
   ajv: Ajv
   sidecarKeyValidated: Set<string>
@@ -39,7 +37,6 @@ export class BIDSContextDataset implements ContextDataset {
     this.tree = {}
     this.ignored = []
     this.modalities = []
-    this.hedArgs = new HEDArgs()
     this.ajv = new Ajv({ strictSchema: false })
     // @ts-expect-error
     this.ajv.compile = memoize(this.ajv.compile)

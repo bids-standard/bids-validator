@@ -1,5 +1,4 @@
 import { ValidatorOptions } from '../setup/options.ts'
-import { HEDArgs } from './hed.ts'
 import { Ajv } from '../deps/ajv.ts'
 
 export interface ContextDatasetSubjects {
@@ -16,7 +15,6 @@ export interface ContextDataset {
   modalities: any[]
   subjects?: ContextDatasetSubjects
   options?: ValidatorOptions
-  hedArgs: HEDArgs
   ajv: Ajv
   sidecarKeyValidated: Set<string>
 }
