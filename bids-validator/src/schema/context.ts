@@ -6,8 +6,7 @@ import {
   ContextNiftiHeader,
   ContextSubject,
 } from '../types/context.ts'
-import { BIDSFile } from '../types/file.ts'
-import { FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'

@@ -1,5 +1,5 @@
 import 'https://raw.githubusercontent.com/rii-mango/NIFTI-Reader-JS/v0.6.4/release/current/nifti-reader-min.js'
-import { BIDSFile } from '../types/file.ts'
+import { BIDSFile } from '../types/filetree.ts'
 import { logger } from '../utils/logger.ts'
 
 export async function loadHeader(file: BIDSFile) {

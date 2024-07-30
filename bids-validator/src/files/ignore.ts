@@ -1,4 +1,4 @@
-import { BIDSFile } from '../types/file.ts'
+import { BIDSFile } from '../types/filetree.ts'
 import { default as ignore } from 'npm:ignore@5.2.4'
 import type { Ignore } from 'npm:ignore@5.2.4'
 

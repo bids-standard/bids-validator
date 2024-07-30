@@ -1,6 +1,5 @@
 import { ContextAssociations, ContextAssociationsEvents } from '../types/context.ts'
-import { BIDSFile } from '../types/file.ts'
-import { FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { BIDSContext } from './context.ts'
 import { readEntities } from './entities.ts'
 import { parseTSV } from '../files/tsv.ts'
