@@ -36,11 +36,19 @@ export const filenameIssues: IssueDefinitionRecord = {
   },
   JSON_KEY_REQUIRED: {
     severity: 'error',
-    reason: "A data file's JSON sidecar is missing a key listed as required.",
+    reason: 'A JSON flle is missing a key listed as required.',
   },
   JSON_KEY_RECOMMENDED: {
     severity: 'warning',
-    reason: 'A data files JSON sidecar is missing a key listed as recommended.',
+    reason: 'A JSON file is missing a key listed as recommended.',
+  },
+  SIDECAR_KEY_REQUIRED: {
+    severity: 'error',
+    reason: "A data file's JSON sidecar is missing a key listed as required.",
+  },
+  SIDECAR_KEY_RECOMMENDED: {
+    severity: 'warning',
+    reason: "A data file's JSON sidecar is missing a key listed as recommended.",
   },
   JSON_SCHEMA_VALIDATION_ERROR: {
     severity: 'error',

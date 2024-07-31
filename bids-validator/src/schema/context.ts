@@ -16,9 +16,6 @@ import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
-import { Ajv, JSONSchemaType, ValidateFunction } from '../deps/ajv.ts'
-import { memoize } from '../utils/memoize.ts'
-import { Schema } from '../types/schema.ts'
 
 export class BIDSContextDataset implements ContextDataset {
   dataset_description: Record<string, unknown>
@@ -28,22 +25,15 @@ export class BIDSContextDataset implements ContextDataset {
   ignored: any[]
   modalities: any[]
   subjects?: ContextDatasetSubjects
-  ajv: Ajv
   sidecarKeyValidated: Set<string>
 
-  constructor(options?: ValidatorOptions, schema?: Schema, description = {}) {
+  constructor(options?: ValidatorOptions, description = {}) {
     this.dataset_description = description
     this.files = []
     this.tree = {}
     this.ignored = []
     this.modalities = []
-    this.ajv = new Ajv({ strictSchema: false })
-    // @ts-expect-error
-    this.ajv.compile = memoize(this.ajv.compile)
     this.sidecarKeyValidated = new Set<string>()
-    if (schema) {
-      this.setCustomAjvFormats(schema)
-    }
     if (options) {
       this.options = options
     }
@@ -54,27 +44,6 @@ export class BIDSContextDataset implements ContextDataset {
       this.dataset_description.DatasetType = 'derivative'
     } else if (!this.dataset_description.DatasetType) {
       this.dataset_description.DatasetType = 'raw'
-    }
-  }
-
-  setCustomAjvFormats(schema: Schema): void {
-    if (typeof schema.objects.formats !== 'object') {
-      // logger.warning(
-      console.log(
-        `schema.objects.formats missing from schema, format validation disabled.`,
-      )
-      return
-    }
-    const schemaFormats = schema.objects.formats
-    for (let key of Object.keys(schemaFormats)) {
-      if (typeof schemaFormats[key]['pattern'] !== 'string') {
-        // logger.warning(
-        console.log(
-          `schema.objects.formats.${key} pattern missing or invalid. Skipping this format for addition to context json validator`,
-        )
-        continue
-      }
-      this.ajv.addFormat(key, schemaFormats[key]['pattern'])
     }
   }
 }
@@ -165,6 +134,9 @@ export class BIDSContext implements Context {
    * Earlier (deeper) sidecars take precedence over later ones.
    */
   async loadSidecar() {
+    if (this.extension === '.json') {
+      return
+    }
     const sidecars = walkBack(this.file)
     for (const file of sidecars) {
       const json = await file

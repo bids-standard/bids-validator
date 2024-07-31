@@ -4,6 +4,7 @@ import { BIDSContext } from './context.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
 import { memoize } from '../utils/memoize.ts'
+import { compile } from '../validators/json.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
@@ -417,12 +418,18 @@ function evalJsonCheck(
   schema: GenericSchema,
   schemaPath: string,
 ): void {
+  const sidecarRule = schemaPath.match(/rules\.sidecar/)
+  // Sidecar rules apply specifically to data files, as JSON files cannot have sidecars
+  // Count on other JSON rules to use selectors to match the correct files
+  if (context.extension === '.json' && sidecarRule) return
+
+  const json = sidecarRule ? context.sidecar : context.json
   for (const [key, requirement] of Object.entries(rule.fields)) {
     const severity = getFieldSeverity(requirement, context)
     // @ts-expect-error
     const metadataDef = schema.objects.metadata[key]
     const keyName: string = metadataDef.name
-    if (severity && severity !== 'ignore' && !(keyName in context.sidecar)) {
+    if (severity && severity !== 'ignore' && !(keyName in json)) {
       if (requirement.issue?.code && requirement.issue?.message) {
         context.issues.add({
           key: requirement.issue.code,
@@ -431,19 +438,25 @@ function evalJsonCheck(
           files: [{ ...context.file }],
         })
       } else if (severity === 'error') {
-        context.issues.addNonSchemaIssue('JSON_KEY_REQUIRED', [
-          {
-            ...context.file,
-            evidence: `missing ${keyName} as per ${schemaPath}`,
-          },
-        ])
+        context.issues.addNonSchemaIssue(
+          sidecarRule ? 'SIDECAR_KEY_REQUIRED' : 'JSON_KEY_REQUIRED',
+          [
+            {
+              ...context.file,
+              evidence: `missing ${keyName} as per ${schemaPath}`,
+            },
+          ],
+        )
       } else if (severity === 'warning') {
-        context.issues.addNonSchemaIssue('JSON_KEY_RECOMMENDED', [
-          {
-            ...context.file,
-            evidence: `missing ${keyName} as per ${schemaPath}`,
-          },
-        ])
+        context.issues.addNonSchemaIssue(
+          sidecarRule ? 'SIDECAR_KEY_RECOMMENDED' : 'JSON_KEY_RECOMMENDED',
+          [
+            {
+              ...context.file,
+              evidence: `missing ${keyName} as per ${schemaPath}`,
+            },
+          ],
+        )
       }
     }
 
@@ -467,7 +480,7 @@ function evalJsonCheck(
       return
     }
 
-    const validate = context.dataset.ajv.compile(metadataDef)
+    const validate = compile(metadataDef)
     const result = validate(context.sidecar[keyName])
     if (result === false) {
       const evidenceBase = `Failed for this file.key: ${originFileKey} Schema path: ${schemaPath}`
