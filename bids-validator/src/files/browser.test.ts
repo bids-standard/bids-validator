@@ -29,7 +29,11 @@ Deno.test('Browser implementation of FileTree', async (t) => {
     ]
     const tree = await fileListToTree(files)
     const expectedTree = new FileTree('', '/', undefined)
-    expectedTree.files = files.map((f) => new BIDSFileBrowser(f, ignore))
+    expectedTree.files = files.map((f) => {
+      const file = new BIDSFileBrowser(f, ignore)
+      file.parent = expectedTree
+      return file
+    })
     assertEquals(tree, expectedTree)
   })
   await t.step('converts a simple FileList with several levels', async () => {
@@ -62,9 +66,14 @@ Deno.test('Browser implementation of FileTree', async (t) => {
     const anatTree = new FileTree('sub-01/anat', 'anat', sub01Tree)
     expectedTree.files = files
       .slice(0, 3)
-      .map((f) => new BIDSFileBrowser(f, ignore))
+      .map((f) => {
+        const file = new BIDSFileBrowser(f, ignore)
+        file.parent = expectedTree
+        return file
+      })
     expectedTree.directories.push(sub01Tree)
     anatTree.files = [new BIDSFileBrowser(files[3], ignore)]
+    anatTree.files[0].parent = anatTree
     sub01Tree.directories.push(anatTree)
     assertEquals(tree, expectedTree)
   })
@@ -82,7 +91,11 @@ Deno.test('Spread copies of BIDSFileBrowser contain name and path properties', a
   ]
   const tree = await fileListToTree(files)
   const expectedTree = new FileTree('', '/', undefined)
-  expectedTree.files = files.map((f) => new BIDSFileBrowser(f, ignore))
+  expectedTree.files = files.map((f) => {
+    const file = new BIDSFileBrowser(f, ignore)
+    file.parent = expectedTree
+    return file
+  })
   assertEquals(tree, expectedTree)
   const spreadFile = { ...expectedTree.files[0], evidence: 'test evidence' }
   assertObjectMatch(spreadFile, {

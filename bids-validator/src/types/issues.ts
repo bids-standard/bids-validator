@@ -1,4 +1,4 @@
-import { BIDSFile } from './file.ts'
+import { BIDSFile } from './filetree.ts'
 
 export type Severity = 'warning' | 'error' | 'ignore'
 

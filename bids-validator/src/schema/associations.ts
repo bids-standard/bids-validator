@@ -1,10 +1,10 @@
 import { ContextAssociations, ContextAssociationsEvents } from '../types/context.ts'
-import { BIDSFile } from '../types/file.ts'
-import { FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { BIDSContext } from './context.ts'
 import { readEntities } from './entities.ts'
 import { parseTSV } from '../files/tsv.ts'
 import { parseBvalBvec } from '../files/dwi.ts'
+import { walkBack } from '../files/inheritance.ts'
 
 // type AssociationsLookup = Record<keyof ContextAssociations, { extensions: string[], inherit: boolean, load: ... }
 
@@ -127,54 +127,18 @@ const associationLookup = {
 }
 
 export async function buildAssociations(
-  fileTree: FileTree,
-  source: BIDSContext,
+  source: BIDSFile,
 ): Promise<ContextAssociations> {
   const associations: ContextAssociations = {}
-  for (const key in associationLookup as typeof associationLookup) {
-    const { suffix, extensions, inherit } =
-      associationLookup[key as keyof typeof associationLookup]
-    const paths = getPaths(fileTree, source, suffix, extensions)
-    if (paths.length === 0) {
-      continue
+
+  for (const [key, value] of Object.entries(associationLookup)) {
+    const { suffix, extensions, inherit, load } = value
+    const path = walkBack(source, inherit, extensions, suffix).next().value
+
+    if (path) {
+      // @ts-expect-error
+      associations[key] = await load(path)
     }
-    if (paths.length > 1) {
-      // error?
-    }
-    // @ts-expect-error
-    associations[key] = await associationLookup[key].load(paths[0])
   }
   return Promise.resolve(associations)
-}
-
-function getPaths(
-  fileTree: FileTree,
-  source: BIDSContext,
-  targetSuffix: string,
-  targetExtensions: string[],
-) {
-  const validAssociations = fileTree.files.filter((file) => {
-    const { suffix, extension, entities } = readEntities(file.name)
-    return (
-      targetExtensions.includes(extension) &&
-      suffix === targetSuffix &&
-      Object.keys(entities).every((entity) => {
-        return (
-          entity in source.entities &&
-          entities[entity] === source.entities[entity]
-        )
-      })
-    )
-  })
-
-  const nextDir = fileTree.directories.find((directory) => {
-    return source.file.path.startsWith(directory.path)
-  })
-
-  if (nextDir) {
-    validAssociations.push(
-      ...getPaths(nextDir, source, targetSuffix, targetExtensions),
-    )
-  }
-  return validAssociations
 }
