@@ -1,4 +1,4 @@
-import { CheckFunction, RuleCheckFunction } from '../types/check.ts'
+import { ContextCheckFunction, RuleCheckFunction } from '../types/check.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { Entity, Format, GenericSchema, Schema } from '../types/schema.ts'
@@ -7,7 +7,7 @@ import { hasProp } from '../utils/objectPathHandler.ts'
 
 const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
-const CHECKS: CheckFunction[] = [
+const CHECKS: ContextCheckFunction[] = [
   missingLabel,
   atRoot,
   entityLabelCheck,

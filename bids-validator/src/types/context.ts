@@ -5,6 +5,7 @@ export interface ContextDatasetSubjects {
   participant_id?: string[]
   phenotype?: string[]
 }
+
 export interface ContextDataset {
   dataset_description: Record<string, unknown>
   files: any[]
