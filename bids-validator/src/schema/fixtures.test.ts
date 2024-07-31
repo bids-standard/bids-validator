@@ -40,6 +40,7 @@ export const dataFile = {
   ignored: false,
   stream: new ReadableStream<Uint8Array>(),
   readBytes: nullReadBytes,
+  parent: anatFileTree,
 }
 
 anatFileTree.files = [
@@ -52,6 +53,7 @@ anatFileTree.files = [
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
     readBytes: nullReadBytes,
+    parent: anatFileTree,
   },
 ]
 
@@ -67,6 +69,7 @@ subjectFileTree.files = [
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
     readBytes: nullReadBytes,
+    parent: subjectFileTree,
   },
 ]
 subjectFileTree.directories = [sessionFileTree]
@@ -80,6 +83,7 @@ stimuliFileTree.files = [...Array(10).keys()].map((i) => (
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
     readBytes: nullReadBytes,
+    parent: stimuliFileTree,
   }
 ))
 
@@ -92,6 +96,7 @@ rootFileTree.files = [
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
     readBytes: nullReadBytes,
+    parent: rootFileTree,
   },
 ]
 rootFileTree.directories = [stimuliFileTree, subjectFileTree]

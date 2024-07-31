@@ -5,7 +5,7 @@ import { dataFile, rootFileTree } from './fixtures.test.ts'
 
 Deno.test('test context LoadSidecar', async (t) => {
   const context = new BIDSContext(rootFileTree, dataFile, new DatasetIssues())
-  await context.loadSidecar(rootFileTree)
+  await context.loadSidecar()
   await t.step('sidecar overwrites correct fields', () => {
     const { rootOverwrite, subOverwrite } = context.sidecar
     assert(rootOverwrite === 'anat')

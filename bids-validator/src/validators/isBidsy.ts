@@ -5,7 +5,7 @@
 // @ts-nocheck
 import { BIDSContext } from '../schema/context.ts'
 import { ContextCheckFunction } from '../../types/check.ts'
-import { BIDSFile } from '../types/file.ts'
+import { BIDSFile } from '../types/filetree.ts'
 import { Schema } from '../types/schema.ts'
 
 export const isBidsyFilename: ContextCheckFunction = (schema, context) => {
