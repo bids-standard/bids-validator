@@ -19,6 +19,10 @@ export async function main(): Promise<ValidationResult> {
   if (options.json) {
     console.log(
       JSON.stringify(schemaResult, (key, value) => {
+        if (value?.parent) {
+          // Remove parent reference to avoid circular references
+          value.parent = undefined
+        }
         if (value instanceof Map) {
           return Array.from(value.values())
         } else {
