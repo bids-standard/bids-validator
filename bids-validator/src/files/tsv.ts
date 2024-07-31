@@ -16,9 +16,16 @@ export function parseTSV(contents: string) {
     .map((str) => str.split('\t'))
   const headers = rows.length ? rows[0] : []
 
+  if (rows.some((row) => row.length !== headers.length)) {
+    throw { key: 'TSV_EQUAL_ROWS' }
+  }
+
   headers.map((x) => {
     columns[x] = []
   })
+  if (headers.length !== Object.keys(columns).length) {
+    throw { key: 'TSV_COLUMN_HEADER_DUPLICATE', evidence: headers.join(', ') }
+  }
   for (let i = 1; i < rows.length; i++) {
     for (let j = 0; j < headers.length; j++) {
       const col = columns[headers[j]] as string[]
