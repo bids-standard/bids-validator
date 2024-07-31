@@ -6,11 +6,11 @@ import {
   ContextNiftiHeader,
   ContextSubject,
 } from '../types/context.ts'
-import { BIDSFile } from '../types/file.ts'
-import { FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
+import { walkBack } from '../files/inheritance.ts'
 import { parseTSV } from '../files/tsv.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
@@ -129,54 +129,19 @@ export class BIDSContext implements Context {
   }
 
   /**
-   * Crawls fileTree from root to current context file, loading any valid
-   * json sidecars found.
+   * Walks the fileTree backwards from the current file to the root,
+   * loading any valid json sidecars found.
+   * Earlier (deeper) sidecars take precedence over later ones.
    */
-  async loadSidecar(fileTree?: FileTree) {
-    if (!fileTree) {
-      fileTree = this.fileTree
-    }
-    const validSidecars = fileTree.files.filter((file) => {
-      const { suffix, extension, entities } = readEntities(file.name)
-      return (
-        extension === '.json' &&
-        suffix === this.suffix &&
-        Object.keys(entities).every((entity) => {
-          return (
-            entity in this.entities &&
-            entities[entity] === this.entities[entity]
-          )
-        })
-      )
-    })
-
-    if (validSidecars.length > 1) {
-      const exactMatch = validSidecars.find(
-        (sidecar) => sidecar.path == this.file.path.replace(this.extension, '.json'),
-      )
-      if (exactMatch) {
-        validSidecars.splice(1)
-        validSidecars[0] = exactMatch
-      } else {
-        logger.warning(
-          `Multiple sidecar files detected for '${this.file.path}'`,
-        )
-      }
-    }
-
-    if (validSidecars.length === 1) {
-      const json = await validSidecars[0]
+  async loadSidecar() {
+    const sidecars = walkBack(this.file)
+    for (const file of sidecars) {
+      const json = await file
         .text()
         .then((text) => JSON.parse(text))
         .catch((error) => {})
-      this.sidecar = { ...this.sidecar, ...json }
-      Object.keys(json).map((x) => this.sidecarKeyOrigin[x] = validSidecars[0].path)
-    }
-    const nextDir = fileTree.directories.find((directory) => {
-      return this.file.path.startsWith(`${directory.path}/`)
-    })
-    if (nextDir) {
-      await this.loadSidecar(nextDir)
+      this.sidecar = { ...json, ...this.sidecar }
+      Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= file.path)
     }
   }
 
@@ -209,7 +174,7 @@ export class BIDSContext implements Context {
   }
 
   async loadAssociations(): Promise<void> {
-    this.associations = await buildAssociations(this.fileTree, this)
+    this.associations = await buildAssociations(this.file)
     return
   }
 
