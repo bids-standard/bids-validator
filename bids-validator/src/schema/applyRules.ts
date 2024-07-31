@@ -4,6 +4,7 @@ import { BIDSContext } from './context.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
 import { memoize } from '../utils/memoize.ts'
+import { compile } from '../validators/json.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
@@ -467,7 +468,7 @@ function evalJsonCheck(
       return
     }
 
-    const validate = context.dataset.ajv.compile(metadataDef)
+    const validate = compile(metadataDef)
     const result = validate(context.sidecar[keyName])
     if (result === false) {
       const evidenceBase = `Failed for this file.key: ${originFileKey} Schema path: ${schemaPath}`
