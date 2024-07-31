@@ -1,5 +1,5 @@
 import { CheckFunction } from '../types/check.ts'
-import { FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { IssueFile } from '../types/issues.ts'
 import { GenericSchema } from '../types/schema.ts'
 import { ValidationResult } from '../types/validation-result.ts'
@@ -13,7 +13,6 @@ import { filenameValidate } from './filenameValidate.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { emptyFile } from './internal/emptyFile.ts'
 import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
-import { BIDSFile } from '../types/file.ts'
 import { parseOptions } from '../setup/options.ts'
 
 /**

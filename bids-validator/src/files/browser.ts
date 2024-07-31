@@ -1,5 +1,4 @@
-import { BIDSFile } from '../types/file.ts'
-import { FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { parse, posix, SEPARATOR_PATTERN } from '../deps/path.ts'
 
@@ -11,6 +10,7 @@ export class BIDSFileBrowser implements BIDSFile {
   #file: File
   name: string
   path: string
+  parent?: FileTree
 
   constructor(file: File, ignore: FileIgnoreRules) {
     this.#file = file
@@ -53,6 +53,7 @@ export function fileListToTree(files: File[]): Promise<FileTree> {
     const fPath = parse(file.path)
     if (fPath.dir === '/') {
       // Top level file
+      file.parent = tree
       tree.files.push(file)
     } else {
       const levels = fPath.dir.split(SEPARATOR_PATTERN).slice(1)
@@ -76,6 +77,7 @@ export function fileListToTree(files: File[]): Promise<FileTree> {
         }
       }
       // At the terminal leaf, add files
+      file.parent = currentLevelTree
       currentLevelTree.files.push(file)
     }
   }

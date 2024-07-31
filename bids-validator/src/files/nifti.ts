@@ -1,5 +1,5 @@
 import { isCompressed, readHeader } from '../deps/nifti.ts'
-import { BIDSFile } from '../types/file.ts'
+import { BIDSFile } from '../types/filetree.ts'
 import { logger } from '../utils/logger.ts'
 import { ContextNiftiHeader } from '../types/context.ts'
 

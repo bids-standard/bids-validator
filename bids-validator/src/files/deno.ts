@@ -2,8 +2,7 @@
  * Deno specific implementation for reading files
  */
 import { basename, join, posix } from '../deps/path.ts'
-import { BIDSFile } from '../types/file.ts'
-import { FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 
@@ -24,6 +23,7 @@ export class BIDSFileDeno implements BIDSFile {
   #ignore: FileIgnoreRules
   name: string
   path: string
+  parent?: FileTree
   #fileInfo?: Deno.FileInfo
   #datasetAbsPath: string
 
@@ -125,6 +125,7 @@ export async function _readFileTree(
         posix.join(relativePath, dirEntry.name),
         ignore,
       )
+      file.parent = tree
       // For .bidsignore, read in immediately and add the rules
       if (dirEntry.name === '.bidsignore') {
         ignore.add(await readBidsIgnore(file))
