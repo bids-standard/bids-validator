@@ -25,7 +25,7 @@ const perContextChecks: ContextCheckFunction[] = [
   filenameIdentify,
   filenameValidate,
   applyRules,
-  hedValidate
+  hedValidate,
 ]
 
 const perDSChecks: DSCheckFunction[] = []
