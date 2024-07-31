@@ -89,11 +89,10 @@ export async function hedValidate(
   })
 }
 
-async function buildHedTsvFile(context: BIDSContext)  {
-  const tsvData = await context.file.text()
+function buildHedTsvFile(context: BIDSContext)  {
   const eventFile = new hedValidator.bids.BidsTsvFile(
     context.path,
-    tsvData,
+    context.columns,
     context.file,
     [],
     context.sidecar,
