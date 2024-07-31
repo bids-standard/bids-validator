@@ -63,6 +63,10 @@ export const filenameIssues: IssueDefinitionRecord = {
     reason:
       'Two elements in the first row of a TSV are the same. Each column header must be unique.',
   },
+  TSV_EQUAL_ROWS: {
+    severity: 'error',
+    reason: 'All rows must have the same number of columns as there are headers.',
+  },
   TSV_COLUMN_MISSING: {
     severity: 'error',
     reason: 'A required column is missing',

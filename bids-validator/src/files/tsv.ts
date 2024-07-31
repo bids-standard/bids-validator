@@ -16,6 +16,10 @@ export function parseTSV(contents: string) {
     .map((str) => str.split('\t'))
   const headers = rows.length ? rows[0] : []
 
+  if (rows.some((row) => row.length !== headers.length)) {
+    throw { key: 'TSV_EQUAL_ROWS' }
+  }
+
   headers.map((x) => {
     columns[x] = []
   })
