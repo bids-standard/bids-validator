@@ -7,20 +7,19 @@ import { loadHeader } from './nifti.ts'
 Deno.test('Test loading nifti header', async (t) => {
   const ignore = new FileIgnoreRules([])
   await t.step('Load header from compressed file', async () => {
-    const path = "sub-01/func/sub-01_task-rhymejudgment_bold.nii.gz"
-    const root = "./tests/data/valid_headers"
+    const path = 'sub-01/func/sub-01_task-rhymejudgment_bold.nii.gz'
+    const root = './tests/data/valid_headers'
     const file = new BIDSFileDeno(root, path, ignore)
     const header = await loadHeader(file)
     assert(header !== undefined)
     assert(header['pixdim'].length === 8)
   })
   await t.step('Fail on non-nifti file', async () => {
-    const path = "sub-01/func/sub-01_task-rhymejudgment_events.tsv"
-    const root = "./tests/data/valid_headers"
+    const path = 'sub-01/func/sub-01_task-rhymejudgment_events.tsv'
+    const root = './tests/data/valid_headers'
     const file = new BIDSFileDeno(root, path, ignore)
     const header = await loadHeader(file)
     assert(header !== undefined)
     assert(header === null)
   })
-
 })

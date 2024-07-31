@@ -50,11 +50,11 @@ Deno.test('test expression functions', async (t) => {
     assert(min([3, 2, 1]) === 1)
     assert(min([]) === Infinity)
     // @ts-ignore
-    assert(min(["3", "2", "1"]) === 1)
+    assert(min(['3', '2', '1']) === 1)
     // @ts-ignore
-    assert(min(["3", "string", "1"]) === 1)
+    assert(min(['3', 'string', '1']) === 1)
     // @ts-ignore
-    assert(min(["3", "n/a", "1"]) === 1)
+    assert(min(['3', 'n/a', '1']) === 1)
     // @ts-ignore
     assert(min(null) === null)
   })
@@ -64,11 +64,11 @@ Deno.test('test expression functions', async (t) => {
     assert(max([3, 2, 1]) === 3)
     assert(max([]) === -Infinity)
     // @ts-ignore
-    assert(max(["3", "2", "1"]) === 3)
+    assert(max(['3', '2', '1']) === 3)
     // @ts-ignore
-    assert(max(["3", "string", "1"]) === 3)
+    assert(max(['3', 'string', '1']) === 3)
     // @ts-ignore
-    assert(max(["3", "n/a", "1"]) === 3)
+    assert(max(['3', 'n/a', '1']) === 3)
     // @ts-ignore
     assert(max(null) === null)
   })
