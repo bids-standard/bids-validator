@@ -65,10 +65,10 @@ export async function hedValidate(
       }
       hedValidationIssues = await setHedSchemas(context.dataset.dataset_description)
 
-      file = await buildHedTsvFile(schema, context)
+      file = await buildHedTsvFile(context)
     } else if (context.extension == '.json' && sidecarHasHed(context.json)) {
       hedValidationIssues = hedValidationIssues = await setHedSchemas(context.dataset.dataset_description)
-      file = buildHedSidecarFile(schema, context)
+      file = buildHedSidecarFile(context)
     }
 
     if (file !== undefined) {
