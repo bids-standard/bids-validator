@@ -65,10 +65,10 @@ export async function hedValidate(
       }
       hedValidationIssues = await setHedSchemas(context.dataset.dataset_description)
 
-      file = await buildHedTsvFile(schema, context)
+      file = await buildHedTsvFile(context)
     } else if (context.extension == '.json' && sidecarHasHed(context.json)) {
       hedValidationIssues = hedValidationIssues = await setHedSchemas(context.dataset.dataset_description)
-      file = buildHedSidecarFile(schema, context)
+      file = buildHedSidecarFile(context)
     }
 
     if (file !== undefined) {
@@ -89,10 +89,7 @@ export async function hedValidate(
   })
 }
 
-async function buildHedTsvFile(
-  schema: GenericSchema,
-  context: BIDSContext,
-)  {
+async function buildHedTsvFile(context: BIDSContext)  {
   const tsvData = await context.file.text()
   const eventFile = new hedValidator.bids.BidsTsvFile(
     context.path,
@@ -104,10 +101,7 @@ async function buildHedTsvFile(
   return eventFile
 }
 
-function buildHedSidecarFile(
-  schema: GenericSchema,
-  context: BIDSContext,
-) {
+function buildHedSidecarFile(context: BIDSContext) {
   const sidecarFile = new hedValidator.bids.BidsSidecar(
     context.path,
     context.json,
