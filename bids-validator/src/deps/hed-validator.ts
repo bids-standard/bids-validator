@@ -1,1 +1,1 @@
-export { default } from "https://esm.sh/hed-validator@3.15.1?deps=node@16"
+export { default } from "https://esm.sh/hed-validator@3.15.2?deps=node@16"

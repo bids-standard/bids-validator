@@ -6,31 +6,6 @@ import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { ColumnsMap } from '../types/columns.ts'
 
-/*
-export class BidsJson extends hedValidator.bids.BidsJsonFile {}
-export class BidsSidecar extends hedValidator.bids.BidsSidecar {}
-export class BidsEventFile extends hedValidator.bids.BidsEventFile {}
-*/
-
-// https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
-function transpose(matrix: string[][]) {
-  return matrix[0].map((col, i) => matrix.map((row) => row[i]))
-}
-
-function columnsToContent(columns: ColumnsMap) {
-  const cols = [] as [][]
-  for (let header in columns) {
-    // @ts-expect-error
-    cols.push(columns[header])
-  }
-  const rows = transpose(cols)
-  return {
-    headers: Object.keys(columns),
-    rows,
-  }
-}
-
-
 function sidecarHasHed(sidecarData: BIDSContext["sidecar"]) {
   if (!sidecarData) {
     return false
@@ -90,7 +65,7 @@ export async function hedValidate(
       }
       hedValidationIssues = await setHedSchemas(context.dataset.dataset_description)
 
-      file = buildHedTsvFile(schema, context)
+      file = await buildHedTsvFile(schema, context)
     } else if (context.extension == '.json' && sidecarHasHed(context.json)) {
       hedValidationIssues = hedValidationIssues = await setHedSchemas(context.dataset.dataset_description)
       file = buildHedSidecarFile(schema, context)
@@ -100,7 +75,7 @@ export async function hedValidate(
       hedValidationIssues.push(...file.validate(hedSchemas))
     }
   } catch (error) {
-    context.issues.addNonSchemaIssue('HED_ERROR', [context.file])
+    context.issues.addNonSchemaIssue('HED_ERROR', [{ ...context.file, evidence: error}])
   }
 
   hedValidationIssues.map((hedIssue) => {
@@ -114,14 +89,14 @@ export async function hedValidate(
   })
 }
 
-function buildHedTsvFile(
+async function buildHedTsvFile(
   schema: GenericSchema,
   context: BIDSContext,
 )  {
-  const tsvContent = columnsToContent(context.columns)
+  const tsvData = await context.file.text()
   const eventFile = new hedValidator.bids.BidsTsvFile(
     context.path,
-    tsvContent,
+    tsvData,
     context.file,
     [],
     context.sidecar,
