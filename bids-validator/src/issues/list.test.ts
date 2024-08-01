@@ -8,33 +8,33 @@ function extractCodes(
   rootSchema?: GenericSchema,
   schemaPath?: string,
 ): string[] {
-    if (!rootSchema) {
-      rootSchema = schema
+  if (!rootSchema) {
+    rootSchema = schema
+  }
+  if (!schemaPath) {
+    schemaPath = 'schema.rules'
+  }
+  let codes = []
+  for (const key in schema) {
+    if (!(schema[key].constructor === Object)) {
+      continue
     }
-    if (!schemaPath) {
-      schemaPath = 'schema.rules'
+    if (schema[key].constructor === Object) {
+      codes.push(...extractCodes(
+        schema[key] as GenericSchema,
+        rootSchema,
+        `${schemaPath}.${key}`,
+      ))
     }
-    let codes = []
-    for (const key in schema) {
-      if (!(schema[key].constructor === Object)) {
-        continue
-      }
-      if (schema[key].constructor === Object) {
-        codes.push(...extractCodes(
-          schema[key] as GenericSchema,
-          rootSchema,
-          `${schemaPath}.${key}`,
-        ))
-      }
-      if ('code' in schema[key] && typeof schema[key]['code'] === 'string') {
-        codes.push(schema[key]['code'])
-      }
+    if ('code' in schema[key] && typeof schema[key]['code'] === 'string') {
+      codes.push(schema[key]['code'])
     }
-    return codes
+  }
+  return codes
 }
 
 Deno.test('Cross reference error codes in schema and in list.ts', async (t) => {
-  let codes = [] as string[];
+  let codes = [] as string[]
   await t.step('load schema, extract codes', async () => {
     const schema = await loadSchema()
     codes = extractCodes(schema as unknown as GenericSchema)
@@ -42,7 +42,7 @@ Deno.test('Cross reference error codes in schema and in list.ts', async (t) => {
   })
 
   await t.step('wat', (t) => {
-    const duplicates = codes.filter(x => Object.hasOwn(nonSchemaIssues, x))
+    const duplicates = codes.filter((x) => Object.hasOwn(nonSchemaIssues, x))
     assert(duplicates.length === 0, `Found duplicates ${duplicates}`)
   })
 })
