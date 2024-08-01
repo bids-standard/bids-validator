@@ -55,7 +55,7 @@ export function applyRules(
   return Promise.resolve()
 }
 
-const evalConstructor = (src: string): Function =>
+export const evalConstructor = (src: string): Function =>
   new Function('context', `with (context) { return ${src} }`)
 const safeHas = () => true
 const safeGet = (target: any, prop: any) => prop === Symbol.unscopables ? undefined : target[prop]
