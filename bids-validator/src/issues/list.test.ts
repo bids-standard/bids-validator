@@ -1,48 +1,65 @@
-import { assert } from '../deps/asserts.ts'
+import { assert, assertEquals } from '../deps/asserts.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { bidsIssues } from './list.ts'
 import { GenericSchema } from '../types/schema.ts'
 
-function extractCodes(
+interface schemaError {
+  code: string
+  level?: string
+}
+
+function getSchemaErrors(
   schema: GenericSchema,
   rootSchema?: GenericSchema,
   schemaPath?: string,
-): string[] {
+): schemaError[] {
   if (!rootSchema) {
     rootSchema = schema
   }
   if (!schemaPath) {
     schemaPath = 'schema.rules'
   }
-  let codes = []
+  let errors = []
   for (const key in schema) {
     if (!(schema[key].constructor === Object)) {
       continue
     }
     if (schema[key].constructor === Object) {
-      codes.push(...extractCodes(
+      errors.push(...getSchemaErrors(
         schema[key] as GenericSchema,
         rootSchema,
         `${schemaPath}.${key}`,
       ))
     }
-    if ('code' in schema[key] && typeof schema[key]['code'] === 'string') {
-      codes.push(schema[key]['code'])
+    let schemaEntry = schema[key] as object
+    if ('code' in schemaEntry && typeof schemaEntry['code'] === 'string') {
+      errors.push(schema[key])
     }
   }
-  return codes
+  return errors as schemaError[]
 }
 
 Deno.test('Cross reference error codes in schema and in list.ts', async (t) => {
-  let codes = [] as string[]
-  await t.step('load schema, extract codes', async () => {
+  let errors = [] as schemaError[]
+  await t.step('load schema, get errors', async () => {
     const schema = await loadSchema()
-    codes = extractCodes(schema as unknown as GenericSchema)
-    assert(codes.length > 1)
+    errors = getSchemaErrors(schema as unknown as GenericSchema)
+    assert(errors.length > 1)
   })
 
   await t.step('wat', (t) => {
-    const duplicates = codes.filter((x) => Object.hasOwn(bidsIssues, x))
-    assert(duplicates.length === 0, `Found duplicates ${duplicates}`)
+    errors.map((error) => {
+      const code = error['code']
+      if (!Object.hasOwn(bidsIssues, code)) {
+        return
+      }
+      if (Object.hasOwn(error, 'level')) {
+        assertEquals(
+          bidsIssues[code]['severity'],
+          error['level'],
+          `Severity mismatch on code ${code}`,
+        )
+      }
+    })
   })
 })
