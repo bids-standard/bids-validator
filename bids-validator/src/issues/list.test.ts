@@ -1,6 +1,6 @@
 import { assert } from '../deps/asserts.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
-import { nonSchemaIssues } from './list.ts'
+import { bidsIssues } from './list.ts'
 import { GenericSchema } from '../types/schema.ts'
 
 function extractCodes(
@@ -42,7 +42,7 @@ Deno.test('Cross reference error codes in schema and in list.ts', async (t) => {
   })
 
   await t.step('wat', (t) => {
-    const duplicates = codes.filter((x) => Object.hasOwn(nonSchemaIssues, x))
+    const duplicates = codes.filter((x) => Object.hasOwn(bidsIssues, x))
     assert(duplicates.length === 0, `Found duplicates ${duplicates}`)
   })
 })
