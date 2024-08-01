@@ -1,6 +1,6 @@
 import { IssueDefinitionRecord } from '../types/issues.ts'
 
-export const filenameIssues: IssueDefinitionRecord = {
+export const bidsIssues: IssueDefinitionRecord = {
   MISSING_DATASET_DESCRIPTION: {
     severity: 'error',
     reason: 'A dataset_description.json file is required in the root of the dataset',
@@ -158,4 +158,4 @@ export const hedOldToNewLookup: Record<number, Partial<keyof IssueDefinitionReco
   109: 'HED_VERSION_NOT_DEFINED'
 }
 
-export const nonSchemaIssues = { ...filenameIssues, ...hedIssues }
+export const nonSchemaIssues = { ...bidsIssues, ...hedIssues }
