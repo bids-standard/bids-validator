@@ -56,7 +56,7 @@ export function applyRules(
 }
 
 export const evalConstructor = (src: string): Function =>
-  new Function('context', `with (context) { return ${src} }`)
+  new Function('context', `with (context) { return ${src.replace(/\\/g, '\\\\')} }`)
 const safeHas = () => true
 const safeGet = (target: any, prop: any) => prop === Symbol.unscopables ? undefined : target[prop]
 
