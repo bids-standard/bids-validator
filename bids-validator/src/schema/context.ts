@@ -178,7 +178,7 @@ export class BIDSContext implements Context {
   }
 
   async loadAssociations(): Promise<void> {
-    this.associations = await buildAssociations(this.file)
+    this.associations = await buildAssociations(this.file, this.issues)
     return
   }
 

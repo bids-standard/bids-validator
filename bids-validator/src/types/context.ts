@@ -46,7 +46,7 @@ export interface ContextAssociationsBval {
   path: string
   n_cols: number
   n_rows: number
-  values: number[]
+  values: string[] // Actually numbers, but only used in functions that convert
 }
 export interface ContextAssociationsBvec {
   path: string
