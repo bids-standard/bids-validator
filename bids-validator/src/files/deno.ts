@@ -23,11 +23,11 @@ export class BIDSFileDeno implements BIDSFile {
   #ignore: FileIgnoreRules
   name: string
   path: string
-  parent?: FileTree
+  parent: FileTree
   #fileInfo?: Deno.FileInfo
   #datasetAbsPath: string
 
-  constructor(datasetPath: string, path: string, ignore: FileIgnoreRules) {
+  constructor(datasetPath: string, path: string, ignore: FileIgnoreRules, parent?: FileTree) {
     this.#datasetAbsPath = datasetPath
     this.path = path
     this.name = basename(path)
@@ -39,6 +39,7 @@ export class BIDSFileDeno implements BIDSFile {
         this.#fileInfo = Deno.lstatSync(this._getPath())
       }
     }
+    this.parent = parent ?? new FileTree('', '/', undefined)
   }
 
   private _getPath(): string {

@@ -12,7 +12,7 @@ export function* walkBack(
 
   targetSuffix = targetSuffix || sourceParts.suffix
 
-  let fileTree = source.parent
+  let fileTree: FileTree | undefined = source.parent
   while (fileTree) {
     const candidates = fileTree.files.filter((file) => {
       const { suffix, extension, entities } = readEntities(file.name)
