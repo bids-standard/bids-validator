@@ -57,6 +57,7 @@ export interface ContextAssociationsChannels {
   path?: string
   type?: string[]
   short_channel?: string[]
+  sampling_frequency?: string[]
 }
 export interface ContextAssociationsCoordsystem {
   path: string
