@@ -117,8 +117,9 @@ const associationLookup = {
         })
       return {
         path: file.path,
-        type: columns.get('type') || [],
-        short_channel: columns.get('short_channel') || [],
+        type: columns.get('type'),
+        short_channel: columns.get('short_channel'),
+        sampling_frequency: columns.get('sampling_frequency'),
       }
     },
   },
