@@ -10,15 +10,9 @@ interface schemaError {
 
 function getSchemaErrors(
   schema: GenericSchema,
-  rootSchema?: GenericSchema,
-  schemaPath?: string,
+  rootSchema: GenericSchema,
+  schemaPath: string,
 ): schemaError[] {
-  if (!rootSchema) {
-    rootSchema = schema
-  }
-  if (!schemaPath) {
-    schemaPath = 'schema.rules'
-  }
   let errors = []
   for (const key in schema) {
     if (!(schema[key].constructor === Object)) {
