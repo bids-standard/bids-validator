@@ -155,7 +155,7 @@ export const hedOldToNewLookup: Record<number, Partial<keyof IssueDefinitionReco
   106: 'HED_INTERNAL_ERROR',
   107: 'HED_INTERNAL_WARNING',
   108: 'HED_MISSING_VALUE_IN_SIDECAR',
-  109: 'HED_VERSION_NOT_DEFINED'
+  109: 'HED_VERSION_NOT_DEFINED',
 }
 
 export const nonSchemaIssues = { ...filenameIssues, ...hedIssues }

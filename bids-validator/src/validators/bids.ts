@@ -1,4 +1,4 @@
-import { DSCheckFunction, ContextCheckFunction } from '../types/check.ts'
+import { ContextCheckFunction, DSCheckFunction } from '../types/check.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { IssueFile } from '../types/issues.ts'
 import { GenericSchema } from '../types/schema.ts'

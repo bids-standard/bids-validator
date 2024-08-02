@@ -6,11 +6,11 @@ import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { ColumnsMap } from '../types/columns.ts'
 
-function sidecarHasHed(sidecarData: BIDSContext["sidecar"]) {
+function sidecarHasHed(sidecarData: BIDSContext['sidecar']) {
   if (!sidecarData) {
     return false
   }
-  return Object.keys(sidecarData).some(x => sidecarValueHasHed(sidecarData[x]))
+  return Object.keys(sidecarData).some((x) => sidecarValueHasHed(sidecarData[x]))
 }
 
 function sidecarValueHasHed(sidecarValue: unknown) {
@@ -67,7 +67,9 @@ export async function hedValidate(
 
       file = await buildHedTsvFile(context)
     } else if (context.extension == '.json' && sidecarHasHed(context.json)) {
-      hedValidationIssues = hedValidationIssues = await setHedSchemas(context.dataset.dataset_description)
+      hedValidationIssues = hedValidationIssues = await setHedSchemas(
+        context.dataset.dataset_description,
+      )
       file = buildHedSidecarFile(context)
     }
 
@@ -75,7 +77,7 @@ export async function hedValidate(
       hedValidationIssues.push(...file.validate(hedSchemas))
     }
   } catch (error) {
-    context.issues.addNonSchemaIssue('HED_ERROR', [{ ...context.file, evidence: error}])
+    context.issues.addNonSchemaIssue('HED_ERROR', [{ ...context.file, evidence: error }])
   }
 
   hedValidationIssues.map((hedIssue) => {
@@ -89,7 +91,7 @@ export async function hedValidate(
   })
 }
 
-function buildHedTsvFile(context: BIDSContext)  {
+function buildHedTsvFile(context: BIDSContext) {
   const eventFile = new hedValidator.bids.BidsTsvFile(
     context.path,
     context.columns,
