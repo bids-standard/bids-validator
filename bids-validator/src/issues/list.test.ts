@@ -38,13 +38,10 @@ Deno.test('Cross reference error codes in schema and in list.ts', async (t) => {
     assert(errors.length > 1)
   })
 
-  await t.step('wat', (t) => {
-    errors.map((error) => {
-      const code = error['code']
-      if (!Object.hasOwn(bidsIssues, code)) {
-        return
-      }
-      if (Object.hasOwn(error, 'level')) {
+  for (const error of errors) {
+    const code = error.code
+    await t.step(`check ${code}`, (t) => {
+      if (Object.hasOwn(bidsIssues, code) && Object.hasOwn(error, 'level')) {
         assertEquals(
           bidsIssues[code]['severity'],
           error['level'],
@@ -52,5 +49,5 @@ Deno.test('Cross reference error codes in schema and in list.ts', async (t) => {
         )
       }
     })
-  })
+  }
 })
