@@ -1,6 +1,7 @@
 import { ContextAssociations, ContextAssociationsEvents } from '../types/context.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { BIDSContext } from './context.ts'
+import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { readEntities } from './entities.ts'
 import { parseTSV } from '../files/tsv.ts'
 import { parseBvalBvec } from '../files/dwi.ts'
@@ -95,6 +96,11 @@ const associationLookup = {
     load: async (file: BIDSFile): Promise<ContextAssociations['bvec']> => {
       const contents = await file.text()
       const rows = parseBvalBvec(contents)
+
+      if (rows.some((row) => row.length !== rows[0].length)) {
+        throw { key: 'BVEC_ROW_LENGTH' }
+      }
+
       return {
         path: file.path,
         n_cols: rows ? rows[0].length : 0,
@@ -128,16 +134,21 @@ const associationLookup = {
 
 export async function buildAssociations(
   source: BIDSFile,
+  issues: DatasetIssues,
 ): Promise<ContextAssociations> {
   const associations: ContextAssociations = {}
 
   for (const [key, value] of Object.entries(associationLookup)) {
     const { suffix, extensions, inherit, load } = value
-    const path = walkBack(source, inherit, extensions, suffix).next().value
+    const file = walkBack(source, inherit, extensions, suffix).next().value
 
-    if (path) {
+    if (file) {
       // @ts-expect-error
-      associations[key] = await load(path)
+      associations[key] = await load(file).catch((error) => {
+        if (error.key) {
+          issues.addNonSchemaIssue(error.key, [file])
+        }
+      })
     }
   }
   return Promise.resolve(associations)
