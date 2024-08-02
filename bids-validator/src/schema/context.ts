@@ -11,7 +11,7 @@ import { ColumnsMap } from '../types/columns.ts'
 import { BIDSEntities, readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { walkBack } from '../files/inheritance.ts'
-import { parseTSV } from '../files/tsv.ts'
+import { loadTSV } from '../files/tsv.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import { ValidatorOptions } from '../setup/options.ts'
@@ -163,9 +163,7 @@ export class BIDSContext implements Context {
       return
     }
 
-    this.columns = await this.file
-      .text()
-      .then((text) => parseTSV(text))
+    this.columns = await loadTSV(this.file)
       .catch((error) => {
         if (error.key) {
           this.issues.addNonSchemaIssue(error.key, [this.file])
@@ -210,8 +208,7 @@ export class BIDSContext implements Context {
       (file) => file.name === 'participants.tsv',
     )
     if (participants_tsv) {
-      const participantsText = await participants_tsv.text()
-      const participantsData = parseTSV(participantsText)
+      const participantsData = await loadTSV(participants_tsv)
       this.dataset.subjects.participant_id = participantsData[
         'participant_id'
       ] as string[]
@@ -226,8 +223,7 @@ export class BIDSContext implements Context {
       // Collect observed participant_ids
       const seen = new Set() as Set<string>
       for (const file of phenotypeFiles) {
-        const phenotypeText = await file.text()
-        const phenotypeData = parseTSV(phenotypeText)
+        const phenotypeData = await loadTSV(file)
         const participant_id = phenotypeData['participant_id'] as string[]
         if (participant_id) {
           participant_id.forEach((id) => seen.add(id))
