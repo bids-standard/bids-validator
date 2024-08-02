@@ -13,24 +13,21 @@ function getSchemaErrors(
   rootSchema: GenericSchema,
   schemaPath: string,
 ): schemaError[] {
-  let errors = []
-  for (const key in schema) {
-    if (!(schema[key].constructor === Object)) {
+  let errors: schemaError[] = []
+  for (const [key, value] of Object.entries(schema)) {
+    if (value.constructor !== Object) {
       continue
     }
-    if (schema[key].constructor === Object) {
-      errors.push(...getSchemaErrors(
-        schema[key] as GenericSchema,
-        rootSchema,
-        `${schemaPath}.${key}`,
-      ))
-    }
-    let schemaEntry = schema[key] as object
-    if ('code' in schemaEntry && typeof schemaEntry['code'] === 'string') {
-      errors.push(schema[key])
+    errors.push(...getSchemaErrors(
+      value as GenericSchema,
+      rootSchema,
+      `${schemaPath}.${key}`,
+    ))
+    if ('code' in value && typeof value.code === 'string') {
+      errors.push(value as unknown as schemaError)
     }
   }
-  return errors as schemaError[]
+  return errors
 }
 
 Deno.test('Cross reference error codes in schema and in list.ts', async (t) => {
