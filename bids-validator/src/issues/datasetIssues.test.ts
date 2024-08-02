@@ -1,5 +1,5 @@
 import { assertEquals, assertObjectMatch } from '../deps/asserts.ts'
-import { BIDSFile } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { IssueFile } from '../types/issues.ts'
 import { DatasetIssues } from './datasetIssues.ts'
 
@@ -17,6 +17,7 @@ Deno.test('DatasetIssues management class', async (t) => {
     const issues = new DatasetIssues()
     const testStream = new ReadableStream()
     const text = () => Promise.resolve('')
+    const root = new FileTree('', '/', undefined)
     const files = [
       {
         text,
@@ -25,6 +26,7 @@ Deno.test('DatasetIssues management class', async (t) => {
         size: 500,
         ignored: false,
         stream: testStream,
+        parent: root,
       } as BIDSFile,
       {
         text,
@@ -37,6 +39,7 @@ Deno.test('DatasetIssues management class', async (t) => {
         character: 5,
         severity: 'warning',
         reason: 'Readme borked',
+        parent: root,
       } as IssueFile,
     ]
     issues.add({ key: 'TEST_FILES_ERROR', reason: 'Test issue', files })

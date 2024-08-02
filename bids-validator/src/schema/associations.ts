@@ -2,7 +2,7 @@ import { ContextAssociations, ContextAssociationsEvents } from '../types/context
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { BIDSContext } from './context.ts'
 import { readEntities } from './entities.ts'
-import { parseTSV } from '../files/tsv.ts'
+import { loadTSV } from '../files/tsv.ts'
 import { parseBvalBvec } from '../files/dwi.ts'
 import { walkBack } from '../files/inheritance.ts'
 
@@ -25,8 +25,10 @@ const associationLookup = {
     extensions: ['.tsv'],
     inherit: true,
     load: async (file: BIDSFile): Promise<ContextAssociations['events']> => {
-      const text = await file.text()
-      const columns = parseTSV(text)
+      const columns = await loadTSV(file)
+        .catch((e) => {
+          return new Map()
+        })
       return {
         path: file.path,
         onset: columns.get('onset') || [],
@@ -40,8 +42,10 @@ const associationLookup = {
     load: async (
       file: BIDSFile,
     ): Promise<ContextAssociations['aslcontext']> => {
-      const contents = await file.text()
-      const columns = parseTSV(contents)
+      const columns = await loadTSV(file)
+        .catch((e) => {
+          return new Map()
+        })
       return {
         path: file.path,
         n_rows: columns.get('volume_type')?.length || 0,
@@ -107,8 +111,10 @@ const associationLookup = {
     extensions: ['.tsv'],
     inherit: true,
     load: async (file: BIDSFile): Promise<ContextAssociations['channels']> => {
-      const contents = await file.text()
-      const columns = parseTSV(contents)
+      const columns = await loadTSV(file)
+        .catch((e) => {
+          return new Map()
+        })
       return {
         path: file.path,
         type: columns.get('type') || [],

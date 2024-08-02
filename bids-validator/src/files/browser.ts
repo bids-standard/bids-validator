@@ -10,15 +10,16 @@ export class BIDSFileBrowser implements BIDSFile {
   #file: File
   name: string
   path: string
-  parent?: FileTree
+  parent: FileTree
 
-  constructor(file: File, ignore: FileIgnoreRules) {
+  constructor(file: File, ignore: FileIgnoreRules, parent?: FileTree) {
     this.#file = file
     this.#ignore = ignore
     this.name = file.name
     const relativePath = this.#file.webkitRelativePath
     const prefixLength = relativePath.indexOf('/')
     this.path = relativePath.substring(prefixLength)
+    this.parent = parent ?? new FileTree('', '/', undefined)
   }
 
   get size(): number {
@@ -49,11 +50,10 @@ export function fileListToTree(files: File[]): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
   const tree = new FileTree('', '/', undefined)
   for (const f of files) {
-    const file = new BIDSFileBrowser(f, ignore)
+    const file = new BIDSFileBrowser(f, ignore, tree) // Default to root
     const fPath = parse(file.path)
     if (fPath.dir === '/') {
       // Top level file
-      file.parent = tree
       tree.files.push(file)
     } else {
       const levels = fPath.dir.split(SEPARATOR_PATTERN).slice(1)

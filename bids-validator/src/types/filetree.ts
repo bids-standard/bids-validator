@@ -16,7 +16,7 @@ export interface BIDSFile {
   text: () => Promise<string>
   // Read a range of bytes
   readBytes: (size: number, offset?: number) => Promise<Uint8Array>
-  parent?: FileTree
+  parent: FileTree
 }
 
 export class FileTree {
