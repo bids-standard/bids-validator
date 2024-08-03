@@ -91,8 +91,9 @@ Deno.test('test expression functions', async (t) => {
     assert(count(['a', 'b', 'a', 'b'], 'a') === 2)
     assert(count(['a', 'b', 'a', 'b'], 'c') === 0)
   })
+
+  const exists = expressionFunctions.exists.bind(context)
   await t.step('exists(..., "dataset") function', () => {
-    const exists = expressionFunctions.exists.bind(context)
     assert(exists([], 'dataset') === 0)
     assert(
       exists(['sub-01/ses-01/anat/sub-01_ses-01_T1w.nii.gz'], 'dataset') === 1,
@@ -105,7 +106,6 @@ Deno.test('test expression functions', async (t) => {
     )
   })
   await t.step('exists(..., "subject") function', () => {
-    const exists = expressionFunctions.exists.bind(context)
     assert(exists([], 'subject') === 0)
     assert(exists(['ses-01/anat/sub-01_ses-01_T1w.nii.gz'], 'subject') === 1)
     assert(
@@ -115,15 +115,19 @@ Deno.test('test expression functions', async (t) => {
       ) === 1,
     )
   })
+  await t.step('exists(..., "file") function', () => {
+    assert(exists([], 'file') === 0)
+    assert(exists(['sub-01_ses-01_T1w.nii.gz'], 'file') === 1)
+    assert(exists(['sub-01_ses-01_T1w.nii.gz', 'sub-01_ses-01_T1w.json'], 'file') === 2)
+    assert(exists(['sub-01_ses-01_T1w.nii.gz', 'ses-01_T1w.json'], 'file') === 1)
+  })
   await t.step('exists(..., "stimuli") function', () => {
-    const exists = expressionFunctions.exists.bind(context)
     assert(exists([], 'stimuli') === 0)
     assert(exists(['stimfile1.png'], 'stimuli') === 1)
     assert(exists(['stimfile1.png', 'stimfile2.png'], 'stimuli') === 2)
     assert(exists(['X.png', 'Y.png'], 'stimuli') === 0)
   })
   await t.step('exists(..., "bids-uri") function', () => {
-    const exists = expressionFunctions.exists.bind(context)
     assert(exists([], 'subject') === 0)
     assert(
       exists(
@@ -140,6 +144,7 @@ Deno.test('test expression functions', async (t) => {
     // Not yet implemented; currently returns length of array
     // assert(exists(['bids::sub-01/ses-01/anat/sub-01_ses-01_T1w.nii.gz', 'bids::T2w.json'], 'bids-uri') === 1)
   })
+
   await t.step('substr function', () => {
     const substr = expressionFunctions.substr
     assert(substr('abc', 0, 1) === 'a')
