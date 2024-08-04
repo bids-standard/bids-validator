@@ -1,5 +1,6 @@
 import { ContextCheckFunction, DSCheckFunction } from '../types/check.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
+import { loadJSON } from '../files/json.ts'
 import { IssueFile } from '../types/issues.ts'
 import { GenericSchema } from '../types/schema.ts'
 import { ValidationResult } from '../types/validation-result.ts'
@@ -50,7 +51,10 @@ export async function validate(
 
   let dsContext
   if (ddFile) {
-    const description = await ddFile.text().then((text) => JSON.parse(text))
+    const description = await loadJSON(ddFile).catch((error) => {
+      issues.addNonSchemaIssue(error.key, [ddFile])
+      return {} as Record<string, unknown>
+    })
     summary.dataProcessed = description.DatasetType === 'derivative'
     dsContext = new BIDSContextDataset(options, description)
   } else {
