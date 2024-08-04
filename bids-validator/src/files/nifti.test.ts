@@ -1,4 +1,4 @@
-import { assert } from '../deps/asserts.ts'
+import { assert, assertObjectMatch } from '../deps/asserts.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSFileDeno } from './deno.ts'
 
@@ -18,8 +18,10 @@ Deno.test('Test loading nifti header', async (t) => {
     const path = 'sub-01/func/sub-01_task-rhymejudgment_events.tsv'
     const root = './tests/data/valid_headers'
     const file = new BIDSFileDeno(root, path, ignore)
-    const header = await loadHeader(file)
-    assert(header !== undefined)
-    assert(header === null)
+    let error: any = undefined
+    const header = await loadHeader(file).catch((e) => {
+      error = e
+    })
+    assertObjectMatch(error, { key: 'NIFTI_HEADER_UNREADABLE' })
   })
 })

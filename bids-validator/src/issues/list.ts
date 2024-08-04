@@ -107,6 +107,11 @@ export const bidsIssues: IssueDefinitionRecord = {
     reason:
       'A column required in a TSV file has been redefined in a sidecar file. This redefinition is being ignored.',
   },
+  NIFTI_HEADER_UNREADABLE: {
+    severity: 'error',
+    reason:
+      'We were unable to parse header data from this NIfTI file. Please ensure it is not corrupted or mislabeled.',
+  },
   CHECK_ERROR: {
     severity: 'error',
     reason: 'generic place holder for errors from failed `checks` evaluated from schema.',

@@ -151,12 +151,13 @@ export class BIDSContext implements Context {
 
   async loadNiftiHeader(): Promise<void> {
     if (
-      this.extension.startsWith('.nii') &&
-      this.dataset.options &&
-      !this.dataset.options.ignoreNiftiHeaders
-    ) {
-      this.nifti_header = await loadHeader(this.file)
-    }
+      !this.extension.startsWith('.nii') || this.dataset?.options?.ignoreNiftiHeaders
+    ) return
+
+    this.nifti_header = await loadHeader(this.file).catch((error) => {
+      this.issues.addNonSchemaIssue(error.key, [this.file])
+      return undefined
+    })
   }
 
   async loadColumns(): Promise<void> {

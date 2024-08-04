@@ -27,23 +27,33 @@ async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array> 
   return result
 }
 
-export async function loadHeader(file: BIDSFile): Promise<ContextNiftiHeader | undefined> {
+export async function loadHeader(file: BIDSFile): Promise<ContextNiftiHeader> {
   try {
     const buf = await file.readBytes(1024)
     const data = isCompressed(buf.buffer) ? await extract(buf, 540) : buf
     const header = readHeader(data.buffer)
-    // normalize between nifti-reader and spec schema
-    // https://github.com/bids-standard/bids-specification/blob/master/src/schema/meta/context.yaml#L200
-    if (header) {
-      // @ts-expect-error
-      header.pixdim = header.pixDims
-      // @ts-expect-error
-      header.dim = header.dims
+    if (!header) {
+      throw { key: 'NIFTI_HEADER_UNREADABLE' }
     }
-    return header as unknown as ContextNiftiHeader
+    const ndim = header.dims[0]
+    return {
+      dim: header.dims,
+      pixdim: header.pixDims,
+      shape: header.dims.slice(1, ndim + 1),
+      voxel_sizes: header.pixDims.slice(1, ndim + 1),
+      dim_info: {
+        freq: header.dim_info & 0x03,
+        phase: (header.dim_info >> 2) & 0x03,
+        slice: (header.dim_info >> 4) & 0x03,
+      },
+      xyzt_units: {
+        xyz: ['unknown', 'meter', 'mm', 'um'][header.xyzt_units & 0x03],
+        t: ['unknown', 'sec', 'msec', 'usec'][(header.xyzt_units >> 3) & 0x03],
+      },
+      qform_code: header.qform_code,
+      sform_code: header.sform_code,
+    } as ContextNiftiHeader
   } catch (err) {
-    logger.warning(`NIfTI file could not be opened or read ${file.path}`)
-    logger.debug(err)
-    return
+    throw { key: 'NIFTI_HEADER_UNREADABLE' }
   }
 }
