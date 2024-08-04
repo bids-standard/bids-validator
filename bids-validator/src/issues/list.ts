@@ -1,6 +1,14 @@
 import { IssueDefinitionRecord } from '../types/issues.ts'
 
 export const bidsIssues: IssueDefinitionRecord = {
+  INVALID_JSON_ENCODING: {
+    severity: 'error',
+    reason: 'JSON files must be valid UTF-8 encoded text.',
+  },
+  JSON_INVALID: {
+    severity: 'error',
+    reason: 'Not a valid JSON file.',
+  },
   MISSING_DATASET_DESCRIPTION: {
     severity: 'error',
     reason: 'A dataset_description.json file is required in the root of the dataset',
