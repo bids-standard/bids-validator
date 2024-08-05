@@ -1,4 +1,4 @@
-import { assert } from '../deps/asserts.ts'
+import { assert, assertObjectMatch } from '../deps/asserts.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { BIDSContext } from './context.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
@@ -8,14 +8,18 @@ Deno.test('test context LoadSidecar', async (t) => {
   await context.loadSidecar()
   await t.step('sidecar overwrites correct fields', () => {
     const { rootOverwrite, subOverwrite } = context.sidecar
-    assert(rootOverwrite === 'anat')
-    assert(subOverwrite === 'anat')
+    assertObjectMatch(context.sidecar, {
+      rootOverwrite: 'anat',
+      subOverwrite: 'anat',
+    })
   })
   await t.step('sidecar adds new fields at each level', () => {
     const { rootValue, subValue, anatValue } = context.sidecar
-    assert(rootValue === 'root')
-    assert(subValue === 'subject')
-    assert(anatValue === 'anat')
+    assertObjectMatch(context.sidecar, {
+      rootValue: 'root',
+      subValue: 'subject',
+      anatValue: 'anat',
+    })
   })
 })
 
