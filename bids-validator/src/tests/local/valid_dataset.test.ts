@@ -8,7 +8,7 @@ Deno.test('valid_dataset dataset', async (t) => {
   const { tree, result } = await validatePath(t, PATH)
 
   await t.step('correctly ignores .bidsignore files', () => {
-    assert(
+    assertEquals(
       result.issues.get({ code: 'NOT_INCLUDED' }).length,
       0,
       formatAssertIssue(

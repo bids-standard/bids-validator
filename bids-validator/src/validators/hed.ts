@@ -73,7 +73,7 @@ export async function hedValidate(
       file = buildHedSidecarFile(context)
     }
 
-    if (file !== undefined) {
+    if (file) {
       hedValidationIssues.push(...file.validate(hedSchemas))
     }
   } catch (error) {
@@ -87,9 +87,10 @@ export async function hedValidate(
   hedValidationIssues.map((hedIssue) => {
     const code = hedIssue.code
     if (code in hedOldToNewLookup) {
+      const location = hedIssue.file ? hedIssue.file.path : ''
       context.dataset.issues.add({
         code: hedOldToNewLookup[code],
-        location: hedIssue.file.path,
+        location,
         issueMessage: hedIssue.evidence,
       })
     }
