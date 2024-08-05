@@ -27,9 +27,11 @@ Deno.test('test missingLabel', async (t) => {
     await missingLabel(schema, context)
     assertEquals(
       context.issues
-        .getFileIssueKeys(context.file.path)
-        .includes('ENTITY_WITH_NO_LABEL'),
-      true,
+        .get({
+          location: context.file.path,
+          code: 'ENTITY_WITH_NO_LABEL'
+        }).length,
+      1
     )
   })
 
@@ -47,10 +49,11 @@ Deno.test('test missingLabel', async (t) => {
 
       await missingLabel(schema, context)
       assertEquals(
-        context.issues
-          .getFileIssueKeys(context.file.path)
-          .includes('ENTITY_WITH_NO_LABEL'),
-        false,
+        context.issues.get({
+          location: context.file.path,
+          code: 'ENTITY_WITH_NO_LABEL'
+        }).length,
+        0
       )
     },
   )

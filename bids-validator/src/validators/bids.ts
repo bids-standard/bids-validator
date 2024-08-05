@@ -55,7 +55,10 @@ export async function validate(
     dsContext = new BIDSContextDataset(options, description)
   } else {
     dsContext = new BIDSContextDataset(options)
-    issues.addNonSchemaIssue('MISSING_DATASET_DESCRIPTION', [] as IssueFile[])
+    issues.add({
+      code: 'MISSING_DATASET_DESCRIPTION',
+      affects: ['/dataset_description.json']
+    })
   }
 
   let derivatives: FileTree[] = []

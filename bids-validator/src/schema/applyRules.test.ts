@@ -117,7 +117,7 @@ Deno.test('evalCheck ensure expression language functions work', () => {
     },
   ]
   applyRules(rule, context)
-  assert(!context.issues.hasIssue({ key: 'CHECK_ERROR' }))
+  assertEquals(context.issues.get({ code: 'CHECK_ERROR' }).length, 0)
 })
 Deno.test(
   'evalCheck ensure expression language will fail appropriately',
@@ -130,7 +130,7 @@ Deno.test(
       },
     ]
     applyRules(rule, context)
-    assert(context.issues.hasIssue({ key: 'CHECK_ERROR' }))
+    assertEquals(context.issues.get({ code: 'CHECK_ERROR' }).length, 1)
   },
 )
 
@@ -150,7 +150,7 @@ Deno.test('evalColumns tests', async (t) => {
     }
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
     evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
-    assert(context.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' }))
+    assertEquals(context.issues.get({ code: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' }).length, 1)
   })
 
   await t.step('check formatless column', () => {
@@ -165,7 +165,7 @@ Deno.test('evalColumns tests', async (t) => {
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
-    assert(context.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE' }))
+    assertEquals(context.issues.get({ code: 'TSV_VALUE_INCORRECT_TYPE' }).length, 1)
   })
 
   await t.step('verify n/a is allowed', () => {
@@ -181,7 +181,7 @@ Deno.test('evalColumns tests', async (t) => {
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
-    assert(context.issues.size === 0)
+    assertEquals(context.issues.size, 0)
   })
 })
 

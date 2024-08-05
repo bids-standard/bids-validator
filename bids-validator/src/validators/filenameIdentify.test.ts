@@ -81,10 +81,11 @@ Deno.test('test hasMatch', async (t) => {
     const context = new BIDSContext(fileTree, file, issues)
     await hasMatch(schema, context)
     assertEquals(
-      context.issues
-        .getFileIssueKeys(context.file.path)
-        .includes('NOT_INCLUDED'),
-      true,
+      context.issues.get({
+        location: context.file.path,
+        code: 'NOT_INCLUDED'
+      }).length,
+      1
     )
     Deno.removeSync(tmpFile)
   })

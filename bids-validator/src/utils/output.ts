@@ -83,6 +83,57 @@ function formatIssue(issue: Issue, options?: LoggingOptions): string {
   return output.join('\n')
 }
 
+/*
+function _formatDatasetIssues(datasetIssues: DatasetIssue, options?: LoggingOptions): string {
+  let output = []
+  for (const [code, codeMessage] of datasetIssues.codeMessages) {
+    let issues = datasetIssues.get({code})
+    if (issues.length === 0) {
+      continue
+    }
+    output.push(formatIssue(code, codeMessage, issues, options))
+  }
+}
+
+function formatIssue(issue: _Issue, options?: LoggingOptions): string {
+    const subCodes = new Set()
+    subCodes = issues.map(x => Set.add(x.subCode))
+
+    const severity = issue[0].severity
+    const color = severity === 'error' ? 'red' : 'yellow'
+    const output = []
+    output.push(
+      '\t' +
+        colors[color](
+          `[${severity.toUpperCase()}] ${codeMessage} (${code})`,
+        ),
+    )
+    output.push('')
+    let fileOutCount = 0
+    issues.forEach((issue) => {
+      if (!options?.verbose && fileOutCount > 2) {
+        return
+      }
+      output.push('\t\t.' + issue.path)
+      if (issue.line) {
+        let msg = '\t\t\t@ line: ' + issue.line
+        if (issue.character) {
+          msg += ' character: ' + issue.character
+        }
+        output.push(msg)
+      }
+      if (issue.issueMessage) {
+        output.push('\t\t\tEvidence: ' + issue.issueMessage)
+      }
+      fileOutCount++
+    })
+    for (const subCode of subCodes.values()) {
+    }
+    }
+  }
+}
+*/
+
 /**
  * Format for the summary
  */

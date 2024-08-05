@@ -166,7 +166,7 @@ export class BIDSContext implements Context {
     this.columns = await loadTSV(this.file)
       .catch((error) => {
         if (error.key) {
-          this.issues.addNonSchemaIssue(error.key, [this.file])
+          this.issues.add({code: error.key, location: this.file.path})
         }
         logger.warning(
           `tsv file could not be opened by loadColumns '${this.file.path}'`,

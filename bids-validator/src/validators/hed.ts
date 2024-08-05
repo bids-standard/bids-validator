@@ -77,16 +77,19 @@ export async function hedValidate(
       hedValidationIssues.push(...file.validate(hedSchemas))
     }
   } catch (error) {
-    context.issues.addNonSchemaIssue('HED_ERROR', [{ ...context.file, evidence: error }])
+    context.issues.add({
+      code: 'HED_ERROR', location: context.path, issueMessage: error
+    })
   }
 
   hedValidationIssues.map((hedIssue) => {
     const code = hedIssue.code
     if (code in hedOldToNewLookup) {
-      context.issues.addNonSchemaIssue(
-        hedOldToNewLookup[code],
-        [{ ...hedIssue.file, evidence: hedIssue.evidence }],
-      )
+      context.issues.add({
+        code: hedOldToNewLookup[code],
+        location: hedIssue.file.path,
+        issueMessage: hedIssue.evidence
+      })
     }
   })
 }

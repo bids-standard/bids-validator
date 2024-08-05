@@ -44,9 +44,11 @@ export async function missingLabel(
   )
 
   if (fileNoLabelEntities.length) {
-    context.issues.addNonSchemaIssue('ENTITY_WITH_NO_LABEL', [
-      { ...context.file, evidence: fileNoLabelEntities.join(', ') },
-    ])
+    context.issues.add({
+      code: 'ENTITY_WITH_NO_LABEL',
+      location: context.path,
+      issueMessage: fileNoLabelEntities.join(', ')
+    })
   }
   return Promise.resolve()
 }
@@ -120,12 +122,11 @@ export async function entityLabelCheck(
       const rePattern = new RegExp(`^${pattern}$`)
       const label = context.entities[fileEntity]
       if (!rePattern.test(label)) {
-        context.issues.addNonSchemaIssue('INVALID_ENTITY_LABEL', [
-          {
-            ...context.file,
-            evidence: `entity: ${fileEntity} label: ${label} pattern: ${pattern}`,
-          },
-        ])
+        context.issues.add({
+          code: 'INVALID_ENTITY_LABEL',
+          location: context.path,
+          issueMessage: `entity: ${fileEntity} label: ${label} pattern: ${pattern}`,
+        })
       }
     } else {
       // unknown entity
@@ -167,16 +168,15 @@ async function checkRules(schema: GenericSchema, context: BIDSContext) {
     } else if (someIssues.length) {
       // What would we want to do with each rules issues? Add all?
       context.issues = ogIssues
-      context.issues.addNonSchemaIssue('ALL_FILENAME_RULES_HAVE_ISSUES', [
-        {
-          ...context.file,
-          evidence: `Rules that matched with issues: ${
+      context.issues.add({
+        code: 'ALL_FILENAME_RULES_HAVE_ISSUES',
+        location: context.path,
+        issueMessage: `Rules that matched with issues: ${
             someIssues
               .map((x) => x[0])
               .join(', ')
           }`,
-        },
-      ])
+      })
     }
   }
   return Promise.resolve()
@@ -210,12 +210,12 @@ function entityRuleIssue(
     )
 
     if (missingRequired.length) {
-      context.issues.addNonSchemaIssue('MISSING_REQUIRED_ENTITY', [
-        {
-          ...context.file,
-          evidence: `${missingRequired.join(', ')} missing from rule ${path}`,
-        },
-      ])
+      context.issues.add({
+        code: 'MISSING_REQUIRED_ENTITY',
+        location: context.path,
+        issueMessage: `${missingRequired.join(', ')} missing from rule ${path}`,
+        rule: path
+      })
     }
   }
 
@@ -224,12 +224,12 @@ function entityRuleIssue(
   )
 
   if (entityNotInRule.length) {
-    context.issues.addNonSchemaIssue('ENTITY_NOT_IN_RULE', [
-      {
-        ...context.file,
-        evidence: `${entityNotInRule.join(', ')} not in rule ${path}`,
-      },
-    ])
+    context.issues.add({
+      code: 'ENTITY_NOT_IN_RULE',
+      location: context.path,
+      issueMessage: `${entityNotInRule.join(', ')} not in rule ${path}`,
+      rule: path
+    })
   }
 }
 
@@ -244,9 +244,12 @@ function datatypeMismatch(
     Array.isArray(rule.datatypes) &&
     !rule.datatypes.includes(context.datatype)
   ) {
-    context.issues.addNonSchemaIssue('DATATYPE_MISMATCH', [
-      { ...context.file, evidence: `Datatype rule being applied: ${path}` },
-    ])
+    context.issues.add({
+      code: 'DATATYPE_MISMATCH',
+      location: context.path,
+      issueMessage: `Datatype rule being applied: ${path}`,
+      rule: path
+    })
   }
 }
 
@@ -260,8 +263,10 @@ async function extensionMismatch(
     Array.isArray(rule.extensions) &&
     !rule.extensions.includes(context.extension)
   ) {
-    context.issues.addNonSchemaIssue('EXTENSION_MISMATCH', [
-      { ...context.file, evidence: `Rule: ${path}` },
-    ])
+    context.issues.add({
+      code: 'EXTENSION_MISMATCH',
+      location: context.path, 
+      rule: path
+    })
   }
 }

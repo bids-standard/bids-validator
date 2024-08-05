@@ -13,11 +13,12 @@ Deno.test('empty_files dataset', async (t) => {
   const { tree, result } = await validatePath(t, PATH)
 
   await t.step('correctly ignores .bidsignore files', () => {
-    assert(
-      result.issues.get('NOT_INCLUDED') === undefined,
+    assertEquals(
+      result.issues.get({code: 'NOT_INCLUDED'}).length,
+      0,
       formatAssertIssue(
         'NOT_INCLUDED should not be present',
-        result.issues.get('NOT_INCLUDED'),
+        result.issues.get({code: 'NOT_INCLUDED'}),
       ),
     )
   })
@@ -30,8 +31,8 @@ Deno.test('empty_files dataset', async (t) => {
   await t.step(
     'EMPTY_FILES error is thrown for only sub-0001_task-AEF_run-01_meg.meg4',
     () => {
-      const issue = result.issues.get('EMPTY_FILE')
-      assertEquals(issue, undefined, 'EMPTY_FILES was not thrown as expected')
+      const issues = result.issues.get({code: 'EMPTY_FILE'})
+      assertEquals(issues.length, 0, 'EMPTY_FILES was not thrown as expected')
       /*
       assert(
         issue.files.get(
