@@ -131,6 +131,11 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'Empty files not allowed.',
   },
+  UNUSED_STIMULUS: {
+    severity: 'warning',
+    reason:
+      'There are files in the /stimuli directory that are not utilized in any _events.tsv file.',
+  },
 }
 
 const hedIssues: IssueDefinitionRecord = {
