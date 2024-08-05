@@ -8,13 +8,13 @@ Deno.test('valid_headers dataset', async (t) => {
   const { tree, result } = await validatePath(t, PATH)
 
   await t.step('correctly ignores .bidsignore files', () => {
-    assert(
+    assertEquals(
       result.issues.get({code: 'NOT_INCLUDED'}).length,
       0,
       formatAssertIssue(
         'NOT_INCLUDED should not be present',
-        result.issues.get({code: 'NOT_INCLUDED'}),
-      ),
+        result.issues.get({code: 'NOT_INCLUDED'})
+      )
     )
   })
 

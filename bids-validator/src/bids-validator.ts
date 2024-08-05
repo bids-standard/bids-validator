@@ -2,8 +2,7 @@ import { main } from './main.ts'
 
 const result = await main()
 
-for (const issue of result.issues.values()) {
-  if (issue.severity === 'error') {
+let errors = result.issues.get({severity: 'error'})
+if (errors.length) {
     Deno.exit(1)
-  }
 }

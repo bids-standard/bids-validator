@@ -1,4 +1,4 @@
-import { assertEquals, assertObjectMatch } from '../deps/asserts.ts'
+import { assertEquals } from '../deps/asserts.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { IssueFile } from '../types/issues.ts'
 import { DatasetIssues } from './datasetIssues.ts'

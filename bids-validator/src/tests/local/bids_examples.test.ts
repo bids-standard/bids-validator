@@ -3,6 +3,7 @@ import { assert, assertEquals } from '../../deps/asserts.ts'
 import { Cell, Row, Table } from '../../deps/cliffy.ts'
 import { colors } from '../../deps/fmt.ts'
 import { IssueOutput } from '../../types/issues.ts'
+import { legacyOutput } from '../../issues/datasetIssues.ts'
 import { formatAssertIssue, validatePath } from './common.ts'
 import { parseOptions } from '../../setup/options.ts'
 
@@ -47,7 +48,7 @@ Deno.test('validate bids-examples', async (t) => {
       }
     } catch (e) {}
     const { tree, result } = await validatePath(t, path, options)
-    const output = result.issues.formatOutput()
+    const output = legacyOutput(result.issues)
     output.errors = output.errors.filter((x) => useIssue(x))
     await t.step(`${path} has no issues`, () => {
       assertEquals(output.errors.length, 0)
