@@ -56,9 +56,9 @@ export async function validate(
       return {} as Record<string, unknown>
     })
     summary.dataProcessed = description.DatasetType === 'derivative'
-    dsContext = new BIDSContextDataset(options, description)
+    dsContext = new BIDSContextDataset(options, fileTree, description)
   } else {
-    dsContext = new BIDSContextDataset(options)
+    dsContext = new BIDSContextDataset(options, fileTree)
     issues.addNonSchemaIssue('MISSING_DATASET_DESCRIPTION', [] as IssueFile[])
   }
 

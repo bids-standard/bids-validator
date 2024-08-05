@@ -22,16 +22,16 @@ export class BIDSContextDataset implements ContextDataset {
   dataset_description: Record<string, unknown>
   options?: ValidatorOptions
   files: any[]
-  tree: object
+  tree: FileTree
   ignored: any[]
   modalities: any[]
   subjects?: ContextDatasetSubjects
   sidecarKeyValidated: Set<string>
 
-  constructor(options?: ValidatorOptions, description = {}) {
-    this.dataset_description = description
+  constructor(options?: ValidatorOptions, tree?: FileTree, description?: Record<string, unknown>) {
+    this.dataset_description = description || {}
     this.files = []
-    this.tree = {}
+    this.tree = tree || new FileTree('/unknown', 'unknown')
     this.ignored = []
     this.modalities = []
     this.sidecarKeyValidated = new Set<string>()

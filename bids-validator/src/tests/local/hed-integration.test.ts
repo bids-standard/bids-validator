@@ -31,7 +31,7 @@ Deno.test('hed-validator not triggered', async (t) => {
   const tree = await readFileTree(PATH)
   const schema = await loadSchema()
   const issues = new DatasetIssues()
-  const dsContext = new BIDSContextDataset(undefined, { 'HEDVersion': ['bad_version'] })
+  const dsContext = new BIDSContextDataset(undefined, undefined, { 'HEDVersion': ['bad_version'] })
   await t.step('detect hed returns false', async () => {
     const eventFile = getFile(tree, 'sub-01/func/sub-01_task-rhymejudgment_events.tsv')
     assert(eventFile !== undefined)
@@ -48,7 +48,7 @@ Deno.test('hed-validator fails with bad schema version', async (t) => {
   const tree = await readFileTree(PATH)
   const schema = await loadSchema()
   const issues = new DatasetIssues()
-  const dsContext = new BIDSContextDataset(undefined, { 'HEDVersion': ['bad_version'] })
+  const dsContext = new BIDSContextDataset(undefined, undefined, { 'HEDVersion': ['bad_version'] })
   await t.step('detect hed returns false', async () => {
     const eventFile = getFile(tree, 'sub-002/eeg/sub-002_task-FacePerception_run-3_events.tsv')
     assert(eventFile !== undefined)
