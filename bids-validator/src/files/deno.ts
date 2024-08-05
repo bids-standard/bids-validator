@@ -26,6 +26,7 @@ export class BIDSFileDeno implements BIDSFile {
   parent: FileTree
   #fileInfo?: Deno.FileInfo
   #datasetAbsPath: string
+  viewed: boolean = false
 
   constructor(datasetPath: string, path: string, ignore: FileIgnoreRules, parent?: FileTree) {
     this.#datasetAbsPath = datasetPath

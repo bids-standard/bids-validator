@@ -25,6 +25,7 @@ function pseudoFile(dir: FileTree): BIDSFile {
     size: [...quickWalk(dir)].reduce((acc, file) => acc + file.size, 0),
     ignored: dir.ignored,
     parent: dir.parent as FileTree,
+    viewed: false,
     ...nullFile,
   }
 }

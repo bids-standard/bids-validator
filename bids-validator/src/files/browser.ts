@@ -11,6 +11,7 @@ export class BIDSFileBrowser implements BIDSFile {
   name: string
   path: string
   parent: FileTree
+  viewed: boolean = false
 
   constructor(file: File, ignore: FileIgnoreRules, parent?: FileTree) {
     this.#file = file
