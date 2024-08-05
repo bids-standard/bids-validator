@@ -1,15 +1,17 @@
-function exists(list: string[], rule: string = 'dataset'): number {
+import { BIDSContext } from './context.ts'
+
+function exists(this: BIDSContext, list: string[], rule: string = 'dataset'): number {
   if (list == null) {
     return 0
   }
 
   const prefix: string[] = []
+  const fileTree = rule == 'file' ? this.file.parent : this.fileTree
 
   // Stimuli and subject-relative paths get prefixes
   if (rule == 'stimuli') {
     prefix.push('stimuli')
   } else if (rule == 'subject') {
-    // @ts-expect-error
     prefix.push('sub-' + this.entities.sub)
   }
 
@@ -28,8 +30,7 @@ function exists(list: string[], rule: string = 'dataset'): number {
     // dataset, subject and stimuli
     return list.filter((x) => {
       const parts = prefix.concat(x.split('/'))
-      // @ts-expect-error
-      return this.fileTree.contains(parts)
+      return fileTree.contains(parts)
     }).length
   }
 }
