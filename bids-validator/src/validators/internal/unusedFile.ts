@@ -28,3 +28,18 @@ export async function unusedStimulus(
     dsContext.issues.addNonSchemaIssue('UNUSED_STIMULUS', unusedStimuli)
   }
 }
+
+const standalone_json = ['dataset_description.json', 'genetic_info.json']
+
+export async function sidecarWithoutDatafile(
+  schema: GenericSchema,
+  dsContext: BIDSContextDataset,
+) {
+  const unusedSidecars = [...walkFileTree(dsContext.tree)].filter(
+    (file) => (!file.viewed && file.name.endsWith('.json') &&
+      !standalone_json.includes(file.name)),
+  )
+  if (unusedSidecars.length) {
+    dsContext.issues.addNonSchemaIssue('SIDECAR_WITHOUT_DATAFILE', unusedSidecars)
+  }
+}

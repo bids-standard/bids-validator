@@ -13,7 +13,7 @@ import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { emptyFile } from './internal/emptyFile.ts'
-import { unusedStimulus } from './internal/unusedFile.ts'
+import { sidecarWithoutDatafile, unusedStimulus } from './internal/unusedFile.ts'
 import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { parseOptions } from '../setup/options.ts'
 import { hedValidate } from './hed.ts'
@@ -31,6 +31,7 @@ const perContextChecks: ContextCheckFunction[] = [
 
 const perDSChecks: DSCheckFunction[] = [
   unusedStimulus,
+  sidecarWithoutDatafile,
 ]
 
 /**

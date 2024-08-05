@@ -136,6 +136,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     reason:
       'There are files in the /stimuli directory that are not utilized in any _events.tsv file.',
   },
+  SIDECAR_WITHOUT_DATAFILE: {
+    severity: 'error',
+    reason: 'A json sidecar file was found without a corresponding data file',
+  },
 }
 
 const hedIssues: IssueDefinitionRecord = {
