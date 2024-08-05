@@ -100,7 +100,10 @@ export function hasMatch(schema, context) {
     context.filenameRules.length === 0 &&
     context.file.path !== '/.bidsignore'
   ) {
-    context.dataset.issues.addNonSchemaIssue('NOT_INCLUDED', [context.file])
+    context.dataset.issues.add({
+      code: 'NOT_INCLUDED',
+      location: context.path,
+    })
   }
 
   /* we have matched multiple rules and a datatype, lets see if we have one

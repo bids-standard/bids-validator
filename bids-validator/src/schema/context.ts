@@ -128,7 +128,7 @@ export class BIDSContext implements Context {
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
-    this.dataset = dsContext ? dsContext : new BIDSContextDataset({tree: fileTree})
+    this.dataset = dsContext ? dsContext : new BIDSContextDataset({ tree: fileTree })
     this.subject = {} as ContextSubject
     this.datatype = ''
     this.modality = ''
@@ -199,7 +199,7 @@ export class BIDSContext implements Context {
     this.columns = await loadTSV(this.file)
       .catch((error) => {
         if (error.key) {
-          this.dataset.issues.addNonSchemaIssue(error.key, [this.file])
+          this.dataset.issues.add({ code: error.key, location: this.file.path })
         }
         logger.warning(
           `tsv file could not be opened by loadColumns '${this.file.path}'`,

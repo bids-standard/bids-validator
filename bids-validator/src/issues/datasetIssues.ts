@@ -44,7 +44,7 @@ interface DatasetIssuesAddParams {
 /**
  * Management class for dataset issues
  */
-export class DatasetIssues extends Map<string, Issue> {
+export class ldDatasetIssues extends Map<string, Issue> {
   constructor() {
     super()
   }
@@ -143,5 +143,66 @@ export class DatasetIssues extends Map<string, Issue> {
       }
     }
     return output
+  }
+}
+
+/*
+  location - path that triggered rule
+  nextIssue - if we want linked list for map collisions
+ */
+export interface _Issue {
+  code: string
+  subCode?: string
+  severity?: Severity
+  location?: string
+  issueMessage?: string
+  codeMessage?: string
+  suggestion?: string
+  affects?: string[]
+  rule?: string
+  nextIssue?: _Issue
+}
+
+//export class _DatasetIssues extends Map<[string, string, string?], _Issue> {
+export class DatasetIssues {
+  issues: _Issue[]
+  codeMessages: Map<string, string>
+
+  constructor() {
+    this.issues = []
+    this.codeMessages = new Map()
+  }
+
+  add(issue: _Issue) {
+    if (!issue.codeMessage) {
+      if (issue.code in nonSchemaIssues) {
+        issue.codeMessage = nonSchemaIssues[issue.code].reason
+        issue.severity ??= nonSchemaIssues[issue.code].severity
+      } else {
+        throw new Error(
+          `key: ${issue.code} does not exist in non-schema issues definitions`,
+        )
+      }
+    }
+    issue.severity ??= 'error'
+    if (!this.codeMessages.has(issue.code)) {
+      this.codeMessages.set(issue.code, issue.codeMessage)
+    }
+    this.issues.push(issue)
+  }
+
+  get(issue: Partial<_Issue>): _Issue[] {
+    let found: _Issue[] = this.issues
+    for (const key in issue) {
+      const value = issue[key as keyof _Issue]
+      if (!value) {
+        continue
+      }
+      found = found.filter((x) => x[key as keyof _Issue] === value)
+    }
+    return found
+  }
+  get size(): number {
+    return this.issues.length
   }
 }

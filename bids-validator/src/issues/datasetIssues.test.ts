@@ -7,11 +7,7 @@ Deno.test('DatasetIssues management class', async (t) => {
   await t.step('Constructor succeeds', () => {
     new DatasetIssues()
   })
-  await t.step('add an Issue', () => {
-    const issues = new DatasetIssues()
-    issues.add({ key: 'TEST_ERROR', reason: 'Test issue' })
-    assertEquals(issues.hasIssue({ key: 'TEST_ERROR' }), true)
-  })
+
   await t.step('add Issue with several kinds of files', () => {
     // This mostly tests the issueFile mapping function
     const issues = new DatasetIssues()
@@ -44,38 +40,9 @@ Deno.test('DatasetIssues management class', async (t) => {
         viewed: false,
       } as IssueFile,
     ]
-    issues.add({ key: 'TEST_FILES_ERROR', reason: 'Test issue', files })
-    assertEquals(issues.getFileIssueKeys('/README'), ['TEST_FILES_ERROR'])
-    for (const [key, issue] of issues) {
-      assertObjectMatch(issue, { key: 'TEST_FILES_ERROR' })
-      for (const f of issue.files.values()) {
-        // Checking all files for the key assures they are in IssueFile format
-        assertObjectMatch(f, {
-          stream: Promise.resolve(testStream),
-        })
-      }
-    }
+    issues.add({ code: 'TEST_FILES_ERROR', codeMessage: 'Test issue', location: files[1].path })
+    const foundIssue = issues.get({ location: '/README' })
+    assertEquals(foundIssue.length, 1)
+    assertEquals(foundIssue[0].code, 'TEST_FILES_ERROR')
   })
-  await t.step(
-    'issues formatted matching the expected IssueOutput type',
-    () => {
-      const issues = new DatasetIssues()
-      issues.add({ key: 'TEST_ERROR', reason: 'Test issue' })
-      assertEquals(issues.hasIssue({ key: 'TEST_ERROR' }), true)
-      assertEquals(issues.formatOutput(), {
-        errors: [
-          {
-            additionalFileCount: 0,
-            code: -9007199254740991,
-            files: [],
-            helpUrl: 'https://neurostars.org/search?q=TEST_ERROR',
-            key: 'TEST_ERROR',
-            reason: 'Test issue',
-            severity: 'error',
-          },
-        ],
-        warnings: [],
-      })
-    },
-  )
 })

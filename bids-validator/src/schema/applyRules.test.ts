@@ -117,7 +117,7 @@ Deno.test('evalCheck ensure expression language functions work', () => {
     },
   ]
   applyRules(rule, context)
-  assert(!context.dataset.issues.hasIssue({ key: 'CHECK_ERROR' }))
+  assertEquals(context.dataset.issues.get({ code: 'CHECK_ERROR' }).length, 0)
 })
 Deno.test(
   'evalCheck ensure expression language will fail appropriately',
@@ -130,7 +130,7 @@ Deno.test(
       },
     ]
     applyRules(rule, context)
-    assert(context.dataset.issues.hasIssue({ key: 'CHECK_ERROR' }))
+    assertEquals(context.dataset.issues.get({ code: 'CHECK_ERROR' }).length, 1)
   },
 )
 
@@ -165,7 +165,7 @@ Deno.test('evalColumns tests', async (t) => {
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
-    assert(context.dataset.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE' }))
+    assertEquals(context.dataset.issues.get({ code: 'TSV_VALUE_INCORRECT_TYPE' }).length, 1)
   })
 
   await t.step('verify n/a is allowed', () => {
@@ -181,7 +181,7 @@ Deno.test('evalColumns tests', async (t) => {
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
-    assert(context.dataset.issues.size === 0)
+    assertEquals(context.dataset.issues.size, 0)
   })
 })
 
