@@ -31,22 +31,24 @@ Deno.test('empty_files dataset', async (t) => {
     'EMPTY_FILES error is thrown for only sub-0001_task-AEF_run-01_meg.meg4',
     () => {
       const issue = result.issues.get('EMPTY_FILE')
-      assertEquals(issue, undefined, 'EMPTY_FILES was not thrown as expected')
-      /*
-      assert(
-        issue.files.get(
-          '/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/sub-0001_task-AEF_run-01_meg.meg4',
-        ),
-        'sub-0001_task-AEF_run-01_meg.meg4 is empty but not present in EMPTY_FILE issue',
+      const file = assert(
+        issue?.files.get('/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/'),
+        'sub-0001_task-AEF_run-01_meg.ds/ is empty but not present in EMPTY_FILE issue',
       )
       assertEquals(
-        issue.files.get(
+        issue?.files.get(
+          '/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/sub-0001_task-AEF_run-01_meg.meg4',
+        ),
+        undefined,
+        'Contents of pseudo files should not be included in EMPTY_FILES error',
+      )
+      assertEquals(
+        issue?.files.get(
           'tests/data/empty_files/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/BadChannels',
         ),
         undefined,
-        'BadChannels should not be included in EMPTY_FILES error',
+        'Contents of pseudo files should not be included in EMPTY_FILES error',
       )
-      */
     },
   )
 })

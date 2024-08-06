@@ -26,14 +26,16 @@ export class FileTree {
   name: string
   files: BIDSFile[]
   directories: FileTree[]
+  ignored: boolean
   parent?: FileTree
 
-  constructor(path: string, name: string, parent?: FileTree) {
+  constructor(path: string, name: string, parent?: FileTree, ignored?: boolean) {
     this.path = path
     this.files = []
     this.directories = []
     this.name = name
     this.parent = parent
+    this.ignored = ignored || false
   }
 
   contains(parts: string[]): boolean {
