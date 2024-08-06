@@ -1,4 +1,4 @@
-import { assertEquals } from '../deps/asserts.ts'
+import { assert, assertEquals } from '../deps/asserts.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { IssueFile } from '../types/issues.ts'
 import { DatasetIssues } from './datasetIssues.ts'
@@ -44,5 +44,26 @@ Deno.test('DatasetIssues management class', async (t) => {
     const foundIssue = issues.get({ location: '/README' })
     assertEquals(foundIssue.length, 1)
     assertEquals(foundIssue[0].code, 'TEST_FILES_ERROR')
+  })
+
+  await t.step('test groupBy', () => {
+    const issues = new DatasetIssues()
+    issues.add({ code: 'NOT_INCLUDED', location: '/file_1' })
+    issues.add({ code: 'NOT_INCLUDED', location: '/file_2' })
+    issues.add({ code: 'EMPTY_FILE', location: '/file_1' })
+    const byLoc = issues.groupBy('location')
+    assert(byLoc !== undefined)
+    const f1 = byLoc.get('/file_1')
+    const f2 = byLoc.get('/file_2')
+    assert(f1 !== undefined)
+    assert(f2 !== undefined)
+    assertEquals(f1.size, 2)
+    assertEquals(f2.size, 1)
+
+    const byCode = issues.groupBy('code')
+    assert(byCode !== undefined)
+    const code1 = byCode.get('NOT_INCLUDED')
+    assert(code1 !== undefined)
+    assertEquals(code1.size, 2)
   })
 })

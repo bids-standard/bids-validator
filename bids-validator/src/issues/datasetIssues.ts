@@ -61,6 +61,23 @@ export class DatasetIssues {
   get size(): number {
     return this.issues.length
   }
+
+  groupBy(key: keyof Issue): Map<Issue[keyof Issue], DatasetIssues> {
+    let groups: Map<Issue[keyof Issue], DatasetIssues> = new Map()
+    groups.set('__noValue', new DatasetIssues())
+    this.issues.map((issue) => {
+      let value: Issue[keyof Issue] = '__noValue'
+      if (key in issue && issue[key]) {
+        value = issue[key]
+      }
+      if (!groups.has(value)) {
+        groups.set(value, new DatasetIssues())
+      }
+      // @ts-expect-error TS2532 return of get possible undefined. Does the above 'has' catch this case?
+      groups.get(value).add(issue)
+    })
+    return groups
+  }
 }
 
 function helpUrl(code: string): string {
