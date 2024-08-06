@@ -12,6 +12,7 @@ import { readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { walkBack } from '../files/inheritance.ts'
 import { loadTSV } from '../files/tsv.ts'
+import { loadJSON } from '../files/json.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import { ValidatorOptions } from '../setup/options.ts'
@@ -139,10 +140,10 @@ export class BIDSContext implements Context {
     }
     const sidecars = walkBack(this.file)
     for (const file of sidecars) {
-      const json = await file
-        .text()
-        .then((text) => JSON.parse(text))
-        .catch((error) => {})
+      const json = await loadJSON(file).catch((error) => {
+        this.issues.addNonSchemaIssue(error.key, [file])
+        return {}
+      })
       this.sidecar = { ...json, ...this.sidecar }
       Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= file.path)
     }
@@ -150,12 +151,13 @@ export class BIDSContext implements Context {
 
   async loadNiftiHeader(): Promise<void> {
     if (
-      this.extension.startsWith('.nii') &&
-      this.dataset.options &&
-      !this.dataset.options.ignoreNiftiHeaders
-    ) {
-      this.nifti_header = await loadHeader(this.file)
-    }
+      !this.extension.startsWith('.nii') || this.dataset?.options?.ignoreNiftiHeaders
+    ) return
+
+    this.nifti_header = await loadHeader(this.file).catch((error) => {
+      this.issues.addNonSchemaIssue(error.key, [this.file])
+      return undefined
+    })
   }
 
   async loadColumns(): Promise<void> {
@@ -186,10 +188,10 @@ export class BIDSContext implements Context {
     if (this.extension !== '.json') {
       return
     }
-    this.json = await this.file
-      .text()
-      .then((text) => JSON.parse(text))
-      .catch((error) => {})
+    this.json = await loadJSON(this.file).catch((error) => {
+      this.issues.addNonSchemaIssue(error.key, [this.file])
+      return {}
+    })
   }
 
   // This is currently done for every file. It should be done once for the dataset.

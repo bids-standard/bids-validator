@@ -52,7 +52,7 @@ anatFileTree.files = [
     size: 311112,
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
-    readBytes: nullReadBytes,
+    readBytes: async (size: number) => new TextEncoder().encode(await anatJson()),
     parent: anatFileTree,
   },
 ]
@@ -68,7 +68,7 @@ subjectFileTree.files = [
     size: 311112,
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
-    readBytes: nullReadBytes,
+    readBytes: async (size: number) => new TextEncoder().encode(await subjectJson()),
     parent: subjectFileTree,
   },
 ]
@@ -95,7 +95,7 @@ rootFileTree.files = [
     size: 311112,
     ignored: false,
     stream: new ReadableStream<Uint8Array>(),
-    readBytes: nullReadBytes,
+    readBytes: async (size: number) => new TextEncoder().encode(await rootJson()),
     parent: rootFileTree,
   },
 ]

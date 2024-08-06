@@ -1,6 +1,14 @@
 import { IssueDefinitionRecord } from '../types/issues.ts'
 
 export const bidsIssues: IssueDefinitionRecord = {
+  INVALID_JSON_ENCODING: {
+    severity: 'error',
+    reason: 'JSON files must be valid UTF-8 encoded text.',
+  },
+  JSON_INVALID: {
+    severity: 'error',
+    reason: 'Not a valid JSON file.',
+  },
   MISSING_DATASET_DESCRIPTION: {
     severity: 'error',
     reason: 'A dataset_description.json file is required in the root of the dataset',
@@ -98,6 +106,11 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'warning',
     reason:
       'A column required in a TSV file has been redefined in a sidecar file. This redefinition is being ignored.',
+  },
+  NIFTI_HEADER_UNREADABLE: {
+    severity: 'error',
+    reason:
+      'We were unable to parse header data from this NIfTI file. Please ensure it is not corrupted or mislabeled.',
   },
   CHECK_ERROR: {
     severity: 'error',

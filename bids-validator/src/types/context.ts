@@ -86,6 +86,8 @@ export interface ContextNiftiHeader {
   dim_info: ContextNiftiHeaderDimInfo
   dim: number[]
   pixdim: number[]
+  shape: number[]
+  voxel_sizes: number[]
   xyzt_units: ContextNiftiHeaderXyztUnits
   qform_code: number
   sform_code: number
