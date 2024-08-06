@@ -1,5 +1,5 @@
 ---
-name: Schema validator web deploy
+name: Schema validator web build
 
 on:
   push:

@@ -1,32 +1,31 @@
 import { memoize } from '../utils/memoize.ts'
 
-export interface BIDSEntities {
+export interface BIDSFileParts {
+  stem: string
   suffix: string
   extension: string
   entities: Record<string, string>
 }
 
-export function _readEntities(filename: string): BIDSEntities {
+export function _readEntities(filename: string): BIDSFileParts {
   let suffix = ''
-  let extension = ''
   const entities: Record<string, string> = {}
 
-  const parts = filename.split('_')
-  for (let i = 0; i < parts.length - 1; i++) {
-    const [entity, label] = parts[i].split('-')
+  const dot = filename.indexOf('.')
+  const [stem, extension] = dot === -1
+    ? [filename, '']
+    : [filename.slice(0, dot), filename.slice(dot)]
+
+  const parts = stem.split('_')
+  if (parts.length > 1 || parts[parts.length - 1].match(/^[a-zA-Z0-9]+$/)) {
+    suffix = parts.pop() as string
+  }
+  for (const part of parts) {
+    const [entity, label] = part.split('-')
     entities[entity] = label || 'NOENTITY'
   }
 
-  const lastPart = parts[parts.length - 1]
-  const extStart = lastPart.indexOf('.')
-  if (extStart === -1) {
-    suffix = lastPart
-  } else {
-    suffix = lastPart.slice(0, extStart)
-    extension = lastPart.slice(extStart)
-  }
-
-  return { suffix, extension, entities }
+  return { stem, entities, suffix, extension }
 }
 
 export const readEntities = memoize(_readEntities)

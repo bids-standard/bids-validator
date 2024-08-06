@@ -31,7 +31,7 @@ function getSchemaErrors(
 }
 
 Deno.test('Cross reference error codes in schema and in list.ts', async (t) => {
-  let errors: schemaError[] = []  
+  let errors: schemaError[] = []
   await t.step('load schema, get errors', async () => {
     const rules = await loadSchema().then((schema) => schema['rules']) as GenericSchema
     errors = getSchemaErrors(rules, rules, 'rules')

@@ -8,7 +8,7 @@ import {
 } from '../types/context.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
-import { BIDSEntities, readEntities } from './entities.ts'
+import { readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { walkBack } from '../files/inheritance.ts'
 import { loadTSV } from '../files/tsv.ts'
