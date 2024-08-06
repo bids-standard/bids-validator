@@ -20,7 +20,7 @@ import { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
 
 export class BIDSContextDataset implements ContextDataset {
-  dataset_description: Record<string, unknown>
+  #dataset_description: Record<string, unknown> = {}
   tree: FileTree
   ignored: BIDSFile[]
   datatypes: string[]
@@ -49,15 +49,19 @@ export class BIDSContextDataset implements ContextDataset {
     if (options) {
       this.options = options
     }
-    if (
-      !this.dataset_description.DatasetType &&
-      this.dataset_description.GeneratedBy
-    ) {
-      this.dataset_description.DatasetType = 'derivative'
-    } else if (!this.dataset_description.DatasetType) {
-      this.dataset_description.DatasetType = 'raw'
-    }
     this.issues = issues || new DatasetIssues()
+  }
+
+  get dataset_description(): Record<string, unknown> {
+    return this.#dataset_description
+  }
+  set dataset_description(value: Record<string, unknown>) {
+    this.#dataset_description = value
+    if (!this.dataset_description.DatasetType) {
+      this.dataset_description.DatasetType = this.dataset_description.GeneratedBy
+        ? 'derivative'
+        : 'raw'
+    }
   }
 }
 
