@@ -5,7 +5,7 @@ import { BIDSContext } from './context.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 Deno.test('test expression functions', async (t) => {
-  const context = new BIDSContext(rootFileTree, dataFile, new DatasetIssues())
+  const context = new BIDSContext(dataFile, undefined, rootFileTree)
 
   await t.step('index function', () => {
     const index = expressionFunctions.index

@@ -1,4 +1,6 @@
+import { GenericSchema } from './schema.ts'
 import { ValidatorOptions } from '../setup/options.ts'
+import { FileTree } from '../types/filetree.ts'
 
 export interface ContextDatasetSubjects {
   sub_dirs: string[]
@@ -8,10 +10,10 @@ export interface ContextDatasetSubjects {
 
 export interface ContextDataset {
   dataset_description: Record<string, unknown>
-  files: any[]
-  tree: object
+  tree: FileTree
   ignored: any[]
-  modalities: any[]
+  datatypes: string[]
+  modalities: string[]
   subjects?: ContextDatasetSubjects
   options?: ValidatorOptions
   sidecarKeyValidated: Set<string>
@@ -93,6 +95,7 @@ export interface ContextNiftiHeader {
   sform_code: number
 }
 export interface Context {
+  schema?: GenericSchema
   dataset: ContextDataset
   subject: ContextSubject
   path: string

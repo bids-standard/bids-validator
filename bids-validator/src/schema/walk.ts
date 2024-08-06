@@ -11,7 +11,7 @@ export async function* _walkFileTree(
   dsContext?: BIDSContextDataset,
 ): AsyncIterable<BIDSContext> {
   for (const file of fileTree.files) {
-    yield new BIDSContext(root, file, issues, dsContext)
+    yield new BIDSContext(file, dsContext, root, issues)
   }
   for (const dir of fileTree.directories) {
     yield* _walkFileTree(dir, root, issues, dsContext)

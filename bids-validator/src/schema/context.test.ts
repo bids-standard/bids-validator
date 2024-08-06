@@ -4,7 +4,7 @@ import { BIDSContext } from './context.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 
 Deno.test('test context LoadSidecar', async (t) => {
-  const context = new BIDSContext(rootFileTree, dataFile, new DatasetIssues())
+  const context = new BIDSContext(dataFile)
   await context.loadSidecar()
   await t.step('sidecar overwrites correct fields', () => {
     const { rootOverwrite, subOverwrite } = context.sidecar
@@ -24,7 +24,7 @@ Deno.test('test context LoadSidecar', async (t) => {
 })
 
 Deno.test('test context loadSubjects', async (t) => {
-  const context = new BIDSContext(rootFileTree, dataFile, new DatasetIssues())
+  const context = new BIDSContext(dataFile, undefined, rootFileTree)
   await context.loadSubjects()
   await t.step('context produces correct subjects object', () => {
     assert(context.dataset.subjects, 'subjects object exists')

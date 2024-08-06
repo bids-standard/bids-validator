@@ -6,6 +6,7 @@ import {
   ContextNiftiHeader,
   ContextSubject,
 } from '../types/context.ts'
+import { GenericSchema } from '../types/schema.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { readEntities } from './entities.ts'
@@ -20,20 +21,28 @@ import { logger } from '../utils/logger.ts'
 
 export class BIDSContextDataset implements ContextDataset {
   dataset_description: Record<string, unknown>
-  options?: ValidatorOptions
-  files: any[]
   tree: FileTree
-  ignored: any[]
-  modalities: any[]
+  ignored: BIDSFile[]
+  datatypes: string[]
+  modalities: string[]
   subjects?: ContextDatasetSubjects
-  sidecarKeyValidated: Set<string>
 
-  constructor(options?: ValidatorOptions, tree?: FileTree, description?: Record<string, unknown>) {
+  sidecarKeyValidated: Set<string>
+  options?: ValidatorOptions
+
+  constructor(
+    options?: ValidatorOptions,
+    tree?: FileTree,
+    description?: Record<string, unknown>,
+    ignored?: BIDSFile[],
+    datatypes?: string[],
+    modalities?: string[],
+  ) {
     this.dataset_description = description || {}
-    this.files = []
     this.tree = tree || new FileTree('/unknown', 'unknown')
-    this.ignored = []
-    this.modalities = []
+    this.ignored = ignored || []
+    this.datatypes = datatypes || []
+    this.modalities = modalities || []
     this.sidecarKeyValidated = new Set<string>()
     if (options) {
       this.options = options
@@ -65,43 +74,45 @@ export class BIDSContextDatasetSubjects implements ContextDatasetSubjects {
   }
 }
 
-const defaultDsContext = new BIDSContextDataset()
-
 export class BIDSContext implements Context {
-  // Internal representation of the file tree
-  fileTree: FileTree
-  filenameRules: string[]
-  issues: DatasetIssues
-  file: BIDSFile
-  suffix: string
-  extension: string
-  entities: Record<string, string>
+  schema?: GenericSchema
   dataset: ContextDataset
   subject: ContextSubject
+  // path: string  <- getter
+  // size: number  <- getter
+  entities: Record<string, string>
   datatype: string
+  suffix: string
+  extension: string
   modality: string
   sidecar: Record<string, any>
-  sidecarKeyOrigin: Record<string, string>
-  json: object
-  columns: ColumnsMap
   associations: ContextAssociations
+  columns: ColumnsMap
+  json: object
+  gzip?: object
   nifti_header?: ContextNiftiHeader
+  ome?: object
+  tiff?: object
+
+  file: BIDSFile
+  filenameRules: string[]
+  issues: DatasetIssues
+  sidecarKeyOrigin: Record<string, string>
 
   constructor(
-    fileTree: FileTree,
     file: BIDSFile,
-    issues: DatasetIssues,
     dsContext?: BIDSContextDataset,
+    fileTree?: FileTree,
+    issues?: DatasetIssues,
   ) {
-    this.fileTree = fileTree
     this.filenameRules = []
-    this.issues = issues
+    this.issues = issues || new DatasetIssues()
     this.file = file
     const bidsEntities = readEntities(file.name)
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
-    this.dataset = dsContext ? dsContext : defaultDsContext
+    this.dataset = dsContext ? dsContext : new BIDSContextDataset(undefined, fileTree)
     this.subject = {} as ContextSubject
     this.datatype = ''
     this.modality = ''
@@ -126,7 +137,7 @@ export class BIDSContext implements Context {
    * In the browser, this is always at the root
    */
   get datasetPath(): string {
-    return this.fileTree.path
+    return this.dataset.tree.path
   }
 
   /**
@@ -201,12 +212,12 @@ export class BIDSContext implements Context {
     }
     this.dataset.subjects = new BIDSContextDatasetSubjects()
     // Load subject dirs from the file tree
-    this.dataset.subjects.sub_dirs = this.fileTree.directories
+    this.dataset.subjects.sub_dirs = this.dataset.tree.directories
       .filter((dir) => dir.name.startsWith('sub-'))
       .map((dir) => dir.name)
 
     // Load participants from participants.tsv
-    const participants_tsv = this.fileTree.files.find(
+    const participants_tsv = this.dataset.tree.files.find(
       (file) => file.name === 'participants.tsv',
     )
     if (participants_tsv) {
@@ -217,7 +228,7 @@ export class BIDSContext implements Context {
     }
 
     // Load phenotype from phenotype/*.tsv
-    const phenotype_dir = this.fileTree.directories.find(
+    const phenotype_dir = this.dataset.tree.directories.find(
       (dir) => dir.name === 'phenotype',
     )
     if (phenotype_dir) {
