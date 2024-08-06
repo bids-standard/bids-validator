@@ -62,21 +62,27 @@ export async function validate(
     issues.addNonSchemaIssue('MISSING_DATASET_DESCRIPTION', [] as IssueFile[])
   }
 
-  let derivatives: FileTree[] = []
+  const bidsDerivatives: FileTree[] = []
+  const nonstdDerivatives: FileTree[] = []
   fileTree.directories = fileTree.directories.filter((dir) => {
-    if (dir.name === 'derivatives') {
-      dir.directories.map((deriv) => {
-        if (
-          deriv.files.some(
-            (file: BIDSFile) => file.name === 'dataset_description.json',
-          )
-        ) {
-          derivatives.push(deriv)
-        }
-      })
+    if (dir.name !== 'derivatives') {
       return true
     }
-    return true
+    for (const deriv of dir.directories) {
+      if (
+        deriv.files.some(
+          (file: BIDSFile) => file.name === 'dataset_description.json',
+        )
+      ) {
+        // New root for the derivative dataset
+        deriv.parent = undefined
+        bidsDerivatives.push(deriv)
+      } else {
+        nonstdDerivatives.push(deriv)
+      }
+    }
+    // Remove derivatives from the main fileTree
+    return false
   })
 
   for await (const context of walkFileTree(fileTree, issues, dsContext)) {
@@ -103,7 +109,7 @@ export async function validate(
 
   let derivativesSummary: Record<string, ValidationResult> = {}
   await Promise.allSettled(
-    derivatives.map(async (deriv) => {
+    bidsDerivatives.map(async (deriv) => {
       derivativesSummary[deriv.name] = await validate(deriv, options)
       return derivativesSummary[deriv.name]
     }),
