@@ -1,3 +1,0 @@
-include LICENSE MANIFEST.in README.md
-include versioneer.py
-include bids_validator/_version.py

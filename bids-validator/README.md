@@ -1,5 +1,4 @@
 [![Node Tests](https://github.com/bids-standard/bids-validator/actions/workflows/node_tests.yml/badge.svg)](https://github.com/bids-standard/bids-validator/actions/workflows/node_tests.yml)
-[![Python tests](https://github.com/bids-standard/bids-validator/actions/workflows/python_tests.yml/badge.svg)](https://github.com/bids-standard/bids-validator/actions/workflows/python_tests.yml)
 [![bids-examples tests](https://github.com/bids-standard/bids-validator/actions/workflows/test-bids-examples.yml/badge.svg)](https://github.com/bids-standard/bids-validator/actions/workflows/test-bids-examples.yml)
 [![CircleCI](https://circleci.com/gh/bids-standard/bids-validator.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/bids-standard/bids-validator)
 [![Codecov](https://codecov.io/gh/bids-standard/bids-validator/branch/master/graph/badge.svg)](https://codecov.io/gh/bids-standard/bids-validator)
@@ -19,8 +18,6 @@
     - [On the Server](#on-the-server)
     - [Through Command Line](#through-command-line)
   - [Docker image](#docker-image)
-  - [Python Library](#python-library)
-    - [Example](#example)
   - [Development](#development)
     - [Running Locally in a Browser](#running-locally-in-a-browser)
     - [Testing](#testing)
@@ -46,28 +43,12 @@
    1. Install Docker
    1. From a terminal run `docker run -ti --rm -v /path/to/data:/data:ro bids/validator /data`
       but replace the `/path/to/data` part of the command with your own path on your machine.
-1. Python Library:
-   1. Install [Python](https://www.python.org/)
-   1. Install [Pip](https://pip.pypa.io/en/stable/installing/) package manager for Python, if
-      not already installed.
-   1. From a terminal run `pip install bids_validator` to acquire the
-      [BIDS Validator PyPI package](https://pypi.org/project/bids-validator/)
-      or `conda install bids-validator` for the
-      [Conda package](https://anaconda.org/conda-forge/bids-validator).
-   1. Open a Python terminal and type: `python`
-   1. Import the BIDS Validator package `from bids_validator import BIDSValidator`
-   1. Check if a file is BIDS compatible `BIDSValidator().is_bids('/relative/path/to/a/bids/file')`
-   1. Note, the file path must be relative to the root of the BIDS dataset, and
-      a leading forward slash `/` must be added to the file path.
 
 ## Support
 
 The BIDS Validator is designed to work in both the browser and in Node.js. We
 target support for the latest long term stable (LTS) release of Node.js and the
 latest version of Chrome.
-
-There is also a library of helper functions written in Python, for use with BIDS
-compliant applications written in this language.
 
 Please report any issues you experience while using these support targets via
 the [GitHub issue tracker](https://github.com/bids-standard/bids-validator/issues).
@@ -385,31 +366,6 @@ See here for a brief explanation of the commands:
   - the third field is optional. In our case, we use `ro` to specify that the
     mounted data is _read only_
 
-## Python Library
-
-[![PyPI version](https://badge.fury.io/py/bids-validator.svg)](https://badge.fury.io/py/bids-validator)
-[![Conda version](https://img.shields.io/conda/vn/conda-forge/bids-validator)](https://anaconda.org/conda-forge/bids-validator)
-
-There are is a limited library of helper functions written in Python. The main function
-determines if a file extension is compliant with the BIDS specification. You can find
-the available functions in the library, as well as their descriptions,
-[here](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/bids_validator/bids_validator.py).
-To install, run `pip install -U bids_validator` (requires python and pip) or
-`conda install bids-validator` (requires a Conda environment).
-
-### Example
-
-```Python
-from bids_validator import BIDSValidator
-validator = BIDSValidator()
-filepaths = ["/sub-01/anat/sub-01_rec-CSD_T1w.nii.gz", "/sub-01/anat/sub-01_acq-23_rec-CSD_T1w.exe"]
-for filepath in filepaths:
-    print(validator.is_bids(filepath))  # will print True, and then False
-```
-
-Note, the file path must be relative to the root of the BIDS dataset, and a 
-leading forward slash `/` must be added to the file path.
-
 ## Development
 
 To develop locally, clone the project and run `npm install` from the project
@@ -465,7 +421,7 @@ Global installs are not recommended for development because of the possibility o
 
 Publishing is done with [Lerna](https://github.com/lerna/lerna). Use the command `npx lerna publish` and follow instructions to set a new version.
 
-Using lerna publish will create a git commit with updated version information and create a version number tag for it, push the tag to GitHub, then publish to NPM and PyPI. The GitHub release is manual following that.
+Using lerna publish will create a git commit with updated version information and create a version number tag for it, push the tag to GitHub, then publish to NPM. The GitHub release is manual following that.
 
 ## Acknowledgments
 
