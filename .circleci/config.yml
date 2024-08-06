@@ -161,54 +161,6 @@ jobs:
       - run: git checkout -f $CIRCLE_TAG
       - run: python3 -m build bids-validator/
       - run: python3 -m twine upload bids-validator/dist/*
-  gh-pages_deployment:
-    docker:
-      - image: node:18-alpine
-    steps:
-      - run: npm install --global npm
-      - run: apk --no-cache add ca-certificates git openssh-client
-      - add_ssh_keys:
-          fingerprints:
-            - '86:74:77:4c:90:02:f4:5d:b4:f8:3c:b4:37:c3:c0:25'
-      - checkout
-      - restore_cache:
-          keys:
-            - npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
-      - run: git config --global user.email "bids.maintenance@gmail.com"
-      - run: git config --global user.name "bids-maintenance"
-      - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - run:
-          name: Create new gh-pages branch without history
-          command: git checkout --orphan gh-pages
-      - run:
-          name: Install bids-validator and bids-validator-web dependencies
-          command: npm install
-      - run:
-          name: Build and export web-validator
-          command: npm run web-export
-      - run:
-          name: Clean and remove bids-validator files
-          command: git reset . && git clean --force -d --exclude bids-validator-web/out
-      - run:
-          name: Move build into legacy directory
-          command: mv bids-validator-web/out/ legacy
-      - run:
-          name: Remove files not related to build
-          command: rm -r bids-validator bids-validator-web node_modules
-      - run:
-          name: Create a nojekyll file (gh-pages specific)
-          command: touch .nojekyll
-      - run: git status
-      - run:
-          name: Commit updates
-          command: git add legacy && git commit --allow-empty --no-verify -m "Circle CI - Generate validator demo with version $CIRCLE_TAG [ci skip]"
-      - run: git push origin gh-pages -f
-      - save_cache:
-          key: npm-deps-{{ checksum "package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
-          paths:
-            - ./node_modules
-      - store_artifacts:
-          path: ~/legacy
 workflows:
   version: 2
   build-deploy:
@@ -252,13 +204,3 @@ workflows:
               ignore: /.*/
             tags:
               only: /.*/
-      - gh-pages_deployment:
-          requires:
-            - test
-            - test_docker
-            - githubPagesTest
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /v\d+\.\d+\.\d+$/
