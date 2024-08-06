@@ -38,7 +38,7 @@ Deno.test('hed-validator not triggered', async (t) => {
     const context = new BIDSContext(eventFile, dsContext)
     await context.asyncLoads()
     await hedValidate(schema as unknown as GenericSchema, context)
-    assert(context.issues.size === 0)
+    assert(context.dataset.issues.size === 0)
   })
 })
 
@@ -54,7 +54,7 @@ Deno.test('hed-validator fails with bad schema version', async (t) => {
     const context = new BIDSContext(eventFile, dsContext)
     await context.asyncLoads()
     await hedValidate(schema as unknown as GenericSchema, context)
-    assert(context.issues.size === 1)
-    assert(context.issues.has('HED_ERROR'))
+    assert(context.dataset.issues.size === 1)
+    assert(context.dataset.issues.has('HED_ERROR'))
   })
 })

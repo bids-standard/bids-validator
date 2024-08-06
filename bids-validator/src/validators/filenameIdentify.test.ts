@@ -79,7 +79,7 @@ Deno.test('test hasMatch', async (t) => {
     const context = new BIDSContext(file, undefined, fileTree)
     await hasMatch(schema, context)
     assertEquals(
-      context.issues
+      context.dataset.issues
         .getFileIssueKeys(context.file.path)
         .includes('NOT_INCLUDED'),
       true,

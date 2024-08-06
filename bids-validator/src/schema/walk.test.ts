@@ -1,13 +1,13 @@
 import { assert, assertEquals } from '../deps/asserts.ts'
-import { BIDSContext } from './context.ts'
+import { BIDSContext, BIDSContextDataset } from './context.ts'
 import { walkFileTree } from './walk.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { simpleDataset, simpleDatasetFileCount } from '../tests/simple-dataset.ts'
 
 Deno.test('file tree walking', async (t) => {
   await t.step('visits each file and creates a BIDSContext', async () => {
-    const issues = new DatasetIssues()
-    for await (const context of walkFileTree(simpleDataset, issues)) {
+    const dsContext = new BIDSContextDataset(undefined, simpleDataset)
+    for await (const context of walkFileTree(dsContext)) {
       assert(
         context instanceof BIDSContext,
         'walk file tree did not return a BIDSContext',
@@ -15,9 +15,9 @@ Deno.test('file tree walking', async (t) => {
     }
   })
   await t.step('visits every file expected', async () => {
-    const issues = new DatasetIssues()
+    const dsContext = new BIDSContextDataset(undefined, simpleDataset)
     let accumulator = 0
-    for await (const context of walkFileTree(simpleDataset, issues)) {
+    for await (const context of walkFileTree(dsContext)) {
       assert(
         context instanceof BIDSContext,
         'walk file tree did not return a BIDSContext',

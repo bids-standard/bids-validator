@@ -27,6 +27,7 @@ export class BIDSContextDataset implements ContextDataset {
   modalities: string[]
   subjects?: ContextDatasetSubjects
 
+  issues: DatasetIssues
   sidecarKeyValidated: Set<string>
   options?: ValidatorOptions
 
@@ -37,6 +38,7 @@ export class BIDSContextDataset implements ContextDataset {
     ignored?: BIDSFile[],
     datatypes?: string[],
     modalities?: string[],
+    issues?: DatasetIssues,
   ) {
     this.dataset_description = description || {}
     this.tree = tree || new FileTree('/unknown', 'unknown')
@@ -55,6 +57,7 @@ export class BIDSContextDataset implements ContextDataset {
     } else if (!this.dataset_description.DatasetType) {
       this.dataset_description.DatasetType = 'raw'
     }
+    this.issues = issues || new DatasetIssues()
   }
 }
 
@@ -76,7 +79,7 @@ export class BIDSContextDatasetSubjects implements ContextDatasetSubjects {
 
 export class BIDSContext implements Context {
   schema?: GenericSchema
-  dataset: ContextDataset
+  dataset: BIDSContextDataset
   subject: ContextSubject
   // path: string  <- getter
   // size: number  <- getter
@@ -96,17 +99,14 @@ export class BIDSContext implements Context {
 
   file: BIDSFile
   filenameRules: string[]
-  issues: DatasetIssues
   sidecarKeyOrigin: Record<string, string>
 
   constructor(
     file: BIDSFile,
     dsContext?: BIDSContextDataset,
     fileTree?: FileTree,
-    issues?: DatasetIssues,
   ) {
     this.filenameRules = []
-    this.issues = issues || new DatasetIssues()
     this.file = file
     const bidsEntities = readEntities(file.name)
     this.suffix = bidsEntities.suffix
@@ -152,7 +152,7 @@ export class BIDSContext implements Context {
     const sidecars = walkBack(this.file)
     for (const file of sidecars) {
       const json = await loadJSON(file).catch((error) => {
-        this.issues.addNonSchemaIssue(error.key, [file])
+        this.dataset.issues.addNonSchemaIssue(error.key, [file])
         return {}
       })
       this.sidecar = { ...json, ...this.sidecar }
@@ -166,7 +166,7 @@ export class BIDSContext implements Context {
     ) return
 
     this.nifti_header = await loadHeader(this.file).catch((error) => {
-      this.issues.addNonSchemaIssue(error.key, [this.file])
+      this.dataset.issues.addNonSchemaIssue(error.key, [this.file])
       return undefined
     })
   }
@@ -179,7 +179,7 @@ export class BIDSContext implements Context {
     this.columns = await loadTSV(this.file)
       .catch((error) => {
         if (error.key) {
-          this.issues.addNonSchemaIssue(error.key, [this.file])
+          this.dataset.issues.addNonSchemaIssue(error.key, [this.file])
         }
         logger.warning(
           `tsv file could not be opened by loadColumns '${this.file.path}'`,
@@ -191,7 +191,7 @@ export class BIDSContext implements Context {
   }
 
   async loadAssociations(): Promise<void> {
-    this.associations = await buildAssociations(this.file, this.issues)
+    this.associations = await buildAssociations(this.file, this.dataset.issues)
     return
   }
 
@@ -200,7 +200,7 @@ export class BIDSContext implements Context {
       return
     }
     this.json = await loadJSON(this.file).catch((error) => {
-      this.issues.addNonSchemaIssue(error.key, [this.file])
+      this.dataset.issues.addNonSchemaIssue(error.key, [this.file])
       return {}
     })
   }
