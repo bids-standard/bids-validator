@@ -1,35 +1,6 @@
 version: 2
 
 jobs:
-  test_python:
-    docker:
-      - image: continuumio/miniconda3
-    environment:
-      BASH_ENV: '/root/.bashrc'
-    steps:
-      - checkout
-      - run:
-          name: setup conda
-          command: |
-            conda create -n testenv Python=3.10
-            conda init
-      - run: git config --global user.email "bids.maintenance@gmail.com"
-      - run: git config --global user.name "bids-maintenance"
-      - run:
-          name: install datalad
-          command: |
-            conda activate testenv
-            conda install -c conda-forge git-annex
-            pip install pytest flake8 pydocstyle datalad
-      - run:
-          name: test python
-          command: |
-            conda activate testenv
-            cd bids-validator
-            pip install .
-            pytest --doctest-modules bids_validator
-            flake8 bids_validator
-            pydocstyle bids_validator/bids_validator.py
   test:
     docker:
       - image: node:18-alpine
@@ -104,63 +75,6 @@ jobs:
             - ./.next/cache
       - store_artifacts:
           path: ~/web_version
-  pypi_precheck:
-    docker:
-      - image: alpine:3.13
-    steps:
-      - run: apk --no-cache add ca-certificates git openssh-client rust cargo
-      - checkout
-      - run:
-          name: Set up environment
-          command: apk --no-cache add build-base libffi-dev libressl-dev
-      - run:
-          name: Install Python 3 and build tools
-          command: apk --no-cache add python3 python3-dev
-      - run:
-          name: Update Python install tools
-          command: |
-            python3 -m ensurepip
-            python3 -m pip install --upgrade pip build
-      - run:
-          name: Install twine, readme renderer
-          command: python3 -m pip install twine readme_renderer[md]
-      - run:
-          name: Check build and readme rendering
-          command: |
-            python3 -m build bids-validator/
-            twine check bids-validator/dist/*
-      - run:
-          name: Check sdist installation
-          command: |
-            cd bids-validator
-            python3 -m venv .venv
-            source .venv/bin/activate
-            python3 --version
-            python3 -m pip install --upgrade pip
-            python3 -m pip install dist/*.tar.gz
-  pypi_deployment:
-    docker:
-      - image: alpine:3.13
-    steps:
-      - run: apk --no-cache add ca-certificates git openssh-client rust cargo
-      - checkout
-      - run:
-          name: Set up environment
-          command: apk --no-cache add build-base libffi-dev libressl-dev
-      - run:
-          name: Install Python 3 and build tools
-          command: apk --no-cache add python3 python3-dev
-      - run:
-          name: Update Python install tools
-          command: |
-            python3 -m ensurepip
-            python3 -m pip install --upgrade pip build
-      - run:
-          name: Install twine, readme renderer
-          command: python3 -m pip install twine readme_renderer[md]
-      - run: git checkout -f $CIRCLE_TAG
-      - run: python3 -m build bids-validator/
-      - run: python3 -m twine upload bids-validator/dist/*
   gh-pages_deployment:
     docker:
       - image: node:18-alpine
@@ -213,12 +127,6 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - test_python:
-          filters:
-            branches:
-              only: /.*/
-            tags:
-              only: /.*/
       - test:
           filters:
             branches:
@@ -235,21 +143,6 @@ workflows:
           filters:
             branches:
               only: /.*/
-            tags:
-              only: /.*/
-      - pypi_precheck:
-          filters:
-            tags:
-              only: /.*/
-      - pypi_deployment:
-          requires:
-            - test_python
-            - test
-            - test_docker
-            - pypi_precheck
-          filters:
-            branches:
-              ignore: /.*/
             tags:
               only: /.*/
       - gh-pages_deployment:
