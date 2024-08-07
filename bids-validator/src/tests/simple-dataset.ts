@@ -7,8 +7,8 @@ const text = () => Promise.resolve('')
 const rootFileTree = new FileTree('/', '')
 const subjectFileTree = new FileTree('/sub-01', 'sub-01', rootFileTree)
 const anatFileTree = new FileTree('/sub-01/anat', 'anat', subjectFileTree)
-anatFileTree.files = [
-  {
+export const generateTestAnatFile = () => {
+  return {
     text,
     path: '/sub-01/anat/sub-01_T1w.nii.gz',
     name: 'sub-01_T1w.nii.gz',
@@ -17,7 +17,10 @@ anatFileTree.files = [
     stream: new ReadableStream<Uint8Array>(),
     readBytes: nullReadBytes,
     parent: anatFileTree,
-  },
+  }
+}
+anatFileTree.files = [
+  generateTestAnatFile()
 ]
 subjectFileTree.files = []
 subjectFileTree.directories = [anatFileTree]

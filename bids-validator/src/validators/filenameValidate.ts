@@ -138,6 +138,7 @@ const ruleChecks: RuleCheckFunction[] = [
   entityRuleIssue,
   datatypeMismatch,
   extensionMismatch,
+  uniqueDataFile,
 ]
 
 async function checkRules(schema: GenericSchema, context: BIDSContext) {
@@ -261,7 +262,34 @@ async function extensionMismatch(
     !rule.extensions.includes(context.extension)
   ) {
     context.dataset.issues.addNonSchemaIssue('EXTENSION_MISMATCH', [
-      { ...context.file, evidence: `Rule: ${path}` },
+      { ...context.file, evidence: `Rule: ${path}` }
     ])
+  }
+}
+
+async function uniqueDataFile(
+  path: string,
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
+  const rule = schema[path]
+  if (sidecarExtensions.includes(context.extension) ||
+    !Array.isArray(rule.extensions)
+  ) {
+    return
+  }
+  const dataExts: string[] = rule.extensions.filter(ext => !sidecarExtensions.includes(ext) &&  ext !== context.extension)
+  if (dataExts.length < 1) {
+    return
+  }
+  const dupes: string[] = []
+  dataExts.map(ext => {
+    const target = context.file.name.replace(new RegExp(`${context.extension}$`), ext)
+    if (context.file.parent.contains([target])) {
+      dupes.push(target)
+    }
+  })
+  if (dupes.length) {
+    context.dataset.issues.addNonSchemaIssue('NON_UNIQUE_DATAFILE', [{...context.file, evidence: `found: ${dupes}`}])
   }
 }

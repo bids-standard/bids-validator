@@ -42,6 +42,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'Extension used by file does not match allowed extensions for its suffix',
   },
+  NON_UNIQUE_DATAFILE: {
+    severity: 'error',
+    reason: 'Multiple files found with the same entities, datatype and suffix.'
+  },
   JSON_KEY_REQUIRED: {
     severity: 'error',
     reason: 'A JSON flle is missing a key listed as required.',
