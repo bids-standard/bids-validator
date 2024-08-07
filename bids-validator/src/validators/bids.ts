@@ -48,7 +48,7 @@ export async function validate(
     (file: BIDSFile) => file.name === 'dataset_description.json',
   )
 
-  const dsContext = new BIDSContextDataset(options, schema, fileTree)
+  const dsContext = new BIDSContextDataset({options, schema, tree: fileTree})
   if (ddFile) {
     dsContext.dataset_description = await loadJSON(ddFile).catch((error) => {
       dsContext.issues.addNonSchemaIssue(error.key, [ddFile])

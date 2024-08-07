@@ -33,26 +33,19 @@ export class BIDSContextDataset implements ContextDataset {
   schema: Schema
 
   constructor(
-    options?: ValidatorOptions,
-    schema?: Schema,
-    tree?: FileTree,
-    description?: Record<string, unknown>,
-    ignored?: BIDSFile[],
-    datatypes?: string[],
-    modalities?: string[],
-    issues?: DatasetIssues,
+    args: Partial<BIDSContextDataset>
   ) {
-    this.schema = schema || {} as unknown as Schema
-    this.dataset_description = description || {}
-    this.tree = tree || new FileTree('/unknown', 'unknown')
-    this.ignored = ignored || []
-    this.datatypes = datatypes || []
-    this.modalities = modalities || []
+    this.schema = args.schema || {} as unknown as Schema
+    this.dataset_description = args.dataset_description || {}
+    this.tree = args.tree || new FileTree('/unknown', 'unknown')
+    this.ignored = args.ignored || []
+    this.datatypes = args.datatypes || []
+    this.modalities = args.modalities || []
     this.sidecarKeyValidated = new Set<string>()
-    if (options) {
-      this.options = options
+    if (args.options) {
+      this.options = args.options
     }
-    this.issues = issues || new DatasetIssues()
+    this.issues = args.issues || new DatasetIssues()
   }
 
   get dataset_description(): Record<string, unknown> {
@@ -118,7 +111,7 @@ export class BIDSContext implements Context {
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
-    this.dataset = dsContext ? dsContext : new BIDSContextDataset(undefined, undefined, fileTree)
+    this.dataset = dsContext ? dsContext : new BIDSContextDataset({tree: fileTree})
     this.subject = {} as ContextSubject
     this.datatype = ''
     this.modality = ''

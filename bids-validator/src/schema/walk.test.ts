@@ -6,7 +6,7 @@ import { simpleDataset, simpleDatasetFileCount } from '../tests/simple-dataset.t
 
 Deno.test('file tree walking', async (t) => {
   await t.step('visits each file and creates a BIDSContext', async () => {
-    const dsContext = new BIDSContextDataset(undefined, undefined, simpleDataset)
+    const dsContext = new BIDSContextDataset({tree: simpleDataset})
     for await (const context of walkFileTree(dsContext)) {
       assert(
         context instanceof BIDSContext,
@@ -15,7 +15,7 @@ Deno.test('file tree walking', async (t) => {
     }
   })
   await t.step('visits every file expected', async () => {
-    const dsContext = new BIDSContextDataset(undefined, undefined, simpleDataset)
+    const dsContext = new BIDSContextDataset({tree: simpleDataset})
     let accumulator = 0
     for await (const context of walkFileTree(dsContext)) {
       assert(
