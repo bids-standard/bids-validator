@@ -26,8 +26,8 @@ export function applyRules(
   if (!rootSchema) {
     rootSchema = schema
   }
-  if (!schemaPath) {
-    schemaPath = 'schema.rules'
+  if (schemaPath === undefined) {
+    schemaPath = ''
   }
   Object.assign(context, expressionFunctions)
   // @ts-expect-error
