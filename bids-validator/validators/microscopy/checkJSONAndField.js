@@ -100,16 +100,16 @@ const checkIfIntendedExists = (intendedFor, fileList, file) => {
   for (let key = 0; key < intendedFor.length; key++) {
     const intendedForFile = intendedFor[key]
     const intendedForFileFull =
-      '/' + file.relativePath.split('/')[1] + '/' + intendedForFile
-    let onTheList = false
-    for (let key2 in fileList) {
-      if (key2) {
-        const filePath = fileList[key2].relativePath
-        if (filePath === intendedForFileFull) {
-          onTheList = true
-        }
-      }
-    }
+      '/' +
+      (intendedForFile.startsWith('bids::')
+        ? intendedForFile.split('::')[1]
+        : file.relativePath.split('/')[1] + '/' + intendedForFile)
+    const onTheList = Object.values(fileList).some(
+      (f) =>
+        f.relativePath === intendedForFileFull ||
+        // Consider .ome.zarr/ files
+        f.relativePath.startsWith(`${intendedForFileFull}/`),
+    )
     if (!onTheList) {
       issues.push(
         new Issue({

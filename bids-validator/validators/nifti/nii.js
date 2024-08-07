@@ -1396,17 +1396,13 @@ function sliceTimingGreaterThanRepetitionTime(array, repetitionTime) {
 
 function checkIfIntendedExists(intendedForFile, fileList, issues, file) {
   const intendedForFileFull =
-    '/' + file.relativePath.split('/')[1] + '/' + intendedForFile
-  let onTheList = false
-
-  for (let key2 in fileList) {
-    if (key2) {
-      const filePath = fileList[key2].relativePath
-      if (filePath === intendedForFileFull) {
-        onTheList = true
-      }
-    }
-  }
+    '/' +
+    (intendedForFile.startsWith('bids::')
+      ? intendedForFile.split('::')[1]
+      : file.relativePath.split('/')[1] + '/' + intendedForFile)
+  const onTheList = Object.values(fileList).some(
+    (f) => f.relativePath === intendedForFileFull,
+  )
   if (!onTheList) {
     issues.push(
       new Issue({
