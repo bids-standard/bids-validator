@@ -44,6 +44,9 @@ export const validateCommand = new Command()
   .option(
     '--color, --no-color [color:boolean]',
     'Enable/disable color output (defaults to detected support)',
+    {
+      default: !!(Deno.env.get('FORCE_COLOR') || Deno.stdout.isTerminal())
+    },
   )
 
 /**
