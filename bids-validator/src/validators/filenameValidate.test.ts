@@ -4,7 +4,6 @@ import { assertEquals } from '../deps/asserts.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { atRoot, entityLabelCheck, missingLabel } from './filenameValidate.ts'
 import { BIDSFileDeno } from '../files/deno.ts'
-import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
@@ -19,14 +18,14 @@ Deno.test('test missingLabel', async (t) => {
     Deno.writeTextFileSync(`${tmpDir}/${basename}`, '')
 
     const context = new BIDSContext(
-      fileTree,
       new BIDSFileDeno(tmpDir, `/${basename}`, ignore),
-      new DatasetIssues(),
+      undefined,
+      fileTree,
     )
 
     await missingLabel(schema, context)
     assertEquals(
-      context.issues
+      context.dataset.issues
         .getFileIssueKeys(context.file.path)
         .includes('ENTITY_WITH_NO_LABEL'),
       true,
@@ -40,14 +39,14 @@ Deno.test('test missingLabel', async (t) => {
       Deno.writeTextFileSync(`${tmpDir}/${basename}`, '')
 
       const context = new BIDSContext(
-        fileTree,
         new BIDSFileDeno(tmpDir, `/${basename}`, ignore),
-        new DatasetIssues(),
+        undefined,
+        fileTree,
       )
 
       await missingLabel(schema, context)
       assertEquals(
-        context.issues
+        context.dataset.issues
           .getFileIssueKeys(context.file.path)
           .includes('ENTITY_WITH_NO_LABEL'),
         false,

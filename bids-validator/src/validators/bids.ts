@@ -37,7 +37,6 @@ export async function validate(
   fileTree: FileTree,
   options: ValidatorOptions,
 ): Promise<ValidationResult> {
-  const issues = new DatasetIssues()
   const summary = new Summary()
   const schema = await loadSchema(options.schema)
   summary.schemaVersion = schema.schema_version
@@ -49,17 +48,15 @@ export async function validate(
     (file: BIDSFile) => file.name === 'dataset_description.json',
   )
 
-  let dsContext
+  const dsContext = new BIDSContextDataset({options, schema, tree: fileTree})
   if (ddFile) {
-    const description = await loadJSON(ddFile).catch((error) => {
-      issues.addNonSchemaIssue(error.key, [ddFile])
+    dsContext.dataset_description = await loadJSON(ddFile).catch((error) => {
+      dsContext.issues.addNonSchemaIssue(error.key, [ddFile])
       return {} as Record<string, unknown>
     })
-    summary.dataProcessed = description.DatasetType === 'derivative'
-    dsContext = new BIDSContextDataset(options, description)
+    summary.dataProcessed = dsContext.dataset_description.DatasetType === 'derivative'
   } else {
-    dsContext = new BIDSContextDataset(options)
-    issues.addNonSchemaIssue('MISSING_DATASET_DESCRIPTION', [] as IssueFile[])
+    dsContext.issues.addNonSchemaIssue('MISSING_DATASET_DESCRIPTION', [] as IssueFile[])
   }
 
   const bidsDerivatives: FileTree[] = []
@@ -85,7 +82,7 @@ export async function validate(
     return false
   })
 
-  for await (const context of walkFileTree(fileTree, issues, dsContext)) {
+  for await (const context of walkFileTree(dsContext)) {
     // TODO - Skip ignored files for now (some tests may reference ignored files)
     if (context.file.ignored) {
       continue
@@ -104,7 +101,7 @@ export async function validate(
     await summary.update(context)
   }
   for (const check of perDSChecks) {
-    await check(schema as unknown as GenericSchema, dsContext, issues)
+    await check(schema as unknown as GenericSchema, dsContext)
   }
 
   let derivativesSummary: Record<string, ValidationResult> = {}
@@ -116,7 +113,7 @@ export async function validate(
   )
 
   let output: ValidationResult = {
-    issues,
+    issues: dsContext.issues,
     summary: summary.formatOutput(),
   }
 

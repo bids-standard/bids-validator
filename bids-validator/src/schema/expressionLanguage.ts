@@ -6,7 +6,7 @@ function exists(this: BIDSContext, list: string[], rule: string = 'dataset'): nu
   }
 
   const prefix: string[] = []
-  const fileTree = rule == 'file' ? this.file.parent : this.fileTree
+  const fileTree = rule == 'file' ? this.file.parent : this.dataset.tree
 
   // Stimuli and subject-relative paths get prefixes
   if (rule == 'stimuli') {

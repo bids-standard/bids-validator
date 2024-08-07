@@ -77,13 +77,13 @@ export async function hedValidate(
       hedValidationIssues.push(...file.validate(hedSchemas))
     }
   } catch (error) {
-    context.issues.addNonSchemaIssue('HED_ERROR', [{ ...context.file, evidence: error }])
+    context.dataset.issues.addNonSchemaIssue('HED_ERROR', [{ ...context.file, evidence: error }])
   }
 
   hedValidationIssues.map((hedIssue) => {
     const code = hedIssue.code
     if (code in hedOldToNewLookup) {
-      context.issues.addNonSchemaIssue(
+      context.dataset.issues.addNonSchemaIssue(
         hedOldToNewLookup[code],
         [{ ...hedIssue.file, evidence: hedIssue.evidence }],
       )

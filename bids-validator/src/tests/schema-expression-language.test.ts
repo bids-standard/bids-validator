@@ -21,8 +21,10 @@ Deno.test('validate schema expression tests', async (t) => {
   const header = ['expression', 'desired', 'actual', 'result'].map((x) => colors.magenta(x))
   for (const test of schema.meta.expression_tests) {
     await t.step(`${test.expression} evals to ${test.result}`, () => {
+      const context = { file: { parent: null }, dataset: { tree: null } } as unknown as BIDSContext
+      Object.assign(context, expressionFunctions)
       // @ts-expect-error
-      const context = expressionFunctions as BIDSContext
+      context.exists.bind(context)
       const actual_result = evalCheck(test.expression, context)
       if (equal(actual_result, test.result)) {
         results.push([

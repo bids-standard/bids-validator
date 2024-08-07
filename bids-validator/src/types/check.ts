@@ -18,5 +18,4 @@ export type RuleCheckFunction = (
 export type DSCheckFunction = (
   schema: GenericSchema,
   dsContext: BIDSContextDataset,
-  issues: DatasetIssues,
 ) => Promise<void>

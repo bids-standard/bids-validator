@@ -101,7 +101,7 @@ Deno.test('evalCheck ensure expression language functions work', () => {
   const context = {
     x: [1, 2, 3, 4],
     y: [1, 1, 1, 1],
-    issues: new DatasetIssues(),
+    dataset: { issues: new DatasetIssues() },
   }
   const rule = [
     {
@@ -117,12 +117,12 @@ Deno.test('evalCheck ensure expression language functions work', () => {
     },
   ]
   applyRules(rule, context)
-  assert(!context.issues.hasIssue({ key: 'CHECK_ERROR' }))
+  assert(!context.dataset.issues.hasIssue({ key: 'CHECK_ERROR' }))
 })
 Deno.test(
   'evalCheck ensure expression language will fail appropriately',
   () => {
-    const context = { issues: new DatasetIssues() }
+    const context = { dataset: { issues: new DatasetIssues() } }
     const rule = [
       {
         selectors: ['true'],
@@ -130,7 +130,7 @@ Deno.test(
       },
     ]
     applyRules(rule, context)
-    assert(context.issues.hasIssue({ key: 'CHECK_ERROR' }))
+    assert(context.dataset.issues.hasIssue({ key: 'CHECK_ERROR' }))
   },
 )
 
@@ -146,11 +146,11 @@ Deno.test('evalColumns tests', async (t) => {
         filename: ['func/sub-01_task-rest_bold.nii.gz'],
         acq_time: ['1900-01-01T00:00:78'],
       },
-      issues: new DatasetIssues(),
+      dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
     evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
-    assert(context.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' }))
+    assert(context.dataset.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' }))
   })
 
   await t.step('check formatless column', () => {
@@ -161,11 +161,11 @@ Deno.test('evalColumns tests', async (t) => {
       columns: {
         onset: ['1', '2', 'not a number'],
       },
-      issues: new DatasetIssues(),
+      dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
-    assert(context.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE' }))
+    assert(context.dataset.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE' }))
   })
 
   await t.step('verify n/a is allowed', () => {
@@ -177,11 +177,11 @@ Deno.test('evalColumns tests', async (t) => {
         onset: ['1', '2', 'n/a'],
         strain_rrid: ['RRID:SCR_012345', 'RRID:SCR_012345', 'n/a'],
       },
-      issues: new DatasetIssues(),
+      dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
-    assert(context.issues.size === 0)
+    assert(context.dataset.issues.size === 0)
   })
 })
 

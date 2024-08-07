@@ -30,16 +30,17 @@ Deno.test('hed-validator not triggered', async (t) => {
   const PATH = 'tests/data/bids-examples/ds003'
   const tree = await readFileTree(PATH)
   const schema = await loadSchema()
-  const issues = new DatasetIssues()
-  const dsContext = new BIDSContextDataset(undefined, { 'HEDVersion': ['bad_version'] })
+  const dsContext = new BIDSContextDataset({dataset_description: {
+    'HEDVersion': ['bad_version'],
+  }})
   await t.step('detect hed returns false', async () => {
     const eventFile = getFile(tree, 'sub-01/func/sub-01_task-rhymejudgment_events.tsv')
     assert(eventFile !== undefined)
     assert(eventFile instanceof BIDSFileDeno)
-    const context = new BIDSContext(tree, eventFile, issues, dsContext)
+    const context = new BIDSContext(eventFile, dsContext)
     await context.asyncLoads()
     await hedValidate(schema as unknown as GenericSchema, context)
-    assert(issues.size === 0)
+    assert(context.dataset.issues.size === 0)
   })
 })
 
@@ -47,16 +48,17 @@ Deno.test('hed-validator fails with bad schema version', async (t) => {
   const PATH = 'tests/data/bids-examples/eeg_ds003645s_hed_library'
   const tree = await readFileTree(PATH)
   const schema = await loadSchema()
-  const issues = new DatasetIssues()
-  const dsContext = new BIDSContextDataset(undefined, { 'HEDVersion': ['bad_version'] })
+  const dsContext = new BIDSContextDataset({dataset_description: {
+    'HEDVersion': ['bad_version'],
+  }})
   await t.step('detect hed returns false', async () => {
     const eventFile = getFile(tree, 'sub-002/eeg/sub-002_task-FacePerception_run-3_events.tsv')
     assert(eventFile !== undefined)
     assert(eventFile instanceof BIDSFileDeno)
-    const context = new BIDSContext(tree, eventFile, issues, dsContext)
+    const context = new BIDSContext(eventFile, dsContext)
     await context.asyncLoads()
     await hedValidate(schema as unknown as GenericSchema, context)
-    assert(issues.size === 1)
-    assert(issues.has('HED_ERROR'))
+    assert(context.dataset.issues.size === 1)
+    assert(context.dataset.issues.has('HED_ERROR'))
   })
 })
