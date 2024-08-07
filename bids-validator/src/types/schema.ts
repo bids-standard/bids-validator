@@ -12,10 +12,18 @@ export interface Entity {
   format: string
 }
 
+export interface Value {
+  value: string
+}
+
 export interface SchemaObjects {
+  datatypes: Record<string, Value>
+  enums: Record<string, Value>
+  entities: Record<string, Entity>
+  extensions: Record<string, Value>
   files: Record<string, unknown>
   formats: Record<string, Format>
-  entities: Record<string, Entity>
+  suffixes: Record<string, Value>
 }
 
 export interface SchemaRules {

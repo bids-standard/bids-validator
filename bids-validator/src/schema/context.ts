@@ -31,9 +31,10 @@ export class BIDSContextDataset implements ContextDataset {
   sidecarKeyValidated: Set<string>
   options?: ValidatorOptions
   schema: Schema
+  pseudofileExtensions: Set<string>
 
   constructor(
-    args: Partial<BIDSContextDataset>
+    args: Partial<BIDSContextDataset>,
   ) {
     this.schema = args.schema || {} as unknown as Schema
     this.dataset_description = args.dataset_description || {}
@@ -46,6 +47,13 @@ export class BIDSContextDataset implements ContextDataset {
       this.options = args.options
     }
     this.issues = args.issues || new DatasetIssues()
+    this.pseudofileExtensions = new Set<string>(
+      args.schema
+        ? Object.values(this.schema.objects.extensions)
+          ?.map((ext) => ext.value)
+          ?.filter((ext) => ext.endsWith('/'))
+        : [],
+    )
   }
 
   get dataset_description(): Record<string, unknown> {
@@ -58,6 +66,15 @@ export class BIDSContextDataset implements ContextDataset {
         ? 'derivative'
         : 'raw'
     }
+  }
+
+  isPseudoFile(file: FileTree): boolean {
+    const { suffix, extension, entities } = readEntities(file.name)
+    return (
+      suffix !== '' &&
+      Object.keys(entities).length > 0 &&
+      this.pseudofileExtensions.has(`${extension}/`)
+    )
   }
 }
 
