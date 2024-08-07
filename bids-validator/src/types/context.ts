@@ -1,4 +1,4 @@
-import { GenericSchema } from './schema.ts'
+import { Schema } from './schema.ts'
 import { ValidatorOptions } from '../setup/options.ts'
 import { FileTree } from '../types/filetree.ts'
 
@@ -95,7 +95,7 @@ export interface ContextNiftiHeader {
   sform_code: number
 }
 export interface Context {
-  schema?: GenericSchema
+  schema: Schema
   dataset: ContextDataset
   subject: ContextSubject
   path: string

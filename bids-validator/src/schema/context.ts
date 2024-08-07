@@ -6,7 +6,7 @@ import {
   ContextNiftiHeader,
   ContextSubject,
 } from '../types/context.ts'
-import { GenericSchema } from '../types/schema.ts'
+import { Schema } from '../types/schema.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { readEntities } from './entities.ts'
@@ -30,9 +30,11 @@ export class BIDSContextDataset implements ContextDataset {
   issues: DatasetIssues
   sidecarKeyValidated: Set<string>
   options?: ValidatorOptions
+  schema: Schema
 
   constructor(
     options?: ValidatorOptions,
+    schema?: Schema,
     tree?: FileTree,
     description?: Record<string, unknown>,
     ignored?: BIDSFile[],
@@ -40,6 +42,7 @@ export class BIDSContextDataset implements ContextDataset {
     modalities?: string[],
     issues?: DatasetIssues,
   ) {
+    this.schema = schema || {} as unknown as Schema
     this.dataset_description = description || {}
     this.tree = tree || new FileTree('/unknown', 'unknown')
     this.ignored = ignored || []
@@ -82,7 +85,6 @@ export class BIDSContextDatasetSubjects implements ContextDatasetSubjects {
 }
 
 export class BIDSContext implements Context {
-  schema?: GenericSchema
   dataset: BIDSContextDataset
   subject: ContextSubject
   // path: string  <- getter
@@ -116,7 +118,7 @@ export class BIDSContext implements Context {
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
-    this.dataset = dsContext ? dsContext : new BIDSContextDataset(undefined, fileTree)
+    this.dataset = dsContext ? dsContext : new BIDSContextDataset(undefined, undefined, fileTree)
     this.subject = {} as ContextSubject
     this.datatype = ''
     this.modality = ''
@@ -125,6 +127,10 @@ export class BIDSContext implements Context {
     this.columns = new ColumnsMap()
     this.json = {}
     this.associations = {} as ContextAssociations
+  }
+
+  get schema(): Schema {
+    return this.dataset.schema
   }
 
   get size(): number {
