@@ -26,8 +26,17 @@ export function applyRules(
   if (!rootSchema) {
     rootSchema = schema
   }
+  /* Normal run of validation starts at schema.json root, but some tests will pass
+     in truncated schemas. Only set origin of rules to rules object if we see it.
+   */
   if (schemaPath === undefined) {
-    schemaPath = ''
+    if (Object.hasOwn(schema, 'rules')) {
+      schemaPath = 'rules'
+      // @ts-expect-error
+      schema = schema.rules
+    } else {
+      schemaPath = ''
+    }
   }
   Object.assign(context, expressionFunctions)
   // @ts-expect-error
