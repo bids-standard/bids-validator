@@ -1,4 +1,5 @@
 import { parseOptions } from './setup/options.ts'
+import { colors } from './deps/fmt.ts'
 import { readFileTree } from './files/deno.ts'
 import { fileListToTree } from './files/browser.ts'
 import { resolve } from './deps/path.ts'
@@ -9,6 +10,7 @@ import type { ValidationResult } from './types/validation-result.ts'
 
 export async function main(): Promise<ValidationResult> {
   const options = await parseOptions(Deno.args)
+  colors.setColorEnabled(options.color)
   setupLogging(options.debug)
   const absolutePath = resolve(options.datasetPath)
   const tree = await readFileTree(absolutePath)

@@ -11,6 +11,7 @@ export type ValidatorOptions = {
   ignoreNiftiHeaders?: boolean
   filenameMode?: boolean
   debug: LevelName
+  color?: boolean
 }
 
 export const validateCommand = new Command()
@@ -39,6 +40,10 @@ export const validateCommand = new Command()
   .option(
     '--filenameMode',
     'Enable filename checks for newline separated filenames read from stdin',
+  )
+  .option(
+    '--color, --no-color [color:boolean]',
+    'Enable/disable color output (defaults to detected support)',
   )
 
 /**

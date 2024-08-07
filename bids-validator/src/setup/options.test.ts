@@ -9,6 +9,7 @@ Deno.test('options parsing', async (t) => {
       debug: 'ERROR',
       json: true,
       schema: 'latest',
+      color: false,
     })
   })
 })
