@@ -150,7 +150,10 @@ Deno.test('evalColumns tests', async (t) => {
     }
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
     evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
-    assert(context.dataset.issues.hasIssue({ key: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' }))
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' }).length,
+      1,
+    )
   })
 
   await t.step('check formatless column', () => {
