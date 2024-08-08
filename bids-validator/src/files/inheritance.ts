@@ -30,6 +30,7 @@ export function* walkBack(
         )
       })
       if (exactMatch) {
+        exactMatch.viewed = true
         yield exactMatch
       } else {
         console.warn(`
@@ -39,6 +40,7 @@ ${candidates.map((file) => `* ${file.path}`).join('\n')}
 `)
       }
     } else if (candidates.length === 1) {
+      candidates[0].viewed = true
       yield candidates[0]
     }
     if (!inherit) break

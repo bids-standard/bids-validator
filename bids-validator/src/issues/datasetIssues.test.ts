@@ -27,6 +27,7 @@ Deno.test('DatasetIssues management class', async (t) => {
         ignored: false,
         stream: testStream,
         parent: root,
+        viewed: false,
       } as BIDSFile,
       {
         text,
@@ -40,6 +41,7 @@ Deno.test('DatasetIssues management class', async (t) => {
         severity: 'warning',
         reason: 'Readme borked',
         parent: root,
+        viewed: false,
       } as IssueFile,
     ]
     issues.add({ key: 'TEST_FILES_ERROR', reason: 'Test issue', files })

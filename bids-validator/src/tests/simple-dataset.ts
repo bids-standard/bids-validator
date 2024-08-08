@@ -17,6 +17,7 @@ anatFileTree.files = [
     stream: new ReadableStream<Uint8Array>(),
     readBytes: nullReadBytes,
     parent: anatFileTree,
+    viewed: false,
   },
 ]
 subjectFileTree.files = []
@@ -31,6 +32,7 @@ rootFileTree.files = [
     stream: new ReadableStream(),
     readBytes: nullReadBytes,
     parent: rootFileTree,
+    viewed: false,
   },
   {
     text,
@@ -41,6 +43,7 @@ rootFileTree.files = [
     stream: new ReadableStream(),
     readBytes: nullReadBytes,
     parent: rootFileTree,
+    viewed: false,
   },
   {
     text,
@@ -51,6 +54,7 @@ rootFileTree.files = [
     stream: new ReadableStream(),
     readBytes: nullReadBytes,
     parent: rootFileTree,
+    viewed: false,
   },
   {
     text,
@@ -61,6 +65,7 @@ rootFileTree.files = [
     stream: new ReadableStream(),
     readBytes: nullReadBytes,
     parent: rootFileTree,
+    viewed: false,
   },
 ]
 rootFileTree.directories = [subjectFileTree]

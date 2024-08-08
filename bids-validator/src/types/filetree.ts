@@ -16,7 +16,10 @@ export interface BIDSFile {
   text: () => Promise<string>
   // Read a range of bytes
   readBytes: (size: number, offset?: number) => Promise<Uint8Array>
+  // Access the parent directory
   parent: FileTree
+  // File has been viewed
+  viewed: boolean
 }
 
 export class FileTree {
@@ -43,7 +46,7 @@ export class FileTree {
       return false
     } else if (parts.length === 1) {
       return (
-        this.files.some((x) => x.name === parts[0]) ||
+        this.files.some((x) => (x.name === parts[0] && (x.viewed = true))) ||
         this.directories.some((x) => x.name === parts[0])
       )
     } else if (parts.length > 1) {

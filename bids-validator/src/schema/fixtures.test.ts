@@ -41,6 +41,7 @@ export const dataFile = {
   stream: new ReadableStream<Uint8Array>(),
   readBytes: nullReadBytes,
   parent: anatFileTree,
+  viewed: false,
 }
 
 anatFileTree.files = [
@@ -54,6 +55,7 @@ anatFileTree.files = [
     stream: new ReadableStream<Uint8Array>(),
     readBytes: async (size: number) => new TextEncoder().encode(await anatJson()),
     parent: anatFileTree,
+    viewed: false,
   },
 ]
 
@@ -70,6 +72,7 @@ subjectFileTree.files = [
     stream: new ReadableStream<Uint8Array>(),
     readBytes: async (size: number) => new TextEncoder().encode(await subjectJson()),
     parent: subjectFileTree,
+    viewed: false,
   },
 ]
 subjectFileTree.directories = [sessionFileTree]
@@ -84,6 +87,7 @@ stimuliFileTree.files = [...Array(10).keys()].map((i) => (
     stream: new ReadableStream<Uint8Array>(),
     readBytes: nullReadBytes,
     parent: stimuliFileTree,
+    viewed: false,
   }
 ))
 
@@ -97,6 +101,7 @@ rootFileTree.files = [
     stream: new ReadableStream<Uint8Array>(),
     readBytes: async (size: number) => new TextEncoder().encode(await rootJson()),
     parent: rootFileTree,
+    viewed: false,
   },
 ]
 rootFileTree.directories = [stimuliFileTree, subjectFileTree]
