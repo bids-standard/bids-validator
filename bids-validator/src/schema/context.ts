@@ -128,7 +128,7 @@ export class BIDSContext implements Context {
     this.suffix = bidsEntities.suffix
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
-    this.dataset = dsContext ? dsContext : new BIDSContextDataset({tree: fileTree})
+    this.dataset = dsContext ? dsContext : new BIDSContextDataset({ tree: fileTree })
     this.subject = {} as ContextSubject
     this.datatype = ''
     this.modality = ''
