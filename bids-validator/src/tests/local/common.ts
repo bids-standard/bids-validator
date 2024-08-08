@@ -33,9 +33,9 @@ export async function validatePath(
   return { tree, result }
 }
 
-export function formatAssertIssue(message: string, issue?: Issue) {
-  if (issue) {
-    return `${message}\n${Deno.inspect(issue, { depth: 8, colors: true })}`
+export function formatAssertIssue(message: string, issue?: Issue[]) {
+  if (issue && issue.length) {
+    return `${message}\n${Deno.inspect(issue[0], { depth: 8, colors: true })}`
   } else {
     return `${message}\nAsserted issue is undefined`
   }

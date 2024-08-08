@@ -1,6 +1,24 @@
 import { BIDSFile } from './filetree.ts'
 
-export type Severity = 'warning' | 'error' | 'ignore'
+const all_severities = ['warning', 'error', 'ignore'] as const
+export type Severity = typeof all_severities[number]
+
+/**
+ * Updated internal Issue structure for schema based validation
+ */
+export interface Issue {
+  code: string
+  subCode?: string
+  severity?: Severity
+  location?: string
+  issueMessage?: string
+  codeMessage?: string
+  suggestion?: string
+  affects?: string[]
+  rule?: string
+  line?: number
+  character?: number
+}
 
 export interface IssueFileDetail {
   name: string
@@ -57,44 +75,4 @@ export type IssueFile = Omit<BIDSFile, 'readBytes'> & {
   evidence?: string
   line?: number
   character?: number
-}
-
-/**
- * Updated internal Issue structure for schema based validation
- */
-export class Issue {
-  key: string
-  severity: Severity
-  reason: string
-  files: Map<string, IssueFile>
-
-  constructor({
-    key,
-    severity,
-    reason,
-    files,
-  }: {
-    key: string
-    severity: Severity
-    reason: string
-    files: Map<string, IssueFile> | IssueFile[]
-  }) {
-    this.key = key
-    this.severity = severity
-    this.reason = reason
-    // We want to be able to easily look up by path, so turn IssueFile[] into a Map
-    if (Array.isArray(files)) {
-      this.files = new Map()
-      for (const f of files) {
-        this.files.set(f.path, f)
-      }
-    } else {
-      this.files = files
-    }
-  }
-
-  get helpUrl(): string {
-    // Provide a link to NeuroStars
-    return `https://neurostars.org/search?q=${this.key}`
-  }
 }

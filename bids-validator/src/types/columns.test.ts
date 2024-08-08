@@ -32,9 +32,9 @@ Deno.test('ColumnsMap', async (t) => {
   })
   await t.step('size columns are permissible', () => {
     const columns = new ColumnsMap()
-    // @ts-expect-error
+    // @ts-expect-error ts thinks size is protected property
     columns['size'] = ['0']
-    // @ts-expect-error
+    // @ts-expect-error ibid
     assertEquals(columns.size, ['0'])
   })
   await t.step('missing columns are undefined', () => {

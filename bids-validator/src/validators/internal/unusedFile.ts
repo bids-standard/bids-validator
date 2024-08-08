@@ -25,7 +25,7 @@ export async function unusedStimulus(
   const stimDir = dsContext.tree.directories.find((dir) => dir.name === 'stimuli')
   const unusedStimuli = [...walkFileTree(stimDir)].filter((stimulus) => !stimulus.viewed)
   if (unusedStimuli.length) {
-    dsContext.issues.addNonSchemaIssue('UNUSED_STIMULUS', unusedStimuli)
+    dsContext.issues.add({ code: 'UNUSED_STIMULUS', affects: unusedStimuli.map((s) => s.path) })
   }
 }
 
@@ -39,7 +39,7 @@ export async function sidecarWithoutDatafile(
     (file) => (!file.viewed && file.name.endsWith('.json') &&
       !standalone_json.includes(file.name)),
   )
-  if (unusedSidecars.length) {
-    dsContext.issues.addNonSchemaIssue('SIDECAR_WITHOUT_DATAFILE', unusedSidecars)
-  }
+  unusedSidecars.forEach((sidecar) => {
+    dsContext.issues.add({ code: 'SIDECAR_WITHOUT_DATAFILE', location: sidecar.path })
+  })
 }

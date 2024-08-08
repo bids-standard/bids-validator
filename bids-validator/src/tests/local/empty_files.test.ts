@@ -13,11 +13,12 @@ Deno.test('empty_files dataset', async (t) => {
   const { tree, result } = await validatePath(t, PATH)
 
   await t.step('correctly ignores .bidsignore files', () => {
-    assert(
-      result.issues.get('NOT_INCLUDED') === undefined,
+    assertEquals(
+      result.issues.get({ code: 'NOT_INCLUDED' }).length,
+      0,
       formatAssertIssue(
         'NOT_INCLUDED should not be present',
-        result.issues.get('NOT_INCLUDED'),
+        result.issues.get({ code: 'NOT_INCLUDED' }),
       ),
     )
   })
@@ -30,25 +31,13 @@ Deno.test('empty_files dataset', async (t) => {
   await t.step(
     'EMPTY_FILES error is thrown for only sub-0001_task-AEF_run-01_meg.meg4',
     () => {
-      const issue = result.issues.get('EMPTY_FILE')
-      const file = assert(
-        issue?.files.get('/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/'),
+      const issues = result.issues.get({ code: 'EMPTY_FILE' })
+      assertEquals(
+        issues.length,
+        1,
         'sub-0001_task-AEF_run-01_meg.ds/ is empty but not present in EMPTY_FILE issue',
       )
-      assertEquals(
-        issue?.files.get(
-          '/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/sub-0001_task-AEF_run-01_meg.meg4',
-        ),
-        undefined,
-        'Contents of pseudo files should not be included in EMPTY_FILES error',
-      )
-      assertEquals(
-        issue?.files.get(
-          'tests/data/empty_files/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/BadChannels',
-        ),
-        undefined,
-        'Contents of pseudo files should not be included in EMPTY_FILES error',
-      )
+      assertEquals(issues[0].location, '/sub-0001/meg/sub-0001_task-AEF_run-01_meg.ds/')
     },
   )
 })

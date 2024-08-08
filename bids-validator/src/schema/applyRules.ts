@@ -145,15 +145,16 @@ function evalRuleChecks(
   if (rule.checks && !mapEvalCheck(rule.checks, context)) {
     if (rule.issue?.code && rule.issue?.message) {
       context.dataset.issues.add({
-        key: rule.issue.code,
-        reason: rule.issue.message,
-        files: [{ ...context.file, evidence: schemaPath }],
+        code: rule.issue.code,
+        codeMessage: rule.issue.message,
+        location: context.path,
+        rule: schemaPath,
         severity: rule.issue.level as Severity,
       })
     } else {
-      context.dataset.issues.addNonSchemaIssue('CHECK_ERROR', [
-        { ...context.file, evidence: schemaPath },
-      ])
+      context.dataset.issues.add(
+        { code: 'CHECK_ERROR', location: context.path, rule: schemaPath },
+      )
     }
   }
   return true
@@ -250,12 +251,12 @@ export function evalColumns(
     let errorObject = columnObject
 
     if (!headers.includes(name) && requirement === 'required') {
-      context.dataset.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
-        {
-          ...context.file,
-          evidence: `Column with header ${name} listed as required. ${schemaPath}`,
-        },
-      ])
+      context.dataset.issues.add({
+        code: 'TSV_COLUMN_MISSING',
+        location: context.path,
+        issueMessage: `Column with header ${name} listed as required.`,
+        rule: schemaPath,
+      })
     }
 
     if ('definition' in columnObject) {
@@ -276,10 +277,12 @@ export function evalColumns(
         typeCheck = (value) => sidecarDefinedTypeCheck(context.sidecar[name], value, schema)
         errorObject = context.sidecar[name]
       } else {
-        context.dataset.issues.addNonSchemaIssue('TSV_COLUMN_TYPE_REDEFINED', [{
-          ...context.file,
-          evidence: `'${name}' redefined with sidecar ${inspect(context.sidecar[name])}`,
-        }])
+        context.dataset.issues.add({
+          code: 'TSV_COLUMN_TYPE_REDEFINED',
+          location: context.path,
+          issueMessage: `'${name}' redefined with sidecar ${inspect(context.sidecar[name])}`,
+          rule: schemaPath,
+        })
       }
     }
 
@@ -291,12 +294,12 @@ export function evalColumns(
       if (
         !typeCheck(value)
       ) {
-        context.dataset.issues.addNonSchemaIssue(error_code, [
-          {
-            ...context.file,
-            evidence: `'${value}' ${inspect(columnObject)}`,
-          },
-        ])
+        context.dataset.issues.add({
+          code: error_code,
+          location: context.path,
+          issueMessage: `'${value}' ${inspect(columnObject)}`,
+          rule: schemaPath,
+        })
         break
       }
     }
@@ -324,17 +327,23 @@ function evalInitialColumns(
     const ruleHeaderName = schema.objects.columns[ruleHeader].name
     const contextIndex = headers.findIndex((x) => x === ruleHeaderName)
     if (contextIndex === -1) {
-      const evidence =
-        `Column with header ${ruleHeaderName} not found, indexed from 0 it should appear in column ${ruleIndex}. ${schemaPath}`
-      context.dataset.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
-        { ...context.file, evidence: evidence },
-      ])
+      const message =
+        `Column with header ${ruleHeaderName} not found, indexed from 0 it should appear in column ${ruleIndex}.`
+      context.dataset.issues.add({
+        code: 'TSV_COLUMN_MISSING',
+        location: context.path,
+        issueMessage: message,
+        rule: schemaPath,
+      })
     } else if (ruleIndex !== contextIndex) {
-      const evidence =
-        `Column with header ${ruleHeaderName} found at index ${contextIndex} while rule specifies, indexed from 0, it should be in column ${ruleIndex}. ${schemaPath}`
-      context.dataset.issues.addNonSchemaIssue('TSV_COLUMN_ORDER_INCORRECT', [
-        { ...context.file, evidence: evidence },
-      ])
+      const message =
+        `Column with header ${ruleHeaderName} found at index ${contextIndex} while rule specifies, indexed from 0, it should be in column ${ruleIndex}.`
+      context.dataset.issues.add({
+        code: 'TSV_COLUMN_ORDER_INCORRECT',
+        location: context.path,
+        issueMessage: message,
+        rule: schemaPath,
+      })
     }
   })
 }
@@ -360,9 +369,12 @@ function evalAdditionalColumns(
       extraCols = extraCols.filter((header) => !(header in context.sidecar))
     }
     if (extraCols.length) {
-      context.dataset.issues.addNonSchemaIssue('TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED', [
-        { ...context.file, evidence: `Disallowed columns found ${extraCols}` },
-      ])
+      context.dataset.issues.add({
+        code: 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED',
+        location: context.path,
+        issueMessage: `Disallowed columns found ${extraCols}`,
+        rule: schemaPath,
+      })
     }
   }
 }
@@ -389,12 +401,12 @@ function evalIndexColumns(
   })
   const missing = index_columns.filter((col: string) => !headers.includes(col))
   if (missing.length) {
-    context.dataset.issues.addNonSchemaIssue('TSV_COLUMN_MISSING', [
-      {
-        ...context.file,
-        evidence: `Columns cited as index columns not in file: ${missing}. ${schemaPath}`,
-      },
-    ])
+    context.dataset.issues.add({
+      code: 'TSV_COLUMN_MISSING',
+      location: context.path,
+      issueMessage: `Columns cited as index columns not in file: ${missing}.`,
+      rule: schemaPath,
+    })
     return
   }
   const rowCount = (context.columns[index_columns[0]] as string[])?.length || 0
@@ -406,9 +418,12 @@ function evalIndexColumns(
       )
     })
     if (uniqueIndexValues.has(indexValue)) {
-      context.dataset.issues.addNonSchemaIssue('TSV_INDEX_VALUE_NOT_UNIQUE', [
-        { ...context.file, evidence: `Row: ${i + 2}, Value: ${indexValue}` },
-      ])
+      context.dataset.issues.add({
+        code: 'TSV_INDEX_VALUE_NOT_UNIQUE',
+        location: context.path,
+        issueMessage: `Row: ${i + 2}, Value: ${indexValue}`,
+        rule: schemaPath,
+      })
     } else {
       uniqueIndexValues.add(indexValue)
     }
@@ -441,31 +456,30 @@ function evalJsonCheck(
     if (severity && severity !== 'ignore' && !(keyName in json)) {
       if (requirement.issue?.code && requirement.issue?.message) {
         context.dataset.issues.add({
-          key: requirement.issue.code,
-          reason: requirement.issue.message,
+          code: requirement.issue.code,
+          subCode: keyName,
+          location: context.path,
           severity,
-          files: [{ ...context.file }],
+          codeMessage: requirement.issue.message,
+          rule: schemaPath,
         })
-      } else if (severity === 'error') {
-        context.dataset.issues.addNonSchemaIssue(
-          sidecarRule ? 'SIDECAR_KEY_REQUIRED' : 'JSON_KEY_REQUIRED',
-          [
-            {
-              ...context.file,
-              evidence: `missing ${keyName} as per ${schemaPath}`,
-            },
-          ],
-        )
-      } else if (severity === 'warning') {
-        context.dataset.issues.addNonSchemaIssue(
-          sidecarRule ? 'SIDECAR_KEY_RECOMMENDED' : 'JSON_KEY_RECOMMENDED',
-          [
-            {
-              ...context.file,
-              evidence: `missing ${keyName} as per ${schemaPath}`,
-            },
-          ],
-        )
+      } else {
+        let code
+        if (severity === 'error') {
+          code = sidecarRule ? 'SIDECAR_KEY_REQUIRED' : 'JSON_KEY_REQUIRED'
+        } else if (severity === 'warning') {
+          code = sidecarRule ? 'SIDECAR_KEY_RECOMMENDED' : 'JSON_KEY_RECOMMENDED'
+        }
+        if (code) {
+          context.dataset.issues.add({
+            code,
+            subCode: keyName,
+            location: context.path,
+            severity,
+            issueMessage: `missing ${keyName}`,
+            rule: schemaPath,
+          })
+        }
       }
     }
 
@@ -477,11 +491,13 @@ function evalJsonCheck(
     }
 
     let originFileKey = ''
+    let originFile = ''
     if (keyName in context.sidecarKeyOrigin) {
-      originFileKey = `${context.sidecarKeyOrigin[keyName]}:${keyName}`
+      originFile = `${context.sidecarKeyOrigin[keyName]}`
+      originFileKey = `${originFile}:${keyName}`
     } else {
       logger.warning(
-        `sidecarKeyOrigin map failed to initialize for ${context.file.path} on key ${keyName}. Validation caching not active for this key.`,
+        `sidecarKeyOrigin map failed to initialize for ${context.path} on key ${keyName}. Validation caching not active for this key.`,
       )
     }
 
@@ -492,23 +508,27 @@ function evalJsonCheck(
     const validate = compile(metadataDef)
     const result = validate(context.sidecar[keyName])
     if (result === false) {
-      const evidenceBase = `Failed for this file.key: ${originFileKey} Schema path: ${schemaPath}`
+      const messageBase = `Failed for this file.key: ${originFileKey}`
       if (!validate.errors) {
-        context.dataset.issues.addNonSchemaIssue('JSON_SCHEMA_VALIDATION_ERROR', [
-          {
-            ...context.file,
-            evidence: evidenceBase,
-          },
-        ])
+        context.dataset.issues.add({
+          code: 'JSON_SCHEMA_VALIDATION_ERROR',
+          subCode: keyName,
+          location: context.path,
+          issueMessage: messageBase,
+          rule: schemaPath,
+          affects: [originFile],
+        })
       } else {
         for (let error of validate.errors) {
           const message = 'message' in error ? `message: ${error['message']}` : ''
-          context.dataset.issues.addNonSchemaIssue('JSON_SCHEMA_VALIDATION_ERROR', [
-            {
-              ...context.file,
-              evidence: `${evidenceBase} ${message}`,
-            },
-          ])
+          context.dataset.issues.add({
+            code: 'JSON_SCHEMA_VALIDATION_ERROR',
+            subCode: keyName,
+            location: context.path,
+            issueMessage: `${messageBase} ${message}`,
+            rule: schemaPath,
+            affects: [originFile],
+          })
         }
       }
     }
