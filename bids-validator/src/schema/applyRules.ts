@@ -279,8 +279,9 @@ export function evalColumns(
       } else {
         context.dataset.issues.add({
           code: 'TSV_COLUMN_TYPE_REDEFINED',
+          subCode: name,
           location: context.path,
-          issueMessage: `'${name}' redefined with sidecar ${inspect(context.sidecar[name])}`,
+          issueMessage: `Sidecar definition: ${inspect(context.sidecar[name])}`,
           rule: schemaPath,
         })
       }
