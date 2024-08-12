@@ -462,9 +462,8 @@ function evalJsonCheck(
           subCode: keyName,
           location: context.path,
           severity,
-          codeMessage: requirement.issue.message,
           rule: schemaPath,
-        })
+        }, requirement.issue.message)
       } else {
         let code
         if (severity === 'error') {
