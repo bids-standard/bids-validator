@@ -10,6 +10,8 @@ import {
 // Code is deprecated, return something unusual but JSON serializable
 const CODE_DEPRECATED = Number.MIN_SAFE_INTEGER
 
+type Group = Map<Issue[keyof Issue], DatasetIssues | Group | undefined>
+
 export class DatasetIssues {
   issues: Issue[]
   codeMessages: Map<string, string>
@@ -64,9 +66,9 @@ export class DatasetIssues {
 
   groupBy(key: keyof Issue): Map<Issue[keyof Issue], DatasetIssues> {
     let groups: Map<Issue[keyof Issue], DatasetIssues> = new Map()
-    groups.set('__noValue', new DatasetIssues())
+    groups.set('None', new DatasetIssues())
     this.issues.map((issue) => {
-      let value: Issue[keyof Issue] = '__noValue'
+      let value: Issue[keyof Issue] = 'None'
       if (key in issue && issue[key]) {
         value = issue[key]
       }
@@ -76,6 +78,18 @@ export class DatasetIssues {
       // @ts-expect-error TS2532 return of get possible undefined. Does the above 'has' catch this case?
       groups.get(value).add(issue, this.codeMessages.get(issue.code))
     })
+    return groups
+  }
+  _groupBy(keys: Array<keyof Issue>): Group | undefined {
+    if (keys.length === 1) {
+      return this.groupBy(keys[0])
+    }
+    let issueKey = keys.pop()
+    if (!issueKey) return undefined
+    let groups: Group = new Map()
+    for (const [key, issues] of this.groupBy(issueKey).entries()) {
+      groups.set(key, issues._groupBy(keys))
+    }
     return groups
   }
 }

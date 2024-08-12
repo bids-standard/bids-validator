@@ -5,8 +5,8 @@ import { prettyBytes } from '../deps/prettyBytes.ts'
 import { Table } from '../deps/cliffy.ts'
 import { colors } from '../deps/fmt.ts'
 import { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
-import { Issue } from '../types/issues.ts'
-import { legacyOutput } from '../issues/datasetIssues.ts'
+import { Issue, Severity } from '../types/issues.ts'
+import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 interface LoggingOptions {
   verbose: boolean
@@ -25,9 +25,9 @@ export function consoleFormat(
   if (result.issues.size === 0) {
     output.push(colors.green('This dataset appears to be BIDS compatible.'))
   } else {
-    let issues = legacyOutput(result.issues)
-    issues.warnings.map((issue) => output.push(formatIssue(issue, options)))
-    issues.errors.map((issue) => output.push(formatIssue(issue, options)))
+    (['warning', 'error'] as Severity[]).map(severity => {
+      output.push(...formatIssues(result.issues.filter({severity}), options, severity))
+    })
   }
   output.push('')
   output.push(formatSummary(result.summary))
@@ -35,55 +35,58 @@ export function consoleFormat(
   return output.join('\n')
 }
 
-/**
- * Format one issue as text with colors
- */
-function formatIssue(issue: Issue, options?: LoggingOptions): string {
-  const severity = issue.severity
+function formatIssues(dsIssues: DatasetIssues, options?: LoggingOptions, severity = 'error'): string[] {
+  let output = []
   const color = severity === 'error' ? 'red' : 'yellow'
-  const output = []
-  output.push(
-    '\t' +
-      colors[color](
-        `[${severity.toUpperCase()}] ${issue.reason} (${issue.key})`,
-      ),
-  )
-  output.push('')
-  let fileOutCount = 0
-  issue.files.forEach((file) => {
-    if (!options?.verbose && fileOutCount > 2) {
-      return
+
+  for (const [code, issues] of dsIssues.groupBy('code').entries()) {
+    if (issues.size === 0 || typeof code !== 'string') {
+      continue
     }
-    output.push('\t\t.' + file.file.path)
-    if (file.line) {
-      let msg = '\t\t\t@ line: ' + file.line
-      if (file.character) {
-        msg += ' character: ' + file.character
-      }
-      output.push(msg)
-    }
-    if (file.evidence) {
-      output.push('\t\t\tEvidence: ' + file.evidence)
-    }
-    fileOutCount++
-  })
-  if (!options?.verbose) {
-    output.push('')
-    output.push('\t\t' + issue.files.length + ' more files with the same issue')
-  }
-  output.push('')
-  if (issue.helpUrl) {
+    const codeMessage = issues.codeMessages.get(code) ?? ''
     output.push(
-      colors.cyan(
-        '\t' +
-          'Please visit ' +
-          issue.helpUrl +
-          ' for existing conversations about this issue.',
-      ),
+      '\t' +
+        colors[color](
+          `[${severity.toUpperCase()}] ${code} ${codeMessage}`,
+        ),
     )
-    output.push('')
+
+    let subCodes = issues.groupBy('subCode')
+    if (subCodes.size === 1 && subCodes.has('None')) {
+      output.push(...formatFiles(issues))
+    } else {
+      for (const [subCode, subIssues] of subCodes) {
+        if (subIssues.size === 0) {
+          continue
+        }
+        output.push('\t\t' + colors[color](`${subCode}`))
+        output.push(...formatFiles(subIssues, options))
+      }
+    }
   }
-  return output.join('\n')
+  return output
+}
+
+function formatFiles(issues: DatasetIssues, options?: LoggingOptions): string[] {
+  let output = []
+  const issueDetails: Array<keyof Issue> = ['location', 'issueMessage', 'rule']
+  const fileCount = options?.verbose ? undefined : 2
+
+  let toPrint = issues.issues.slice(0, fileCount)
+  toPrint.map((issue: Issue) => {
+    let fileOut: string[] = []
+      issueDetails.map(key => {
+      if (Object.hasOwn(issue, key) && issue[key]) {
+        fileOut.push(`${issue[key]}`)
+      }
+    })
+    output.push('\t\t' + fileOut.join(' - '))
+  })
+  if (fileCount && fileCount < issues.size) {
+    output.push('')
+    output.push(`\t\t${issues.size - fileCount} more files with the same issue`)
+  }
+  return output
 }
 
 /**
