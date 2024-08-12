@@ -146,11 +146,10 @@ function evalRuleChecks(
     if (rule.issue?.code && rule.issue?.message) {
       context.dataset.issues.add({
         code: rule.issue.code,
-        codeMessage: rule.issue.message,
         location: context.path,
         rule: schemaPath,
         severity: rule.issue.level as Severity,
-      })
+      }, rule.issue.message)
     } else {
       context.dataset.issues.add(
         { code: 'CHECK_ERROR', location: context.path, rule: schemaPath },
@@ -297,7 +296,7 @@ export function evalColumns(
       ) {
         context.dataset.issues.add({
           code: error_code,
-          subCode: name
+          subCode: name,
           location: context.path,
           issueMessage: `'${value}'`,
           rule: schemaPath,
@@ -369,11 +368,11 @@ function evalAdditionalColumns(
     if (rule.additional_columns === 'allowed_if_defined') {
       extraCols = extraCols.filter((header) => !(header in context.sidecar))
     }
-    if (extraCols.length) {
+    for (const col of extraCols) {
       context.dataset.issues.add({
         code: 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED',
+        subCode: col,
         location: context.path,
-        issueMessage: `Disallowed columns found ${extraCols}`,
         rule: schemaPath,
       })
     }
@@ -401,15 +400,15 @@ function evalIndexColumns(
     return schema.objects.columns[col].name
   })
   const missing = index_columns.filter((col: string) => !headers.includes(col))
-  if (missing.length) {
+  for (const col of missing) {
     context.dataset.issues.add({
       code: 'TSV_COLUMN_MISSING',
+      subCode: col,
       location: context.path,
-      issueMessage: `Columns cited as index columns not in file: ${missing}.`,
       rule: schemaPath,
     })
-    return
   }
+
   const rowCount = (context.columns[index_columns[0]] as string[])?.length || 0
   for (let i = 0; i < rowCount; i++) {
     let indexValue = ''

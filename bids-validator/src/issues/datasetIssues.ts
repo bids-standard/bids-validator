@@ -53,7 +53,7 @@ export class DatasetIssues {
     const results = new DatasetIssues()
     const found = this.get(query)
     for (const issue of found) {
-      results.add(issue)
+      results.add(issue, this.codeMessages.get(issue.code))
     }
     return results
   }
@@ -74,7 +74,7 @@ export class DatasetIssues {
         groups.set(value, new DatasetIssues())
       }
       // @ts-expect-error TS2532 return of get possible undefined. Does the above 'has' catch this case?
-      groups.get(value).add(issue)
+      groups.get(value).add(issue, this.codeMessages.get(issue.code))
     })
     return groups
   }
@@ -85,9 +85,8 @@ function helpUrl(code: string): string {
   return `https://neurostars.org/search?q=${code}`
 }
 
-const legacyIssueFile = (issue: Issue): IssueFileOutput => {
+const legacyIssueFile = (issue: Issue, reason: string): IssueFileOutput => {
   const evidence = issue.issueMessage || ''
-  const reason = issue.codeMessage || ''
   const line = 0
   const character = 0
   const path = issue.location || ''
@@ -128,7 +127,7 @@ export function legacyOutput(datasetIssues: DatasetIssues): FullTestIssuesReturn
         key: code,
         code: CODE_DEPRECATED,
         reason: codeMessage,
-        files: issuesBySeverity.map(legacyIssueFile),
+        files: issuesBySeverity.map((x) => legacyIssueFile(x, codeMessage)),
         additionalFileCount: issuesBySeverity.length,
         helpUrl: helpUrl(code),
       })

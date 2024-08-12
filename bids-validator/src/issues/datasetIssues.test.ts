@@ -47,7 +47,7 @@ Deno.test('DatasetIssues management class', async (t) => {
         viewed: false,
       } as IssueFile,
     ]
-    issues.add({ code: 'TEST_FILES_ERROR', codeMessage: 'Test issue', location: files[1].path })
+    issues.add({ code: 'TEST_FILES_ERROR', location: files[1].path }, 'Test issue')
     const foundIssue = issues.get({ location: '/README' })
     assertEquals(foundIssue.length, 1)
     assertEquals(foundIssue[0].code, 'TEST_FILES_ERROR')
