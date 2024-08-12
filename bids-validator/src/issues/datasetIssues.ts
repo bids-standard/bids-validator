@@ -19,7 +19,7 @@ export class DatasetIssues {
     this.codeMessages = new Map()
   }
 
-  add(issue: Issue) {
+  add(issue: Issue, codeMessage?: string) {
     if (!issue.codeMessage) {
       if (issue.code in nonSchemaIssues) {
         issue.codeMessage = nonSchemaIssues[issue.code].reason
