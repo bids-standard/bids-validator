@@ -446,7 +446,7 @@ function evalJsonCheck(
   // Count on other JSON rules to use selectors to match the correct files
   if (context.extension === '.json' && sidecarRule) return
 
-  const json = sidecarRule ? context.sidecar : context.json
+  const json: Record<string, any> = sidecarRule ? context.sidecar : context.json
   for (const [key, requirement] of Object.entries(rule.fields)) {
     // @ts-expect-error
     const metadataDef = schema.objects.metadata[key]
