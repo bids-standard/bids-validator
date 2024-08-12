@@ -446,75 +446,73 @@ function evalJsonCheck(
   // Count on other JSON rules to use selectors to match the correct files
   if (context.extension === '.json' && sidecarRule) return
 
-  const json = sidecarRule ? context.sidecar : context.json
+  const json: Record<string, any> = sidecarRule ? context.sidecar : context.json
   for (const [key, requirement] of Object.entries(rule.fields)) {
-    const severity = getFieldSeverity(requirement, context)
     // @ts-expect-error
     const metadataDef = schema.objects.metadata[key]
     const keyName: string = metadataDef.name
-    if (severity && severity !== 'ignore' && !(keyName in json)) {
-      if (requirement.issue?.code && requirement.issue?.message) {
-        context.dataset.issues.add({
-          code: requirement.issue.code,
-          subCode: keyName,
-          location: context.path,
-          severity,
-          rule: schemaPath,
-        }, requirement.issue.message)
-      } else {
-        let code
-        if (severity === 'error') {
-          code = sidecarRule ? 'SIDECAR_KEY_REQUIRED' : 'JSON_KEY_REQUIRED'
-        } else if (severity === 'warning') {
-          code = sidecarRule ? 'SIDECAR_KEY_RECOMMENDED' : 'JSON_KEY_RECOMMENDED'
-        }
-        if (code) {
+    const value = json[keyName]
+    if (value === undefined) {
+      const severity = getFieldSeverity(requirement, context)
+      if (severity && severity !== 'ignore') {
+        if (requirement.issue?.code && requirement.issue?.message) {
           context.dataset.issues.add({
-            code,
+            code: requirement.issue.code,
             subCode: keyName,
             location: context.path,
             severity,
-            issueMessage: `missing ${keyName}`,
             rule: schemaPath,
-          })
+          }, requirement.issue.message)
+        } else {
+          let code
+          if (severity === 'error') {
+            code = sidecarRule ? 'SIDECAR_KEY_REQUIRED' : 'JSON_KEY_REQUIRED'
+          } else if (severity === 'warning') {
+            code = sidecarRule ? 'SIDECAR_KEY_RECOMMENDED' : 'JSON_KEY_RECOMMENDED'
+          }
+          if (code) {
+            context.dataset.issues.add({
+              code,
+              subCode: keyName,
+              location: context.path,
+              severity,
+              rule: schemaPath,
+            })
+          }
         }
       }
+
+      /* Regardless of if key is required/recommended/optional, we do no
+       * further valdiation if it is not present in sidecar.
+       */
+      continue
     }
 
-    /* Regardless of if key is required/recommended/optional, we do no
-     * further valdiation if it is not present in sidecar.
-     */
-    if (!(keyName in context.sidecar)) {
-      return
-    }
-
-    let originFileKey = ''
-    let originFile = ''
-    if (keyName in context.sidecarKeyOrigin) {
-      originFile = `${context.sidecarKeyOrigin[keyName]}`
-      originFileKey = `${originFile}:${keyName}`
-    } else {
+    if (sidecarRule && !(keyName in context.sidecarKeyOrigin)) {
       logger.warning(
         `sidecarKeyOrigin map failed to initialize for ${context.path} on key ${keyName}. Validation caching not active for this key.`,
       )
     }
 
-    if (context.dataset.sidecarKeyValidated.has(originFileKey)) {
-      return
+    const location = sidecarRule ? (context.sidecarKeyOrigin[keyName] ?? '') : context.path
+    const affects = sidecarRule ? [context.path] : undefined
+
+    const keyAddress = `${location}:${keyName}`
+
+    if (sidecarRule && context.dataset.sidecarKeyValidated.has(keyAddress)) {
+      continue
     }
 
     const validate = compile(metadataDef)
-    const result = validate(context.sidecar[keyName])
+    const result = validate(value)
     if (result === false) {
-      const messageBase = `Failed for this file.key: ${originFileKey}`
       if (!validate.errors) {
         context.dataset.issues.add({
           code: 'JSON_SCHEMA_VALIDATION_ERROR',
           subCode: keyName,
-          location: context.path,
-          issueMessage: messageBase,
+          location: location,
           rule: schemaPath,
-          affects: [originFile],
+          affects: affects,
         })
       } else {
         for (let error of validate.errors) {
@@ -522,16 +520,16 @@ function evalJsonCheck(
           context.dataset.issues.add({
             code: 'JSON_SCHEMA_VALIDATION_ERROR',
             subCode: keyName,
-            location: context.path,
-            issueMessage: `${messageBase} ${message}`,
+            location: location,
+            issueMessage: message,
             rule: schemaPath,
-            affects: [originFile],
+            affects: affects,
           })
         }
       }
     }
-    if (originFileKey) {
-      context.dataset.sidecarKeyValidated.add(originFileKey)
+    if (sidecarRule && location) {
+      context.dataset.sidecarKeyValidated.add(keyAddress)
     }
   }
 }
