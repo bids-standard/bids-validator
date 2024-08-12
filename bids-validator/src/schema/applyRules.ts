@@ -253,8 +253,8 @@ export function evalColumns(
     if (!headers.includes(name) && requirement === 'required') {
       context.dataset.issues.add({
         code: 'TSV_COLUMN_MISSING',
+        subCode: name,
         location: context.path,
-        issueMessage: `Column with header ${name} listed as required.`,
         rule: schemaPath,
       })
     }
