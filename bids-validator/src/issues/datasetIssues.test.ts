@@ -1,4 +1,4 @@
-import { assert, assertEquals } from '../deps/asserts.ts'
+import { assert, assertEquals, assertThrows } from '../deps/asserts.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { IssueFile } from '../types/issues.ts'
 import { DatasetIssues } from './datasetIssues.ts'
@@ -6,6 +6,13 @@ import { DatasetIssues } from './datasetIssues.ts'
 Deno.test('DatasetIssues management class', async (t) => {
   await t.step('Constructor succeeds', () => {
     new DatasetIssues()
+  })
+  await t.step('add Issue throws an error with bad error code', () => {
+    // This mostly tests the issueFile mapping function
+    const issues = new DatasetIssues()
+    assertThrows(() => {
+      issues.add({code: '__NOT_A_REAL_CODE__'})
+    })
   })
 
   await t.step('add Issue with several kinds of files', () => {
