@@ -20,9 +20,9 @@ export class DatasetIssues {
   }
 
   add(issue: Issue, codeMessage?: string) {
-    if (!issue.codeMessage) {
+    if (!codeMessage) {
       if (issue.code in nonSchemaIssues) {
-        issue.codeMessage = nonSchemaIssues[issue.code].reason
+        codeMessage = nonSchemaIssues[issue.code].reason
         issue.severity ??= nonSchemaIssues[issue.code].severity
       } else {
         throw new Error(
