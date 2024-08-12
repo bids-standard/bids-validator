@@ -12,7 +12,6 @@ export interface Issue {
   severity?: Severity
   location?: string
   issueMessage?: string
-  codeMessage?: string
   suggestion?: string
   affects?: string[]
   rule?: string
