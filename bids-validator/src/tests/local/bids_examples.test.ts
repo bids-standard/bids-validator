@@ -26,7 +26,7 @@ function formatBEIssue(issue: IssueOutput, dsPath: string) {
   errors.push(
     Row.from([
       colors.red(issue.key),
-      issue.files[0].file.name,
+      issue.files[0].file.path,
       issue.files[0].evidence,
     ]),
   )
