@@ -10,7 +10,7 @@ import type { ValidationResult } from './types/validation-result.ts'
 
 export async function main(): Promise<ValidationResult> {
   const options = await parseOptions(Deno.args)
-  colors.setColorEnabled(options.color)
+  colors.setColorEnabled(options.color ?? false)
   setupLogging(options.debug)
   const absolutePath = resolve(options.datasetPath)
   const tree = await readFileTree(absolutePath)
