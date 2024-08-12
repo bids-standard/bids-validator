@@ -27,11 +27,19 @@ async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array> 
   return result
 }
 
+function readHeaderQuiet(buf: ArrayBuffer) {
+  const console_error = console.error
+  console.error = () => {}
+  const header = readHeader(buf)
+  console.error = console_error
+  return header
+}
+
 export async function loadHeader(file: BIDSFile): Promise<ContextNiftiHeader> {
   try {
     const buf = await file.readBytes(1024)
     const data = isCompressed(buf.buffer) ? await extract(buf, 540) : buf
-    const header = readHeader(data.buffer)
+    const header = readHeaderQuiet(data.buffer)
     if (!header) {
       throw { key: 'NIFTI_HEADER_UNREADABLE' }
     }
