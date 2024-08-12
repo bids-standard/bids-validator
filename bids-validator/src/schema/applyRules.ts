@@ -338,12 +338,11 @@ function evalInitialColumns(
         rule: schemaPath,
       })
     } else if (ruleIndex !== contextIndex) {
-      const message =
-        `Column with header ${ruleHeaderName} found at index ${contextIndex} while rule specifies, indexed from 0, it should be in column ${ruleIndex}.`
       context.dataset.issues.add({
         code: 'TSV_COLUMN_ORDER_INCORRECT',
+        subCode: ruleHeaderName,
         location: context.path,
-        issueMessage: message,
+        issueMessage: `Column ${ruleIndex} (starting from 0) found at index ${contextIndex}.`,
         rule: schemaPath,
       })
     }
