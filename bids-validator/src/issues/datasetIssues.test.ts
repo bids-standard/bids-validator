@@ -11,7 +11,7 @@ Deno.test('DatasetIssues management class', async (t) => {
     // This mostly tests the issueFile mapping function
     const issues = new DatasetIssues()
     assertThrows(() => {
-      issues.add({code: '__NOT_A_REAL_CODE__'})
+      issues.add({ code: '__NOT_A_REAL_CODE__' })
     })
   })
 
