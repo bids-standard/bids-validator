@@ -297,8 +297,9 @@ export function evalColumns(
       ) {
         context.dataset.issues.add({
           code: error_code,
+          subCode: name
           location: context.path,
-          issueMessage: `'${value}' ${inspect(columnObject)}`,
+          issueMessage: `'${value}'`,
           rule: schemaPath,
         })
         break
