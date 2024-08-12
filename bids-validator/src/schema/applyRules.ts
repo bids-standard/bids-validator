@@ -328,12 +328,11 @@ function evalInitialColumns(
     const ruleHeaderName = schema.objects.columns[ruleHeader].name
     const contextIndex = headers.findIndex((x) => x === ruleHeaderName)
     if (contextIndex === -1) {
-      const message =
-        `Column with header ${ruleHeaderName} not found, indexed from 0 it should appear in column ${ruleIndex}.`
       context.dataset.issues.add({
         code: 'TSV_COLUMN_MISSING',
+        subCode: ruleHeaderName,
         location: context.path,
-        issueMessage: message,
+        issueMessage: `Column ${ruleIndex} (starting from 0) not found.`,
         rule: schemaPath,
       })
     } else if (ruleIndex !== contextIndex) {
