@@ -32,7 +32,7 @@ export class DatasetIssues {
     }
     issue.severity ??= 'error'
     if (!this.codeMessages.has(issue.code)) {
-      this.codeMessages.set(issue.code, issue.codeMessage)
+      this.codeMessages.set(issue.code, codeMessage)
     }
     this.issues.push(issue)
   }
