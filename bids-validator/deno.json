@@ -1,4 +1,7 @@
 {
+  "name": "@bids/validator",
+  "version": "1.14.9-dev.0",
+  "exports": "./src/bids-validator.ts",
   "tasks": {
     "test": "deno test -A src/tests/"
   },
