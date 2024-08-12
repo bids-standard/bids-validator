@@ -55,12 +55,15 @@ export async function validate(
   const dsContext = new BIDSContextDataset({ options, schema, tree: fileTree })
   if (ddFile) {
     dsContext.dataset_description = await loadJSON(ddFile).catch((error) => {
-      dsContext.issues.addNonSchemaIssue(error.key, [ddFile])
+      dsContext.issues.add({ code: error.key, location: ddFile.path })
       return {} as Record<string, unknown>
     })
     summary.dataProcessed = dsContext.dataset_description.DatasetType === 'derivative'
   } else {
-    dsContext.issues.addNonSchemaIssue('MISSING_DATASET_DESCRIPTION', [] as IssueFile[])
+    dsContext.issues.add({
+      code: 'MISSING_DATASET_DESCRIPTION',
+      affects: ['/dataset_description.json'],
+    })
   }
 
   const bidsDerivatives: FileTree[] = []

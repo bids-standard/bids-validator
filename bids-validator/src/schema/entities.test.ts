@@ -88,6 +88,7 @@ Deno.test('test readEntities performance', (t) => {
   const readEntitiesTime = end - start
 
   const perfRatio = readEntitiesTime / normalizePerf + Number.EPSILON
-  console.log(`readEntities() runtime ratio: ${perfRatio.toFixed(2)}`)
-  assert(perfRatio < 2)
+  const message = `readEntities() runtime ratio: ${perfRatio.toFixed(2)}`
+  console.log(message)
+  assert(perfRatio < 2, message)
 })

@@ -153,7 +153,7 @@ export async function buildAssociations(
       // @ts-expect-error
       associations[key] = await load(file).catch((error) => {
         if (error.key) {
-          issues.addNonSchemaIssue(error.key, [file])
+          issues.add({ code: error.key, location: file.path })
         }
       })
     }

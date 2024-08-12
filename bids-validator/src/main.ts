@@ -26,7 +26,7 @@ export async function main(): Promise<ValidationResult> {
           value.parent = undefined
         }
         if (value instanceof Map) {
-          return Array.from(value.values())
+          return Object.fromEntries(value)
         } else {
           return value
         }

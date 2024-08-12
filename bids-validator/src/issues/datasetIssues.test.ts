@@ -1,4 +1,4 @@
-import { assertEquals, assertObjectMatch } from '../deps/asserts.ts'
+import { assert, assertEquals, assertThrows } from '../deps/asserts.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { IssueFile } from '../types/issues.ts'
 import { DatasetIssues } from './datasetIssues.ts'
@@ -7,11 +7,14 @@ Deno.test('DatasetIssues management class', async (t) => {
   await t.step('Constructor succeeds', () => {
     new DatasetIssues()
   })
-  await t.step('add an Issue', () => {
+  await t.step('add Issue throws an error with bad error code', () => {
+    // This mostly tests the issueFile mapping function
     const issues = new DatasetIssues()
-    issues.add({ key: 'TEST_ERROR', reason: 'Test issue' })
-    assertEquals(issues.hasIssue({ key: 'TEST_ERROR' }), true)
+    assertThrows(() => {
+      issues.add({ code: '__NOT_A_REAL_CODE__' })
+    })
   })
+
   await t.step('add Issue with several kinds of files', () => {
     // This mostly tests the issueFile mapping function
     const issues = new DatasetIssues()
@@ -44,38 +47,30 @@ Deno.test('DatasetIssues management class', async (t) => {
         viewed: false,
       } as IssueFile,
     ]
-    issues.add({ key: 'TEST_FILES_ERROR', reason: 'Test issue', files })
-    assertEquals(issues.getFileIssueKeys('/README'), ['TEST_FILES_ERROR'])
-    for (const [key, issue] of issues) {
-      assertObjectMatch(issue, { key: 'TEST_FILES_ERROR' })
-      for (const f of issue.files.values()) {
-        // Checking all files for the key assures they are in IssueFile format
-        assertObjectMatch(f, {
-          stream: Promise.resolve(testStream),
-        })
-      }
-    }
+    issues.add({ code: 'TEST_FILES_ERROR', location: files[1].path }, 'Test issue')
+    const foundIssue = issues.get({ location: '/README' })
+    assertEquals(foundIssue.length, 1)
+    assertEquals(foundIssue[0].code, 'TEST_FILES_ERROR')
   })
-  await t.step(
-    'issues formatted matching the expected IssueOutput type',
-    () => {
-      const issues = new DatasetIssues()
-      issues.add({ key: 'TEST_ERROR', reason: 'Test issue' })
-      assertEquals(issues.hasIssue({ key: 'TEST_ERROR' }), true)
-      assertEquals(issues.formatOutput(), {
-        errors: [
-          {
-            additionalFileCount: 0,
-            code: -9007199254740991,
-            files: [],
-            helpUrl: 'https://neurostars.org/search?q=TEST_ERROR',
-            key: 'TEST_ERROR',
-            reason: 'Test issue',
-            severity: 'error',
-          },
-        ],
-        warnings: [],
-      })
-    },
-  )
+
+  await t.step('test groupBy', () => {
+    const issues = new DatasetIssues()
+    issues.add({ code: 'NOT_INCLUDED', location: '/file_1' })
+    issues.add({ code: 'NOT_INCLUDED', location: '/file_2' })
+    issues.add({ code: 'EMPTY_FILE', location: '/file_1' })
+    const byLoc = issues.groupBy('location')
+    assert(byLoc !== undefined)
+    const f1 = byLoc.get('/file_1')
+    const f2 = byLoc.get('/file_2')
+    assert(f1 !== undefined)
+    assert(f2 !== undefined)
+    assertEquals(f1.size, 2)
+    assertEquals(f2.size, 1)
+
+    const byCode = issues.groupBy('code')
+    assert(byCode !== undefined)
+    const code1 = byCode.get('NOT_INCLUDED')
+    assert(code1 !== undefined)
+    assertEquals(code1.size, 2)
+  })
 })
