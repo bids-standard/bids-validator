@@ -5,6 +5,7 @@ import { expressionFunctions } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
 import { memoize } from '../utils/memoize.ts'
 import { compile } from '../validators/json.ts'
+import { DefinedError } from '../deps/ajv.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
@@ -504,28 +505,16 @@ function evalJsonCheck(
     }
 
     const validate = compile(metadataDef)
-    const result = validate(value)
-    if (result === false) {
-      if (!validate.errors) {
+    if (!validate(value)) {
+      for (const err of validate.errors as DefinedError[]) {
         context.dataset.issues.add({
           code: 'JSON_SCHEMA_VALIDATION_ERROR',
           subCode: keyName,
-          location: location,
+          issueMessage: err['message'],
           rule: schemaPath,
-          affects: affects,
+          location,
+          affects,
         })
-      } else {
-        for (let error of validate.errors) {
-          const message = 'message' in error ? `message: ${error['message']}` : ''
-          context.dataset.issues.add({
-            code: 'JSON_SCHEMA_VALIDATION_ERROR',
-            subCode: keyName,
-            location: location,
-            issueMessage: message,
-            rule: schemaPath,
-            affects: affects,
-          })
-        }
       }
     }
     if (sidecarRule && location) {
