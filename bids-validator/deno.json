@@ -2,6 +2,22 @@
   "name": "@bids/validator",
   "version": "1.14.9-dev.0",
   "exports": "./src/bids-validator.ts",
+  "publish": {
+    "exclude": [
+      "bids_validator/",
+      "bin/",
+      "tests/",
+      "docs/",
+      "utils/",
+      "validators/",
+      "bids-validator-deno",
+      "build.ts",
+      "cli.js",
+      "esbuild.mjs",
+      "index.js",
+      "package.json"
+    ]
+  },
   "tasks": {
     "test": "deno test -A src/tests/"
   },
