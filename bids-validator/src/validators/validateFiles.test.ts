@@ -72,7 +72,11 @@ Deno.test('test valid paths', async (t) => {
   for (const filename of validFiles) {
     await t.step(filename, async () => {
       const issues = validatePath(filename)
-      assertEquals(issues.get({ location: filename }).length, 0)
+      assertEquals(
+        issues.get({ location: filename }).length,
+        0,
+        Deno.inspect(issues),
+      )
     })
   }
 })
@@ -129,6 +133,7 @@ Deno.test('test invalid paths', async (t) => {
         context.dataset.issues.get({
           location: context.file.path,
         }).length > 0,
+        `Matching filename rules: ${context.filenameRules}`,
       )
     })
   }
