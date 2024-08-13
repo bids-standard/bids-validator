@@ -8,7 +8,6 @@ Deno.test('DatasetIssues management class', async (t) => {
     new DatasetIssues()
   })
   await t.step('add Issue throws an error with bad error code', () => {
-    // This mostly tests the issueFile mapping function
     const issues = new DatasetIssues()
     assertThrows(() => {
       issues.add({ code: '__NOT_A_REAL_CODE__' })
@@ -16,7 +15,6 @@ Deno.test('DatasetIssues management class', async (t) => {
   })
 
   await t.step('add Issue with several kinds of files', () => {
-    // This mostly tests the issueFile mapping function
     const issues = new DatasetIssues()
     const testStream = new ReadableStream()
     const text = () => Promise.resolve('')

@@ -2,8 +2,8 @@
 import { assert, assertEquals } from '../../deps/asserts.ts'
 import { Cell, Row, Table } from '../../deps/cliffy.ts'
 import { colors } from '../../deps/fmt.ts'
-import { IssueOutput } from '../../types/issues.ts'
-import { legacyOutput } from '../../issues/datasetIssues.ts'
+import { Issue } from '../../types/issues.ts'
+import { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { formatAssertIssue, validatePath } from './common.ts'
 import { parseOptions } from '../../setup/options.ts'
 
@@ -11,10 +11,10 @@ const options = await parseOptions(['fake_dataset_arg', ...Deno.args])
 options.ignoreNiftiHeaders = true
 
 // Stand in for old validator config that could ignore issues
-function useIssue(issue: IssueOutput): boolean {
+function useIssue(issue: Issue): boolean {
   return (
-    'schema.rules.checks.general.DuplicateFiles' !== issue.files[0].evidence &&
-    issue.key !== 'EMPTY_FILE'
+    'rules.checks.general.DuplicateFiles' !== issue.rule &&
+    issue.code !== 'EMPTY_FILE'
   )
 }
 
@@ -22,12 +22,16 @@ let header: string[] = ['issue key', 'filename', 'schema path']
 header = header.map((x) => colors.magenta(x))
 
 const errors: Row[] = []
-function formatBEIssue(issue: IssueOutput, dsPath: string) {
+function formatBEIssue(issue: Issue) {
+  let code = issue.code
+  if ('subCode' in issue && issue.subCode) {
+    code = `${code} - ${issue.subCode}`
+  }
   errors.push(
     Row.from([
-      colors.red(issue.key),
-      issue.files[0].file.name,
-      issue.files[0].evidence,
+      colors.red(code),
+      issue.location,
+      issue.issueMessage,
     ]),
   )
 }
@@ -48,12 +52,12 @@ Deno.test('validate bids-examples', async (t) => {
       }
     } catch (e) {}
     const { tree, result } = await validatePath(t, path, options)
-    const output = legacyOutput(result.issues)
-    output.errors = output.errors.filter((x) => useIssue(x))
+    const dsIssues: DatasetIssues = result.issues.filter({ 'severity': 'error' })
+    const issues = dsIssues.issues.filter((x) => useIssue(x))
     await t.step(`${path} has no issues`, () => {
-      assertEquals(output.errors.length, 0)
+      assertEquals(issues.length, 0)
     })
-    if (output.errors.length === 0) {
+    if (issues.length === 0) {
       continue
     }
 
@@ -65,7 +69,7 @@ Deno.test('validate bids-examples', async (t) => {
         undefined,
       ]).border(true),
     )
-    output.errors.map((x) => formatBEIssue(x, dirEntry.name))
+    issues.map((x) => formatBEIssue(x))
   }
   const table = new Table()
     .header(header)
