@@ -1,4 +1,4 @@
-import { assertEquals } from '../deps/asserts.ts'
+import { assertEquals } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
 
 Deno.test('Deno implementation of FileIgnoreRules', async (t) => {

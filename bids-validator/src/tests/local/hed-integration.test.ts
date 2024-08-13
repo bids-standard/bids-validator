@@ -1,5 +1,5 @@
 import { formatAssertIssue, validatePath } from './common.ts'
-import { assert, assertEquals } from '../../deps/asserts.ts'
+import { assert, assertEquals } from '@std/assert'
 import { BIDSFileDeno, readFileTree } from '../../files/deno.ts'
 import { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { loadSchema } from '../../setup/loadSchema.ts'

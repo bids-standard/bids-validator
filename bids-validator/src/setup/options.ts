@@ -1,5 +1,5 @@
-import { LevelName, LogLevelNames } from '../deps/logger.ts'
-import { Command, EnumType } from '../deps/cliffy.ts'
+import { LevelName, LogLevelNames } from '@std/log'
+import { Command, EnumType } from '@cliffy/command'
 import { getVersion } from '../version.ts'
 
 export type ValidatorOptions = {

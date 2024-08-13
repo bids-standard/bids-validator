@@ -1,4 +1,4 @@
-import { assert, assertObjectMatch } from '../deps/asserts.ts'
+import { assert, assertObjectMatch } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSFileDeno } from './deno.ts'
 

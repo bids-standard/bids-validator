@@ -1,7 +1,8 @@
 /**
  * Deno specific implementation for reading files
  */
-import { basename, join, posix } from '../deps/path.ts'
+import { basename, join } from '@std/path'
+import * as posix from '@std/path/posix'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'

@@ -1,4 +1,4 @@
-import { assert, assertEquals } from '../deps/asserts.ts'
+import { assert, assertEquals } from '@std/assert'
 import { BIDSContext, BIDSContextDataset } from './context.ts'
 import { walkFileTree } from './walk.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'

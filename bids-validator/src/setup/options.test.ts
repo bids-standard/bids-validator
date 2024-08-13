@@ -1,4 +1,4 @@
-import { assertEquals } from '../deps/asserts.ts'
+import { assertEquals } from '@std/assert'
 import { parseOptions } from './options.ts'
 
 Deno.test('options parsing', async (t) => {

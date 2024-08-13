@@ -1,4 +1,4 @@
-import { assert } from '../deps/asserts.ts'
+import { assert } from '@std/assert'
 import { expressionFunctions } from './expressionLanguage.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import { BIDSContext } from './context.ts'

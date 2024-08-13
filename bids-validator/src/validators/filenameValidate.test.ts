@@ -1,6 +1,6 @@
 import { FileTree } from '../types/filetree.ts'
 import { GenericSchema } from '../types/schema.ts'
-import { assertEquals } from '../deps/asserts.ts'
+import { assertEquals } from '@std/assert'
 import { BIDSContext } from '../schema/context.ts'
 import { atRoot, entityLabelCheck, missingLabel } from './filenameValidate.ts'
 import { BIDSFileDeno } from '../files/deno.ts'

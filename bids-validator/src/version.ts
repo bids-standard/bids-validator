@@ -1,6 +1,6 @@
 import gitmeta from './.git-meta.json' with { type: 'json' }
 import denojson from '../deno.json' with { type: 'json' }
-import { dirname } from './deps/path.ts'
+import { dirname } from '@std/path'
 
 /**
  * Determine the version of the currently running script.

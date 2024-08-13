@@ -1,4 +1,4 @@
-import { ConsoleHandler, getLogger, LevelName, Logger, setup } from '../deps/logger.ts'
+import { ConsoleHandler, getLogger, LevelName, Logger, setup } from '@std/log'
 
 /**
  * Setup a console logger used with the --debug flag

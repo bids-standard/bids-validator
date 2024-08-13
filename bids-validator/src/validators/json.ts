@@ -1,4 +1,4 @@
-import { Ajv, JSONSchemaType, ValidateFunction } from '../deps/ajv.ts'
+import { Ajv, JSONSchemaType, ValidateFunction } from '@ajv'
 import { Schema } from '../types/schema.ts'
 import { memoize } from '../utils/memoize.ts'
 import { logger } from '../utils/logger.ts'

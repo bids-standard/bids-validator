@@ -1,5 +1,5 @@
 // Deno runtime tests for tests/data/valid_headers
-import { assert, assertEquals } from '../../deps/asserts.ts'
+import { assert, assertEquals } from '@std/assert'
 import { formatAssertIssue, validatePath } from './common.ts'
 
 const PATH = 'tests/data/valid_headers'

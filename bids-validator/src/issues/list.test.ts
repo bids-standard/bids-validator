@@ -1,4 +1,4 @@
-import { assert, assertEquals } from '../deps/asserts.ts'
+import { assert, assertEquals } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { bidsIssues } from './list.ts'
 import { GenericSchema } from '../types/schema.ts'

@@ -1,9 +1,9 @@
 /**
  * Utilities for formatting human readable output (CLI or other UIs)
  */
-import { prettyBytes } from '../deps/prettyBytes.ts'
-import { Table } from '../deps/cliffy.ts'
-import { colors } from '../deps/fmt.ts'
+import { Table } from '@cliffy/table'
+import * as colors from '@std/fmt/colors'
+import { format as prettyBytes } from '@std/fmt/bytes'
 import { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
 import { Issue, Severity } from '../types/issues.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'

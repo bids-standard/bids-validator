@@ -1,6 +1,6 @@
 import { FileIgnoreRules } from './ignore.ts'
 import { FileTree } from '../types/filetree.ts'
-import { assertEquals, assertObjectMatch } from '../deps/asserts.ts'
+import { assertEquals, assertObjectMatch } from '@std/assert'
 import { BIDSFileBrowser, fileListToTree } from './browser.ts'
 
 class TestFile extends File {

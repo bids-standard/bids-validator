@@ -1,4 +1,4 @@
-import { assertEquals } from '../deps/asserts.ts'
+import { assertEquals } from '@std/assert'
 import { parseStack } from './logger.ts'
 
 Deno.test('logger', async (t) => {

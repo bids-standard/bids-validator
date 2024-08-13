@@ -1,6 +1,7 @@
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
-import { parse, posix, SEPARATOR_PATTERN } from '../deps/path.ts'
+import { parse, SEPARATOR_PATTERN } from '@std/path'
+import * as posix from '@std/path/posix'
 
 /**
  * Browser implement of BIDSFile wrapping native File/FileList types

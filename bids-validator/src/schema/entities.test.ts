@@ -1,4 +1,4 @@
-import { assert, assertObjectMatch } from '../deps/asserts.ts'
+import { assert, assertObjectMatch } from '@std/assert'
 import { readEntities } from './entities.ts'
 import { nullReadBytes } from '../tests/nullReadBytes.ts'
 import { generateBIDSFilename } from '../tests/generate-filenames.ts'

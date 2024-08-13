@@ -5,7 +5,7 @@ import { expressionFunctions } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
 import { memoize } from '../utils/memoize.ts'
 import { compile } from '../validators/json.ts'
-import { DefinedError } from '../deps/ajv.ts'
+import { DefinedError } from '@ajv'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
