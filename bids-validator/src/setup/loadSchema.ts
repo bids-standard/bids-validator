@@ -1,8 +1,6 @@
 import { Schema } from '../types/schema.ts'
 import { objectPathHandler } from '../utils/objectPathHandler.ts'
-import * as schemaDefault from 'https://bids-specification.readthedocs.io/en/latest/schema.json' assert {
-  type: 'json',
-}
+import * as schemaDefault from 'jsr:@bids/schema@0' with { type: 'json' }
 import { setCustomMetadataFormats } from '../validators/json.ts'
 
 /**
@@ -22,7 +20,7 @@ export async function loadSchema(version = 'latest'): Promise<Schema> {
   let schema: Schema | undefined = undefined
   try {
     const schemaModule = await import(/* @vite-ignore */ schemaUrl, {
-      assert: { type: 'json' },
+      with: { type: 'json' },
     })
     schema = new Proxy(
       schemaModule.default as object,
@@ -35,7 +33,7 @@ export async function loadSchema(version = 'latest'): Promise<Schema> {
       `Warning, could not load schema from ${schemaUrl}, falling back to internal version`,
     )
     schema = new Proxy(
-      schemaDefault.default as object,
+      schemaDefault as object,
       objectPathHandler,
     ) as Schema
   }
