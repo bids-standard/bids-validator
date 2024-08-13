@@ -466,20 +466,15 @@ function evalJsonCheck(
           }, requirement.issue.message)
         } else {
           let code
-          if (severity === 'error') {
-            code = sidecarRule ? 'SIDECAR_KEY_REQUIRED' : 'JSON_KEY_REQUIRED'
-          } else if (severity === 'warning') {
-            code = sidecarRule ? 'SIDECAR_KEY_RECOMMENDED' : 'JSON_KEY_RECOMMENDED'
-          }
-          if (code) {
-            context.dataset.issues.add({
-              code,
-              subCode: keyName,
-              location: context.path,
-              severity,
-              rule: schemaPath,
-            })
-          }
+          const keyType = sidecarRule ? 'SIDECAR_KEY' : 'JSON_KEY'
+          const level = severity === 'error' ? 'REQUIRED' : 'RECOMMENDED'
+          context.dataset.issues.add({
+            `${keyType}_${level}`,
+            subCode: keyName,
+            location: context.path,
+            severity,
+            rule: schemaPath,
+          })
         }
       }
 
