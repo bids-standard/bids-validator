@@ -71,12 +71,4 @@ Deno.test('DatasetIssues management class', async (t) => {
     assert(code1 !== undefined)
     assertEquals(code1.size, 2)
   })
-  await t.step('test multiple groupBy', () => {
-    const issues = new DatasetIssues()
-    issues.add({ code: 'NOT_INCLUDED', subCode: 'sub1', location: '/file_1' })
-    issues.add({ code: 'NOT_INCLUDED', subCode: 'sub2', location: '/file_1' })
-    issues.add({ code: 'NOT_INCLUDED', subCode: 'sub1', location: '/file_2' })
-    issues.add({ code: 'NOT_INCLUDED', subCode: 'sub2', location: '/file_2' })
-    issues.add({ code: 'EMPTY_FILE', location: '/file_1' })
-  })
 })

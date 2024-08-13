@@ -25,8 +25,8 @@ export function consoleFormat(
   if (result.issues.size === 0) {
     output.push(colors.green('This dataset appears to be BIDS compatible.'))
   } else {
-    (['warning', 'error'] as Severity[]).map(severity => {
-      output.push(...formatIssues(result.issues.filter({severity}), options, severity))
+    ;(['warning', 'error'] as Severity[]).map((severity) => {
+      output.push(...formatIssues(result.issues.filter({ severity }), options, severity))
     })
   }
   output.push('')
@@ -35,7 +35,11 @@ export function consoleFormat(
   return output.join('\n')
 }
 
-function formatIssues(dsIssues: DatasetIssues, options?: LoggingOptions, severity = 'error'): string[] {
+function formatIssues(
+  dsIssues: DatasetIssues,
+  options?: LoggingOptions,
+  severity = 'error',
+): string[] {
   let output = []
   const color = severity === 'error' ? 'red' : 'yellow'
 
@@ -63,6 +67,13 @@ function formatIssues(dsIssues: DatasetIssues, options?: LoggingOptions, severit
         output.push(...formatFiles(subIssues, options))
       }
     }
+
+    output.push(
+      colors.cyan(
+        `\tPlease visit ${helpUrl(code)} for existing conversations about this issue.`,
+      ),
+    )
+    output.push('')
   }
   return output
 }
@@ -79,7 +90,7 @@ function formatFiles(issues: DatasetIssues, options?: LoggingOptions): string[] 
   let toPrint = issues.issues.slice(0, fileCount)
   toPrint.map((issue: Issue) => {
     let fileOut: string[] = []
-      issueDetails.map(key => {
+    issueDetails.map((key) => {
       if (Object.hasOwn(issue, key) && issue[key]) {
         fileOut.push(`${issue[key]}`)
       }
@@ -153,4 +164,9 @@ function formatSummary(summary: SummaryOutput): string {
   )
 
   return output.join('\n')
+}
+
+function helpUrl(code: string): string {
+  // Provide a link to NeuroStars
+  return `https://neurostars.org/search?q=${code}`
 }

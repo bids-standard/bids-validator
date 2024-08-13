@@ -74,21 +74,4 @@ export class DatasetIssues {
     })
     return groups
   }
-  _groupBy(keys: Array<keyof Issue>): Group | undefined {
-    if (keys.length === 1) {
-      return this.groupBy(keys[0])
-    }
-    let issueKey = keys.pop()
-    if (!issueKey) return undefined
-    let groups: Group = new Map()
-    for (const [key, issues] of this.groupBy(issueKey).entries()) {
-      groups.set(key, issues._groupBy(keys))
-    }
-    return groups
-  }
-}
-
-function helpUrl(code: string): string {
-  // Provide a link to NeuroStars
-  return `https://neurostars.org/search?q=${code}`
 }
