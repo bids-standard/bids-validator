@@ -469,7 +469,7 @@ function evalJsonCheck(
           const keyType = sidecarRule ? 'SIDECAR_KEY' : 'JSON_KEY'
           const level = severity === 'error' ? 'REQUIRED' : 'RECOMMENDED'
           context.dataset.issues.add({
-            `${keyType}_${level}`,
+            code: `${keyType}_${level}`,
             subCode: keyName,
             location: context.path,
             severity,
