@@ -69,7 +69,11 @@ function formatIssues(dsIssues: DatasetIssues, options?: LoggingOptions, severit
 
 function formatFiles(issues: DatasetIssues, options?: LoggingOptions): string[] {
   let output = []
-  const issueDetails: Array<keyof Issue> = ['location', 'issueMessage', 'rule']
+  let issueDetails: Array<keyof Issue> = ['location', 'issueMessage']
+  if (options?.verbose) {
+    issueDetails = ['location', 'issueMessage', 'rule']
+  }
+
   const fileCount = options?.verbose ? undefined : 2
 
   let toPrint = issues.issues.slice(0, fileCount)
@@ -86,6 +90,7 @@ function formatFiles(issues: DatasetIssues, options?: LoggingOptions): string[] 
     output.push('')
     output.push(`\t\t${issues.size - fileCount} more files with the same issue`)
   }
+  output.push('')
   return output
 }
 

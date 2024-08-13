@@ -280,7 +280,7 @@ export function evalColumns(
           code: 'TSV_COLUMN_TYPE_REDEFINED',
           subCode: name,
           location: context.path,
-          issueMessage: `Sidecar definition: ${inspect(context.sidecar[name])}`,
+          issueMessage: `defined in ${context.sidecarKeyOrigin[name]}`,
           rule: schemaPath,
         })
       }
