@@ -15,7 +15,9 @@
       "cli.js",
       "esbuild.mjs",
       "index.js",
-      "package.json"
+      "package.json",
+      ".npmignore",
+      ".gitattributes"
     ]
   },
   "imports": {
