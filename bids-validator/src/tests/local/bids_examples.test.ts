@@ -52,7 +52,7 @@ Deno.test('validate bids-examples', async (t) => {
       }
     } catch (e) {}
     const { tree, result } = await validatePath(t, path, options)
-    const dsIssues: DatasetIssues = result.issues.filter({'severity': 'error'})
+    const dsIssues: DatasetIssues = result.issues.filter({ 'severity': 'error' })
     const issues = dsIssues.issues.filter((x) => useIssue(x))
     await t.step(`${path} has no issues`, () => {
       assertEquals(issues.length, 0)
