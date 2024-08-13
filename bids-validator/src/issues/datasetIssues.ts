@@ -87,8 +87,3 @@ export class DatasetIssues {
     return groups
   }
 }
-
-function helpUrl(code: string): string {
-  // Provide a link to NeuroStars
-  return `https://neurostars.org/search?q=${code}`
-}
