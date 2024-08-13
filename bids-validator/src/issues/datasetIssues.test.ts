@@ -78,6 +78,5 @@ Deno.test('DatasetIssues management class', async (t) => {
     issues.add({ code: 'NOT_INCLUDED', subCode: 'sub1', location: '/file_2' })
     issues.add({ code: 'NOT_INCLUDED', subCode: 'sub2', location: '/file_2' })
     issues.add({ code: 'EMPTY_FILE', location: '/file_1' })
-    console.log(issues._groupBy(['subCode', 'code']))
   })
 })
