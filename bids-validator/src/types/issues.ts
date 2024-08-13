@@ -38,27 +38,6 @@ export interface IssueFileOutput {
 }
 
 /**
- * Dataset issue, derived from OpenNeuro schema and existing validator implementation
- */
-export interface IssueOutput {
-  severity: Severity
-  key: string
-  code: number
-  reason: string
-  files: IssueFileOutput[]
-  additionalFileCount: number
-  helpUrl: string
-}
-
-/**
- * Shape returned by fullTest call in non-schema validator
- */
-export interface FullTestIssuesReturn {
-  errors: IssueOutput[]
-  warnings: IssueOutput[]
-}
-
-/**
  * For defining internal issues quickly
  */
 export interface IssueDefinition {

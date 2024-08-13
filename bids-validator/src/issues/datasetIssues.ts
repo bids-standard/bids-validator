@@ -1,9 +1,6 @@
 import { nonSchemaIssues } from './list.ts'
 import {
-  FullTestIssuesReturn,
   Issue,
-  IssueFileOutput,
-  IssueOutput,
   Severity,
 } from '../types/issues.ts'
 
@@ -97,55 +94,4 @@ export class DatasetIssues {
 function helpUrl(code: string): string {
   // Provide a link to NeuroStars
   return `https://neurostars.org/search?q=${code}`
-}
-
-const legacyIssueFile = (issue: Issue, reason: string): IssueFileOutput => {
-  const evidence = issue.issueMessage || ''
-  const line = 0
-  const character = 0
-  const path = issue.location || ''
-  return {
-    key: issue.code,
-    code: CODE_DEPRECATED,
-    file: { path, name: '', relativePath: '' },
-    evidence,
-    line,
-    character,
-    severity: issue.severity || 'error',
-    reason,
-    helpUrl: helpUrl(issue.code),
-  }
-}
-
-export function legacyOutput(datasetIssues: DatasetIssues): FullTestIssuesReturn {
-  const output: FullTestIssuesReturn = {
-    errors: [],
-    warnings: [],
-  }
-  for (const [code, codeMessage] of datasetIssues.codeMessages) {
-    const issues = datasetIssues.filter({ code })
-
-    const severities: [Severity, IssueOutput[]][] = [['warning', output.warnings], [
-      'error',
-      output.errors,
-    ]]
-    for (const [severity, _output] of severities) {
-      if (!severity) continue
-      const issuesBySeverity = issues.get({ severity })
-      if (issuesBySeverity.length === 0) {
-        continue
-      }
-
-      _output.push({
-        severity: severity,
-        key: code,
-        code: CODE_DEPRECATED,
-        reason: codeMessage,
-        files: issuesBySeverity.map((x) => legacyIssueFile(x, codeMessage)),
-        additionalFileCount: issuesBySeverity.length,
-        helpUrl: helpUrl(code),
-      })
-    }
-  }
-  return output
 }
