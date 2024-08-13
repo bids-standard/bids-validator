@@ -51,7 +51,9 @@ const result = await esbuild.build({
   target: ['chrome109', 'firefox109', 'safari16'],
   plugins: [
     versionPlugin,
-    ...denoPlugins(),
+    ...denoPlugins({
+      configPath: path.join(dir, 'deno.json'),
+    }),
   ],
   allowOverwrite: true,
   sourcemap: flags.minify ? false : 'inline',
