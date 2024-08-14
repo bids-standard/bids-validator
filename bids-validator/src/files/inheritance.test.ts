@@ -4,7 +4,7 @@ import { BIDSFileDeno } from '../files/deno.ts'
 import { walkBack } from './inheritance.ts'
 import { nullFile } from '../tests/nullFile.ts'
 
-Deno.test('walkBack throws multiple inheritance error', async (t) => {
+Deno.test('walkback inheritance tests', async (t) => {
   const rootFileTree = new FileTree('/', '')
   rootFileTree.files.push({
     path: '/',
@@ -20,15 +20,35 @@ Deno.test('walkBack throws multiple inheritance error', async (t) => {
     parent: rootFileTree,
   }
   rootFileTree.files.push(dataFile)
-  assertThrows(() => {
-    try {
-      const sidecars = walkBack(dataFile)
-      for (const f of sidecars) {
-        continue
+  await t.step('walkBack throws multiple inheritance error', async () => {
+    assertThrows(() => {
+      try {
+        const sidecars = walkBack(dataFile)
+        for (const f of sidecars) {
+          continue
+        }
+      } catch (error) {
+        assertEquals(error.code, 'MULTIPLE_INHERITABLE_FILES')
+        throw error
       }
-    } catch (error) {
-      assertEquals(error.code, 'MULTIPLE_INHERITABLE_FILES')
-      throw error
-    }
+    })
   })
+  await t.step(
+    'no error thrown on exact inheritance match with multiple valid candidates',
+    async () => {
+      rootFileTree.files.push({
+        path: '/',
+        name: 'sub-01_acq-test_T1w.json',
+        ...nullFile,
+        parent: rootFileTree,
+      })
+      const sidecars = walkBack(dataFile)
+      const sidecarFiles = []
+      for (const f of sidecars) {
+        sidecarFiles.push(f)
+      }
+      assertEquals(sidecarFiles.length, 1)
+      assertEquals(sidecarFiles[0].name, 'sub-01_acq-test_T1w.json')
+    },
+  )
 })
