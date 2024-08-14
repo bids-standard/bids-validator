@@ -116,6 +116,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     reason:
       'A column required in a TSV file has been redefined in a sidecar file. This redefinition is being ignored.',
   },
+  MULTIPLE_INHERITABLE_FILES: {
+    severity: 'error',
+    reason: 'Multiple files in a directory were valid candidates for inheritance.'
+  },
   NIFTI_HEADER_UNREADABLE: {
     severity: 'error',
     reason:
