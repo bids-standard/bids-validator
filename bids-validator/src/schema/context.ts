@@ -169,8 +169,9 @@ export class BIDSContext implements Context {
     if (this.extension === '.json') {
       return
     }
+    let sidecars: BIDSFile[] = []
     try {
-      const sidecars = [...walkBack(this.file)]
+      sidecars = [...walkBack(this.file)]
     } catch (error) {
       if (error.code === 'MULTIPLE_INHERITABLE_FILES') {
         this.dataset.issues.add(error)
@@ -178,21 +179,13 @@ export class BIDSContext implements Context {
         throw error
       }
     }
-    try {
-      for (const file of sidecars) {
-        const json = await loadJSON(file).catch((error) => {
-          this.dataset.issues.add({ code: error.key, location: file.path })
-          return {}
-        })
-        this.sidecar = { ...json, ...this.sidecar }
-        Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= file.path)
-      }
-    } catch (error) {
-      if (error.code === 'MULTIPLE_INHERITABLE_FILES') {
-        this.dataset.issues.add(error)
-      } else {
-        throw error
-      }
+    for (const file of sidecars) {
+      const json = await loadJSON(file).catch((error) => {
+        this.dataset.issues.add({ code: error.key, location: file.path })
+        return {}
+      })
+      this.sidecar = { ...json, ...this.sidecar }
+      Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= file.path)
     }
   }
 
@@ -227,15 +220,7 @@ export class BIDSContext implements Context {
   }
 
   async loadAssociations(): Promise<void> {
-    try {
-      this.associations = await buildAssociations(this.file, this.dataset.issues)
-    } catch (error) {
-      if (error.code === 'MULTIPLE_INHERITABLE_FILES') {
-        this.dataset.issues.add(error)
-      } else {
-        throw error
-      }
-    }
+    this.associations = await buildAssociations(this.file, this.dataset.issues)
     return
   }
 
