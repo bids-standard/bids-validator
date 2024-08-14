@@ -1,22 +1,13 @@
 import { assert, assertEquals } from '../deps/asserts.ts'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
-import { FileTree } from '../types/filetree.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { GenericSchema, Schema } from '../types/schema.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
+import { nullFile } from '../tests/nullFile.ts'
 
 const schema = await loadSchema() as unknown as GenericSchema
-const nullFile = {
-  size: 0,
-  ignored: false,
-  parent: new FileTree('/', '/'),
-  viewed: false,
-  stream: new ReadableStream(),
-  text: async () => '',
-  readBytes: async (size: number, offset?: number) => new Uint8Array(),
-}
 
 function newContext(path: string): BIDSContext {
   return new BIDSContext({
