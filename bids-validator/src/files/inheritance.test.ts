@@ -6,9 +6,19 @@ import { nullFile } from '../tests/nullFile.ts'
 
 Deno.test('walkBack throws multiple inheritance error', async (t) => {
   const rootFileTree = new FileTree('/', '')
-  rootFileTree.files.push({ path: '/', name: 'sub-01_T1w.json', ...nullFile, parent: rootFileTree})
-  rootFileTree.files.push({ path: '/', name: 'T1w.json', ...nullFile, parent: rootFileTree})
-  const dataFile =   { path: '/', name: 'sub-01_acq-test_T1w.nii', ...nullFile, parent: rootFileTree}
+  rootFileTree.files.push({
+    path: '/',
+    name: 'sub-01_T1w.json',
+    ...nullFile,
+    parent: rootFileTree,
+  })
+  rootFileTree.files.push({ path: '/', name: 'T1w.json', ...nullFile, parent: rootFileTree })
+  const dataFile = {
+    path: '/',
+    name: 'sub-01_acq-test_T1w.nii',
+    ...nullFile,
+    parent: rootFileTree,
+  }
   rootFileTree.files.push(dataFile)
   assertThrows(() => {
     try {

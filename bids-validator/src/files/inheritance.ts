@@ -23,11 +23,11 @@ export function* walkBack(
       )
     })
     if (candidates.length > 1) {
-        throw {
-          code: 'MULTIPLE_INHERITABLE_FILES',
-          location: source.path,
-          affects: candidates.map((file) => file.path)
-        }
+      throw {
+        code: 'MULTIPLE_INHERITABLE_FILES',
+        location: source.path,
+        affects: candidates.map((file) => file.path),
+      }
     } else if (candidates.length === 1) {
       candidates[0].viewed = true
       yield candidates[0]
