@@ -147,7 +147,17 @@ export async function buildAssociations(
 
   for (const [key, value] of Object.entries(associationLookup)) {
     const { suffix, extensions, inherit, load } = value
-    const file = walkBack(source, inherit, extensions, suffix).next().value
+    let file
+    try {
+      file = walkBack(source, inherit, extensions, suffix).next().value
+    } catch (error) {
+      if (error.code === 'MULTIPLE_INHERITABLE_FILES') {
+        issues.add(error)
+        break
+      } else {
+        throw error
+      }
+    }
 
     if (file) {
       // @ts-expect-error

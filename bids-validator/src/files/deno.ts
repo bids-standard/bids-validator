@@ -28,11 +28,11 @@ export class BIDSFileDeno implements BIDSFile {
   #datasetAbsPath: string
   viewed: boolean = false
 
-  constructor(datasetPath: string, path: string, ignore: FileIgnoreRules, parent?: FileTree) {
+  constructor(datasetPath: string, path: string, ignore?: FileIgnoreRules, parent?: FileTree) {
     this.#datasetAbsPath = datasetPath
     this.path = path
     this.name = basename(path)
-    this.#ignore = ignore
+    this.#ignore = ignore ?? new FileIgnoreRules([])
     try {
       this.#fileInfo = Deno.statSync(this._getPath())
     } catch (error) {

@@ -33,11 +33,11 @@ export function* walkBack(
         exactMatch.viewed = true
         yield exactMatch
       } else {
-        console.warn(`
-Multiple candidates detected for '${source.path}'
-
-${candidates.map((file) => `* ${file.path}`).join('\n')}
-`)
+        throw {
+          code: 'MULTIPLE_INHERITABLE_FILES',
+          location: source.path,
+          affects: candidates.map((file) => file.path)
+        }
       }
     } else if (candidates.length === 1) {
       candidates[0].viewed = true

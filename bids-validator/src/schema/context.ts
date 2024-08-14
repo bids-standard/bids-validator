@@ -169,7 +169,16 @@ export class BIDSContext implements Context {
     if (this.extension === '.json') {
       return
     }
-    const sidecars = walkBack(this.file)
+    let sidecars: BIDSFile[] = []
+    try {
+      sidecars = [...walkBack(this.file)]
+    } catch (error) {
+      if (error.code === 'MULTIPLE_INHERITABLE_FILES') {
+        this.dataset.issues.add(error)
+      } else {
+        throw error
+      }
+    }
     for (const file of sidecars) {
       const json = await loadJSON(file).catch((error) => {
         this.dataset.issues.add({ code: error.key, location: file.path })
