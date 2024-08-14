@@ -35,6 +35,9 @@ export async function missingLabel(
   schema: GenericSchema,
   context: BIDSContext,
 ) {
+  if (!context.filenameRules.some((rule) => 'suffixes' in schema[rule])) {
+    return Promise.resolve()
+  }
   const fileNoLabelEntities = Object.keys(context.entities).filter(
     (key) => context.entities[key] === 'NOENTITY',
   )
