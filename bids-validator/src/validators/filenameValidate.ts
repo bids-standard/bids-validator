@@ -300,4 +300,19 @@ async function invalidLocation(
       })
     }
   }
+
+  if (!sub && context.path.match(/^\/sub-/)) {
+    context.dataset.issues.add({
+      code: 'INVALID_LOCATION',
+      location: context.path,
+      issueMessage: `Expected location: /${context.file.name}`,
+    })
+  }
+  if (!ses && context.path.match(/\/ses-/)) {
+    context.dataset.issues.add({
+      code: 'INVALID_LOCATION',
+      location: context.path,
+      issueMessage: `Unexpected session directory`,
+    })
+  }
 }
