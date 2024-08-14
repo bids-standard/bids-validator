@@ -12,6 +12,7 @@ const CHECKS: ContextCheckFunction[] = [
   atRoot,
   entityLabelCheck,
   checkRules,
+  reconstructionFailure,
 ]
 
 export async function filenameValidate(
@@ -313,6 +314,29 @@ async function invalidLocation(
       code: 'INVALID_LOCATION',
       location: context.path,
       issueMessage: `Unexpected session directory`,
+    })
+  }
+}
+
+async function reconstructionFailure(
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
+  if (Object.keys(context.entities).length === 0) {
+    return
+  }
+  const typedSchema = schema as unknown as Schema
+  const entityKeys = typedSchema.rules.entities
+    .map((entity) => typedSchema.objects.entities[entity].name)
+    .filter((entity) => entity in context.entities)
+  // join with hyphen
+  const entities = entityKeys.map((entity) => `${entity}-${context.entities[entity]}`)
+  const expectedFilename = [...entities, context.suffix + context.extension].join('_')
+  if (context.file.name !== expectedFilename) {
+    context.dataset.issues.add({
+      code: 'FILENAME_MISMATCH',
+      location: context.path,
+      issueMessage: `Expected filename: ${expectedFilename}`,
     })
   }
 }
