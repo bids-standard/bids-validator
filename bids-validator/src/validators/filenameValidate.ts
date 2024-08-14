@@ -12,6 +12,7 @@ const CHECKS: ContextCheckFunction[] = [
   atRoot,
   entityLabelCheck,
   checkRules,
+  reconstructionFailure,
 ]
 
 export async function filenameValidate(
@@ -35,6 +36,9 @@ export async function missingLabel(
   schema: GenericSchema,
   context: BIDSContext,
 ) {
+  if (!context.filenameRules.some((rule) => 'suffixes' in schema[rule])) {
+    return Promise.resolve()
+  }
   const fileNoLabelEntities = Object.keys(context.entities).filter(
     (key) => context.entities[key] === 'NOENTITY',
   )
@@ -139,6 +143,7 @@ const ruleChecks: RuleCheckFunction[] = [
   entityRuleIssue,
   datatypeMismatch,
   extensionMismatch,
+  invalidLocation,
 ]
 
 async function checkRules(schema: GenericSchema, context: BIDSContext) {
@@ -267,6 +272,71 @@ async function extensionMismatch(
       code: 'EXTENSION_MISMATCH',
       location: context.path,
       rule: path,
+    })
+  }
+}
+
+async function invalidLocation(
+  path: string,
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
+  const rule = schema[path]
+  if (!('entities' in rule)) {
+    return
+  }
+  const sub: string | undefined = context.entities.sub
+  const ses: string | undefined = context.entities.ses
+
+  if (sub) {
+    let pattern = `/sub-${sub}/`
+    if (ses) {
+      pattern += `ses-${ses}/`
+    }
+    if (!context.path.startsWith(pattern)) {
+      context.dataset.issues.add({
+        code: 'INVALID_LOCATION',
+        location: context.path,
+        issueMessage: `Expected location: ${pattern}`,
+      })
+    }
+  }
+
+  if (!sub && context.path.match(/^\/sub-/)) {
+    context.dataset.issues.add({
+      code: 'INVALID_LOCATION',
+      location: context.path,
+      issueMessage: `Expected location: /${context.file.name}`,
+    })
+  }
+  if (!ses && context.path.match(/\/ses-/)) {
+    context.dataset.issues.add({
+      code: 'INVALID_LOCATION',
+      location: context.path,
+      issueMessage: `Unexpected session directory`,
+    })
+  }
+}
+
+async function reconstructionFailure(
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
+  if (Object.keys(context.entities).length === 0) {
+    return
+  }
+  const typedSchema = schema as unknown as Schema
+  const entityKeys = typedSchema.rules.entities
+    .map((entity) => typedSchema.objects.entities[entity].name)
+    .filter((entity) => entity in context.entities)
+  // join with hyphen
+  const entities = entityKeys.map((entity) => `${entity}-${context.entities[entity]}`)
+  const expectedFilename = [...entities, context.suffix + context.extension].join('_')
+  if (context.file.name !== expectedFilename) {
+    context.dataset.issues.add({
+      code: 'FILENAME_MISMATCH',
+      location: context.path,
+      issueMessage: `Expected filename: ${expectedFilename}`,
     })
   }
 }

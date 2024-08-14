@@ -27,6 +27,7 @@ export interface SchemaObjects {
 }
 
 export interface SchemaRules {
+  entities: string[]
   files: SchemaFiles
   modalities: Record<string, unknown>
 }

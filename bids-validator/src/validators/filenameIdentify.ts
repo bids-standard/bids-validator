@@ -55,8 +55,8 @@ function findRuleMatches(schema, context) {
  */
 export function _findRuleMatches(node, path, context) {
   if (
-    ('path' in node && context.file.name.endsWith(node.path)) ||
-    ('stem' in node && context.file.name.match(globToRegExp(node.stem + '*'))) ||
+    (`/${node.path}` === context.path) ||
+    (node.stem && matchStemRule(node, context)) ||
     ('suffixes' in node && node.suffixes.includes(context.suffix))
   ) {
     context.filenameRules.push(path)
@@ -70,6 +70,16 @@ export function _findRuleMatches(node, path, context) {
       _findRuleMatches(node[key], `${path}.${key}`, context)
     })
   }
+}
+
+function matchStemRule(node, context): boolean {
+  if (!context.file.name.split('.')[0].match(globToRegExp(node.stem))) {
+    return false
+  }
+  if (node.datatypes) {
+    return node.datatypes.includes(context.datatype)
+  }
+  return true
 }
 
 export async function datatypeFromDirectory(schema, context) {

@@ -21,7 +21,8 @@ export function _readEntities(filename: string): BIDSFileParts {
     suffix = parts.pop() as string
   }
   for (const part of parts) {
-    const [entity, label] = part.split('-')
+    // Use capturing regex to split on the first hyphen only
+    const [entity, label] = part.split(/-(.+)/)
     entities[entity] = label || 'NOENTITY'
   }
 
