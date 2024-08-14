@@ -142,6 +142,7 @@ const ruleChecks: RuleCheckFunction[] = [
   entityRuleIssue,
   datatypeMismatch,
   extensionMismatch,
+  invalidLocation,
 ]
 
 async function checkRules(schema: GenericSchema, context: BIDSContext) {
@@ -271,5 +272,32 @@ async function extensionMismatch(
       location: context.path,
       rule: path,
     })
+  }
+}
+
+async function invalidLocation(
+  path: string,
+  schema: GenericSchema,
+  context: BIDSContext,
+) {
+  const rule = schema[path]
+  if (!('entities' in rule)) {
+    return
+  }
+  const sub: string | undefined = context.entities.sub
+  const ses: string | undefined = context.entities.ses
+
+  if (sub) {
+    let pattern = `/sub-${sub}/`
+    if (ses) {
+      pattern += `ses-${ses}/`
+    }
+    if (!context.path.startsWith(pattern)) {
+      context.dataset.issues.add({
+        code: 'INVALID_LOCATION',
+        location: context.path,
+        issueMessage: `Expected location: ${pattern}`,
+      })
+    }
   }
 }

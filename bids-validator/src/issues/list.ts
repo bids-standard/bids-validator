@@ -42,6 +42,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'Extension used by file does not match allowed extensions for its suffix',
   },
+  INVALID_LOCATION: {
+    severity: 'error',
+    reason: 'The file has a valid name, but is located in an invalid directory.',
+  },
   JSON_KEY_REQUIRED: {
     severity: 'error',
     reason: 'A JSON flle is missing a key listed as required.',
