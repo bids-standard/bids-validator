@@ -23,10 +23,21 @@ export function* walkBack(
       )
     })
     if (candidates.length > 1) {
-      throw {
-        code: 'MULTIPLE_INHERITABLE_FILES',
-        location: source.path,
-        affects: candidates.map((file) => file.path),
+      const exactMatch = candidates.find((file) => {
+        const { suffix, extension, entities } = readEntities(file.name)
+        return Object.keys(sourceParts.entities).every((entity) =>
+          entities[entity] === sourceParts.entities[entity]
+        )
+      })
+      if (exactMatch) {
+        exactMatch.viewed = true
+        yield exactMatch
+      } else {
+        throw {
+          code: 'MULTIPLE_INHERITABLE_FILES',
+          location: source.path,
+          affects: candidates.map((file) => file.path)
+        }
       }
     } else if (candidates.length === 1) {
       candidates[0].viewed = true
