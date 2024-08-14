@@ -120,6 +120,8 @@ Deno.test('test invalid paths', async (t) => {
     '/sub-01/ses-test/sub-02_ses-test_acq-singleband_run-01_dwi.bval', // wrong sub id in the filename
     '/sub-01/sub-01_ses-test_acq-singleband_run-01_dwi.bvec', // ses dir missed
     '/ses-test/sub-01_ses-test_acq-singleband_run-01_dwi.json', // sub id dir missed
+    '/sub-01/ses-test/sub-01_ses-test_run-01_acq-singleband_dwi.json', // incorrect entity order
+    '/sub-01/ses-test/sub-01_ses-test_acq-singleband_acq-singleband_run-01_dwi.json', // entity appears twice
     '/measurement_tool_name.tsv', // missed phenotype dir
     '/phentype/measurement_tool_name.josn', // wrong phenotype dir
     '/phenotype/measurement_tool_name.jsn', // wrong extension
