@@ -54,6 +54,38 @@ function sidecarDefinedTypeCheck(
 }
 
 /**
+ * Check whether sidecar and schema definitions are compatible.
+ */
+function compatibleDefinitions(
+  rule: object,
+  schemaObject: SchemaTypeLike,
+): boolean {
+  const schemaLike = {}
+  if (typeof rule?.Levels === 'object') {
+    schemaLike.enum = [...Object.keys(rule.Levels)]
+    schemaLike.type = typeof schemaLike.enum[0]
+  }
+  if (rule?.Units) {
+    schemaLike.type = 'number'
+    schemaLike.unit = rule.Units
+  }
+  // Suppose we are overriding the schema with the sidecar...
+  const effectiveType = schemaLike.type || schemaObject.type
+  const effectiveEnum = schemaLike.enum || schemaObject.enum
+  const effectiveUnit = schemaLike.unit || schemaObject.unit
+
+  // Types are compatible if unchanged, or both numeric
+  const typeCompatible = effectiveType === schemaObject.type ||
+    effectiveType === 'number' && schemaObject.type === 'integer'
+  // Enums are compatible if the sidecar enum is a subset of the schema enum
+  const enumCompatible = schemaObject.enum === undefined ||
+    effectiveEnum?.every((x) => schemaObject.enum.includes(x))
+  // Units are compatible if the sidecar unit is the same as the schema unit
+  const unitCompatible = schemaObject.unit === undefined || effectiveUnit === schemaObject.unit
+  return typeCompatible && enumCompatible && unitCompatible
+}
+
+/**
  * Columns in schema rules are assertions about the requirement level of what
  * headers should be present in a tsv file. Examples in specification:
  * schema/rules/tabular_data/*
@@ -117,7 +149,7 @@ export function evalColumns(
       if ('definition' in columnObject) {
         typeCheck = (value) => sidecarDefinedTypeCheck(context.sidecar[name], value, schema)
         errorObject = context.sidecar[name]
-      } else {
+      } else if (!compatibleDefinitions(context.sidecar[name], columnObject)) {
         context.dataset.issues.add({
           code: 'TSV_COLUMN_TYPE_REDEFINED',
           subCode: name,
