@@ -5,20 +5,12 @@ import { BIDSContext } from '../schema/context.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import type { GenericSchema, Schema } from '../types/schema.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
-import { nullFile } from '../tests/nullFile.ts'
+import { pathToFile } from '../files/filetree.ts'
 
 const schema = await loadSchema() as unknown as GenericSchema
 
-function newContext(path: string): BIDSContext {
-  return new BIDSContext({
-    name: path.split('/').pop() as string,
-    path: path,
-    ...nullFile,
-  })
-}
-
 function validatePath(path: string): DatasetIssues {
-  const context = newContext(path)
+  const context = new BIDSContext(pathToFile(path))
   filenameIdentify(schema, context)
   filenameValidate(schema, context)
   return context.dataset.issues
@@ -119,7 +111,7 @@ Deno.test('test invalid paths', async (t) => {
   ]
   for (const filename of invalidFiles) {
     await t.step(filename, async () => {
-      const context = newContext(filename)
+      const context = new BIDSContext(pathToFile(filename))
       await filenameIdentify(schema, context)
       await filenameValidate(schema, context)
       assert(

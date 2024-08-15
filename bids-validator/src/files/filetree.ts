@@ -2,21 +2,23 @@ import { parse, SEPARATOR_PATTERN } from '@std/path'
 import * as posix from '@std/path/posix'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 
-const dummy = {
+const nullFile = {
   size: 0,
   ignored: false,
   stream: new ReadableStream(),
   text: () => Promise.resolve(''),
-  readBytes: () => Promise.resolve(new Uint8Array()),
+  readBytes: async (size: number, offset?: number) => new Uint8Array(),
   parent: new FileTree('', '/'),
   viewed: false,
 }
 
+export function pathToFile(path: string): BIDSFile {
+  const name = path.split('/').pop() as string
+  return { name, path, ...nullFile }
+}
+
 export function pathsToTree(paths: string[]): FileTree {
-  return filesToTree(paths.map((path) => {
-    const name = path.split('/').pop() as string
-    return { name, path, ...dummy }
-  }))
+  return filesToTree(paths.map(pathToFile))
 }
 
 export function filesToTree(fileList: BIDSFile[]): FileTree {
