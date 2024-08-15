@@ -52,7 +52,7 @@ function App() {
     const dirHandle = await directoryOpen({
       recursive: true,
     })
-    const fileTree = await fileListToTree(dirHandle)
+    const fileTree = fileListToTree(dirHandle)
     setValidation(await validate(fileTree, {}))
   }
 

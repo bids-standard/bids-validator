@@ -1,4 +1,5 @@
 import { type BIDSFile, FileTree } from '../types/filetree.ts'
+import { filesToTree } from './filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { parse, SEPARATOR_PATTERN } from '@std/path'
 import * as posix from '@std/path/posix'
@@ -48,40 +49,8 @@ export class BIDSFileBrowser implements BIDSFile {
 /**
  * Convert from FileList (created with webkitDirectory: true) to FileTree for validator use
  */
-export function fileListToTree(files: File[]): Promise<FileTree> {
+export function fileListToTree(files: File[]): FileTree {
   const ignore = new FileIgnoreRules([])
   const tree = new FileTree('', '/', undefined)
-  for (const f of files) {
-    const file = new BIDSFileBrowser(f, ignore, tree) // Default to root
-    const fPath = parse(file.path)
-    if (fPath.dir === '/') {
-      // Top level file
-      tree.files.push(file)
-    } else {
-      const levels = fPath.dir.split(SEPARATOR_PATTERN).slice(1)
-      let currentLevelTree = tree
-      for (const level of levels) {
-        const exists = currentLevelTree.directories.find(
-          (d) => d.name === level,
-        )
-        // If this level exists, set it and descend once
-        if (exists) {
-          currentLevelTree = exists
-        } else {
-          // Otherwise make a new level and continue if needed
-          const newTree = new FileTree(
-            posix.join(currentLevelTree.path, level),
-            level,
-            currentLevelTree,
-          )
-          currentLevelTree.directories.push(newTree)
-          currentLevelTree = newTree
-        }
-      }
-      // At the terminal leaf, add files
-      file.parent = currentLevelTree
-      currentLevelTree.files.push(file)
-    }
-  }
-  return Promise.resolve(tree)
+  return filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, tree)))
 }
