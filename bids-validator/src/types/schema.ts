@@ -89,13 +89,14 @@ export interface SchemaFields {
   issue?: SchemaIssue
 }
 
-interface SchemaType {
+export interface SchemaType {
   type: string
   format?: string
   enum?: string[]
   items?: SchemaType[]
   minItems?: number
   maxItems?: number
+  unit?: string
 }
 
 interface AnyOf {

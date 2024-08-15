@@ -1,5 +1,10 @@
-import { GenericRule, GenericSchema, SchemaTypeLike } from '../types/schema.ts'
+import { GenericRule, GenericSchema, SchemaType, SchemaTypeLike } from '../types/schema.ts'
 import { BIDSContext } from './context.ts'
+
+interface ColumnDefinition {
+  Levels?: Record<string, unknown>
+  Units?: string
+}
 
 /**
  * schema.formats contains named types with patterns. Many entries in
@@ -38,13 +43,11 @@ function schemaObjectTypeCheck(
  * Checks user supplied type information from a sidecar against tsv column value.
  */
 function sidecarDefinedTypeCheck(
-  rule: object,
+  rule: ColumnDefinition,
   value: string,
   schema: GenericSchema,
 ): boolean {
-  if (
-    'Levels' in rule && rule['Levels'] && typeof (rule['Levels']) == 'object'
-  ) {
+  if (typeof rule?.Levels === 'object') {
     return value == 'n/a' || value in rule['Levels']
   } else if ('Units' in rule) {
     return schemaObjectTypeCheck({ 'type': 'number' }, value, schema)
@@ -57,10 +60,14 @@ function sidecarDefinedTypeCheck(
  * Check whether sidecar and schema definitions are compatible.
  */
 function compatibleDefinitions(
-  rule: object,
-  schemaObject: SchemaTypeLike,
+  rule: ColumnDefinition,
+  schemaObject: SchemaType,
 ): boolean {
-  const schemaLike = {}
+  const schemaLike: {
+    type?: string
+    enum?: string[]
+    unit?: string
+  } = {}
   if (typeof rule?.Levels === 'object') {
     schemaLike.enum = [...Object.keys(rule.Levels)]
     schemaLike.type = typeof schemaLike.enum[0]
@@ -79,7 +86,7 @@ function compatibleDefinitions(
     effectiveType === 'number' && schemaObject.type === 'integer'
   // Enums are compatible if the sidecar enum is a subset of the schema enum
   const enumCompatible = schemaObject.enum === undefined ||
-    effectiveEnum?.every((x) => schemaObject.enum.includes(x))
+    effectiveEnum?.every((x) => schemaObject?.enum?.includes(x)) as boolean
   // Units are compatible if the sidecar unit is the same as the schema unit
   const unitCompatible = schemaObject.unit === undefined || effectiveUnit === schemaObject.unit
   return typeCompatible && enumCompatible && unitCompatible
@@ -149,7 +156,9 @@ export function evalColumns(
       if ('definition' in columnObject) {
         typeCheck = (value) => sidecarDefinedTypeCheck(context.sidecar[name], value, schema)
         errorObject = context.sidecar[name]
-      } else if (!compatibleDefinitions(context.sidecar[name], columnObject)) {
+      } else if (
+        !compatibleDefinitions(context.sidecar[name], columnObject as unknown as SchemaType)
+      ) {
         context.dataset.issues.add({
           code: 'TSV_COLUMN_TYPE_REDEFINED',
           subCode: name,
