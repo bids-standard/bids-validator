@@ -41,13 +41,18 @@ export const validateCommand = new Command()
     '--filenameMode',
     'Enable filename checks for newline separated filenames read from stdin',
   )
-  .option(
-    '--color, --no-color [color:boolean]',
-    'Enable/disable color output (defaults to detected support)',
-    {
-      default: !!(Deno.env.get('FORCE_COLOR') || Deno.stdout.isTerminal()),
-    },
-  )
+
+// Disabling color output is only available in Deno
+if (typeof Deno !== 'undefined') {
+  validateCommand
+    .option(
+      '--color, --no-color [color:boolean]',
+      'Enable/disable color output (defaults to detected support)',
+      {
+        default: !!(Deno.env.get('FORCE_COLOR') || Deno.stdout.isTerminal()),
+      },
+    )
+}
 
 /**
  * Parse command line options and return a ValidatorOptions config
