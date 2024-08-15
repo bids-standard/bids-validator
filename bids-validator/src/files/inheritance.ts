@@ -36,7 +36,7 @@ export function* walkBack(
         throw {
           code: 'MULTIPLE_INHERITABLE_FILES',
           location: source.path,
-          affects: candidates.map((file) => file.path)
+          affects: candidates.map((file) => file.path),
         }
       }
     } else if (candidates.length === 1) {

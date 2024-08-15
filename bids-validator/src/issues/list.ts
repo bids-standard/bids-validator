@@ -118,7 +118,7 @@ export const bidsIssues: IssueDefinitionRecord = {
   },
   MULTIPLE_INHERITABLE_FILES: {
     severity: 'error',
-    reason: 'Multiple files in a directory were found to be valid candidates for inheritance.'
+    reason: 'Multiple files in a directory were found to be valid candidates for inheritance.',
   },
   NIFTI_HEADER_UNREADABLE: {
     severity: 'error',
