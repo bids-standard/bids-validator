@@ -1,4 +1,4 @@
-import { assert, assertEquals } from '../deps/asserts.ts'
+import { assert, assertEquals } from '@std/assert'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
 import { BIDSContext } from '../schema/context.ts'

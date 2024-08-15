@@ -1,4 +1,4 @@
-import { isCompressed, readHeader } from '../deps/nifti.ts'
+import { isCompressed, readHeader } from '@mango/nifti'
 import { BIDSFile } from '../types/filetree.ts'
 import { logger } from '../utils/logger.ts'
 import { ContextNiftiHeader } from '../types/context.ts'

@@ -2,7 +2,7 @@ import { ContextCheckFunction, RuleCheckFunction } from '../types/check.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { Entity, Format, GenericSchema, Schema } from '../types/schema.ts'
-import { SEPARATOR_PATTERN } from '../deps/path.ts'
+import { SEPARATOR_PATTERN } from '@std/path'
 import { hasProp } from '../utils/objectPathHandler.ts'
 
 const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']

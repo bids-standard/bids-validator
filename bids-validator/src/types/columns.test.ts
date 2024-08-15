@@ -1,4 +1,4 @@
-import { assertEquals } from '../deps/asserts.ts'
+import { assertEquals } from '@std/assert'
 import { ColumnsMap } from './columns.ts'
 
 Deno.test('ColumnsMap', async (t) => {

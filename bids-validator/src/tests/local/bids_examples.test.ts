@@ -1,7 +1,7 @@
 // Deno runtime tests for tests/data/valid_dataset
-import { assert, assertEquals } from '../../deps/asserts.ts'
-import { Cell, Row, Table } from '../../deps/cliffy.ts'
-import { colors } from '../../deps/fmt.ts'
+import { assert, assertEquals } from '@std/assert'
+import { Cell, Row, Table } from '@cliffy/table'
+import * as colors from '@std/fmt/colors'
 import { Issue } from '../../types/issues.ts'
 import { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { formatAssertIssue, validatePath } from './common.ts'

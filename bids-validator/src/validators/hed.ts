@@ -1,4 +1,4 @@
-import hedValidator from '../deps/hed-validator.ts'
+import hedValidator from '@hed/validator'
 import { hedOldToNewLookup } from '../issues/list.ts'
 import { GenericSchema } from '../types/schema.ts'
 import { IssueFile, IssueFileOutput } from '../types/issues.ts'

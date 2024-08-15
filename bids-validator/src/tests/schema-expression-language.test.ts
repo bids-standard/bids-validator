@@ -1,8 +1,8 @@
 import { loadSchema } from '../setup/loadSchema.ts'
-import { Table } from '../deps/cliffy.ts'
-import { colors } from '../deps/fmt.ts'
+import { Table } from '@cliffy/table'
+import * as colors from '@std/fmt/colors'
 import { BIDSContext } from '../schema/context.ts'
-import { assert, assertEquals } from '../deps/asserts.ts'
+import { assert, assertEquals } from '@std/assert'
 import { evalCheck } from '../schema/applyRules.ts'
 import { expressionFunctions } from '../schema/expressionLanguage.ts'
 

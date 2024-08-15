@@ -1,4 +1,4 @@
-import { assertEquals } from '../deps/asserts.ts'
+import { assertEquals } from '@std/assert'
 import { BIDSContext } from '../schema/context.ts'
 import { _findRuleMatches, datatypeFromDirectory, hasMatch } from './filenameIdentify.ts'
 import { BIDSFileDeno } from '../files/deno.ts'
