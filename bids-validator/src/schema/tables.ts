@@ -174,15 +174,15 @@ export function evalColumns(
     }
 
     for (const value of context.columns[name] as string[]) {
-      if (
-        !typeCheck(value)
-      ) {
+      if (!typeCheck(value)) {
+        const issueMessage = `'${value}'` +
+          (value.match(/^\s*(NA|na|nan|NaN|n\/a)\s*$/) ? ", did you mean 'n/a'?" : '')
         context.dataset.issues.add({
           code: error_code,
           subCode: name,
           location: context.path,
-          issueMessage: `'${value}'`,
           rule: schemaPath,
+          issueMessage,
         })
         break
       }
