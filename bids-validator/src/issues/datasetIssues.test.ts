@@ -1,6 +1,5 @@
 import { assert, assertEquals, assertThrows } from '@std/assert'
-import { type BIDSFile, FileTree } from '../types/filetree.ts'
-import type { IssueFile } from '../types/issues.ts'
+import { pathsToTree } from '../files/filetree.ts'
 import { DatasetIssues } from './datasetIssues.ts'
 
 Deno.test('DatasetIssues management class', async (t) => {
@@ -15,37 +14,12 @@ Deno.test('DatasetIssues management class', async (t) => {
   })
 
   await t.step('add Issue with several kinds of files', () => {
+    const root = pathsToTree([
+      '/dataset_description.json',
+      '/README',
+    ])
     const issues = new DatasetIssues()
-    const testStream = new ReadableStream()
-    const text = () => Promise.resolve('')
-    const root = new FileTree('', '/', undefined)
-    const files = [
-      {
-        text,
-        name: 'dataset_description.json',
-        path: '/dataset_description.json',
-        size: 500,
-        ignored: false,
-        stream: testStream,
-        parent: root,
-        viewed: false,
-      } as BIDSFile,
-      {
-        text,
-        name: 'README',
-        path: '/README',
-        size: 500,
-        ignored: false,
-        stream: testStream,
-        line: 1,
-        character: 5,
-        severity: 'warning',
-        reason: 'Readme borked',
-        parent: root,
-        viewed: false,
-      } as IssueFile,
-    ]
-    issues.add({ code: 'TEST_FILES_ERROR', location: files[1].path }, 'Test issue')
+    issues.add({ code: 'TEST_FILES_ERROR', location: root.files[1].path }, 'Test issue')
     const foundIssue = issues.get({ location: '/README' })
     assertEquals(foundIssue.length, 1)
     assertEquals(foundIssue[0].code, 'TEST_FILES_ERROR')

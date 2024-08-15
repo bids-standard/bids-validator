@@ -1,4 +1,5 @@
-import { parse, posix, SEPARATOR_PATTERN } from '../deps/path.ts'
+import { parse, SEPARATOR_PATTERN } from '@std/path'
+import * as posix from '@std/path/posix'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 
 const dummy = {
@@ -14,12 +15,12 @@ const dummy = {
 export function pathsToTree(paths: string[]): FileTree {
   return filesToTree(paths.map((path) => {
     const name = path.split('/').pop() as string
-    return { name, path, ...dummy } as BIDSFile
+    return { name, path, ...dummy }
   }))
 }
 
 export function filesToTree(fileList: BIDSFile[]): FileTree {
-  const tree: FileTree = new FileTree('', '/')
+  const tree: FileTree = new FileTree('/', '/')
   for (const file of fileList) {
     const parts = parse(file.path)
     if (parts.dir === '/') {

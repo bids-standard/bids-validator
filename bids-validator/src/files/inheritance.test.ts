@@ -1,26 +1,15 @@
 import { assertEquals, assertThrows } from '@std/assert'
-import { FileTree } from '../types/filetree.ts'
-import type { BIDSFileDeno } from '../files/deno.ts'
+import { pathsToTree } from './filetree.ts'
 import { walkBack } from './inheritance.ts'
-import { nullFile } from '../tests/nullFile.ts'
 
 Deno.test('walkback inheritance tests', async (t) => {
-  const rootFileTree = new FileTree('/', '')
-  rootFileTree.files.push({
-    path: '/',
-    name: 'sub-01_T1w.json',
-    ...nullFile,
-    parent: rootFileTree,
-  })
-  rootFileTree.files.push({ path: '/', name: 'T1w.json', ...nullFile, parent: rootFileTree })
-  const dataFile = {
-    path: '/',
-    name: 'sub-01_acq-test_T1w.nii',
-    ...nullFile,
-    parent: rootFileTree,
-  }
-  rootFileTree.files.push(dataFile)
   await t.step('walkBack throws multiple inheritance error', async () => {
+    const rootFileTree = pathsToTree([
+      '/T1w.json',
+      '/acq-MPRAGE_T1w.json',
+      '/sub-01/anat/sub-01_acq-MPRAGE_T1w.nii.gz',
+    ])
+    const dataFile = rootFileTree.directories[0].directories[0].files[0]
     assertThrows(() => {
       try {
         const sidecars = walkBack(dataFile)
@@ -36,19 +25,23 @@ Deno.test('walkback inheritance tests', async (t) => {
   await t.step(
     'no error thrown on exact inheritance match with multiple valid candidates',
     async () => {
-      rootFileTree.files.push({
-        path: '/',
-        name: 'sub-01_acq-test_T1w.json',
-        ...nullFile,
-        parent: rootFileTree,
-      })
+      const rootFileTree = pathsToTree([
+        '/T1w.json',
+        '/sub-01/anat/sub-01_acq-MPRAGE_T1w.nii.gz',
+        '/sub-01/anat/sub-01_acq-MPRAGE_T1w.json',
+        '/sub-01/anat/sub-01_T1w.json',
+      ])
+      const dataFile = rootFileTree.directories[0].directories[0].files[0]
       const sidecars = walkBack(dataFile)
       const sidecarFiles = []
       for (const f of sidecars) {
         sidecarFiles.push(f)
       }
-      assertEquals(sidecarFiles.length, 1)
-      assertEquals(sidecarFiles[0].name, 'sub-01_acq-test_T1w.json')
+      assertEquals(sidecarFiles.length, 2)
+      assertEquals(sidecarFiles.map((f) => f.path), [
+        '/sub-01/anat/sub-01_acq-MPRAGE_T1w.json',
+        '/T1w.json',
+      ])
     },
   )
 })

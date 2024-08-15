@@ -51,6 +51,6 @@ export class BIDSFileBrowser implements BIDSFile {
  */
 export function fileListToTree(files: File[]): FileTree {
   const ignore = new FileIgnoreRules([])
-  const tree = new FileTree('', '/', undefined)
+  const tree = new FileTree('/', '/', undefined)
   return filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, tree)))
 }
