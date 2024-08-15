@@ -23,19 +23,15 @@ export const rootFileTree = pathsToTree([
   ...[...Array(10).keys()].map((i) => `/stimuli/stimfile${i}.png`),
 ])
 
-const rootJSONFile = rootFileTree.files.find((f) => f.path === '/T1w.json') as BIDSFile
+const rootJSONFile = rootFileTree.get('T1w.json') as BIDSFile
 rootJSONFile.readBytes = readBytes(rootJson)
 
-const subjectFileTree = rootFileTree.directories.find((d) => d.name === 'sub-01') as FileTree
+const subjectFileTree = rootFileTree.get('sub-01') as FileTree
 const subjectJSONFile = subjectFileTree.files[0] as BIDSFile
 subjectJSONFile.readBytes = readBytes(subjectJson)
 
 const anatFileTree = subjectFileTree.directories[0].directories[0] as FileTree
 
-export const dataFile = anatFileTree.files.find((f) =>
-  f.name === 'sub-01_ses-01_T1w.nii.gz'
-) as BIDSFile
-const anatJSONFile = anatFileTree.files.find((f) =>
-  f.name === 'sub-01_ses-01_T1w.json'
-) as BIDSFile
+export const dataFile = anatFileTree.get('sub-01_ses-01_T1w.nii.gz') as BIDSFile
+const anatJSONFile = anatFileTree.get('sub-01_ses-01_T1w.json') as BIDSFile
 anatJSONFile.readBytes = (size: number) => Promise.resolve(new TextEncoder().encode(anatJson))

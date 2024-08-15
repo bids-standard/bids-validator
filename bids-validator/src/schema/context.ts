@@ -246,9 +246,7 @@ export class BIDSContext implements Context {
       .map((dir) => dir.name)
 
     // Load participants from participants.tsv
-    const participants_tsv = this.dataset.tree.files.find(
-      (file) => file.name === 'participants.tsv',
-    )
+    const participants_tsv = this.dataset.tree.get('participants.tsv') as BIDSFile
     if (participants_tsv) {
       const participantsData = await loadTSV(participants_tsv)
       this.dataset.subjects.participant_id = participantsData[
@@ -257,9 +255,7 @@ export class BIDSContext implements Context {
     }
 
     // Load phenotype from phenotype/*.tsv
-    const phenotype_dir = this.dataset.tree.directories.find(
-      (dir) => dir.name === 'phenotype',
-    )
+    const phenotype_dir = this.dataset.tree.get('phenotype') as FileTree
     if (phenotype_dir) {
       const phenotypeFiles = phenotype_dir.files.filter((file) => file.name.endsWith('.tsv'))
       // Collect observed participant_ids

@@ -22,7 +22,7 @@ export async function unusedStimulus(
   schema: GenericSchema,
   dsContext: BIDSContextDataset,
 ) {
-  const stimDir = dsContext.tree.directories.find((dir) => dir.name === 'stimuli')
+  const stimDir = dsContext.tree.get('stimuli') as FileTree
   const unusedStimuli = [...walkFileTree(stimDir)].filter((stimulus) => !stimulus.viewed)
   if (unusedStimuli.length) {
     dsContext.issues.add({ code: 'UNUSED_STIMULUS', affects: unusedStimuli.map((s) => s.path) })

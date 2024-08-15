@@ -48,9 +48,7 @@ export async function validate(
   /* There should be a dataset_description in root, this will tell us if we
    * are dealing with a derivative dataset
    */
-  const ddFile = fileTree.files.find(
-    (file: BIDSFile) => file.name === 'dataset_description.json',
-  )
+  const ddFile = fileTree.get('dataset_description.json') as BIDSFile
 
   const dsContext = new BIDSContextDataset({ options, schema, tree: fileTree })
   if (ddFile) {
@@ -73,11 +71,7 @@ export async function validate(
       return true
     }
     for (const deriv of dir.directories) {
-      if (
-        deriv.files.some(
-          (file: BIDSFile) => file.name === 'dataset_description.json',
-        )
-      ) {
+      if (deriv.get('dataset_description.json')) {
         // New root for the derivative dataset
         deriv.parent = undefined
         bidsDerivatives.push(deriv)

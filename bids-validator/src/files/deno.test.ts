@@ -2,6 +2,7 @@ import { assert, assertEquals, assertRejects } from '@std/assert'
 import { readAll, readerFromStreamReader } from '@std/io'
 import { basename, dirname, fromFileUrl, join } from '@std/path'
 import { EOL } from '@std/fs'
+import { FileTree } from '../types/filetree.ts'
 import { BIDSFileDeno, readFileTree, UnicodeDecodeError } from './deno.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules } from './ignore.ts'
@@ -67,10 +68,10 @@ Deno.test('Deno implementation of FileTree', async (t) => {
   const tree = await readFileTree(srcdir)
   await t.step('uses POSIX relative paths', async () => {
     assertEquals(tree.path, '/')
-    const parentObj = tree.directories.find((dir) => dir.name === parent)
+    const parentObj = tree.get(parent) as FileTree
     assert(parentObj !== undefined)
     assertEquals(parentObj.path, `/${parent}`)
-    const testObj = parentObj.files.find((file) => file.name === testFilename)
+    const testObj = parentObj.get(testFilename) as BIDSFileDeno
     assert(testObj !== undefined)
     assertEquals(testObj.path, `/${parent}/${testFilename}`)
   })
