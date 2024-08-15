@@ -1,7 +1,7 @@
 import hedValidator from '@hed/validator'
 import { hedOldToNewLookup } from '../issues/list.ts'
 import { GenericSchema } from '../types/schema.ts'
-import { IssueFile, IssueFileOutput } from '../types/issues.ts'
+import { IssueFile } from '../types/issues.ts'
 import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { ColumnsMap } from '../types/columns.ts'
