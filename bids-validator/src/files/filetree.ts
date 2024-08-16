@@ -32,7 +32,7 @@ export function filesToTree(fileList: BIDSFile[]): FileTree {
     }
     let current = tree
     for (const level of parts.dir.split(SEPARATOR_PATTERN).slice(1)) {
-      const exists = current.directories.find((dir) => dir.name === level)
+      const exists = current.get(level) as FileTree
       if (exists) {
         current = exists
         continue

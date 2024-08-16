@@ -1,6 +1,3 @@
-/**
- * Abstract FileTree for all environments (Deno, Browser, Python)
- */
 export interface BIDSFile {
   // Filename
   name: string
@@ -22,6 +19,9 @@ export interface BIDSFile {
   viewed: boolean
 }
 
+/**
+ * Abstract FileTree for all environments (Deno, Browser, Python)
+ */
 export class FileTree {
   // Relative path to this FileTree location
   path: string
@@ -30,6 +30,7 @@ export class FileTree {
   files: BIDSFile[]
   directories: FileTree[]
   ignored: boolean
+  viewed: boolean
   parent?: FileTree
 
   constructor(path: string, name: string, parent?: FileTree, ignored?: boolean) {
@@ -38,26 +39,31 @@ export class FileTree {
     this.directories = []
     this.name = name
     this.parent = parent
+    this.viewed = false
     this.ignored = ignored || false
   }
 
-  contains(parts: string[]): boolean {
+  _get(parts: string[]): BIDSFile | FileTree | undefined {
     if (parts.length === 0) {
-      return false
+      return undefined
     } else if (parts.length === 1) {
-      return (
-        this.files.some((x) => (x.name === parts[0] && (x.viewed = true))) ||
-        this.directories.some((x) => x.name === parts[0])
-      )
-    } else if (parts.length > 1) {
-      const nextDir = this.directories.find((x) => x.name === parts[0])
-      if (nextDir) {
-        return nextDir.contains(parts.slice(1, parts.length))
-      } else {
-        return false
-      }
+      return this.files.find((x) => x.name === parts[0]) ||
+        this.directories.find((x) => x.name === parts[0])
     } else {
-      return false
+      const nextDir = this.directories.find((x) => x.name === parts[0])
+      return nextDir?._get(parts.slice(1, parts.length))
     }
+  }
+
+  get(path: string): BIDSFile | FileTree | undefined {
+    if (path.startsWith('/')) {
+      path = path.slice(1)
+    }
+    return this._get(path.split('/'))
+  }
+
+  contains(parts: string[]): boolean {
+    const value = this._get(parts)
+    return value ? (value.viewed = true) : false
   }
 }
