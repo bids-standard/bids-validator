@@ -3,7 +3,7 @@
  */
 import { basename, join } from '@std/path'
 import * as posix from '@std/path/posix'
-import { BIDSFile, FileTree } from '../types/filetree.ts'
+import { type BIDSFile, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 
@@ -111,7 +111,7 @@ export class BIDSFileDeno implements BIDSFile {
   }
 }
 
-export async function _readFileTree(
+async function _readFileTree(
   rootPath: string,
   relativePath: string,
   ignore: FileIgnoreRules,

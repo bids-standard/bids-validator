@@ -1,7 +1,7 @@
 import { isCompressed, readHeader } from '@mango/nifti'
-import { BIDSFile } from '../types/filetree.ts'
-import { logger } from '../utils/logger.ts'
-import { ContextNiftiHeader } from '../types/context.ts'
+import type { BIDSFile } from '../types/filetree.ts'
+import type { logger } from '../utils/logger.ts'
+import type { ContextNiftiHeader } from '../types/context.ts'
 
 async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array> {
   // The fflate decompression that is used in nifti-reader does not like

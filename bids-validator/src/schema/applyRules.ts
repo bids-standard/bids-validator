@@ -1,11 +1,11 @@
-import { GenericRule, GenericSchema, SchemaFields, SchemaTypeLike } from '../types/schema.ts'
-import { Severity } from '../types/issues.ts'
-import { BIDSContext } from './context.ts'
+import type { GenericRule, GenericSchema, SchemaFields, SchemaTypeLike } from '../types/schema.ts'
+import type { Severity } from '../types/issues.ts'
+import type { BIDSContext } from './context.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
 import { memoize } from '../utils/memoize.ts'
 import { compile } from '../validators/json.ts'
-import { DefinedError } from '@ajv'
+import type { DefinedError } from '@ajv'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.

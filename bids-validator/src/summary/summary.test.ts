@@ -1,5 +1,5 @@
 import { computeModalities, modalityPrettyLookup, Summary } from './summary.ts'
-import { assertEquals, assertObjectMatch } from '@std/assert'
+import { assertEquals, type assertObjectMatch } from '@std/assert'
 
 Deno.test('Summary class and helper functions', async (t) => {
   await t.step('Constructor succeeds', () => {

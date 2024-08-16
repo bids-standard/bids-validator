@@ -1,6 +1,6 @@
-import { BIDSFile } from '../types/filetree.ts'
-import { default as ignore } from 'npm:ignore@5.2.4'
-import type { Ignore } from 'npm:ignore@5.2.4'
+import type { BIDSFile } from '../types/filetree.ts'
+import { default as ignore } from '@ignore'
+import type { Ignore } from '@ignore'
 
 export async function readBidsIgnore(file: BIDSFile) {
   const value = await file.text()

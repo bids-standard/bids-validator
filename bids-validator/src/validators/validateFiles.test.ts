@@ -3,8 +3,8 @@ import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
 import { BIDSContext } from '../schema/context.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
-import { GenericSchema, Schema } from '../types/schema.ts'
-import { DatasetIssues } from '../issues/datasetIssues.ts'
+import type { GenericSchema, Schema } from '../types/schema.ts'
+import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { nullFile } from '../tests/nullFile.ts'
 
 const schema = await loadSchema() as unknown as GenericSchema

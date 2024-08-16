@@ -1,6 +1,6 @@
-import { Schema } from './schema.ts'
-import { ValidatorOptions } from '../setup/options.ts'
-import { FileTree } from '../types/filetree.ts'
+import type { Schema } from './schema.ts'
+import type { ValidatorOptions } from '../setup/options.ts'
+import type { FileTree } from '../types/filetree.ts'
 
 export interface ContextDatasetSubjects {
   sub_dirs: string[]

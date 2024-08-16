@@ -3,7 +3,7 @@
  * Module for parsing TSV
  */
 import { ColumnsMap } from '../types/columns.ts'
-import { BIDSFile } from '../types/filetree.ts'
+import type { BIDSFile } from '../types/filetree.ts'
 import { filememoizeAsync } from '../utils/memoize.ts'
 import type { WithCache } from '../utils/memoize.ts'
 
@@ -17,7 +17,7 @@ async function _loadTSV(file: BIDSFile): Promise<ColumnsMap> {
 
 export const loadTSV = filememoizeAsync(_loadTSV)
 
-export function parseTSV(contents: string) {
+function parseTSV(contents: string) {
   const columns = new ColumnsMap()
   const rows: string[][] = normalizeEOL(contents)
     .split('\n')

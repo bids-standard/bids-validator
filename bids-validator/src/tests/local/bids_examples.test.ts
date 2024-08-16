@@ -1,10 +1,10 @@
 // Deno runtime tests for tests/data/valid_dataset
-import { assert, assertEquals } from '@std/assert'
+import { type assert, assertEquals } from '@std/assert'
 import { Cell, Row, Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
-import { Issue } from '../../types/issues.ts'
-import { DatasetIssues } from '../../issues/datasetIssues.ts'
-import { formatAssertIssue, validatePath } from './common.ts'
+import type { Issue } from '../../types/issues.ts'
+import type { DatasetIssues } from '../../issues/datasetIssues.ts'
+import { type formatAssertIssue, validatePath } from './common.ts'
 import { parseOptions } from '../../setup/options.ts'
 
 const options = await parseOptions(['fake_dataset_arg', ...Deno.args])

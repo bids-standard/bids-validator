@@ -1,11 +1,11 @@
 import { readFileTree } from '../../files/deno.ts'
 import { FileTree } from '../../types/filetree.ts'
 import { validate } from '../../validators/bids.ts'
-import { ValidationResult } from '../../types/validation-result.ts'
-import { Issue } from '../../types/issues.ts'
+import type { ValidationResult } from '../../types/validation-result.ts'
+import type { Issue } from '../../types/issues.ts'
 import { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { Summary } from '../../summary/summary.ts'
-import { parseOptions, ValidatorOptions } from '../../setup/options.ts'
+import { parseOptions, type ValidatorOptions } from '../../setup/options.ts'
 
 export async function validatePath(
   t: Deno.TestContext,
@@ -13,7 +13,7 @@ export async function validatePath(
   options: Partial<ValidatorOptions> = {},
 ): Promise<{ tree: FileTree; result: ValidationResult }> {
   let tree: FileTree = new FileTree('', '')
-  let summary = new Summary()
+  const summary = new Summary()
   let result: ValidationResult = {
     issues: new DatasetIssues(),
     summary: summary.formatOutput(),

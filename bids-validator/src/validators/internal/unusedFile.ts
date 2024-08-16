@@ -1,6 +1,6 @@
-import { GenericSchema } from '../../types/schema.ts'
-import { BIDSFile, FileTree } from '../../types/filetree.ts'
-import { BIDSContextDataset } from '../../schema/context.ts'
+import type { GenericSchema } from '../../types/schema.ts'
+import type { BIDSFile, FileTree } from '../../types/filetree.ts'
+import type { BIDSContextDataset } from '../../schema/context.ts'
 
 function* walkFileTree(fileTree?: FileTree): Generator<BIDSFile> {
   if (!fileTree) {

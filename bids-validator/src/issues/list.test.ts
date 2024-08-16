@@ -1,7 +1,7 @@
 import { assert, assertEquals } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { bidsIssues } from './list.ts'
-import { GenericSchema } from '../types/schema.ts'
+import type { GenericSchema } from '../types/schema.ts'
 
 interface schemaError {
   code: string
@@ -13,7 +13,7 @@ function getSchemaErrors(
   rootSchema: GenericSchema,
   schemaPath: string,
 ): schemaError[] {
-  let errors: schemaError[] = []
+  const errors: schemaError[] = []
   for (const [key, value] of Object.entries(schema)) {
     if (value.constructor !== Object) {
       continue

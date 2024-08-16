@@ -1,4 +1,4 @@
-import { LevelName, LogLevelNames } from '@std/log'
+import { type LevelName, LogLevelNames } from '@std/log'
 import { Command, EnumType } from '@cliffy/command'
 import { getVersion } from '../version.ts'
 
@@ -14,7 +14,7 @@ export type ValidatorOptions = {
   color?: boolean
 }
 
-export const validateCommand = new Command()
+const validateCommand = new Command()
   .name('bids-validator')
   .type('debugLevel', new EnumType(LogLevelNames))
   .description(
@@ -49,7 +49,7 @@ if (typeof Deno !== 'undefined') {
       '--color, --no-color [color:boolean]',
       'Enable/disable color output (defaults to detected support)',
       {
-        default: !!(Deno.env.get('FORCE_COLOR') || Deno.stdout.isTerminal()),
+        default: Deno.stdout.isTerminal() || !!Deno.env.get('FORCE_COLOR'),
       },
     )
 }

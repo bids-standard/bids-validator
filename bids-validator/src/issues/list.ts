@@ -1,4 +1,4 @@
-import { IssueDefinitionRecord } from '../types/issues.ts'
+import type { IssueDefinitionRecord } from '../types/issues.ts'
 
 export const bidsIssues: IssueDefinitionRecord = {
   INVALID_JSON_ENCODING: {

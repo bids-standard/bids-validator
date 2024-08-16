@@ -1,4 +1,4 @@
-import { ContextCheckFunction } from '../../types/check.ts'
+import type { ContextCheckFunction } from '../../types/check.ts'
 
 // Non-schema EMPTY_FILE implementation
 export const emptyFile: ContextCheckFunction = (schema, context) => {

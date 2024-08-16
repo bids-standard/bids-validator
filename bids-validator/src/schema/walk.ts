@@ -1,6 +1,6 @@
-import { BIDSContext, BIDSContextDataset } from './context.ts'
-import { BIDSFile, FileTree } from '../types/filetree.ts'
-import { DatasetIssues } from '../issues/datasetIssues.ts'
+import { BIDSContext, type BIDSContextDataset } from './context.ts'
+import type { BIDSFile, FileTree } from '../types/filetree.ts'
+import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { loadTSV } from '../files/tsv.ts'
 
 function* quickWalk(dir: FileTree): Generator<BIDSFile> {
@@ -31,7 +31,7 @@ function pseudoFile(dir: FileTree): BIDSFile {
 }
 
 /** Recursive algorithm for visiting each file in the dataset, creating a context */
-export async function* _walkFileTree(
+async function* _walkFileTree(
   fileTree: FileTree,
   dsContext: BIDSContextDataset,
 ): AsyncIterable<BIDSContext> {

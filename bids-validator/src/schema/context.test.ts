@@ -1,5 +1,5 @@
 import { assert, assertObjectMatch } from '@std/assert'
-import { DatasetIssues } from '../issues/datasetIssues.ts'
+import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { BIDSContext } from './context.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 

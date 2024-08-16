@@ -1,10 +1,10 @@
 import { FileTree } from '../types/filetree.ts'
-import { GenericSchema } from '../types/schema.ts'
+import type { GenericSchema } from '../types/schema.ts'
 import { assertEquals } from '@std/assert'
 import { BIDSContext } from '../schema/context.ts'
-import { atRoot, entityLabelCheck, missingLabel } from './filenameValidate.ts'
-import { BIDSFileDeno } from '../files/deno.ts'
-import { FileIgnoreRules } from '../files/ignore.ts'
+import { type atRoot, type entityLabelCheck, missingLabel } from './filenameValidate.ts'
+import type { BIDSFileDeno } from '../files/deno.ts'
+import type { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
 const schema = (await loadSchema()) as unknown as GenericSchema

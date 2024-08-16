@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { assert, assertEquals, assertObjectMatch } from '@std/assert'
+import { assert, assertEquals, type assertObjectMatch } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { applyRules, evalCheck, evalColumns, evalConstructor } from './applyRules.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'

@@ -1,6 +1,6 @@
 import { collectSubjectMetadata } from './collectSubjectMetadata.ts'
-import { SubjectMetadata, SummaryOutput } from '../types/validation-result.ts'
-import { BIDSContext } from '../schema/context.ts'
+import type { SubjectMetadata, SummaryOutput } from '../types/validation-result.ts'
+import type { BIDSContext } from '../schema/context.ts'
 
 export const modalityPrettyLookup: Record<string, string> = {
   mri: 'MRI',
@@ -42,7 +42,7 @@ export function computeModalities(
   )
 }
 
-export function computeSecondaryModalities(
+function computeSecondaryModalities(
   secondary: Record<string, number>,
 ): string[] {
   const nonZeroSecondary = Object.keys(secondary).filter(

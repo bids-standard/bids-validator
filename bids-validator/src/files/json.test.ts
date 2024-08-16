@@ -1,7 +1,7 @@
-import { assert, assertObjectMatch } from '@std/assert'
-import { BIDSFileDeno, UnicodeDecodeError } from './deno.ts'
-import { BIDSFile } from '../types/filetree.ts'
-import { FileIgnoreRules } from './ignore.ts'
+import { type assert, assertObjectMatch } from '@std/assert'
+import type { BIDSFileDeno, UnicodeDecodeError } from './deno.ts'
+import type { BIDSFile } from '../types/filetree.ts'
+import type { FileIgnoreRules } from './ignore.ts'
 
 import { loadJSON } from './json.ts'
 

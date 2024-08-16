@@ -1,6 +1,6 @@
 import { assertEquals, assertThrows } from '@std/assert'
 import { FileTree } from '../types/filetree.ts'
-import { BIDSFileDeno } from '../files/deno.ts'
+import type { BIDSFileDeno } from '../files/deno.ts'
 import { walkBack } from './inheritance.ts'
 import { nullFile } from '../tests/nullFile.ts'
 

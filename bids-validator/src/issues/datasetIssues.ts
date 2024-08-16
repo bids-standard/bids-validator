@@ -1,5 +1,5 @@
 import { nonSchemaIssues } from './list.ts'
-import { Issue, Severity } from '../types/issues.ts'
+import type { Issue, Severity } from '../types/issues.ts'
 
 // Code is deprecated, return something unusual but JSON serializable
 const CODE_DEPRECATED = Number.MIN_SAFE_INTEGER
@@ -59,7 +59,7 @@ export class DatasetIssues {
   }
 
   groupBy(key: keyof Issue): Map<Issue[keyof Issue], DatasetIssues> {
-    let groups: Map<Issue[keyof Issue], DatasetIssues> = new Map()
+    const groups: Map<Issue[keyof Issue], DatasetIssues> = new Map()
     groups.set('None', new DatasetIssues())
     this.issues.map((issue) => {
       let value: Issue[keyof Issue] = 'None'
