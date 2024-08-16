@@ -78,7 +78,7 @@ export class BIDSContextDataset implements ContextDataset {
   }
 }
 
-export class BIDSContextDatasetSubjects implements ContextDatasetSubjects {
+class BIDSContextDatasetSubjects implements ContextDatasetSubjects {
   sub_dirs: string[]
   participant_id?: string[]
   phenotype?: string[]

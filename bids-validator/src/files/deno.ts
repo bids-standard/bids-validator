@@ -111,7 +111,7 @@ export class BIDSFileDeno implements BIDSFile {
   }
 }
 
-export async function _readFileTree(
+async function _readFileTree(
   rootPath: string,
   relativePath: string,
   ignore: FileIgnoreRules,

@@ -1,13 +1,13 @@
 import { memoize } from '../utils/memoize.ts'
 
-export interface BIDSFileParts {
+interface BIDSFileParts {
   stem: string
   suffix: string
   extension: string
   entities: Record<string, string>
 }
 
-export function _readEntities(filename: string): BIDSFileParts {
+function _readEntities(filename: string): BIDSFileParts {
   let suffix = ''
   const entities: Record<string, string> = {}
 

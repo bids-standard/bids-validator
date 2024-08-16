@@ -42,7 +42,7 @@ export function computeModalities(
   )
 }
 
-export function computeSecondaryModalities(
+function computeSecondaryModalities(
   secondary: Record<string, number>,
 ): string[] {
   const nonZeroSecondary = Object.keys(secondary).filter(

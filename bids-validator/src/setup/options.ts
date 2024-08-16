@@ -14,7 +14,7 @@ export type ValidatorOptions = {
   color?: boolean
 }
 
-export const validateCommand = new Command()
+const validateCommand = new Command()
   .name('bids-validator')
   .type('debugLevel', new EnumType(LogLevelNames))
   .description(

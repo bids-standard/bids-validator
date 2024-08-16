@@ -17,7 +17,7 @@ async function _loadTSV(file: BIDSFile): Promise<ColumnsMap> {
 
 export const loadTSV = filememoizeAsync(_loadTSV)
 
-export function parseTSV(contents: string) {
+function parseTSV(contents: string) {
   const columns = new ColumnsMap()
   const rows: string[][] = normalizeEOL(contents)
     .split('\n')

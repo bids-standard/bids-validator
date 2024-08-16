@@ -31,7 +31,7 @@ function pseudoFile(dir: FileTree): BIDSFile {
 }
 
 /** Recursive algorithm for visiting each file in the dataset, creating a context */
-export async function* _walkFileTree(
+async function* _walkFileTree(
   fileTree: FileTree,
   dsContext: BIDSContextDataset,
 ): AsyncIterable<BIDSContext> {
