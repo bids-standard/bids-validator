@@ -72,6 +72,9 @@ export class DatasetIssues {
       // @ts-expect-error TS2532 return of get possible undefined. Does the above 'has' catch this case?
       groups.get(value).add(issue, this.codeMessages.get(issue.code))
     })
+    if (groups.has('None') && groups.get('None')?.size === 0) {
+      groups.delete('None')
+    }
     return groups
   }
 }

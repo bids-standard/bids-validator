@@ -1,107 +1,41 @@
-import { FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
+import { pathsToTree } from '../files/filetree.ts'
 import { nullReadBytes } from '../tests/nullReadBytes.ts'
 
-const text = () => Promise.resolve('')
+const anatJson = JSON.stringify({
+  rootOverwrite: 'anat',
+  subOverwrite: 'anat',
+  anatValue: 'anat',
+})
+const subjectJson = JSON.stringify({ subOverwrite: 'subject', subValue: 'subject' })
+const rootJson = JSON.stringify({ rootOverwrite: 'root', rootValue: 'root' })
 
-const anatJson = () =>
-  Promise.resolve(
-    JSON.stringify({
-      rootOverwrite: 'anat',
-      subOverwrite: 'anat',
-      anatValue: 'anat',
-    }),
-  )
-const subjectJson = () =>
-  Promise.resolve(
-    JSON.stringify({ subOverwrite: 'subject', subValue: 'subject' }),
-  )
-const rootJson = () =>
-  Promise.resolve(JSON.stringify({ rootOverwrite: 'root', rootValue: 'root' }))
-
-export const rootFileTree = new FileTree('/', '')
-const stimuliFileTree = new FileTree('/stimuli', 'stimuli', rootFileTree)
-const subjectFileTree = new FileTree('/sub-01', 'sub-01', rootFileTree)
-const sessionFileTree = new FileTree(
-  '/sub-01/ses-01',
-  'ses-01',
-  subjectFileTree,
-)
-const anatFileTree = new FileTree(
-  '/sub-01/ses-01/anat',
-  'anat',
-  sessionFileTree,
-)
-
-export const dataFile = {
-  text,
-  path: '/sub-01/ses-01/anat/sub-01_ses-01_T1w.nii.gz',
-  name: 'sub-01_ses-01_T1w.nii.gz',
-  size: 311112,
-  ignored: false,
-  stream: new ReadableStream<Uint8Array>(),
-  readBytes: nullReadBytes,
-  parent: anatFileTree,
-  viewed: false,
+function readBytes(json: string) {
+  return (size: number) => Promise.resolve(new TextEncoder().encode(json))
 }
 
-anatFileTree.files = [
-  dataFile,
-  {
-    text: anatJson,
-    path: '/sub-01/ses-01/anat/sub-01_ses-01_T1w.json',
-    name: 'sub-01_ses-01_T1w.json',
-    size: 311112,
-    ignored: false,
-    stream: new ReadableStream<Uint8Array>(),
-    readBytes: async (size: number) => new TextEncoder().encode(await anatJson()),
-    parent: anatFileTree,
-    viewed: false,
-  },
-]
+export const rootFileTree = pathsToTree([
+  '/dataset_description.json',
+  '/T1w.json',
+  '/sub-01/ses-01_T1w.json',
+  '/sub-01/ses-01/anat/sub-01_ses-01_T1w.nii.gz',
+  '/sub-01/ses-01/anat/sub-01_ses-01_T1w.json',
+  ...[...Array(10).keys()].map((i) => `/stimuli/stimfile${i}.png`),
+])
 
-sessionFileTree.files = []
-sessionFileTree.directories = [anatFileTree]
+const rootJSONFile = rootFileTree.files.find((f) => f.path === '/T1w.json') as BIDSFile
+rootJSONFile.readBytes = readBytes(rootJson)
 
-subjectFileTree.files = [
-  {
-    text: subjectJson,
-    path: '/sub-01/ses-01_T1w.json',
-    name: 'ses-01_T1w.json',
-    size: 311112,
-    ignored: false,
-    stream: new ReadableStream<Uint8Array>(),
-    readBytes: async (size: number) => new TextEncoder().encode(await subjectJson()),
-    parent: subjectFileTree,
-    viewed: false,
-  },
-]
-subjectFileTree.directories = [sessionFileTree]
+const subjectFileTree = rootFileTree.directories.find((d) => d.name === 'sub-01') as FileTree
+const subjectJSONFile = subjectFileTree.files[0] as BIDSFile
+subjectJSONFile.readBytes = readBytes(subjectJson)
 
-stimuliFileTree.files = [...Array(10).keys()].map((i) => (
-  {
-    text,
-    path: `/stimuli/stimfile${i}.png`,
-    name: `stimfile${i}.png`,
-    size: 2048,
-    ignored: false,
-    stream: new ReadableStream<Uint8Array>(),
-    readBytes: nullReadBytes,
-    parent: stimuliFileTree,
-    viewed: false,
-  }
-))
+const anatFileTree = subjectFileTree.directories[0].directories[0] as FileTree
 
-rootFileTree.files = [
-  {
-    text: rootJson,
-    path: '/T1w.json',
-    name: 'T1w.json',
-    size: 311112,
-    ignored: false,
-    stream: new ReadableStream<Uint8Array>(),
-    readBytes: async (size: number) => new TextEncoder().encode(await rootJson()),
-    parent: rootFileTree,
-    viewed: false,
-  },
-]
-rootFileTree.directories = [stimuliFileTree, subjectFileTree]
+export const dataFile = anatFileTree.files.find((f) =>
+  f.name === 'sub-01_ses-01_T1w.nii.gz'
+) as BIDSFile
+const anatJSONFile = anatFileTree.files.find((f) =>
+  f.name === 'sub-01_ses-01_T1w.json'
+) as BIDSFile
+anatJSONFile.readBytes = (size: number) => Promise.resolve(new TextEncoder().encode(anatJson))
