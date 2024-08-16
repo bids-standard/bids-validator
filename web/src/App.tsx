@@ -6,33 +6,43 @@ import type { ValidationResult } from "../../bids-validator/src/types/validation
 import { Collapse } from "./Collapse.tsx"
 import { Summary } from "./Summary.tsx"
 
-function Files({ files }) {
+function Files({ issues }) {
+  const unique = new Map(issues.map(({ location, issueMessage }) => {
+    return [`${location}${issueMessage ?? ''}`, { location, issueMessage }]
+  }))
   return (
     <ul>
-      {Array.from(files.entries()).map(([key, value]) => {
-        if (value && !key) {
-          return <li key={value}>{value.evidence}</li>
-        }
-        return <li key={key}>{key}</li>
+      {[...unique.values()].map(({ location, issueMessage }) => {
+        return <li key={location}>{location}
+          { issueMessage && ` (${issueMessage})` }</li>
       })}
     </ul>
   )
 }
 
 function Issue({ data }) {
-  return (
-    <div className={data.severity}>
-      <Collapse label={`${data.severity}: ${data.key}`}>
-        <div>{data.reason}</div>
-        {data.files.size && <Files files={data.files}></Files>}
-        <p>
-          <a href={`https://neurostars.org/search?q=${data.key}`}>
-            Search for this issue on Neurostars.
-          </a>
-        </p>
-      </Collapse>
-    </div>
-  )
+  const { code, severity } = data.issues[0]
+  const ret = []
+  for (const [subCode, subIssues] of data.groupBy('subCode')) {
+    if (subIssues.size === 0) {
+      continue
+    }
+    const label = `${severity}: ${code}` + (subCode === 'None' ? '' : ` (${subCode})`)
+    ret.push(
+      <div className={severity}>
+        <Collapse label={label}>
+          <div>{data.codeMessages.get(code)}</div>
+          <Files issues={subIssues.issues}></Files>
+          <p>
+            <a href={`https://neurostars.org/search?q=${code}`}>
+              Search for this issue on Neurostars.
+            </a>
+          </p>
+        </Collapse>
+      </div>
+    )
+  }
+  return ret
 }
 
 function App() {
@@ -42,24 +52,34 @@ function App() {
     const dirHandle = await directoryOpen({
       recursive: true,
     })
-    const fileTree = await fileListToTree(dirHandle)
+    const fileTree = fileListToTree(dirHandle)
     setValidation(await validate(fileTree, {}))
   }
 
   let validatorOutput
 
   if (validation) {
-    const issuesList = Array.from(validation.issues.keys()).map((key) => (
-      <li key={key}>
-        <Issue data={validation.issues.get(key)} />
-      </li>
-    ))
+    const errorList = []
+    const warningList = []
+    for (const [code, issues] of validation.issues.filter({ severity: 'error' }).groupBy('code')) {
+      if (code === 'None') {
+        continue
+      }
+      errorList.push(...Issue({ data: issues }))
+    }
+    for (const [code, issues] of validation.issues.filter({ severity: 'warning' }).groupBy('code')) {
+      if (code === 'None') {
+        continue
+      }
+      warningList.push(...Issue({ data: issues }))
+    }
     validatorOutput = (
       <>
         <button onClick={validateDir}>Reselect Files</button>
         <div>
           <ul className="issues-list">
-            {issuesList}
+            {errorList}
+            {warningList}
           </ul>
           <Summary data={validation.summary} />
           <a
