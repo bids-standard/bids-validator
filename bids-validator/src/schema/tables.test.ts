@@ -156,13 +156,11 @@ Deno.test('tables eval* tests', async (t) => {
     evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals( context.dataset.issues.size, 0)
 
-    context.columns[''] = [1, 2, 3]
+    context.columns['extra'] = [1, 2, 3]
     evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals(
       context.dataset.issues.get({ code: 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED' }).length,
       1,
     )
   })
-=======
->>>>>>> 0dd5c14ffa3937ccaf5983ef213018728f68d08d
 })
