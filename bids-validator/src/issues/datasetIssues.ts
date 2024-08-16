@@ -59,7 +59,7 @@ export class DatasetIssues {
   }
 
   groupBy(key: keyof Issue): Map<Issue[keyof Issue], DatasetIssues> {
-    let groups: Map<Issue[keyof Issue], DatasetIssues> = new Map()
+    const groups: Map<Issue[keyof Issue], DatasetIssues> = new Map()
     groups.set('None', new DatasetIssues())
     this.issues.map((issue) => {
       let value: Issue[keyof Issue] = 'None'

@@ -13,7 +13,7 @@ export async function validatePath(
   options: Partial<ValidatorOptions> = {},
 ): Promise<{ tree: FileTree; result: ValidationResult }> {
   let tree: FileTree = new FileTree('', '')
-  let summary = new Summary()
+  const summary = new Summary()
   let result: ValidationResult = {
     issues: new DatasetIssues(),
     summary: summary.formatOutput(),

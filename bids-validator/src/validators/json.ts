@@ -16,7 +16,7 @@ export function setCustomMetadataFormats(schema: Schema): void {
     return
   }
   const schemaFormats = schema.objects.formats
-  for (let key of Object.keys(schemaFormats)) {
+  for (const key of Object.keys(schemaFormats)) {
     const pattern = schemaFormats[key]['pattern']
     if (typeof pattern !== 'string') {
       logger.warning(

@@ -13,7 +13,7 @@ function getSchemaErrors(
   rootSchema: GenericSchema,
   schemaPath: string,
 ): schemaError[] {
-  let errors: schemaError[] = []
+  const errors: schemaError[] = []
   for (const [key, value] of Object.entries(schema)) {
     if (value.constructor !== Object) {
       continue

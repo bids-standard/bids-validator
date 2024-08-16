@@ -40,7 +40,7 @@ function formatIssues(
   options?: LoggingOptions,
   severity = 'error',
 ): string[] {
-  let output = []
+  const output = []
   const color = severity === 'error' ? 'red' : 'yellow'
 
   for (const [code, issues] of dsIssues.groupBy('code').entries()) {
@@ -55,7 +55,7 @@ function formatIssues(
         ),
     )
 
-    let subCodes = issues.groupBy('subCode')
+    const subCodes = issues.groupBy('subCode')
     if (subCodes.size === 1 && subCodes.has('None')) {
       output.push(...formatFiles(issues))
     } else {
@@ -79,7 +79,7 @@ function formatIssues(
 }
 
 function formatFiles(issues: DatasetIssues, options?: LoggingOptions): string[] {
-  let output = []
+  const output = []
   let issueDetails: Array<keyof Issue> = ['location', 'issueMessage']
   if (options?.verbose) {
     issueDetails = ['location', 'issueMessage', 'rule']
@@ -87,9 +87,9 @@ function formatFiles(issues: DatasetIssues, options?: LoggingOptions): string[] 
 
   const fileCount = options?.verbose ? undefined : 2
 
-  let toPrint = issues.issues.slice(0, fileCount)
+  const toPrint = issues.issues.slice(0, fileCount)
   toPrint.map((issue: Issue) => {
-    let fileOut: string[] = []
+    const fileOut: string[] = []
     issueDetails.map((key) => {
       if (Object.hasOwn(issue, key) && issue[key]) {
         fileOut.push(`${issue[key]}`)

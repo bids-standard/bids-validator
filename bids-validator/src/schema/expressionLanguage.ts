@@ -50,7 +50,7 @@ export const expressionFunctions = {
     return a.some((x) => b.includes(x))
   },
   match: (target: string, regex: string): boolean => {
-    let re = RegExp(regex)
+    const re = RegExp(regex)
     return target.match(re) !== null
   },
   type: <T>(operand: T): string => {

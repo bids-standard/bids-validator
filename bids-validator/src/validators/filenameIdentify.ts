@@ -86,7 +86,7 @@ export async function datatypeFromDirectory(schema, context) {
   const subEntity = schema.objects.entities.subject.name
   const sesEntity = schema.objects.entities.session.name
   const parts = context.file.path.split(SEPARATOR_PATTERN)
-  let datatypeIndex = parts.length - 2
+  const datatypeIndex = parts.length - 2
   if (datatypeIndex < 1) {
     return Promise.resolve()
   }
@@ -96,7 +96,7 @@ export async function datatypeFromDirectory(schema, context) {
     context.datatype = dirDatatype
     return Promise.resolve()
   }
-  for (let key in schema.rules.modalities) {
+  for (const key in schema.rules.modalities) {
     if (schema.rules.modalities[key].datatypes.includes(dirDatatype)) {
       context.modality = key
       context.datatype = dirDatatype

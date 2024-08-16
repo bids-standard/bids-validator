@@ -111,7 +111,7 @@ export async function validate(
     await check(schema as unknown as GenericSchema, dsContext)
   }
 
-  let derivativesSummary: Record<string, ValidationResult> = {}
+  const derivativesSummary: Record<string, ValidationResult> = {}
   await Promise.allSettled(
     bidsDerivatives.map(async (deriv) => {
       derivativesSummary[deriv.name] = await validate(deriv, options)
@@ -119,7 +119,7 @@ export async function validate(
     }),
   )
 
-  let output: ValidationResult = {
+  const output: ValidationResult = {
     issues: dsContext.issues,
     summary: summary.formatOutput(),
   }

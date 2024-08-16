@@ -9,7 +9,7 @@ import type { GenericSchema } from '../../types/schema.ts'
 import { hedValidate } from '../../validators/hed.ts'
 
 function getFile(fileTree: FileTree, path: string) {
-  let [current, ...nextPath] = path.split('/')
+  const [current, ...nextPath] = path.split('/')
   if (nextPath.length === 0) {
     const target = fileTree.files.find((x) => x.name === current)
     if (target) {
