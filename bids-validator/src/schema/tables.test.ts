@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { assertEquals } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
-import { evalColumns } from './tables.ts'
+import { evalAdditionalColumns, evalColumns, evalIndexColumns, evalInitialColumns } from './tables.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 const schemaDefs = {
@@ -28,13 +28,14 @@ const schemaDefs = {
             onset: 'required',
             strain_rrid: 'optional',
           },
+          additional_columns: 'not_allowed'
         },
       },
     },
   },
 }
 
-Deno.test('evalColumns tests', async (t) => {
+Deno.test('tables eval* tests', async (t) => {
   const schema = await loadSchema()
 
   await t.step('check invalid datetime (scans.tsv:acq_time)', () => {
@@ -85,5 +86,81 @@ Deno.test('evalColumns tests', async (t) => {
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals(context.dataset.issues.size, 0)
+  })
+
+  await t.step('verify column ordering', () => {
+    const context = {
+      path: '/sub-01/sub-01_scans.tsv',
+      extension: '.tsv',
+      sidecar: {},
+      columns: {
+        onset: ['1900-01-01:00:00'],
+      },
+      dataset: { issues: new DatasetIssues() },
+    }
+    const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
+    evalInitialColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_COLUMN_MISSING' }).length,
+      1,
+    )
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_COLUMN_ORDER_INCORRECT' }).length,
+      0,
+    )
+
+    context.columns['filename'] = ['func/sub-01_task-rest_bold.nii.gz']
+    evalInitialColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_COLUMN_ORDER_INCORRECT' }).length,
+      1,
+    )
+  })
+
+  await t.step('verify column index', () => {
+    const context = {
+      path: '/sub-01/sub-01_scans.tsv',
+      extension: '.tsv',
+      sidecar: {},
+      columns: {
+        onset: ['1900-01-01:00:00', '1900-01-01:00:00'],
+      },
+      dataset: { issues: new DatasetIssues() },
+    }
+    const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
+    evalIndexColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_COLUMN_MISSING' }).length,
+      1,
+    )
+    context.columns['filename'] = ['func/sub-01_task-rest_bold.nii.gz', 'func/sub-01_task-rest_bold.nii.gz']
+    evalIndexColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_INDEX_VALUE_NOT_UNIQUE' }).length,
+      1,
+    )
+  })
+
+  await t.step('verify additional columns', () => {
+    const context = {
+      path: '/sub-01/sub-01_scans.tsv',
+      extension: '.tsv',
+      sidecar: {},
+      columns: {
+        onset: ['1', '2', 'n/a'],
+        strain_rrid: ['RRID:SCR_012345', 'RRID:SCR_012345', 'n/a'],
+      },
+      dataset: { issues: new DatasetIssues() },
+    }
+    const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
+    evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    assertEquals( context.dataset.issues.size, 0)
+
+    context.columns[''] = [1, 2, 3]
+    evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED' }).length,
+      1,
+    )
   })
 })
