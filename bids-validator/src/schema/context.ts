@@ -16,6 +16,7 @@ import { ColumnsMap } from '../types/columns.ts'
 import { readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { walkBack } from '../files/inheritance.ts'
+import { parseGzip } from '../files/gzip.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { loadJSON } from '../files/json.ts'
 import { loadHeader } from '../files/nifti.ts'
@@ -243,6 +244,16 @@ export class BIDSContext implements Context {
     })
   }
 
+  async loadGzip(): Promise<void> {
+    if (!this.extension.endsWith('.gz')) {
+      return
+    }
+    this.gzip = await parseGzip(this.file, 512).catch((error) => {
+      console.debug('Error parsing gzip header', error)
+      return undefined
+    })
+  }
+
   // This is currently done for every file. It should be done once for the dataset.
   async loadSubjects(): Promise<void> {
     if (this.dataset.subjects != null) {
@@ -288,6 +299,7 @@ export class BIDSContext implements Context {
       this.loadAssociations(),
       this.loadNiftiHeader(),
       this.loadJSON(),
+      this.loadGzip(),
     ])
   }
 }
