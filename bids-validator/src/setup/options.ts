@@ -49,7 +49,7 @@ if (typeof Deno !== 'undefined') {
       '--color, --no-color [color:boolean]',
       'Enable/disable color output (defaults to detected support)',
       {
-        default: !!(Deno.env.get('FORCE_COLOR') || Deno.stdout.isTerminal()),
+        default: Deno.stdout.isTerminal() || !!Deno.env.get('FORCE_COLOR'),
       },
     )
 }
