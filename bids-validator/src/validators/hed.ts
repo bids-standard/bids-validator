@@ -1,10 +1,10 @@
 import hedValidator from '@hed/validator'
 import { hedOldToNewLookup } from '../issues/list.ts'
-import { GenericSchema } from '../types/schema.ts'
-import { IssueFile } from '../types/issues.ts'
-import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
-import { DatasetIssues } from '../issues/datasetIssues.ts'
-import { ColumnsMap } from '../types/columns.ts'
+import type { GenericSchema } from '../types/schema.ts'
+import type { IssueFile } from '../types/issues.ts'
+import type { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
+import type { DatasetIssues } from '../issues/datasetIssues.ts'
+import type { ColumnsMap } from '../types/columns.ts'
 
 function sidecarHasHed(sidecarData: BIDSContext['sidecar']) {
   if (!sidecarData) {

@@ -1,4 +1,4 @@
-import { DatasetIssues } from '../issues/datasetIssues.ts'
+import type { DatasetIssues } from '../issues/datasetIssues.ts'
 
 export interface SubjectMetadata {
   participantId: string

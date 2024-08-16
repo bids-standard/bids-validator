@@ -1,4 +1,4 @@
-import { BIDSFile, FileTree } from '../types/filetree.ts'
+import { type BIDSFile, FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { parse, SEPARATOR_PATTERN } from '@std/path'
 import * as posix from '@std/path/posix'

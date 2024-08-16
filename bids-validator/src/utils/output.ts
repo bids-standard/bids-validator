@@ -4,9 +4,9 @@
 import { Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
 import { format as prettyBytes } from '@std/fmt/bytes'
-import { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
-import { Issue, Severity } from '../types/issues.ts'
-import { DatasetIssues } from '../issues/datasetIssues.ts'
+import type { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
+import type { Issue, Severity } from '../types/issues.ts'
+import type { DatasetIssues } from '../issues/datasetIssues.ts'
 
 interface LoggingOptions {
   verbose: boolean

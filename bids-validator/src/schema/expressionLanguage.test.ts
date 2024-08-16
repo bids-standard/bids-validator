@@ -2,7 +2,7 @@ import { assert } from '@std/assert'
 import { expressionFunctions } from './expressionLanguage.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import { BIDSContext } from './context.ts'
-import { DatasetIssues } from '../issues/datasetIssues.ts'
+import type { DatasetIssues } from '../issues/datasetIssues.ts'
 
 Deno.test('test expression functions', async (t) => {
   const context = new BIDSContext(dataFile, undefined, rootFileTree)

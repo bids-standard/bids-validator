@@ -1,4 +1,4 @@
-import { SubjectMetadata } from '../types/validation-result.ts'
+import type { SubjectMetadata } from '../types/validation-result.ts'
 const PARTICIPANT_ID = 'participantId'
 /**
  * Go from tsv format string with participant_id as a required header to array of form

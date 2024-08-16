@@ -1,4 +1,4 @@
-import { LevelName, LogLevelNames } from '@std/log'
+import { type LevelName, LogLevelNames } from '@std/log'
 import { Command, EnumType } from '@cliffy/command'
 import { getVersion } from '../version.ts'
 

@@ -1,4 +1,4 @@
-import { Schema } from '../types/schema.ts'
+import type { Schema } from '../types/schema.ts'
 import { objectPathHandler } from '../utils/objectPathHandler.ts'
 import * as schemaDefault from '@bids/schema/schema' with { type: 'json' }
 import { setCustomMetadataFormats } from '../validators/json.ts'

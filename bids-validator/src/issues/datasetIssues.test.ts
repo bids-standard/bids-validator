@@ -1,6 +1,6 @@
 import { assert, assertEquals, assertThrows } from '@std/assert'
-import { BIDSFile, FileTree } from '../types/filetree.ts'
-import { IssueFile } from '../types/issues.ts'
+import { type BIDSFile, FileTree } from '../types/filetree.ts'
+import type { IssueFile } from '../types/issues.ts'
 import { DatasetIssues } from './datasetIssues.ts'
 
 Deno.test('DatasetIssues management class', async (t) => {

@@ -13,10 +13,10 @@
  */
 // @ts-nocheck
 import { globToRegExp, SEPARATOR_PATTERN } from '@std/path'
-import { GenericSchema, Schema } from '../types/schema.ts'
-import { BIDSContext } from '../schema/context.ts'
-import { lookupModality } from '../schema/modalities.ts'
-import { CheckFunction } from '../types/check.ts'
+import type { GenericSchema, Schema } from '../types/schema.ts'
+import type { BIDSContext } from '../schema/context.ts'
+import type { lookupModality } from '../schema/modalities.ts'
+import type { CheckFunction } from '../types/check.ts'
 import { lookupEntityLiteral } from './filenameValidate.ts'
 
 const CHECKS: CheckFunction[] = [

@@ -1,6 +1,6 @@
-import { GenericSchema } from './schema.ts'
-import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
-import { DatasetIssues } from '../issues/datasetIssues.ts'
+import type { GenericSchema } from './schema.ts'
+import type { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
+import type { DatasetIssues } from '../issues/datasetIssues.ts'
 
 /** Function interface for writing a check */
 export type ContextCheckFunction = (

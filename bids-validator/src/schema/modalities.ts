@@ -1,4 +1,4 @@
-import { Schema } from '../types/schema.ts'
+import type { Schema } from '../types/schema.ts'
 
 export function lookupModality(schema: Schema, datatype: string): string {
   const modalities = schema.rules.modalities as Record<string, any>

@@ -1,6 +1,6 @@
-import { BIDSContext, BIDSContextDataset } from './context.ts'
-import { BIDSFile, FileTree } from '../types/filetree.ts'
-import { DatasetIssues } from '../issues/datasetIssues.ts'
+import { BIDSContext, type BIDSContextDataset } from './context.ts'
+import type { BIDSFile, FileTree } from '../types/filetree.ts'
+import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { loadTSV } from '../files/tsv.ts'
 
 function* quickWalk(dir: FileTree): Generator<BIDSFile> {

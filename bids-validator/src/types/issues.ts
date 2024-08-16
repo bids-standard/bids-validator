@@ -1,4 +1,4 @@
-import { BIDSFile } from './filetree.ts'
+import type { BIDSFile } from './filetree.ts'
 
 const all_severities = ['warning', 'error', 'ignore'] as const
 export type Severity = typeof all_severities[number]

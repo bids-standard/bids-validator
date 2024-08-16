@@ -3,7 +3,7 @@
  * Module for parsing TSV
  */
 import { ColumnsMap } from '../types/columns.ts'
-import { BIDSFile } from '../types/filetree.ts'
+import type { BIDSFile } from '../types/filetree.ts'
 import { filememoizeAsync } from '../utils/memoize.ts'
 import type { WithCache } from '../utils/memoize.ts'
 

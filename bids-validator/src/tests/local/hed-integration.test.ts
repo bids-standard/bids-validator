@@ -1,11 +1,11 @@
-import { formatAssertIssue, validatePath } from './common.ts'
+import type { formatAssertIssue, validatePath } from './common.ts'
 import { assert, assertEquals } from '@std/assert'
 import { BIDSFileDeno, readFileTree } from '../../files/deno.ts'
-import { DatasetIssues } from '../../issues/datasetIssues.ts'
+import type { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { loadSchema } from '../../setup/loadSchema.ts'
 import { BIDSContext, BIDSContextDataset } from '../../schema/context.ts'
-import { BIDSFile, FileTree } from '../../types/filetree.ts'
-import { GenericSchema } from '../../types/schema.ts'
+import type { BIDSFile, FileTree } from '../../types/filetree.ts'
+import type { GenericSchema } from '../../types/schema.ts'
 import { hedValidate } from '../../validators/hed.ts'
 
 function getFile(fileTree: FileTree, path: string) {

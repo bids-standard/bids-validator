@@ -1,4 +1,4 @@
-import { BIDSFile } from '../types/filetree.ts'
+import type { BIDSFile } from '../types/filetree.ts'
 
 async function readJSONText(file: BIDSFile): Promise<string> {
   // Read JSON text from a file

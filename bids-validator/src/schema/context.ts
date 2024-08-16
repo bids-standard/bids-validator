@@ -1,4 +1,4 @@
-import {
+import type {
   Context,
   ContextAssociations,
   ContextDataset,
@@ -6,8 +6,8 @@ import {
   ContextNiftiHeader,
   ContextSubject,
 } from '../types/context.ts'
-import { Schema } from '../types/schema.ts'
-import { BIDSFile, FileTree } from '../types/filetree.ts'
+import type { Schema } from '../types/schema.ts'
+import { type BIDSFile, FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -16,7 +16,7 @@ import { loadTSV } from '../files/tsv.ts'
 import { loadJSON } from '../files/json.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
-import { ValidatorOptions } from '../setup/options.ts'
+import type { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
 
 export class BIDSContextDataset implements ContextDataset {

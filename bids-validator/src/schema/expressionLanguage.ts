@@ -1,4 +1,4 @@
-import { BIDSContext } from './context.ts'
+import type { BIDSContext } from './context.ts'
 
 function exists(this: BIDSContext, list: string[], rule: string = 'dataset'): number {
   if (list == null) {
