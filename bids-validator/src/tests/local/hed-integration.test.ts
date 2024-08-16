@@ -8,24 +8,6 @@ import type { BIDSFile, FileTree } from '../../types/filetree.ts'
 import type { GenericSchema } from '../../types/schema.ts'
 import { hedValidate } from '../../validators/hed.ts'
 
-function getFile(fileTree: FileTree, path: string) {
-  const [current, ...nextPath] = path.split('/')
-  if (nextPath.length === 0) {
-    const target = fileTree.files.find((x) => x.name === current)
-    if (target) {
-      return target
-    }
-    const dirTarget = fileTree.directories.find((x) => x.name === nextPath[0])
-    return dirTarget
-  } else {
-    const nextTree = fileTree.directories.find((x) => x.name === current)
-    if (nextTree) {
-      return getFile(nextTree, nextPath.join('/'))
-    }
-  }
-  return undefined
-}
-
 Deno.test('hed-validator not triggered', async (t) => {
   const PATH = 'tests/data/bids-examples/ds003'
   const tree = await readFileTree(PATH)
@@ -36,7 +18,7 @@ Deno.test('hed-validator not triggered', async (t) => {
     },
   })
   await t.step('detect hed returns false', async () => {
-    const eventFile = getFile(tree, 'sub-01/func/sub-01_task-rhymejudgment_events.tsv')
+    const eventFile = tree.get('sub-01/func/sub-01_task-rhymejudgment_events.tsv')
     assert(eventFile !== undefined)
     assert(eventFile instanceof BIDSFileDeno)
     const context = new BIDSContext(eventFile, dsContext)
@@ -56,7 +38,7 @@ Deno.test('hed-validator fails with bad schema version', async (t) => {
     },
   })
   await t.step('detect hed returns false', async () => {
-    const eventFile = getFile(tree, 'sub-002/eeg/sub-002_task-FacePerception_run-3_events.tsv')
+    const eventFile = tree.get('sub-002/eeg/sub-002_task-FacePerception_run-3_events.tsv')
     assert(eventFile !== undefined)
     assert(eventFile instanceof BIDSFileDeno)
     const context = new BIDSContext(eventFile, dsContext)
