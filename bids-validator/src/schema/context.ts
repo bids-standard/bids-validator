@@ -18,6 +18,7 @@ import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { walkBack } from '../files/inheritance.ts'
 import { parseGzip } from '../files/gzip.ts'
 import { loadTSV } from '../files/tsv.ts'
+import { parseTIFF } from '../files/tiff.ts'
 import { loadJSON } from '../files/json.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
@@ -254,6 +255,20 @@ export class BIDSContext implements Context {
     })
   }
 
+  async loadTIFF(): Promise<void> {
+    if (!this.extension.endsWith('.tif') && !this.extension.endsWith('.btf')) {
+      return
+    }
+    const { tiff, ome } = await parseTIFF(this.file, this.extension.startsWith('.ome')).catch(
+      (error) => {
+        console.debug('Error parsing tiff header', error)
+        return { tiff: undefined, ome: undefined }
+      },
+    )
+    this.tiff = tiff
+    this.ome = ome
+  }
+
   // This is currently done for every file. It should be done once for the dataset.
   async loadSubjects(): Promise<void> {
     if (this.dataset.subjects != null) {
@@ -300,6 +315,7 @@ export class BIDSContext implements Context {
       this.loadNiftiHeader(),
       this.loadJSON(),
       this.loadGzip(),
+      this.loadTIFF(),
     ])
   }
 }
