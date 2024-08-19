@@ -197,6 +197,10 @@ export class BIDSContext implements Context {
       this.sidecar = { ...json, ...this.sidecar }
       Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= file.path)
     }
+    // Hack: round RepetitionTime to 3 decimal places; schema should add rounding function
+    if (typeof this.sidecar.RepetitionTime === 'number') {
+      this.sidecar.RepetitionTime = Math.round(this.sidecar.RepetitionTime * 1000) / 1000
+    }
   }
 
   async loadNiftiHeader(): Promise<void> {
