@@ -21,7 +21,7 @@ export async function parseGzip(
 ): Promise<Gzip | undefined> {
   const buf = await file.readBytes(maxBytes)
   const view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength)
-  if (view.getUint16(0, false) !== 0x1f8b) return undefined
+  if (view.byteLength < 2 || view.getUint16(0, false) !== 0x1f8b) return undefined
 
   const flags = buf[3]
   const hasExtra = flags & 0x04 // FEXTRA
