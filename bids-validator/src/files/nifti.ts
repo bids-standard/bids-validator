@@ -1,7 +1,7 @@
 import { isCompressed, readHeader } from '@mango/nifti'
 import type { BIDSFile } from '../types/filetree.ts'
 import type { logger } from '../utils/logger.ts'
-import type { ContextNiftiHeader } from '../types/context.ts'
+import type { NiftiHeader } from '@bids/schema/context'
 
 async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array> {
   // The fflate decompression that is used in nifti-reader does not like
@@ -35,7 +35,7 @@ function readHeaderQuiet(buf: ArrayBuffer) {
   return header
 }
 
-export async function loadHeader(file: BIDSFile): Promise<ContextNiftiHeader> {
+export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
   try {
     const buf = await file.readBytes(1024)
     const data = isCompressed(buf.buffer) ? await extract(buf, 540) : buf
@@ -60,7 +60,7 @@ export async function loadHeader(file: BIDSFile): Promise<ContextNiftiHeader> {
       },
       qform_code: header.qform_code,
       sform_code: header.sform_code,
-    } as ContextNiftiHeader
+    } as NiftiHeader
   } catch (err) {
     throw { key: 'NIFTI_HEADER_UNREADABLE' }
   }

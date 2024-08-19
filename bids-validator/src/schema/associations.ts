@@ -1,4 +1,15 @@
-import type { ContextAssociations, ContextAssociationsEvents } from '../types/context.ts'
+import type {
+  Aslcontext,
+  Associations,
+  Bval,
+  Bvec,
+  Channels,
+  Coordsystem,
+  Events,
+  M0Scan,
+  Magnitude,
+  Magnitude1,
+} from '@bids/schema/context'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -25,7 +36,7 @@ const associationLookup = {
     suffix: 'events',
     extensions: ['.tsv'],
     inherit: true,
-    load: async (file: BIDSFile): Promise<ContextAssociations['events']> => {
+    load: async (file: BIDSFile): Promise<Events> => {
       const columns = await loadTSV(file)
         .catch((e) => {
           return new Map()
@@ -42,7 +53,7 @@ const associationLookup = {
     inherit: true,
     load: async (
       file: BIDSFile,
-    ): Promise<ContextAssociations['aslcontext']> => {
+    ): Promise<Aslcontext> => {
       const columns = await loadTSV(file)
         .catch((e) => {
           return new Map()
@@ -58,7 +69,7 @@ const associationLookup = {
     suffix: 'm0scan',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
-    load: (file: BIDSFile): Promise<ContextAssociations['m0scan']> => {
+    load: (file: BIDSFile): Promise<M0Scan> => {
       return Promise.resolve({ path: file.path })
     },
   },
@@ -66,7 +77,7 @@ const associationLookup = {
     suffix: 'magnitude',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
-    load: (file: BIDSFile): Promise<ContextAssociations['magnitude']> => {
+    load: (file: BIDSFile): Promise<Magnitude> => {
       return Promise.resolve({ path: file.path })
     },
   },
@@ -74,7 +85,7 @@ const associationLookup = {
     suffix: 'magnitude1',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
-    load: (file: BIDSFile): Promise<ContextAssociations['magnitude1']> => {
+    load: (file: BIDSFile): Promise<Magnitude1> => {
       return Promise.resolve({ path: file.path })
     },
   },
@@ -82,13 +93,14 @@ const associationLookup = {
     suffix: 'dwi',
     extensions: ['.bval'],
     inherit: true,
-    load: async (file: BIDSFile): Promise<ContextAssociations['bval']> => {
+    load: async (file: BIDSFile): Promise<Bval> => {
       const contents = await file.text()
       const rows = parseBvalBvec(contents)
       return {
         path: file.path,
         n_cols: rows ? rows[0].length : 0,
         n_rows: rows ? rows.length : 0,
+        // @ts-expect-error values is expected to be a number[], coerce lazily
         values: rows[0],
       }
     },
@@ -97,7 +109,7 @@ const associationLookup = {
     suffix: 'dwi',
     extensions: ['.bvec'],
     inherit: true,
-    load: async (file: BIDSFile): Promise<ContextAssociations['bvec']> => {
+    load: async (file: BIDSFile): Promise<Bvec> => {
       const contents = await file.text()
       const rows = parseBvalBvec(contents)
 
@@ -116,7 +128,7 @@ const associationLookup = {
     suffix: 'channels',
     extensions: ['.tsv'],
     inherit: true,
-    load: async (file: BIDSFile): Promise<ContextAssociations['channels']> => {
+    load: async (file: BIDSFile): Promise<Channels> => {
       const columns = await loadTSV(file)
         .catch((e) => {
           return new Map()
@@ -133,7 +145,7 @@ const associationLookup = {
     suffix: 'coordsystem',
     extensions: ['.json'],
     inherit: true,
-    load: (file: BIDSFile): Promise<ContextAssociations['coordsystem']> => {
+    load: (file: BIDSFile): Promise<Coordsystem> => {
       return Promise.resolve({ path: file.path })
     },
   },
@@ -142,8 +154,8 @@ const associationLookup = {
 export async function buildAssociations(
   source: BIDSFile,
   issues: DatasetIssues,
-): Promise<ContextAssociations> {
-  const associations: ContextAssociations = {}
+): Promise<Associations> {
+  const associations: Associations = {}
 
   for (const [key, value] of Object.entries(associationLookup)) {
     const { suffix, extensions, inherit, load } = value
@@ -160,7 +172,7 @@ export async function buildAssociations(
     }
 
     if (file) {
-      // @ts-expect-error
+      // @ts-expect-error Matching load return value to key is hard
       associations[key] = await load(file).catch((error) => {
         if (error.key) {
           issues.add({ code: error.key, location: file.path })

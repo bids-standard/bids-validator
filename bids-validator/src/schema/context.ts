@@ -1,13 +1,17 @@
 import type {
+  Associations,
   Context,
-  ContextAssociations,
-  ContextDataset,
-  ContextDatasetSubjects,
-  ContextNiftiHeader,
-  ContextSubject,
-} from '../types/context.ts'
+  Dataset,
+  Gzip,
+  NiftiHeader,
+  Ome,
+  Subject,
+  Subjects,
+  Tiff,
+} from '@bids/schema/context'
 import type { Schema } from '../types/schema.ts'
-import { type BIDSFile, FileTree } from '../types/filetree.ts'
+import type { BIDSFile } from '../types/filetree.ts'
+import { FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -19,13 +23,13 @@ import { buildAssociations } from './associations.ts'
 import type { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
 
-export class BIDSContextDataset implements ContextDataset {
+export class BIDSContextDataset implements Dataset {
   #dataset_description: Record<string, unknown> = {}
   tree: FileTree
-  ignored: BIDSFile[]
+  ignored: string[]
   datatypes: string[]
   modalities: string[]
-  subjects?: ContextDatasetSubjects
+  subjects: Subjects
 
   issues: DatasetIssues
   sidecarKeyValidated: Set<string>
@@ -54,6 +58,11 @@ export class BIDSContextDataset implements ContextDataset {
           ?.filter((ext) => ext.endsWith('/'))
         : [],
     )
+    this.subjects = args.subjects || {
+      sub_dirs: this.tree.directories.map((dir) => dir.name).filter((dir) =>
+        dir.startsWith('sub-')
+      ),
+    }
   }
 
   get dataset_description(): Record<string, unknown> {
@@ -78,7 +87,7 @@ export class BIDSContextDataset implements ContextDataset {
   }
 }
 
-class BIDSContextDatasetSubjects implements ContextDatasetSubjects {
+class BIDSContextDatasetSubjects implements Subjects {
   sub_dirs: string[]
   participant_id?: string[]
   phenotype?: string[]
@@ -96,7 +105,7 @@ class BIDSContextDatasetSubjects implements ContextDatasetSubjects {
 
 export class BIDSContext implements Context {
   dataset: BIDSContextDataset
-  subject: ContextSubject
+  subject: Subject
   // path: string  <- getter
   // size: number  <- getter
   entities: Record<string, string>
@@ -105,13 +114,13 @@ export class BIDSContext implements Context {
   extension: string
   modality: string
   sidecar: Record<string, any>
-  associations: ContextAssociations
-  columns: ColumnsMap
-  json: object
-  gzip?: object
-  nifti_header?: ContextNiftiHeader
-  ome?: object
-  tiff?: object
+  associations: Associations
+  columns: Record<string, string[]>
+  json: Record<string, any>
+  gzip?: Gzip
+  nifti_header?: NiftiHeader
+  ome?: Ome
+  tiff?: Tiff
 
   file: BIDSFile
   filenameRules: string[]
@@ -129,14 +138,14 @@ export class BIDSContext implements Context {
     this.extension = bidsEntities.extension
     this.entities = bidsEntities.entities
     this.dataset = dsContext ? dsContext : new BIDSContextDataset({ tree: fileTree })
-    this.subject = {} as ContextSubject
+    this.subject = {} as Subject
     this.datatype = ''
     this.modality = ''
     this.sidecar = {}
     this.sidecarKeyOrigin = {}
-    this.columns = new ColumnsMap()
+    this.columns = new ColumnsMap() as Record<string, string[]>
     this.json = {}
-    this.associations = {} as ContextAssociations
+    this.associations = {} as Associations
   }
 
   get schema(): Schema {
@@ -215,7 +224,7 @@ export class BIDSContext implements Context {
         )
         logger.debug(error)
         return new Map<string, string[]>() as ColumnsMap
-      })
+      }) as Record<string, string[]>
     return
   }
 

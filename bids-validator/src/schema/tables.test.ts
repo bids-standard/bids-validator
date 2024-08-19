@@ -1,7 +1,12 @@
 // @ts-nocheck
 import { assertEquals } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
-import { evalAdditionalColumns, evalColumns, evalIndexColumns, evalInitialColumns } from './tables.ts'
+import {
+  evalAdditionalColumns,
+  evalColumns,
+  evalIndexColumns,
+  evalInitialColumns,
+} from './tables.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 const schemaDefs = {
@@ -28,7 +33,7 @@ const schemaDefs = {
             onset: 'required',
             strain_rrid: 'optional',
           },
-          additional_columns: 'not_allowed'
+          additional_columns: 'not_allowed',
         },
       },
     },
@@ -133,7 +138,10 @@ Deno.test('tables eval* tests', async (t) => {
       context.dataset.issues.get({ code: 'TSV_COLUMN_MISSING' }).length,
       1,
     )
-    context.columns['filename'] = ['func/sub-01_task-rest_bold.nii.gz', 'func/sub-01_task-rest_bold.nii.gz']
+    context.columns['filename'] = [
+      'func/sub-01_task-rest_bold.nii.gz',
+      'func/sub-01_task-rest_bold.nii.gz',
+    ]
     evalIndexColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
     assertEquals(
       context.dataset.issues.get({ code: 'TSV_INDEX_VALUE_NOT_UNIQUE' }).length,
@@ -154,7 +162,7 @@ Deno.test('tables eval* tests', async (t) => {
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
-    assertEquals( context.dataset.issues.size, 0)
+    assertEquals(context.dataset.issues.size, 0)
 
     context.columns['extra'] = [1, 2, 3]
     evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
