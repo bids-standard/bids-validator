@@ -135,6 +135,10 @@ export async function validate(
     }),
   )
 
+  if (options.ignoreWarnings) {
+    dsContext.issues = dsContext.issues.filter({ severity: 'error' })
+  }
+
   const output: ValidationResult = {
     issues: dsContext.issues,
     summary: summary.formatOutput(),

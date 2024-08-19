@@ -9,6 +9,7 @@ export type ValidatorOptions = {
   json?: boolean
   verbose?: boolean
   ignoreNiftiHeaders?: boolean
+  ignoreWarnings?: boolean
   filenameMode?: boolean
   debug: LevelName
   color?: boolean
@@ -35,6 +36,7 @@ const validateCommand = new Command()
     },
   )
   .option('-v, --verbose', 'Log more extensive information about issues')
+  .option('--ignoreWarnings', 'Disregard non-critical issues')
   .option(
     '--ignoreNiftiHeaders',
     'Disregard NIfTI header content during validation',
