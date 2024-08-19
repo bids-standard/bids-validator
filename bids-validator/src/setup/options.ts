@@ -12,7 +12,12 @@ export type ValidatorOptions = {
   filenameMode?: boolean
   debug: LevelName
   color?: boolean
+  blacklistModalities: string[]
 }
+
+const modalityType = new EnumType<string>(
+  ['MRI', 'PET', 'MEG', 'EEG', 'iEEG', 'Microscopy', 'NIRS', 'MRS'],
+)
 
 const validateCommand = new Command()
   .name('bids-validator')
@@ -40,6 +45,12 @@ const validateCommand = new Command()
   .option(
     '--filenameMode',
     'Enable filename checks for newline separated filenames read from stdin',
+  )
+  .type('modality', modalityType)
+  .option(
+    '--blacklistModalities <...modalities:modality>',
+    'Array of modalities to error on if detected.',
+    { default: [] as string[] },
   )
 
 // Disabling color output is only available in Deno
