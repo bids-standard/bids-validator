@@ -46,7 +46,8 @@ export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
     const ndim = header.dims[0]
     return {
       dim: header.dims,
-      pixdim: header.pixDims,
+      // Hack: round pixdim to 3 decimal places; schema should add rounding function
+      pixdim: header.pixDims.map((pixdim) => Math.round(pixdim * 1000) / 1000),
       shape: header.dims.slice(1, ndim + 1),
       voxel_sizes: header.pixDims.slice(1, ndim + 1),
       dim_info: {
