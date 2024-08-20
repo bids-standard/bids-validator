@@ -170,6 +170,9 @@ Deno.test('test expression functions', async (t) => {
     assert(array_equal(sorted([], 'numeric'), []))
     assert(array_equal(sorted([5, 25, 125, 625], 'numeric'), [5, 25, 125, 625]))
     assert(array_equal(sorted([125, 25, 5, 625], 'numeric'), [5, 25, 125, 625]))
+    assert(
+      array_equal(sorted(['-2', '-1', '0', '1', '2'], 'numeric'), ['-2', '-1', '0', '1', '2']),
+    )
   })
   await t.step('sorted(..., "lexical") function', () => {
     const sorted = expressionFunctions.sorted

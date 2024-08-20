@@ -10,6 +10,7 @@ Deno.test('options parsing', async (t) => {
       json: true,
       schema: 'latest',
       color: false,
+      blacklistModalities: [],
     })
   })
 })

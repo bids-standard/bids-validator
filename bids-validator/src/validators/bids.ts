@@ -105,6 +105,28 @@ export async function validate(
     await check(schema as unknown as GenericSchema, dsContext)
   }
 
+  const modalitiesRule = schema.rules.modalities as Record<string, { datatypes: string[] }>
+  const blacklistedDatatypes = new Map<string, string>()
+  // Map blacklisted datatypes back to the modality that generated them
+  for (const modality of options.blacklistModalities) {
+    const datatypes = modalitiesRule[modality.toLowerCase()]?.datatypes as string[]
+    for (const datatype of datatypes) {
+      blacklistedDatatypes.set(datatype, modality)
+    }
+  }
+
+  const blacklistedDirs = fileTree.directories.filter((dir) => dir.name.startsWith('sub-'))
+    .flatMap((dir) => dir.directories)
+    .flatMap((dir) => dir.name.startsWith('ses-') ? dir.directories : [dir])
+    .filter((dir) => blacklistedDatatypes.has(dir.name))
+
+  blacklistedDirs.forEach((dir) => {
+    dsContext.issues.add({
+      code: 'BLACKLISTED_MODALITY',
+      location: dir.path,
+    })
+  })
+
   const derivativesSummary: Record<string, ValidationResult> = {}
   await Promise.allSettled(
     bidsDerivatives.map(async (deriv) => {
@@ -112,6 +134,10 @@ export async function validate(
       return derivativesSummary[deriv.name]
     }),
   )
+
+  if (options.ignoreWarnings) {
+    dsContext.issues = dsContext.issues.filter({ severity: 'error' })
+  }
 
   const output: ValidationResult = {
     issues: dsContext.issues,

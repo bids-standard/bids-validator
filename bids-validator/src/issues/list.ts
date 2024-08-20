@@ -182,6 +182,10 @@ const hedIssues: IssueDefinitionRecord = {
     reason:
       "You should define 'HEDVersion' for this file. If you don't provide this information, the HED validation will use the latest version available.",
   },
+  BLACKLISTED_MODALITY: {
+    severity: 'error',
+    reason: 'The modality in this file is blacklisted through validator configuration.',
+  },
 }
 
 export const hedOldToNewLookup: Record<number, Partial<keyof IssueDefinitionRecord>> = {
