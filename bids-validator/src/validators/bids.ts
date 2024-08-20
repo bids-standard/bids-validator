@@ -137,7 +137,7 @@ export async function validate(
   )
 
   if (config) {
-    for (const level of ['ignore', 'warn', 'error'] as const) {
+    for (const level of ['ignore', 'warning', 'error'] as const) {
       for (const filter of config[level] ?? []) {
         for (const issue of dsContext.issues.filter(filter).issues) {
           issue.severity = level as Severity

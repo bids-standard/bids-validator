@@ -2,12 +2,10 @@ import { LogLevelNames } from '@std/log'
 import type { LevelName } from '@std/log'
 import { Command, EnumType } from '@cliffy/command'
 import { getVersion } from '../version.ts'
-import type { Issue } from '../types/issues.ts'
+import type { Issue, Severity } from '../types/issues.ts'
 
 export type Config = {
-  ignore?: Partial<Issue>[]
-  warn?: Partial<Issue>[]
-  error?: Partial<Issue>[]
+  [key in Severity]?: Partial<Issue>[]
 }
 
 export type ValidatorOptions = {

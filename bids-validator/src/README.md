@@ -28,7 +28,7 @@ warnings, errors or ignored.
   "ignore": [
     { "code": "JSON_KEY_RECOMMENDED", "location": "/T1w.json" }
   ],
-  "warn": [],
+  "warning": [],
   "error": [
     { "code": "NO_AUTHORS" }
   ]
