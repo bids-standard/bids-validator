@@ -96,6 +96,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'A TSV file has extra columns which are not allowed for its file type',
   },
+  TSV_ADDITIONAL_COLUMNS_UNDEFINED: {
+    severity: 'warning',
+    reason: 'A TSV file has extra columns which are not defined in its associated JSON sidecar',
+  },
   TSV_INDEX_VALUE_NOT_UNIQUE: {
     severity: 'error',
     reason:

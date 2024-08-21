@@ -247,16 +247,19 @@ export function evalAdditionalColumns(
     let extraCols = headers.filter(
       (header) => !ruleHeadersNames.includes(header),
     )
-    if (rule.additional_columns === 'allowed_if_defined') {
+
+    if (rule.additional_columns?.startsWith('allowed')) {
       extraCols = extraCols.filter((header) => !(header in context.sidecar))
     }
+    const issue = {
+      code: rule.additional_columns === 'allowed'
+        ? 'TSV_ADDITIONAL_COLUMNS_UNDEFINED'
+        : 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED',
+      location: context.path,
+      rule: schemaPath,
+    }
     for (const col of extraCols) {
-      context.dataset.issues.add({
-        code: 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED',
-        subCode: col,
-        location: context.path,
-        rule: schemaPath,
-      })
+      context.dataset.issues.add({ ...issue, subCode: col })
     }
   }
 }
