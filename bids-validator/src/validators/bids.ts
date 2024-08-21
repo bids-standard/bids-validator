@@ -128,12 +128,14 @@ export async function validate(
   })
 
   const derivativesSummary: Record<string, ValidationResult> = {}
-  await Promise.allSettled(
-    bidsDerivatives.map(async (deriv) => {
-      derivativesSummary[deriv.name] = await validate(deriv, options)
-      return derivativesSummary[deriv.name]
-    }),
-  )
+  if (options.recursive) {
+    await Promise.allSettled(
+      bidsDerivatives.map(async (deriv) => {
+        derivativesSummary[deriv.name] = await validate(deriv, options)
+        return derivativesSummary[deriv.name]
+      }),
+    )
+  }
 
   if (options.ignoreWarnings) {
     dsContext.issues = dsContext.issues.filter({ severity: 'error' })
