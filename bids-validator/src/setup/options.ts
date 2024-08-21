@@ -19,6 +19,7 @@ export type ValidatorOptions = {
   filenameMode?: boolean
   debug: LevelName
   color?: boolean
+  recursive?: boolean
   blacklistModalities: string[]
 }
 
@@ -61,6 +62,11 @@ const validateCommand = new Command()
     'Array of modalities to error on if detected.',
     { default: [] as string[] },
   )
+  .option(
+    '-r, --recursive',
+    'Validate datasets found in derivatives directories in addition to root dataset',
+  )
+
 
 // Disabling color output is only available in Deno
 if (typeof Deno !== 'undefined') {
