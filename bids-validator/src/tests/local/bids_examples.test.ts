@@ -5,18 +5,11 @@ import * as colors from '@std/fmt/colors'
 import type { Issue } from '../../types/issues.ts'
 import type { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { type formatAssertIssue, validatePath } from './common.ts'
-import { parseOptions } from '../../setup/options.ts'
+import { type Config, parseOptions } from '../../setup/options.ts'
 
 const options = await parseOptions(['fake_dataset_arg', ...Deno.args])
 options.ignoreNiftiHeaders = true
-
-// Stand in for old validator config that could ignore issues
-function useIssue(issue: Issue): boolean {
-  return (
-    'rules.checks.general.DuplicateFiles' !== issue.rule &&
-    issue.code !== 'EMPTY_FILE'
-  )
-}
+const config: Config = {'ignore': [{code: 'EMPTY_FILE'}]}
 
 let header: string[] = ['issue key', 'filename', 'schema path']
 header = header.map((x) => colors.magenta(x))
@@ -51,13 +44,12 @@ Deno.test('validate bids-examples', async (t) => {
         continue
       }
     } catch (e) {}
-    const { tree, result } = await validatePath(t, path, options)
-    const dsIssues: DatasetIssues = result.issues.filter({ 'severity': 'error' })
-    const issues = dsIssues.issues.filter((x) => useIssue(x))
+    const { tree, result } = await validatePath(t, path, options, config)
+    const dsIssues = result.issues.filter({ 'severity': 'error' })
     await t.step(`${path} has no issues`, () => {
-      assertEquals(issues.length, 0)
+      assertEquals(dsIssues.size, 0)
     })
-    if (issues.length === 0) {
+    if (dsIssues.size === 0) {
       continue
     }
 
@@ -69,7 +61,7 @@ Deno.test('validate bids-examples', async (t) => {
         undefined,
       ]).border(true),
     )
-    issues.map((x) => formatBEIssue(x))
+    dsIssues.issues.map((x) => formatBEIssue(x))
   }
   const table = new Table()
     .header(header)

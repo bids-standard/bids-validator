@@ -1,13 +1,13 @@
 import type { ContextCheckFunction, DSCheckFunction } from '../types/check.ts'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { loadJSON } from '../files/json.ts'
-import type { IssueFile } from '../types/issues.ts'
+import type { IssueFile, Severity } from '../types/issues.ts'
 import type { GenericSchema } from '../types/schema.ts'
 import type { ValidationResult } from '../types/validation-result.ts'
 import { applyRules } from '../schema/applyRules.ts'
 import { walkFileTree } from '../schema/walk.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
-import type { ValidatorOptions } from '../setup/options.ts'
+import type { Config, ValidatorOptions } from '../setup/options.ts'
 import { Summary } from '../summary/summary.ts'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
@@ -40,6 +40,7 @@ const perDSChecks: DSCheckFunction[] = [
 export async function validate(
   fileTree: FileTree,
   options: ValidatorOptions,
+  config?: Config,
 ): Promise<ValidationResult> {
   const summary = new Summary()
   const schema = await loadSchema(options.schema)
@@ -134,6 +135,16 @@ export async function validate(
       return derivativesSummary[deriv.name]
     }),
   )
+
+  if (config) {
+    for (const level of ['ignore', 'warning', 'error'] as const) {
+      for (const filter of config[level] ?? []) {
+        for (const issue of dsContext.issues.filter(filter).issues) {
+          issue.severity = level as Severity
+        }
+      }
+    }
+  }
 
   if (options.ignoreWarnings) {
     dsContext.issues = dsContext.issues.filter({ severity: 'error' })

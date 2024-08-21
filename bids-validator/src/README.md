@@ -18,6 +18,26 @@ $ deno run --allow-read --allow-env https://deno.land/x/bids_validator/bids-vali
 
 Deno by default sandboxes applications like a web browser. `--allow-read` allows the validator to read local files, and `--allow-env` enables OS-specific features.
 
+### Configuration file
+
+The schema validator accepts a JSON configuration file that reclassifies issues as
+warnings, errors or ignored.
+
+```json
+{
+  "ignore": [
+    { "code": "JSON_KEY_RECOMMENDED", "location": "/T1w.json" }
+  ],
+  "warning": [],
+  "error": [
+    { "code": "NO_AUTHORS" }
+  ]
+}
+```
+
+The issues are partial matches of the `issues` that the validator accumulates.
+Pass the `--json` flag to see the issues in detail.
+
 ### Development tools
 
 From the repository root, use `bids-validator/bids-validator-deno` to run with all permissions enabled by default:

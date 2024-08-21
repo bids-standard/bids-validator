@@ -1,11 +1,17 @@
-import { type LevelName, LogLevelNames } from '@std/log'
+import { LogLevelNames } from '@std/log'
+import type { LevelName } from '@std/log'
 import { Command, EnumType } from '@cliffy/command'
 import { getVersion } from '../version.ts'
+import type { Issue, Severity } from '../types/issues.ts'
+
+export type Config = {
+  [key in Severity]?: Partial<Issue>[]
+}
 
 export type ValidatorOptions = {
   datasetPath: string
   schema?: string
-  legacy?: boolean
+  config?: string
   json?: boolean
   verbose?: boolean
   ignoreNiftiHeaders?: boolean
@@ -29,19 +35,20 @@ const validateCommand = new Command()
   .arguments('<dataset_directory>')
   .option('--json', 'Output machine readable JSON')
   .option(
-    '-s, --schema <type:string>',
+    '-s, --schema <URL-or-tag:string>',
     'Specify a schema version to use for validation',
     {
       default: 'latest',
     },
   )
+  .option('-c, --config <file:string>', 'Path to a JSON configuration file')
   .option('-v, --verbose', 'Log more extensive information about issues')
   .option('--ignoreWarnings', 'Disregard non-critical issues')
   .option(
     '--ignoreNiftiHeaders',
     'Disregard NIfTI header content during validation',
   )
-  .option('--debug <type:debugLevel>', 'Enable debug output', {
+  .option('--debug <level:debugLevel>', 'Enable debug output', {
     default: 'ERROR',
   })
   .option(
