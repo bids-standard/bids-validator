@@ -3,7 +3,7 @@
  * Module for extracting Tiff metadata
  */
 import { Ome, Tiff } from '@bids/schema/context'
-import * as xml2js from '@xml2js'
+import * as XML from '@libs/xml'
 import { BIDSFile } from '../types/filetree.ts'
 
 function getImageDescription(
@@ -57,19 +57,19 @@ export async function parseTIFF(
   }
 
   const imageDescription = getImageDescription(dataview, littleEndian, version === 42 ? 12 : 20)
-  const omexml = await xml2js.parseStringPromise(imageDescription || '') as { [key: string]: any }
-  const Pixels = omexml?.OME?.Image[0]?.Pixels[0]["$"]
+  const omexml = await XML.parse(imageDescription || '') as { [key: string]: any }
+  const Pixels = omexml?.OME?.Image?.Pixels
   if (!Pixels) return { tiff: { version } }
 
   return {
     tiff: { version },
     ome: {
-      PhysicalSizeX: parseFloat(Pixels['PhysicalSizeX']),
-      PhysicalSizeY: parseFloat(Pixels['PhysicalSizeY']),
-      PhysicalSizeZ: parseFloat(Pixels['PhysicalSizeZ']),
-      PhysicalSizeXUnit: Pixels['PhysicalSizeXUnit'],
-      PhysicalSizeYUnit: Pixels['PhysicalSizeYUnit'],
-      PhysicalSizeZUnit: Pixels['PhysicalSizeZUnit'],
+      PhysicalSizeX: parseFloat(Pixels['@PhysicalSizeX']),
+      PhysicalSizeY: parseFloat(Pixels['@PhysicalSizeY']),
+      PhysicalSizeZ: parseFloat(Pixels['@PhysicalSizeZ']),
+      PhysicalSizeXUnit: Pixels['@PhysicalSizeXUnit'],
+      PhysicalSizeYUnit: Pixels['@PhysicalSizeYUnit'],
+      PhysicalSizeZUnit: Pixels['@PhysicalSizeZUnit'],
     },
   }
 }
