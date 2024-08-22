@@ -251,10 +251,15 @@ export function evalAdditionalColumns(
     if (rule.additional_columns?.startsWith('allowed')) {
       extraCols = extraCols.filter((header) => !(header in context.sidecar))
     }
+    const code = (
+	rule.additional_columns === 'allowed'
+	? 'TSV_ADDITIONAL_COLUMNS_UNDEFINED'
+	: rule.additional_columns === 'allowed_if_defined'
+	? 'TSV_ADDITIONAL_COLUMNS_MUST_DEFINE'
+	: 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED'
+    )
     const issue = {
-      code: rule.additional_columns === 'allowed'
-        ? 'TSV_ADDITIONAL_COLUMNS_UNDEFINED'
-        : 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED',
+      code,
       location: context.path,
       rule: schemaPath,
     }
