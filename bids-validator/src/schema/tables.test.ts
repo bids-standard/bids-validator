@@ -149,7 +149,7 @@ Deno.test('tables eval* tests', async (t) => {
     )
   })
 
-  await t.step('verify additional columns', () => {
+  await t.step('verify not allowed additional columns', () => {
     const context = {
       path: '/sub-01/sub-01_scans.tsv',
       extension: '.tsv',
@@ -168,6 +168,38 @@ Deno.test('tables eval* tests', async (t) => {
     evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals(
       context.dataset.issues.get({ code: 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED' }).length,
+      1,
+    )
+  })
+  await t.step('verify allowed and allowed_if_defined additional columns', () => {
+    const context = {
+      path: '/sub-01/sub-01_scans.tsv',
+      extension: '.tsv',
+      sidecar: {'extra': {'description': 'a fun and whimsical extra column'}},
+      columns: {
+        onset: ['1', '2', 'n/a'],
+        strain_rrid: ['RRID:SCR_012345', 'RRID:SCR_012345', 'n/a'],
+        extra: [1, 2, 3]
+      },
+      dataset: { issues: new DatasetIssues() },
+    }
+    const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
+    rule['additional_columns'] = "allowed_if_defined"
+    evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    assertEquals(context.dataset.issues.size, 0)
+
+    context['sidecar'] = {}
+    evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_ADDITIONAL_COLUMNS_MUST_DEFINE' }).length,
+      1,
+    )
+
+    rule['additional_columns'] = "allowed"
+    evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    console.log(context.dataset.issues)
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_ADDITIONAL_COLUMNS_UNDEFINED' }).length,
       1,
     )
   })
