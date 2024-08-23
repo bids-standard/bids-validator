@@ -1,4 +1,5 @@
 import { parseOptions } from './setup/options.ts'
+import type { Config } from './setup/options.ts'
 import * as colors from '@std/fmt/colors'
 import { readFileTree } from './files/deno.ts'
 import { fileListToTree } from './files/browser.ts'
@@ -12,11 +13,14 @@ export async function main(): Promise<ValidationResult> {
   const options = await parseOptions(Deno.args)
   colors.setColorEnabled(options.color ?? false)
   setupLogging(options.debug)
+
   const absolutePath = resolve(options.datasetPath)
   const tree = await readFileTree(absolutePath)
 
+  const config = options.config ? JSON.parse(Deno.readTextFileSync(options.config)) as Config : {}
+
   // Run the schema based validator
-  const schemaResult = await validate(tree, options)
+  const schemaResult = await validate(tree, options, config)
 
   if (options.json) {
     console.log(

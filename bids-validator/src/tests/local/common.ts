@@ -5,12 +5,13 @@ import type { ValidationResult } from '../../types/validation-result.ts'
 import type { Issue } from '../../types/issues.ts'
 import { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { Summary } from '../../summary/summary.ts'
-import { parseOptions, type ValidatorOptions } from '../../setup/options.ts'
+import { type Config, parseOptions, type ValidatorOptions } from '../../setup/options.ts'
 
 export async function validatePath(
   t: Deno.TestContext,
   path: string,
   options: Partial<ValidatorOptions> = {},
+  config: Config = {},
 ): Promise<{ tree: FileTree; result: ValidationResult }> {
   let tree: FileTree = new FileTree('', '')
   const summary = new Summary()
@@ -27,7 +28,7 @@ export async function validatePath(
     result = await validate(tree, {
       ...(await parseOptions([path])),
       ...options,
-    })
+    }, config)
   })
 
   return { tree, result }

@@ -254,7 +254,7 @@ export class BIDSContext implements Context {
       return
     }
     this.gzip = await parseGzip(this.file, 512).catch((error) => {
-      console.debug('Error parsing gzip header', error)
+      logger.debug('Error parsing gzip header', error)
       return undefined
     })
   }
@@ -265,7 +265,7 @@ export class BIDSContext implements Context {
     }
     const { tiff, ome } = await parseTIFF(this.file, this.extension.startsWith('.ome')).catch(
       (error) => {
-        console.debug('Error parsing tiff header', error)
+        logger.debug('Error parsing tiff header', error)
         return { tiff: undefined, ome: undefined }
       },
     )
