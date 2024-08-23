@@ -239,7 +239,7 @@ export function evalAdditionalColumns(
   if (context.extension !== '.tsv') return
   const headers = Object.keys(context?.columns)
   // hard coding allowed here feels bad
-  if (!(rule.additional_columns === 'allowed') && rule.columns) {
+  if (rule.columns) {
     const ruleHeadersNames = Object.keys(rule.columns).map(
       // @ts-expect-error
       (x) => schema.objects.columns[x].name,

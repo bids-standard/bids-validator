@@ -184,7 +184,7 @@ Deno.test('tables eval* tests', async (t) => {
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
-    rule['additional_columns'] = "allowed_if_defined"
+    rule.additional_columns = "allowed_if_defined"
     evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals(context.dataset.issues.size, 0)
 
@@ -195,9 +195,8 @@ Deno.test('tables eval* tests', async (t) => {
       1,
     )
 
-    rule['additional_columns'] = "allowed"
+    rule.additional_columns = "allowed"
     evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
-    console.log(context.dataset.issues)
     assertEquals(
       context.dataset.issues.get({ code: 'TSV_ADDITIONAL_COLUMNS_UNDEFINED' }).length,
       1,
