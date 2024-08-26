@@ -39,10 +39,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04, macos-12, windows-2022]
+        allow-net: [true, false]
       fail-fast: false
     defaults:
       run:
         working-directory: ./bids-validator
+        shell: bash
 
     steps:
       - uses: actions/checkout@v4
@@ -51,7 +53,13 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - run: deno test --allow-all --coverage=cov/ src/
+      - name: Set permissions with network access
+        run: echo 'PERMS=--allow-read --allow-write --allow-env --allow-run --allow-net' >> $GITHUB_ENV
+        if: ${{ matrix.allow-net }}
+      - name: Set permissions without network access
+        run: echo 'PERMS=--allow-read --allow-write --allow-env --allow-run --deny-net' >> $GITHUB_ENV
+        if: ${{ ! matrix.allow-net }}
+      - run: deno test $PERMS --coverage=cov/ src/
       - name: Collect coverage
         run: deno coverage cov/ --lcov --output=coverage.lcov
         if: ${{ always() }}
