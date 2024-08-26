@@ -238,8 +238,7 @@ export function evalAdditionalColumns(
 ): void {
   if (context.extension !== '.tsv') return
   const headers = Object.keys(context?.columns)
-  // hard coding allowed here feels bad
-  if (!(rule.additional_columns === 'allowed') && rule.columns) {
+  if (rule.columns) {
     const ruleHeadersNames = Object.keys(rule.columns).map(
       // @ts-expect-error
       (x) => schema.objects.columns[x].name,
@@ -247,16 +246,24 @@ export function evalAdditionalColumns(
     let extraCols = headers.filter(
       (header) => !ruleHeadersNames.includes(header),
     )
-    if (rule.additional_columns === 'allowed_if_defined') {
+
+    if (rule.additional_columns?.startsWith('allowed')) {
       extraCols = extraCols.filter((header) => !(header in context.sidecar))
     }
+    const code = (
+	rule.additional_columns === 'allowed'
+	? 'TSV_ADDITIONAL_COLUMNS_UNDEFINED'
+	: rule.additional_columns === 'allowed_if_defined'
+	? 'TSV_ADDITIONAL_COLUMNS_MUST_DEFINE'
+	: 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED'
+    )
+    const issue = {
+      code,
+      location: context.path,
+      rule: schemaPath,
+    }
     for (const col of extraCols) {
-      context.dataset.issues.add({
-        code: 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED',
-        subCode: col,
-        location: context.path,
-        rule: schemaPath,
-      })
+      context.dataset.issues.add({ ...issue, subCode: col })
     }
   }
 }
