@@ -1,6 +1,6 @@
 {
   "name": "@bids/validator",
-  "version": "1.14.9",
+  "version": "1.14.10",
   "exports": "./src/bids-validator.ts",
   "publish": {
     "exclude": [
