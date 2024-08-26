@@ -108,11 +108,13 @@ export async function validate(
 
   const modalitiesRule = schema.rules.modalities as Record<string, { datatypes: string[] }>
   const blacklistedDatatypes = new Map<string, string>()
-  // Map blacklisted datatypes back to the modality that generated them
-  for (const modality of options.blacklistModalities) {
-    const datatypes = modalitiesRule[modality.toLowerCase()]?.datatypes as string[]
-    for (const datatype of datatypes) {
-      blacklistedDatatypes.set(datatype, modality)
+  if (options.blacklistModalities) {
+    // Map blacklisted datatypes back to the modality that generated them
+    for (const modality of options.blacklistModalities) {
+      const datatypes = modalitiesRule[modality.toLowerCase()]?.datatypes as string[]
+      for (const datatype of datatypes) {
+        blacklistedDatatypes.set(datatype, modality)
+      }
     }
   }
 
