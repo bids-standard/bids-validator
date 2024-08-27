@@ -8,34 +8,35 @@ import { setCustomMetadataFormats } from '../validators/json.ts'
  *
  * version is ignored when the network cannot be accessed
  */
-export async function loadSchema(version = 'latest'): Promise<Schema> {
-  const versionRegex = /^v\d/
+export async function loadSchema(version?: string): Promise<Schema> {
   let schemaUrl = version
   const bidsSchema = typeof Deno !== 'undefined' ? Deno.env.get('BIDS_SCHEMA') : undefined
   if (bidsSchema !== undefined) {
     schemaUrl = bidsSchema
-  } else if (version === 'latest' || versionRegex.test(version)) {
+  } else if (version?.match(/^(v\d+\.\d+\.\d+|stable|latest)$/)) {
     schemaUrl = `https://bids-specification.readthedocs.io/en/${version}/schema.json`
   }
-  let schema: Schema | undefined = undefined
-  try {
-    const schemaModule = await import(/* @vite-ignore */ schemaUrl, {
-      with: { type: 'json' },
-    })
-    schema = new Proxy(
-      schemaModule.default as object,
-      objectPathHandler,
-    ) as Schema
-  } catch (error) {
-    // No network access or other errors
-    console.error(error)
-    console.error(
-      `Warning, could not load schema from ${schemaUrl}, falling back to internal version`,
-    )
-    schema = new Proxy(
-      schemaDefault as object,
-      objectPathHandler,
-    ) as Schema
+
+  let schema: Schema = new Proxy(
+    schemaDefault as object,
+    objectPathHandler,
+  ) as Schema
+
+  if (schemaUrl !== undefined) {
+    try {
+      const jsonResponse = await fetch(schemaUrl)
+      const jsonData = await jsonResponse.json()
+      schema = new Proxy(
+        jsonData as object,
+        objectPathHandler,
+      ) as Schema
+    } catch (error) {
+      // No network access or other errors
+      console.error(error)
+      console.error(
+        `Warning, could not load schema from ${schemaUrl}, falling back to internal version`,
+      )
+    }
   }
   setCustomMetadataFormats(schema)
   return schema

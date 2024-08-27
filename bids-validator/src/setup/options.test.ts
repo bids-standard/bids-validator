@@ -8,7 +8,6 @@ Deno.test('options parsing', async (t) => {
       datasetPath: 'my_dataset',
       debug: 'ERROR',
       json: true,
-      schema: 'latest',
       color: false,
       blacklistModalities: [],
     })
