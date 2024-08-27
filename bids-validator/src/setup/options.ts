@@ -38,9 +38,6 @@ const validateCommand = new Command()
   .option(
     '-s, --schema <URL-or-tag:string>',
     'Specify a schema version to use for validation',
-    {
-      default: 'latest',
-    },
   )
   .option('-c, --config <file:string>', 'Path to a JSON configuration file')
   .option('-v, --verbose', 'Log more extensive information about issues')
