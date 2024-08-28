@@ -32,7 +32,10 @@ Deno.test('parseGzip', async (t) => {
     })
   })
   await t.step('gracefully handles empty file', async () => {
-    const file = new BIDSFileDeno('tests/data/bids-examples/7t_trt', 'sub-01/ses-1/anat/sub-01_ses-1_T1map.nii.gz')
+    const file = new BIDSFileDeno(
+      'tests/data/bids-examples/7t_trt',
+      'sub-01/ses-1/anat/sub-01_ses-1_T1map.nii.gz',
+    )
     const gzip = await parseGzip(file)
     assert(!gzip)
   })

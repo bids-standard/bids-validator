@@ -9,7 +9,7 @@ import { type Config, parseOptions } from '../../setup/options.ts'
 
 const options = await parseOptions(['fake_dataset_arg', ...Deno.args])
 options.ignoreNiftiHeaders = true
-const config: Config = {'ignore': [{code: 'EMPTY_FILE'}]}
+const config: Config = { 'ignore': [{ code: 'EMPTY_FILE' }] }
 
 let header: string[] = ['issue key', 'filename', 'schema path']
 header = header.map((x) => colors.magenta(x))

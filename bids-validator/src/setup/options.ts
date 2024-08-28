@@ -64,7 +64,6 @@ const validateCommand = new Command()
     'Validate datasets found in derivatives directories in addition to root dataset',
   )
 
-
 // Disabling color output is only available in Deno
 if (typeof Deno !== 'undefined') {
   validateCommand

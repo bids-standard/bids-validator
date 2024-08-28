@@ -98,7 +98,8 @@ export const bidsIssues: IssueDefinitionRecord = {
   },
   TSV_ADDITIONAL_COLUMNS_MUST_DEFINE: {
     severity: 'error',
-    reason: 'Additional TSV columns must be defined in the associated JSON sidecar for this file type',
+    reason:
+      'Additional TSV columns must be defined in the associated JSON sidecar for this file type',
   },
   TSV_ADDITIONAL_COLUMNS_UNDEFINED: {
     severity: 'warning',
