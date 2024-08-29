@@ -1,5 +1,5 @@
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
-import type { Context } from '@bids/schema/context'
+import type { Context } from '@bids/schema'
 import { readEntities } from '../schema/entities.ts'
 
 export function* walkBack(
