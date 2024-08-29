@@ -33,7 +33,7 @@ const perContextChecks: ContextCheckFunction[] = [
 const perDSChecks: DSCheckFunction[] = [
   unusedStimulus,
   sidecarWithoutDatafile,
-  citationValdiate,
+  citationValidate,
 ]
 
 /**
