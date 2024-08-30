@@ -27,7 +27,7 @@ const flags = parse(Deno.args, {
 
 const version = await getVersion()
 
-let versionPlugin = {
+const versionPlugin = {
   name: 'version',
   setup(build: esbuild.PluginBuild) {
     build.onResolve({ filter: /\.git-meta\.json/ }, (args) => ({
@@ -46,7 +46,7 @@ const result = await esbuild.build({
   format: 'esm',
   entryPoints: [MAIN_ENTRY, CLI_ENTRY],
   bundle: true,
-  outdir: path.join('dist','validator'),
+  outdir: path.join('dist', 'validator'),
   minify: flags.minify,
   target: ['chrome109', 'firefox109', 'safari16'],
   plugins: [

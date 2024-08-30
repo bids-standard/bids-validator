@@ -17,6 +17,7 @@ import { sidecarWithoutDatafile, unusedStimulus } from './internal/unusedFile.ts
 import { type BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import type { parseOptions } from '../setup/options.ts'
 import { hedValidate } from './hed.ts'
+import { citationValidate } from './citation.ts'
 
 /**
  * Ordering of checks to apply
@@ -32,6 +33,7 @@ const perContextChecks: ContextCheckFunction[] = [
 const perDSChecks: DSCheckFunction[] = [
   unusedStimulus,
   sidecarWithoutDatafile,
+  citationValidate,
 ]
 
 /**

@@ -1,7 +1,7 @@
 import { assert, assertObjectMatch } from '@std/assert'
 import { loadSchema } from './loadSchema.ts'
 
-Deno.test('schema yaml loader', async (t) => {
+Deno.test('schema loader', async (t) => {
   await t.step('reads in top level files document', async () => {
     const schemaDefs = await loadSchema()
     // Look for some stable fields in top level files
