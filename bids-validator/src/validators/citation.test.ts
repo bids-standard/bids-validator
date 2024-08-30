@@ -4,8 +4,10 @@ import { BIDSFileDeno } from '../files/deno.ts'
 import { citationValidate } from './citation.ts'
 import { BIDSContextDataset } from '../schema/context.ts'
 import { GenericSchema } from '../types/schema.ts'
+import { loadSchema } from '../setup/loadSchema.ts'
 
 Deno.test('citation validation', async (t) => {
+  const schema = await loadSchema()
   await t.step('no errors on the good citation.cff', async () => {
     const tree = pathsToTree(['CITATION.cff'])
     const dsContext = new BIDSContextDataset({ tree })
