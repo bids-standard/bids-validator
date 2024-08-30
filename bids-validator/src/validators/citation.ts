@@ -2,12 +2,10 @@ import type { GenericSchema } from '../types/schema.ts'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import type { BIDSContextDataset } from '../schema/context.ts'
 import { schema as citationSchema } from '@bids/schema/citation'
-import { Ajv, type DefinedError } from '@ajv'
-import _addFormats from '@ajv-formats'
+import { compile } from './json.ts'
+import type { DefinedError } from '@ajv'
 import { parse } from '@std/yaml'
 
-// https://github.com/ajv-validator/ajv-formats/issues/85
-const addFormats = _addFormats as unknown as typeof _addFormats.default
 const citationFilename = 'CITATION.cff'
 
 export async function citationValidate(
@@ -23,9 +21,7 @@ export async function citationValidate(
     throw error
     return
   }
-  const ajv = new Ajv()
-  addFormats(ajv)
-  const citationValidate = ajv.compile(citationSchema)
+  const citationValidate = compile(citationSchema)
   if (!citationValidate(citation)) {
     for (const err of citationValidate.errors as DefinedError[]) {
       dsContext.issues.add({

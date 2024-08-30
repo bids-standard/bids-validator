@@ -28,7 +28,6 @@
   },
   "imports": {
     "@ajv": "npm:ajv@8.16.0",
-    "@ajv-formats": "npm:ajv-formats@3.0.1",
     "@bids/schema": "jsr:@bids/schema@0.11.2-dev.2+7f1f6737",
     "@cliffy/command": "jsr:@cliffy/command@1.0.0-rc.5",
     "@cliffy/table": "jsr:@cliffy/table@1.0.0-rc.5",

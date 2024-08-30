@@ -42,15 +42,6 @@ const versionPlugin = {
   },
 }
 
-const custom_external = {
-  name: 'custom-external',
-  setup({ onResolve }) {
-    onResolve({ filter: /^ajv/ }, (args) => {
-      return { path: args.path, external: true }
-    })
-  },
-}
-
 const result = await esbuild.build({
   format: 'esm',
   entryPoints: [MAIN_ENTRY, CLI_ENTRY],
@@ -60,7 +51,6 @@ const result = await esbuild.build({
   target: ['chrome109', 'firefox109', 'safari16'],
   plugins: [
     versionPlugin,
-    custom_external,
     ...denoPlugins({
       configPath: path.join(dir, 'deno.json'),
     }),
