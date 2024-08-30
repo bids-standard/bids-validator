@@ -25,7 +25,8 @@ export async function citationValidate(
   if (!validate(citation)) {
     for (const err of validate.errors as DefinedError[]) {
       dsContext.issues.add({
-        code: 'JSON_SCHEMA_VALIDATION_ERROR',
+        code: 'CITATION_CFF_VALIDATION_ERROR',
+        subCode: err['instancePath'],
         issueMessage: err['message'],
         location: citationFilename,
       })
