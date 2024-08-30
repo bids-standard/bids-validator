@@ -20,6 +20,6 @@ Deno.test('citation validation', async (t) => {
     const file = new BIDSFileDeno('tests/data/citation', 'bad.cff')
     tree.files[0].text = () => file.text()
     await citationValidate({} as GenericSchema, dsContext)
-    assert(dsContext.issues.size === 1)
+    assert(dsContext.issues.get({ code: 'CITATION_CFF_VALIDATION_ERROR' }).length === 1)
   })
 })

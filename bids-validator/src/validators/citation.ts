@@ -18,7 +18,11 @@ export async function citationValidate(
   try {
     citation = parse(await citationFile.text())
   } catch (error) {
-    throw error
+    dsContext.issues.add({
+      code: 'FILE_READ',
+      issueMessage: `Error from attempted read of file:\n${error}`,
+      location: citationFilename,
+    })
     return
   }
   const validate = compile(citationSchema)
