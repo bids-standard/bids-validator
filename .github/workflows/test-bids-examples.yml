@@ -57,6 +57,12 @@ jobs:
           which bids-validator
           ls -a $(which bids-validator)
 
+      - name: Ignore examples not supported by legacy validator
+        run: |
+          for DS in bids-examples/mrs_*; do
+            touch $DS/.SKIP_VALIDATION
+          done
+
       - name: Validate all BIDS datasets using bids-validator
         run: |
           export PATH="../node_modules/.bin:$PATH"
