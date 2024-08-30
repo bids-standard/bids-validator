@@ -106,9 +106,9 @@ describe('BIDS example datasets ', function () {
         assert(summary.subjects.length === 16)
         assert.deepEqual(summary.tasks, ['balloon analog risk task'])
         expect(summary.modalities).toEqual(['MRI'])
-        assert(summary.totalFiles === 134)
+        assert(summary.totalFiles === 135)
         assert.deepEqual(errors.length, 1)
-        assert(warnings.length === 2)
+        assert(warnings.length === 3)
         assert(
           warnings.findIndex((warning) => warning.code === 13) > -1,
           'warnings do not contain a code 13',
@@ -217,9 +217,9 @@ describe('BIDS example datasets ', function () {
         assert(summary.subjects.length === 16)
         assert.deepEqual(summary.tasks, ['balloon analog risk task'])
         assert(summary.modalities.includes('MRI'))
-        assert(summary.totalFiles === 134)
+        assert(summary.totalFiles === 135)
         assert.deepEqual(errors.length, 1)
-        assert(warnings.length === 2)
+        assert(warnings.length === 3)
         assert(
           warnings.findIndex((warning) => warning.code === 13) > -1,
           'warnings do not contain a code 13',
@@ -241,9 +241,9 @@ describe('BIDS example datasets ', function () {
         assert(summary.subjects.length === 16)
         assert.deepEqual(summary.tasks, ['balloon analog risk task'])
         assert(summary.modalities.includes('MRI'))
-        assert(summary.totalFiles === 134)
+        assert(summary.totalFiles === 135)
         assert.deepEqual(errors.length, 2)
-        assert(warnings.length === 2)
+        assert(warnings.length === 3)
         assert(
           warnings.findIndex((warning) => warning.code === 13) > -1,
           'warnings do not contain a code 13',
