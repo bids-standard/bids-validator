@@ -21,9 +21,9 @@ export async function citationValidate(
     throw error
     return
   }
-  const citationValidate = compile(citationSchema)
-  if (!citationValidate(citation)) {
-    for (const err of citationValidate.errors as DefinedError[]) {
+  const validate = compile(citationSchema)
+  if (!validate(citation)) {
+    for (const err of validate.errors as DefinedError[]) {
       dsContext.issues.add({
         code: 'JSON_SCHEMA_VALIDATION_ERROR',
         issueMessage: err['message'],
