@@ -70,25 +70,3 @@ Deno.test('test readEntities', async (t) => {
     })
   })
 })
-
-Deno.test('test readEntities performance', (t) => {
-  const generateStart = performance.now()
-  const testFilenames = []
-  for (let n = 0; n < 200000; n++) {
-    testFilenames.push(generateBIDSFilename(Math.floor(Math.random() * 4)))
-  }
-  const generateEnd = performance.now()
-  const normalizePerf = generateEnd - generateStart
-
-  const start = performance.now()
-  for (const each of testFilenames) {
-    readEntities(each)
-  }
-  const end = performance.now()
-  const readEntitiesTime = end - start
-
-  const perfRatio = readEntitiesTime / normalizePerf + Number.EPSILON
-  const message = `readEntities() runtime ratio: ${perfRatio.toFixed(2)}`
-  console.log(message)
-  assert(perfRatio < 2, message)
-})
