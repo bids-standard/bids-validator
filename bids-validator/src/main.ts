@@ -3,9 +3,10 @@ import type { Config } from './setup/options.ts'
 import * as colors from '@std/fmt/colors'
 import { readFileTree } from './files/deno.ts'
 import { fileListToTree } from './files/browser.ts'
+import { stringToFile } from './files/outfile.ts'
 import { resolve } from '@std/path'
 import { validate } from './validators/bids.ts'
-import { consoleFormat } from './utils/output.ts'
+import { consoleFormat, resultToJSONStr } from './utils/output.ts'
 import { setupLogging } from './utils/logger.ts'
 import type { ValidationResult } from './types/validation-result.ts'
 
@@ -27,26 +28,19 @@ export async function main(): Promise<ValidationResult> {
   // Run the schema based validator
   const schemaResult = await validate(tree, options, config)
 
+  let output_string = ""
   if (options.json) {
-    console.log(
-      JSON.stringify(schemaResult, (key, value) => {
-        if (value?.parent) {
-          // Remove parent reference to avoid circular references
-          value.parent = undefined
-        }
-        if (value instanceof Map) {
-          return Object.fromEntries(value)
-        } else {
-          return value
-        }
-      }),
-    )
+    output_string = resultToJSONStr(schemaResult)
   } else {
-    console.log(
-      consoleFormat(schemaResult, {
-        verbose: options.verbose ? options.verbose : false,
-      }),
-    )
+    output_string = consoleFormat(schemaResult, {
+      verbose: options.verbose ? options.verbose : false,
+    })
+  }
+
+  if (options.outfile) {
+    stringToFile(output_string, options.outfile)
+  } else {
+    console.log(output_string)
   }
 
   return schemaResult

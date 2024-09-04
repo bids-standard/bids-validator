@@ -26,6 +26,7 @@ export type ValidatorOptions = {
   debug: LevelName
   color?: boolean
   recursive?: boolean
+  outfile?: string
   blacklistModalities: string[]
 }
 
@@ -69,6 +70,10 @@ export const validateCommand = new Command()
   .option(
     '-r, --recursive',
     'Validate datasets found in derivatives directories in addition to root dataset',
+  )
+  .option(
+    '-o, --outfile <file: string>',
+    'File to write validation results to. Implies --json.',
   )
 
 // Disabling color output is only available in Deno
