@@ -9,6 +9,11 @@ import { consoleFormat } from './utils/output.ts'
 import { setupLogging } from './utils/logger.ts'
 import type { ValidationResult } from './types/validation-result.ts'
 
+/**
+ * Validation entrypoint intended for command line usage with Deno
+ *
+ * Parses command line options, runs validation, and formats the result. Call `validate` directly for other environments
+ */
 export async function main(): Promise<ValidationResult> {
   const options = await parseOptions(Deno.args)
   colors.setColorEnabled(options.color ?? false)

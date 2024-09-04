@@ -4,10 +4,16 @@ import { Command, EnumType } from '@cliffy/command'
 import { getVersion } from '../version.ts'
 import type { Issue, Severity } from '../types/issues.ts'
 
+/**
+ * BIDS Validator config file object definition
+ */
 export type Config = {
   [key in Severity]?: Partial<Issue>[]
 }
 
+/**
+ * BIDS Validator options object definition
+ */
 export type ValidatorOptions = {
   datasetPath: string
   schema?: string
@@ -27,7 +33,8 @@ const modalityType = new EnumType<string>(
   ['MRI', 'PET', 'MEG', 'EEG', 'iEEG', 'Microscopy', 'NIRS', 'MRS'],
 )
 
-const validateCommand = new Command()
+/** Extendable Cliffy Command with built in BIDS validator options */
+export const validateCommand = new Command()
   .name('bids-validator')
   .type('debugLevel', new EnumType(LogLevelNames))
   .description(
