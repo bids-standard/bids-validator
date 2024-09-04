@@ -34,7 +34,7 @@ const modalityType = new EnumType<string>(
 )
 
 /** Extendable Cliffy Command with built in BIDS validator options */
-export const validateCommand = new Command()
+export const validateCommand: Command<void, void, any, string[]> = new Command()
   .name('bids-validator')
   .type('debugLevel', new EnumType(LogLevelNames))
   .description(
