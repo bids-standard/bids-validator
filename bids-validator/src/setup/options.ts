@@ -35,7 +35,7 @@ const modalityType = new EnumType<string>(
 )
 
 /** Extendable Cliffy Command with built in BIDS validator options */
-export const validateCommand = new Command()
+export const validateCommand: Command<void, void, any, string[], void> = new Command()
   .name('bids-validator')
   .type('debugLevel', new EnumType(LogLevelNames))
   .description(
@@ -72,8 +72,8 @@ export const validateCommand = new Command()
     'Validate datasets found in derivatives directories in addition to root dataset',
   )
   .option(
-    '-o, --outfile <file: string>',
-    'File to write validation results to. Implies --json.',
+    '-o, --outfile <file:string>',
+    'File to write validation results to.',
   )
 
 // Disabling color output is only available in Deno

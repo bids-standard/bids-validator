@@ -1,6 +1,6 @@
 {
   "name": "bids-validator",
-  "version": "1.14.12-dev.0",
+  "version": "1.14.13-dev.0",
   "description": "",
   "main": "./dist/commonjs/index.js",
   "exports": {
@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/bids-standard/bids-validator",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.621.0",
+    "@aws-sdk/client-s3": "^3.637.0",
     "ajv": "^6.5.2",
     "bytes": "^3.1.2",
     "colors": "^1.4.0",
@@ -53,7 +53,7 @@
     "lerna": "^8.1.8",
     "lodash": "^4.17.21",
     "minimatch": "3.0.5",
-    "next": "14.2.5",
+    "next": "14.2.7",
     "nifti-js": "^1.0.1",
     "p-limit": "^2.1.0",
     "pako": "^1.0.6",
@@ -76,7 +76,7 @@
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "husky": "^9.1.4",
+    "husky": "^9.1.5",
     "lockfile": "^1.0.4",
     "sync-request": "6.1.0"
   },

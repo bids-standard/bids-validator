@@ -7,7 +7,7 @@ export function stringToFile(s: string, path: string) {
 }
 
 function denoStringToFile(s: string, path: string) {
-  Deno.writeTextFileSync(s, path)
+  Deno.writeTextFileSync(path, s)
 }
 
 /* path doesn't make much sense here. Should be just a filename. */
