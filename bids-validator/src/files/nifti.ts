@@ -1,6 +1,6 @@
 import { isCompressed, readHeader } from '@mango/nifti'
 import type { BIDSFile } from '../types/filetree.ts'
-import type { logger } from '../utils/logger.ts'
+import { logger } from '../utils/logger.ts'
 import type { NiftiHeader } from '@bids/schema/context'
 
 async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array> {
