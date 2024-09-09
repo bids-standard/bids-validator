@@ -3,7 +3,6 @@ import type { Config } from './setup/options.ts'
 import * as colors from '@std/fmt/colors'
 import { readFileTree } from './files/deno.ts'
 import { fileListToTree } from './files/browser.ts'
-import { stringToFile } from './files/outfile.ts'
 import { resolve } from '@std/path'
 import { validate } from './validators/bids.ts'
 import { consoleFormat, resultToJSONStr } from './utils/output.ts'
@@ -30,7 +29,7 @@ export async function main(): Promise<ValidationResult> {
 
   let output_string = ""
   if (options.json) {
-    output_string = resultToJSONStr(schemaResult)
+      output_string = resultToJSONStr(schemaResult)
   } else {
     output_string = consoleFormat(schemaResult, {
       verbose: options.verbose ? options.verbose : false,
@@ -38,7 +37,12 @@ export async function main(): Promise<ValidationResult> {
   }
 
   if (options.outfile) {
-    stringToFile(output_string, options.outfile)
+    if (globalThis.Deno) {
+      Deno.writeTextFileSync(options.outfile, output_string)
+    } else {
+      console.error("Output to file only supported in Deno runtime")
+      console.log(output_string)
+    }
   } else {
     console.log(output_string)
   }
