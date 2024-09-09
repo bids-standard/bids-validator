@@ -29,9 +29,12 @@ async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array> 
 
 function readHeaderQuiet(buf: ArrayBuffer) {
   const console_error = console.error
-  console.error = () => {}
+  const console_log = console.log
+  console.error = (msg: string) => { logger.info(msg)}
+  console.log = (msg: string) => { logger.info(msg)}
   const header = readHeader(buf)
   console.error = console_error
+  console.log = console_log
   return header
 }
 
