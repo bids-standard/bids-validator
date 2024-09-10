@@ -57,7 +57,7 @@ function formatIssues(
 
     const subCodes = issues.groupBy('subCode')
     if (subCodes.size === 1 && subCodes.has('None')) {
-      output.push(...formatFiles(issues))
+      output.push(...formatFiles(issues, options))
     } else {
       for (const [subCode, subIssues] of subCodes) {
         if (subIssues.size === 0) {
