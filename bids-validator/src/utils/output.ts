@@ -170,3 +170,17 @@ function helpUrl(code: string): string {
   // Provide a link to NeuroStars
   return `https://neurostars.org/search?q=${code}`
 }
+
+export function resultToJSONStr(result: ValidationResult) {
+  return JSON.stringify(result, (key, value) => {
+    if (value?.parent) {
+      // Remove parent reference to avoid circular references
+      value.parent = undefined
+    }
+    if (value instanceof Map) {
+      return Object.fromEntries(value)
+    } else {
+      return value
+    }
+  })
+}
