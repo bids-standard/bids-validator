@@ -171,7 +171,7 @@ function helpUrl(code: string): string {
   return `https://neurostars.org/search?q=${code}`
 }
 
-export function resultToJSONStr(result: ValidationResult) {
+export function resultToJSONStr(result: ValidationResult): string {
   return JSON.stringify(result, (key, value) => {
     if (value?.parent) {
       // Remove parent reference to avoid circular references
