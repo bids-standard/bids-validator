@@ -44,7 +44,7 @@
     "cross-fetch": "^4.0.0",
     "date-fns": "^3.6.0",
     "events": "^3.3.0",
-    "exifreader": "^4.23.3",
+    "exifreader": "^4.23.5",
     "hed-validator": "^3.15.4",
     "ignore": "^5.3.2",
     "is-utf8": "^0.2.1",

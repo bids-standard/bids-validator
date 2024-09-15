@@ -13,7 +13,7 @@
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
-    "sass": "^1.77.8"
+    "sass": "^1.78.0"
   },
   "scripts": {
     "dev": "next",
