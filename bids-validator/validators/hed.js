@@ -3,7 +3,12 @@ import utils from '../utils'
 
 const Issue = utils.issues.Issue
 
-export default async function checkHedStrings(tsvs, jsonContents, jsonFiles) {
+export default async function returnHedIssues(tsvs, jsonContents, jsonFiles) {
+  const issues = await checkHedStrings(tsvs, jsonContents, jsonFiles)
+  return issues.map((issue) => new Issue(issue))
+}
+
+async function checkHedStrings(tsvs, jsonContents, jsonFiles) {
   const datasetDescription = jsonContents['/dataset_description.json']
   const datasetDescriptionData = new hedValidator.bids.BidsJsonFile(
     '/dataset_description.json',
