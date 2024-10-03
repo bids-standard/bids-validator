@@ -1,8 +1,6 @@
 import utils from '../../utils'
 import Ajv from 'ajv'
-import addFormats from "ajv-formats"
 const ajv = new Ajv({ allErrors: true, strictSchema: false })
-addFormats(ajv)
 ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'))
 ajv.addSchema(require('./schemas/common_definitions.json'))
 const Issue = utils.issues.Issue
