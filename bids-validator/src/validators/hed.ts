@@ -90,6 +90,8 @@ export async function hedValidate(
       const location = hedIssue.file ? hedIssue.file.path : ''
       context.dataset.issues.add({
         code: hedOldToNewLookup[code],
+        // @ts-expect-error
+        subCode: hedIssue.hedIssue.hedCode, // Hidden property
         location,
         issueMessage: hedIssue.evidence,
       })
