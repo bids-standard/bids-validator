@@ -27,7 +27,7 @@ Deno.test('Browser implementation of FileTree', async (t) => {
       ),
       new TestFile(['flat test dataset'], 'README.md', 'ds/README.md'),
     ]
-    const tree = fileListToTree(files)
+    const tree = await fileListToTree(files)
     const expectedTree = new FileTree('/', '/', undefined)
     expectedTree.files = files.map((f) => {
       const file = new BIDSFileBrowser(f, ignore)
@@ -60,7 +60,7 @@ Deno.test('Browser implementation of FileTree', async (t) => {
         'ds/sub-01/anat/sub-01_T1w.nii.gz',
       ),
     ]
-    const tree = fileListToTree(files)
+    const tree = await fileListToTree(files)
     const expectedTree = new FileTree('/', '/', undefined)
     const sub01Tree = new FileTree('/sub-01', 'sub-01', expectedTree)
     const anatTree = new FileTree('/sub-01/anat', 'anat', sub01Tree)
@@ -89,7 +89,7 @@ Deno.test('Spread copies of BIDSFileBrowser contain name and path properties', a
     ),
     new TestFile(['flat test dataset'], 'README.md', 'ds/README.md'),
   ]
-  const tree = fileListToTree(files)
+  const tree = await fileListToTree(files)
   const expectedTree = new FileTree('/', '/', undefined)
   expectedTree.files = files.map((f) => {
     const file = new BIDSFileBrowser(f, ignore)
