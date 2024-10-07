@@ -1,6 +1,6 @@
 import { type BIDSFile, FileTree } from '../types/filetree.ts'
 import { filesToTree } from './filetree.ts'
-import { FileIgnoreRules } from './ignore.ts'
+import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 import { parse, SEPARATOR_PATTERN } from '@std/path'
 import * as posix from '@std/path/posix'
 
@@ -49,8 +49,13 @@ export class BIDSFileBrowser implements BIDSFile {
 /**
  * Convert from FileList (created with webkitDirectory: true) to FileTree for validator use
  */
-export function fileListToTree(files: File[]): FileTree {
+export async function fileListToTree(files: File[]): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
-  const tree = new FileTree('/', '/', undefined)
-  return filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, tree)))
+  const root = new FileTree('/', '/', undefined)
+  const tree = filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, root)))
+  const bidsignore = tree.get('.bidsignore')
+  if (bidsignore) {
+    ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
+  }
+  return tree
 }

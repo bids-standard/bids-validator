@@ -27,7 +27,7 @@ Deno.test('Browser implementation of FileTree', async (t) => {
       ),
       new TestFile(['flat test dataset'], 'README.md', 'ds/README.md'),
     ]
-    const tree = fileListToTree(files)
+    const tree = await fileListToTree(files)
     const expectedTree = new FileTree('/', '/', undefined)
     expectedTree.files = files.map((f) => {
       const file = new BIDSFileBrowser(f, ignore)
@@ -60,7 +60,7 @@ Deno.test('Browser implementation of FileTree', async (t) => {
         'ds/sub-01/anat/sub-01_T1w.nii.gz',
       ),
     ]
-    const tree = fileListToTree(files)
+    const tree = await fileListToTree(files)
     const expectedTree = new FileTree('/', '/', undefined)
     const sub01Tree = new FileTree('/sub-01', 'sub-01', expectedTree)
     const anatTree = new FileTree('/sub-01/anat', 'anat', sub01Tree)
@@ -77,6 +77,60 @@ Deno.test('Browser implementation of FileTree', async (t) => {
     sub01Tree.directories.push(anatTree)
     assertEquals(tree, expectedTree)
   })
+
+  await t.step('reads .bidsignore during load', async () => {
+    const ignore = new FileIgnoreRules([])
+    const files = [
+      new TestFile(
+        ['ignored_but_absent\n', 'ignored_and_present\n'],
+        '.bidsignore',
+        'ds/.bidsignore',
+      ),
+      new TestFile(
+        ['{}'],
+        'dataset_description.json',
+        'ds/dataset_description.json',
+      ),
+      new TestFile(
+        ['tsv headers\n', 'column\tdata'],
+        'participants.tsv',
+        'ds/participants.tsv',
+      ),
+      new TestFile(
+        ['single subject test dataset'],
+        'README.md',
+        'ds/README.md',
+      ),
+      new TestFile(
+        ['Anything can be in an ignored file'],
+        'ignored_and_present',
+        'ds/ignored_and_present',
+      ),
+      new TestFile(
+        ['nifti file goes here'],
+        'sub-01_T1w.nii.gz',
+        'ds/sub-01/anat/sub-01_T1w.nii.gz',
+      ),
+    ]
+    const tree = await fileListToTree(files)
+    const expectedTree = new FileTree('/', '/', undefined)
+    const sub01Tree = new FileTree('/sub-01', 'sub-01', expectedTree)
+    const anatTree = new FileTree('/sub-01/anat', 'anat', sub01Tree)
+    expectedTree.files = files
+      .slice(0, 5)
+      .map((f) => {
+        const file = new BIDSFileBrowser(f, ignore)
+        file.parent = expectedTree
+        return file
+      })
+    expectedTree.directories.push(sub01Tree)
+    anatTree.files = [new BIDSFileBrowser(files[5], ignore)]
+    anatTree.files[0].parent = anatTree
+    sub01Tree.directories.push(anatTree)
+    assertEquals(tree, expectedTree)
+
+    assertEquals(tree.get('ignored_and_present')?.ignored, true)
+  })
 })
 
 Deno.test('Spread copies of BIDSFileBrowser contain name and path properties', async () => {
@@ -89,7 +143,7 @@ Deno.test('Spread copies of BIDSFileBrowser contain name and path properties', a
     ),
     new TestFile(['flat test dataset'], 'README.md', 'ds/README.md'),
   ]
-  const tree = fileListToTree(files)
+  const tree = await fileListToTree(files)
   const expectedTree = new FileTree('/', '/', undefined)
   expectedTree.files = files.map((f) => {
     const file = new BIDSFileBrowser(f, ignore)
