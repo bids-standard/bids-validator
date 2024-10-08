@@ -2,6 +2,7 @@
  * Deno specific implementation for reading files
  */
 import { basename, join } from '@std/path'
+import { existsSync } from '@std/fs'
 import * as posix from '@std/path/posix'
 import { type BIDSFile, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
@@ -149,16 +150,13 @@ async function _readFileTree(
  */
 export async function readFileTree(rootPath: string): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
-  if (globalThis.Deno) {
-    import { existsSync } from '@std/fs'
-    if (existsSync(join(rootPath, '.bidsignore'))) {
-          const ignoreFile = new BIDSFileDeno(
-            rootPath,
-            '.bidsignore',
-            ignore,
-          )
-          ignore.add(await readBidsIgnore(ignoreFile))
-    }
+  if (existsSync(join(rootPath, '.bidsignore'))) {
+        const ignoreFile = new BIDSFileDeno(
+          rootPath,
+          '.bidsignore',
+          ignore,
+        )
+        ignore.add(await readBidsIgnore(ignoreFile))
   }
   return _readFileTree(rootPath, '/', ignore)
 }
