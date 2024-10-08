@@ -148,10 +148,15 @@ async function _readFileTree(
 /**
  * Read in the target directory structure and return a FileTree
  */
-export function readFileTree(rootPath: string): Promise<FileTree> {
+export async function readFileTree(rootPath: string): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
   if (existsSync(join(rootPath, '.bidsignore'))) {
-        ignore.add(readBidsIgnore(join(rootPath, '.bidsignore')))
+        const ignoreFile = new BIDSFileDeno(
+          rootPath,
+          '.bidsignore',
+          ignore,
+        )
+        ignore.add(await readBidsIgnore(ignoreFile))
   }
   return _readFileTree(rootPath, '/', ignore)
 }
