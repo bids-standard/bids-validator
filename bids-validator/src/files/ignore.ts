@@ -2,8 +2,8 @@ import type { BIDSFile } from '../types/filetree.ts'
 import { default as ignore } from '@ignore'
 import type { Ignore } from '@ignore'
 
-export async function readBidsIgnore(file: BIDSFile) {
-  const value = await file.text()
+export function readBidsIgnore(file: string) {
+  const value = Deno.readTextFileSync(file)
   if (value) {
     const lines = value.split('\n')
     return lines

@@ -1,3 +1,5 @@
+import { FileIgnoreRules } from '../files/ignore.ts'
+
 export interface BIDSFile {
   // Filename
   name: string
@@ -29,18 +31,22 @@ export class FileTree {
   name: string
   files: BIDSFile[]
   directories: FileTree[]
-  ignored: boolean
   viewed: boolean
   parent?: FileTree
+  #ignore: FileIgnoreRules
 
-  constructor(path: string, name: string, parent?: FileTree, ignored?: boolean) {
+  constructor(path: string, name: string, parent?: FileTree, ignore?: FileIgnoreRules) {
     this.path = path
     this.files = []
     this.directories = []
     this.name = name
     this.parent = parent
     this.viewed = false
-    this.ignored = ignored || false
+    this.#ignore = ignore ?? new FileIgnoreRules([])
+  }
+
+  get ignored(): boolean {
+    return this.#ignore.test(this.path)
   }
 
   _get(parts: string[]): BIDSFile | FileTree | undefined {
