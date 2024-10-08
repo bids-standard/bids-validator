@@ -119,7 +119,7 @@ async function _readFileTree(
 ): Promise<FileTree> {
   await requestReadPermission()
   const name = basename(relativePath)
-  const tree = new FileTree(relativePath, name, parent)
+  const tree = new FileTree(relativePath, name, parent, ignore.test(join(rootPath, relativePath)))
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     if (dirEntry.isFile || dirEntry.isSymlink) {
