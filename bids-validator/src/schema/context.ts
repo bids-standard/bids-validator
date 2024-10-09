@@ -225,7 +225,7 @@ export class BIDSContext implements Context {
         if (error.key) {
           this.dataset.issues.add({ code: error.key, location: this.file.path })
         }
-        logger.warning(
+        logger.warn(
           `tsv file could not be opened by loadColumns '${this.file.path}'`,
         )
         logger.debug(error)

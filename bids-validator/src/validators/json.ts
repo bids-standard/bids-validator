@@ -10,7 +10,7 @@ export const compile = memoize(metadataValidator.compile.bind(metadataValidator)
 
 export function setCustomMetadataFormats(schema: Schema): void {
   if (typeof schema.objects.formats !== 'object') {
-    logger.warning(
+    logger.warn(
       `schema.objects.formats missing from schema, format validation disabled.`,
     )
     return
@@ -19,7 +19,7 @@ export function setCustomMetadataFormats(schema: Schema): void {
   for (const key of Object.keys(schemaFormats)) {
     const pattern = schemaFormats[key]['pattern']
     if (typeof pattern !== 'string') {
-      logger.warning(
+      logger.warn(
         `schema.objects.formats.${key} pattern missing or invalid. Skipping this format for addition to context json validator`,
       )
       continue

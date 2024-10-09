@@ -6,6 +6,7 @@ import * as posix from '@std/path/posix'
 import { type BIDSFile, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
+import { logger } from '../utils/logger.ts'
 
 /**
  * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters
@@ -157,8 +158,8 @@ export async function readFileTree(rootPath: string): Promise<FileTree> {
         )
         ignore.add(await readBidsIgnore(ignoreFile))
   } catch (err) {
-    if (!(Object.hasOwn(err, 'code') && err.code === "ENOENT")) {
-      throw err
+    if (!Object.hasOwn(err, 'code') || err.code !== "ENOENT") {
+      logger.error(`Failed to read '.bidsignore' file with the following error:\n${err}`)
     }
   }
   return _readFileTree(rootPath, '/', ignore)
