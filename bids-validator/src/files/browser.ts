@@ -55,7 +55,11 @@ export async function fileListToTree(files: File[]): Promise<FileTree> {
   const tree = filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, root)))
   const bidsignore = tree.get('.bidsignore')
   if (bidsignore) {
-    ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
+    try {
+      ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
+    } catch (err) {
+      console.log(`Failed to read '.bidsignore' file with the following error:\n${err}`)
+    }
   }
   return tree
 }

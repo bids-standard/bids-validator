@@ -70,6 +70,9 @@ export async function validate(
   const bidsDerivatives: FileTree[] = []
   const nonstdDerivatives: FileTree[] = []
   fileTree.directories = fileTree.directories.filter((dir) => {
+    if (['sourcedata', 'code'].includes(dir.name)) {
+      return false
+    }
     if (dir.name !== 'derivatives') {
       return true
     }

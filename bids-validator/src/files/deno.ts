@@ -6,6 +6,7 @@ import * as posix from '@std/path/posix'
 import { type BIDSFile, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
+import { logger } from '../utils/logger.ts'
 
 /**
  * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters
@@ -119,7 +120,7 @@ async function _readFileTree(
 ): Promise<FileTree> {
   await requestReadPermission()
   const name = basename(relativePath)
-  const tree = new FileTree(relativePath, name, parent)
+  const tree = new FileTree(relativePath, name, parent, ignore)
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     if (dirEntry.isFile || dirEntry.isSymlink) {
@@ -129,10 +130,6 @@ async function _readFileTree(
         ignore,
       )
       file.parent = tree
-      // For .bidsignore, read in immediately and add the rules
-      if (dirEntry.name === '.bidsignore') {
-        ignore.add(await readBidsIgnore(file))
-      }
       tree.files.push(file)
     }
     if (dirEntry.isDirectory) {
@@ -151,7 +148,19 @@ async function _readFileTree(
 /**
  * Read in the target directory structure and return a FileTree
  */
-export function readFileTree(rootPath: string): Promise<FileTree> {
+export async function readFileTree(rootPath: string): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
+  try {
+    const ignoreFile = new BIDSFileDeno(
+      rootPath,
+      '.bidsignore',
+      ignore,
+    )
+    ignore.add(await readBidsIgnore(ignoreFile))
+  } catch (err) {
+    if (!Object.hasOwn(err, 'code') || err.code !== 'ENOENT') {
+      logger.error(`Failed to read '.bidsignore' file with the following error:\n${err}`)
+    }
+  }
   return _readFileTree(rootPath, '/', ignore)
 }

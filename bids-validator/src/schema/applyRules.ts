@@ -221,7 +221,7 @@ function evalJsonCheck(
     }
 
     if (sidecarRule && !(keyName in context.sidecarKeyOrigin)) {
-      logger.warning(
+      logger.warn(
         `sidecarKeyOrigin map failed to initialize for ${context.path} on key ${keyName}. Validation caching not active for this key.`,
       )
     }
