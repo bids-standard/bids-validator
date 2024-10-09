@@ -151,14 +151,14 @@ async function _readFileTree(
 export async function readFileTree(rootPath: string): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
   try {
-        const ignoreFile = new BIDSFileDeno(
-          rootPath,
-          '.bidsignore',
-          ignore,
-        )
-        ignore.add(await readBidsIgnore(ignoreFile))
+    const ignoreFile = new BIDSFileDeno(
+      rootPath,
+      '.bidsignore',
+      ignore,
+    )
+    ignore.add(await readBidsIgnore(ignoreFile))
   } catch (err) {
-    if (!Object.hasOwn(err, 'code') || err.code !== "ENOENT") {
+    if (!Object.hasOwn(err, 'code') || err.code !== 'ENOENT') {
       logger.error(`Failed to read '.bidsignore' file with the following error:\n${err}`)
     }
   }

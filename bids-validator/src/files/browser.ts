@@ -57,7 +57,7 @@ export async function fileListToTree(files: File[]): Promise<FileTree> {
   if (bidsignore) {
     try {
       ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
-    } catch(err) {
+    } catch (err) {
       console.log(`Failed to read '.bidsignore' file with the following error:\n${err}`)
     }
   }
