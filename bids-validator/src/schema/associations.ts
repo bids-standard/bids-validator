@@ -141,6 +141,16 @@ const associationLookup = {
       }
     },
   },
+  electrodes: {
+    suffix: 'electrodes',
+    extensions: ['.tsv'],
+    inherit: true,
+    load: async (file: BIDSFile): Promise<{ path: string }> => {
+      return {
+        path: file.path,
+      }
+    },
+  },
   coordsystem: {
     suffix: 'coordsystem',
     extensions: ['.json'],
