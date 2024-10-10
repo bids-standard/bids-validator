@@ -33,10 +33,12 @@ export function* walkBack(
         exactMatch.viewed = true
         yield exactMatch
       } else {
+        const paths = candidates.map((x) => x.path).sort()
         throw {
           code: 'MULTIPLE_INHERITABLE_FILES',
-          location: source.path,
-          affects: candidates.map((file) => file.path),
+          location: paths[0],
+          affects: source.path,
+          issueMessage: `Candidate files: ${paths}`,
         }
       }
     } else if (candidates.length === 1) {
