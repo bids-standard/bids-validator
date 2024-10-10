@@ -56,8 +56,12 @@ export async function validate(
   const dsContext = new BIDSContextDataset({ options, schema, tree: fileTree })
   if (ddFile) {
     dsContext.dataset_description = await loadJSON(ddFile).catch((error) => {
-      dsContext.issues.add({ code: error.key, location: ddFile.path })
-      return {} as Record<string, unknown>
+      if (error.key) {
+        dsContext.issues.add({ code: error.key, location: ddFile.path })
+        return {} as Record<string, unknown>
+      } else {
+        throw error
+      }
     })
     summary.dataProcessed = dsContext.dataset_description.DatasetType === 'derivative'
   } else {

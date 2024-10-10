@@ -192,8 +192,12 @@ export class BIDSContext implements Context {
     }
     for (const file of sidecars) {
       const json = await loadJSON(file).catch((error) => {
-        this.dataset.issues.add({ code: error.key, location: file.path })
-        return {}
+        if (error.key) {
+          this.dataset.issues.add({ code: error.key, location: file.path })
+          return {}
+        } else {
+          throw error
+        }
       })
       this.sidecar = { ...json, ...this.sidecar }
       Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= file.path)
@@ -210,8 +214,12 @@ export class BIDSContext implements Context {
     ) return
 
     this.nifti_header = await loadHeader(this.file).catch((error) => {
-      this.dataset.issues.add({ code: error.key, location: this.file.path })
-      return undefined
+      if (error.key) {
+        this.dataset.issues.add({ code: error.key, location: this.file.path })
+        return undefined
+      } else {
+        throw error
+      }
     })
   }
 
@@ -244,8 +252,12 @@ export class BIDSContext implements Context {
       return
     }
     this.json = await loadJSON(this.file).catch((error) => {
-      this.dataset.issues.add({ code: error.key, location: this.file.path })
-      return {}
+      if (error.key) {
+        this.dataset.issues.add({ code: error.key, location: this.file.path })
+        return {}
+      } else {
+        throw error
+      }
     })
   }
 
