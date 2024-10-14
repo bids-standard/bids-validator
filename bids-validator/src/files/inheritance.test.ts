@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from '@std/assert'
+import { assert, assertEquals, assertThrows } from '@std/assert'
 import { pathsToTree } from './filetree.ts'
 import { walkBack } from './inheritance.ts'
 
@@ -17,6 +17,9 @@ Deno.test('walkback inheritance tests', async (t) => {
           continue
         }
       } catch (error) {
+        assert(error)
+        assert(typeof error === 'object')
+        assert('code' in error)
         assertEquals(error.code, 'MULTIPLE_INHERITABLE_FILES')
         throw error
       }
