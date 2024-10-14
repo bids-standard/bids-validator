@@ -25,7 +25,7 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: deno --node-modules-dir=auto --allow-env --allow-read ./build.ts
+      - run: deno --node-modules-dir=auto --allow-env --allow-read --allow-run ./build.ts
         working-directory: ./bids-validator
       - run: deno run -A ./bids-validator/dist/validator/bids-validator.js --version
       - uses: actions/upload-artifact@v4
