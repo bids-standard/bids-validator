@@ -22,9 +22,9 @@ jobs:
       - name: Save describe stamp
         id: describe
         run: echo version=$( git describe ) >> $GITHUB_OUTPUT
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
+          deno-version: v2.x
       - run: ./build.ts
         working-directory: ./bids-validator
       - run: deno run -A ./bids-validator/dist/validator/bids-validator.js --version
@@ -52,7 +52,7 @@ jobs:
           submodules: true
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: v2.x
       - name: Set permissions with network access
         run: echo 'PERMS=--allow-read --allow-write --allow-env --allow-run --allow-net' >> $GITHUB_ENV
         if: ${{ matrix.allow-net }}
