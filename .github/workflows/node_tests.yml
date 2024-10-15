@@ -35,24 +35,26 @@ jobs:
           git config --global user.email "bids.maintenance@gmail.com"
           git config --global user.name "bids-maintenance"
       - name: Set up Node
-        working-dir: ./legacy
+        working-directory: ./legacy
         run: |
           npm install -g npm@^7
           npm install
       - name: Eslint
+        working-directory: ./legacy
         run: npm run lint
       - name: Get bids-examples data
+        working-directory: ./legacy
         run: git submodule update --init
       - name: Jest tests
+        working-directory: ./legacy
         run: npm run coverage -- --maxWorkers=2 --testTimeout=10000 --colors
-        working-dir: ./legacy
       - name: Upload to codecov
-        working-dir: ./legacy
+        working-directory: ./legacy
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Smoke tests
-        working-dir: ./legacy
+        working-directory: ./legacy
         run: |
           bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders
           bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders --json
