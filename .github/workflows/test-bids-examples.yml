@@ -37,16 +37,19 @@ jobs:
         run: npm install --global npm
 
       - name: Install bids-validator
+        working-directory: ./legacy
         run: |
           npm install
           npm link ./bids-validator
           echo "./node_modules/.bin" >> $GITHUB_PATH
 
       - name: Get bids-examples data
+        working-directory: ./legacy
         run: |
           git clone --depth 1 https://github.com/bids-standard/bids-examples
 
       - name: Display versions and environment information
+        working-directory: ./legacy
         run: |
           echo $TZ
           export PATH="../node_modules/.bin:$PATH"
@@ -58,15 +61,17 @@ jobs:
           ls -a $(which bids-validator)
 
       - name: Ignore examples not supported by legacy validator
+        working-directory: ./legacy
         run: |
           for DS in bids-examples/mrs_*; do
             touch $DS/.SKIP_VALIDATION
           done
 
       - name: Validate all BIDS datasets using bids-validator
+        working-directory: ./legacy
         run: |
           export PATH="../node_modules/.bin:$PATH"
           cat ./run_tests.sh
           bash ./run_tests.sh
         shell: bash
-        working-directory: ./bids-examples
+        working-directory: /bids-examples
