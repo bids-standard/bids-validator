@@ -1,4 +1,4 @@
-import { default as Ajv, type JSONSchemaType, type ValidateFunction } from '@ajv'
+import { Ajv, type JSONSchemaType, type ValidateFunction } from '@ajv'
 import type { Schema } from '../types/schema.ts'
 import { memoize } from '../utils/memoize.ts'
 import { logger } from '../utils/logger.ts'
