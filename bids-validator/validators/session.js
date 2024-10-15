@@ -11,15 +11,12 @@ import isNode from '../utils/isNode'
  * files from the set.
  */
 const session = function missingSessionFiles(fileList) {
-  const issues = []
   const { subjects, sessions } = getDataOrganization(fileList)
-
-  issues.push(...missingSessionWarnings(subjects, sessions))
-
   const subject_files = getSubjectFiles(subjects)
-  issues.push(...missingFileWarnings(subjects, subject_files))
-
-  return issues
+  return [
+    ...missingSessionWarnings(subjects, sessions),
+    ...missingFileWarnings(subjects, subject_files),
+  ]
 }
 
 /**
