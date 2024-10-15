@@ -25,10 +25,12 @@ jobs:
         working-directory: ./web
       - name: Install NPM deps
         run: npm install
+        working-directory: ./legacy
       - name: Build legacy validator website
         run: npm run web-export
+        working-directory: ./legacy
       - name: Move legacy validator build into deno website
-        run: mv bids-validator-web/out web/dist/legacy
+        run: mv legacy/bids-validator-web/out web/dist/legacy
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
