@@ -439,5 +439,5 @@ funded projects/grants:
 
 - [BIDS Derivatives (NIMH: R24MH114705, PI: Poldrack)](https://grantome.com/grant/NIH/R24-MH114705-01)
 - [OpenNeuro (NIMH: R24MH117179, PI: Poldrack)](https://grantome.com/grant/NIH/R24-MH117179-01)
-- [Spokes: MEDIUM: WEST (NSF: 1760950, PI: Poldrack & Gorgolewski)](https://grantome.com/grant/NSF/IIS-1760950)
+- [Spokes: MEDIUM: WEST (NSF: 1760950, PI: Poldrack & Gorgolewski)](https://grantome.com/grant/NSF/ACI-1760950)
 - [ReproNim](http://repronim.org) [(NIH-NIBIB P41 EB019936, PI: Kennedy)](https://projectreporter.nih.gov/project_info_description.cfm?aid=8999833)
