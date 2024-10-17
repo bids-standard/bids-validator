@@ -4,7 +4,7 @@ import { assertEquals, assertObjectMatch } from '@std/assert'
 import { BIDSFileBrowser, fileListToTree } from './browser.ts'
 
 class TestFile extends File {
-  webkitRelativePath: string
+  override webkitRelativePath: string
   constructor(
     fileBits: BlobPart[],
     fileName: string,
