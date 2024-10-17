@@ -29,6 +29,7 @@ const anatMultiInv = buildRegExp(file_level_rules.anat_multiinv)
 const anatMP2RAGE = buildRegExp(file_level_rules.anat_mp2rage)
 const anatVFAMT = buildRegExp(file_level_rules.anat_vfa_mt)
 const anatMTR = buildRegExp(file_level_rules.anat_mtr)
+const anatCont = buildRegExp(file_level_rules.anat_cont)
 const behavioralData = buildRegExp(file_level_rules.behavioral)
 const dwiData = buildRegExp(file_level_rules.dwi)
 const eegData = buildRegExp(file_level_rules.eeg)
@@ -242,7 +243,8 @@ export default {
         conditionalMatch(anatMultiInv, path) ||
         conditionalMatch(anatMP2RAGE, path) ||
         conditionalMatch(anatVFAMT, path) ||
-        conditionalMatch(anatMTR, path)
+        conditionalMatch(anatMTR, path) ||
+        conditionalMatch(anatCont, path)
       )
     },
 
