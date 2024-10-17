@@ -4,12 +4,12 @@ jobs:
   test:
     docker:
       - image: node:18-alpine
-    working-directory: ~/project/legacy
+    working_directory: ~/project/legacy
     steps:
       - checkout
       - restore_cache:
           keys:
-            - npm-deps-{{ checksum "./legacy/package.json" }}-{{ checksum "./legacy/bids-validator/package.json" }}-{{ checksum "./legacy/bids-validator-web/package.json" }}-v1
+            - npm-deps-{{ checksum "./package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
       - run: apk --no-cache add git
       - run: npm install -g npm@^7
       - run: npm install
@@ -38,7 +38,7 @@ jobs:
       # Ubuntu 20.04, Docker v20.10.11, Docker Compose v1.29.2
       # see: https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
       image: ubuntu-2004:202111-02
-    working-directory: ~/project/legacy
+    working_directory: ~/project/legacy
     steps:
       - checkout
       - run: docker build -t $IMAGE_NAME:latest .
@@ -57,14 +57,14 @@ jobs:
   githubPagesTest:
     docker:
       - image: node:18-alpine
-    working-directory: ~/project/legacy
+    working_directory: ~/project/legacy
     steps:
       - run: npm install --global npm
       - run: apk --no-cache add ca-certificates git openssh-client rsync
       - checkout
       - restore_cache:
           keys:
-            - npm-deps-{{ checksum "./legacy/package.json" }}-{{ checksum "./legacy/bids-validator/package.json" }}-{{ checksum "./legacy/bids-validator-web/package.json" }}-v1
+            - npm-deps-{{ checksum "./package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
       - run:
           name: Install bids-validator and bids-validator-web dependencies
           command: npm install
@@ -72,7 +72,7 @@ jobs:
           name: Build and export web-validator
           command: npm run web-export && rsync -av ./bids-validator-web/out/ ~/web_version
       - save_cache:
-          key: npm-deps-{{ checksum "./legacy/package.json" }}-{{ checksum "./legacy/bids-validator/package.json" }}-{{ checksum "./legacy/bids-validator-web/package.json" }}-v1
+          key: npm-deps-{{ checksum "./package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
           paths:
             - ./node_modules
             - ./.next/cache
