@@ -4,6 +4,7 @@ jobs:
   test:
     docker:
       - image: node:18-alpine
+    working-directory: ~/project/legacy
     steps:
       - checkout
       - restore_cache:
@@ -37,6 +38,7 @@ jobs:
       # Ubuntu 20.04, Docker v20.10.11, Docker Compose v1.29.2
       # see: https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
       image: ubuntu-2004:202111-02
+    working-directory: ~/project/legacy
     steps:
       - checkout
       - run: docker build -t $IMAGE_NAME:latest .
@@ -55,6 +57,7 @@ jobs:
   githubPagesTest:
     docker:
       - image: node:18-alpine
+    working-directory: ~/project/legacy
     steps:
       - run: npm install --global npm
       - run: apk --no-cache add ca-certificates git openssh-client rsync
