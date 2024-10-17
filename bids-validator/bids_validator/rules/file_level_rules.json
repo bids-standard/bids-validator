@@ -141,6 +141,17 @@
       "@@@_anat_ext_@@@": ["nii\\.gz", "nii", "json"]
     }
   },
+  "anat_cont": {
+    "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?anat[\\/\\\\]\\1(_\\2)?(?:_task-[a-zA-Z0-9]+)?(?:_acq-[a-zA-Z0-9]+)?(?:_ce-[a-zA-Z0-9]+)?(?:_rec-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?(?:_echo-[0-9]+)?(?:_part-(imag|mag|phase|real))?(?:_recording-[a-zA-Z0-9]+)?(?:_chunk-[0-9]+)?(?:@@@_cont_ext_@@@)$",
+    "tokens": {
+      "@@@_cont_ext_@@@": [
+        "_physio\\.tsv\\.gz",
+        "_stim\\.tsv\\.gz",
+        "_physio\\.json",
+        "_stim\\.json"
+      ]
+    }
+  },
 
   "behavioral": {
     "regexp": "^[\\/\\\\](sub-[a-zA-Z0-9]+)[\\/\\\\](?:(ses-[a-zA-Z0-9]+)[\\/\\\\])?beh[\\/\\\\]\\1(_\\2)?_task-[a-zA-Z0-9]+(?:_acq-[a-zA-Z0-9]+)?(?:_run-[0-9]+)?((?:@@@_behavioral_ext_@@@)|(?:_recording-[a-zA-Z0-9]+)?(?:@@@_cont_ext_@@@))$",
