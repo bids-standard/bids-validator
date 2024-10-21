@@ -23,9 +23,17 @@ export async function loadSchema(version?: string): Promise<Schema> {
   ) as Schema
 
   if (schemaUrl !== undefined) {
+    let jsonData = {}
     try {
-      const jsonResponse = await fetch(schemaUrl)
-      const jsonData = await jsonResponse.json()
+      if (typeof Deno !== 'undefined' && !schemaUrl.match(/http(s)?:\/\//)) {
+        const decoder = new TextDecoder("utf-8");
+        const data = await Deno.readFile(schemaUrl);
+        jsonData = JSON.parse(decoder.decode(data))
+        
+      } else {
+        const jsonResponse = await fetch(schemaUrl)
+        jsonData = await jsonResponse.json()
+      }
       schema = new Proxy(
         jsonData as object,
         objectPathHandler,
