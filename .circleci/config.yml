@@ -1,0 +1,102 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: node:18-alpine
+    working_directory: ~/project/legacy
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - npm-deps-{{ checksum "./package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
+      - run: apk --no-cache add git
+      - run: npm install -g npm@^7
+      - run: npm install
+      - run:
+          name: Eslint
+          command: npm run lint
+      - run:
+          name: Get bids-examples data
+          command: git submodule update --init
+      - run:
+          # must include separating --, see https://stackoverflow.com/a/14404223/5201771
+          name: Jest tests
+          command: npm run coverage -- --maxWorkers=2 --testTimeout=10000
+      - run:
+          name: Upload to codecov
+          command: npm run codecov
+      - run:
+          name: Smoke tests
+          command: |
+            bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders
+            bids-validator/bin/bids-validator bids-validator/tests/data/valid_headers/ --ignoreNiftiHeaders --json
+  test_docker:
+    environment:
+      IMAGE_NAME: bids/validator
+    machine:
+      # Ubuntu 20.04, Docker v20.10.11, Docker Compose v1.29.2
+      # see: https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
+      image: ubuntu-2004:202111-02
+    working_directory: ~/project/legacy
+    steps:
+      - checkout
+      - run: docker build -t $IMAGE_NAME:latest .
+      - run:
+          name: Smoke tests
+          command: |
+            docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders
+            docker run --rm -it -v $PWD/bids-validator/tests/data/valid_headers:/data bids/validator:latest /data --ignoreNiftiHeaders --json
+      - run:
+          name: Archive Docker image
+          command: docker save -o image.tar $IMAGE_NAME
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./image.tar
+  githubPagesTest:
+    docker:
+      - image: node:18-alpine
+    working_directory: ~/project/legacy
+    steps:
+      - run: npm install --global npm
+      - run: apk --no-cache add ca-certificates git openssh-client rsync
+      - checkout
+      - restore_cache:
+          keys:
+            - npm-deps-{{ checksum "./package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
+      - run:
+          name: Install bids-validator and bids-validator-web dependencies
+          command: npm install
+      - run:
+          name: Build and export web-validator
+          command: npm run web-export && rsync -av ./bids-validator-web/out/ ~/web_version
+      - save_cache:
+          key: npm-deps-{{ checksum "./package.json" }}-{{ checksum "./bids-validator/package.json" }}-{{ checksum "./bids-validator-web/package.json" }}-v1
+          paths:
+            - ./node_modules
+            - ./.next/cache
+      - store_artifacts:
+          path: ~/web_version
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+      - test_docker:
+          filters:
+            tags:
+              only: /.*/
+      - githubPagesTest:
+          requires:
+            - test
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
