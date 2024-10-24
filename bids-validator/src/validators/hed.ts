@@ -80,7 +80,7 @@ export async function hedValidate(
     context.dataset.issues.add({
       code: 'HED_ERROR',
       location: context.path,
-      issueMessage: error,
+      issueMessage: error as string,
     })
   }
 

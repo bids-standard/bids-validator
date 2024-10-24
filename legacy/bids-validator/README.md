@@ -26,12 +26,6 @@
 
 ## Quickstart
 
-This repository houses 4 packages:
-1. [./bids-validator](./bids-validator)The current deno based bids-validator cli and library
-2. [./web](./web)The current web based validator
-3. [./legacy/bids-validator](legacy/bids-validator)The legacy node validator 
-4. [./legacy/bids-validator-web](legacy/bids-validator-web)The legacy web based validator
-
 1. Web version:
    1. Open [Google Chrome](https://www.google.com/chrome/) or
       [Mozilla Firefox](https://mozilla.org/firefox) (currently the only
@@ -52,6 +46,9 @@ This repository houses 4 packages:
 
 ## Support
 
+The BIDS Validator is designed to work in both the browser and in Node.js. We
+target support for the latest long term stable (LTS) release of Node.js and the
+latest version of Chrome.
 
 Please report any issues you experience while using these support targets via
 the [GitHub issue tracker](https://github.com/bids-standard/bids-validator/issues).
@@ -422,12 +419,20 @@ Global installs are not recommended for development because of the possibility o
 
 ### Publishing
 
+Publishing is done with [Lerna](https://github.com/lerna/lerna). Use the command `npx lerna publish` and follow instructions to set a new version.
+
+Using lerna publish will create a git commit with updated version information and create a version number tag for it, push the tag to GitHub, then publish to NPM. The GitHub release is manual following that.
 
 ## Acknowledgments
 
 Many contributions to the `bids-validator` were done by members of the
 BIDS community. See the
 [list of contributors](https://bids-specification.readthedocs.io/en/stable/99-appendices/01-contributors.html).
+
+A large part of the development of `bids-validator` is currently done by
+[Squishymedia](https://squishymedia.com/), who are in turn financed through
+different grants offered for the general development of BIDS. See the list
+below.
 
 Development and contributions were supported through the following federally
 funded projects/grants:

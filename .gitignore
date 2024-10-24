@@ -11,7 +11,7 @@ coverage/
 __pycache__/
 dist/
 *.egg-info/
-bids-validator-web/out/
+legacy/bids-validator-web/out/
 .next/
 
 # Only use global yarn.lock
