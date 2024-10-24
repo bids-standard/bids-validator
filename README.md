@@ -26,7 +26,7 @@
 
 ## Quickstart
 
-This repository currently houses 4 packages:
+This repository houses 4 packages:
 1. [./bids-validator](./bids-validator)The current deno based bids-validator cli and library
 2. [./web](./web)The current web based validator
 3. [./legacy/bids-validator](legacy/bids-validator)The legacy node validator 
