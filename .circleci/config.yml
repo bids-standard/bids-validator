@@ -79,3 +79,6 @@ jobs:
       - store_artifacts:
           path: ~/web_version
 workflows:
+  version: 2
+  build-deploy:
+    jobs: []
