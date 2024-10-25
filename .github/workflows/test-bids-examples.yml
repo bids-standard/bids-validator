@@ -59,7 +59,7 @@ jobs:
 
       - name: Ignore examples not supported by legacy validator
         run: |
-          for DS in bids-examples/mrs_*; do
+          for DS in bids-examples/mrs_* bids-examples/dwi_deriv; do
             touch $DS/.SKIP_VALIDATION
           done
 
