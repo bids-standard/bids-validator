@@ -27,7 +27,7 @@ describe('HED', function () {
     ]
     const jsonDictionary = {
       '/sub01/sub01_task-test_events.json': {
-        myCodes: {
+        test: {
           HED: {
             one: 'Duration/5 s',
           },
@@ -55,12 +55,8 @@ describe('HED', function () {
     ]
     const jsonDictionary = {
       '/sub01/sub01_task-test_events.json': {
-        myCodes: {
-          test: {
-            HED: {
-              one: 'Label/#',
-            },
-          },
+        test: {
+          HED: 'Label/#',
         },
       },
       '/dataset_description.json': { HEDVersion: '8.0.0' },
@@ -86,11 +82,9 @@ describe('HED', function () {
 
     const jsonDictionary = {
       '/sub01/sub01_task-test_events.json': {
-        myCodes: {
-          test: {
-            HED: {
-              one: 'ts:Sensory-presentation, Label/#',
-            },
+        test: {
+          HED: {
+            one: 'ts:Sensory-presentation, Train',
           },
         },
       },
@@ -148,11 +142,9 @@ describe('HED', function () {
 
     const jsonDictionary = {
       '/sub01/sub01_task-test_events.json': {
-        myCodes: {
-          test: {
-            HED: {
-              one: 'ts:Sensory-presentation, Label/#, sc:Sleep-deprivation',
-            },
+        test: {
+          HED: {
+            one: 'ts:Sensory-presentation, Walk, sc:Sleep-deprivation',
           },
         },
       },
@@ -260,7 +252,7 @@ describe('HED', function () {
     ]
     const jsonDictionary = {
       '/sub01/sub01_task-test_events.json': {
-        myCodes: {
+        test: {
           HED: {
             one: 'Duration/5 s',
           },
