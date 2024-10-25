@@ -18,6 +18,7 @@ import { type BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import type { parseOptions } from '../setup/options.ts'
 import { hedValidate } from './hed.ts'
 import { citationValidate } from './citation.ts'
+import { logger } from '../utils/logger.ts'
 
 /**
  * Ordering of checks to apply
@@ -121,8 +122,12 @@ export async function validate(
     // Map blacklisted datatypes back to the modality that generated them
     for (const modality of options.blacklistModalities) {
       const datatypes = modalitiesRule[modality.toLowerCase()]?.datatypes as string[]
-      for (const datatype of datatypes) {
-        blacklistedDatatypes.set(datatype, modality)
+      if (datatypes) {
+        for (const datatype of datatypes) {
+          blacklistedDatatypes.set(datatype, modality)
+        }
+      } else {
+        logger.warn(`Attempted to blacklist unknown modality: ${modality}`)
       }
     }
   }
