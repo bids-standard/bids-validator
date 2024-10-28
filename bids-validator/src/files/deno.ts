@@ -7,6 +7,7 @@ import { type BIDSFile, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 import { logger } from '../utils/logger.ts'
+export { type BIDSFile, FileTree }
 
 /**
  * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters

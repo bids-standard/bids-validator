@@ -8,6 +8,7 @@ import { validate } from './validators/bids.ts'
 import { consoleFormat, resultToJSONStr } from './utils/output.ts'
 import { setupLogging } from './utils/logger.ts'
 import type { ValidationResult } from './types/validation-result.ts'
+export type { ValidationResult } from './types/validation-result.ts'
 
 /**
  * Validation entrypoint intended for command line usage with Deno
