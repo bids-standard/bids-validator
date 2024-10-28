@@ -6,7 +6,8 @@
     "./main": "./src/main.ts",
     "./output": "./src/utils/output.ts",
     "./files": "./src/files/deno.ts",
-    "./options": "./src/setup/options.ts"
+    "./options": "./src/setup/options.ts",
+    "./issues": "./src/issues/datasetIssues.ts"
   },
   "publish": {
     "exclude": [
