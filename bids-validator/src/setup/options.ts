@@ -3,6 +3,7 @@ import type { LevelName } from '@std/log'
 import { Command, EnumType } from '@cliffy/command'
 import { getVersion } from '../version.ts'
 import type { Issue, Severity } from '../types/issues.ts'
+import { schema } from '@bids/schema'
 
 /**
  * BIDS Validator config file object definition
@@ -31,7 +32,7 @@ export type ValidatorOptions = {
 }
 
 const modalityType = new EnumType<string>(
-  ['MRI', 'PET', 'MEG', 'EEG', 'iEEG', 'Microscopy', 'NIRS', 'MRS'],
+  Object.keys(schema.rules.modalities)
 )
 
 /** Extendable Cliffy Command with built in BIDS validator options */
