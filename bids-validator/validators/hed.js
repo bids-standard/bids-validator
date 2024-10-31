@@ -29,38 +29,36 @@ async function checkHedStrings(tsvs, jsonContents, jsonFiles) {
     )
   }
 
-  const issues = []
+  const sidecarIssues = validateFiles(
+    buildSidecars(jsonContents, jsonFiles),
+    hedSchemas,
+  )
+
+  if (sidecarIssues.some((issue) => issue.isError() || issue.code === 109)) {
+    return sidecarIssues
+  }
+
+  const tsvIssues = validateFiles(buildTsvs(tsvs, jsonContents), hedSchemas)
+
+  return [...sidecarIssues, ...tsvIssues]
+}
+
+function* buildSidecars(jsonContents, jsonFiles) {
   for (const [sidecarName, sidecarContents] of Object.entries(jsonContents)) {
-    try {
-      const sidecarFile = buildSidecar(sidecarName, sidecarContents, jsonFiles)
-      issues.push(...validateFile(sidecarFile, hedSchemas))
-    } catch (e) {
-      issues.push(new Issue({ code: 109 }))
-      return issues
-    }
+    yield buildSidecar(sidecarName, sidecarContents, jsonFiles)
   }
-
-  if (issues.some((issue) => issue.isError())) {
-    return issues
-  }
-
-  for (const tsv of tsvs) {
-    try {
-      const tsvFile = buildTsv(tsv, jsonContents)
-      issues.push(...validateFile(tsvFile, hedSchemas))
-    } catch (e) {
-      issues.push(new Issue({ code: 109 }))
-      return issues
-    }
-  }
-
-  return issues
 }
 
 function buildSidecar(sidecarName, sidecarContents, jsonFiles) {
   const file = getSidecarFileObject(sidecarName, jsonFiles)
 
   return new hedValidator.bids.BidsSidecar(sidecarName, sidecarContents, file)
+}
+
+function* buildTsvs(tsvs, jsonContents) {
+  for (const tsv of tsvs) {
+    yield buildTsv(tsv, jsonContents)
+  }
 }
 
 function buildTsv(tsv, jsonContents) {
@@ -81,12 +79,20 @@ function buildTsv(tsv, jsonContents) {
   )
 }
 
-function validateFile(file, hedSchemas) {
-  const issues = file.validate(hedSchemas)
-  if (issues === null) {
-    throw new Error()
+function validateFiles(fileGenerator, hedSchemas) {
+  const issues = []
+  for (const file of fileGenerator) {
+    try {
+      const fileIssues = file.validate(hedSchemas)
+      if (fileIssues === null) {
+        return [new hedValidator.bids.BidsIssue(109)]
+      }
+      issues.push(fileIssues)
+    } catch (issueError) {
+      return hedValidator.bids.BidsHedIssue.fromHedIssues(issueError, file.file)
+    }
   }
-  return issues
+  return issues.flat()
 }
 
 function getSidecarFileObject(sidecarName, jsonFiles) {
