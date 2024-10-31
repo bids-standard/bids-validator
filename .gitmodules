@@ -1,3 +1,0 @@
-[submodule "bids-examples"]
-	path = legacy/bids-validator/tests/data/bids-examples
-	url = https://github.com/bids-standard/bids-examples.git
