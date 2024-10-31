@@ -26,12 +26,11 @@ jobs:
         with:
           deno-version: v2.x
       - run: deno --node-modules-dir=auto -A ./build.ts
-        working-directory: ./bids-validator
-      - run: deno run -A ./bids-validator/dist/validator/bids-validator.js --version
+      - run: deno run -A ./dist/validator/bids-validator.js --version
       - uses: actions/upload-artifact@v4
         with:
           name: main
-          path: bids-validator/dist/validator
+          path: dist/validator
 
   test:
     runs-on: ${{ matrix.os }}
@@ -43,7 +42,6 @@ jobs:
       fail-fast: false
     defaults:
       run:
-        working-directory: ./bids-validator
         shell: bash
 
     steps:

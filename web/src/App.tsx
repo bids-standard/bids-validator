@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import "./App.css"
 import { directoryOpen } from "https://esm.sh/browser-fs-access@0.35.0"
 import { fileListToTree, validate } from "../dist/validator/main.js"
-import type { ValidationResult } from "../../bids-validator/src/types/validation-result.ts"
+import type { ValidationResult } from "../../src/types/validation-result.ts"
 import { Collapse } from "./Collapse.tsx"
 import { Summary } from "./Summary.tsx"
 
