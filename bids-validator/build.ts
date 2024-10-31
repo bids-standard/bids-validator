@@ -6,7 +6,7 @@
  */
 import * as esbuild from 'https://deno.land/x/esbuild@v0.24.0/mod.js'
 import { parse } from 'https://deno.land/std@0.223.0/flags/mod.ts'
-import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@0.10.3"
+import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@0.11.0"
 import * as path from "https://deno.land/std@0.223.0/path/mod.ts"
 import { getVersion } from './src/version.ts'
 

@@ -22,10 +22,10 @@ jobs:
       - name: Save describe stamp
         id: describe
         run: echo version=$( git describe ) >> $GITHUB_OUTPUT
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
-      - run: ./build.ts
+          deno-version: v2.x
+      - run: deno --node-modules-dir=auto -A ./build.ts
         working-directory: ./bids-validator
       - run: deno run -A ./bids-validator/dist/validator/bids-validator.js --version
       - uses: actions/upload-artifact@v4
@@ -52,14 +52,17 @@ jobs:
           submodules: true
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: v2.x
       - name: Set permissions with network access
         run: echo 'PERMS=--allow-read --allow-write --allow-env --allow-run --allow-net' >> $GITHUB_ENV
         if: ${{ matrix.allow-net }}
       - name: Set permissions without network access
         run: echo 'PERMS=--allow-read --allow-write --allow-env --allow-run --deny-net' >> $GITHUB_ENV
         if: ${{ ! matrix.allow-net }}
-      - run: deno test $PERMS --coverage=cov/ src/
+      - name: Disable example that requires network access
+        run: touch tests/data/bids-examples/xeeg_hed_score/.SKIP_VALIDATION
+        if: ${{ ! matrix.allow-net }}
+      - run: deno test --node-modules-dir=auto $PERMS --coverage=cov/ src/
       - name: Collect coverage
         run: deno coverage cov/ --lcov --output=coverage.lcov
         if: ${{ always() }}

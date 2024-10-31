@@ -39,7 +39,7 @@ export class BIDSFileDeno implements BIDSFile {
     try {
       this.#fileInfo = Deno.statSync(this._getPath())
     } catch (error) {
-      if (error.code === 'ENOENT') {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
         this.#fileInfo = Deno.lstatSync(this._getPath())
       }
     }
@@ -159,7 +159,7 @@ export async function readFileTree(rootPath: string): Promise<FileTree> {
     )
     ignore.add(await readBidsIgnore(ignoreFile))
   } catch (err) {
-    if (!Object.hasOwn(err, 'code') || err.code !== 'ENOENT') {
+    if (err && typeof err === 'object' && !('code' in err && err.code !== 'ENOENT')) {
       logger.error(`Failed to read '.bidsignore' file with the following error:\n${err}`)
     }
   }
