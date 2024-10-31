@@ -1,0 +1,3 @@
+[codespell]
+skip = deno.lock,data
+ignore-words-list = particpants
