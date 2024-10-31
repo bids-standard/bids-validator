@@ -60,7 +60,7 @@ To participate, be sure you know how to
 1. [Make a GitHub account][link_signupinstructions]
 1. Install the required software:
    - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-   - [NodeJS](https://nodejs.org/en/download/), including `npm` of version 7 or higher (check existing version with `npm -v`, to update an existing nodejs, we can suggest [this guide](https://phoenixnap.com/kb/update-node-js-version).)
+   - [Deno](https://deno.com/)
 1. In the GitHub interface, [make a fork][link_fork] of
    https://github.com/bids-standard/bids-validator to your own user (called `USER` for the
    sake of the example)
@@ -71,18 +71,9 @@ To participate, be sure you know how to
    - You will now have a new directory called `bids-validator`
    - navigate to that directory and run `git status` to verify that it's a `git`
      directory
-   - run `npm install` to install the BIDS validator
-1. Upon inspection of the `bids-validator` repository we can find the
-   "executable" BIDS validator, located in `<...>/bids-validator/bin`, where
-   `<...>` is the path to your `bids-validator` repository
-   - To make this executable available from the command line, we have to add it
-     to the path. On Unix systems with bash as their default shell, this means
-     editing the `.bashrc` file by adding the following line to the bottom of
-     it: `export PATH="$PATH:<...>/bids-validator/bin"` ... Note that `<...>`
-     again needs to be replaced by the path to your BIDS validator repository
-   - Now whenever you open a new command line, we will have the `bids-validator`
-     executable available. You can verify by opening a new command line and
-     typing `bids-validator --version`, and it should print the version number
+1. Install `bids-validator` with: `deno install -Agf --reload ./bids-validator/src/bids-validator.ts`
+   - Deno will install the file to its `bin` directory. On Unix systems,
+     this should be `$HOME/.deno/bin`. You may need to add this to your `PATH`.
 
 Now your development version of BIDS validator is set up and you can use it.
 Whenever you _checkout_ a new branch in your git repository, the

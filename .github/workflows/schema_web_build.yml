@@ -3,10 +3,10 @@ name: Schema validator web build
 
 on:
   push:
-    branches: [master]
+    branches: [master, main]
     tags: ['*']
   pull_request:
-    branches: [master]
+    branches: [master, main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
