@@ -59,6 +59,9 @@ jobs:
       - name: Set permissions without network access
         run: echo 'PERMS=--allow-read --allow-write --allow-env --allow-run --deny-net' >> $GITHUB_ENV
         if: ${{ ! matrix.allow-net }}
+      - name: Disable example that requires network access
+        run: touch bids-validator/tests/data/bids-examples/xeeg_hed_score/.SKIP_VALIDATION
+        if: ${{ ! matrix.allow-net }}
       - run: deno test --node-modules-dir=auto $PERMS --coverage=cov/ src/
       - name: Collect coverage
         run: deno coverage cov/ --lcov --output=coverage.lcov
