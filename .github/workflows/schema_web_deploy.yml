@@ -14,23 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Use Node 18 for legacy build
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - uses: denoland/setup-deno@v2
+      - uses: denoland/setup-deno@v1
         with:
           deno-version: v2.x
       - run: deno task build
         working-directory: ./web
       - name: Install NPM deps
         run: npm install
-        working-directory: ./legacy
-      - name: Build legacy validator website
-        run: npm run web-export
-        working-directory: ./legacy
-      - name: Move legacy validator build into deno website
-        run: mv legacy/bids-validator-web/out web/dist/legacy
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
