@@ -1,3 +1,4 @@
 #!/usr/bin/env -S deno run --allow-read --allow-write --allow-env --allow-net --allow-run 
+// This script runs the local copy of the validator, intended as a development aid.
+// You generally should run `deno run -A jsr:@bids/validator`
 import './src/bids-validator.ts'
-
