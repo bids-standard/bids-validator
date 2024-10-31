@@ -1,1 +1,0 @@
-bids-validator/README.md
