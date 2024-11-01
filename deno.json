@@ -11,10 +11,11 @@
   },
   "publish": {
     "exclude": [
-      "tests/",
+      "**/tests/",
       "tools/",
       "web/",
       ".*",
+      "**/*.test.ts",
       "Dockerfile",
       "build.ts",
       "deno.lock",
