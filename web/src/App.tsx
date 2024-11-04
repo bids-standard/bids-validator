@@ -115,7 +115,7 @@ function App() {
         Note: Selecting a dataset only performs validation. Files are never
         uploaded.
       </div>
-      <div>Previous version of the BIDS validator (non-schema) available <a href="https://bids-standard.github.io/bids-validator/legacy">here.</a></div>
+      <div>The legacy BIDS Validator is available <a href="https://bids-standard.github.io/legacy-validator/">here.</a></div>
     </>
   )
 }
