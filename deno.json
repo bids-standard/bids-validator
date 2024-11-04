@@ -11,20 +11,15 @@
   },
   "publish": {
     "exclude": [
-      "bids_validator/",
-      "bin/",
-      "tests/",
-      "docs/",
-      "utils/",
-      "validators/",
-      "bids-validator-deno",
+      "**/tests/",
+      "tools/",
+      "web/",
+      ".*",
+      "**/*.test.ts",
+      "Dockerfile",
       "build.ts",
-      "cli.js",
-      "esbuild.mjs",
-      "index.js",
-      "package.json",
-      ".npmignore",
-      ".gitattributes"
+      "deno.lock",
+      "local-run"
     ]
   },
   "imports": {
