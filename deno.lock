@@ -1,78 +1,76 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@bids/schema@0.11.4-dev.6+d9c23eb0": "0.11.4-dev.6+d9c23eb0",
-    "jsr:@cliffy/command@1.0.0-rc.5": "1.0.0-rc.5",
-    "jsr:@cliffy/flags@1.0.0-rc.5": "1.0.0-rc.5",
-    "jsr:@cliffy/internal@1.0.0-rc.5": "1.0.0-rc.5",
-    "jsr:@cliffy/table@1.0.0-rc.5": "1.0.0-rc.5",
-    "jsr:@libs/typing@2": "2.9.0",
-    "jsr:@libs/xml@5.4.13": "5.4.13",
+    "jsr:@bids/schema@0.11.4-dev.10+436d7cde": "0.11.4-dev.10+436d7cde",
+    "jsr:@cliffy/command@1.0.0-rc.7": "1.0.0-rc.7",
+    "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
+    "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
+    "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
+    "jsr:@libs/typing@3": "3.1.0",
+    "jsr:@libs/xml@6.0.1": "6.0.1",
     "jsr:@luca/esbuild-deno-loader@0.10.3": "0.10.3",
     "jsr:@luca/esbuild-deno-loader@0.11.0": "0.11.0",
-    "jsr:@std/assert@1.0.2": "1.0.2",
+    "jsr:@std/assert@1.0.7": "1.0.7",
     "jsr:@std/assert@~0.213.1": "0.213.1",
     "jsr:@std/bytes@^1.0.2": "1.0.2",
     "jsr:@std/bytes@^1.0.2-rc.3": "1.0.2",
-    "jsr:@std/cli@1.0.0-rc.2": "1.0.0-rc.2",
     "jsr:@std/encoding@0.213": "0.213.1",
     "jsr:@std/encoding@^1.0.5": "1.0.5",
-    "jsr:@std/fmt@1.0.0": "1.0.0",
-    "jsr:@std/fmt@^1.0.0-rc.1": "1.0.0",
-    "jsr:@std/fmt@~0.225.4": "0.225.6",
-    "jsr:@std/fs@1.0.1": "1.0.1",
-    "jsr:@std/fs@^1.0.0-rc.5": "1.0.1",
-    "jsr:@std/internal@^1.0.1": "1.0.4",
-    "jsr:@std/io@0.224.4": "0.224.4",
-    "jsr:@std/io@~0.224.3": "0.224.4",
+    "jsr:@std/fmt@1.0.3": "1.0.3",
+    "jsr:@std/fmt@^1.0.2": "1.0.3",
+    "jsr:@std/fmt@~1.0.2": "1.0.3",
+    "jsr:@std/fs@1.0.5": "1.0.5",
+    "jsr:@std/fs@^1.0.4": "1.0.5",
+    "jsr:@std/internal@^1.0.5": "1.0.5",
+    "jsr:@std/io@0.225": "0.225.0",
+    "jsr:@std/io@0.225.0": "0.225.0",
     "jsr:@std/jsonc@0.213": "0.213.1",
-    "jsr:@std/log@0.224.5": "0.224.5",
+    "jsr:@std/log@0.224.9": "0.224.9",
     "jsr:@std/path@0.213": "0.213.1",
-    "jsr:@std/path@1.0.2": "1.0.2",
-    "jsr:@std/path@^1.0.2": "1.0.2",
+    "jsr:@std/path@1.0.8": "1.0.8",
     "jsr:@std/path@^1.0.6": "1.0.6",
-    "jsr:@std/text@1.0.0-rc.1": "1.0.0-rc.1",
+    "jsr:@std/path@^1.0.7": "1.0.8",
+    "jsr:@std/text@~1.0.7": "1.0.8",
     "jsr:@std/yaml@^1.0.4": "1.0.5",
+    "npm:@bids/nifti-reader-js@0.6.9": "0.6.9",
     "npm:ajv@8.17.1": "8.17.1",
     "npm:hed-validator@3.15.5": "3.15.5",
-    "npm:ignore@5.3.2": "5.3.2",
-    "npm:nifti-reader-js@0.6.8": "0.6.8"
+    "npm:ignore@6.0.2": "6.0.2"
   },
   "jsr": {
-    "@bids/schema@0.11.4-dev.6+d9c23eb0": {
-      "integrity": "a0ac8687737bc5e3efa63c00df9c637596441feb2ff5ab243468ca84ea24fc6e"
+    "@bids/schema@0.11.4-dev.10+436d7cde": {
+      "integrity": "ad822d610054450b0b4b2fc71a654a415951e42aa4e753ede4eb550a62d04f50"
     },
-    "@cliffy/command@1.0.0-rc.5": {
-      "integrity": "55e00a1d0ae38152fb275a89494a81ffb9b144eb9060107c0be5af46e1ba736c",
+    "@cliffy/command@1.0.0-rc.7": {
+      "integrity": "1288808d7a3cd18b86c24c2f920e47a6d954b7e23cadc35c8cbd78f8be41f0cd",
       "dependencies": [
         "jsr:@cliffy/flags",
         "jsr:@cliffy/internal",
         "jsr:@cliffy/table",
-        "jsr:@std/fmt@~0.225.4",
+        "jsr:@std/fmt@~1.0.2",
         "jsr:@std/text"
       ]
     },
-    "@cliffy/flags@1.0.0-rc.5": {
-      "integrity": "bd33b7b399e0af353f5516d87a2d552d46ee7e7f4a6f0c0bc65fcce750710217",
+    "@cliffy/flags@1.0.0-rc.7": {
+      "integrity": "318d9be98f6a6417b108e03dec427dea96cdd41a15beb21d2554ae6da450a781",
       "dependencies": [
         "jsr:@std/text"
       ]
     },
-    "@cliffy/internal@1.0.0-rc.5": {
-      "integrity": "1e8dca4fcfba1815bf1a899bb880e09f8b45284c352465ef8fb015887c1fc126"
+    "@cliffy/internal@1.0.0-rc.7": {
+      "integrity": "10412636ab3e67517d448be9eaab1b70c88eba9be22617b5d146257a11cc9b17"
     },
-    "@cliffy/table@1.0.0-rc.5": {
-      "integrity": "2b3e1b4764bbb56b0c39aeba95bc0bb551d9bd4475fbb6d1ce368c08b7ef9eb3",
+    "@cliffy/table@1.0.0-rc.7": {
+      "integrity": "9fdd9776eda28a0b397981c400eeb1aa36da2371b43eefe12e6ff555290e3180",
       "dependencies": [
-        "jsr:@std/cli",
-        "jsr:@std/fmt@~0.225.4"
+        "jsr:@std/fmt@~1.0.2"
       ]
     },
-    "@libs/typing@2.9.0": {
-      "integrity": "ddf35ea652b807cd9b19b4f3f163fb5d76d57299053753fbd01ba8b02d9306ad"
+    "@libs/typing@3.1.0": {
+      "integrity": "091b59f57a99f84c9fccf8f59534f77f177705ac25183b575c83fd7aa6dcfafe"
     },
-    "@libs/xml@5.4.13": {
-      "integrity": "995320d1ce4a29ced82233e5e46d47a880e338197bbd257a686bf9afcc3ac0e4",
+    "@libs/xml@6.0.1": {
+      "integrity": "64af4f93464c77c3e1158fb97c3657779ca554b14f38616b96cde31e22d8a309",
       "dependencies": [
         "jsr:@libs/typing"
       ]
@@ -96,8 +94,8 @@
     "@std/assert@0.213.1": {
       "integrity": "24c28178b30c8e0782c18e8e94ea72b16282207569cdd10ffb9d1d26f2edebfe"
     },
-    "@std/assert@1.0.2": {
-      "integrity": "ccacec332958126deaceb5c63ff8b4eaf9f5ed0eac9feccf124110435e59e49c",
+    "@std/assert@1.0.7": {
+      "integrity": "64ce9fac879e0b9f3042a89b3c3f8ccfc9c984391af19e2087513a79d73e28c3",
       "dependencies": [
         "jsr:@std/internal"
       ]
@@ -105,34 +103,28 @@
     "@std/bytes@1.0.2": {
       "integrity": "fbdee322bbd8c599a6af186a1603b3355e59a5fb1baa139f8f4c3c9a1b3e3d57"
     },
-    "@std/cli@1.0.0-rc.2": {
-      "integrity": "97dfae82b9f0e189768ebfa7a5da53375955b94bad0a1804f8e3b73563b03787"
-    },
     "@std/encoding@0.213.1": {
       "integrity": "fcbb6928713dde941a18ca5db88ca1544d0755ec8fb20fe61e2dc8144b390c62"
     },
     "@std/encoding@1.0.5": {
       "integrity": "ecf363d4fc25bd85bd915ff6733a7e79b67e0e7806334af15f4645c569fefc04"
     },
-    "@std/fmt@0.225.6": {
-      "integrity": "aba6aea27f66813cecfd9484e074a9e9845782ab0685c030e453a8a70b37afc8"
+    "@std/fmt@1.0.3": {
+      "integrity": "97765c16aa32245ff4e2204ecf7d8562496a3cb8592340a80e7e554e0bb9149f"
     },
-    "@std/fmt@1.0.0": {
-      "integrity": "8a95c9fdbb61559418ccbc0f536080cf43341655e1444f9d375a66886ceaaa3d"
-    },
-    "@std/fs@1.0.1": {
-      "integrity": "d6914ca2c21abe591f733b31dbe6331e446815e513e2451b3b9e472daddfefcb",
+    "@std/fs@1.0.5": {
+      "integrity": "41806ad6823d0b5f275f9849a2640d87e4ef67c51ee1b8fb02426f55e02fd44e",
       "dependencies": [
-        "jsr:@std/path@^1.0.2"
+        "jsr:@std/path@^1.0.7"
       ]
     },
-    "@std/internal@1.0.4": {
-      "integrity": "62e8e4911527e5e4f307741a795c0b0a9e6958d0b3790716ae71ce085f755422"
+    "@std/internal@1.0.5": {
+      "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
     },
-    "@std/io@0.224.4": {
-      "integrity": "bce1151765e4e70e376039fd72c71672b4d4aae363878a5ee3e58361b81197ec",
+    "@std/io@0.225.0": {
+      "integrity": "c1db7c5e5a231629b32d64b9a53139445b2ca640d828c26bf23e1c55f8c079b3",
       "dependencies": [
-        "jsr:@std/bytes@^1.0.2-rc.3"
+        "jsr:@std/bytes@^1.0.2"
       ]
     },
     "@std/jsonc@0.213.1": {
@@ -141,12 +133,12 @@
         "jsr:@std/assert@~0.213.1"
       ]
     },
-    "@std/log@0.224.5": {
-      "integrity": "4612a45189438441bbd923a4cad1cce5c44c6c4a039195a3e8d831ce38894eee",
+    "@std/log@0.224.9": {
+      "integrity": "419d04e4d93e6b1a0205ac3f94809621cfec3d328d09fec9ec59cafa3b3fcaee",
       "dependencies": [
-        "jsr:@std/fmt@^1.0.0-rc.1",
-        "jsr:@std/fs@^1.0.0-rc.5",
-        "jsr:@std/io@~0.224.3"
+        "jsr:@std/fmt@^1.0.2",
+        "jsr:@std/fs@^1.0.4",
+        "jsr:@std/io@0.225"
       ]
     },
     "@std/path@0.213.1": {
@@ -155,20 +147,26 @@
         "jsr:@std/assert@~0.213.1"
       ]
     },
-    "@std/path@1.0.2": {
-      "integrity": "a452174603f8c620bd278a380c596437a9eef50c891c64b85812f735245d9ec7"
-    },
     "@std/path@1.0.6": {
       "integrity": "ab2c55f902b380cf28e0eec501b4906e4c1960d13f00e11cfbcd21de15f18fed"
     },
-    "@std/text@1.0.0-rc.1": {
-      "integrity": "34c722203e87ee12792c8d4a0cd2ee0e001341cbce75b860fc21be19d62232b0"
+    "@std/path@1.0.8": {
+      "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
+    },
+    "@std/text@1.0.8": {
+      "integrity": "40ba34caa095f393e78796e5eda37b8b4e2cc6cfd6f51f34658ad7487b1451e4"
     },
     "@std/yaml@1.0.5": {
       "integrity": "71ba3d334305ee2149391931508b2c293a8490f94a337eef3a09cade1a2a2742"
     }
   },
   "npm": {
+    "@bids/nifti-reader-js@0.6.9": {
+      "integrity": "sha512-3KWpGKrgUUvT5Bbl25K9TTQ77DRS5DUpcyhZlAblCPdP1YMy0tCzrxarRTixWM9tDN6sWUOBbf6zQpPyVe11Lw==",
+      "dependencies": [
+        "fflate"
+      ]
+    },
     "ajv@8.17.1": {
       "integrity": "sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==",
       "dependencies": [
@@ -232,8 +230,8 @@
     "ieee754@1.2.1": {
       "integrity": "sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA=="
     },
-    "ignore@5.3.2": {
-      "integrity": "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="
+    "ignore@6.0.2": {
+      "integrity": "sha512-InwqeHHN2XpumIkMvpl/DCJVrAHgCsG5+cn1XlnLWGwtZBm8QJfSusItfrwx81CTp5agNZqpKU2J/ccC5nGT4A=="
     },
     "inherits@2.0.3": {
       "integrity": "sha512-x00IRNXNy63jwGkJmzPigoySHbaqpNuzKbBOmzK+g2OdZpQ9w+sxCN+VSB3ja7IAge2OP2qpfxTjeNcyjmW1uw=="
@@ -243,12 +241,6 @@
     },
     "lodash@4.17.21": {
       "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
-    },
-    "nifti-reader-js@0.6.8": {
-      "integrity": "sha512-yIKNVzYFiUcSHazoR+sd6Ka7sUmZTabaVqJRFxbdlAKR1hnPBuNP71g3AyApo37nJ3k41c632QPij5q7gF1YPQ==",
-      "dependencies": [
-        "fflate"
-      ]
     },
     "node-fetch@2.7.0": {
       "integrity": "sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==",
@@ -409,21 +401,21 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@bids/schema@0.11.4-dev.6+d9c23eb0",
-      "jsr:@cliffy/command@1.0.0-rc.5",
-      "jsr:@cliffy/table@1.0.0-rc.5",
-      "jsr:@libs/xml@5.4.13",
-      "jsr:@std/assert@1.0.2",
-      "jsr:@std/fmt@1.0.0",
-      "jsr:@std/fs@1.0.1",
-      "jsr:@std/io@0.224.4",
-      "jsr:@std/log@0.224.5",
-      "jsr:@std/path@1.0.2",
+      "jsr:@bids/schema@0.11.4-dev.10+436d7cde",
+      "jsr:@cliffy/command@1.0.0-rc.7",
+      "jsr:@cliffy/table@1.0.0-rc.7",
+      "jsr:@libs/xml@6.0.1",
+      "jsr:@std/assert@1.0.7",
+      "jsr:@std/fmt@1.0.3",
+      "jsr:@std/fs@1.0.5",
+      "jsr:@std/io@0.225.0",
+      "jsr:@std/log@0.224.9",
+      "jsr:@std/path@1.0.8",
       "jsr:@std/yaml@^1.0.4",
+      "npm:@bids/nifti-reader-js@0.6.9",
       "npm:ajv@8.17.1",
       "npm:hed-validator@3.15.5",
-      "npm:ignore@5.3.2",
-      "npm:nifti-reader-js@0.6.8"
+      "npm:ignore@6.0.2"
     ]
   }
 }
