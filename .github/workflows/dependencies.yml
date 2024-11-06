@@ -1,0 +1,18 @@
+---
+name: Update dependencies
+
+on:
+  schedule:
+    - cron: "15 15 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  molt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hasundue/molt-action@v1
