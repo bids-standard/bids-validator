@@ -1,20 +1,33 @@
-# Deno based bids-validator
+# The BIDS Validator
 
-## Intro
+The BIDS Validator is a web application, command-line utility,
+and Javascript/Typescript library for assessing compliance with the
+[Brain Imaging Data Structure][BIDS] standard.
 
-This is a full rewrite of the bids-validator JavaScript implementation designed to use the [bids-specification schema](https://github.com/bids-standard/bids-specification/tree/master/src/schema) to apply the majority of validation rules.
+## Getting Started
 
-Deno is a JavaScript and TypeScript runtime that is used to run the schema based validator. Deno is simpler than Node.js and only requires one tool to use, the Deno executable itself. To install Deno, follow these [install instructions for your platform](https://deno.land/manual/getting_started/installation).
+In most cases,
+the simplest way to use the validator is to browse to the [BIDS Validator][] web page:
 
-## Usage
+![The web interface to the BIDS Validator with the "Select Dataset Files" button highlighted.
+(Dark theme)](_static/web_entrypoint_dark.png){.only-dark width="50%" align=center}
+![The web interface to the BIDS Validator with the "Select Dataset Files" button highlighted.
+(Light theme)](_static/web_entrypoint_light.png){.only-light width="50%" align=center}
 
-To use the latest validator hosted at https://deno.land/x/bids_validator, use the following command:
+The web validator runs in-browser, and does not transfer data to any remote server.
 
-```console
-$ deno run --allow-read --allow-env https://deno.land/x/bids_validator/bids-validator.ts path/to/dataset
+In some contexts, such as when working on a remote server,
+it may be easier to use the command-line.
+The BIDS Validator can be run with the [Deno] runtime
+(see [Deno - Installation][] for detailed installation instructions):
+
+```shell
+deno run -ERN jsr:@bids/validator
 ```
 
-Deno by default sandboxes applications like a web browser. `--allow-read` allows the validator to read local files, and `--allow-env` enables OS-specific features.
+Deno by default sandboxes applications like a web browser.
+`-E`, `-R` and `-N` allow the validator to read environment variables,
+local files, and network locations.
 
 ### Configuration file
 
