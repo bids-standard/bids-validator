@@ -159,7 +159,7 @@ export async function readFileTree(rootPath: string): Promise<FileTree> {
     )
     ignore.add(await readBidsIgnore(ignoreFile))
   } catch (err) {
-    if (err && typeof err === 'object' && !('code' in err && err.code !== 'ENOENT')) {
+    if (err && typeof err === 'object' && !('code' in err && err.code === 'ENOENT')) {
       logger.error(`Failed to read '.bidsignore' file with the following error:\n${err}`)
     }
   }
