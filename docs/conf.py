@@ -17,6 +17,7 @@ extensions = [
     # 'sphinx_js',
     'myst_parser',
     'sphinx_copybutton',
+    'sphinx_design',
 ]
 
 templates_path = ['_templates']
@@ -45,4 +46,5 @@ html_theme_options = {
 
 myst_enable_extensions = [
     "attrs_inline",
+    "colon_fence",
 ]
