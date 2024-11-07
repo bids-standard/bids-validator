@@ -36,7 +36,13 @@ html_theme_options = {
         "text": "The BIDS Validator",
         "image_light": "_static/BIDS_logo_black.svg",
         "image_dark": "_static/BIDS_logo_white.svg",
-    }
+    },
+    "repository_url": "https://github.com/bids-standard/bids-validator",
+    "path_to_docs": "docs",
+    "use_source_button": True,
+    "use_edit_page_button": True,
+    "use_repository_button": True,
+    "use_issues_button": True,
 }
 
 # -- Customization
