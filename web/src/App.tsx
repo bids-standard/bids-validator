@@ -6,7 +6,6 @@ import { fileListToTree, validate } from "../dist/validator/main.js"
 import type { ValidationResult } from "../../src/types/validation-result.ts"
 import { Collapse } from "./Collapse.tsx"
 import { Summary } from "./Summary.tsx"
-console.log(confetti)
 
 function Files({ issues }) {
   const unique = new Map(issues.map(({ location, issueMessage }) => {
