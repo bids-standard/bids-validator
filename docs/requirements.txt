@@ -1,0 +1,5 @@
+sphinx
+myst_parser
+sphinx-book-theme
+sphinx-copybutton
+sphinx-design
