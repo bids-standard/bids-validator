@@ -51,13 +51,13 @@ Pass the `--json` flag to see the issues in detail.
 
 ### Development tools
 
-From the repository root, use `bids-validator/bids-validator-deno` to run with all permissions enabled by default:
+From the repository root, use `./local-run` to run with all permissions enabled by default:
 
 ```shell
 # Run from within the /bids-validator directory
 cd bids-validator
 # Run validator:
-./bids-validator-deno path/to/dataset
+./local-run path/to/dataset
 ```
 
 ## Schema validator test suite
@@ -68,12 +68,6 @@ deno test --allow-env --allow-read --allow-write src/
 ```
 
 This test suite includes running expected output from bids-examples and may throw some expected failures for bids-examples datasets where either the schema or validator are misaligned with the example dataset while under development.
-
-## Refreshing latest specification
-
-If you are validating with the latest specification instead of a specific version, the validator will hold onto a cached version. You can request the newest version by adding the `--reload` argument to obtain the newest specification definition.
-
-`deno run --reload=https://bids-specification.readthedocs.io/en/latest/schema.json src/main.ts`
 
 ## Modifying and building a new schema
 
