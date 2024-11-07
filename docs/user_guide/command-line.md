@@ -64,7 +64,7 @@ bids-validator <dataset>
 | `--ignoreNiftiHeaders`         | Do not open NIfTI files, skipping any checks that rely on NIfTI header data                                                                                           |
 | `--filenameMode`               | Perform filename checks only on newline-separated filenames read from [stdin]                                                                                         |
 | `--blacklistModalities MOD...` | Raise error if passed modalities are detected in the dataset. Modalities may be any of `mri`, `eeg`, `ieeg`, `meg`, `beh`, `pet`, `micr`, `motion`, `nirs`, or `mrs`. |
-| `--debug LEVEL`                | Enable logging at the specified level. Default level is `ERROR`. Levels include (from most to least verbose): `NOTSET`, `DEBUG`, `INFO`, WARN`, `ERROR`, `CRITICAL`.  |
+| `--debug LEVEL`                | Enable logging at the specified level. Default level is `ERROR`. Levels include (from most to least verbose): `NOTSET`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `CRITICAL`. |
 | `--color`, `--no-color`        | Enable/disable color. The validator also respects the [NO_COLOR] and [FORCE_COLOR] environment variables.                                                             |
 
 ## Configuration file

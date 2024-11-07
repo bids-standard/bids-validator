@@ -94,61 +94,13 @@ consider:
      `upstream` refers to the original BIDS validator repository on GitHub
    - you can use `upstream` to always stay up to date with changes that are
      being made on the original BIDS validator. For that, simply navigate to
-     the `master` branch of **your** repository using `git checkout master`,
-     and then run `git pull upstream master`
+     the `main` branch of **your** repository using `git checkout main`,
+     and then run `git pull upstream main`
 1. When you get completely stuck with your repository and you just want to
    reset it to be an exact mirror of the original BIDS validator, you can
    run the following command (Note: this will discard all current changes):
-   - first checkout your master: `git checkout master`
-   - then run: `git reset --hard upstream/master`
-
-## Extending the BIDS validator for a BIDS Extension Proposal (BEP)
-
-### Regular expressions
-
-A lot of validation of BIDS files and directories is happening through
-[regular expressions](https://en.wikipedia.org/wiki/Regular_expression).
-You can see the regular expressions
-[here](https://github.com/bids-standard/bids-validator/tree/master/bids-validator/bids_validator/rules).
-
-Changing the regular expressions can be a delicate thing, so we recommend
-testing your regular expressions exhaustively. A helpful website for that can
-be [https://regex101.com/](https://regex101.com/), where you can test regular
-expressions in your browser, and even save and share them.
-
-### JSON schemas
-
-Another big chunk of BIDS validation is happening through [JSON schemas](https://json-schema.org/).
-In BIDS, a lot of metadata is saved in JSON files, which are very well defined
-and readable by a computer. With these properties, we can make requirements of
-how a JSON ought to look like. You can find our JSON schemas
-[here](https://github.com/bids-standard/bids-validator/tree/master/bids-validator/validators/json/schemas).
-
-As with regular expressions, we recommend lots of testing on the JSON schemas.
-You can easily have a first try of that using a website like
-[https://www.jsonschemavalidator.net/](https://www.jsonschemavalidator.net/).
-Simply copy over a schema from BIDS validator to the left field, and try to
-comply to the schema, or trigger an error by typing in a JSON to the right
-field.
-
-### Writing tests
-
-For every change you make it is important to include a test. That way, we can
-make sure that the behavior of BIDS validator is as expected, and furthermore
-we will be notified whenever a contributor makes a change in the code that
-breaks the expected behavior of the BIDS validator.
-
-A test usually provides some known data, and let's the software run over it ...
-just to check whether the output is as we know it should be (because we know
-the data, after all).
-
-You can get a good impression using the following links:
-
-- [How regular expressions are tested](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/tests/type.spec.js)
-- [How JSON schemas are tested](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/tests/json.spec.js)
-- [How TSV files are tested](https://github.com/bids-standard/bids-validator/blob/master/bids-validator/tests/tsv.spec.js)
-
-For more information on how to run the tests check the [testing section](./README.md#testing) of the README.
+   - first checkout your main: `git checkout main`
+   - then run: `git reset --hard upstream/main`
 
 [link_git]: https://git-scm.com/
 [link_handbook]: https://guides.github.com/introduction/git-handbook/
