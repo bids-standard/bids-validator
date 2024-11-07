@@ -10,7 +10,7 @@ export function parseBvalBvec(contents: string): string[][] {
   // BVAL files are a single row of numbers, and may contain
   // trailing whitespace
   return normalizeEOL(contents)
-    .split(/\s*\n/) // Split on newlines, ignoring trailing whitespace
+    .split(/\n/) // Split on newlines
     .filter((x) => x.match(/\S/)) // Remove empty lines
-    .map((row) => row.split(/\s+/))
+    .map((row) => row.trimEnd().split(/\s+/)) // Split on whitespace, ignoring trailing
 }
