@@ -1,4 +1,4 @@
 sphinx
 myst_parser
-pydata-sphinx-theme
+sphinx-book-theme
 sphinx-copybutton
