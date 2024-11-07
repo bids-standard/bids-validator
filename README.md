@@ -10,9 +10,9 @@ In most cases,
 the simplest way to use the validator is to browse to the [BIDS Validator][] web page:
 
 ![The web interface to the BIDS Validator with the "Select Dataset Files" button highlighted.
-(Dark theme)](_static/web_entrypoint_dark.png){.only-dark width="50%" align=center}
+(Dark theme)](docs/_static/web_entrypoint_dark.png#gh-dark-mode-only)
 ![The web interface to the BIDS Validator with the "Select Dataset Files" button highlighted.
-(Light theme)](_static/web_entrypoint_light.png){.only-light width="50%" align=center}
+(Light theme)](docs/_static/web_entrypoint_light.png#gh-light-mode-only)
 
 The web validator runs in-browser, and does not transfer data to any remote server.
 
