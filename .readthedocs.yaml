@@ -11,7 +11,7 @@ build:
       - asdf global uv latest
       # Turn `python -m virtualenv` into `python -c pass`
       - truncate --size 0 $( dirname $( uv python find ) )/../lib/python3*/site-packages/virtualenv/__main__.py
-      - mount | grep ^/home
+      - mount
     post_create_environment:
       - uv venv $READTHEDOCS_VIRTUALENV_PATH
       # Turn `python -m pip` into `python -c pass`
