@@ -10,6 +10,7 @@ build:
       - asdf install uv latest
       - asdf global uv latest
       - uv venv $READTHEDOCS_VIRTUALENV_PATH
+      - ls -lR $READTHEDOCS_VIRTUALENV_PATH
       # Turn `python -m [pip|virtualenv]` into `python -c pass`
       - truncate --size 0 $READTHEDOCS_VIRTUALENV_PATH/lib/python3*/site-packages/pip.py
       - truncate --size 0 $READTHEDOCS_VIRTUALENV_PATH/lib/python3*/site-packages/virtualenv.py
