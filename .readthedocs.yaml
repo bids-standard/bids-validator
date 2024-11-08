@@ -5,12 +5,15 @@ build:
   tools:
     python: latest
   jobs:
-    post_create_environment:
+    pre_create_environment:
       - asdf plugin add uv
       - asdf install uv latest
       - asdf global uv latest
-      # Turn `python -m pip` into `python -c pass`
-      - truncate --size 0 $READTHEDOCS_VIRTUALENV_PATH/lib/python3*/site-packages/pip/__main__.py
-      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH uv pip install --upgrade sphinx
+      - uv venv $READTHEDOCS_VIRTUALENV_PATH
+      # Turn `python -m [pip|virtualenv]` into `python -c pass`
+      - truncate --size 0 $READTHEDOCS_VIRTUALENV_PATH/lib/python3*/site-packages/pip.py
+      - truncate --size 0 $READTHEDOCS_VIRTUALENV_PATH/lib/python3*/site-packages/virtualenv.py
+    post_create_environment:
+      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH uv pip install -n --upgrade sphinx
     post_install:
-      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH uv pip install -r docs/requirements.txt
+      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH uv pip install -n -r docs/requirements.txt
