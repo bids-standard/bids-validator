@@ -44,7 +44,9 @@ authors:
   - family-names: Feingold
     given-names: Franklin
     orcid: https://orcid.org/0000-0002-6533-2909
-    affiliation: Department of Psychology, Stanford University
+  - family-names: Gau
+    given-names: Rémi
+    orcid: https://orcid.org/0000-0002-1535-9767  
   - family-names: Gorgolewski
     given-names: Krzysztof J.
     orcid: https://orcid.org/0000-0003-3321-7583
