@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'BIDS Validator'
-copyright = '2024, BIDS Contributors'
+copyright = 'BIDS Contributors'
 author = 'BIDS Contributors'
 
 # -- General configuration ---------------------------------------------------
