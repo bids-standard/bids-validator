@@ -1,5 +1,6 @@
 [![Deno build](https://github.com/bids-standard/bids-validator/actions/workflows/deno_tests.yml/badge.svg)](https://github.com/bids-standard/bids-validator/actions/workflows/deno_tests.yml)
 [![Web validator](https://github.com/bids-standard/bids-validator/actions/workflows/web_build.yml/badge.svg)](https://github.com/bids-standard/bids-validator/actions/workflows/web_build.yml)
+[![Documentation Status](https://readthedocs.org/projects/bids-validator/badge/?version=latest)](https://bids-validator.readthedocs.io/en/latest/?badge=latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3688707.svg)](https://doi.org/10.5281/zenodo.3688707)
 
 # The BIDS Validator
