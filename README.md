@@ -84,4 +84,4 @@ The command to compile a dereferenced schema is `bst -v export --output src/sche
 
 ## Documentation
 
-The BIDS validator documentaion is available on [Read the Docs](https://bids-validator.readthedocs.io/en/latest/).
+The BIDS validator documentation is available on [Read the Docs](https://bids-validator.readthedocs.io/en/latest/).
