@@ -1,13 +1,4 @@
 {
-  "title": "bids-validator",
-  "description": "The bids-validator is a software tool to check neuroimaging datasets for adherence to the Brain Imaging Data Structure (BIDS) format. More information about BIDS can be found at <a href=\"https://bids.neuroimaging.io\">bids.neuroimaging.io</a>.",
-  "keywords": [
-    "BIDS",
-    "brain imaging data structure",
-    "neuroscience",
-    "neuroimaging",
-    "neuroinformatics"
-  ],
   "creators": [
     {
       "affiliation": "Stanford University",
@@ -170,7 +161,5 @@
     {
       "name": "Zulfikar, Wazeer"
     }
-  ],
-  "license": "mit-license",
-  "upload_type": "software"
+  ]
 }

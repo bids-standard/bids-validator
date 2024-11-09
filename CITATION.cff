@@ -1,0 +1,29 @@
+# schema: https://github.com/citation-file-format/citation-file-format/blob/main/schema-guide.md
+
+cff-version: 1.2.0
+
+title: bids-validator
+
+license: mit-license
+
+type: software
+
+repository-code: https://github.com/bids-standard/bids-validator
+
+message: The bids-validator is a software tool to check neuroimaging datasets for adherence to the Brain Imaging Data Structure (BIDS) format. More information about BIDS can be found at <a href=\"https://bids.neuroimaging.io\">bids.neuroimaging.io</a>.
+
+identifiers:
+  - description: releases on zenodo
+    type: doi
+    value: 10.5281/zenodo.3688707
+
+keywords:
+  - brain imaging data structure
+  - BIDS
+  - neuroscience
+  - neuroimaging
+  - neuroinformatics
+
+authors:
+  - given-names: Aaron
+    family-names: Oliver-Taylor
