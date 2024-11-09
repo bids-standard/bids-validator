@@ -2,9 +2,11 @@ import json
 from pathlib import Path
 import ruamel.yaml
 from rich import print
+import collections
 
 yaml = ruamel.yaml.YAML()
 yaml.indent(mapping=2, sequence=4, offset=2)
+yaml.width = 4096
 
 
 def load_citation(citation_file: Path) -> dict:
@@ -24,12 +26,19 @@ with Path(".zenodo.json").open() as f:
 citation = load_citation(Path("CITATION.cff"))
 citation["authors"] = []
 
+key_order = ["family-names", "given-names", "orcid", "affiliation"]
+
 for author in zenodo['creators']:
     name = author["name"].split(", ")
-    author["given-names"] = name[0]
-    author["family-names"] = name[1]
+    author["given-names"] = name[1]
+    author["family-names"] = name[0]
     author.pop("name")
-    print(author)
+    author =  {k : author[k] for k in key_order if k in author}
 
 
-write_citation(citation[])
+    citation["authors"].append(author)
+
+
+citation["authors"] = sorted(citation["authors"], key=lambda d: d['family-names'])
+
+write_citation(Path("CITATION.cff"), citation)
