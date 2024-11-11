@@ -102,6 +102,65 @@ consider:
    - first checkout your main: `git checkout main`
    - then run: `git reset --hard upstream/main`
 
+## Developing for the validator
+
+When proposing a feature or bug fix, you must decide what branch you will target:
+`main` or `dev`.
+In most cases, you will want `main`, but read below to understand the purposes of
+the two branches.
+
+### Branching policy
+
+The BIDS Validator's `main` branch tracks the most recent release version of the specification:
+<https://bids-specification.readthedocs.io/en/stable/>.
+Pull requests made against the `main` branch should implement features or fix bugs in a way
+that preserves consistency with the stable specification.
+
+The `dev` branch is for features that are not yet in the released version of the BIDS
+specification.
+The purpose of this branch is to verify that proposed rules can be validated and
+provide users with preview access to upcoming changes to the validator, increasing the chances
+of catching issues with the specification or the validator, prior to release.
+Changes to the `dev` branch may be backed out at any time.
+
+### How to prepare a pull request for your target branch
+
+If you're going to target `main`, then start as follows:
+
+```console
+git fetch upstream
+git switch -c feat/short-desc upstream/main
+```
+
+This will create a new branch named `feat/short-desc`
+(use `fix/...` for bug-fix branches, `doc/...` for documentation, etc.) starting
+from the current state of the `main` branch on the `upstream` remote.
+Instead of `short-desc`, use a few words to make the content of your branch
+easily identifiable.
+
+Once ready
+
+```console
+git push -u origin feat/short-desc
+```
+
+GitHub will give you a link, such as
+<https://github.com/bids-standard/bids-validator/compare/master...username:bids-validator:feat/short-desc?expand=1>.
+Follow that link to create a pull request.
+
+While you are creating the pull request, verify that the base branch is set to `main`.
+
+For `dev`, the process is identical:
+
+```console
+git fetch upstream
+git switch -c feat/short-desc upstream/dev
+# Add your feature
+git push -u origin feat/short-desc
+```
+
+Open PR, set base branch to `dev`.
+
 [link_git]: https://git-scm.com/
 [link_handbook]: https://guides.github.com/introduction/git-handbook/
 [link_swc_intro]: http://swcarpentry.github.io/git-novice/
