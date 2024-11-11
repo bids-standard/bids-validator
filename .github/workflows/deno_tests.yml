@@ -76,7 +76,7 @@ jobs:
         if: ${{ ! matrix.allow-net }}
       - name: Disable unreleased examples
         run: touch tests/data/bids-examples/dwi_deriv/.SKIP_VALIDATION
-        if: github.ref_name != 'dev'
+        if: github.ref_name != 'dev' && github.base_ref != 'dev'
       - run: deno test --node-modules-dir=auto $PERMS --coverage=cov/ src/
       - name: Collect coverage
         run: deno coverage cov/ --lcov --output=coverage.lcov
