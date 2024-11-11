@@ -62,7 +62,7 @@ Context: {
 ```
 
 To take an example, in a minimal dataset containing only a single subject's T1-weighted image,
-the context for that image might be:
+the `context` for that image might be:
 
 ```yaml
 dataset:

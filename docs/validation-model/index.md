@@ -9,9 +9,9 @@ def validate(directory):
     dataset = buildDatasetContext(fileTree)
 
     for file in walk(dataset.fileTree):
-        context = buildFileContext(dataset, file)
+        file_context = buildFileContext(dataset, file)
         for check in perFileChecks:
-            check(context)
+            check(file_context)
 
     for check in datasetChecks:
         check(dataset)
