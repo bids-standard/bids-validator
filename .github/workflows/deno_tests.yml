@@ -13,6 +13,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  debug_info:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git status
+      - run: git describe
+      - run: env
+      - name: Dump github context
+        run: echo $GITHUB_CONTEXT | jq .
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -60,6 +74,9 @@ jobs:
       - name: Disable example that requires network access
         run: touch tests/data/bids-examples/xeeg_hed_score/.SKIP_VALIDATION
         if: ${{ ! matrix.allow-net }}
+      - name: Disable unreleased examples
+        run: touch tests/data/bids-examples/dwi_deriv/.SKIP_VALIDATION
+        if: github.ref_name != 'dev' && github.base_ref != 'dev'
       - run: deno test --node-modules-dir=auto $PERMS --coverage=cov/ src/
       - name: Collect coverage
         run: deno coverage cov/ --lcov --output=coverage.lcov
