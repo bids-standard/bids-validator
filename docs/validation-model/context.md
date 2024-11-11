@@ -157,3 +157,4 @@ The heavy lifting is done in `parsePath`, `loadSidecar` and `loadAssociation`.
 implement the BIDS [Inheritance Principle].
 
 [Inheritance Principle]: https://bids-specification.readthedocs.io/en/stable/common-principles.html#the-inheritance-principle
+[schema]: https://bidsschematools.readthedocs.io/
