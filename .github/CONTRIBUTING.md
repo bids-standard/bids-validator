@@ -104,9 +104,9 @@ consider:
 
 ## Developing for the validator
 
-When proposing a feature or bug fix, you must decide what branch you will target:
+When proposing a feature or bug fix, you must decide which branch you will target:
 `main` or `dev`.
-In most cases, you will want `main`, but read below to understand the purposes of
+In most cases you will want `main`, but read below to understand the purposes of
 the two branches.
 
 ### Branching policy
@@ -121,7 +121,7 @@ specification.
 The purpose of this branch is to verify that proposed rules can be validated and
 provide users with preview access to upcoming changes to the validator, increasing the chances
 of catching issues with the specification or the validator, prior to release.
-Changes to the `dev` branch may be backed out at any time.
+Changes to the `dev` branch may be reverted at any time.
 
 ### How to prepare a pull request for your target branch
 
@@ -138,13 +138,13 @@ from the current state of the `main` branch on the `upstream` remote.
 Instead of `short-desc`, use a few words to make the content of your branch
 easily identifiable.
 
-Once ready
+Once you have changes committed and ready for review you can run:
 
 ```console
 git push -u origin feat/short-desc
 ```
 
-GitHub will give you a link, such as
+GitHub will then give you a link such as:
 <https://github.com/bids-standard/bids-validator/compare/master...username:bids-validator:feat/short-desc?expand=1>.
 Follow that link to create a pull request.
 
