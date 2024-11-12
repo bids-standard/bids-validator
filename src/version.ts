@@ -38,7 +38,6 @@ async function getLocalVersion(path: string): Promise<string> {
       args: ['-C', path, '-c', 'safe.directory=*', 'describe', '--tags', '--always'],
     })
     const { success, stdout } = await command.output();
-    console.log(success)
     const description = new TextDecoder().decode(stdout).trim()
     return description
   } catch(err) {
