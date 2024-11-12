@@ -1,4 +1,4 @@
-import { BIDSFile, FileTree } from '../types/filetree.ts'
+import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { pathsToTree } from '../files/filetree.ts'
 import { nullReadBytes } from '../tests/nullReadBytes.ts'
 

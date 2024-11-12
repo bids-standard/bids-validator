@@ -168,14 +168,13 @@ export const bidsIssues: IssueDefinitionRecord = {
   },
   CITATION_CFF_VALIDATION_ERROR: {
     severity: 'error',
-    reason: 
-      "The file does not pass validation using the citation.cff standard's schema." +
-      'https://github.com/citation-file-format/citation-file-format/blob/main/schema-guide.md'
+    reason: "The file does not pass validation using the citation.cff standard's schema." +
+      'https://github.com/citation-file-format/citation-file-format/blob/main/schema-guide.md',
   },
   FILE_READ: {
     severity: 'error',
-    reason: 'We were unable to read this file.'
-  }
+    reason: 'We were unable to read this file.',
+  },
 }
 
 const hedIssues: IssueDefinitionRecord = {

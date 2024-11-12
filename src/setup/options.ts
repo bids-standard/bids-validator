@@ -32,7 +32,7 @@ export type ValidatorOptions = {
 }
 
 const modalityType = new EnumType<string>(
-  Object.keys(schema.rules.modalities)
+  Object.keys(schema.rules.modalities),
 )
 
 /** Extendable Cliffy Command with built in BIDS validator options */

@@ -1,6 +1,6 @@
 import { parse, SEPARATOR_PATTERN } from '@std/path'
 import * as posix from '@std/path/posix'
-import { BIDSFile, FileTree } from '../types/filetree.ts'
+import { type BIDSFile, FileTree } from '../types/filetree.ts'
 
 const nullFile = {
   size: 0,

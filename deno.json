@@ -9,17 +9,21 @@
     "./options": "./src/setup/options.ts",
     "./issues": "./src/issues/datasetIssues.ts"
   },
+  "exclude": [
+    "docs/",
+    "tools/",
+    "web/",
+    ".*",
+    "CITATION.cff",
+    "Dockerfile",
+    "build.ts",
+    "local-run"
+  ],
   "publish": {
     "exclude": [
       "**/tests/",
-      "tools/",
-      "web/",
-      ".*",
       "**/*.test.ts",
-      "Dockerfile",
-      "build.ts",
-      "deno.lock",
-      "local-run"
+      "deno.lock"
     ]
   },
   "imports": {
@@ -47,6 +51,8 @@
     "semiColons": false,
     "singleQuote": true,
     "proseWrap": "preserve",
-    "include": ["src/"]
+    "include": [
+      "src/"
+    ]
   }
 }
