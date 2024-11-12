@@ -34,14 +34,14 @@ export async function getVersion(): Promise<string> {
 async function getLocalVersion(path: string): Promise<string> {
   // safe.directory setting so we could still operate from another user
   try {
-    const command = new Deno.Command("git", {
+    const command = new Deno.Command('git', {
       args: ['-C', path, '-c', 'safe.directory=*', 'describe', '--tags', '--always'],
     })
-    const { success, stdout } = await command.output();
+    const { success, stdout } = await command.output()
     const description = new TextDecoder().decode(stdout).trim()
     return description
-  } catch(err) {
-    return ""
+  } catch (err) {
+    return ''
   }
 }
 

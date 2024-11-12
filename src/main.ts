@@ -28,9 +28,9 @@ export async function main(): Promise<ValidationResult> {
   // Run the schema based validator
   const schemaResult = await validate(tree, options, config)
 
-  let output_string = ""
+  let output_string = ''
   if (options.json) {
-      output_string = resultToJSONStr(schemaResult)
+    output_string = resultToJSONStr(schemaResult)
   } else {
     output_string = consoleFormat(schemaResult, {
       verbose: options.verbose ? options.verbose : false,
@@ -41,7 +41,7 @@ export async function main(): Promise<ValidationResult> {
     if (globalThis.Deno) {
       Deno.writeTextFileSync(options.outfile, output_string)
     } else {
-      console.error("Output to file only supported in Deno runtime")
+      console.error('Output to file only supported in Deno runtime')
       console.log(output_string)
     }
   } else {

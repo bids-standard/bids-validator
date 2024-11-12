@@ -163,7 +163,10 @@ export async function buildAssociations(
     try {
       file = walkBack(source, inherit, extensions, suffix).next().value
     } catch (error) {
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'MULTIPLE_INHERITABLE_FILES') {
+      if (
+        error && typeof error === 'object' && 'code' in error &&
+        error.code === 'MULTIPLE_INHERITABLE_FILES'
+      ) {
         // @ts-expect-error
         issues.add(error)
         break
