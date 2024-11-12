@@ -2,9 +2,9 @@
  * TIFF
  * Module for extracting Tiff metadata
  */
-import { Ome, Tiff } from '@bids/schema/context'
+import type { Ome, Tiff } from '@bids/schema/context'
 import * as XML from '@libs/xml'
-import { BIDSFile } from '../types/filetree.ts'
+import type { BIDSFile } from '../types/filetree.ts'
 
 function getImageDescription(
   dataview: DataView,

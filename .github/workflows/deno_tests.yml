@@ -95,6 +95,25 @@ jobs:
           deno-version: v2.x
       - run: deno publish --dry-run
 
+  publish:
+    runs-on: ubuntu-latest
+    needs: [test, publish-dry-run]
+    if: github.ref_type == 'tag'
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check tag matches ${{ github.ref_name }}
+        run: jq -e ".version[:1] != \"v\" and .version==\"$TAG\"" deno.json
+        env:
+          TAG: ${{ github.ref_name }}
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno publish
+
   deploy:
     needs: [build]
     runs-on: ubuntu-latest

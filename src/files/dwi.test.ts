@@ -4,7 +4,7 @@ import { parseBvalBvec } from './dwi.ts'
 
 Deno.test('Test bval/bvec parsing', async (t) => {
   await t.step('Load 3 bvals', async () => {
-    const bvals = parseBvalBvec('0 1 2 \n')  // Typically ends with " \n"
+    const bvals = parseBvalBvec('0 1 2 \n') // Typically ends with " \n"
     assertEquals(bvals, [['0', '1', '2']])
   })
   await t.step('Load 3 bvals - missing newline', async () => {
@@ -32,4 +32,3 @@ Deno.test('Test bval/bvec parsing', async (t) => {
     assertEquals(bvecs, [['0', '1', '2'], ['0', '1', '2'], ['0', '1', '2']])
   })
 })
-

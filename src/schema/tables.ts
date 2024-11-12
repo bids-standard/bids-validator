@@ -1,5 +1,5 @@
-import { GenericRule, GenericSchema, SchemaType, SchemaTypeLike } from '../types/schema.ts'
-import { BIDSContext } from './context.ts'
+import type { GenericRule, GenericSchema, SchemaType, SchemaTypeLike } from '../types/schema.ts'
+import type { BIDSContext } from './context.ts'
 
 interface ColumnDefinition {
   Levels?: Record<string, unknown>

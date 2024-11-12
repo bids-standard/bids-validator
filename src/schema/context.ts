@@ -184,7 +184,10 @@ export class BIDSContext implements Context {
     try {
       sidecars = [...walkBack(this.file)]
     } catch (error) {
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'MULTIPLE_INHERITABLE_FILES') {
+      if (
+        error && typeof error === 'object' && 'code' in error &&
+        error.code === 'MULTIPLE_INHERITABLE_FILES'
+      ) {
         // @ts-expect-error
         this.dataset.issues.add(error)
       } else {

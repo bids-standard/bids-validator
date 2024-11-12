@@ -1,6 +1,6 @@
 import { nonSchemaIssues } from './list.ts'
-import type { Issue, Severity, IssueDefinition, IssueFile } from '../types/issues.ts'
-export type { Issue, Severity, IssueDefinition, IssueFile }
+import type { Issue, IssueDefinition, IssueFile, Severity } from '../types/issues.ts'
+export type { Issue, IssueDefinition, IssueFile, Severity }
 
 // Code is deprecated, return something unusual but JSON serializable
 const CODE_DEPRECATED = Number.MIN_SAFE_INTEGER
