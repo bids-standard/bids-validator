@@ -1,4 +1,4 @@
-import { FileTree } from '../types/filetree.ts'
+import type { FileTree } from '../types/filetree.ts'
 import type { GenericSchema } from '../types/schema.ts'
 import { assertEquals } from '@std/assert'
 import { BIDSContext } from '../schema/context.ts'

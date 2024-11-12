@@ -2,8 +2,8 @@
  * GZIP
  * Module for extracting gzip metadata from a file
  */
-import { Gzip } from '@bids/schema/context'
-import { BIDSFile } from '../types/filetree.ts'
+import type { Gzip } from '@bids/schema/context'
+import type { BIDSFile } from '../types/filetree.ts'
 
 /**
  * Parse a gzip header from a file

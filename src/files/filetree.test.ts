@@ -1,6 +1,6 @@
 import { assert, assertEquals } from '@std/assert'
-import { FileIgnoreRules } from './ignore.ts'
-import { FileTree } from '../types/filetree.ts'
+import type { FileIgnoreRules } from './ignore.ts'
+import type { FileTree } from '../types/filetree.ts'
 import { filesToTree, pathsToTree } from './filetree.ts'
 
 Deno.test('FileTree generation', async (t) => {

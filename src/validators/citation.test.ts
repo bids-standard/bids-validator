@@ -3,7 +3,7 @@ import { pathsToTree } from '../files/filetree.ts'
 import { BIDSFileDeno } from '../files/deno.ts'
 import { citationValidate } from './citation.ts'
 import { BIDSContextDataset } from '../schema/context.ts'
-import { GenericSchema } from '../types/schema.ts'
+import type { GenericSchema } from '../types/schema.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
 Deno.test('citation validation', async (t) => {
