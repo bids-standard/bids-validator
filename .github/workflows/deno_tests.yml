@@ -106,7 +106,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check tag matches ${{ github.ref_name }}
-        run: jq -e ".version==\"${TAG#v}\"" deno.json
+        run: jq -e ".version[:1] != \"v\" and .version==\"$TAG\"" deno.json
         env:
           TAG: ${{ github.ref_name }}
       - uses: denoland/setup-deno@v2
