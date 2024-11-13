@@ -61,6 +61,13 @@ jobs:
         working-directory: dev/web
       - name: Nest dev inside stable
         run: mv dev/web/dist stable/web/dist/dev
+      - name: Add legacy/ redirect
+        run: |
+          mkdir $DIR
+          echo '<html><meta http-equiv="refresh" content="0; URL='$URL'"></html>' > $DIR/index.html
+        env:
+          DIR: stable/web/dist/legacy
+          URL: https://bids-standard.github.io/legacy-validator/
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
