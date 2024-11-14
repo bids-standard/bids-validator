@@ -71,66 +71,24 @@ export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
   }
 }
 
+/** Vector addition */
 function add(a: number[], b: number[]): number[] {
   return a.map((x, i) => x + b[i])
 }
 
+/** Vector subtraction */
 function sub(a: number[], b: number[]): number[] {
   return a.map((x, i) => x - b[i])
 }
 
+/** Scalar multiplication */
 function scale(vec: number[], scalar: number): number[] {
   return vec.map((x) => x * scalar)
 }
 
+/** Dot product */
 function dot(a: number[], b: number[]): number {
   return a.map((x, i) => x * b[i]).reduce((acc, x) => acc + x, 0)
-}
-
-function extractRotation(affine: number[][]): number[][] {
-  // This function is an extract of the Python function transforms3d.affines.decompose44
-  // (https://github.com/matthew-brett/transforms3d/blob/6a43a98/transforms3d/affines.py#L10-L153)
-  //
-  // To explain the conventions of the s{xyz}* parameters:
-  //
-  // The upper left 3x3 of the affine is a matrix we will call RZS which can be decomposed
-  //
-  //    RZS = R * Z * S
-  //
-  // where R is a 3x3 rotation matrix, Z is a diagonal matrix of scalings
-  //
-  //    Z = diag([sx, xy, sz])
-  //
-  // and S is a shear matrix with the form
-  //
-  //    S = [[1, sxy, sxz],
-  //         [0,   1, syz],
-  //         [0,   0,   1]]
-  //
-  // Note that this function does not return scales, shears or translations, and
-  // does not guarantee a right-handed rotation matrix, as that is not necessary for our use.
-
-  // Operate on columns, which are the cosines that project input coordinates onto output axes
-  const [cosX, cosY, cosZ] = [0, 1, 2].map((j) => [0, 1, 2].map((i) => affine[i][j]))
-
-  const sx = Math.sqrt(dot(cosX, cosX))
-  const normX = cosX.map((x) => x / sx) // Unit vector
-
-  // Orthogonalize cosY with respect to normX
-  const sx_sxy = dot(normX, cosY)
-  const orthY = sub(cosY, scale(normX, sx_sxy))
-  const sy = Math.sqrt(dot(orthY, orthY))
-  const normY = orthY.map((y) => y / sy)
-
-  // Orthogonalize cosZ with respect to normX and normY
-  const sx_sxz = dot(normX, cosZ)
-  const sy_syz = dot(normY, cosZ)
-  const orthZ = sub(cosZ, add(scale(normX, sx_sxz), scale(normY, sy_syz)))
-  const sz = Math.sqrt(dot(orthZ, orthZ))
-  const normZ = orthZ.map((z) => z / sz)
-
-  // Transposed normalized cosines
-  return [normX, normY, normZ]
 }
 
 function argMax(arr: number[]): number {
@@ -165,9 +123,25 @@ function argMax(arr: number[]): number {
  * @returns character codes describing the orientation of an image affine.
  */
 export function axisCodes(affine: number[][]): string[] {
-  // Note that rotation is transposed
-  const rotations = extractRotation(affine)
-  const maxIndices = rotations.map((row) => argMax(row.map(Math.abs)))
+  // This function is an extract of the Python function transforms3d.affines.decompose44
+  // (https://github.com/matthew-brett/transforms3d/blob/6a43a98/transforms3d/affines.py#L10-L153)
+  //
+  // As an optimization, this only orthogonalizes the basis,
+  // and does not normalize to unit vectors.
+
+  // Operate on columns, which are the cosines that project input coordinates onto output axes
+  const [cosX, cosY, cosZ] = [0, 1, 2].map((j) => [0, 1, 2].map((i) => affine[i][j]))
+
+  // Orthogonalize cosY with respect to cosX
+  const orthY = sub(cosY, scale(cosX, dot(cosX, cosY)))
+
+  // Orthogonalize cosZ with respect to cosX and orthY
+  const orthZ = sub(
+    cosZ, add(scale(cosX, dot(cosX, cosZ)), scale(orthY, dot(orthY, cosZ)))
+  )
+
+  const basis = [cosX, orthY, orthZ]
+  const maxIndices = basis.map((row) => argMax(row.map(Math.abs)))
 
   // Check that indices are 0, 1 and 2 in some order
   if (maxIndices.toSorted().some((idx, i) => idx !== i)) {
@@ -176,5 +150,5 @@ export function axisCodes(affine: number[][]): string[] {
 
   // Positive/negative codes for each world axis
   const codes = ['RL', 'AP', 'SI']
-  return maxIndices.map((idx, i) => codes[idx][rotations[i][idx] > 0 ? 0 : 1])
+  return maxIndices.map((idx, i) => codes[idx][basis[i][idx] > 0 ? 0 : 1])
 }
