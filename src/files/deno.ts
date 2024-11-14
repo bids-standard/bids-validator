@@ -151,17 +151,14 @@ async function _readFileTree(
  */
 export async function readFileTree(rootPath: string): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
-  try {
-    const ignoreFile = new BIDSFileDeno(
-      rootPath,
-      '.bidsignore',
-      ignore,
-    )
-    ignore.add(await readBidsIgnore(ignoreFile))
-  } catch (err) {
-    if (err && typeof err === 'object' && !('code' in err && err.code === 'ENOENT')) {
-      logger.error(`Failed to read '.bidsignore' file with the following error:\n${err}`)
+  const tree = await _readFileTree(rootPath, '/', ignore)
+  const bidsignore = tree.get('.bidsignore')
+  if (bidsignore) {
+    try {
+      ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
+    } catch (err) {
+      console.log(`Failed to read '.bidsignore' file with the following error:\n${err}`)
     }
   }
-  return _readFileTree(rootPath, '/', ignore)
+  return tree
 }
