@@ -161,6 +161,93 @@ git push -u origin feat/short-desc
 
 Open PR, set base branch to `dev`.
 
+### Conventions for branches, commits and changelogs
+
+The following conventions are intended to make contributions legible to other contributors
+and, ultimately, users.
+They are also there to help you, as a contributor, focus on doing one task at a time.
+
+The following are common types of contributions, sorted roughly by order of interest
+to the reader:
+
+| Contribution type | Branch prefix | Commit prefix | Changelog section       |
+|-------------------|---------------|---------------|-------------------------|
+| Bug fix           | `fix/`        | `fix:`        | Fixed                   |
+| Feature           | `feat/`       | `feat:`       | Added                   |
+| Documentation     | `doc/`        | `doc:`        | Added or Infrastructure |
+| Refactor          | `rf/`         | `rf:`         | Changed                 |
+| Testing           | `test/`       | `test:`       | Changed                 |
+| Style-only        | `sty/`        | `style:`      | Infrastructure          |
+| Maintenance       | `chore/`      | `chore:`      | Infrastructure          |
+
+If you are contributing a bug-fix, it can help focus your efforts to name your branch
+`fix/problem-with-X`, and start commit messages where you write fixes with `fix:`.
+Similarly, branches and commits that focus on features, documentation, refactors,
+and so on, all have prefixes that help your reader understand what you were trying to do.
+
+If you find your contribution spanning more than one of these sections,
+it might be worth breaking into multiple pull requests.
+Exceptions include tests and documentation relevant to the main thrust of the PR,
+which are always welcome.
+
+None of this is set in stone, and we all make mistakes, so don't worry about
+following it to the letter.
+We will let you know if your contribution is doing too many things and work with
+you to split it into more manageable pieces.
+
+#### Changelog entries
+
+We are using the [scriv] changelog management tool to help keep our changelog organized.
+
+Most pull requests will deserve changelog entries, and some may deserve more than one.
+Scriv allows changelog entries to be made as part of the pull request, which gives
+the contributor and the reviewer a chance to consider the impact of the pull request.
+
+To add an entry, run:
+
+```
+scriv create --edit
+```
+
+(If you're wondering how to install `scriv`, we recommend using [uvx scriv][].)
+
+Your editor will open a Markdown file with commented sections.
+Find the appropriate section(s) for your contribution and write a 1-3 line description.
+
+#### Style contributions
+
+Style changes in code can be a source of frustration.
+Some editors will reformat entire files when a single line is changed,
+swamping the meaningful change with a large number of cosmetic changes.
+
+We have provided a [`.editorconfig`](https://editorconfig.org) file in the repository,
+which should be respected by [most editors](https://editorconfig.org/#pre-installed),
+and there are plugins available for [others](https://editorconfig.org/#download).
+Additionally, we use `deno fmt` to format the code in this repository.
+Using an autoformatter like this helps avoid (ongoing) disagreements over style preferences
+so we can focus on the content of the work.
+
+Even with these, it is possible that when you go to commit your changes,
+you have changed more than you intended to.
+One reason this can happen is that we might have forgetten to autoformat our code.
+
+One tool for this situation is `git add --patch` (or `-p`).
+This tool shows you each change in turn, allowing you to decide whether or not to
+"stage" the change. Stage only the chunks containing the pieces you meant to change,
+and commit those. You can then `git checkout .` to discard the remaining changes.
+
+It is sometimes unavoidable to reformat large portions of code.
+In these cases, please make a style-only commit,
+followed by a commit with the meaningful changes.
+This will speed up review significantly.
+
+Overall, a style-only pull request should be a rare event,
+typically when adopting or upgrading an autoformatter.
+This will generally have the effect of introducing merge conflicts,
+so we may refrain from doing it for a while.
+If you're feeling the urge, it's best to ask!
+
+
 [link_git]: https://git-scm.com/
 [link_handbook]: https://guides.github.com/introduction/git-handbook/
 [link_swc_intro]: http://swcarpentry.github.io/git-novice/
@@ -168,3 +255,7 @@ Open PR, set base branch to `dev`.
 [link_pullrequest]: https://help.github.com/articles/creating-a-pull-request-from-a-fork
 [link_fork]: https://help.github.com/articles/fork-a-repo/
 [link_clone]: https://help.github.com/articles/cloning-a-repository
+[conventional commits]: https://www.conventionalcommits.org/en/v1.0.0/
+[git blame]: https://docs.github.com/en/repositories/working-with-files/using-files/viewing-a-file#viewing-the-line-by-line-revision-history-for-a-file
+[scriv]: https://scriv.readthedocs.io/en/latest/
+[uvx]: https://docs.astral.sh/uv/guides/tools/
