@@ -80,7 +80,7 @@ To modify the schema a clone of bids-standard/bids-specification will need to be
 
 After changes to the schema have been made to a local copy the dereferenced single json file used by the validator will need to be built. The `bidsschematools` python package does this. It can be installed from pypi via pip or a local installation can be made. It lives in the specification repository here https://github.com/bids-standard/bids-specification/tree/master/tools/schemacode
 
-The command to compile a dereferenced schema is `bst -v export --output src/schema.json` (this assumes you are in the root of the bids-specification repo). Once compiled it can be passed to the validator via the `-s` flag, `./bids-validator-deno -s <path to schema> <path to dataset>`
+The command to compile a dereferenced schema is `bst -v export --schema src/schema --output src/schema.json` (this assumes you are in the root of the bids-specification repo). Once compiled it can be passed to the validator via the `-s` flag, `./bids-validator-deno -s <path to schema> <path to dataset>`
 
 
 ## Documentation
