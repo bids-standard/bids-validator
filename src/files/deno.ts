@@ -117,6 +117,7 @@ async function _readFileTree(
   rootPath: string,
   relativePath: string,
   ignore: FileIgnoreRules,
+  prune: FileIgnoreRules,
   parent?: FileTree,
 ): Promise<FileTree> {
   await requestReadPermission()
@@ -124,10 +125,14 @@ async function _readFileTree(
   const tree = new FileTree(relativePath, name, parent, ignore)
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
+    const thisPath = posix.join(relativePath, dirEntry.name)
+    if (prune.test(thisPath)) {
+      continue
+    }
     if (dirEntry.isFile || dirEntry.isSymlink) {
       const file = new BIDSFileDeno(
         rootPath,
-        posix.join(relativePath, dirEntry.name),
+        thisPath,
         ignore,
       )
       file.parent = tree
@@ -136,8 +141,9 @@ async function _readFileTree(
     if (dirEntry.isDirectory) {
       const dirTree = await _readFileTree(
         rootPath,
-        posix.join(relativePath, dirEntry.name),
+        thisPath,
         ignore,
+        prune,
         tree,
       )
       tree.directories.push(dirTree)
@@ -149,9 +155,13 @@ async function _readFileTree(
 /**
  * Read in the target directory structure and return a FileTree
  */
-export async function readFileTree(rootPath: string): Promise<FileTree> {
+export async function readFileTree(
+  rootPath: string,
+  prune?: FileIgnoreRules,
+): Promise<FileTree> {
+  prune ??= new FileIgnoreRules([], false)
   const ignore = new FileIgnoreRules([])
-  const tree = await _readFileTree(rootPath, '/', ignore)
+  const tree = await _readFileTree(rootPath, '/', ignore, prune)
   const bidsignore = tree.get('.bidsignore')
   if (bidsignore) {
     try {

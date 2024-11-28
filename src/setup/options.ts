@@ -29,6 +29,7 @@ export type ValidatorOptions = {
   recursive?: boolean
   outfile?: string
   blacklistModalities: string[]
+  prune?: boolean
 }
 
 const modalityType = new EnumType<string>(
@@ -71,6 +72,10 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   .option(
     '-r, --recursive',
     'Validate datasets found in derivatives directories in addition to root dataset',
+  )
+  .option(
+    '-p, --prune',
+    'Prune derivatives and sourcedata directories on load (disables -r and will underestimate dataset size)',
   )
   .option(
     '-o, --outfile <file:string>',
