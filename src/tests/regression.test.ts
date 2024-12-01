@@ -3,13 +3,12 @@ import { pathsToTree } from '../files/filetree.ts'
 import { validate } from '../validators/bids.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 
-
 Deno.test('Regression tests', async (t) => {
   await t.step('Verify ignored files in scans.tsv do not trigger error', async () => {
     const paths = [
       '/dataset_description.json',
       '/sub-01/anat/sub-01_T1w.nii.gz',
-      '/sub-01/anat/sub-01_CT.nii.gz',  // unknown file
+      '/sub-01/anat/sub-01_CT.nii.gz', // unknown file
       '/sub-01/sub-01_scans.tsv',
     ]
     const ignore = ['*_CT.nii.gz']
