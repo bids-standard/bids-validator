@@ -11,20 +11,24 @@ async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array> 
   const stream = new ReadableStream({
     start(controller) {
       controller.enqueue(buffer)
+      controller.close()
     },
   })
   const reader = stream.pipeThrough(new DecompressionStream('gzip')).getReader()
   let offset = 0
-  while (offset < nbytes) {
-    const { value, done } = await reader.read()
-    if (done) {
-      break
+  try {
+    while (offset < nbytes) {
+      const { value, done } = await reader.read()
+      if (done || !value) {
+        break
+      }
+      result.set(value.subarray(0, Math.min(value.length, nbytes - offset)), offset)
+      offset += value.length
     }
-    result.set(value.subarray(0, Math.min(value.length, nbytes - offset)), offset)
-    offset += value.length
+  } finally {
+    await reader.cancel()
   }
-  await reader.cancel()
-  return result
+  return result.subarray(0, offset)
 }
 
 export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
