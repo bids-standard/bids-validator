@@ -1,4 +1,4 @@
-import { isCompressed, readHeader } from '@mango/nifti'
+import { isCompressed, isNIFTI1, isNIFTI2, NIFTI1, NIFTI2 } from '@mango/nifti'
 import type { BIDSFile } from '../types/filetree.ts'
 import { logger } from '../utils/logger.ts'
 import type { NiftiHeader } from '@bids/schema/context'
@@ -34,8 +34,16 @@ async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array> 
 export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
   try {
     const buf = await file.readBytes(1024)
-    const data = isCompressed(buf.buffer) ? await extract(buf, 540) : buf
-    const header = readHeader(data.buffer)
+    const data = isCompressed(buf.buffer) ? await extract(buf, 540) : buf.slice(0, 540)
+    let header
+    if (isNIFTI1(data.buffer)) {
+      header = new NIFTI1()
+      // Truncate to 348 bytes to avoid attempting to parse extensions
+      header.readHeader(data.buffer.slice(0, 348))
+    } else if (isNIFTI2(data.buffer)) {
+      header = new NIFTI2()
+      header.readHeader(data.buffer)
+    }
     if (!header) {
       throw { key: 'NIFTI_HEADER_UNREADABLE' }
     }
