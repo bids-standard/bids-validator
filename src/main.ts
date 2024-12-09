@@ -3,6 +3,7 @@ import type { Config } from './setup/options.ts'
 import * as colors from '@std/fmt/colors'
 import { readFileTree } from './files/deno.ts'
 import { fileListToTree } from './files/browser.ts'
+import { FileIgnoreRules } from './files/ignore.ts'
 import { resolve } from '@std/path'
 import { validate } from './validators/bids.ts'
 import { consoleFormat, resultToJSONStr } from './utils/output.ts'
@@ -21,7 +22,10 @@ export async function main(): Promise<ValidationResult> {
   setupLogging(options.debug)
 
   const absolutePath = resolve(options.datasetPath)
-  const tree = await readFileTree(absolutePath)
+  const prune = options.prune
+    ? new FileIgnoreRules(['derivatives', 'sourcedata', 'code'], false)
+    : undefined
+  const tree = await readFileTree(absolutePath, prune)
 
   const config = options.config ? JSON.parse(Deno.readTextFileSync(options.config)) as Config : {}
 
