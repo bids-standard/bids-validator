@@ -7,12 +7,12 @@
 
 The BIDS Validator is a web application, command-line utility,
 and Javascript/Typescript library for assessing compliance with the
-[Brain Imaging Data Structure (BIDS)](https://bids.neuroimaging.io/) standard.
+[Brain Imaging Data Structure (BIDS)][BIDS] standard.
 
 ## Getting Started
 
 In most cases,
-the simplest way to use the validator is to browse to the [BIDS Validator][https://bids-standard.github.io/bids-validator/] web page:
+the simplest way to use the validator is to browse to the [BIDS Validator][] web page:
 
 ![The web interface to the BIDS Validator with the "Select Dataset Files" button highlighted.
 (Dark theme)](docs/_static/web_entrypoint_dark.png#gh-dark-mode-only)
@@ -23,8 +23,8 @@ The web validator runs in-browser, and does not transfer data to any remote serv
 
 In some contexts, such as when working on a remote server,
 it may be easier to use the command-line.
-The BIDS Validator can be run with the [Deno](https://deno.com/) runtime
-(see [Deno - Installation](https://docs.deno.com/runtime/getting_started/installation/) for detailed installation instructions):
+The BIDS Validator can be run with the [Deno][] runtime
+(see [Deno - Installation][] for detailed installation instructions):
 
 ```shell
 deno run -ERN jsr:@bids/validator
@@ -86,3 +86,8 @@ The command to compile a dereferenced schema is `bst -v export --schema src/sche
 ## Documentation
 
 The BIDS validator documentation is available on [Read the Docs](https://bids-validator.readthedocs.io/en/latest/).
+
+[BIDS]: https://bids.neuroimaging.io
+[BIDS Validator]: https://bids-standard.github.io/bids-validator/
+[Deno]: https://deno.com/
+[Deno - Installation]: https://docs.deno.com/runtime/getting_started/installation/
