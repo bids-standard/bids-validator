@@ -53,4 +53,23 @@ Deno.test('Test loading nifti header', async (t) => {
     })
     assertObjectMatch(error, { key: 'NIFTI_HEADER_UNREADABLE' })
   })
+
+  await t.step('Tolerate big headers', async () => {
+    const path = 'big_header.nii.gz'
+    const root = './tests/data/'
+    const file = new BIDSFileDeno(root, path, ignore)
+    let error: any = undefined
+    const header = await loadHeader(file)
+    assert(header !== undefined)
+    assertObjectMatch(header, {
+      dim: [3, 1, 1, 1, 1, 1, 1],
+      pixdim: [1, 1, 1, 1, 1, 1, 1],
+      shape: [1, 1, 1],
+      voxel_sizes: [1, 1, 1],
+      dim_info: { freq: 0, phase: 0, slice: 0 },
+      xyzt_units: { xyz: 'unknown', t: 'unknown' },
+      qform_code: 0,
+      sform_code: 2,
+    })
+  })
 })

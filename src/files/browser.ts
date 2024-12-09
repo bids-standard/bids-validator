@@ -52,7 +52,7 @@ export class BIDSFileBrowser implements BIDSFile {
 export async function fileListToTree(files: File[]): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
   const root = new FileTree('/', '/', undefined)
-  const tree = filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, root)))
+  const tree = filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, root)), ignore)
   const bidsignore = tree.get('.bidsignore')
   if (bidsignore) {
     try {
