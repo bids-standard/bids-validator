@@ -25,6 +25,16 @@ Deno.test('DatasetIssues management class', async (t) => {
     assertEquals(foundIssue[0].code, 'TEST_FILES_ERROR')
   })
 
+  await t.step('get issues with glob pattern', () => {
+    const issues = new DatasetIssues()
+    issues.add({ code: 'TEST_FILES_ERROR', location: '/acq-mprage_T1w.json' }, 'Test issue')
+    issues.add({ code: 'TEST_FILES_ERROR', location: '/acq-memprage_T1w.json' }, 'Test issue')
+    issues.add({ code: 'TEST_FILES_ERROR', location: '/acq-mb1_bold.json' }, 'Test issue')
+    issues.add({ code: 'TEST_FILES_ERROR', location: '/acq-mb4_bold.json' }, 'Test issue')
+    const foundIssue = issues.get({ location: '*_bold.json' })
+    assertEquals(foundIssue.length, 2)
+  })
+
   await t.step('test groupBy', () => {
     const issues = new DatasetIssues()
     issues.add({ code: 'NOT_INCLUDED', location: '/file_1' })
