@@ -1,4 +1,5 @@
 import { assertEquals } from '@std/assert'
+import { SEPARATOR_PATTERN } from '@std/path'
 import { BIDSContext } from '../schema/context.ts'
 import { _findRuleMatches, datatypeFromDirectory, hasMatch } from './filenameIdentify.ts'
 import { BIDSFileDeno } from '../files/deno.ts'
@@ -67,12 +68,8 @@ Deno.test('test hasMatch', async (t) => {
 
   await t.step('No match', async () => {
     const tmpFile = Deno.makeTempFileSync()
-    const parts = tmpFile.split('/')
-    const file = new BIDSFileDeno(
-      parts.slice(0, parts.length - 1).join('/'),
-      '/' + parts[parts.length - 1],
-      ignore,
-    )
+    const [ dir, base ]  = tmpFile.split(SEPARATOR_PATTERN)
+    const file = new BIDSFileDeno(dir, `/${base}`, ignore)
 
     const context = new BIDSContext(file)
     await hasMatch(schema, context)
@@ -82,7 +79,6 @@ Deno.test('test hasMatch', async (t) => {
         code: 'NOT_INCLUDED',
       }).length,
       1,
-      `${context.file.path} ${tmpFile}`
     )
     Deno.removeSync(tmpFile)
   })
