@@ -70,7 +70,7 @@ Deno.test('test hasMatch', async (t) => {
     const parts = tmpFile.split('/')
     const file = new BIDSFileDeno(
       parts.slice(0, parts.length - 1).join('/'),
-      parts[parts.length - 1],
+      '/' + parts[parts.length - 1],
       ignore,
     )
 
@@ -82,6 +82,7 @@ Deno.test('test hasMatch', async (t) => {
         code: 'NOT_INCLUDED',
       }).length,
       1,
+      `${context.file.path} ${tmpFile}`
     )
     Deno.removeSync(tmpFile)
   })

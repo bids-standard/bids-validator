@@ -43,7 +43,7 @@ export class DatasetIssues {
       if (!value) {
         continue
       }
-      if (key === 'location'){
+      if (key === 'location' && typeof value === "string" && !value.startsWith('/')){
         // @ts-expect-error
         const key_ignore = ignore().add(value as string)
         found = found.filter((x) => x[key] && key_ignore.ignores(x[key].slice(1, x[key].length)))
