@@ -53,7 +53,7 @@ async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMa
       headers.map((header, index) => [header, columns[index].slice(0, rowIndex)]),
     )
   } finally {
-    reader.releaseLock()
+    await reader.cancel()
   }
 }
 
