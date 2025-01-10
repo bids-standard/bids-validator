@@ -5,7 +5,11 @@ import { FileIgnoreRules } from './ignore.ts'
 
 const nullFile = {
   size: 0,
-  stream: new ReadableStream(),
+  stream: new ReadableStream({
+    start(controller) {
+      controller.close()
+    }
+  }),
   text: () => Promise.resolve(''),
   readBytes: async (size: number, offset?: number) => new Uint8Array(),
   parent: new FileTree('', '/'),
