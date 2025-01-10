@@ -2,44 +2,58 @@
  * TSV
  * Module for parsing TSV
  */
+import { TextLineStream } from '@std/streams'
 import { ColumnsMap } from '../types/columns.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { filememoizeAsync } from '../utils/memoize.ts'
-import type { WithCache } from '../utils/memoize.ts'
-
-const normalizeEOL = (str: string): string => str.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
-// Typescript resolved `row && !/^\s*$/.test(row)` as `string | boolean`
-const isContentfulRow = (row: string): boolean => !!(row && !/^\s*$/.test(row))
+import { createUTF8Stream } from './streams.ts'
 
 async function _loadTSV(file: BIDSFile): Promise<ColumnsMap> {
-  return await file.text().then(parseTSV)
+  const reader = file.stream
+    .pipeThrough(createUTF8Stream())
+    .pipeThrough(new TextLineStream())
+    .getReader()
+
+  try {
+    const headerRow = await reader.read()
+    const headers = (headerRow.done || !headerRow.value) ? [] : headerRow.value.split('\t')
+
+    // Initialize columns in array for construction efficiency
+    const initialCapacity = 1000
+    const columns: string[][] = headers.map(() => new Array<string>(initialCapacity))
+
+    let rowIndex = 0 // Keep in scope after loop
+    for (; ; rowIndex++) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      // Expect a newline at the end of the file, but otherwise error on empty lines
+      if (!value) {
+        const nextRow = await reader.read()
+        if (nextRow.done) break
+        throw { key: 'TSV_EMPTY_LINE', line: rowIndex + 2 }
+      }
+
+      const values = value.split('\t')
+      if (values.length !== headers.length) {
+        throw { key: 'TSV_EQUAL_ROWS', line: rowIndex + 2 }
+      }
+      columns.forEach((column, columnIndex) => {
+        // Double array size if we exceed the current capacity
+        if (rowIndex >= column.length) {
+          column.length = column.length * 2
+        }
+        column[rowIndex] = values[columnIndex]
+      })
+    }
+
+    // Construct map, truncating columns to number of rows read
+    return new ColumnsMap(
+      headers.map((header, index) => [header, columns[index].slice(0, rowIndex)]),
+    )
+  } finally {
+    reader.releaseLock()
+  }
 }
 
 export const loadTSV = filememoizeAsync(_loadTSV)
-
-function parseTSV(contents: string) {
-  const columns = new ColumnsMap()
-  const rows: string[][] = normalizeEOL(contents)
-    .split('\n')
-    .filter(isContentfulRow)
-    .map((str) => str.split('\t'))
-  const headers = rows.length ? rows[0] : []
-
-  if (rows.some((row) => row.length !== headers.length)) {
-    throw { key: 'TSV_EQUAL_ROWS' }
-  }
-
-  headers.map((x) => {
-    columns[x] = []
-  })
-  if (headers.length !== Object.keys(columns).length) {
-    throw { key: 'TSV_COLUMN_HEADER_DUPLICATE', evidence: headers.join(', ') }
-  }
-  for (let i = 1; i < rows.length; i++) {
-    for (let j = 0; j < headers.length; j++) {
-      const col = columns[headers[j]] as string[]
-      col.push(rows[i][j])
-    }
-  }
-  return columns
-}

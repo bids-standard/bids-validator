@@ -1,9 +1,9 @@
 // Allow ColumnsMap to be accessed as an object too
 export class ColumnsMap extends Map<string, string[]> {
   [key: string]: Map<string, string[]>[keyof Map<string, string[]>] | string[]
-  constructor() {
+  constructor(iterable?: Iterable<readonly [string, string[]]>) {
     super()
-    const columns = new Map<string, string[]>() as ColumnsMap
+    const columns = new Map<string, string[]>(iterable) as ColumnsMap
     return new Proxy<ColumnsMap>(columns, columnMapAccessorProxy)
   }
 }
