@@ -62,6 +62,48 @@ Deno.test('TSV loading', async (t) => {
     }
   })
 
+  await t.step('maxRows limits the number of rows read', async () => {
+    const file = pathToFile('/long.tsv')
+    // Use 1500 to avoid overlap with default initial capacity
+    const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
+    file.stream = streamFromString(text)
+
+    let map = await loadTSV(file, 0)
+    assertEquals(map.a, [])
+    assertEquals(map.b, [])
+    assertEquals(map.c, [])
+
+    // Clear memoization cache. We currently do not key on maxRows.
+    loadTSV.cache.clear()
+    file.stream = streamFromString(text)
+    map = await loadTSV(file, 1)
+    assertEquals(map.a, ['1'])
+    assertEquals(map.b, ['2'])
+    assertEquals(map.c, ['3'])
+
+    loadTSV.cache.clear()
+    file.stream = streamFromString(text)
+    map = await loadTSV(file, 2)
+    assertEquals(map.a, ['1', '1'])
+    assertEquals(map.b, ['2', '2'])
+    assertEquals(map.c, ['3', '3'])
+
+    loadTSV.cache.clear()
+    file.stream = streamFromString(text)
+    map = await loadTSV(file, -1)
+    assertEquals(map.a, Array(1500).fill('1'))
+    assertEquals(map.b, Array(1500).fill('2'))
+    assertEquals(map.c, Array(1500).fill('3'))
+
+    loadTSV.cache.clear()
+    // Check that maxRows does not truncate shorter files
+    file.stream = streamFromString('a\tb\tc\n1\t2\t3\n4\t5\t6\n7\t8\t9\n')
+    map = await loadTSV(file, 4)
+    assertEquals(map.a, ['1', '4', '7'])
+    assertEquals(map.b, ['2', '5', '8'])
+    assertEquals(map.c, ['3', '6', '9'])
+  })
+
   // Tests will have populated the memoization cache
   await loadTSV.cache.clear()
 })

@@ -8,7 +8,7 @@ import type { BIDSFile } from '../types/filetree.ts'
 import { filememoizeAsync } from '../utils/memoize.ts'
 import { createUTF8Stream } from './streams.ts'
 
-async function _loadTSV(file: BIDSFile): Promise<ColumnsMap> {
+async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMap> {
   const reader = file.stream
     .pipeThrough(createUTF8Stream())
     .pipeThrough(new TextLineStream())
@@ -19,11 +19,12 @@ async function _loadTSV(file: BIDSFile): Promise<ColumnsMap> {
     const headers = (headerRow.done || !headerRow.value) ? [] : headerRow.value.split('\t')
 
     // Initialize columns in array for construction efficiency
-    const initialCapacity = 1000
+    const initialCapacity = maxRows >= 0 ? maxRows : 1000
     const columns: string[][] = headers.map(() => new Array<string>(initialCapacity))
 
+    maxRows = maxRows >= 0 ? maxRows : Infinity
     let rowIndex = 0 // Keep in scope after loop
-    for (; ; rowIndex++) {
+    for (; rowIndex < maxRows; rowIndex++) {
       const { done, value } = await reader.read()
       if (done) break
 
