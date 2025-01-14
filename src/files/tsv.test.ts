@@ -73,7 +73,7 @@ Deno.test('TSV loading', async (t) => {
     assertEquals(map.b, [])
     assertEquals(map.c, [])
 
-    // Clear memoization cache. We currently do not key on maxRows.
+    // Do not assume that caching respects maxRows in this test
     loadTSV.cache.clear()
     file.stream = streamFromString(text)
     map = await loadTSV(file, 1)
@@ -130,6 +130,32 @@ Deno.test('TSV loading', async (t) => {
     assertEquals(repeatMap.c, ['3', '3'])
     // Same contents, different objects
     assertNotEquals(map, repeatMap)
+  })
+
+  await t.step('caching is keyed on maxRows', async () => {
+    const file = pathToFile('/long.tsv')
+    // Use 1500 to avoid overlap with default initial capacity
+    const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
+    file.stream = streamFromString(text)
+
+    let map = await loadTSV(file, 2)
+    assertEquals(map.a, ['1', '1'])
+    assertEquals(map.b, ['2', '2'])
+    assertEquals(map.c, ['3', '3'])
+
+    file.stream = streamFromString(text)
+    let repeatMap = await loadTSV(file, 3)
+    assertNotEquals(map, repeatMap)
+    assertEquals(repeatMap.a, ['1', '1', '1'])
+    assertEquals(repeatMap.b, ['2', '2', '2'])
+    assertEquals(repeatMap.c, ['3', '3', '3'])
+
+    file.stream = streamFromString(text)
+    repeatMap = await loadTSV(file, 2)
+    assertEquals(map, repeatMap)
+    assertEquals(repeatMap.a, ['1', '1'])
+    assertEquals(repeatMap.b, ['2', '2'])
+    assertEquals(repeatMap.c, ['3', '3'])
   })
 
   // Tests will have populated the memoization cache
