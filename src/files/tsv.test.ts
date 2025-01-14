@@ -1,4 +1,4 @@
-import { assert, assertEquals, assertNotEquals, assertObjectMatch } from '@std/assert'
+import { assert, assertEquals, assertNotStrictEquals, assertObjectMatch, assertStrictEquals } from '@std/assert'
 import { pathToFile } from './filetree.ts'
 import { loadTSV } from './tsv.ts'
 import { streamFromString } from '../tests/utils.ts'
@@ -119,8 +119,7 @@ Deno.test('TSV loading', async (t) => {
     // Replace stream to ensure cache does not depend on deep object equality
     file.stream = streamFromString(text)
     let repeatMap = await loadTSV(file, 2)
-    // Equality is identity for objects
-    assertEquals(map, repeatMap)
+    assertStrictEquals(map, repeatMap)
 
     loadTSV.cache.clear()
     // DO NOT replace stream so the next read verifies the previous stream wasn't read
@@ -129,7 +128,7 @@ Deno.test('TSV loading', async (t) => {
     assertEquals(repeatMap.b, ['2', '2'])
     assertEquals(repeatMap.c, ['3', '3'])
     // Same contents, different objects
-    assertNotEquals(map, repeatMap)
+    assertNotStrictEquals(map, repeatMap)
   })
 
   await t.step('caching is keyed on maxRows', async () => {
@@ -145,14 +144,14 @@ Deno.test('TSV loading', async (t) => {
 
     file.stream = streamFromString(text)
     let repeatMap = await loadTSV(file, 3)
-    assertNotEquals(map, repeatMap)
+    assertNotStrictEquals(map, repeatMap)
     assertEquals(repeatMap.a, ['1', '1', '1'])
     assertEquals(repeatMap.b, ['2', '2', '2'])
     assertEquals(repeatMap.c, ['3', '3', '3'])
 
     file.stream = streamFromString(text)
     repeatMap = await loadTSV(file, 2)
-    assertEquals(map, repeatMap)
+    assertStrictEquals(map, repeatMap)
     assertEquals(repeatMap.a, ['1', '1'])
     assertEquals(repeatMap.b, ['2', '2'])
     assertEquals(repeatMap.c, ['3', '3'])
