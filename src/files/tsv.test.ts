@@ -1,4 +1,4 @@
-import { assert, assertEquals, assertObjectMatch } from '@std/assert'
+import { assert, assertEquals, assertNotEquals, assertObjectMatch } from '@std/assert'
 import { pathToFile } from './filetree.ts'
 import { loadTSV } from './tsv.ts'
 import { streamFromString } from '../tests/utils.ts'
@@ -104,6 +104,34 @@ Deno.test('TSV loading', async (t) => {
     assertEquals(map.c, ['3', '6', '9'])
   })
 
+  await t.step('caching avoids multiple reads', async () => {
+    loadTSV.cache.clear()
+    const file = pathToFile('/long.tsv')
+    // Use 1500 to avoid overlap with default initial capacity
+    const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
+    file.stream = streamFromString(text)
+
+    let map = await loadTSV(file, 2)
+    assertEquals(map.a, ['1', '1'])
+    assertEquals(map.b, ['2', '2'])
+    assertEquals(map.c, ['3', '3'])
+
+    // Replace stream to ensure cache does not depend on deep object equality
+    file.stream = streamFromString(text)
+    let repeatMap = await loadTSV(file, 2)
+    // Equality is identity for objects
+    assertEquals(map, repeatMap)
+
+    loadTSV.cache.clear()
+    // DO NOT replace stream so the next read verifies the previous stream wasn't read
+    repeatMap = await loadTSV(file, 2)
+    assertEquals(repeatMap.a, ['1', '1'])
+    assertEquals(repeatMap.b, ['2', '2'])
+    assertEquals(repeatMap.c, ['3', '3'])
+    // Same contents, different objects
+    assertNotEquals(map, repeatMap)
+  })
+
   // Tests will have populated the memoization cache
-  await loadTSV.cache.clear()
+  loadTSV.cache.clear()
 })
