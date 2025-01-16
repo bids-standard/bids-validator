@@ -41,6 +41,7 @@
     "@std/io": "jsr:@std/io@0.225.0",
     "@std/log": "jsr:@std/log@0.224.9",
     "@std/path": "jsr:@std/path@1.0.8",
+    "@std/streams": "jsr:@std/streams@1.0.8",
     "@std/yaml": "jsr:@std/yaml@^1.0.4"
   },
   "tasks": {

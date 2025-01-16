@@ -84,6 +84,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'All rows must have the same number of columns as there are headers.',
   },
+  TSV_EMPTY_LINE: {
+    severity: 'error',
+    reason: 'An empty line was found in the TSV file.',
+  },
   TSV_COLUMN_MISSING: {
     severity: 'error',
     reason: 'A required column is missing',

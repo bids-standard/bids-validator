@@ -232,7 +232,7 @@ export class BIDSContext implements Context {
       return
     }
 
-    this.columns = await loadTSV(this.file)
+    this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
       .catch((error) => {
         if (error.key) {
           this.dataset.issues.add({ code: error.key, location: this.file.path })
@@ -247,7 +247,11 @@ export class BIDSContext implements Context {
   }
 
   async loadAssociations(): Promise<void> {
-    this.associations = await buildAssociations(this.file, this.dataset.issues)
+    this.associations = await buildAssociations(
+      this.file,
+      this.dataset.issues,
+      this.dataset.options?.maxRows,
+    )
     return
   }
 
