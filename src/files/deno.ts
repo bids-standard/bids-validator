@@ -7,17 +7,8 @@ import { type BIDSFile, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 import { logger } from '../utils/logger.ts'
+import { createUTF8Stream } from './streams.ts'
 export { type BIDSFile, FileTree }
-
-/**
- * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters
- */
-export class UnicodeDecodeError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'UnicodeDecode'
-  }
-}
 
 /**
  * Deno implementation of BIDSFile
@@ -67,27 +58,17 @@ export class BIDSFileDeno implements BIDSFile {
    * Read the entire file and decode as utf-8 text
    */
   async text(): Promise<string> {
-    const streamReader = this.stream
-      .pipeThrough(new TextDecoderStream('utf-8'))
-      .getReader()
-    let data = ''
+    const reader = this.stream.pipeThrough(createUTF8Stream()).getReader()
+    const chunks: string[] = []
     try {
-      // Read once to check for unicode issues
-      const { done, value } = await streamReader.read()
-      // Check for UTF-16 BOM
-      if (value && value.startsWith('\uFFFD')) {
-        throw new UnicodeDecodeError('This file appears to be UTF-16')
-      }
-      if (done) return data
-      data += value
-      // Continue reading the rest of the file if no unicode issues were found
       while (true) {
-        const { done, value } = await streamReader.read()
-        if (done) return data
-        data += value
+        const { done, value } = await reader.read()
+        if (done) break
+        chunks.push(value)
       }
+      return chunks.join('')
     } finally {
-      streamReader.releaseLock()
+      reader.releaseLock()
     }
   }
 
