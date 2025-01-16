@@ -18,6 +18,10 @@ async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMa
     const headerRow = await reader.read()
     const headers = (headerRow.done || !headerRow.value) ? [] : headerRow.value.split('\t')
 
+    if (new Set(headers).size !== headers.length) {
+      throw { key: 'TSV_COLUMN_HEADER_DUPLICATE', evidence: headers.join(', ') }
+    }
+
     // Initialize columns in array for construction efficiency
     const initialCapacity = maxRows >= 0 ? maxRows : 1000
     const columns: string[][] = headers.map(() => new Array<string>(initialCapacity))

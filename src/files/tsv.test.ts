@@ -157,6 +157,18 @@ Deno.test('TSV loading', async (t) => {
     assertEquals(repeatMap.c, ['3', '3'])
   })
 
+  await t.step('Raises issue on duplicate header', async () => {
+    const file = pathToFile('/duplicate_header.tsv')
+    file.stream = streamFromString('a\ta\n1\t2\n')
+
+    try {
+      await loadTSV(file)
+      assert(false, 'Expected error')
+    } catch (e: any) {
+      assertObjectMatch(e, { key: 'TSV_COLUMN_HEADER_DUPLICATE', evidence: 'a, a' })
+    }
+  })
+
   // Tests will have populated the memoization cache
   loadTSV.cache.clear()
 })
