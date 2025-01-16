@@ -31,7 +31,6 @@ export class FileIgnoreRules {
     config: string[],
     addDefaults: boolean = true,
   ) {
-    // @ts-expect-error
     this.#ignore = ignore()
     if (addDefaults) {
       this.#ignore.add(defaultIgnores)

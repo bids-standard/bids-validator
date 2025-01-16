@@ -84,6 +84,8 @@ warnings, errors or ignored.
 }
 ```
 
+When a configuration specifies `location` without leading `/` it is interpreted
+as a glob pattern following gitignore syntax.
 The issues are partial matches of the [Issues] that the validator accumulates.
 Pass the `--json` flag to see the issues in detail.
 
