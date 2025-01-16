@@ -1,9 +1,10 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@bids/schema@0.11.3+2": "0.11.3+1",
+    "jsr:@bids/schema@1.0.0": "1.0.0",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
+    "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@effigies/cliffy-command@1.0.0-dev.8": "1.0.0-dev.8",
     "jsr:@effigies/cliffy-table@1.0.0-dev.5": "1.0.0-dev.5",
     "jsr:@effigies/cliffy-table@^1.0.0-dev.5": "1.0.0-dev.5",
@@ -36,11 +37,11 @@
     "npm:@bids/nifti-reader-js@0.6.9": "0.6.9",
     "npm:ajv@8.17.1": "8.17.1",
     "npm:hed-validator@3.15.5": "3.15.5",
-    "npm:ignore@6.0.2": "6.0.2"
+    "npm:ignore@7.0.3": "7.0.3"
   },
   "jsr": {
-    "@bids/schema@0.11.3+1": {
-      "integrity": "331d9975fe35175e5fc4990e97abf6459f564bc630309ae80ceee98211123cfb"
+    "@bids/schema@1.0.0": {
+      "integrity": "866fe0f636b73e08bf6ba739941821a24199cc72d0f312a81328ec7ecafaceee"
     },
     "@cliffy/flags@1.0.0-rc.7": {
       "integrity": "318d9be98f6a6417b108e03dec427dea96cdd41a15beb21d2554ae6da450a781",
@@ -51,11 +52,18 @@
     "@cliffy/internal@1.0.0-rc.7": {
       "integrity": "10412636ab3e67517d448be9eaab1b70c88eba9be22617b5d146257a11cc9b17"
     },
+    "@cliffy/table@1.0.0-rc.7": {
+      "integrity": "9fdd9776eda28a0b397981c400eeb1aa36da2371b43eefe12e6ff555290e3180",
+      "dependencies": [
+        "jsr:@std/fmt@~1.0.2"
+      ]
+    },
     "@effigies/cliffy-command@1.0.0-dev.8": {
       "integrity": "d6489c66bf7f603225a426b26b62eaee32bf6da04b69056bcb015a1f17190087",
       "dependencies": [
         "jsr:@cliffy/flags",
         "jsr:@cliffy/internal",
+        "jsr:@cliffy/table",
         "jsr:@effigies/cliffy-table@^1.0.0-dev.5",
         "jsr:@std/fmt@~1.0.2",
         "jsr:@std/text"
@@ -231,8 +239,8 @@
     "ieee754@1.2.1": {
       "integrity": "sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA=="
     },
-    "ignore@6.0.2": {
-      "integrity": "sha512-InwqeHHN2XpumIkMvpl/DCJVrAHgCsG5+cn1XlnLWGwtZBm8QJfSusItfrwx81CTp5agNZqpKU2J/ccC5nGT4A=="
+    "ignore@7.0.3": {
+      "integrity": "sha512-bAH5jbK/F3T3Jls4I0SO1hmPR0dKU0a7+SY6n1yzRtG54FLO8d6w/nxLFX2Nb7dBu6cCWXPaAME6cYqFUMmuCA=="
     },
     "inherits@2.0.3": {
       "integrity": "sha512-x00IRNXNy63jwGkJmzPigoySHbaqpNuzKbBOmzK+g2OdZpQ9w+sxCN+VSB3ja7IAge2OP2qpfxTjeNcyjmW1uw=="
@@ -402,7 +410,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@bids/schema@0.11.3+2",
+      "jsr:@bids/schema@1.0.0",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
       "jsr:@libs/xml@6.0.1",
@@ -416,7 +424,7 @@
       "npm:@bids/nifti-reader-js@0.6.9",
       "npm:ajv@8.17.1",
       "npm:hed-validator@3.15.5",
-      "npm:ignore@6.0.2"
+      "npm:ignore@7.0.3"
     ]
   }
 }

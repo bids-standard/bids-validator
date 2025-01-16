@@ -1,5 +1,4 @@
 import { default as ignore } from '@ignore'
-import type { Ignore } from '@ignore'
 import { nonSchemaIssues } from './list.ts'
 import type { Issue, IssueDefinition, IssueFile, Severity } from '../types/issues.ts'
 export type { Issue, IssueDefinition, IssueFile, Severity }
@@ -44,7 +43,6 @@ export class DatasetIssues {
         continue
       }
       if (key === 'location' && typeof value === "string" && !value.startsWith('/')){
-        // @ts-expect-error
         const key_ignore = ignore().add(value as string)
         found = found.filter((x) => x[key] && key_ignore.ignores(x[key].slice(1, x[key].length)))
       } else {
