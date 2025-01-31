@@ -31,8 +31,8 @@ deno run -ERWN jsr:@bids/validator
 ```
 
 Deno by default sandboxes applications like a web browser.
-`-E`, `-R` and `-N` allow the validator to read environment variables,
-local files, and network locations.
+`-E`, `-R`, '-W', and `-N` allow the validator to read environment variables,
+read/write local files, and read network locations.
 
 ### Configuration file
 
