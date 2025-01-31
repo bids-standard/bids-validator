@@ -27,7 +27,7 @@ The BIDS Validator can be run with the [Deno][] runtime
 (see [Deno - Installation][] for detailed installation instructions):
 
 ```shell
-deno run -ERN jsr:@bids/validator
+deno run -ERWN jsr:@bids/validator
 ```
 
 Deno by default sandboxes applications like a web browser.
