@@ -27,10 +27,14 @@ const defaultIgnores = [
 export class FileIgnoreRules {
   #ignore: Ignore
 
-  constructor(config: string[]) {
-    // @ts-expect-error
+  constructor(
+    config: string[],
+    addDefaults: boolean = true,
+  ) {
     this.#ignore = ignore()
-    this.#ignore.add(defaultIgnores)
+    if (addDefaults) {
+      this.#ignore.add(defaultIgnores)
+    }
     this.#ignore.add(config)
   }
 

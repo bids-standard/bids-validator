@@ -3,7 +3,8 @@ import { readAll, readerFromStreamReader } from '@std/io'
 import { basename, dirname, fromFileUrl, join } from '@std/path'
 import { EOL } from '@std/fs'
 import type { FileTree } from '../types/filetree.ts'
-import { BIDSFileDeno, readFileTree, UnicodeDecodeError } from './deno.ts'
+import { BIDSFileDeno, readFileTree } from './deno.ts'
+import { UnicodeDecodeError } from './streams.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules } from './ignore.ts'
 
@@ -12,9 +13,11 @@ await requestReadPermission()
 // Use this file for testing file behavior
 const testUrl = import.meta.url
 const testPath = fromFileUrl(testUrl)
-const testDir = dirname(testPath)
+const testDir = dirname(testPath) // $REPO/src/files
 const testFilename = basename(testPath)
+const repoRoot = dirname(dirname(dirname(testPath)))
 const ignore = new FileIgnoreRules([])
+const prune = new FileIgnoreRules(['derivatives'], false)
 
 Deno.test('Deno implementation of BIDSFile', async (t) => {
   await t.step('implements basic file properties', () => {
@@ -53,7 +56,7 @@ Deno.test('Deno implementation of BIDSFile', async (t) => {
     'strips BOM characters when reading UTF-8 via .text()',
     async () => {
       // BOM is invalid in JSON but shows up often from certain tools, so abstract handling it
-      const bomDir = join(testPath, '..', '..', 'tests')
+      const bomDir = join(repoRoot, 'src', 'tests')
       const bomFilename = 'bom-utf8.json'
       const file = new BIDSFileDeno(bomDir, bomFilename, ignore)
       const text = await file.text()
@@ -74,5 +77,17 @@ Deno.test('Deno implementation of FileTree', async (t) => {
     const testObj = parentObj.get(testFilename) as BIDSFileDeno
     assert(testObj !== undefined)
     assertEquals(testObj.path, `/${parent}/${testFilename}`)
+  })
+
+  await t.step('implements pruning', async () => {
+    const dsDir = join(repoRoot, 'tests', 'data', 'valid_dataset')
+    const derivFile =
+      'derivatives/fmriprep/sub-01/ses-01/func/sub-01_ses-01_task-rest_confounds.tsv.gz'
+
+    const fullTree = await readFileTree(dsDir)
+    assert(fullTree.get(derivFile))
+
+    const prunedTree = await readFileTree(dsDir, prune)
+    assert(!prunedTree.get(derivFile))
   })
 })

@@ -2,7 +2,7 @@
 
 The BIDS Validator is a web application, command-line utility,
 and Javascript/Typescript library for assessing compliance with the
-[Brain Imaging Data Structure][BIDS] standard.
+[Brain Imaging Data Structure (BIDS)][BIDS] standard.
 
 ## Getting Started
 
@@ -18,7 +18,7 @@ The web validator runs in-browser, and does not transfer data to any remote serv
 
 In some contexts, such as when working on a remote server,
 it may be easier to use the command-line.
-The BIDS Validator can be run with the [Deno] runtime
+The BIDS Validator can be run with the [Deno][] runtime
 (see [Deno - Installation][] for detailed installation instructions):
 
 ```shell

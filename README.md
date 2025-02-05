@@ -7,7 +7,7 @@
 
 The BIDS Validator is a web application, command-line utility,
 and Javascript/Typescript library for assessing compliance with the
-[Brain Imaging Data Structure][BIDS] standard.
+[Brain Imaging Data Structure (BIDS)][BIDS] standard.
 
 ## Getting Started
 
@@ -23,7 +23,7 @@ The web validator runs in-browser, and does not transfer data to any remote serv
 
 In some contexts, such as when working on a remote server,
 it may be easier to use the command-line.
-The BIDS Validator can be run with the [Deno] runtime
+The BIDS Validator can be run with the [Deno][] runtime
 (see [Deno - Installation][] for detailed installation instructions):
 
 ```shell
@@ -80,9 +80,14 @@ To modify the schema a clone of bids-standard/bids-specification will need to be
 
 After changes to the schema have been made to a local copy the dereferenced single json file used by the validator will need to be built. The `bidsschematools` python package does this. It can be installed from pypi via pip or a local installation can be made. It lives in the specification repository here https://github.com/bids-standard/bids-specification/tree/master/tools/schemacode
 
-The command to compile a dereferenced schema is `bst -v export --output src/schema.json` (this assumes you are in the root of the bids-specification repo). Once compiled it can be passed to the validator via the `-s` flag, `./bids-validator-deno -s <path to schema> <path to dataset>`
+The command to compile a dereferenced schema is `bst -v export --schema src/schema --output src/schema.json` (this assumes you are in the root of the bids-specification repo). Once compiled it can be passed to the validator via the `-s` flag, `./bids-validator-deno -s <path to schema> <path to dataset>`
 
 
 ## Documentation
 
 The BIDS validator documentation is available on [Read the Docs](https://bids-validator.readthedocs.io/en/latest/).
+
+[BIDS]: https://bids.neuroimaging.io
+[BIDS Validator]: https://bids-standard.github.io/bids-validator/
+[Deno]: https://deno.com/
+[Deno - Installation]: https://docs.deno.com/runtime/getting_started/installation/

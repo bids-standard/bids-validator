@@ -36,8 +36,8 @@ const associationLookup = {
     suffix: 'events',
     extensions: ['.tsv'],
     inherit: true,
-    load: async (file: BIDSFile): Promise<Events> => {
-      const columns = await loadTSV(file)
+    load: async (file: BIDSFile, options: { maxRows: number }): Promise<Events> => {
+      const columns = await loadTSV(file, options.maxRows)
         .catch((e) => {
           return new Map()
         })
@@ -53,8 +53,9 @@ const associationLookup = {
     inherit: true,
     load: async (
       file: BIDSFile,
+      options: { maxRows: number },
     ): Promise<Aslcontext> => {
-      const columns = await loadTSV(file)
+      const columns = await loadTSV(file, options.maxRows)
         .catch((e) => {
           return new Map()
         })
@@ -69,7 +70,7 @@ const associationLookup = {
     suffix: 'm0scan',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
-    load: (file: BIDSFile): Promise<M0Scan> => {
+    load: (file: BIDSFile, options: any): Promise<M0Scan> => {
       return Promise.resolve({ path: file.path })
     },
   },
@@ -77,7 +78,7 @@ const associationLookup = {
     suffix: 'magnitude',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
-    load: (file: BIDSFile): Promise<Magnitude> => {
+    load: (file: BIDSFile, options: any): Promise<Magnitude> => {
       return Promise.resolve({ path: file.path })
     },
   },
@@ -85,7 +86,7 @@ const associationLookup = {
     suffix: 'magnitude1',
     extensions: ['.nii', '.nii.gz'],
     inherit: false,
-    load: (file: BIDSFile): Promise<Magnitude1> => {
+    load: (file: BIDSFile, options: any): Promise<Magnitude1> => {
       return Promise.resolve({ path: file.path })
     },
   },
@@ -93,7 +94,7 @@ const associationLookup = {
     suffix: 'dwi',
     extensions: ['.bval'],
     inherit: true,
-    load: async (file: BIDSFile): Promise<Bval> => {
+    load: async (file: BIDSFile, options: any): Promise<Bval> => {
       const contents = await file.text()
       const rows = parseBvalBvec(contents)
       return {
@@ -109,7 +110,7 @@ const associationLookup = {
     suffix: 'dwi',
     extensions: ['.bvec'],
     inherit: true,
-    load: async (file: BIDSFile): Promise<Bvec> => {
+    load: async (file: BIDSFile, options: any): Promise<Bvec> => {
       const contents = await file.text()
       const rows = parseBvalBvec(contents)
 
@@ -128,8 +129,8 @@ const associationLookup = {
     suffix: 'channels',
     extensions: ['.tsv'],
     inherit: true,
-    load: async (file: BIDSFile): Promise<Channels> => {
-      const columns = await loadTSV(file)
+    load: async (file: BIDSFile, options: { maxRows: number }): Promise<Channels> => {
+      const columns = await loadTSV(file, options.maxRows)
         .catch((e) => {
           return new Map()
         })
@@ -145,7 +146,7 @@ const associationLookup = {
     suffix: 'coordsystem',
     extensions: ['.json'],
     inherit: true,
-    load: (file: BIDSFile): Promise<Coordsystem> => {
+    load: (file: BIDSFile, options: any): Promise<Coordsystem> => {
       return Promise.resolve({ path: file.path })
     },
   },
@@ -154,6 +155,7 @@ const associationLookup = {
 export async function buildAssociations(
   source: BIDSFile,
   issues: DatasetIssues,
+  maxRows: number = -1,
 ): Promise<Associations> {
   const associations: Associations = {}
 
@@ -177,7 +179,7 @@ export async function buildAssociations(
 
     if (file) {
       // @ts-expect-error Matching load return value to key is hard
-      associations[key] = await load(file).catch((error) => {
+      associations[key] = await load(file, { maxRows }).catch((error) => {
         if (error.key) {
           issues.add({ code: error.key, location: file.path })
         }

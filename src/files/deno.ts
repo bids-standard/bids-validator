@@ -7,17 +7,8 @@ import { type BIDSFile, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 import { logger } from '../utils/logger.ts'
+import { createUTF8Stream } from './streams.ts'
 export { type BIDSFile, FileTree }
-
-/**
- * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters
- */
-export class UnicodeDecodeError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'UnicodeDecode'
-  }
-}
 
 /**
  * Deno implementation of BIDSFile
@@ -67,27 +58,17 @@ export class BIDSFileDeno implements BIDSFile {
    * Read the entire file and decode as utf-8 text
    */
   async text(): Promise<string> {
-    const streamReader = this.stream
-      .pipeThrough(new TextDecoderStream('utf-8'))
-      .getReader()
-    let data = ''
+    const reader = this.stream.pipeThrough(createUTF8Stream()).getReader()
+    const chunks: string[] = []
     try {
-      // Read once to check for unicode issues
-      const { done, value } = await streamReader.read()
-      // Check for UTF-16 BOM
-      if (value && value.startsWith('\uFFFD')) {
-        throw new UnicodeDecodeError('This file appears to be UTF-16')
-      }
-      if (done) return data
-      data += value
-      // Continue reading the rest of the file if no unicode issues were found
       while (true) {
-        const { done, value } = await streamReader.read()
-        if (done) return data
-        data += value
+        const { done, value } = await reader.read()
+        if (done) break
+        chunks.push(value)
       }
+      return chunks.join('')
     } finally {
-      streamReader.releaseLock()
+      reader.releaseLock()
     }
   }
 
@@ -120,6 +101,7 @@ async function _readFileTree(
   rootPath: string,
   relativePath: string,
   ignore: FileIgnoreRules,
+  prune: FileIgnoreRules,
   parent?: FileTree,
 ): Promise<FileTree> {
   await requestReadPermission()
@@ -127,10 +109,14 @@ async function _readFileTree(
   const tree = new FileTree(relativePath, name, parent, ignore)
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
+    const thisPath = posix.join(relativePath, dirEntry.name)
+    if (prune.test(thisPath)) {
+      continue
+    }
     if (dirEntry.isFile || dirEntry.isSymlink) {
       const file = new BIDSFileDeno(
         rootPath,
-        posix.join(relativePath, dirEntry.name),
+        thisPath,
         ignore,
       )
       file.parent = tree
@@ -139,8 +125,9 @@ async function _readFileTree(
     if (dirEntry.isDirectory) {
       const dirTree = await _readFileTree(
         rootPath,
-        posix.join(relativePath, dirEntry.name),
+        thisPath,
         ignore,
+        prune,
         tree,
       )
       tree.directories.push(dirTree)
@@ -152,9 +139,13 @@ async function _readFileTree(
 /**
  * Read in the target directory structure and return a FileTree
  */
-export async function readFileTree(rootPath: string): Promise<FileTree> {
+export async function readFileTree(
+  rootPath: string,
+  prune?: FileIgnoreRules,
+): Promise<FileTree> {
+  prune ??= new FileIgnoreRules([], false)
   const ignore = new FileIgnoreRules([])
-  const tree = await _readFileTree(rootPath, '/', ignore)
+  const tree = await _readFileTree(rootPath, '/', ignore, prune)
   const bidsignore = tree.get('.bidsignore')
   if (bidsignore) {
     try {

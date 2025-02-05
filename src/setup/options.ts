@@ -29,6 +29,8 @@ export type ValidatorOptions = {
   recursive?: boolean
   outfile?: string
   blacklistModalities: string[]
+  prune?: boolean
+  maxRows?: number
 }
 
 const modalityType = new EnumType<string>(
@@ -49,6 +51,11 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
     'Specify a schema version to use for validation',
   )
   .option('-c, --config <file:string>', 'Path to a JSON configuration file')
+  .option(
+    '--max-rows <nrows:number>',
+    'Maximum number of rows to validate in TSVs. Use 0 to validate headers only. Use -1 to validate all.',
+    { default: 1000 },
+  )
   .option('-v, --verbose', 'Log more extensive information about issues')
   .option('--ignoreWarnings', 'Disregard non-critical issues')
   .option(
@@ -71,6 +78,10 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   .option(
     '-r, --recursive',
     'Validate datasets found in derivatives directories in addition to root dataset',
+  )
+  .option(
+    '-p, --prune',
+    'Prune derivatives and sourcedata directories on load (disables -r and will underestimate dataset size)',
   )
   .option(
     '-o, --outfile <file:string>',
