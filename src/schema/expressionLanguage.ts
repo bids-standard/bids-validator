@@ -40,14 +40,30 @@ export const expressionFunctions = {
     const index = list.indexOf(item)
     return index != -1 ? index : null
   },
-  intersects: <T>(a: T[], b: T[]): boolean => {
+  intersects: <T>(a: T[], b: T[]): T[] | boolean => {
+    // Tolerate single values
     if (!Array.isArray(a)) {
       a = [a]
     }
     if (!Array.isArray(b)) {
       b = [b]
     }
-    return a.some((x) => b.includes(x))
+    // Construct a set from the smaller list
+    if (a.length < b.length) {
+      const tmp = a
+      a = b
+      b = tmp
+    }
+    if (b.length === 0) {
+      return false
+    }
+
+    const bSet = new Set(b)
+    const intersection = a.filter((x) => bSet.has(x))
+    if (intersection.length === 0) {
+      return false
+    }
+    return intersection
   },
   match: (target: string, regex: string): boolean => {
     const re = RegExp(regex)

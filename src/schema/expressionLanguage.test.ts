@@ -16,16 +16,27 @@ Deno.test('test expression functions', async (t) => {
   })
   await t.step('intersects function', () => {
     const intersects = expressionFunctions.intersects
-    assert(intersects([1, 2, 3], [2, 3, 4]) === true)
+    const equal = expressionFunctions.allequal
+
+    const truthy = (a: any): boolean => !!a
+
+    assert(truthy(intersects([1, 2, 3], [2, 3, 4])))
     assert(intersects([1, 2, 3], [4, 5, 6]) === false)
-    assert(intersects(['abc', 'def'], ['def']) === true)
+    assert(truthy(intersects(['abc', 'def'], ['def'])))
     assert(intersects(['abc', 'def'], ['ghi']) === false)
+    // Just checking values, I'm not concerned about types here
+    // @ts-expect-error
+    assert(equal(intersects([1, 2, 3], [2, 3, 4]), [2, 3]))
+    // @ts-expect-error
+    assert(equal(intersects(['abc', 'def'], ['def']), ['def']))
 
     // Promote scalars to arrays
     // @ts-ignore
-    assert(intersects('abc', ['abc', 'def']) === true)
+    assert(truthy(intersects('abc', ['abc', 'def'])))
     // @ts-ignore
     assert(intersects('abc', ['a', 'b', 'c']) === false)
+    // @ts-expect-error
+    assert(equal(intersects('abc', ['abc', 'def']), ['abc']))
   })
   await t.step('match function', () => {
     const match = expressionFunctions.match
