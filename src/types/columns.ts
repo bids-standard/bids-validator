@@ -15,8 +15,14 @@ const columnMapAccessorProxy = {
     prop: symbol | string,
     receiver: ColumnsMap,
   ) {
-    // Map.size exists, so we need to shadow it with the column contents
-    if (prop === 'size') return target.get('size')
+    // Map instance methods/properties that could plasubily be column names:
+    if (
+      ['clear', 'delete', 'keys', 'set', 'values', 'size'].includes(
+        prop as string,
+      )
+    ) {
+      return target.get(prop as string)
+    }
     const value = Reflect.get(target, prop, receiver)
     if (typeof value === 'function') return value.bind(target)
     if (prop === Symbol.iterator) return target[Symbol.iterator].bind(target)
