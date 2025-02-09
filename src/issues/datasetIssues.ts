@@ -42,7 +42,7 @@ export class DatasetIssues {
       if (!value) {
         continue
       }
-      if (key === 'location' && typeof value === "string" && !value.startsWith('/')){
+      if (key === 'location' && typeof value === 'string' && !value.startsWith('/')) {
         const key_ignore = ignore().add(value as string)
         found = found.filter((x) => x[key] && key_ignore.ignores(x[key].slice(1, x[key].length)))
       } else {

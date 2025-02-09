@@ -1,6 +1,6 @@
 export type WithCache<T> = T & { cache: Map<string, any> }
 interface FileLike {
-  path: string,
+  path: string
   parent: { path: string }
 }
 
