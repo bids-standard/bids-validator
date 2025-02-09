@@ -39,6 +39,9 @@ export class BIDSContextDataset implements Dataset {
   schema: Schema
   pseudofileExtensions: Set<string>
 
+  // Opaque object for HED validator
+  hedSchemas: object | undefined | null = undefined
+
   constructor(
     args: Partial<BIDSContextDataset>,
   ) {

@@ -22,22 +22,23 @@ function sidecarValueHasHed(sidecarValue: unknown) {
   )
 }
 
-let hedSchemas: object | undefined | null = undefined
-
-async function setHedSchemas(datasetDescriptionJson = {}) {
+async function setHedSchemas(dataset: BIDSContextDataset) {
+  if (dataset.hedSchemas !== undefined) {
+    return [] as HedIssue[]
+  }
   const datasetDescriptionData = new hedValidator.bids.BidsJsonFile(
     '/dataset_description.json',
-    datasetDescriptionJson,
+    dataset.dataset_description,
     null,
   )
   try {
-    hedSchemas = await hedValidator.bids.buildBidsSchemas(
+    dataset.hedSchemas = await hedValidator.bids.buildBidsSchemas(
       datasetDescriptionData,
       null,
     )
     return [] as HedIssue[]
   } catch (issueError) {
-    hedSchemas = null
+    dataset.hedSchemas = null
     return hedValidator.bids.BidsHedIssue.fromHedIssues(
       issueError,
       datasetDescriptionData.file,
@@ -59,22 +60,20 @@ export async function hedValidate(
   let hedValidationIssues = [] as HedIssue[]
 
   try {
-    if (context.extension == '.tsv' && context.columns) {
+    if (context.extension === '.tsv' && context.columns) {
       if (!('HED' in context.columns) && !sidecarHasHed(context.sidecar)) {
         return
       }
-      hedValidationIssues = await setHedSchemas(context.dataset.dataset_description)
+      hedValidationIssues = await setHedSchemas(context.dataset)
 
       file = await buildHedTsvFile(context)
-    } else if (context.extension == '.json' && sidecarHasHed(context.json)) {
-      hedValidationIssues = hedValidationIssues = await setHedSchemas(
-        context.dataset.dataset_description,
-      )
+    } else if (context.extension === '.json' && sidecarHasHed(context.json)) {
+      hedValidationIssues = hedValidationIssues = await setHedSchemas(context.dataset)
       file = buildHedSidecarFile(context)
     }
 
     if (file) {
-      hedValidationIssues.push(...file.validate(hedSchemas))
+      hedValidationIssues.push(...file.validate(context.dataset.hedSchemas))
     }
   } catch (error) {
     context.dataset.issues.add({
