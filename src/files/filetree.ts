@@ -8,7 +8,7 @@ const nullFile = {
   stream: new ReadableStream({
     start(controller) {
       controller.close()
-    }
+    },
   }),
   text: () => Promise.resolve(''),
   readBytes: async (size: number, offset?: number) => new Uint8Array(),

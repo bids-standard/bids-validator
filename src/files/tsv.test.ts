@@ -1,4 +1,10 @@
-import { assert, assertEquals, assertNotStrictEquals, assertObjectMatch, assertStrictEquals } from '@std/assert'
+import {
+  assert,
+  assertEquals,
+  assertNotStrictEquals,
+  assertObjectMatch,
+  assertStrictEquals,
+} from '@std/assert'
 import { pathToFile } from './filetree.ts'
 import { loadTSV } from './tsv.ts'
 import { streamFromString } from '../tests/utils.ts'

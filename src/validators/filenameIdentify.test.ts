@@ -68,7 +68,7 @@ Deno.test('test hasMatch', async (t) => {
 
   await t.step('No match', async () => {
     const tmpFile = Deno.makeTempFileSync()
-    const [ dir, base ]  = tmpFile.split(SEPARATOR_PATTERN)
+    const [dir, base] = tmpFile.split(SEPARATOR_PATTERN)
     const file = new BIDSFileDeno(dir, `/${base}`, ignore)
 
     const context = new BIDSContext(file)

@@ -1,6 +1,6 @@
 import { assert, assertEquals } from '@std/assert'
 import { createUTF8Stream, UnicodeDecodeError } from './streams.ts'
-import { streamFromUint8Array, streamFromString } from '../tests/utils.ts'
+import { streamFromString, streamFromUint8Array } from '../tests/utils.ts'
 
 Deno.test('createUTF8Stream', async (t) => {
   await t.step('should return a TransformStream with UTF8StreamTransformer', () => {
