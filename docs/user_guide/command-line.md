@@ -10,19 +10,19 @@ In general, there is no need to install Deno applications.
 `deno run` allows running from the Javascript Repository:
 
 ```sh
-deno run -ERN jsr:@bids/validator <dataset>
+deno run -ERWN jsr:@bids/validator <dataset>
 ```
 
 However, you can also install a lightweight script (into `$HOME/.deno/bin`):
 
 ```sh
-deno install -ERN -g -n bids-validator jsr:@bids/validator
+deno install -ERWN -g -n bids-validator jsr:@bids/validator
 ```
 
 Or compile a bundled binary:
 
 ```sh
-deno compile -ERN -o bids-validator jsr:@bids/validator
+deno compile -ERWN -o bids-validator jsr:@bids/validator
 ```
 
 ## Usage
@@ -36,7 +36,7 @@ The BIDS Validator takes a single dataset as input:
 :sync: run
 
 ```sh
-deno run -ERN jsr:@bids/validator <dataset>
+deno run -ERWN jsr:@bids/validator <dataset>
 ```
 
 :::
