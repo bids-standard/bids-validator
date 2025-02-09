@@ -25,6 +25,9 @@ function sidecarValueHasHed(sidecarValue: unknown) {
 let hedSchemas: object | undefined | null = undefined
 
 async function setHedSchemas(datasetDescriptionJson = {}) {
+  if (hedSchemas !== undefined) {
+    return [] as HedIssue[]
+  }
   const datasetDescriptionData = new hedValidator.bids.BidsJsonFile(
     '/dataset_description.json',
     datasetDescriptionJson,
@@ -59,14 +62,14 @@ export async function hedValidate(
   let hedValidationIssues = [] as HedIssue[]
 
   try {
-    if (context.extension == '.tsv' && context.columns) {
+    if (context.extension === '.tsv' && context.columns) {
       if (!('HED' in context.columns) && !sidecarHasHed(context.sidecar)) {
         return
       }
       hedValidationIssues = await setHedSchemas(context.dataset.dataset_description)
 
       file = await buildHedTsvFile(context)
-    } else if (context.extension == '.json' && sidecarHasHed(context.json)) {
+    } else if (context.extension === '.json' && sidecarHasHed(context.json)) {
       hedValidationIssues = hedValidationIssues = await setHedSchemas(
         context.dataset.dataset_description,
       )
