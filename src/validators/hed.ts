@@ -3,26 +3,25 @@ import { hedOldToNewLookup } from '../issues/list.ts'
 import type { GenericSchema } from '../types/schema.ts'
 import type { IssueFile } from '../types/issues.ts'
 import type { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
-import type { ColumnsMap } from '../types/columns.ts'
 
-function sidecarHasHed(sidecarData: BIDSContext['sidecar']) {
+export interface HedIssue {
+  code: number
+  file: IssueFile
+  evidence: string
+}
+
+function sidecarHasHed(sidecarData: BIDSContext['sidecar']): boolean {
   if (!sidecarData) {
     return false
   }
   return Object.keys(sidecarData).some((x) => sidecarValueHasHed(sidecarData[x]))
 }
 
-function sidecarValueHasHed(sidecarValue: unknown) {
-  return (
-    sidecarValue !== null &&
-    typeof sidecarValue === 'object' &&
-    'HED' in sidecarValue &&
-    sidecarValue.HED !== undefined
-  )
+function sidecarValueHasHed(sidecarValue: { HED?: string }): boolean {
+  return typeof sidecarValue.HED !== 'undefined'
 }
 
-async function setHedSchemas(dataset: BIDSContextDataset) {
+async function setHedSchemas(dataset: BIDSContextDataset): Promise<HedIssue[]> {
   if (dataset.hedSchemas !== undefined) {
     return [] as HedIssue[]
   }
@@ -46,14 +45,8 @@ async function setHedSchemas(dataset: BIDSContextDataset) {
   }
 }
 
-export interface HedIssue {
-  code: number
-  file: IssueFile
-  evidence: string
-}
-
 export async function hedValidate(
-  schema: GenericSchema,
+  _schema: GenericSchema,
   context: BIDSContext,
 ): Promise<void> {
   let file
@@ -89,8 +82,8 @@ export async function hedValidate(
       const location = hedIssue.file ? hedIssue.file.path : ''
       context.dataset.issues.add({
         code: hedOldToNewLookup[code],
-        // @ts-expect-error
-        subCode: hedIssue.hedIssue.hedCode, // Hidden property
+        // @ts-expect-error  Hidden property
+        subCode: hedIssue.hedIssue.hedCode,
         location,
         issueMessage: hedIssue.evidence,
       })
@@ -98,7 +91,7 @@ export async function hedValidate(
   })
 }
 
-function buildHedTsvFile(context: BIDSContext) {
+function buildHedTsvFile(context: BIDSContext): hedValidator.bids.BidsTsvFile {
   const eventFile = new hedValidator.bids.BidsTsvFile(
     context.path,
     context.columns,
@@ -109,7 +102,7 @@ function buildHedTsvFile(context: BIDSContext) {
   return eventFile
 }
 
-function buildHedSidecarFile(context: BIDSContext) {
+function buildHedSidecarFile(context: BIDSContext): hedValidator.bids.BidsSidecar {
   const sidecarFile = new hedValidator.bids.BidsSidecar(
     context.path,
     context.json,
