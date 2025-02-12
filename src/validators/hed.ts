@@ -52,61 +52,63 @@ export async function hedValidate(
   let file
   let hedValidationIssues = [] as HedIssue[]
 
+  if (context.dataset.hedSchemas === null) {
+    return
+  }
+
   try {
     if (context.extension === '.tsv' && context.columns) {
       if (!('HED' in context.columns) && !sidecarHasHed(context.sidecar)) {
         return
       }
       hedValidationIssues = await setHedSchemas(context.dataset)
-
-      file = await buildHedTsvFile(context)
+      file = buildHedTsvFile(context)
     } else if (context.extension === '.json' && sidecarHasHed(context.json)) {
-      hedValidationIssues = hedValidationIssues = await setHedSchemas(context.dataset)
+      hedValidationIssues = await setHedSchemas(context.dataset)
       file = buildHedSidecarFile(context)
     }
 
     if (file) {
-      hedValidationIssues.push(...file.validate(context.dataset.hedSchemas))
+      const fileIssues = file.validate(context.dataset.hedSchemas) ?? [] as HedIssue[]
+      hedValidationIssues.push(...fileIssues)
     }
   } catch (error) {
     context.dataset.issues.add({
-      code: 'HED_ERROR',
+      code: 'HED_INTERNAL_ERROR',
       location: context.path,
       issueMessage: error as string,
     })
   }
 
-  hedValidationIssues.map((hedIssue) => {
+  for (const hedIssue of hedValidationIssues) {
     const code = hedIssue.code
     if (code in hedOldToNewLookup) {
-      const location = hedIssue.file ? hedIssue.file.path : ''
+      const location = hedIssue.file?.path ?? ''
       context.dataset.issues.add({
         code: hedOldToNewLookup[code],
         // @ts-expect-error  Hidden property
-        subCode: hedIssue.hedIssue.hedCode,
+        subCode: hedIssue.hedIssue?.hedCode,
         location,
         issueMessage: hedIssue.evidence,
       })
     }
-  })
+  }
 }
 
 function buildHedTsvFile(context: BIDSContext): hedValidator.bids.BidsTsvFile {
-  const eventFile = new hedValidator.bids.BidsTsvFile(
+  return new hedValidator.bids.BidsTsvFile(
     context.path,
     context.columns,
     context.file,
     [],
     context.sidecar,
   )
-  return eventFile
 }
 
 function buildHedSidecarFile(context: BIDSContext): hedValidator.bids.BidsSidecar {
-  const sidecarFile = new hedValidator.bids.BidsSidecar(
+  return new hedValidator.bids.BidsSidecar(
     context.path,
     context.json,
     context.file,
   )
-  return sidecarFile
 }
