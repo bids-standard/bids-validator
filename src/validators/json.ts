@@ -3,7 +3,7 @@ import type { Schema } from '../types/schema.ts'
 import { memoize } from '../utils/memoize.ts'
 import { logger } from '../utils/logger.ts'
 
-const metadataValidator = new Ajv({ strictSchema: false })
+const metadataValidator = new Ajv({ strictSchema: false, logger: false })
 
 // Bind the method to the instance before memoizing to avoid losing the context
 export const compile = memoize(metadataValidator.compile.bind(metadataValidator))
