@@ -34,15 +34,15 @@ async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array> 
 export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
   try {
     const buf = await file.readBytes(1024)
-    const data = isCompressed(buf.buffer) ? await extract(buf, 540) : buf.slice(0, 540)
+    const data = isCompressed(buf.buffer as ArrayBuffer) ? await extract(buf, 540) : buf.slice(0, 540)
     let header
-    if (isNIFTI1(data.buffer)) {
+    if (isNIFTI1(data.buffer as ArrayBuffer)) {
       header = new NIFTI1()
       // Truncate to 348 bytes to avoid attempting to parse extensions
-      header.readHeader(data.buffer.slice(0, 348))
-    } else if (isNIFTI2(data.buffer)) {
+      header.readHeader(data.buffer.slice(0, 348) as ArrayBuffer)
+    } else if (isNIFTI2(data.buffer as ArrayBuffer)) {
       header = new NIFTI2()
-      header.readHeader(data.buffer)
+      header.readHeader(data.buffer as ArrayBuffer)
     }
     if (!header) {
       throw { key: 'NIFTI_HEADER_UNREADABLE' }

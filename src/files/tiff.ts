@@ -27,7 +27,7 @@ function getImageDescription(
     if (dataview.getUint16(IFDoffset + 2 + i * IFDsize, littleEndian) === 0x010e) {
       const nbytes = dataview.getUint32(IFDoffset + 2 + i * IFDsize + 4, littleEndian)
       const offset = dataview.getUint32(IFDoffset + 2 + i * IFDsize + 8, littleEndian)
-      return new TextDecoder().decode(dataview.buffer.slice(offset, offset + nbytes))
+      return new TextDecoder().decode(dataview.buffer.slice(offset, offset + nbytes) as ArrayBuffer)
     }
   }
 }
