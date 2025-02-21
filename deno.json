@@ -45,7 +45,7 @@
     "@std/yaml": "jsr:@std/yaml@^1.0.4"
   },
   "tasks": {
-    "test": "deno test -A src/tests/"
+    "test": "deno test -A src/"
   },
   "fmt": {
     "lineWidth": 99,
