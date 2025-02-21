@@ -39,6 +39,9 @@ export class BIDSContextDataset implements Dataset {
   schema: Schema
   pseudofileExtensions: Set<string>
 
+  // Opaque object for HED validator
+  hedSchemas: object | undefined | null = undefined
+
   constructor(
     args: Partial<BIDSContextDataset>,
   ) {
@@ -60,11 +63,8 @@ export class BIDSContextDataset implements Dataset {
           ?.filter((ext) => ext.endsWith('/'))
         : [],
     )
-    this.subjects = args.subjects || {
-      sub_dirs: this.tree.directories.map((dir) => dir.name).filter((dir) =>
-        dir.startsWith('sub-')
-      ),
-    }
+    // @ts-ignore
+    this.subjects = args.subjects || null
   }
 
   get dataset_description(): Record<string, unknown> {

@@ -11,7 +11,7 @@ const subjectJson = JSON.stringify({ subOverwrite: 'subject', subValue: 'subject
 const rootJson = JSON.stringify({ rootOverwrite: 'root', rootValue: 'root' })
 
 function readBytes(json: string) {
-  return (size: number) => Promise.resolve(new TextEncoder().encode(json))
+  return (size: number) => Promise.resolve(new TextEncoder().encode(json) as Uint8Array<ArrayBuffer>)
 }
 
 export const rootFileTree = pathsToTree([
@@ -34,4 +34,5 @@ const anatFileTree = subjectFileTree.directories[0].directories[0] as FileTree
 
 export const dataFile = anatFileTree.get('sub-01_ses-01_T1w.nii.gz') as BIDSFile
 const anatJSONFile = anatFileTree.get('sub-01_ses-01_T1w.json') as BIDSFile
-anatJSONFile.readBytes = (size: number) => Promise.resolve(new TextEncoder().encode(anatJson))
+anatJSONFile.readBytes = (size: number) =>
+  Promise.resolve(new TextEncoder().encode(anatJson) as Uint8Array<ArrayBuffer>)

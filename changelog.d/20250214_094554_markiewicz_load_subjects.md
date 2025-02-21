@@ -16,12 +16,15 @@ Uncomment the section that is right (remove the HTML comment wrapper).
 - A bullet item for the Changed category.
 
 -->
-<!--
+
 ### Fixed
 
-- A bullet item for the Fixed category.
+- Subject detection in `participants.tsv` and `phenotype/` directories
+  has been restored, enabling checks that were deactivated by the missing
+  data. ([#162])
 
--->
+[#162]: https://github.com/bids-standard/bids-validator/pull/162
+
 <!--
 ### Deprecated
 
@@ -40,7 +43,9 @@ Uncomment the section that is right (remove the HTML comment wrapper).
 - A bullet item for the Security category.
 
 -->
+<!--
 ### Infrastructure
 
-- Adopting [scriv](https://scriv.readthedocs.io/en/latest/) for changelog
-  management.
+- A bullet item for the Infrastructure category.
+
+-->

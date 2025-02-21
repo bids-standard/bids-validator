@@ -8,8 +8,7 @@
     "jsr:@effigies/cliffy-command@1.0.0-dev.8": "1.0.0-dev.8",
     "jsr:@effigies/cliffy-table@1.0.0-dev.5": "1.0.0-dev.5",
     "jsr:@effigies/cliffy-table@^1.0.0-dev.5": "1.0.0-dev.5",
-    "jsr:@libs/typing@3": "3.1.2",
-    "jsr:@libs/xml@6.0.1": "6.0.1",
+    "jsr:@libs/xml@6.0.4": "6.0.4",
     "jsr:@luca/esbuild-deno-loader@0.10.3": "0.10.3",
     "jsr:@luca/esbuild-deno-loader@0.11.0": "0.11.0",
     "jsr:@std/assert@1.0.7": "1.0.7",
@@ -17,25 +16,29 @@
     "jsr:@std/bytes@^1.0.2": "1.0.5",
     "jsr:@std/bytes@^1.0.2-rc.3": "1.0.2",
     "jsr:@std/bytes@^1.0.3": "1.0.5",
+    "jsr:@std/bytes@^1.0.5": "1.0.5",
     "jsr:@std/encoding@0.213": "0.213.1",
     "jsr:@std/encoding@^1.0.5": "1.0.5",
     "jsr:@std/fmt@1.0.3": "1.0.3",
+    "jsr:@std/fmt@1.0.5": "1.0.5",
     "jsr:@std/fmt@^1.0.2": "1.0.3",
-    "jsr:@std/fmt@~1.0.2": "1.0.3",
-    "jsr:@std/fs@1.0.5": "1.0.5",
-    "jsr:@std/fs@^1.0.4": "1.0.5",
+    "jsr:@std/fmt@^1.0.5": "1.0.5",
+    "jsr:@std/fmt@~1.0.2": "1.0.5",
+    "jsr:@std/fs@1.0.13": "1.0.13",
+    "jsr:@std/fs@^1.0.11": "1.0.13",
     "jsr:@std/internal@^1.0.5": "1.0.5",
-    "jsr:@std/io@0.225": "0.225.0",
-    "jsr:@std/io@0.225.0": "0.225.0",
+    "jsr:@std/io@0.225.2": "0.225.2",
+    "jsr:@std/io@~0.225.2": "0.225.2",
     "jsr:@std/jsonc@0.213": "0.213.1",
-    "jsr:@std/log@0.224.9": "0.224.9",
+    "jsr:@std/log@0.224.14": "0.224.14",
     "jsr:@std/path@0.213": "0.213.1",
     "jsr:@std/path@1.0.8": "1.0.8",
     "jsr:@std/path@^1.0.6": "1.0.6",
     "jsr:@std/path@^1.0.7": "1.0.8",
-    "jsr:@std/streams@1.0.8": "1.0.8",
+    "jsr:@std/path@^1.0.8": "1.0.8",
+    "jsr:@std/streams@1.0.9": "1.0.9",
     "jsr:@std/text@~1.0.7": "1.0.10",
-    "jsr:@std/yaml@^1.0.4": "1.0.5",
+    "jsr:@std/yaml@^1.0.5": "1.0.5",
     "npm:@bids/nifti-reader-js@0.6.9": "0.6.9",
     "npm:ajv@8.17.1": "8.17.1",
     "npm:hed-validator@3.15.5": "3.15.5",
@@ -80,14 +83,8 @@
     "@libs/typing@3.1.0": {
       "integrity": "091b59f57a99f84c9fccf8f59534f77f177705ac25183b575c83fd7aa6dcfafe"
     },
-    "@libs/typing@3.1.2": {
-      "integrity": "72342a0eaedcc1f3f3ec18f8f9573759011c68f135e2ec6c7282c59843f7a37e"
-    },
-    "@libs/xml@6.0.1": {
-      "integrity": "64af4f93464c77c3e1158fb97c3657779ca554b14f38616b96cde31e22d8a309",
-      "dependencies": [
-        "jsr:@libs/typing"
-      ]
+    "@libs/xml@6.0.4": {
+      "integrity": "c896f17016dbf5f2d62496e0bd6cd7db145c05987d0e45d4dd2c87785a60f528"
     },
     "@luca/esbuild-deno-loader@0.10.3": {
       "integrity": "32fc93f7e7f78060234fd5929a740668aab1c742b808c6048b57f9aaea514921",
@@ -132,19 +129,22 @@
     "@std/fmt@1.0.3": {
       "integrity": "97765c16aa32245ff4e2204ecf7d8562496a3cb8592340a80e7e554e0bb9149f"
     },
-    "@std/fs@1.0.5": {
-      "integrity": "41806ad6823d0b5f275f9849a2640d87e4ef67c51ee1b8fb02426f55e02fd44e",
+    "@std/fmt@1.0.5": {
+      "integrity": "0cfab43364bc36650d83c425cd6d99910fc20c4576631149f0f987eddede1a4d"
+    },
+    "@std/fs@1.0.13": {
+      "integrity": "756d3ff0ade91c9e72b228e8012b6ff00c3d4a4ac9c642c4dac083536bf6c605",
       "dependencies": [
-        "jsr:@std/path@^1.0.7"
+        "jsr:@std/path@^1.0.8"
       ]
     },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
     },
-    "@std/io@0.225.0": {
-      "integrity": "c1db7c5e5a231629b32d64b9a53139445b2ca640d828c26bf23e1c55f8c079b3",
+    "@std/io@0.225.2": {
+      "integrity": "3c740cd4ee4c082e6cfc86458f47e2ab7cb353dc6234d5e9b1f91a2de5f4d6c7",
       "dependencies": [
-        "jsr:@std/bytes@^1.0.2"
+        "jsr:@std/bytes@^1.0.5"
       ]
     },
     "@std/jsonc@0.213.1": {
@@ -153,12 +153,12 @@
         "jsr:@std/assert@~0.213.1"
       ]
     },
-    "@std/log@0.224.9": {
-      "integrity": "419d04e4d93e6b1a0205ac3f94809621cfec3d328d09fec9ec59cafa3b3fcaee",
+    "@std/log@0.224.14": {
+      "integrity": "257f7adceee3b53bb2bc86c7242e7d1bc59729e57d4981c4a7e5b876c808f05e",
       "dependencies": [
-        "jsr:@std/fmt@^1.0.2",
-        "jsr:@std/fs@^1.0.4",
-        "jsr:@std/io@0.225"
+        "jsr:@std/fmt@^1.0.5",
+        "jsr:@std/fs@^1.0.11",
+        "jsr:@std/io@~0.225.2"
       ]
     },
     "@std/path@0.213.1": {
@@ -173,10 +173,10 @@
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
     },
-    "@std/streams@1.0.8": {
-      "integrity": "b41332d93d2cf6a82fe4ac2153b930adf1a859392931e2a19d9fabfb6f154fb3",
+    "@std/streams@1.0.9": {
+      "integrity": "a9d26b1988cdd7aa7b1f4b51e1c36c1557f3f252880fa6cc5b9f37078b1a5035",
       "dependencies": [
-        "jsr:@std/bytes@^1.0.3"
+        "jsr:@std/bytes@^1.0.5"
       ]
     },
     "@std/text@1.0.8": {
@@ -433,15 +433,15 @@
       "jsr:@bids/schema@1.1.0-dev.5+6994398d",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
-      "jsr:@libs/xml@6.0.1",
+      "jsr:@libs/xml@6.0.4",
       "jsr:@std/assert@1.0.7",
-      "jsr:@std/fmt@1.0.3",
-      "jsr:@std/fs@1.0.5",
-      "jsr:@std/io@0.225.0",
-      "jsr:@std/log@0.224.9",
+      "jsr:@std/fmt@1.0.5",
+      "jsr:@std/fs@1.0.13",
+      "jsr:@std/io@0.225.2",
+      "jsr:@std/log@0.224.14",
       "jsr:@std/path@1.0.8",
-      "jsr:@std/streams@1.0.8",
-      "jsr:@std/yaml@^1.0.4",
+      "jsr:@std/streams@1.0.9",
+      "jsr:@std/yaml@^1.0.5",
       "npm:@bids/nifti-reader-js@0.6.9",
       "npm:ajv@8.17.1",
       "npm:hed-validator@3.15.5",

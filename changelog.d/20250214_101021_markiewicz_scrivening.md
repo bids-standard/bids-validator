@@ -5,12 +5,6 @@ Uncomment the section that is right (remove the HTML comment wrapper).
 -->
 
 <!--
-### Removed
-
-- A bullet item for the Removed category.
-
--->
-<!--
 ### Added
 
 - A bullet item for the Added category.
@@ -22,21 +16,35 @@ Uncomment the section that is right (remove the HTML comment wrapper).
 - A bullet item for the Changed category.
 
 -->
+
+### Fixed
+
+- Skip HED tests if schema cannot be loaded. This was exhibiting
+  as a `HED_ERROR` with "cannot read property null". ([#160])
+
+[#160]: https://github.com/bids-standard/bids-validator/pull/160
+
 <!--
 ### Deprecated
 
 - A bullet item for the Deprecated category.
 
 -->
-### Fixed
+<!--
+### Removed
 
-- Improve handling of `.bidsignore` files in the web validator.
-  Ignores matching directories but not the files they contained could fail to match.
-  (#113)
+- A bullet item for the Removed category.
 
+-->
 <!--
 ### Security
 
 - A bullet item for the Security category.
+
+-->
+<!--
+### Infrastructure
+
+- A bullet item for the Infrastructure category.
 
 -->

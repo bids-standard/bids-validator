@@ -3,7 +3,7 @@ import type { BIDSFile } from '../types/filetree.ts'
 import { logger } from '../utils/logger.ts'
 import type { NiftiHeader } from '@bids/schema/context'
 
-async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array> {
+async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array<ArrayBuffer>> {
   // The fflate decompression that is used in nifti-reader does not like
   // truncated data, so pretend that we have a stream and stop reading
   // when we have enough bytes.
