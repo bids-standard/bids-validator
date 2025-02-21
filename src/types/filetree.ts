@@ -14,7 +14,7 @@ export interface BIDSFile {
   // Resolve stream to decoded utf-8 text
   text: () => Promise<string>
   // Read a range of bytes
-  readBytes: (size: number, offset?: number) => Promise<Uint8Array>
+  readBytes: (size: number, offset?: number) => Promise<Uint8Array<ArrayBuffer>>
   // Access the parent directory
   parent: FileTree
   // File has been viewed

@@ -78,7 +78,7 @@ export class BIDSFileDeno implements BIDSFile {
    * Reads up to size bytes, starting at offset.
    * If EOF is encountered, the resulting array may be smaller.
    */
-  async readBytes(size: number, offset = 0): Promise<Uint8Array> {
+  async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
     const handle = this.#openHandle()
     const buf = new Uint8Array(size)
     await handle.seek(offset, Deno.SeekMode.Start)

@@ -41,7 +41,7 @@ export class BIDSFileBrowser implements BIDSFile {
     return this.#file.text()
   }
 
-  async readBytes(size: number, offset = 0): Promise<Uint8Array> {
+  async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
     return new Uint8Array(await this.#file.slice(offset, size).arrayBuffer())
   }
 }
