@@ -1,7 +1,7 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@bids/schema@1.1.0-dev.5+6994398d": "1.1.0-dev.5+6994398d",
+    "jsr:@bids/schema@1.1.0-dev.9+1a202531": "1.1.0-dev.9+1a202531",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
@@ -45,8 +45,8 @@
     "npm:ignore@7.0.3": "7.0.3"
   },
   "jsr": {
-    "@bids/schema@1.1.0-dev.5+6994398d": {
-      "integrity": "a02f3ab01a54d29e47eb6ce6d8c0b93f03432e35e300e2953117f41fdd60573f"
+    "@bids/schema@1.1.0-dev.9+1a202531": {
+      "integrity": "6a7f25b2a58e06eadf65ab086ca6736f071b6f6ec928086db0f649a1d016d445"
     },
     "@cliffy/flags@1.0.0-rc.7": {
       "integrity": "318d9be98f6a6417b108e03dec427dea96cdd41a15beb21d2554ae6da450a781",
@@ -430,7 +430,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@bids/schema@1.1.0-dev.5+6994398d",
+      "jsr:@bids/schema@1.1.0-dev.9+1a202531",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
       "jsr:@libs/xml@6.0.4",
