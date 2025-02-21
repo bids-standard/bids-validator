@@ -7,7 +7,7 @@ import * as XML from '@libs/xml'
 import type { BIDSFile } from '../types/filetree.ts'
 
 function getImageDescription(
-  dataview: DataView,
+  dataview: DataView<ArrayBuffer>,
   littleEndian: boolean,
   IFDsize: number,
 ): string | undefined {
