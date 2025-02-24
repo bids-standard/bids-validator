@@ -1,14 +1,9 @@
-import hedValidator from '@hed/validator'
-import { hedOldToNewLookup } from '../issues/list.ts'
+import * as hedValidator from '@hed/validator'
 import type { GenericSchema } from '../types/schema.ts'
-import type { IssueFile } from '../types/issues.ts'
+import type { Issue } from '../types/issues.ts'
 import type { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 
-export interface HedIssue {
-  code: number
-  file: IssueFile
-  evidence: string
-}
+export interface HedIssue extends Issue {}
 
 function sidecarHasHed(sidecarData: BIDSContext['sidecar']): boolean {
   if (!sidecarData) {
@@ -25,20 +20,19 @@ async function setHedSchemas(dataset: BIDSContextDataset): Promise<HedIssue[]> {
   if (dataset.hedSchemas !== undefined) {
     return [] as HedIssue[]
   }
-  const datasetDescriptionData = new hedValidator.bids.BidsJsonFile(
+  const datasetDescriptionData = new hedValidator.BidsJsonFile(
     '/dataset_description.json',
-    dataset.dataset_description,
     null,
+    dataset.dataset_description,
   )
   try {
-    dataset.hedSchemas = await hedValidator.bids.buildBidsSchemas(
+    dataset.hedSchemas = await hedValidator.buildBidsSchemas(
       datasetDescriptionData,
-      null,
     )
     return [] as HedIssue[]
   } catch (issueError) {
     dataset.hedSchemas = null
-    return hedValidator.bids.BidsHedIssue.fromHedIssues(
+    return hedValidator.BidsHedIssue.fromHedIssues(
       issueError,
       datasetDescriptionData.file,
     )
@@ -74,41 +68,31 @@ export async function hedValidate(
     }
   } catch (error) {
     context.dataset.issues.add({
-      code: 'HED_INTERNAL_ERROR',
+      code: 'HED_ERROR',
+      subCode: 'INTERNAL_ERROR',
       location: context.path,
       issueMessage: error as string,
     })
   }
 
   for (const hedIssue of hedValidationIssues) {
-    const code = hedIssue.code
-    if (code in hedOldToNewLookup) {
-      const location = hedIssue.file?.path ?? ''
-      context.dataset.issues.add({
-        code: hedOldToNewLookup[code],
-        // @ts-expect-error  Hidden property
-        subCode: hedIssue.hedIssue?.hedCode,
-        location,
-        issueMessage: hedIssue.evidence,
-      })
-    }
+    context.dataset.issues.add(hedIssue)
   }
 }
 
-function buildHedTsvFile(context: BIDSContext): hedValidator.bids.BidsTsvFile {
-  return new hedValidator.bids.BidsTsvFile(
+function buildHedTsvFile(context: BIDSContext): hedValidator.BidsTsvFile {
+  return new hedValidator.BidsTsvFile(
     context.path,
-    context.columns,
     context.file,
-    [],
+    context.columns,
     context.sidecar,
   )
 }
 
-function buildHedSidecarFile(context: BIDSContext): hedValidator.bids.BidsSidecar {
-  return new hedValidator.bids.BidsSidecar(
+function buildHedSidecarFile(context: BIDSContext): hedValidator.BidsSidecar {
+  return new hedValidator.BidsSidecar(
     context.path,
-    context.json,
     context.file,
+    context.json,
   )
 }
