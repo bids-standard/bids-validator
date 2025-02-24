@@ -1,4 +1,25 @@
 
+<a id='changelog-2.0.3'></a>
+# 2.0.3 — 2025-02-24
+
+## Fixed
+
+- Subject detection in `participants.tsv` and `phenotype/` directories
+  has been restored, enabling checks that were deactivated by the missing
+  data. ([#162])
+
+[#162]: https://github.com/bids-standard/bids-validator/pull/162
+
+- Skip HED tests if schema cannot be loaded. This was exhibiting
+  as a `HED_ERROR` with "cannot read property null". ([#160])
+
+[#160]: https://github.com/bids-standard/bids-validator/pull/160
+
+- `TSV_INCORRECT_VALUE_TYPE*` error messages now indicate that a match
+  failed, instead of confusingly claim success. ([#165])
+
+[#165]: https://github.com/bids-standard/bids-validator/pull/165
+
 <a id='changelog-2.0.2'></a>
 # 2.0.2 — 2025-02-10
 
