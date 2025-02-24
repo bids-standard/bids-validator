@@ -2,6 +2,9 @@ import { FileIgnoreRules } from './ignore.ts'
 import { FileTree } from '../types/filetree.ts'
 import { assertEquals, assertObjectMatch } from '@std/assert'
 import { BIDSFileBrowser, fileListToTree } from './browser.ts'
+import { streamFromString } from '../tests/utils.ts'
+
+const nullstream = streamFromString('')
 
 class TestFile extends File {
   override webkitRelativePath: string
@@ -13,6 +16,7 @@ class TestFile extends File {
   ) {
     super(fileBits, fileName, options)
     this.webkitRelativePath = webkitRelativePath
+    this.stream = () => nullstream
   }
 }
 
@@ -79,7 +83,7 @@ Deno.test('Browser implementation of FileTree', async (t) => {
   })
 
   await t.step('reads .bidsignore during load', async () => {
-    const ignore = new FileIgnoreRules([])
+    const ignore = new FileIgnoreRules(['ignored_but_absent', 'ignored_and_present'])
     const files = [
       new TestFile(
         ['ignored_but_absent\n', 'ignored_and_present\n'],

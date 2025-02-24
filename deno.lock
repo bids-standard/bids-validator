@@ -11,7 +11,7 @@
     "jsr:@libs/xml@6.0.4": "6.0.4",
     "jsr:@luca/esbuild-deno-loader@0.10.3": "0.10.3",
     "jsr:@luca/esbuild-deno-loader@0.11.0": "0.11.0",
-    "jsr:@std/assert@1.0.7": "1.0.7",
+    "jsr:@std/assert@1.0.11": "1.0.11",
     "jsr:@std/assert@~0.213.1": "0.213.1",
     "jsr:@std/bytes@^1.0.2": "1.0.4",
     "jsr:@std/bytes@^1.0.2-rc.3": "1.0.2",
@@ -103,8 +103,8 @@
     "@std/assert@0.213.1": {
       "integrity": "24c28178b30c8e0782c18e8e94ea72b16282207569cdd10ffb9d1d26f2edebfe"
     },
-    "@std/assert@1.0.7": {
-      "integrity": "64ce9fac879e0b9f3042a89b3c3f8ccfc9c984391af19e2087513a79d73e28c3",
+    "@std/assert@1.0.11": {
+      "integrity": "2461ef3c368fe88bc60e186e7744a93112f16fd110022e113a0849e94d1c83c1",
       "dependencies": [
         "jsr:@std/internal"
       ]
@@ -435,7 +435,7 @@
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
       "jsr:@libs/xml@6.0.4",
-      "jsr:@std/assert@1.0.7",
+      "jsr:@std/assert@1.0.11",
       "jsr:@std/fmt@1.0.5",
       "jsr:@std/fs@1.0.13",
       "jsr:@std/io@0.225.2",
