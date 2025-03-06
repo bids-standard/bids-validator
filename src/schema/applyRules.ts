@@ -189,10 +189,11 @@ function evalJsonCheck(
     const metadataDef = schema.objects.metadata[key]
     const keyName: string = metadataDef.name
     const value = json[keyName]
+    const issueMessage = `Field description: ${metadataDef.description}`
+
     if (value === undefined) {
       const severity = getFieldSeverity(requirement, context)
       if (severity && severity !== 'ignore') {
-        const issueMessage = `Field description: ${metadataDef.description}`
         if (requirement.issue?.code && requirement.issue?.message) {
           context.dataset.issues.add({
             code: requirement.issue.code,
@@ -243,7 +244,7 @@ function evalJsonCheck(
         context.dataset.issues.add({
           code: 'JSON_SCHEMA_VALIDATION_ERROR',
           subCode: keyName,
-          issueMessage: err['message'],
+          issueMessage: `${err['message']}\n\n${issueMessage}`,
           rule: schemaPath,
           location,
           affects,
