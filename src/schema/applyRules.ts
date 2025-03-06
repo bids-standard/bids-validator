@@ -192,6 +192,7 @@ function evalJsonCheck(
     if (value === undefined) {
       const severity = getFieldSeverity(requirement, context)
       if (severity && severity !== 'ignore') {
+        const issueMessage = `Field description: ${metadataDef.description}`
         if (requirement.issue?.code && requirement.issue?.message) {
           context.dataset.issues.add({
             code: requirement.issue.code,
@@ -199,9 +200,9 @@ function evalJsonCheck(
             location: context.path,
             severity,
             rule: schemaPath,
+            issueMessage,
           }, requirement.issue.message)
         } else {
-          let code
           const keyType = sidecarRule ? 'SIDECAR_KEY' : 'JSON_KEY'
           const level = severity === 'error' ? 'REQUIRED' : 'RECOMMENDED'
           context.dataset.issues.add({
@@ -210,6 +211,7 @@ function evalJsonCheck(
             location: context.path,
             severity,
             rule: schemaPath,
+            issueMessage,
           })
         }
       }
