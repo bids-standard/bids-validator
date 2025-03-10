@@ -12,7 +12,7 @@
  * object in the schema for reference.
  */
 // @ts-nocheck
-import { globToRegExp, SEPARATOR_PATTERN } from '@std/path'
+import { globToRegExp, SEPARATOR_PATTERN, SEPARATOR } from '@std/path'
 import type { GenericSchema, Schema } from '../types/schema.ts'
 import type { BIDSContext } from '../schema/context.ts'
 import type { lookupModality } from '../schema/modalities.ts'
@@ -26,12 +26,56 @@ const CHECKS: CheckFunction[] = [
   cleanContext,
 ]
 
+const DIR_CHECKS: CheckFunction[] = [
+  findDirRuleMatches,
+  hasMatch,
+  cleanContext,
+]
+
 export async function filenameIdentify(schema, context) {
-  for (const check of CHECKS) {
+  let checks = CHECKS
+  if (Object.hasOwn(context, 'directory') && context.directory) {
+    checks = DIR_CHECKS
+  }
+  for (const check of checks) {
     await check(schema as unknown as GenericSchema, context)
   }
 }
 
+export async function findDirRuleMatches(schema, context) {
+  let schemaPath = 'rules.directories.raw'
+  if (context.dataset.dataset_description.DatasetType === 'derivative') {
+    schemaPath = 'rules.directories.derivative'
+  }
+  Object.keys(schema[schemaPath]).map((key) => {
+    const path = `${schemaPath}.${key}`
+    const node = schema[path]
+    if ('name' in node) {
+      if (node.name === context.file.name.replaceAll(SEPARATOR, "")) {
+        context.filenameRules.push(path)
+      }
+    }
+    if ('entity' in node) {
+      let entityDef = schema[`objects.entities.${node.entity}`]
+      if (
+        entityDef && 'name' in entityDef && context.file.name.startsWith(`${entityDef['name']}-`)
+      ) {
+        context.filenameRules.push(path)
+      }
+    }
+    if ('value' in node) {
+      // kludge, entries in schema.objects are plural, value specified as singular
+      // will fail for modalities
+      Object.keys(schema[`objects.${node.value}s`]).map((key) => {
+        const value = schema[`objects.${node.value}s.${key}`].value
+        if (`${value}` === context.file.name.replaceAll(SEPARATOR, "")) {
+          context.filenameRules.push(path)
+        }
+      })
+    }
+  })
+  return Promise.resolve()
+}
 function findRuleMatches(schema, context) {
   const schemaPath = 'rules.files'
   Object.keys(schema[schemaPath]).map((key) => {

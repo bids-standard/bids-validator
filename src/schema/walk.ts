@@ -18,11 +18,11 @@ const nullFile = {
   readBytes: async (size: number, offset?: number) => new Uint8Array(),
 }
 
-function pseudoFile(dir: FileTree): BIDSFile {
+function pseudoFile(dir: FileTree, opaque: boolean): BIDSFile {
   return {
     name: `${dir.name}/`,
     path: `${dir.path}/`,
-    size: [...quickWalk(dir)].reduce((acc, file) => acc + file.size, 0),
+    size: opaque ? [...quickWalk(dir)].reduce((acc, file) => acc + file.size, 0) : 0,
     ignored: dir.ignored,
     parent: dir.parent as FileTree,
     viewed: dir.viewed,
@@ -40,8 +40,15 @@ async function* _walkFileTree(
   }
   for (const dir of fileTree.directories) {
     if (dsContext.isPseudoFile(dir)) {
-      yield new BIDSContext(pseudoFile(dir), dsContext)
+      yield new BIDSContext(pseudoFile(dir, true), dsContext)
+    } else if (dsContext.isOpaqueDirectory(dir)) {
+      let context = new BIDSContext(pseudoFile(dir, true), dsContext)
+      context.directory = true
+      yield context
     } else {
+      let context = new BIDSContext(pseudoFile(dir, false), dsContext)
+      context.directory = true
+      yield context
       yield* _walkFileTree(dir, dsContext)
     }
   }
