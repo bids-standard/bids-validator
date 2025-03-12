@@ -1,0 +1,39 @@
+[build-system]
+requires = ["pdm-backend", "wheel"]
+build-backend = "pdm.backend"
+
+[tool.pdm.build]
+is-purelib = false
+excludes = ["dist/*", "lib/*", ".gitignore"]
+
+[tool.pdm.build.wheel-data]
+scripts = ["dist/bids-validator", "dist/bids-validator.exe"]
+
+[tool.pdm.version]
+source = "scm"
+# tag_filter = "test/*"
+# tag_regex = '^test/(?:\D*)?(?P<version>([1-9][0-9]*!)?(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))*((a|b|c|rc)(0|[1-9][0-9]*))?(\.post(0|[1-9][0-9]*))?(\.dev(0|[1-9][0-9]*))?$)$'
+
+[project]
+name = "bids-validator-deno"
+dynamic = ["version"]
+description = "Python installer for the self-contained binary of bids-validator"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+keywords = ["bids", "bids-validator"]
+authors = [{ name = "bids-standard developers" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+]
+dependencies = []
+
+[project.urls]
+Documentation = "https://github.com/bids-standard/bids-validator/tree/main/tools/pypi-whl"
+Issues = "https://github.com/bids-standard/bids-validator/issues"
+Source = "https://github.com/bids-standard/bids-validator/tree/main/tools/pypi-whl"
+
