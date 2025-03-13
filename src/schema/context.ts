@@ -98,7 +98,7 @@ export class BIDSContextDataset implements Dataset {
     )
   }
   isOpaqueDirectory(file: FileTree): boolean {
-    return this.opaqueDirectories.has(file.name)
+    return this.opaqueDirectories.has(file.path)
   }
 
 }
