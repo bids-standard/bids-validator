@@ -39,16 +39,12 @@ async function* _walkFileTree(
     yield new BIDSContext(file, dsContext)
   }
   for (const dir of fileTree.directories) {
-    if (dsContext.isPseudoFile(dir)) {
-      yield new BIDSContext(pseudoFile(dir, true), dsContext)
-    } else if (dsContext.isOpaqueDirectory(dir)) {
-      let context = new BIDSContext(pseudoFile(dir, true), dsContext)
-      context.directory = true
-      yield context
-    } else {
-      let context = new BIDSContext(pseudoFile(dir, false), dsContext)
-      context.directory = true
-      yield context
+    const pseudo = dsContext.isPseudoFile(dir)
+    const opaque = pseudo || dsContext.isOpaqueDirectory(dir)
+    const context = new BIDSContext(pseudoFile(dir, opaque), dsContext)
+    context.directory = !pseudo
+    yield context
+    if (!opaque) {
       yield* _walkFileTree(dir, dsContext)
     }
   }
