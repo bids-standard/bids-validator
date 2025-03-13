@@ -12,7 +12,7 @@
  * object in the schema for reference.
  */
 // @ts-nocheck
-import { globToRegExp, SEPARATOR_PATTERN, SEPARATOR } from '@std/path'
+import { globToRegExp, SEPARATOR_PATTERN } from '@std/path'
 import type { GenericSchema, Schema } from '../types/schema.ts'
 import type { BIDSContext } from '../schema/context.ts'
 import type { lookupModality } from '../schema/modalities.ts'
@@ -51,7 +51,7 @@ export async function findDirRuleMatches(schema, context) {
     const path = `${schemaPath}.${key}`
     const node = schema[path]
     if ('name' in node) {
-      if (node.name === context.file.name.replaceAll(SEPARATOR, "")) {
+      if (node.name === context.file.name.replaceAll('/', "")) {
         context.filenameRules.push(path)
       }
     }
@@ -68,7 +68,7 @@ export async function findDirRuleMatches(schema, context) {
       // will fail for modalities
       Object.keys(schema[`objects.${node.value}s`]).map((key) => {
         const value = schema[`objects.${node.value}s.${key}`].value
-        if (`${value}` === context.file.name.replaceAll(SEPARATOR, "")) {
+        if (`${value}` === context.file.name.replaceAll('/', "")) {
           context.filenameRules.push(path)
         }
       })
