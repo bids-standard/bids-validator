@@ -1,0 +1,73 @@
+name: PyPI Whl Publish
+
+on:
+  push:
+    branches: [main, dev]
+    tags: ['*']
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+    working-directory: tools/pypi-whl
+
+jobs:
+  build_wheels:
+    name: Build whl on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # windows-latest is an Intel runner
+        # macos-13 is an Intel runner, macos-latest is an Apple Silicon runner
+        # ubuntu-latest is an Intel runner, ubuntu-24.04-arm is an arm runner
+        os:
+          - windows-latest
+          - macos-13
+          - macos-latest
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+      - name: Install build and twine
+        run: python -m pip install build twine
+      - name: Compile deno binaries
+        run: deno compile -ERNW --allow-run -o dist/bids-validator ../../src/bids-validator.ts
+      - name: Print out the content of the dist folder after building validator binary
+        run: ls -l dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bids-validator-${{ matrix.os }}
+          path: |
+            tools/pypi-whl/dist/bids-validator
+            tools/pypi-whl/dist/bids-validator.*
+      - name: Build wheel
+        run: python -m build --wheel
+      - name: Print out the content of the dist folder after building the wheel
+        run: ls -l dist/
+      - name: Validate the built wheel through installation and running the validator
+        run: ./validate_wheel.sh
+      - name: Check if distribution's description will render correctly on PyPI
+        run: twine check dist/*.whl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}
+          path: tools/pypi-whl/dist/*.whl
+      - name: Publish wheels if corresponds to a version tag
+        if: github.ref_type == 'tag'
+        run: ./publish.sh
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+          TAG: ${{ github.ref_name }}
