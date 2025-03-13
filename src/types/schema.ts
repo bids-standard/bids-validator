@@ -30,6 +30,16 @@ export interface SchemaRules {
   entities: string[]
   files: SchemaFiles
   modalities: Record<string, unknown>
+  directories: Record<string, Record<string, DirectoryRule>>
+}
+
+export interface DirectoryRule {
+  name: string
+  entity: string
+  level: string
+  value: string
+  subdirs: string[]
+  opaque: boolean
 }
 
 export interface SchemaFiles {

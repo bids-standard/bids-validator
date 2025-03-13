@@ -108,6 +108,10 @@ export class Summary {
       return
     }
 
+    if (context.directory === true && context.size === 0) {
+      return
+    }
+
     this.totalFiles++
     this.size += await context.file.size
 
