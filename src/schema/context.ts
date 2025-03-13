@@ -68,8 +68,8 @@ export class BIDSContextDataset implements Dataset {
     this.opaqueDirectories = new Set<string>(
       args.schema
         ? Object.values(this.schema.rules.directories.raw)
-          ?.filter((rule) => 'name' in rule)
-          ?.map((ext) => ext.name)
+          ?.filter((rule) => rule?.opaque && 'name' in rule)
+          ?.map((dir) => `/${dir.name}`)
         : [],
     )
     // @ts-ignore
