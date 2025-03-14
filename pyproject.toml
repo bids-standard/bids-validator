@@ -1,0 +1,40 @@
+[project]
+name = "bids-validator-deno"
+description = "Typescript implementation of the BIDS validator"
+authors = [
+    {name = "bids-standard developers"},
+]
+dependencies = []
+readme = "README.md"
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: JavaScript",
+]
+keywords = ["BIDS", "BIDS validator"]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://bids-validator.readthedocs.io/"
+"Source code" = "https://github.com/bids-standard/bids-validator"
+Issues = "https://github.com/bids-standard/bids-validator/issues"
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.build]
+source-includes = ["src/", "deno.json"]
+excludes = [".*"]
+
+[tool.pdm.build.wheel-data]
+scripts = ["scripts/*"]
+
+[tool.pdm.version]
+source = "scm"
