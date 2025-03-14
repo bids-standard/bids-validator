@@ -38,3 +38,24 @@ scripts = ["scripts/*"]
 
 [tool.pdm.version]
 source = "scm"
+
+[tool.cibuildwheel]
+build = "cp39-*"
+# Deno requires glibc, so the alpine package doesn't give us musllinux yet
+# Deno will not build for 32-bit architectures
+skip = "*musllinux* *_i686 *-win32"
+build-frontend = "build"
+
+manylinux-x86_64-image = "quay.io/pypa/manylinux_2_24_x86_64:latest"
+manylinux-aarch64-image = "quay.io/pypa/manylinux_2_24_aarch64:latest"
+
+before-build = "curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh && deno --version"
+test-command = "bids-validator-deno --version"
+
+[[tool.cibuildwheel.overrides]]
+select = "*musllinux*"
+before-build = 'apk add deno'
+
+[[tool.cibuildwheel.overrides]]
+select = "*win*"
+before-build = 'npm install -g deno & deno --version'
