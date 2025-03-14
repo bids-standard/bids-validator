@@ -43,28 +43,30 @@ export async function hedValidate(
   _schema: GenericSchema,
   context: BIDSContext,
 ): Promise<void> {
-  let file
-  let hedValidationIssues = [] as HedIssue[]
-
   if (context.dataset.hedSchemas === null) {
     return
   }
 
   try {
-    if (context.extension === '.tsv' && context.columns) {
-      if (!('HED' in context.columns) && !sidecarHasHed(context.sidecar)) {
-        return
-      }
-      hedValidationIssues = await setHedSchemas(context.dataset)
+    let file
+
+    if (context.extension === '.tsv' && context.columns && ('HED' in context.columns || sidecarHasHed(context.sidecar))) {
       file = buildHedTsvFile(context)
     } else if (context.extension === '.json' && sidecarHasHed(context.json)) {
-      hedValidationIssues = await setHedSchemas(context.dataset)
       file = buildHedSidecarFile(context)
+    } else {
+      return
     }
 
-    if (file) {
+    const hedValidationIssues = await setHedSchemas(context.dataset)
+
+    if (hedValidationIssues.length === 0) {
       const fileIssues = file.validate(context.dataset.hedSchemas) ?? [] as HedIssue[]
       hedValidationIssues.push(...fileIssues)
+    }
+
+    for (const hedIssue of hedValidationIssues) {
+      context.dataset.issues.add(hedIssue)
     }
   } catch (error) {
     context.dataset.issues.add({
@@ -73,10 +75,6 @@ export async function hedValidate(
       location: context.path,
       issueMessage: error as string,
     })
-  }
-
-  for (const hedIssue of hedValidationIssues) {
-    context.dataset.issues.add(hedIssue)
   }
 }
 
