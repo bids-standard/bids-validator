@@ -31,8 +31,15 @@ deno run -ERWN jsr:@bids/validator
 ```
 
 Deno by default sandboxes applications like a web browser.
-`-E`, `-R`, '-W', and `-N` allow the validator to read environment variables,
+`-E`, `-R`, `-W`, and `-N` allow the validator to read environment variables,
 read/write local files, and read network locations.
+
+A pre-compiled binary is published to [PyPI][] and may be installed with:
+
+```
+pip install bids-validator-deno
+bids-validator-deno --help
+```
 
 ### Configuration file
 
@@ -91,3 +98,4 @@ The BIDS validator documentation is available on [Read the Docs](https://bids-va
 [BIDS Validator]: https://bids-standard.github.io/bids-validator/
 [Deno]: https://deno.com/
 [Deno - Installation]: https://docs.deno.com/runtime/getting_started/installation/
+[PyPI]: https://pypi.org/project/bids-validator-deno/
