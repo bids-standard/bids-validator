@@ -42,7 +42,7 @@
     "jsr:@std/yaml@^1.0.5": "1.0.5",
     "npm:@bids/nifti-reader-js@0.6.9": "0.6.9",
     "npm:ajv@8.17.1": "8.17.1",
-    "npm:hed-validator@4.0.0": "4.0.0",
+    "npm:hed-validator@4.0.1": "4.0.1",
     "npm:ignore@7.0.3": "7.0.3"
   },
   "jsr": {
@@ -216,6 +216,9 @@
         "ieee754"
       ]
     },
+    "core-js-pure@3.41.0": {
+      "integrity": "sha512-71Gzp96T9YPk63aUvE5Q5qP+DryB4ZloUZPSOebGM88VNw8VNfvdA7z6kGA8iGOTEzAomsRidp4jXSmUIJsL+Q=="
+    },
     "cross-fetch@4.1.0": {
       "integrity": "sha512-uKm5PU+MHTootlWEY+mZ4vvXoCn4fLQxT9dSc1sXVMSFkINTJVN8cAQROpwcKm8bJ/c7rgZVIBWzH5T78sNZZw==",
       "dependencies": [
@@ -240,10 +243,11 @@
     "fflate@0.8.2": {
       "integrity": "sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A=="
     },
-    "hed-validator@4.0.0": {
-      "integrity": "sha512-dpq0WVeJdJv8EctJhLfBMgyAjhwgkdfQvNBJqG2lrQ6ludQLTV3SSroMCIE1yzwHZsYQdF5JjqdAx3NHibpFnA==",
+    "hed-validator@4.0.1": {
+      "integrity": "sha512-JISoDcsm3IjK3l5+sbAd9DBOno9TWyk2EC2kXAaX5JLo9RIZH3e/sWgI7spMxR60VOT69/CCo/YD3ak3/AhkCw==",
       "dependencies": [
         "buffer",
+        "core-js-pure",
         "cross-fetch",
         "date-and-time",
         "date-fns",
@@ -445,7 +449,7 @@
       "jsr:@std/yaml@^1.0.5",
       "npm:@bids/nifti-reader-js@0.6.9",
       "npm:ajv@8.17.1",
-      "npm:hed-validator@4.0.0",
+      "npm:hed-validator@4.0.1",
       "npm:ignore@7.0.3"
     ]
   }
