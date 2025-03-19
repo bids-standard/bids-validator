@@ -49,6 +49,7 @@ export async function findDirRuleMatches(schema, context) {
     if ('name' in node) {
       if (node.name === context.file.name.replaceAll('/', "")) {
         context.filenameRules.push(path)
+        break
       }
     }
     if ('entity' in node) {
