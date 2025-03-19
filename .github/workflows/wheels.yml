@@ -1,0 +1,138 @@
+name: Build wheels
+
+on:
+  push:
+    branches: [main, dev]
+    tags: ['*']
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MACOSX_DEPLOYMENT_TARGET: '10.12'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build_sdist:
+    name: Build & verify package
+    runs-on: ubuntu-latest
+    permissions:
+      attestations: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: hynek/build-and-inspect-python-package@v2
+        with:
+          attest-build-provenance-github: ${{ github.event_name != 'pull_request' }}
+          skip-wheel: true
+
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: [build_sdist]
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+          - windows-latest
+          - macos-13
+          - macos-latest
+      fail-fast: false
+    permissions:
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Download sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: Packages
+          path: dist
+
+      - name: Unpack sdist
+        run: |
+          tar --strip-components=1 -xzvf dist/*.tar.gz
+          rm -r dist
+
+      - name: Build wheels from sdist
+        uses: pypa/cibuildwheel@v2.23
+
+      - name: Generate artifact attestation for wheels
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
+        with:
+          subject-path: "wheelhouse/bids_validator_deno-*.whl"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}
+          path: ./wheelhouse
+
+  test-publish:
+    name: Push package to test.pypi.org
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: [build_wheels]
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: Packages
+          path: dist
+
+      - name: Download wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheel-*
+          path: dist
+
+      - run: |
+          mv dist/*/* dist/
+          rmdir dist/*/
+
+      - name: Upload package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
+
+  publish:
+    name: Publish released package to pypi.org
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    needs: [build_wheels]
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: Packages
+          path: dist
+
+      - name: Download wheels
+        uses: actions/download-artifact@v4
+        with:
+          name: wheel-*
+          path: dist
+
+      - run: |
+          mv dist/*/* dist/
+          rmdir dist/*/
+
+      - name: Upload package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
