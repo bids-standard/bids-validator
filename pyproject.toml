@@ -36,9 +36,6 @@ excludes = [".*"]
 [tool.pdm.build.wheel-data]
 scripts = ["scripts/*"]
 
-[tool.pdm.version]
-source = "scm"
-
 [tool.cibuildwheel]
 build = "cp39-*"
 # Deno requires glibc, so the alpine package doesn't give us musllinux yet

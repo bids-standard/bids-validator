@@ -1,15 +1,19 @@
+import json
 import shutil
 import subprocess
 import sysconfig
 
 
-def pdm_build_hook_enabled(context):
-    # Disable hooks for sdist builds
-    return context.target != "sdist"
-
-
 def pdm_build_initialize(context):
     context.ensure_build_dir()
+
+    deno_json = context.root / "deno.json"
+    deno_config = json.loads(deno_json.read_text())
+    context.config.metadata["version"] = deno_config["version"]
+
+    if context.target == "sdist":
+        return
+
     # Inject compiled binary into scripts/, so it will be picked up to install
     target = context.root / "scripts" / "bids-validator-deno"
 
