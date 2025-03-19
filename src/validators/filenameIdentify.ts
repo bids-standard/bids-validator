@@ -40,13 +40,12 @@ export async function filenameIdentify(schema, context) {
 }
 
 export async function findDirRuleMatches(schema, context) {
-  let schemaPath = 'rules.directories.raw'
-  if (context.dataset.dataset_description.DatasetType === 'derivative') {
-    schemaPath = 'rules.directories.derivative'
-  }
-  Object.keys(schema[schemaPath]).map((key) => {
+  const datasetType = context.dataset.dataset_description?.DatasetType || 'raw'
+  const schemaPath = `rules.directories.${datasetType}`
+  const directoryRule = schema[schemaPath]
+  for (const key of Object.keys(directoryRule)) {
     const path = `${schemaPath}.${key}`
-    const node = schema[path]
+    const node = directoryRule[key]
     if ('name' in node) {
       if (node.name === context.file.name.replaceAll('/', "")) {
         context.filenameRules.push(path)
