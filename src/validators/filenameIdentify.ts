@@ -58,6 +58,7 @@ export async function findDirRuleMatches(schema, context) {
         entityDef && 'name' in entityDef && context.file.name.startsWith(`${entityDef['name']}-`)
       ) {
         context.filenameRules.push(path)
+        break
       }
     }
     if ('value' in node) {
