@@ -43,6 +43,8 @@ export async function findDirRuleMatches(schema, context) {
   const datasetType = context.dataset.dataset_description?.DatasetType || 'raw'
   const schemaPath = `rules.directories.${datasetType}`
   const directoryRule = schema[schemaPath]
+  const schemaObjects = schema['objects']
+  const schemaEntities = schema['objects.entities']
   for (const key of Object.keys(directoryRule)) {
     const path = `${schemaPath}.${key}`
     const node = directoryRule[key]
@@ -53,7 +55,7 @@ export async function findDirRuleMatches(schema, context) {
       }
     }
     if ('entity' in node) {
-      let entityDef = schema[`objects.entities.${node.entity}`]
+      let entityDef = schemaEntities[node.entity]
       if (
         entityDef && 'name' in entityDef && context.file.name.startsWith(`${entityDef['name']}-`)
       ) {
@@ -64,8 +66,8 @@ export async function findDirRuleMatches(schema, context) {
     if ('value' in node) {
       // kludge, entries in schema.objects are plural, value specified as singular
       // will fail for modalities
-      for (const valueObj of Object.keys(schema[`objects.${node.value}s`])) {
-        if (valueObj.value === context.file.name.replaceAll('/', "")) {
+      for (const valueObj of Object.keys(schemaObjects[`${node.value}s`])) {
+        if (valueObj === context.file.name.replaceAll('/', "")) {
           context.filenameRules.push(path)
           break
         }
