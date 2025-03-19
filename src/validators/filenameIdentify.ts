@@ -62,12 +62,12 @@ export async function findDirRuleMatches(schema, context) {
     if ('value' in node) {
       // kludge, entries in schema.objects are plural, value specified as singular
       // will fail for modalities
-      Object.keys(schema[`objects.${node.value}s`]).map((key) => {
-        const value = schema[`objects.${node.value}s.${key}`].value
-        if (`${value}` === context.file.name.replaceAll('/', "")) {
+      for (const valueObj of Object.keys(schema[`objects.${node.value}s`])) {
+        if (valueObj.value === context.file.name.replaceAll('/', "")) {
           context.filenameRules.push(path)
+          break
         }
-      })
+      }
     }
   }
   return Promise.resolve()
