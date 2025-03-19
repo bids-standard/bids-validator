@@ -69,7 +69,7 @@ export async function findDirRuleMatches(schema, context) {
         }
       })
     }
-  })
+  }
   return Promise.resolve()
 }
 function findRuleMatches(schema, context) {
