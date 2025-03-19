@@ -72,10 +72,16 @@ jobs:
         run: echo 'PERMS=--allow-read --allow-write --allow-env --allow-run --deny-net' >> $GITHUB_ENV
         if: ${{ ! matrix.allow-net }}
       - name: Disable example that requires network access
-        run: touch tests/data/bids-examples/xeeg_hed_score/.SKIP_VALIDATION
+        run: |
+          for DS in eeg_ds003645s_hed_library xeeg_hed_score; do
+            touch tests/data/bids-examples/${DS}/.SKIP_VALIDATION
+          done
         if: ${{ ! matrix.allow-net }}
       - name: Disable unreleased examples
-        run: touch tests/data/bids-examples/dwi_deriv/.SKIP_VALIDATION
+        run: |
+          for DS in dwi_deriv pheno004; do
+            touch tests/data/bids-examples/${DS}/.SKIP_VALIDATION
+          done
         if: github.ref_name != 'dev' && github.base_ref != 'dev'
       - run: deno test --node-modules-dir=auto $PERMS --coverage=cov/ src/
       - name: Collect coverage
