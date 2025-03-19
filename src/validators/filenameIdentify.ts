@@ -33,10 +33,7 @@ const DIR_CHECKS: CheckFunction[] = [
 ]
 
 export async function filenameIdentify(schema, context) {
-  let checks = CHECKS
-  if (Object.hasOwn(context, 'directory') && context.directory) {
-    checks = DIR_CHECKS
-  }
+  const checks = context?.directory ? DIR_CHECKS : CHECKS
   for (const check of checks) {
     await check(schema as unknown as GenericSchema, context)
   }
