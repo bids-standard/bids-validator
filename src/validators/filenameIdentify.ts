@@ -26,12 +26,56 @@ const CHECKS: CheckFunction[] = [
   cleanContext,
 ]
 
+const DIR_CHECKS: CheckFunction[] = [
+  findDirRuleMatches,
+  hasMatch,
+  cleanContext,
+]
+
 export async function filenameIdentify(schema, context) {
-  for (const check of CHECKS) {
+  const checks = context?.directory ? DIR_CHECKS : CHECKS
+  for (const check of checks) {
     await check(schema as unknown as GenericSchema, context)
   }
 }
 
+export async function findDirRuleMatches(schema, context) {
+  const datasetType = context.dataset.dataset_description?.DatasetType || 'raw'
+  const schemaPath = `rules.directories.${datasetType}`
+  const directoryRule = schema[schemaPath]
+  const schemaObjects = schema['objects']
+  const schemaEntities = schema['objects.entities']
+  loop: for (const key of Object.keys(directoryRule)) {
+    const path = `${schemaPath}.${key}`
+    const node = directoryRule[key]
+    if ('name' in node) {
+      if (node.name === context.file.name.replaceAll('/', "")) {
+        context.filenameRules.push(path)
+        break
+      }
+    }
+    if ('entity' in node) {
+      let entityDef = schemaEntities[node.entity]
+      if (
+        entityDef && 'name' in entityDef && context.file.name.startsWith(`${entityDef['name']}-`)
+      ) {
+        context.filenameRules.push(path)
+        break
+      }
+    }
+    if ('value' in node) {
+      // kludge, entries in schema.objects are plural, value specified as singular
+      // will fail for modalities
+      for (const valueObj of Object.keys(schemaObjects[`${node.value}s`])) {
+        if (valueObj === context.file.name.replaceAll('/', "")) {
+          context.filenameRules.push(path)
+          break loop
+        }
+      }
+    }
+  }
+  return Promise.resolve()
+}
 function findRuleMatches(schema, context) {
   const schemaPath = 'rules.files'
   Object.keys(schema[schemaPath]).map((key) => {
