@@ -22,3 +22,13 @@ jobs:
         python-version: 3
     - name: Validate CITATION.cff
       run: pipx run cffconvert --validate
+  check_change_log:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check for changes in changelog
+      env:
+        BASE_REF: ${{ github.event.pull_request.base.ref }}
+        NO_CHANGELOG_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'no changelog') }}
+      run: .github/scripts/check.sh"
+      shell: bash
