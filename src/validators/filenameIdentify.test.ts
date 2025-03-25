@@ -1,7 +1,12 @@
 import { assertEquals } from '@std/assert'
 import { SEPARATOR_PATTERN } from '@std/path'
 import { BIDSContext } from '../schema/context.ts'
-import { findDirRuleMatches, _findRuleMatches, datatypeFromDirectory, hasMatch } from './filenameIdentify.ts'
+import {
+  _findRuleMatches,
+  datatypeFromDirectory,
+  findDirRuleMatches,
+  hasMatch,
+} from './filenameIdentify.ts'
 import { BIDSFileDeno } from '../files/deno.ts'
 import { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
@@ -104,7 +109,7 @@ Deno.test('test directoryIdentify', async (t) => {
     context.directory = true
     await findDirRuleMatches(schema, context)
     assertEquals(context.filenameRules.length, 1)
-    assertEquals(context.filenameRules[0], "rules.directories.raw.subject")
+    assertEquals(context.filenameRules[0], 'rules.directories.raw.subject')
   })
   await t.step('Test name based rule', async () => {
     const fileName = '/derivatives/'
@@ -113,7 +118,7 @@ Deno.test('test directoryIdentify', async (t) => {
     context.directory = true
     await findDirRuleMatches(schema, context)
     assertEquals(context.filenameRules.length, 1)
-    assertEquals(context.filenameRules[0], "rules.directories.raw.derivatives")
+    assertEquals(context.filenameRules[0], 'rules.directories.raw.derivatives')
   })
   await t.step('Test value based rule', async () => {
     const fileName = '/func/'
@@ -122,7 +127,6 @@ Deno.test('test directoryIdentify', async (t) => {
     context.directory = true
     await findDirRuleMatches(schema, context)
     assertEquals(context.filenameRules.length, 1)
-    assertEquals(context.filenameRules[0], "rules.directories.raw.datatype")
+    assertEquals(context.filenameRules[0], 'rules.directories.raw.datatype')
   })
 })
-  

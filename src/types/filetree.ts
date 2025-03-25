@@ -46,7 +46,7 @@ export class FileTree {
   }
 
   get ignored(): boolean {
-    if (!this.parent) { return false }
+    if (!this.parent) return false
     return this.#ignore.test(this.path)
   }
 
