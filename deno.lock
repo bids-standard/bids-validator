@@ -1,7 +1,7 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@bids/schema@1.0.3": "1.0.3",
+    "jsr:@bids/schema@1.0.4": "1.0.4",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
@@ -27,7 +27,7 @@
     "jsr:@std/fs@1.0.11": "1.0.11",
     "jsr:@std/fs@1.0.13": "1.0.13",
     "jsr:@std/fs@^1.0.11": "1.0.13",
-    "jsr:@std/internal@^1.0.5": "1.0.5",
+    "jsr:@std/internal@^1.0.5": "1.0.6",
     "jsr:@std/io@0.225.2": "0.225.2",
     "jsr:@std/io@~0.225.2": "0.225.2",
     "jsr:@std/jsonc@0.213": "0.213.1",
@@ -38,7 +38,7 @@
     "jsr:@std/path@^1.0.7": "1.0.8",
     "jsr:@std/path@^1.0.8": "1.0.8",
     "jsr:@std/streams@1.0.9": "1.0.9",
-    "jsr:@std/text@~1.0.7": "1.0.8",
+    "jsr:@std/text@~1.0.7": "1.0.12",
     "jsr:@std/yaml@^1.0.5": "1.0.5",
     "npm:@bids/nifti-reader-js@0.6.9": "0.6.9",
     "npm:ajv@8.17.1": "8.17.1",
@@ -46,8 +46,8 @@
     "npm:ignore@7.0.3": "7.0.3"
   },
   "jsr": {
-    "@bids/schema@1.0.3": {
-      "integrity": "028addae5f47974dc9904b0186b6b0f961620e0faf67a7d350284d529b3bbc62"
+    "@bids/schema@1.0.4": {
+      "integrity": "54fae7e87e2cc150203b41f69c19ad21263dba078ef990211ee2f8d7683b1828"
     },
     "@cliffy/flags@1.0.0-rc.7": {
       "integrity": "318d9be98f6a6417b108e03dec427dea96cdd41a15beb21d2554ae6da450a781",
@@ -145,6 +145,9 @@
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
     },
+    "@std/internal@1.0.6": {
+      "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
+    },
     "@std/io@0.225.2": {
       "integrity": "3c740cd4ee4c082e6cfc86458f47e2ab7cb353dc6234d5e9b1f91a2de5f4d6c7",
       "dependencies": [
@@ -185,6 +188,9 @@
     },
     "@std/text@1.0.8": {
       "integrity": "40ba34caa095f393e78796e5eda37b8b4e2cc6cfd6f51f34658ad7487b1451e4"
+    },
+    "@std/text@1.0.12": {
+      "integrity": "921132a41e03a2363f76ee5afe83c90a6271596aa95c137494edcb3404a564a5"
     },
     "@std/yaml@1.0.5": {
       "integrity": "71ba3d334305ee2149391931508b2c293a8490f94a337eef3a09cade1a2a2742"
@@ -435,7 +441,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@bids/schema@1.0.3",
+      "jsr:@bids/schema@1.0.4",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
       "jsr:@libs/xml@6.0.4",
