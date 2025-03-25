@@ -6,7 +6,8 @@ Uncomment the section that is right (remove the HTML comment wrapper).
 
 ### Added
 
-- Create contexts for directories and validate their names according to schema.rules.directories entries.
+- Validate directory names names according to `schema.rules.directories` entries.
+  Use rules to identify "opaque" directories whose contents are unspecified by BIDS.
 
 <!--
 ### Changed
