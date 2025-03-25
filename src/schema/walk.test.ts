@@ -44,7 +44,7 @@ Deno.test('file tree walking', async (t) => {
         context instanceof BIDSContext,
         'walk file tree did not return a BIDSContext',
       )
-      if (!context.directory || context.file.name === "code/") {
+      if (!context.directory || context.file.name === 'code/') {
         accumulator = accumulator + 1
       }
     }
@@ -54,5 +54,4 @@ Deno.test('file tree walking', async (t) => {
       'visited file count does not match expected value',
     )
   })
-
 })

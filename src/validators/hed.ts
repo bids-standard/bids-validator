@@ -50,7 +50,10 @@ export async function hedValidate(
   try {
     let file
 
-    if (context.extension === '.tsv' && context.columns && ('HED' in context.columns || sidecarHasHed(context.sidecar))) {
+    if (
+      context.extension === '.tsv' && context.columns &&
+      ('HED' in context.columns || sidecarHasHed(context.sidecar))
+    ) {
       file = buildHedTsvFile(context)
     } else if (context.extension === '.json' && sidecarHasHed(context.json)) {
       file = buildHedSidecarFile(context)

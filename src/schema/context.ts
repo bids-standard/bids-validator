@@ -25,7 +25,6 @@ import { buildAssociations } from './associations.ts'
 import type { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
 
-
 export class BIDSContextDataset implements Dataset {
   #dataset_description: Record<string, unknown> = {}
   tree: FileTree
@@ -100,7 +99,6 @@ export class BIDSContextDataset implements Dataset {
   isOpaqueDirectory(file: FileTree): boolean {
     return this.opaqueDirectories.has(file.path)
   }
-
 }
 
 class BIDSContextDatasetSubjects implements Subjects {

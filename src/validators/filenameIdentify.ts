@@ -49,7 +49,7 @@ export async function findDirRuleMatches(schema, context) {
     const path = `${schemaPath}.${key}`
     const node = directoryRule[key]
     if ('name' in node) {
-      if (node.name === context.file.name.replaceAll('/', "")) {
+      if (node.name === context.file.name.replaceAll('/', '')) {
         context.filenameRules.push(path)
         break
       }
@@ -67,7 +67,7 @@ export async function findDirRuleMatches(schema, context) {
       // kludge, entries in schema.objects are plural, value specified as singular
       // will fail for modalities
       for (const valueObj of Object.keys(schemaObjects[`${node.value}s`])) {
-        if (valueObj === context.file.name.replaceAll('/', "")) {
+        if (valueObj === context.file.name.replaceAll('/', '')) {
           context.filenameRules.push(path)
           break loop
         }

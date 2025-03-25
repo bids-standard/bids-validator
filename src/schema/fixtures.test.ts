@@ -11,7 +11,8 @@ const subjectJson = JSON.stringify({ subOverwrite: 'subject', subValue: 'subject
 const rootJson = JSON.stringify({ rootOverwrite: 'root', rootValue: 'root' })
 
 function readBytes(json: string) {
-  return (size: number) => Promise.resolve(new TextEncoder().encode(json) as Uint8Array<ArrayBuffer>)
+  return (size: number) =>
+    Promise.resolve(new TextEncoder().encode(json) as Uint8Array<ArrayBuffer>)
 }
 
 export const rootFileTree = pathsToTree([
