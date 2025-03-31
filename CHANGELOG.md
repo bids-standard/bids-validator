@@ -1,3 +1,32 @@
+<a id='changelog-2.0.4'></a>
+# 2.0.5 — 2025-03-31
+
+A hot-fix release that adds missing entries to the 2.0.4 changelog and fixes publication to PyPI.
+
+<a id='changelog-2.0.4'></a>
+# 2.0.4 — 2025-03-31
+
+## Added
+
+- Validate directory names names according to `schema.rules.directories` entries.
+  Use rules to identify "opaque" directories whose contents are unspecified by BIDS.
+  ([#180])
+
+[#180]: https://github.com/bids-standard/bids-validator/pull/180
+
+- Report field descriptions for missing or invalid metadata. ([#177])
+
+[#177]: https://github.com/bids-standard/bids-validator/pull/177
+
+- Publish validator to PyPI as `bids-validator-deno`. ([#186])
+
+[#186]: https://github.com/bids-standard/bids-validator/pull/186
+
+## Changed
+
+- Update to HED Validator 4.0.0. ([#173])
+
+[#173]: https://github.com/bids-standard/bids-validator/pull/173
 
 <a id='changelog-2.0.3'></a>
 # 2.0.3 — 2025-02-24
