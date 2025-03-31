@@ -1,7 +1,12 @@
 import { assertEquals } from '@std/assert'
 import { SEPARATOR_PATTERN } from '@std/path'
 import { BIDSContext } from '../schema/context.ts'
-import { _findRuleMatches, datatypeFromDirectory, hasMatch } from './filenameIdentify.ts'
+import {
+  _findRuleMatches,
+  datatypeFromDirectory,
+  findDirRuleMatches,
+  hasMatch,
+} from './filenameIdentify.ts'
 import { BIDSFileDeno } from '../files/deno.ts'
 import { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
@@ -93,5 +98,35 @@ Deno.test('test hasMatch', async (t) => {
     ]
     await hasMatch(schema, context)
     assertEquals(context.filenameRules.length, 2)
+  })
+})
+
+Deno.test('test directoryIdentify', async (t) => {
+  await t.step('Test entity based rule', async () => {
+    const fileName = '/sub-01/'
+    const file = new BIDSFileDeno(PATH, fileName, ignore)
+    const context = new BIDSContext(file)
+    context.directory = true
+    await findDirRuleMatches(schema, context)
+    assertEquals(context.filenameRules.length, 1)
+    assertEquals(context.filenameRules[0], 'rules.directories.raw.subject')
+  })
+  await t.step('Test name based rule', async () => {
+    const fileName = '/derivatives/'
+    const file = new BIDSFileDeno(PATH, fileName, ignore)
+    const context = new BIDSContext(file)
+    context.directory = true
+    await findDirRuleMatches(schema, context)
+    assertEquals(context.filenameRules.length, 1)
+    assertEquals(context.filenameRules[0], 'rules.directories.raw.derivatives')
+  })
+  await t.step('Test value based rule', async () => {
+    const fileName = '/func/'
+    const file = new BIDSFileDeno(`${PATH}/sub-01/ses-01`, fileName, ignore)
+    const context = new BIDSContext(file)
+    context.directory = true
+    await findDirRuleMatches(schema, context)
+    assertEquals(context.filenameRules.length, 1)
+    assertEquals(context.filenameRules[0], 'rules.directories.raw.datatype')
   })
 })

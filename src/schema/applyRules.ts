@@ -189,6 +189,8 @@ function evalJsonCheck(
     const metadataDef = schema.objects.metadata[key]
     const keyName: string = metadataDef.name
     const value = json[keyName]
+    const issueMessage = `Field description: ${metadataDef.description}`
+
     if (value === undefined) {
       const severity = getFieldSeverity(requirement, context)
       if (severity && severity !== 'ignore') {
@@ -199,9 +201,9 @@ function evalJsonCheck(
             location: context.path,
             severity,
             rule: schemaPath,
+            issueMessage,
           }, requirement.issue.message)
         } else {
-          let code
           const keyType = sidecarRule ? 'SIDECAR_KEY' : 'JSON_KEY'
           const level = severity === 'error' ? 'REQUIRED' : 'RECOMMENDED'
           context.dataset.issues.add({
@@ -210,6 +212,7 @@ function evalJsonCheck(
             location: context.path,
             severity,
             rule: schemaPath,
+            issueMessage,
           })
         }
       }
@@ -241,7 +244,7 @@ function evalJsonCheck(
         context.dataset.issues.add({
           code: 'JSON_SCHEMA_VALIDATION_ERROR',
           subCode: keyName,
-          issueMessage: err['message'],
+          issueMessage: `${err['message']}\n\n${issueMessage}`,
           rule: schemaPath,
           location,
           affects,

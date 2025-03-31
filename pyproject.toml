@@ -1,0 +1,58 @@
+[project]
+name = "bids-validator-deno"
+description = "Typescript implementation of the BIDS validator"
+authors = [
+    {name = "bids-standard developers"},
+]
+dependencies = []
+readme = "README.md"
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: JavaScript",
+]
+keywords = ["BIDS", "BIDS validator"]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://bids-validator.readthedocs.io/"
+"Source code" = "https://github.com/bids-standard/bids-validator"
+Issues = "https://github.com/bids-standard/bids-validator/issues"
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.build]
+source-includes = ["src/", "deno.json"]
+excludes = [".*"]
+
+[tool.pdm.build.wheel-data]
+scripts = ["scripts/*"]
+
+[tool.cibuildwheel]
+build = "cp39-*"
+# Deno requires glibc, so the alpine package doesn't give us musllinux yet
+# Deno will not build for 32-bit architectures
+skip = "*musllinux* *_i686 *-win32"
+build-frontend = "build"
+
+manylinux-x86_64-image = "quay.io/pypa/manylinux_2_24_x86_64:latest"
+manylinux-aarch64-image = "quay.io/pypa/manylinux_2_24_aarch64:latest"
+
+before-build = "curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh && deno --version"
+test-command = "bids-validator-deno --version"
+
+[[tool.cibuildwheel.overrides]]
+select = "*musllinux*"
+before-build = 'apk add deno'
+
+[[tool.cibuildwheel.overrides]]
+select = "*win*"
+before-build = 'npm install -g deno & deno --version'

@@ -38,6 +38,7 @@ export class BIDSContextDataset implements Dataset {
   options?: ValidatorOptions
   schema: Schema
   pseudofileExtensions: Set<string>
+  opaqueDirectories: Set<string>
 
   // Opaque object for HED validator
   hedSchemas: object | undefined | null = undefined
@@ -63,6 +64,13 @@ export class BIDSContextDataset implements Dataset {
           ?.filter((ext) => ext.endsWith('/'))
         : [],
     )
+    this.opaqueDirectories = new Set<string>(
+      args.schema
+        ? Object.values(this.schema.rules.directories.raw)
+          ?.filter((rule) => rule?.opaque && 'name' in rule)
+          ?.map((dir) => `/${dir.name}`)
+        : [],
+    )
     // @ts-ignore
     this.subjects = args.subjects || null
   }
@@ -70,6 +78,7 @@ export class BIDSContextDataset implements Dataset {
   get dataset_description(): Record<string, unknown> {
     return this.#dataset_description
   }
+
   set dataset_description(value: Record<string, unknown>) {
     this.#dataset_description = value
     if (!this.dataset_description.DatasetType) {
@@ -86,6 +95,9 @@ export class BIDSContextDataset implements Dataset {
       Object.keys(entities).length > 0 &&
       this.pseudofileExtensions.has(`${extension}/`)
     )
+  }
+  isOpaqueDirectory(file: FileTree): boolean {
+    return this.opaqueDirectories.has(file.path)
   }
 }
 
@@ -123,6 +135,7 @@ export class BIDSContext implements Context {
   nifti_header?: NiftiHeader
   ome?: Ome
   tiff?: Tiff
+  directory?: boolean
 
   file: BIDSFile
   filenameRules: string[]

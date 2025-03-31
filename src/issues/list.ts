@@ -179,9 +179,6 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'We were unable to read this file.',
   },
-}
-
-const hedIssues: IssueDefinitionRecord = {
   HED_ERROR: {
     severity: 'error',
     reason: 'The validation on this HED string returned an error.',
@@ -190,33 +187,6 @@ const hedIssues: IssueDefinitionRecord = {
     severity: 'warning',
     reason: 'The validation on this HED string returned a warning.',
   },
-  HED_INTERNAL_ERROR: {
-    severity: 'error',
-    reason: 'An internal error occurred during HED validation.',
-  },
-  HED_INTERNAL_WARNING: {
-    severity: 'warning',
-    reason: 'An internal warning occurred during HED validation.',
-  },
-  HED_MISSING_VALUE_IN_SIDECAR: {
-    severity: 'warning',
-    reason:
-      'The json sidecar does not contain this column value as a possible key to a HED string.',
-  },
-  HED_VERSION_NOT_DEFINED: {
-    severity: 'warning',
-    reason:
-      "You should define 'HEDVersion' for this file. If you don't provide this information, the HED validation will use the latest version available.",
-  },
 }
 
-export const hedOldToNewLookup: Record<number, Partial<keyof IssueDefinitionRecord>> = {
-  104: 'HED_ERROR',
-  105: 'HED_WARNING',
-  106: 'HED_INTERNAL_ERROR',
-  107: 'HED_INTERNAL_WARNING',
-  108: 'HED_MISSING_VALUE_IN_SIDECAR',
-  109: 'HED_VERSION_NOT_DEFINED',
-}
-
-export const nonSchemaIssues = { ...bidsIssues, ...hedIssues }
+export const nonSchemaIssues = { ...bidsIssues }
