@@ -29,6 +29,10 @@ export class BIDSFileBrowser implements BIDSFile {
     return this.#file.size
   }
 
+  get size(): number {
+    return this.#file.size
+  }
+
   get stream(): ReadableStream<Uint8Array> {
     return this.#file.stream()
   }
@@ -44,6 +48,12 @@ export class BIDSFileBrowser implements BIDSFile {
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
     return new Uint8Array(await this.#file.slice(offset, size).arrayBuffer())
   }
+
+  async slice(start: number, end: number): Promise<ArrayBuffer> {
+    return (await this.readBytes(end - start, start)).buffer
+  }
+
+  /**
 }
 
 /**

@@ -45,6 +45,10 @@ export class BIDSFileDeno implements BIDSFile {
     return this.#fileInfo ? this.#fileInfo.size : -1
   }
 
+  get byteLength(): number {
+    return this.#fileInfo ? this.#fileInfo.size : -1
+  }
+
   get stream(): ReadableStream<Uint8Array> {
     const handle = this.#openHandle()
     return handle.readable
@@ -87,6 +91,9 @@ export class BIDSFileDeno implements BIDSFile {
     return buf.subarray(0, nbytes)
   }
 
+  async slice(start: number, end: number): Promise<ArrayBuffer> {
+    return (await this.readBytes(end - start, start)).buffer
+  }
   /**
    * Return a Deno file handle
    */

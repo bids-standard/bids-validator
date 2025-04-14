@@ -6,7 +6,7 @@ import { createUTF8Stream } from './streams.ts'
 export async function loadParquet(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMap> {
   let columnsMap = new ColumnsMap()
   const readOpts: ParquetReadOptions = {
-    file: (await file.readBytes(file.size)).buffer,
+    file: file,
     // @ts-expect-error
     onChunk: (data) => columnsMap[data.columnName] = data.columnData.map(entry => String(entry)), 
   }
