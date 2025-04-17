@@ -26,14 +26,14 @@ either be "warning" or "error".
 In the web validator, these issues appear as:
 
 ![A NIFTI_HEADER_UNREADABLE error in the web validator. (Dark theme)
-](_static/example_error_dark.png){.only-dark width="50%" align=center}
+](../_static/example_error_dark.png){.only-dark align=center}
 ![A NIFTI_HEADER_UNREADABLE error in the web validator. (Light theme)
-](_static/example_error_light.png){.only-light width="50%" align=center}
+](../_static/example_error_light.png){.only-light align=center}
 
 ![A README_FILE_SMALL warning in the web validator. (Dark theme)
-](_static/example_warning_dark.png){.only-dark width="50%" align=center}
+](../_static/example_warning_dark.png){.only-dark align=center}
 ![A README_FILE_SMALL warning in the web validator. (Light theme)
-](_static/example_warning_light.png){.only-light width="50%" align=center}
+](../_static/example_warning_light.png){.only-light align=center}
 
 In the command-line validator, these would be rendered as:
 
