@@ -15,6 +15,10 @@ export interface BIDSFile {
   text: () => Promise<string>
   // Read a range of bytes
   readBytes: (size: number, offset?: number) => Promise<Uint8Array<ArrayBuffer>>
+  // Alternative to readBytes used for ArrayBuffer compatibility
+  slice: (start: number, end: number) => Promise<ArrayBuffer>
+  // Alternative to size used for ArrayBuffer compatibility
+  byteLength: number
   // Access the parent directory
   parent: FileTree
   // File has been viewed
