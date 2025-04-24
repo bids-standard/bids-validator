@@ -96,3 +96,22 @@ The validator defines the following fields for issues:
 
 All fields except `code`, `severity` and `location` are optional and may be
 absent from any issue.
+
+## External validators
+
+BIDS interoperates with other standards.
+Where feasible, the BIDS Validator will call an external validator and
+expose its issues as BIDS issues.
+
+### Hierarchical Event Descriptors (HED)
+
+The HED validator produces issues of the following form:
+
+| Field          | Type       | Description                                                         |
+| -------------- | ---------- | ------------------------------------------------------------------- |
+| `code`         | `string`   | `HED_WARNING` or `HED_ERROR`                                        |
+| `subCode`      | `string`   | The `"hedCode"` emitted by the HED validator.                       |
+| `severity`     | `string`   | `"error"` or `"warning"`                                            |
+| `location`     | `string`   | A path to the file in the dataset where the error occurs.           |
+| `issueMessage` | `string`   | A human-readable description of the issue.                          |
+| `line`         | `number`   | The line number (0-indexed) in `location` that triggered the issue. |
