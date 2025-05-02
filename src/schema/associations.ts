@@ -10,9 +10,7 @@ import type {
   Magnitude,
   Magnitude1,
 } from '@bids/schema/context'
-import type {
-  Schema as MetaSchema
-} from '@bids/schema/metaschema'
+import type { Schema as MetaSchema } from '@bids/schema/metaschema'
 
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
@@ -38,128 +36,83 @@ import { expressionFunctions } from './expressionLanguage.ts'
  * returning promises for now.
  */
 const associationLookup = {
-  events: {
-    suffix: 'events',
-    extensions: ['.tsv'],
-    inherit: true,
-    load: async (file: BIDSFile, options: { maxRows: number }): Promise<Events> => {
-      const columns = await loadTSV(file, options.maxRows)
-        .catch((e) => {
-          return new Map()
-        })
-      return {
-        path: file.path,
-        onset: columns.get('onset') || [],
-      }
-    },
+  events: async (file: BIDSFile, options: { maxRows: number }): Promise<Events> => {
+    const columns = await loadTSV(file, options.maxRows)
+      .catch((e) => {
+        return new Map()
+      })
+    return {
+      path: file.path,
+      onset: columns.get('onset') || [],
+    }
   },
-  aslcontext: {
-    suffix: 'aslcontext',
-    extensions: ['.tsv'],
-    inherit: true,
-    load: async (
-      file: BIDSFile,
-      options: { maxRows: number },
-    ): Promise<Aslcontext> => {
-      const columns = await loadTSV(file, options.maxRows)
-        .catch((e) => {
-          return new Map()
-        })
-      return {
-        path: file.path,
-        n_rows: columns.get('volume_type')?.length || 0,
-        volume_type: columns.get('volume_type') || [],
-      }
-    },
+  aslcontext: async (
+    file: BIDSFile,
+    options: { maxRows: number },
+  ): Promise<Aslcontext> => {
+    const columns = await loadTSV(file, options.maxRows)
+      .catch((e) => {
+        return new Map()
+      })
+    return {
+      path: file.path,
+      n_rows: columns.get('volume_type')?.length || 0,
+      volume_type: columns.get('volume_type') || [],
+    }
   },
-  m0scan: {
-    suffix: 'm0scan',
-    extensions: ['.nii', '.nii.gz'],
-    inherit: false,
-    load: (file: BIDSFile, options: any): Promise<M0Scan> => {
-      return Promise.resolve({ path: file.path })
-    },
+  m0scan: (file: BIDSFile, options: any): Promise<M0Scan> => {
+    return Promise.resolve({ path: file.path })
   },
-  magnitude: {
-    suffix: 'magnitude',
-    extensions: ['.nii', '.nii.gz'],
-    inherit: false,
-    load: (file: BIDSFile, options: any): Promise<Magnitude> => {
-      return Promise.resolve({ path: file.path })
-    },
+  magnitude: (file: BIDSFile, options: any): Promise<Magnitude> => {
+    return Promise.resolve({ path: file.path })
   },
-  magnitude1: {
-    suffix: 'magnitude1',
-    extensions: ['.nii', '.nii.gz'],
-    inherit: false,
-    load: (file: BIDSFile, options: any): Promise<Magnitude1> => {
-      return Promise.resolve({ path: file.path })
-    },
+  magnitude1: (file: BIDSFile, options: any): Promise<Magnitude1> => {
+    return Promise.resolve({ path: file.path })
   },
-  bval: {
-    suffix: 'dwi',
-    extensions: ['.bval'],
-    inherit: true,
-    load: async (file: BIDSFile, options: any): Promise<Bval> => {
-      const contents = await file.text()
-      const rows = parseBvalBvec(contents)
-      return {
-        path: file.path,
-        n_cols: rows ? rows[0].length : 0,
-        n_rows: rows ? rows.length : 0,
-        // @ts-expect-error values is expected to be a number[], coerce lazily
-        values: rows[0],
-      }
-    },
+  bval: async (file: BIDSFile, options: any): Promise<Bval> => {
+    const contents = await file.text()
+    const rows = parseBvalBvec(contents)
+    return {
+      path: file.path,
+      n_cols: rows ? rows[0].length : 0,
+      n_rows: rows ? rows.length : 0,
+      // @ts-expect-error values is expected to be a number[], coerce lazily
+      values: rows[0],
+    }
   },
-  bvec: {
-    suffix: 'dwi',
-    extensions: ['.bvec'],
-    inherit: true,
-    load: async (file: BIDSFile, options: any): Promise<Bvec> => {
-      const contents = await file.text()
-      const rows = parseBvalBvec(contents)
+  bvec: async (file: BIDSFile, options: any): Promise<Bvec> => {
+    const contents = await file.text()
+    const rows = parseBvalBvec(contents)
 
-      if (rows.some((row) => row.length !== rows[0].length)) {
-        throw { key: 'BVEC_ROW_LENGTH' }
-      }
+    if (rows.some((row) => row.length !== rows[0].length)) {
+      throw { key: 'BVEC_ROW_LENGTH' }
+    }
 
-      return {
-        path: file.path,
-        n_cols: rows ? rows[0].length : 0,
-        n_rows: rows ? rows.length : 0,
-      }
-    },
+    return {
+      path: file.path,
+      n_cols: rows ? rows[0].length : 0,
+      n_rows: rows ? rows.length : 0,
+    }
   },
-  channels: {
-    suffix: 'channels',
-    extensions: ['.tsv'],
-    inherit: true,
-    load: async (file: BIDSFile, options: { maxRows: number }): Promise<Channels> => {
-      const columns = await loadTSV(file, options.maxRows)
-        .catch((e) => {
-          return new Map()
-        })
-      return {
-        path: file.path,
-        type: columns.get('type'),
-        short_channel: columns.get('short_channel'),
-        sampling_frequency: columns.get('sampling_frequency'),
-      }
-    },
+  channels: async (file: BIDSFile, options: { maxRows: number }): Promise<Channels> => {
+    const columns = await loadTSV(file, options.maxRows)
+      .catch((e) => {
+        return new Map()
+      })
+    return {
+      path: file.path,
+      type: columns.get('type'),
+      short_channel: columns.get('short_channel'),
+      sampling_frequency: columns.get('sampling_frequency'),
+    }
   },
-  coordsystem: {
-    suffix: 'coordsystem',
-    extensions: ['.json'],
-    inherit: true,
-    load: (file: BIDSFile, options: any): Promise<Coordsystem> => {
-      return Promise.resolve({ path: file.path })
-    },
+  coordsystem: (file: BIDSFile, options: any): Promise<Coordsystem> => {
+    return Promise.resolve({ path: file.path })
   },
 }
 
 export async function buildAssociations(
-  context: BIDSContext
+  context: BIDSContext,
 ): Promise<Associations> {
   const associations: Associations = {}
 
@@ -175,8 +128,8 @@ export async function buildAssociations(
     }
     let file
     let extension: string[] = []
-    if (typeof rule.target.extension === "string") {
-      extension = [ rule.target.extension ]
+    if (typeof rule.target.extension === 'string') {
+      extension = [rule.target.extension]
     } else if (Array.isArray(rule.target.extension)) {
       extension = rule.target.extension
     }
@@ -197,13 +150,15 @@ export async function buildAssociations(
 
     if (file) {
       // @ts-expect-error
-      const load = associationLookup[key].load
-      // @ts-expect-error Matching load return value to key is hard
-      associations[key] = await load(file, { maxRows: context.dataset.options?.maxRows }).catch((error) => {
-        if (error.key) {
-          context.dataset.issues.add({ code: error.key, location: file.path })
-        }
-      })
+      const load = associationLookup[key]
+      // @ts-expect-error
+      associations[key] = await load(file, { maxRows: context.dataset.options?.maxRows }).catch(
+        (error: any) => {
+          if (key in error) {
+            context.dataset.issues.add({ code: error.key, location: file.path })
+          }
+        },
+      )
     }
   }
   return Promise.resolve(associations)
