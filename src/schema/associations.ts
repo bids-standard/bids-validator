@@ -10,6 +10,10 @@ import type {
   Magnitude,
   Magnitude1,
 } from '@bids/schema/context'
+import type {
+  Schema as MetaSchema
+} from '@bids/schema/metaschema'
+
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -17,6 +21,8 @@ import type { readEntities } from './entities.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { parseBvalBvec } from '../files/dwi.ts'
 import { walkBack } from '../files/inheritance.ts'
+import { evalCheck } from './applyRules.ts'
+import { expressionFunctions } from './expressionLanguage.ts'
 
 // type AssociationsLookup = Record<keyof ContextAssociations, { extensions: string[], inherit: boolean, load: ... }
 
@@ -153,24 +159,36 @@ const associationLookup = {
 }
 
 export async function buildAssociations(
-  source: BIDSFile,
-  issues: DatasetIssues,
-  maxRows: number = -1,
+  context: BIDSContext
 ): Promise<Associations> {
   const associations: Associations = {}
 
-  for (const [key, value] of Object.entries(associationLookup)) {
-    const { suffix, extensions, inherit, load } = value
+  const schema: MetaSchema = context.dataset.schema as MetaSchema
+
+  Object.assign(context, expressionFunctions)
+  // @ts-expect-error
+  context.exists.bind(context)
+
+  for (const [key, rule] of Object.entries(schema.meta.associations)) {
+    if (!rule.selectors!.every((x) => evalCheck(x, context))) {
+      continue
+    }
     let file
+    let extension: string[] = []
+    if (typeof rule.target.extension === "string") {
+      extension = [ rule.target.extension ]
+    } else if (Array.isArray(rule.target.extension)) {
+      extension = rule.target.extension
+    }
     try {
-      file = walkBack(source, inherit, extensions, suffix).next().value
+      file = walkBack(context.file, rule.inherit, extension, rule.target.suffix).next().value
     } catch (error) {
       if (
         error && typeof error === 'object' && 'code' in error &&
         error.code === 'MULTIPLE_INHERITABLE_FILES'
       ) {
         // @ts-expect-error
-        issues.add(error)
+        context.dataset.issues.add(error)
         break
       } else {
         throw error
@@ -178,10 +196,12 @@ export async function buildAssociations(
     }
 
     if (file) {
+      // @ts-expect-error
+      const load = associationLookup[key].load
       // @ts-expect-error Matching load return value to key is hard
-      associations[key] = await load(file, { maxRows }).catch((error) => {
+      associations[key] = await load(file, { maxRows: context.dataset.options?.maxRows }).catch((error) => {
         if (error.key) {
-          issues.add({ code: error.key, location: file.path })
+          context.dataset.issues.add({ code: error.key, location: file.path })
         }
       })
     }
