@@ -8,7 +8,7 @@ Errors are emitted when a violation of the BIDS specification is detected,
 or, in some cases, the validator is unable to read part of the dataset.
 Errors must be resolved in order for a dataset to be considered valid.
 
-Warnings are emitted for violations of BIDS specification recommendations,
+Warnings are emitted when BIDS specification recommendations are not followed,
 as well as cases where a common problem may be present, and user attention
 is needed to verify the validity of the dataset.
 
