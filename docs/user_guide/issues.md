@@ -99,7 +99,7 @@ absent from any issue.
 
 ## External validators
 
-BIDS interoperates with other standards.
+BIDS reuses many other data standards (see e.g. [BIDS Philosophy](https://bids.neuroimaging.io/index.html#philosophy) section).
 Where feasible, the BIDS Validator will call an external validator and
 expose its issues as BIDS issues.
 
