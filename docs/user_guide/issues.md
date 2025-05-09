@@ -17,6 +17,8 @@ is needed to verify the validity of the dataset.
 Every issue has a code indicating the issue type, a location indicating
 the file where the issue was detected, and a severity field that can
 either be "warning" or "error".
+If some issues are configured to be ignored, in JSON output mode they would still be listed and
+have severity "ignore".
 
 | `code`                    | `location`                       | `severity` |
 | ------------------------- | -------------------------------- | ---------- |
