@@ -261,9 +261,7 @@ export class BIDSContext implements Context {
 
   async loadAssociations(): Promise<void> {
     this.associations = await buildAssociations(
-      this.file,
-      this.dataset.issues,
-      this.dataset.options?.maxRows,
+      this,
     )
     return
   }
