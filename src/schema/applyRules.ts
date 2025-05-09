@@ -181,7 +181,9 @@ function evalJsonCheck(
   const sidecarRule = schemaPath.match(/rules\.sidecar/)
   // Sidecar rules apply specifically to data files, as JSON files cannot have sidecars
   // Count on other JSON rules to use selectors to match the correct files
-  if (context.extension === '.json' && sidecarRule) return
+  // Text files at the root do not have sidecars. We might want a cleaner
+  // or more schematic way to identify them in the future.
+  if (sidecarRule && (['.json', '', '.md', '.txt', '.rst', '.cff'].includes(context.extension))) return
 
   const json: Record<string, any> = sidecarRule ? context.sidecar : context.json
   for (const [key, requirement] of Object.entries(rule.fields)) {
