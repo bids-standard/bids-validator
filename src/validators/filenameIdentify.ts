@@ -135,18 +135,15 @@ export async function datatypeFromDirectory(schema, context) {
     return Promise.resolve()
   }
   const dirDatatype = parts[datatypeIndex]
-  if (dirDatatype === 'phenotype') {
-    // Phenotype is a pseudo-datatype for now.
+  if (dirDatatype in schema.objects.datatypes) {
     context.datatype = dirDatatype
-    return Promise.resolve()
-  }
-  for (const key in schema.rules.modalities) {
-    if (schema.rules.modalities[key].datatypes.includes(dirDatatype)) {
-      context.modality = key
-      context.datatype = dirDatatype
-      return Promise.resolve()
+    for (const key in schema.rules.modalities) {
+      if (schema.rules.modalities[key].datatypes.includes(dirDatatype)) {
+        context.modality = key
+      }
     }
   }
+  return Promise.resolve()
 }
 
 export function hasMatch(schema, context) {
