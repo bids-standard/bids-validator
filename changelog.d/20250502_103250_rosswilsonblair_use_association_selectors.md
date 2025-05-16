@@ -13,7 +13,7 @@ For top level release notes, leave all the headers commented out.
 -->
 ### Changed
 
-- Rely on schema.meta.associations to load context associations instead of relying on list maintained in validator.
+- Rely on `schema.meta.associations` to load context associations instead of relying on list maintained in validator.
 
 <!--
 ### Fixed
