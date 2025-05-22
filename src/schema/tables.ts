@@ -239,6 +239,11 @@ export function evalAdditionalColumns(
   if (context.extension !== '.tsv') return
   const headers = Object.keys(context?.columns)
   if (rule.columns) {
+    if (!rule.additional_columns || rule.additional_columns === 'n/a' ) {
+      // Old schemas might be missing the field, so be permissive.
+      // New schemas indicate it is not applicable with 'n/a'.
+      return
+    }
     const ruleHeadersNames = Object.keys(rule.columns).map(
       // @ts-expect-error
       (x) => schema.objects.columns[x].name,
@@ -250,11 +255,11 @@ export function evalAdditionalColumns(
     if (rule.additional_columns?.startsWith('allowed')) {
       extraCols = extraCols.filter((header) => !(header in context.sidecar))
     }
-    const code = rule.additional_columns === 'allowed'
-      ? 'TSV_ADDITIONAL_COLUMNS_UNDEFINED'
+    const code = rule.additional_columns === 'not_allowed'
+      ? 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED'
       : rule.additional_columns === 'allowed_if_defined'
       ? 'TSV_ADDITIONAL_COLUMNS_MUST_DEFINE'
-      : 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED'
+      : 'TSV_ADDITIONAL_COLUMNS_UNDEFINED'
     const issue = {
       code,
       location: context.path,
