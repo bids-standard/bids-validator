@@ -1,3 +1,26 @@
+
+<a id='changelog-"2.0.6"'></a>
+# "2.0.6" — 2025-05-23
+
+## Added
+
+- Explain the issue data fields in the documentation. ([#199])
+
+[#199]: https://github.com/bids-standard/bids-validator/pull/199
+
+## Changed
+
+- Validator now returns exit code 16 instead of 1 for validation of a dataset with errors.
+
+- Rely on `schema.meta.associations` to load context associations instead of relying on list maintained in validator.
+
+## Fixed
+
+- Sidecar checks are skipped for text files that should not have sidecars.
+  This resolves a problem in derivative datasets, where BIDS specifies a
+  RECOMMENDED field of `Description` in all derivative files. ([#202])
+
+[#202]: https://github.com/bids-standard/bids-validator/issues/202
 <a id='changelog-2.0.4'></a>
 # 2.0.5 — 2025-03-31
 
