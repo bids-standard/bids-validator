@@ -126,7 +126,7 @@ export async function buildAssociations(
     if (!rule.selectors!.every((x) => evalCheck(x, context))) {
       continue
     }
-    let file
+    let file: BIDSFile | BIDSFile[]
     let extension: string[] = []
     if (typeof rule.target.extension === 'string') {
       extension = [rule.target.extension]
@@ -135,6 +135,9 @@ export async function buildAssociations(
     }
     try {
       file = walkBack(context.file, rule.inherit, extension, rule.target.suffix).next().value
+      if (Array.isArray(file)) {
+        file = file[0]
+      }
     } catch (error) {
       if (
         error && typeof error === 'object' && 'code' in error &&
