@@ -117,12 +117,18 @@ export async function buildAssociations(
   const associations: Associations = {}
 
   const schema: MetaSchema = context.dataset.schema as MetaSchema
+  // Augment rule type with an entities field that should be present in BIDS 1.10.1+
+  type ruleType = MetaSchema['meta']['associations'][keyof MetaSchema['meta']['associations']]
+  type AugmentedRuleType = ruleType & {
+    target: ruleType['target'] & { entities?: string[] }
+  }
 
   Object.assign(context, expressionFunctions)
   // @ts-expect-error
   context.exists.bind(context)
 
-  for (const [key, rule] of Object.entries(schema.meta.associations)) {
+  for (const key of Object.keys(schema.meta.associations)) {
+    const rule = schema.meta.associations[key] as AugmentedRuleType
     if (!rule.selectors!.every((x) => evalCheck(x, context))) {
       continue
     }
@@ -134,7 +140,13 @@ export async function buildAssociations(
       extension = rule.target.extension
     }
     try {
-      file = walkBack(context.file, rule.inherit, extension, rule.target.suffix).next().value
+      file = walkBack(
+        context.file,
+        rule.inherit,
+        extension,
+        rule.target.suffix,
+        rule.target?.entities ?? [],
+      ).next().value
       if (Array.isArray(file)) {
         file = file[0]
       }
