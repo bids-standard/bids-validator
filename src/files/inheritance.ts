@@ -1,13 +1,37 @@
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
-import type { Context } from '@bids/schema'
 import { readEntities } from '../schema/entities.ts'
 
-export function* walkBack(
+
+type Ret<T> = T extends [string, ...string[]] ? (BIDSFile | BIDSFile[]) : BIDSFile
+
+/** Find associated files in order of proximity to a source file.
+ *
+ * This function implements the BIDS Inheritance Principle.
+ *
+ * @param {BIDSFile} source
+ *    The source file to start the search from.
+ * @param {boolean} [inherit=true]
+ *    If true, search up the file tree for associated files.
+ *    If false, the associated file must be found in the same directory.
+ * @param {string[]} [targetExtensions='.json']
+ *    The extensions of associated files.
+ * @param {string} [targetSuffix]
+ *    The suffix of associated files. If not provided, it defaults to the suffix of the source file.
+ * @param {string[]} [targetEntities]
+ *    Additional entities permitted in associated files.
+ *    A non-empty value implies that multiple values may be returned.
+ *    By default, associated files must have a subset of the entities in the source file.
+ *
+ * @returns {Generator<BIDSFile | BIDSFile[]>}
+ *    A generator that yields associated files or arrays of files.
+ */
+export function* walkBack<T extends string[]>(
   source: BIDSFile,
   inherit: boolean = true,
   targetExtensions: string[] = ['.json'],
   targetSuffix?: string,
-): Generator<BIDSFile> {
+  targetEntities?: T,
+): Generator<Ret<T>> {
   const sourceParts = readEntities(source.name)
 
   targetSuffix = targetSuffix || sourceParts.suffix
@@ -19,12 +43,14 @@ export function* walkBack(
       return (
         targetExtensions.includes(extension) &&
         suffix === targetSuffix &&
-        Object.keys(entities).every((entity) => entities[entity] === sourceParts.entities[entity])
+        Object.keys(entities).every((entity) =>
+          entities[entity] === sourceParts.entities[entity] || targetEntities?.includes(entity)
+        )
       )
     })
     if (candidates.length > 1) {
       const exactMatch = candidates.find((file) => {
-        const { suffix, extension, entities } = readEntities(file.name)
+        const { entities } = readEntities(file.name)
         return Object.keys(sourceParts.entities).every((entity) =>
           entities[entity] === sourceParts.entities[entity]
         )
@@ -32,6 +58,9 @@ export function* walkBack(
       if (exactMatch) {
         exactMatch.viewed = true
         yield exactMatch
+      } else if (targetEntities?.length) {
+        candidates.forEach((file) => (file.viewed = true))
+        yield candidates as Ret<T>
       } else {
         const paths = candidates.map((x) => x.path).sort()
         throw {
