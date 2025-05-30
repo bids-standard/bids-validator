@@ -1,10 +1,8 @@
 import type { Aslcontext, Associations, Bval, Bvec, Channels, Events } from '@bids/schema/context'
 import type { Schema as MetaSchema } from '@bids/schema/metaschema'
 
-import type { BIDSFile, FileTree } from '../types/filetree.ts'
+import type { BIDSFile } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
-import type { readEntities } from './entities.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { parseBvalBvec } from '../files/dwi.ts'
 import { walkBack } from '../files/inheritance.ts'
