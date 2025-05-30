@@ -53,8 +53,14 @@ export const collectSubjectMetadata = (
           '',
         )
         // make age an integer
-        // @ts-expect-error
-        if (ageKey) data[ageKey.index] = parseInt(data[ageKey.index])
+        if (ageKey) {
+          if(data[ageKey.index] === "89+") {
+            data[ageKey.index] = "89+"
+          } else {
+            // @ts-expect-error
+            data[ageKey.index] = parseFloat(data[ageKey.index])
+          }
+        }
         return data
       })
       .map((data) =>

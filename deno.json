@@ -28,7 +28,7 @@
   },
   "imports": {
     "@ajv": "npm:ajv@8.17.1",
-    "@bids/schema": "jsr:@bids/schema@1.1.0-dev.12+78213dcf",
+    "@bids/schema": "jsr:@bids/schema@^1.1.0-dev.16+a7dd34ad",
     "@cliffy/command": "jsr:@effigies/cliffy-command@1.0.0-dev.8",
     "@cliffy/table": "jsr:@effigies/cliffy-table@1.0.0-dev.5",
     "@hed/validator": "npm:hed-validator@4.0.1",

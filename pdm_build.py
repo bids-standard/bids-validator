@@ -27,6 +27,9 @@ def pdm_build_initialize(context):
             "compile",
             "-ERNW",
             "--allow-run",
+            # Types are checked elsewhere. Type checking at wheel build
+            # is painful if some platforms have newer typescript than others.
+            "--no-check",
             "-o",
             str(target),
             "src/bids-validator.ts",
