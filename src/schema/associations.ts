@@ -1,15 +1,4 @@
-import type {
-  Aslcontext,
-  Associations,
-  Bval,
-  Bvec,
-  Channels,
-  Coordsystem,
-  Events,
-  M0Scan,
-  Magnitude,
-  Magnitude1,
-} from '@bids/schema/context'
+import type { Aslcontext, Associations, Bval, Bvec, Channels, Events } from '@bids/schema/context'
 import type { Schema as MetaSchema } from '@bids/schema/metaschema'
 
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
@@ -22,18 +11,17 @@ import { walkBack } from '../files/inheritance.ts'
 import { evalCheck } from './applyRules.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 
-// type AssociationsLookup = Record<keyof ContextAssociations, { extensions: string[], inherit: boolean, load: ... }
+function defaultAssociation(file: BIDSFile, _options: any): Promise<{ path: string }> {
+  return Promise.resolve({ path: file.path })
+}
 
 /**
- * This object describes associated files for data files in a bids dataset
- * For any given datafile we iterate over every key/value in this object.
- * For each entry we see if any files in the datafiles directory have:
- *   - a suffix that matches the key
- *   - an extension in the entry's extension array.
- *   - that all the files entities and their values match those of the datafile
- * If the entry allows for inheritance we recurse up the filetree looking for other applicable files.
- * The load functions are incomplete, some associations need to read data from a file so they're
- * returning promises for now.
+ * This object describes lookup functions for files associated to data files in a bids dataset.
+ * For any given data file we iterate over the associations defined schema.meta.associations.
+ * If the selectors match the data file, we attempt to find an associated file,
+ * and use the given function to load the data from that file.
+ *
+ * Many associations only consist of a path; this object is for more complex associations.
  */
 const associationLookup = {
   events: async (file: BIDSFile, options: { maxRows: number }): Promise<Events> => {
@@ -59,15 +47,6 @@ const associationLookup = {
       n_rows: columns.get('volume_type')?.length || 0,
       volume_type: columns.get('volume_type') || [],
     }
-  },
-  m0scan: (file: BIDSFile, options: any): Promise<M0Scan> => {
-    return Promise.resolve({ path: file.path })
-  },
-  magnitude: (file: BIDSFile, options: any): Promise<Magnitude> => {
-    return Promise.resolve({ path: file.path })
-  },
-  magnitude1: (file: BIDSFile, options: any): Promise<Magnitude1> => {
-    return Promise.resolve({ path: file.path })
   },
   bval: async (file: BIDSFile, options: any): Promise<Bval> => {
     const contents = await file.text()
@@ -105,9 +84,6 @@ const associationLookup = {
       short_channel: columns.get('short_channel'),
       sampling_frequency: columns.get('sampling_frequency'),
     }
-  },
-  coordsystem: (file: BIDSFile, options: any): Promise<Coordsystem> => {
-    return Promise.resolve({ path: file.path })
   },
 }
 
@@ -165,7 +141,7 @@ export async function buildAssociations(
 
     if (file) {
       // @ts-expect-error
-      const load = associationLookup[key]
+      const load = associationLookup[key] ?? defaultAssociation
       // @ts-expect-error
       associations[key] = await load(file, { maxRows: context.dataset.options?.maxRows }).catch(
         (error: any) => {
