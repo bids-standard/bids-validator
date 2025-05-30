@@ -1,8 +1,8 @@
 import React, { useState } from "react"
 import "./App.css"
 import { directoryOpen } from "https://esm.sh/browser-fs-access@0.35.0"
-import confetti, { create } from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.module.mjs';
-import { fileListToTree, validate } from "../dist/validator/main.js"
+import confetti from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.module.mjs';
+import { fileListToTree, validate, getVersion } from "../dist/validator/main.js"
 import type { ValidationResult } from "../../src/types/validation-result.ts"
 import { Collapse } from "./Collapse.tsx"
 import { Summary } from "./Summary.tsx"
@@ -56,6 +56,9 @@ function App() {
     const fileTree = await fileListToTree(dirHandle)
     setValidation(await validate(fileTree, {}))
   }
+
+  const [version, setVersion] = useState<string>()
+  getVersion().then((v) => { setVersion(v) })
 
   let validatorOutput
 
@@ -130,6 +133,7 @@ function App() {
     <>
       <h1>BIDS Validator</h1>
       {validatorOutput}
+      <div><em>BIDS Validator version: {version}</em></div>
       <div>
         Note: Selecting a dataset only performs validation. Files are never
         uploaded.
