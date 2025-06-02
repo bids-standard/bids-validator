@@ -43,8 +43,8 @@ build = "cp39-*"
 skip = "*musllinux* *_i686 *-win32"
 build-frontend = "build"
 
-manylinux-x86_64-image = "quay.io/pypa/manylinux_2_24_x86_64:latest"
-manylinux-aarch64-image = "quay.io/pypa/manylinux_2_24_aarch64:latest"
+manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64:latest"
+manylinux-aarch64-image = "quay.io/pypa/manylinux_2_28_aarch64:latest"
 
 before-build = "curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh && deno --version"
 test-command = "bids-validator-deno --version"
