@@ -1,4 +1,11 @@
 
+<a id='changelog-2.0.7'></a>
+# 2.0.7 — 2025-06-03
+
+## Changed
+
+- Handle TSV schema rules with missing or `n/a` values for `additional_columns`.
+
 <a id='changelog-"2.0.6"'></a>
 # "2.0.6" — 2025-05-23
 
