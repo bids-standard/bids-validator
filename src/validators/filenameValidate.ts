@@ -9,7 +9,6 @@ const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 const CHECKS: ContextCheckFunction[] = [
   missingLabel,
-  atRoot,
   entityLabelCheck,
   checkRules,
   reconstructionFailure,
@@ -23,13 +22,6 @@ export async function filenameValidate(
     await check(schema, context)
   }
   return Promise.resolve()
-}
-
-export function isAtRoot(context: BIDSContext) {
-  if (context.file.path.split(SEPARATOR_PATTERN).length !== 2) {
-    return false
-  }
-  return true
 }
 
 export async function missingLabel(
@@ -54,15 +46,6 @@ export async function missingLabel(
       issueMessage: fileNoLabelEntities.join(', '),
     })
   }
-  return Promise.resolve()
-}
-
-export function atRoot(schema: GenericSchema, context: BIDSContext) {
-  /*
-  if (fileIsAtRoot && !sidecarExtensions.includes(context.extension)) {
-    // create issue for data file in root of dataset
-  }
-  */
   return Promise.resolve()
 }
 
@@ -203,9 +186,8 @@ function entityRuleIssue(
   const fileEntities = Object.keys(context.entities)
   const ruleEntities = Object.keys(rule.entities).map((key) => lookupEntityLiteral(key, schema))
 
-  // skip required entity checks if file is at root.
-  // No requirements for inherited sidecars at this level.
-  if (!isAtRoot(context)) {
+  // skip required entity checks for 'metadata' per inheritance rules 1 + 2
+  if (!sidecarExtensions.includes(context.extension)) {
     const ruleEntitiesRequired = Object.entries(rule.entities)
       .filter(([_, v]) => v === 'required')
       .map(([k, _]) => lookupEntityLiteral(k, schema))
