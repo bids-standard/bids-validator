@@ -11,16 +11,16 @@ For top level release notes, leave all the headers commented out.
 - A bullet item for the Added category.
 
 -->
+<!--
 ### Changed
 
-- Categorically prevent required entites on metadata files to more closely follow inheritance principle.
-
-<!--
-### Fixed
-
-- A bullet item for the Fixed category.
 
 -->
+### Fixed
+
+- Categorically prevent required entites on metadata files to more closely follow inheritance principle.
+- Also skip required entities on all derivative files.
+
 <!--
 ### Deprecated
 

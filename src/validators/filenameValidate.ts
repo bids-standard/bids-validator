@@ -187,7 +187,8 @@ function entityRuleIssue(
   const ruleEntities = Object.keys(rule.entities).map((key) => lookupEntityLiteral(key, schema))
 
   // skip required entity checks for 'metadata' per inheritance rules 1 + 2
-  if (!sidecarExtensions.includes(context.extension)) {
+  // Also skip for all deriv files.
+  if (!sidecarExtensions.includes(context.extension) && !path.includes('rules.deriv.')) {
     const ruleEntitiesRequired = Object.entries(rule.entities)
       .filter(([_, v]) => v === 'required')
       .map(([k, _]) => lookupEntityLiteral(k, schema))
