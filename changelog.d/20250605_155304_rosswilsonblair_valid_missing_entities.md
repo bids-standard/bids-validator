@@ -18,7 +18,7 @@ For top level release notes, leave all the headers commented out.
 -->
 ### Fixed
 
-- Categorically prevent required entites on metadata files to more closely follow inheritance principle.
+- Categorically prevent required entities on metadata files to more closely follow inheritance principle.
 - Also skip required entities on all derivative files.
 
 <!--
