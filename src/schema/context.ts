@@ -208,7 +208,7 @@ export class BIDSContext implements Context {
       }
     }
     for (const file of sidecars) {
-      const json = await loadJSON(file).catch((error) => {
+      const json = await loadJSON(file).catch((error): Record<string, unknown> => {
         if (error.key) {
           this.dataset.issues.add({ code: error.key, location: file.path })
           return {}
@@ -218,14 +218,12 @@ export class BIDSContext implements Context {
       })
       const overrides = Object.keys(this.sidecar).filter((x) => Object.hasOwn(json, x))
       for (const key of overrides) {
-        // @ts-ignore
         if (json[key] !== this.sidecar[key]) {
           const overrideLocation = this.sidecarKeyOrigin[key]
           this.dataset.issues.add({
             code: 'SIDECAR_FIELD_OVERRIDE',
             subCode: key,
             location: overrideLocation,
-            // @ts-ignore
             issueMessage: `Sidecar key defined in ${file.path} overrides previous value (${json[key]}) from ${overrideLocation}`,
           })
         }
