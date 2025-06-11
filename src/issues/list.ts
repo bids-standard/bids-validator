@@ -166,6 +166,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'A json sidecar file was found without a corresponding data file',
   },
+  SIDECAR_FIELD_OVERRIDE: {
+    severity: 'warning',
+    reason: 'Sidecar files should not override values assigned at a higher level.',
+  },
   BLACKLISTED_MODALITY: {
     severity: 'error',
     reason: 'The modality in this file is blacklisted through validator configuration.',

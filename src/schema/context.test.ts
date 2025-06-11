@@ -1,4 +1,4 @@
-import { assert, assertObjectMatch } from '@std/assert'
+import { assert, assertEquals, assertObjectMatch } from '@std/assert'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { BIDSContext } from './context.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
@@ -20,6 +20,12 @@ Deno.test('test context LoadSidecar', async (t) => {
       subValue: 'subject',
       anatValue: 'anat',
     })
+  })
+  await t.step('Warnings are emitted for overriding sidecar fields', () => {
+    assertEquals(
+      context.dataset.issues.get({ code: 'SIDECAR_FIELD_OVERRIDE' }).length,
+      2,
+    )
   })
 })
 

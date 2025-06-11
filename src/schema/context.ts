@@ -216,6 +216,20 @@ export class BIDSContext implements Context {
           throw error
         }
       })
+      const overrides = Object.keys(this.sidecar).filter((x) => Object.hasOwn(json, x))
+      for (const key of overrides) {
+        // @ts-ignore
+        if (json[key] !== this.sidecar[key]) {
+          const overrideLocation = this.sidecarKeyOrigin[key]
+          this.dataset.issues.add({
+            code: 'SIDECAR_FIELD_OVERRIDE',
+            subCode: key,
+            location: overrideLocation,
+            // @ts-ignore
+            issueMessage: `Sidecar key defined in ${file.path} overrides previous value (${json[key]}) from ${overrideLocation}`,
+          })
+        }
+      }
       this.sidecar = { ...json, ...this.sidecar }
       Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= file.path)
     }
