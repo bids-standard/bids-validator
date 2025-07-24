@@ -1,3 +1,4 @@
+import { exists } from "jsr:@std/fs/exists";
 import type { Schema } from '../types/schema.ts'
 import { objectPathHandler } from '../utils/objectPathHandler.ts'
 import { schema as schemaDefault } from '@bids/schema'
@@ -24,8 +25,13 @@ export async function loadSchema(version?: string): Promise<Schema> {
 
   if (schemaUrl !== undefined) {
     try {
-      const jsonResponse = await fetch(schemaUrl)
-      const jsonData = await jsonResponse.json()
+      let jsonData = {}
+      if (exists(schemaUrl)) {
+        jsonData = JSON.parse(await Deno.readTextFile(schemaUrl))
+      } else {
+        const jsonResponse = await fetch(schemaUrl)
+        jsonData = await jsonResponse.json()
+      }
       schema = new Proxy(
         jsonData as object,
         objectPathHandler,
