@@ -1,4 +1,16 @@
 
+<a id='changelog-"2.0.8"'></a>
+# "2.0.8" — 2025-08-07
+
+## Added
+
+- Support multi-inheritance for associated files.
+  This will allow for multiple `electrodes.tsv` files,
+  distinguished by the `space-` entity. ([#206] [#207])
+
+[#206]: https://github.com/bids-standard/bids-validator/issues/206
+[#207]: https://github.com/bids-standard/bids-validator/pull/207
+
 <a id='changelog-2.0.7'></a>
 # 2.0.7 — 2025-06-03
 
