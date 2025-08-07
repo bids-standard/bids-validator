@@ -206,7 +206,20 @@ export function evalInitialColumns(
     return
   }
   const headers = [...Object.keys(context.columns)]
-  rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
+
+  // filter the rules initial columns by missing optional columns in the data.
+  const initial_columns = rule.initial_columns.filter((ruleHeader: string) => {
+    const ruleHeaderName = schema.objects.columns[ruleHeader].name
+    return !(
+      (typeof rule.columns[ruleHeader] === 'string' && rule.columns[ruleHeader] != 'required') ||
+      (
+        typeof rule.columns[ruleHeader] === 'object' &&
+        'level' in rule.columns[ruleHeader] && rule.columns[ruleHeader].level != 'required'
+      ) &&
+      !headers.includes(ruleHeaderName)
+    )
+  })
+  initial_columns.map((ruleHeader: string, ruleIndex: number) => {
     // @ts-expect-error
     const ruleHeaderName = schema.objects.columns[ruleHeader].name
     const contextIndex = headers.findIndex((x) => x === ruleHeaderName)

@@ -135,14 +135,28 @@ export async function datatypeFromDirectory(schema, context) {
     return Promise.resolve()
   }
   const dirDatatype = parts[datatypeIndex]
+  /*
   if (dirDatatype === 'phenotype') {
     // Phenotype is a pseudo-datatype for now.
     context.datatype = dirDatatype
     return Promise.resolve()
   }
+  */
   for (const key in schema.rules.modalities) {
     if (schema.rules.modalities[key].datatypes.includes(dirDatatype)) {
       context.modality = key
+      context.datatype = dirDatatype
+      return Promise.resolve()
+    }
+  }
+  /*
+   * Catch non modality based datatypes. Currently the keys of the objects.datatypes
+   * match the value in the `value` key for datatype objects. If this ever changes, where
+   * datatypes are referred to by their key in objects.datatypes and not their `value`,
+   * this function will need to be refactored.
+   */
+  for (const key in schema.objects.datatypes) {
+    if (dirDatatype === schema.objects.datatypes[key].value) {
       context.datatype = dirDatatype
       return Promise.resolve()
     }
