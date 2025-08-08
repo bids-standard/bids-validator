@@ -78,6 +78,13 @@ export async function validate(
     if (['sourcedata', 'code'].includes(dir.name)) {
       return false
     }
+    if (
+      dir.name.startsWith('sub-')
+      && options.subjectLabel.length
+      && !options.subjectLabel.map(subId => `sub-${subId}`).includes(dir.name)
+    ) {
+      return false
+    }
     if (dir.name !== 'derivatives') {
       return true
     }

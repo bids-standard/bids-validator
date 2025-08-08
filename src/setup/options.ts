@@ -31,6 +31,7 @@ export type ValidatorOptions = {
   blacklistModalities: string[]
   prune?: boolean
   maxRows?: number
+  subjectLabel: string[]
 }
 
 const modalityType = new EnumType<string>(
@@ -86,6 +87,11 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   .option(
     '-o, --outfile <file:string>',
     'File to write validation results to.',
+  )
+  .option(
+    '--subject-label <...subjectIds:string>',
+    'Array of subject ids to validate',
+    { default: [] as string[] },
   )
 
 // Disabling color output is only available in Deno
