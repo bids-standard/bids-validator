@@ -58,7 +58,7 @@ const result = await esbuild.build({
   ],
   allowOverwrite: true,
   sourcemap: flags.minify ? false : 'inline',
-  external: ['encoding'],
+  external: ['encoding', 'hed-validator'],
 })
 
 if (result.warnings.length > 0) {
