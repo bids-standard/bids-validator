@@ -44,7 +44,6 @@ const versionPlugin = {
 
 const result = await esbuild.build({
   format: 'esm',
-  platform: 'node',
   entryPoints: [MAIN_ENTRY, CLI_ENTRY],
   bundle: true,
   outdir: path.join('dist', 'validator'),
@@ -58,7 +57,6 @@ const result = await esbuild.build({
   ],
   allowOverwrite: true,
   sourcemap: flags.minify ? false : 'inline',
-  external: ['encoding'],
 })
 
 if (result.warnings.length > 0) {
