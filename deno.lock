@@ -47,7 +47,7 @@
     "npm:@bids/nifti-reader-js@0.6.9": "0.6.9",
     "npm:@types/node@*": "22.15.15",
     "npm:ajv@8.17.1": "8.17.1",
-    "npm:hed-validator@4.1.3": "4.1.3",
+    "npm:hed-validator@4.1.4": "4.1.4",
     "npm:ignore@7.0.3": "7.0.3"
   },
   "jsr": {
@@ -255,8 +255,8 @@
     "fflate@0.8.2": {
       "integrity": "sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A=="
     },
-    "hed-validator@4.1.3": {
-      "integrity": "sha512-DCh4QUWFrNZRfzt6HHcSnKIr8xptbeYmrX0xum0aB5NsE5zp+qcvhL48Ix0jyzGScz9y0LVAaw0GvXndk5WPNA==",
+    "hed-validator@4.1.4": {
+      "integrity": "sha512-Cyprv/TCXUP1FC5c/h1Yi3k2XawlDP1YJ5kxI724WSRg67Xz/RlYnMxJposhAIZMFPWMdDkATtoM5fro68k7RA==",
       "dependencies": [
         "core-js-pure",
         "fast-xml-parser",
@@ -398,7 +398,7 @@
       "jsr:@std/yaml@^1.0.5",
       "npm:@bids/nifti-reader-js@0.6.9",
       "npm:ajv@8.17.1",
-      "npm:hed-validator@4.1.3",
+      "npm:hed-validator@4.1.4",
       "npm:ignore@7.0.3"
     ]
   }
