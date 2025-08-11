@@ -30,8 +30,14 @@ async function setHedSchemas(dataset: BIDSContextDataset): Promise<HedIssue[]> {
       datasetDescriptionData,
     )
     return [] as HedIssue[]
-  } catch (issueError) {
+  } catch (error) {
     dataset.hedSchemas = null
+    let issueError: Error
+    if (error instanceof Error) {
+      issueError = error
+    } else {
+      issueError = new Error('unknown error')
+    }
     return hedValidator.BidsHedIssue.fromHedIssues(
       issueError,
       datasetDescriptionData.file,
