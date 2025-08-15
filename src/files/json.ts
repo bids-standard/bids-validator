@@ -28,7 +28,7 @@ export async function loadJSON(file: BIDSFile): Promise<Record<string, unknown>>
   } catch (error) {
     throw { key: 'JSON_INVALID' } // Raise syntax errors
   }
-  if (Array.isArray(parsedText)) {
+  if (Array.isArray(parsedText) || typeof parsedText !== "object") {
     throw { key: 'JSON_NOT_AN_OBJECT' }
   }
   return parsedText
