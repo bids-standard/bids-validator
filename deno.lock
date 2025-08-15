@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@bids/schema@1.0.4": "1.0.4",
+    "jsr:@bids/schema@~1.0.14": "1.0.14",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
@@ -23,13 +23,13 @@
     "jsr:@std/fmt@1.0.5": "1.0.5",
     "jsr:@std/fmt@1.0.6": "1.0.6",
     "jsr:@std/fmt@^1.0.2": "1.0.3",
-    "jsr:@std/fmt@^1.0.5": "1.0.5",
-    "jsr:@std/fmt@~1.0.2": "1.0.5",
+    "jsr:@std/fmt@^1.0.5": "1.0.6",
+    "jsr:@std/fmt@~1.0.2": "1.0.6",
     "jsr:@std/fs@1.0.11": "1.0.11",
     "jsr:@std/fs@1.0.13": "1.0.13",
     "jsr:@std/fs@1.0.15": "1.0.15",
-    "jsr:@std/fs@^1.0.11": "1.0.13",
-    "jsr:@std/internal@^1.0.6": "1.0.6",
+    "jsr:@std/fs@^1.0.11": "1.0.15",
+    "jsr:@std/internal@^1.0.6": "1.0.10",
     "jsr:@std/internal@^1.0.9": "1.0.10",
     "jsr:@std/io@0.225.2": "0.225.2",
     "jsr:@std/io@~0.225.2": "0.225.2",
@@ -39,7 +39,7 @@
     "jsr:@std/path@1.0.8": "1.0.8",
     "jsr:@std/path@^1.0.6": "1.0.6",
     "jsr:@std/path@^1.0.7": "1.0.8",
-    "jsr:@std/path@^1.0.8": "1.0.8",
+    "jsr:@std/path@^1.0.8": "1.1.1",
     "jsr:@std/path@^1.1.1": "1.1.1",
     "jsr:@std/streams@1.0.9": "1.0.9",
     "jsr:@std/text@~1.0.7": "1.0.12",
@@ -51,8 +51,8 @@
     "npm:ignore@7.0.3": "7.0.3"
   },
   "jsr": {
-    "@bids/schema@1.0.4": {
-      "integrity": "54fae7e87e2cc150203b41f69c19ad21263dba078ef990211ee2f8d7683b1828"
+    "@bids/schema@1.0.14": {
+      "integrity": "973d1a939b570a36009a5e842d9035d3113ea79c19fb544ab6216b0f9210e426"
     },
     "@cliffy/flags@1.0.0-rc.7": {
       "integrity": "318d9be98f6a6417b108e03dec427dea96cdd41a15beb21d2554ae6da450a781",
@@ -384,7 +384,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@bids/schema@1.0.4",
+      "jsr:@bids/schema@~1.0.14",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
       "jsr:@libs/xml@6.0.4",
