@@ -13,7 +13,7 @@ For top level release notes, leave all the headers commented out.
 -->
 ### Changed
 
-- Raise error when json files are parsed and their root value is an array instead of object
+- Raise error when JSON files are parsed and their root value is anything other than an object
 
 <!--
 ### Fixed
