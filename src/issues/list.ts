@@ -11,7 +11,7 @@ export const bidsIssues: IssueDefinitionRecord = {
   },
   JSON_NOT_AN_OBJECT: {
     severity: 'error',
-    reason: 'Parsed json file contains an array as its root element and not an object.',
+    reason: 'Parsed JSON file does not contain an object.',
   },
   MISSING_DATASET_DESCRIPTION: {
     severity: 'error',
