@@ -2,18 +2,21 @@ import type { GenericSchema } from '../../types/schema.ts'
 import type { BIDSFile, FileTree } from '../../types/filetree.ts'
 import type { BIDSContextDataset } from '../../schema/context.ts'
 
-function* walkFileTree(fileTree?: FileTree): Generator<BIDSFile> {
+function* walkFileTree(fileTree?: FileTree, dsContext: BIDSContextDataset): Generator<BIDSFile> {
+  
   if (!fileTree) {
     return
   }
+
   for (const file of fileTree.files) {
     if (!file.ignored) {
       yield file
     }
   }
+
   for (const dir of fileTree.directories) {
-    if (!dir.ignored) {
-      yield* walkFileTree(dir)
+    if (!dir.ignored && !dsContext.isPseudoFile(dir) && !dsContext.isOpaqueDirectory(dir)) {
+      yield* walkFileTree(dir, dsContext)
     }
   }
 }
@@ -35,9 +38,9 @@ export async function sidecarWithoutDatafile(
   schema: GenericSchema,
   dsContext: BIDSContextDataset,
 ) {
-  const unusedSidecars = [...walkFileTree(dsContext.tree)].filter(
+  const unusedSidecars = [...walkFileTree(dsContext.tree, dsContext)].filter(
     (file) => (!file.viewed && file.name.endsWith('.json') &&
-      !standalone_json.includes(file.name)),
+      !standalone_json.includes(file.name)), 
   )
   unusedSidecars.forEach((sidecar) => {
     dsContext.issues.add({ code: 'SIDECAR_WITHOUT_DATAFILE', location: sidecar.path })
