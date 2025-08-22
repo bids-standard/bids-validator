@@ -2,7 +2,7 @@ import type { GenericSchema } from '../../types/schema.ts'
 import type { BIDSFile, FileTree } from '../../types/filetree.ts'
 import type { BIDSContextDataset } from '../../schema/context.ts'
 
-function* walkFileTree(fileTree?: FileTree, dsContext: BIDSContextDataset): Generator<BIDSFile> {
+function* walkFileTree(fileTree: FileTree, dsContext: BIDSContextDataset): Generator<BIDSFile> {
   
   if (!fileTree) {
     return
@@ -26,7 +26,7 @@ export async function unusedStimulus(
   dsContext: BIDSContextDataset,
 ) {
   const stimDir = dsContext.tree.get('stimuli') as FileTree
-  const unusedStimuli = [...walkFileTree(stimDir)].filter((stimulus) => !stimulus.viewed)
+  const unusedStimuli = [...walkFileTree(stimDir, dsContext)].filter((stimulus) => !stimulus.viewed)
   if (unusedStimuli.length) {
     dsContext.issues.add({ code: 'UNUSED_STIMULUS', affects: unusedStimuli.map((s) => s.path) })
   }
