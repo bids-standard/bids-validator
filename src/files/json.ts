@@ -22,14 +22,17 @@ async function readJSONText(file: BIDSFile): Promise<string> {
 
 export async function loadJSON(file: BIDSFile): Promise<Record<string, unknown>> {
   const text = await readJSONText(file) // Raise encoding errors
-  let parsedText;
+  let parsedText
   try {
     parsedText = JSON.parse(text)
   } catch (error) {
     throw { key: 'JSON_INVALID' } // Raise syntax errors
   }
-  if (Array.isArray(parsedText) || typeof parsedText !== "object") {
-    throw { key: 'JSON_NOT_AN_OBJECT', evidence: text.substring(0, 10) + (text.length > 10 ? '...' : '') }
+  if (Array.isArray(parsedText) || typeof parsedText !== 'object') {
+    throw {
+      key: 'JSON_NOT_AN_OBJECT',
+      evidence: text.substring(0, 10) + (text.length > 10 ? '...' : ''),
+    }
   }
   return parsedText
 }
