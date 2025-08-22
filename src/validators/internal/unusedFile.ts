@@ -3,7 +3,6 @@ import type { BIDSFile, FileTree } from '../../types/filetree.ts'
 import type { BIDSContextDataset } from '../../schema/context.ts'
 
 function* walkFileTree(fileTree: FileTree, dsContext: BIDSContextDataset): Generator<BIDSFile> {
-  
   if (!fileTree) {
     return
   }
@@ -26,7 +25,9 @@ export async function unusedStimulus(
   dsContext: BIDSContextDataset,
 ) {
   const stimDir = dsContext.tree.get('stimuli') as FileTree
-  const unusedStimuli = [...walkFileTree(stimDir, dsContext)].filter((stimulus) => !stimulus.viewed)
+  const unusedStimuli = [...walkFileTree(stimDir, dsContext)].filter((stimulus) =>
+    !stimulus.viewed
+  )
   if (unusedStimuli.length) {
     dsContext.issues.add({ code: 'UNUSED_STIMULUS', affects: unusedStimuli.map((s) => s.path) })
   }
@@ -40,7 +41,7 @@ export async function sidecarWithoutDatafile(
 ) {
   const unusedSidecars = [...walkFileTree(dsContext.tree, dsContext)].filter(
     (file) => (!file.viewed && file.name.endsWith('.json') &&
-      !standalone_json.includes(file.name)), 
+      !standalone_json.includes(file.name)),
   )
   unusedSidecars.forEach((sidecar) => {
     dsContext.issues.add({ code: 'SIDECAR_WITHOUT_DATAFILE', location: sidecar.path })
