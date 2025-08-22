@@ -1,7 +1,6 @@
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { readEntities } from '../schema/entities.ts'
 
-
 type Ret<T> = T extends [string, ...string[]] ? (BIDSFile | BIDSFile[]) : BIDSFile
 
 /** Find associated files in order of proximity to a source file.

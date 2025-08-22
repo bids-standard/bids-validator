@@ -9,6 +9,7 @@ import type {
   Subjects,
   Tiff,
 } from '@bids/schema/context'
+import type { Schemas as HedSchemas } from '@hed/validator'
 import type { Schema } from '../types/schema.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { FileTree } from '../types/filetree.ts'
@@ -41,7 +42,7 @@ export class BIDSContextDataset implements Dataset {
   opaqueDirectories: Set<string>
 
   // Opaque object for HED validator
-  hedSchemas: object | undefined | null = undefined
+  hedSchemas: HedSchemas | undefined | null = undefined
 
   constructor(
     args: Partial<BIDSContextDataset>,

@@ -183,7 +183,9 @@ function evalJsonCheck(
   // Count on other JSON rules to use selectors to match the correct files
   // Text files at the root do not have sidecars. We might want a cleaner
   // or more schematic way to identify them in the future.
-  if (sidecarRule && (['.json', '', '.md', '.txt', '.rst', '.cff'].includes(context.extension))) return
+  if (sidecarRule && (['.json', '', '.md', '.txt', '.rst', '.cff'].includes(context.extension))) {
+    return
+  }
 
   const json: Record<string, any> = sidecarRule ? context.sidecar : context.json
   for (const [key, requirement] of Object.entries(rule.fields)) {

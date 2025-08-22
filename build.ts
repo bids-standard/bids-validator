@@ -6,7 +6,7 @@
  */
 import * as esbuild from 'https://deno.land/x/esbuild@v0.24.0/mod.js'
 import { parse } from 'https://deno.land/std@0.223.0/flags/mod.ts'
-import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@0.11.0"
+import { denoPlugin } from "jsr:@deno/esbuild-plugin@1.1.5";
 import * as path from "https://deno.land/std@0.223.0/path/mod.ts"
 import { getVersion } from './src/version.ts'
 
@@ -51,7 +51,7 @@ const result = await esbuild.build({
   target: ['chrome109', 'firefox109', 'safari16'],
   plugins: [
     versionPlugin,
-    ...denoPlugins({
+    denoPlugin({
       configPath: path.join(dir, 'deno.json'),
     }),
   ],

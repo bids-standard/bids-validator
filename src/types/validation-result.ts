@@ -2,7 +2,7 @@ import type { DatasetIssues } from '../issues/datasetIssues.ts'
 
 export interface SubjectMetadata {
   participantId: string
-  age?: number | null | "89+"
+  age?: number | null | '89+'
   sex?: string
 }
 /*

@@ -7,12 +7,7 @@ For top level release notes, leave all the headers commented out.
 
 ### Added
 
-- Support multi-inheritance for associated files.
-  This will allow for multiple `electrodes.tsv` files,
-  distinguished by the `space-` entity. ([#206] [#207])
-
-[#206]: https://github.com/bids-standard/bids-validator/issues/206
-[#207]: https://github.com/bids-standard/bids-validator/pull/207
+- Display version in web app
 
 <!--
 ### Changed

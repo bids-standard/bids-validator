@@ -9,6 +9,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'Not a valid JSON file.',
   },
+  JSON_NOT_AN_OBJECT: {
+    severity: 'error',
+    reason: 'Parsed JSON file does not contain an object.',
+  },
   MISSING_DATASET_DESCRIPTION: {
     severity: 'error',
     reason: 'A dataset_description.json file is required in the root of the dataset',

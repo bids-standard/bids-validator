@@ -239,7 +239,7 @@ export function evalAdditionalColumns(
   if (context.extension !== '.tsv') return
   const headers = Object.keys(context?.columns)
   if (rule.columns) {
-    if (!rule.additional_columns || rule.additional_columns === 'n/a' ) {
+    if (!rule.additional_columns || rule.additional_columns === 'n/a') {
       // Old schemas might be missing the field, so be permissive.
       // New schemas indicate it is not applicable with 'n/a'.
       return
