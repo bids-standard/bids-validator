@@ -1,0 +1,49 @@
+<!--
+A new scriv changelog fragment.
+
+Uncomment the section that is right (remove the HTML comment wrapper).
+For top level release notes, leave all the headers commented out.
+-->
+
+### Added
+
+- The `--datasetTypes` flag accepts a list of `DatasetType`s,
+  allowing applications to restrict the datasets they accept.
+
+
+<!--
+### Changed
+
+- A bullet item for the Changed category.
+
+-->
+<!--
+### Fixed
+
+- A bullet item for the Fixed category.
+
+-->
+<!--
+### Deprecated
+
+- A bullet item for the Deprecated category.
+
+-->
+<!--
+### Removed
+
+- A bullet item for the Removed category.
+
+-->
+<!--
+### Security
+
+- A bullet item for the Security category.
+
+-->
+<!--
+### Infrastructure
+
+- A bullet item for the Infrastructure category.
+
+-->
