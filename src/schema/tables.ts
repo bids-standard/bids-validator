@@ -1,95 +1,192 @@
-import type { GenericRule, GenericSchema, SchemaType, SchemaTypeLike } from '../types/schema.ts'
+import type { GenericRule } from '../types/schema.ts'
+import type { Schema } from '@bids/schema/metaschema'
 import type { BIDSContext } from './context.ts'
 
-interface ColumnDefinition {
-  Levels?: Record<string, unknown>
-  Units?: string
+type ColumnSchema = Schema['objects']['columns'][keyof Schema['objects']['columns']]
+type Formats = Schema['objects']['formats']
+
+/* Common target for comparing schema and sidecar definitions */
+interface ValueSignature {
+  formats: string[]
+  pattern?: string
+  units?: string
+  levels?: string[]
+  maximum?: number
+  minimum?: number
 }
 
-/**
- * schema.formats contains named types with patterns. Many entries in
- * schema.objects have a format to constrain its possible values. Presently
- * this is written with tsv's in mind. The blanket n/a pass may be inappropriate
- * for other type checks. filenameValidate predates this but does similar type
- * checking for entities.
+/* Compiled type check specification */
+interface ValueSpec {
+  pattern: RegExp
+  levels?: string[]
+  maximum?: number
+  minimum?: number
+}
+
+/* Sidecar column definition */
+interface ColumnDefinition {
+  Format?: string
+  Levels?: Record<string, unknown>
+  Units?: string
+  Maximum?: number
+  Minimum?: number
+}
+
+function _getFormats(schemaObject: ColumnSchema): string[] {
+  if (schemaObject.anyOf) {
+    const anyOf = schemaObject.anyOf as ColumnSchema[]
+    return anyOf.map(_getFormats).flat() as string[]
+  }
+  return [(schemaObject.format as string) ?? (schemaObject.type as string) ?? 'string']
+}
+
+/* Get formats from schema object, accounting for anyOf */
+function extractSchema(schemaObject: ColumnSchema): ValueSignature {
+  return {
+    formats: _getFormats(schemaObject),
+    pattern: schemaObject.pattern as string | undefined,
+    units: schemaObject.unit as string | undefined,
+    levels: schemaObject?.enum as string[] | undefined,
+    maximum: schemaObject?.maximum as number | undefined,
+    minimum: schemaObject?.minimum as number | undefined,
+  }
+}
+
+/* Get formats from sidecar column definition */
+function extractDefinition(definition: ColumnDefinition): ValueSignature {
+  return {
+    formats: [definition.Format ?? (definition.Units ? 'number' : 'string')],
+    units: definition.Units,
+    levels: definition.Levels ? Object.keys(definition.Levels) : undefined,
+    maximum: definition.Maximum,
+    minimum: definition.Minimum,
+  }
+}
+
+function _formatToType(format: string): string {
+  switch (format) {
+    case 'integer':
+    case 'number':
+      return 'number'
+    case 'boolean':
+      return 'boolean'
+    default:
+      return 'string'
+  }
+}
+
+/* Construct a signature that satisfies both input signatures
+ * Error if the override conflicts rather than refines
  */
-function schemaObjectTypeCheck(
-  schemaObject: SchemaTypeLike,
-  value: string,
-  schema: GenericSchema,
-): boolean {
-  // always allow n/a?
+function refineSignature(base: ValueSignature, override: ValueSignature): ValueSignature {
+  // Collapse formats to string, number, boolean
+  if (!base.formats.map(_formatToType).includes(_formatToType(override.formats[0]))) {
+    throw {
+      code: 'TSV_COLUMN_TYPE_REDEFINED',
+      issueMessage: `Format "${override.formats[0]}" must be ${base.formats.join(' or ')}`,
+    }
+  }
+  // TODO: Compare actual formats; we want to check that override.formats[0]
+  // is actually a subset of base.formats
+  // TODO: Should we assert that override.formats == ["string"] if base.pattern?
+
+  // Enums must be a subset
+  const effectiveLevels = override.levels ?? base.levels as string[]
+  if (base.levels !== undefined && override.levels !== undefined) {
+    if (!effectiveLevels.every((v) => base.levels?.includes(v))) {
+      throw {
+        code: 'TSV_COLUMN_TYPE_REDEFINED',
+        issueMessage: `Levels {${override.levels.join(', ')}} is not a subset of {${
+          base.levels.join(', ')
+        }}.`,
+      }
+    }
+  }
+
+  // Units must match
+  const effectiveUnits = override.units ?? base.units
+  if (base.units !== undefined && effectiveUnits !== base.units) {
+    throw {
+      code: 'TSV_COLUMN_TYPE_REDEFINED',
+      issueMessage: `Unit "${effectiveUnits}" must be "${base.units}"`,
+    }
+  }
+
+  const effectiveMinimum = override.minimum ?? base.minimum as number
+  if (base.minimum !== undefined && effectiveMinimum < base.minimum) {
+    throw {
+      code: 'TSV_COLUMN_TYPE_REDEFINED',
+      issueMessage: `Minimum ${effectiveMinimum} is less than ${base.minimum}`,
+    }
+  }
+
+  const effectiveMaximum = override.maximum ?? base.maximum as number
+  if (base.maximum !== undefined && effectiveMaximum > base.maximum) {
+    throw {
+      code: 'TSV_COLUMN_TYPE_REDEFINED',
+      issueMessage: `Maximum ${effectiveMaximum} is greater than ${base.maximum}`,
+    }
+  }
+
+  return {
+    formats: override.formats,
+    pattern: base.pattern,
+    units: effectiveUnits,
+    levels: effectiveLevels,
+    maximum: effectiveMaximum,
+    minimum: effectiveMinimum,
+  }
+}
+
+/* Get the effective ValueSignature for a column, combining schema and sidecar */
+function getValueSignature(
+  schemaObject: ColumnSchema,
+  definition: ColumnDefinition | undefined,
+): ValueSignature {
+  // definition indicates a fully overridable "conventional" column
+  if ('definition' in schemaObject) {
+    return extractDefinition(definition ?? (schemaObject.definition as ColumnDefinition))
+  }
+  // JSON-schema-like definitions may be duplicated or refined by sidecars
+  const schemaSignature = extractSchema(schemaObject)
+  return definition
+    ? refineSignature(schemaSignature, extractDefinition(definition))
+    : schemaSignature
+}
+
+/* Construct a type check specification from a ValueSignature */
+function compileSignature(signature: ValueSignature, formats: Formats): ValueSpec {
+  const pattern = signature.pattern ?? signature.formats.map((f) => formats[f].pattern).join('|')
+  return {
+    pattern: new RegExp(`^${pattern}$`),
+    levels: signature.levels,
+    maximum: signature.maximum,
+    minimum: signature.minimum,
+  }
+}
+
+/* Identify trivial signatures that would always pass */
+function isTrivialSignature(sig: ValueSignature): boolean {
+  return sig.levels === undefined &&
+    sig.maximum === undefined &&
+    sig.minimum === undefined &&
+    (sig.pattern === undefined && sig.formats[0] === 'string' || sig.pattern === '.*')
+}
+
+/* Check a value against a compiled type check specification */
+function checkValue(value: string, spec: ValueSpec): boolean {
   if (value === 'n/a') {
     return true
   }
-
-  if ('anyOf' in schemaObject) {
-    return schemaObject.anyOf.some((x) => schemaObjectTypeCheck(x, value, schema))
+  if (!spec.pattern.test(value) || spec.levels && !spec.levels.includes(value)) {
+    return false
   }
-  if ('enum' in schemaObject && schemaObject.enum) {
-    return schemaObject.enum.some((x) => x === value)
+  if (spec.maximum !== undefined || spec.minimum !== undefined) {
+    const numValue = parseFloat(value)
+    return (spec.maximum === undefined || numValue <= spec.maximum) &&
+      (spec.minimum === undefined || numValue >= spec.minimum)
   }
-
-  const format = schemaObject.format
-    // @ts-expect-error
-    ? schema.objects.formats[schemaObject.format]
-    // @ts-expect-error
-    : schema.objects.formats[schemaObject.type]
-  const re = new RegExp(`^${format.pattern}$`)
-  return re.test(value)
-}
-
-/**
- * Checks user supplied type information from a sidecar against tsv column value.
- */
-function sidecarDefinedTypeCheck(
-  rule: ColumnDefinition,
-  value: string,
-  schema: GenericSchema,
-): boolean {
-  if (typeof rule?.Levels === 'object') {
-    return value == 'n/a' || value in rule['Levels']
-  } else if ('Units' in rule) {
-    return schemaObjectTypeCheck({ 'type': 'number' }, value, schema)
-  } else {
-    return true
-  }
-}
-
-/**
- * Check whether sidecar and schema definitions are compatible.
- */
-function compatibleDefinitions(
-  rule: ColumnDefinition,
-  schemaObject: SchemaType,
-): boolean {
-  const schemaLike: {
-    type?: string
-    enum?: string[]
-    unit?: string
-  } = {}
-  if (typeof rule?.Levels === 'object') {
-    schemaLike.enum = [...Object.keys(rule.Levels)]
-    schemaLike.type = typeof schemaLike.enum[0]
-  }
-  if (rule?.Units) {
-    schemaLike.type = 'number'
-    schemaLike.unit = rule.Units
-  }
-  // Suppose we are overriding the schema with the sidecar...
-  const effectiveType = schemaLike.type || schemaObject.type
-  const effectiveEnum = schemaLike.enum || schemaObject.enum
-  const effectiveUnit = schemaLike.unit || schemaObject.unit
-
-  // Types are compatible if unchanged, or both numeric
-  const typeCompatible = effectiveType === schemaObject.type ||
-    effectiveType === 'number' && schemaObject.type === 'integer'
-  // Enums are compatible if the sidecar enum is a subset of the schema enum
-  const enumCompatible = schemaObject.enum === undefined ||
-    effectiveEnum?.every((x) => schemaObject?.enum?.includes(x)) as boolean
-  // Units are compatible if the sidecar unit is the same as the schema unit
-  const unitCompatible = schemaObject.unit === undefined || effectiveUnit === schemaObject.unit
-  return typeCompatible && enumCompatible && unitCompatible
+  return true
 }
 
 /**
@@ -107,29 +204,20 @@ function compatibleDefinitions(
 export function evalColumns(
   rule: GenericRule,
   context: BIDSContext,
-  schema: GenericSchema,
+  schema: Schema,
   schemaPath: string,
 ): void {
   if (!rule.columns || context.extension !== '.tsv') return
   const headers = [...Object.keys(context.columns)]
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
-    // @ts-expect-error
-    const columnObject: GenericRule = schema.objects.columns[ruleHeader]
+    const columnObject: ColumnSchema = schema.objects.columns[ruleHeader]
+
+    // What is this?
     if (!('name' in columnObject) || !columnObject['name']) {
       return
     }
-    const name = columnObject.name
-    let typeCheck = (value: string) =>
-      schemaObjectTypeCheck(
-        columnObject as unknown as SchemaTypeLike,
-        value,
-        schema,
-      )
-    const error_code = (requirement != 'required')
-      ? 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED'
-      : 'TSV_VALUE_INCORRECT_TYPE'
-    let errorObject = columnObject
 
+    const name = columnObject.name
     if (!headers.includes(name) && requirement === 'required') {
       context.dataset.issues.add({
         code: 'TSV_COLUMN_MISSING',
@@ -139,49 +227,44 @@ export function evalColumns(
       })
     }
 
-    if ('definition' in columnObject) {
-      typeCheck = (value) =>
-        // @ts-expect-error
-        sidecarDefinedTypeCheck(columnObject.definition, value, schema)
-    }
-
-    const inspect = typeof Deno !== 'undefined'
-      ? Deno.inspect
-      : (x: any) => JSON.stringify(x, null, 2)
-
-    if (
-      name in context.sidecar && context.sidecar[name] &&
-      typeof (context.sidecar[name]) === 'object'
-    ) {
-      if ('definition' in columnObject) {
-        typeCheck = (value) => sidecarDefinedTypeCheck(context.sidecar[name], value, schema)
-        errorObject = context.sidecar[name]
-      } else if (
-        !compatibleDefinitions(context.sidecar[name], columnObject as unknown as SchemaType)
-      ) {
+    let signature: ValueSignature
+    try {
+      signature = getValueSignature(columnObject, context?.sidecar[name])
+    } catch (e: any) {
+      if (e?.code) {
         context.dataset.issues.add({
-          code: 'TSV_COLUMN_TYPE_REDEFINED',
+          ...e,
           subCode: name,
-          location: context.path,
-          issueMessage: `defined in ${context.sidecarKeyOrigin[name]}`,
+          location: context.sidecarKeyOrigin[name],
           rule: schemaPath,
         })
+        signature = getValueSignature(columnObject, undefined)
+      } else {
+        throw e
       }
     }
 
-    if (!headers.includes(name)) {
+    if (!headers.includes(name) || isTrivialSignature(signature)) {
       continue
     }
 
-    for (const value of context.columns[name] as string[]) {
-      if (!typeCheck(value)) {
+    const spec = compileSignature(signature, schema.objects.formats)
+
+    const issue = {
+      code: 'TSV_VALUE_INCORRECT_TYPE' + (requirement != 'required' ? '_NONREQUIRED' : ''),
+      subCode: name,
+      location: context.path,
+      rule: schemaPath,
+    }
+
+    const column = context.columns[name] as string[]
+    for (const [index, value] of column.entries()) {
+      if (!checkValue(value, spec)) {
         const issueMessage = `'${value}'` +
           (value.match(/^\s*(NA|na|nan|NaN|n\/a)\s*$/) ? ", did you mean 'n/a'?" : '')
         context.dataset.issues.add({
-          code: error_code,
-          subCode: name,
-          location: context.path,
-          rule: schemaPath,
+          ...issue,
+          line: index + 2,
           issueMessage,
         })
         break
@@ -197,7 +280,7 @@ export function evalColumns(
 export function evalInitialColumns(
   rule: GenericRule,
   context: BIDSContext,
-  schema: GenericSchema,
+  schema: Schema,
   schemaPath: string,
 ): void {
   if (
@@ -207,7 +290,6 @@ export function evalInitialColumns(
   }
   const headers = [...Object.keys(context.columns)]
   rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
-    // @ts-expect-error
     const ruleHeaderName = schema.objects.columns[ruleHeader].name
     const contextIndex = headers.findIndex((x) => x === ruleHeaderName)
     if (contextIndex === -1) {
@@ -233,7 +315,7 @@ export function evalInitialColumns(
 export function evalAdditionalColumns(
   rule: GenericRule,
   context: BIDSContext,
-  schema: GenericSchema,
+  schema: Schema,
   schemaPath: string,
 ): void {
   if (context.extension !== '.tsv') return
@@ -245,7 +327,6 @@ export function evalAdditionalColumns(
       return
     }
     const ruleHeadersNames = Object.keys(rule.columns).map(
-      // @ts-expect-error
       (x) => schema.objects.columns[x].name,
     )
     let extraCols = headers.filter(
@@ -274,7 +355,7 @@ export function evalAdditionalColumns(
 export function evalIndexColumns(
   rule: GenericRule,
   context: BIDSContext,
-  schema: GenericSchema,
+  schema: Schema,
   schemaPath: string,
 ): void {
   if (
@@ -288,7 +369,6 @@ export function evalIndexColumns(
   const headers = Object.keys(context?.columns)
   const uniqueIndexValues = new Set()
   const index_columns = rule.index_columns.map((col: string) => {
-    // @ts-expect-error
     return schema.objects.columns[col].name
   })
   const missing = index_columns.filter((col: string) => !headers.includes(col))
