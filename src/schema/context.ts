@@ -210,8 +210,8 @@ export class BIDSContext implements Context {
     }
     for (const file of sidecars) {
       const json = await loadJSON(file).catch((error) => {
-        if (error.key) {
-          this.dataset.issues.add({ code: error.key, location: file.path })
+        if (error.code) {
+          this.dataset.issues.add({ ...error, location: file.path })
           return {}
         } else {
           throw error
@@ -272,8 +272,8 @@ export class BIDSContext implements Context {
       return
     }
     this.json = await loadJSON(this.file).catch((error) => {
-      if (error.key) {
-        this.dataset.issues.add({ code: error.key, location: this.file.path })
+      if (error.code) {
+        this.dataset.issues.add({ ...error, location: this.file.path })
         return {}
       } else {
         throw error
