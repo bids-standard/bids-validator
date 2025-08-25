@@ -155,7 +155,7 @@ Deno.test('tables eval* tests', async (t) => {
     let issues = context.dataset.issues.get({ code: 'TSV_COLUMN_TYPE_REDEFINED' })
     assertEquals(issues.length, 1)
     assertEquals(issues[0].subCode, 'strain_rrid')
-    assertEquals(issues[0].evidence, 'Format "integer" must be rrid')
+    assertEquals(issues[0].issueMessage, 'Format "integer" must be rrid')
 
     // Overriding the default sex definition uses the provided values
     // Values in the default definition may raise issues

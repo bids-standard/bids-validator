@@ -83,7 +83,7 @@ function refineSignature(base: ValueSignature, override: ValueSignature): ValueS
   if (!base.formats.map(_formatToType).includes(_formatToType(override.formats[0]))) {
     throw {
       code: 'TSV_COLUMN_TYPE_REDEFINED',
-      evidence: `Format "${override.formats[0]}" must be ${base.formats.join(' or ')}`,
+      issueMessage: `Format "${override.formats[0]}" must be ${base.formats.join(' or ')}`,
     }
   }
   // TODO: Compare actual formats; we want to check that override.formats[0]
@@ -96,7 +96,7 @@ function refineSignature(base: ValueSignature, override: ValueSignature): ValueS
     if (!effectiveLevels.every((v) => base.levels?.includes(v))) {
       throw {
         code: 'TSV_COLUMN_TYPE_REDEFINED',
-        evidence: `Levels {${override.levels.join(', ')}} is not a subset of {${
+        issueMessage: `Levels {${override.levels.join(', ')}} is not a subset of {${
           base.levels.join(', ')
         }}.`,
       }
@@ -108,7 +108,7 @@ function refineSignature(base: ValueSignature, override: ValueSignature): ValueS
   if (base.units !== undefined && effectiveUnits !== base.units) {
     throw {
       code: 'TSV_COLUMN_TYPE_REDEFINED',
-      evidence: `Unit "${effectiveUnits}" must be "${base.units}"`,
+      issueMessage: `Unit "${effectiveUnits}" must be "${base.units}"`,
     }
   }
 
@@ -116,7 +116,7 @@ function refineSignature(base: ValueSignature, override: ValueSignature): ValueS
   if (base.minimum !== undefined && effectiveMinimum < base.minimum) {
     throw {
       code: 'TSV_COLUMN_TYPE_REDEFINED',
-      evidence: `Minimum ${effectiveMinimum} is less than ${base.minimum}`,
+      issueMessage: `Minimum ${effectiveMinimum} is less than ${base.minimum}`,
     }
   }
 
@@ -124,7 +124,7 @@ function refineSignature(base: ValueSignature, override: ValueSignature): ValueS
   if (base.maximum !== undefined && effectiveMaximum > base.maximum) {
     throw {
       code: 'TSV_COLUMN_TYPE_REDEFINED',
-      evidence: `Maximum ${effectiveMaximum} is greater than ${base.maximum}`,
+      issueMessage: `Maximum ${effectiveMaximum} is greater than ${base.maximum}`,
     }
   }
 
@@ -235,8 +235,7 @@ export function evalColumns(
         context.dataset.issues.add({
           ...e,
           subCode: name,
-          location: context.path,
-          issueMessage: `defined in ${context.sidecarKeyOrigin[name]}`,
+          location: context.sidecarKeyOrigin[name],
           rule: schemaPath,
         })
         signature = getValueSignature(columnObject, undefined)
