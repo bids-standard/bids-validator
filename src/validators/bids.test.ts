@@ -14,6 +14,7 @@ Deno.test('Smoke tests of main validation function', async (t) => {
       debug: 'INFO',
       ignoreNiftiHeaders: true,
       blacklistModalities: [],
+      datasetTypes: [],
     })
     assert(result.issues.get({ code: 'BLACKLISTED_MODALITY' }).length === 0)
 
@@ -22,6 +23,7 @@ Deno.test('Smoke tests of main validation function', async (t) => {
       debug: 'INFO',
       ignoreNiftiHeaders: true,
       blacklistModalities: ['MRI'],
+      datasetTypes: [],
     })
     assert(result.issues.get({ code: 'BLACKLISTED_MODALITY' }).length === 1)
 
@@ -30,6 +32,7 @@ Deno.test('Smoke tests of main validation function', async (t) => {
       debug: 'INFO',
       ignoreNiftiHeaders: true,
       blacklistModalities: ['MEG'],
+      datasetTypes: [],
     })
     assert(result.issues.get({ code: 'BLACKLISTED_MODALITY' }).length === 0)
 
@@ -38,6 +41,7 @@ Deno.test('Smoke tests of main validation function', async (t) => {
       debug: 'INFO',
       ignoreNiftiHeaders: true,
       blacklistModalities: ['MEG', 'MRI'],
+      datasetTypes: [],
     })
     assert(result.issues.get({ code: 'BLACKLISTED_MODALITY' }).length === 1)
   })
@@ -48,6 +52,7 @@ Deno.test('Smoke tests of main validation function', async (t) => {
         datasetPath: '/dataset',
         debug: 'INFO',
         blacklistModalities: [],
+        datasetTypes: [],
       },
       {
         ignore: [{ location: '/dataset_description.json' }],

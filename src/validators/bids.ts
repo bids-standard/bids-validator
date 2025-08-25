@@ -72,6 +72,18 @@ export async function validate(
     })
   }
 
+  // Empty list defaults to allow all
+  if (options.datasetTypes.length) {
+    const datasetType = (dsContext.dataset_description.DatasetType ?? 'raw') as string
+    if (!options.datasetTypes.includes(datasetType)) {
+      dsContext.issues.add({
+        code: 'UNSUPPORTED_DATASET_TYPE',
+        location: '/dataset_description.json',
+        issueMessage: `"DatasetType": "${datasetType}"`,
+      })
+    }
+  }
+
   const bidsDerivatives: FileTree[] = []
   const nonstdDerivatives: FileTree[] = []
   fileTree.directories = fileTree.directories.filter((dir) => {
