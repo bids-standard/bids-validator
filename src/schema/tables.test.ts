@@ -26,6 +26,18 @@ const schemaDefs = {
           index_columns: ['filename'],
           additional_columns: 'allowed',
         },
+        Participants: {
+          selectors: ['path == "/participants.tsv"'],
+          initial_columns: ['participant_id'],
+          columns: {
+            participant_id: 'required',
+            age: 'recommended',
+            sex: 'recommended',
+            strain_rrid: 'recommended',
+          },
+          index_columns: ['participant_id'],
+          additional_columns: 'allowed',
+        },
       },
       made_up: {
         MadeUp: {
@@ -91,6 +103,67 @@ Deno.test('tables eval* tests', async (t) => {
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals(context.dataset.issues.size, 0)
+  })
+
+  await t.step('verify column override behavior', () => {
+    const context = {
+      path: '/participants.tsv',
+      extension: '.tsv',
+      sidecar: {
+        participant_id: {
+          Description: 'A participant identifier',
+          Format: 'string',
+        },
+        age: {
+          Description: 'Age in weeks',
+          Format: 'number',
+        },
+        sex: {
+          Description: 'Phenotypic sex',
+          Format: 'string',
+          Levels: {
+            'F': { Description: 'Female' },
+            'M': { Description: 'Male' },
+            'O': { Description: 'Other' },
+          },
+        },
+        strain_rrid: {
+          Description: 'Invalid override',
+          Format: 'integer',
+        },
+      },
+      sidecarKeyOrigin: {
+        participant_id: '/participants.json',
+        age: '/participants.json',
+        sex: '/participants.json',
+        strain_rrid: '/participants.json',
+      },
+      columns: {
+        participant_id: ['sub-01', 'sub-02', 'sub-03'],
+        age: ['10', '20', '30'],
+        sex: ['M', 'F', 'f'],
+        strain_rrid: ['RRID:SCR_012345', 'RRID:SCR_012345', 'n/a'],
+      },
+      dataset: { issues: new DatasetIssues() },
+    }
+    const rule = schemaDefs.rules.tabular_data.modality_agnostic.Participants
+    evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Participants')
+
+    // participant_id column definition is compatible with schema
+    // age and sex may be overridden
+    // strain_rrid can't be redefined to numeric
+    let issues = context.dataset.issues.get({ code: 'TSV_COLUMN_TYPE_REDEFINED' })
+    assertEquals(issues.length, 1)
+    assertEquals(issues[0].subCode, 'strain_rrid')
+    assertEquals(issues[0].issueMessage, 'Format "integer" must be rrid')
+
+    // Overriding the default sex definition uses the provided values
+    // Values in the default definition may raise issues
+    issues = context.dataset.issues.get({ code: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' })
+    assertEquals(issues.length, 1)
+    assertEquals(issues[0].subCode, 'sex')
+    assertEquals(issues[0].line, 4)
+    assertEquals(issues[0].issueMessage, "'f'")
   })
 
   await t.step('verify column ordering', () => {
