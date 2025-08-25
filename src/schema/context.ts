@@ -320,9 +320,10 @@ export class BIDSContext implements Context {
     const participants_tsv = this.dataset.tree.get('participants.tsv') as BIDSFile
     if (participants_tsv) {
       const participantsData = await loadTSV(participants_tsv)
-      this.dataset.subjects.participant_id = participantsData[
-        'participant_id'
-      ] as string[]
+        .catch((error) => {
+          return new Map()
+        }) as Record<string, string[]>
+      this.dataset.subjects.participant_id = participantsData['participant_id']
     }
 
     // Load phenotype from phenotype/*.tsv
@@ -333,7 +334,10 @@ export class BIDSContext implements Context {
       const seen = new Set() as Set<string>
       for (const file of phenotypeFiles) {
         const phenotypeData = await loadTSV(file)
-        const participant_id = phenotypeData['participant_id'] as string[]
+          .catch((error) => {
+            return new Map()
+          }) as Record<string, string[]>
+        const participant_id = phenotypeData['participant_id']
         if (participant_id) {
           participant_id.forEach((id) => seen.add(id))
         }
