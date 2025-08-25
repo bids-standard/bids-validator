@@ -83,7 +83,7 @@ function refineSignature(base: ValueSignature, override: ValueSignature): ValueS
   if (!base.formats.map(_formatToType).includes(_formatToType(override.formats[0]))) {
     throw {
       code: 'TSV_COLUMN_TYPE_REDEFINED',
-      evidence: `${override.formats[0]} must be one of ${base.formats.join(', ')}`,
+      evidence: `Format "${override.formats[0]}" must be ${base.formats.join(' or ')}`,
     }
   }
   // TODO: Compare actual formats; we want to check that override.formats[0]
