@@ -248,8 +248,8 @@ export class BIDSContext implements Context {
 
     this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
       .catch((error) => {
-        if (error.key) {
-          this.dataset.issues.add({ code: error.key, location: this.file.path })
+        if (error.code) {
+          this.dataset.issues.add({ ...error, location: this.file.path })
         }
         logger.warn(
           `tsv file could not be opened by loadColumns '${this.file.path}'`,

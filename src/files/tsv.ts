@@ -19,7 +19,11 @@ async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMa
     const headers = (headerRow.done || !headerRow.value) ? [] : headerRow.value.split('\t')
 
     if (new Set(headers).size !== headers.length) {
-      throw { key: 'TSV_COLUMN_HEADER_DUPLICATE', evidence: headers.join(', ') }
+      throw {
+        code: 'TSV_COLUMN_HEADER_DUPLICATE',
+        location: file.path,
+        issueMessage: headers.join(', '),
+      }
     }
 
     // Initialize columns in array for construction efficiency
@@ -36,12 +40,12 @@ async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMa
       if (!value) {
         const nextRow = await reader.read()
         if (nextRow.done) break
-        throw { key: 'TSV_EMPTY_LINE', line: rowIndex + 2 }
+        throw { code: 'TSV_EMPTY_LINE', location: file.path, line: rowIndex + 2 }
       }
 
       const values = value.split('\t')
       if (values.length !== headers.length) {
-        throw { key: 'TSV_EQUAL_ROWS', line: rowIndex + 2 }
+        throw { code: 'TSV_EQUAL_ROWS', location: file.path, line: rowIndex + 2 }
       }
       columns.forEach((column, columnIndex) => {
         // Double array size if we exceed the current capacity
