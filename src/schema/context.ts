@@ -232,8 +232,8 @@ export class BIDSContext implements Context {
     ) return
 
     this.nifti_header = await loadHeader(this.file).catch((error) => {
-      if (error.key) {
-        this.dataset.issues.add({ code: error.key, location: this.file.path })
+      if (error.code) {
+        this.dataset.issues.add({ ...error, location: this.file.path })
         return undefined
       } else {
         throw error

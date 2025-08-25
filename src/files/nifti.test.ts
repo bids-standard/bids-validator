@@ -51,7 +51,7 @@ Deno.test('Test loading nifti header', async (t) => {
     const header = await loadHeader(file).catch((e) => {
       error = e
     })
-    assertObjectMatch(error, { key: 'NIFTI_HEADER_UNREADABLE' })
+    assertObjectMatch(error, { code: 'NIFTI_HEADER_UNREADABLE' })
   })
 
   await t.step('Tolerate big headers', async () => {
