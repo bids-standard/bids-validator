@@ -24,6 +24,7 @@ Deno.test('Regression tests', async (t) => {
       debug: 'ERROR',
       ignoreNiftiHeaders: true,
       blacklistModalities: [],
+      datasetTypes: [],
     })
     assert(result.issues.get({ code: 'NOT_INCLUDED' }).length == 1)
     assert(result.issues.get({ code: 'SCANS_FILENAME_NOT_MATCH_DATASET' }).length == 0)
@@ -37,6 +38,7 @@ Deno.test('Regression tests', async (t) => {
       debug: 'ERROR',
       ignoreNiftiHeaders: true,
       blacklistModalities: [],
+      datasetTypes: [],
     })
     assert(result.issues.get({ code: 'NOT_INCLUDED' }).length == 0)
     assert(result.issues.get({ code: 'SCANS_FILENAME_NOT_MATCH_DATASET' }).length == 0)

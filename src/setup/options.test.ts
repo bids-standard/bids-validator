@@ -10,6 +10,7 @@ Deno.test('options parsing', async (t) => {
       json: true,
       color: false,
       blacklistModalities: [],
+      datasetTypes: [],
       maxRows: 1000,
     })
   })

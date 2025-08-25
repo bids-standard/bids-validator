@@ -170,6 +170,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'A json sidecar file was found without a corresponding data file',
   },
+  UNSUPPORTED_DATASET_TYPE: {
+    severity: 'error',
+    reason: 'This DatasetType is not supported by the application.',
+  },
   BLACKLISTED_MODALITY: {
     severity: 'error',
     reason: 'The modality in this file is blacklisted through validator configuration.',
