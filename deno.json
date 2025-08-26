@@ -1,6 +1,6 @@
 {
   "name": "@bids/validator",
-  "version": "2.0.9-dev",
+  "version": "2.0.9",
   "exports": {
     ".": "./src/bids-validator.ts",
     "./main": "./src/main.ts",

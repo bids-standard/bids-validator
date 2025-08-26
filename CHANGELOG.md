@@ -1,4 +1,20 @@
 
+<a id='changelog-"2.0.9"'></a>
+# "2.0.9" — 2025-08-26
+
+## Added
+
+- Display version in web app
+
+- The `--datasetTypes` flag accepts a list of `DatasetType`s,
+  allowing applications to restrict the datasets they accept.
+
+## Changed
+
+- Upgraded to BIDS schema version 1.0.13.
+
+- Raise error when JSON files are parsed and their root value is anything other than an object
+
 <a id='changelog-"2.0.8"'></a>
 # "2.0.8" — 2025-08-07
 
