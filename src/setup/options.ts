@@ -76,13 +76,13 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   )
   .type('datasetType', datasetType)
   .option(
-    '--datasetTypes <...datasetTypes:datasetType>',
+    '--datasetTypes <datasetTypes:datasetType[]>',
     'Permitted dataset types to validate against (default: all)',
     { default: [] as string[] },
   )
   .type('modality', modalityType)
   .option(
-    '--blacklistModalities <...modalities:modality>',
+    '--blacklistModalities <modalities:modality[]>',
     'Array of modalities to error on if detected.',
     { default: [] as string[] },
   )
