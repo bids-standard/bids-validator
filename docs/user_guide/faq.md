@@ -13,8 +13,9 @@ The primary way it does this is by interpreting the [BIDS Schema][schema-descrip
 
 The general categories of rules include:
 
-- Filename rules: These rules indicate valid combinations of [entities][], [suffixes][]
-  [datatypes][] and [extensions][]. Every file in a dataset must match a filename rule.
+- Filename rules: These rules indicate valid combinations of [entities][], [suffixes][definitions]
+  [datatypes][definitions] and [extensions][definitions].
+  Every file in a dataset must match a filename rule.
 - Sidecar and JSON rules: These rules indicate whether fields are REQUIRED, RECOMMENDED
   or OPTIONAL in a JSON file.
   REQUIRED fields produce errors on absence, while RECOMMENDED fields produce warnings on absence.
@@ -105,3 +106,5 @@ or `n/a` (which is permitted in all columns, according to the BIDS Standard).
 
 [new-issue]: https://github.com/bids-standard/bids-validator/issues/new
 [schema-description]: https://bidsschematools.readthedocs.io/en/latest/description.html
+[entities]: https://bids-specification.readthedocs.io/en/stable/common-principles.html#entities
+[definitions]: https://bids-specification.readthedocs.io/en/stable/common-principles.html#definitions
