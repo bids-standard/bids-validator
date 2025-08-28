@@ -57,8 +57,8 @@ export async function validate(
   const dsContext = new BIDSContextDataset({ options, schema, tree: fileTree })
   if (ddFile) {
     dsContext.dataset_description = await loadJSON(ddFile).catch((error) => {
-      if (error.key) {
-        dsContext.issues.add({ code: error.key, location: ddFile.path })
+      if (error.code) {
+        dsContext.issues.add({ ...error, location: ddFile.path })
         return {} as Record<string, unknown>
       } else {
         throw error

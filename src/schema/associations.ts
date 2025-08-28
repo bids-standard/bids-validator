@@ -143,8 +143,8 @@ export async function buildAssociations(
       // @ts-expect-error
       associations[key] = await load(file, { maxRows: context.dataset.options?.maxRows }).catch(
         (error: any) => {
-          if (key in error) {
-            context.dataset.issues.add({ code: error.key, location: file.path })
+          if (error.code) {
+            context.dataset.issues.add({ ...error, location: file.path })
           }
         },
       )

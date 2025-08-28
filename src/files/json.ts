@@ -14,7 +14,7 @@ async function readJSONText(file: BIDSFile): Promise<string> {
     }
     return text
   } catch (error) {
-    throw { key: 'INVALID_JSON_ENCODING' }
+    throw { code: 'INVALID_JSON_ENCODING' }
   } finally {
     decoder.decode() // Reset decoder
   }
@@ -26,12 +26,12 @@ export async function loadJSON(file: BIDSFile): Promise<Record<string, unknown>>
   try {
     parsedText = JSON.parse(text)
   } catch (error) {
-    throw { key: 'JSON_INVALID' } // Raise syntax errors
+    throw { code: 'JSON_INVALID' } // Raise syntax errors
   }
   if (Array.isArray(parsedText) || typeof parsedText !== 'object') {
     throw {
-      key: 'JSON_NOT_AN_OBJECT',
-      evidence: text.substring(0, 10) + (text.length > 10 ? '...' : ''),
+      code: 'JSON_NOT_AN_OBJECT',
+      issueMessage: text.substring(0, 10) + (text.length > 10 ? '...' : ''),
     }
   }
   return parsedText

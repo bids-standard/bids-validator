@@ -53,7 +53,7 @@ Deno.test('TSV loading', async (t) => {
     try {
       await loadTSV(file)
     } catch (e: any) {
-      assertObjectMatch(e, { key: 'TSV_EMPTY_LINE', line: 3 })
+      assertObjectMatch(e, { code: 'TSV_EMPTY_LINE', line: 3 })
     }
   })
 
@@ -64,7 +64,7 @@ Deno.test('TSV loading', async (t) => {
     try {
       await loadTSV(file)
     } catch (e: any) {
-      assertObjectMatch(e, { key: 'TSV_EQUAL_ROWS', line: 3 })
+      assertObjectMatch(e, { code: 'TSV_EQUAL_ROWS', location: '/mismatched_row.tsv', line: 3 })
     }
   })
 
@@ -171,7 +171,7 @@ Deno.test('TSV loading', async (t) => {
       await loadTSV(file)
       assert(false, 'Expected error')
     } catch (e: any) {
-      assertObjectMatch(e, { key: 'TSV_COLUMN_HEADER_DUPLICATE', evidence: 'a, a' })
+      assertObjectMatch(e, { code: 'TSV_COLUMN_HEADER_DUPLICATE', issueMessage: 'a, a' })
     }
   })
 

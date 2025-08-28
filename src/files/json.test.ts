@@ -40,7 +40,7 @@ Deno.test('Test JSON error conditions', async (t) => {
     await loadJSON(BOMfile).catch((e) => {
       error = e
     })
-    assertObjectMatch(error, { key: 'INVALID_JSON_ENCODING' })
+    assertObjectMatch(error, { code: 'INVALID_JSON_ENCODING' })
   })
 
   await t.step('Error on UTF-16', async () => {
@@ -49,7 +49,7 @@ Deno.test('Test JSON error conditions', async (t) => {
     await loadJSON(UTF16file).catch((e) => {
       error = e
     })
-    assertObjectMatch(error, { key: 'INVALID_JSON_ENCODING' })
+    assertObjectMatch(error, { code: 'INVALID_JSON_ENCODING' })
   })
 
   await t.step('Error on invalid JSON syntax', async () => {
@@ -58,6 +58,6 @@ Deno.test('Test JSON error conditions', async (t) => {
     await loadJSON(badJSON).catch((e) => {
       error = e
     })
-    assertObjectMatch(error, { key: 'JSON_INVALID' })
+    assertObjectMatch(error, { code: 'JSON_INVALID' })
   })
 })
