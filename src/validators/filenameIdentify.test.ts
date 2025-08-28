@@ -93,8 +93,8 @@ Deno.test('test hasMatch', async (t) => {
     const file = new BIDSFileDeno(path, fileName, ignore)
     const context = new BIDSContext(file)
     context.filenameRules = [
-      'rules.files.raw.task.events__mri',
-      'rules.files.raw.task.events__pet',
+      'rules.files.raw.events.events__mri',
+      'rules.files.raw.events.events__pet',
     ]
     await hasMatch(schema, context)
     assertEquals(context.filenameRules.length, 2)
