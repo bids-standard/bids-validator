@@ -133,6 +133,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     reason:
       'A column required in a TSV file has been redefined in a sidecar file. This redefinition is being ignored.',
   },
+  INVALID_GZIP: {
+    severity: 'error',
+    reason: 'The gzip file could not be decompressed. It may be corrupt or misnamed.',
+  },
   MULTIPLE_INHERITABLE_FILES: {
     severity: 'error',
     reason: 'Multiple files in a directory were found to be valid candidates for inheritance.',
