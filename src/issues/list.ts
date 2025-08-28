@@ -133,6 +133,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     reason:
       'A column required in a TSV file has been redefined in a sidecar file. This redefinition is being ignored.',
   },
+  TSV_PSEUDO_AGE_DEPRECATED: {
+    severity: 'warning',
+    reason: 'Use of the value "89+" in column "age" is deprecated. Use 89 for all ages 89 and over.',
+  },
   INVALID_GZIP: {
     severity: 'error',
     reason: 'The gzip file could not be decompressed. It may be corrupt or misnamed.',
