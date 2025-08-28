@@ -18,7 +18,7 @@ import { readEntities } from './entities.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { walkBack } from '../files/inheritance.ts'
 import { parseGzip } from '../files/gzip.ts'
-import { loadTSV } from '../files/tsv.ts'
+import { loadTSV, loadTSVGZ } from '../files/tsv.ts'
 import { parseTIFF } from '../files/tiff.ts'
 import { loadJSON } from '../files/json.ts'
 import { loadHeader } from '../files/nifti.ts'
@@ -254,21 +254,40 @@ export class BIDSContext implements Context {
   }
 
   async loadColumns(): Promise<void> {
-    if (this.extension !== '.tsv') {
-      return
+    if (this.extension == '.tsv') {
+      this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
+        .catch((error) => {
+          if (error.code) {
+            this.dataset.issues.add({ ...error, location: this.file.path })
+          }
+          logger.warn(
+            `tsv file could not be opened by loadColumns '${this.file.path}'`,
+          )
+          logger.debug(error)
+          return new Map<string, string[]>() as ColumnsMap
+        }) as Record<string, string[]>
+    } else if (this.extension == '.tsv.gz') {
+      const headers = this.sidecar.Columns as string[];
+      if (!headers || this.size === 0) {
+        // Missing Columns will be caught by sidecar rules
+        // Note that these rules currently select for suffix, and will need to be generalized
+        // or duplicated for new .tsv.gz files
+        // `this.size === 0` will show as `EMPTY_FILE`, so do not add INVALID_GZIP
+        return
+      }
+      this.columns = await loadTSVGZ(this.file, headers, this.dataset.options?.maxRows)
+        .catch((error) => {
+          if (error.code) {
+            this.dataset.issues.add({ ...error, location: this.file.path })
+          }
+          logger.warn(
+            `tsv.gz file could not be opened by loadColumns '${this.file.path}'`,
+          )
+          logger.debug(error)
+          return new Map<string, string[]>() as ColumnsMap
+        }) as Record<string, string[]>
     }
 
-    this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
-      .catch((error) => {
-        if (error.code) {
-          this.dataset.issues.add({ ...error, location: this.file.path })
-        }
-        logger.warn(
-          `tsv file could not be opened by loadColumns '${this.file.path}'`,
-        )
-        logger.debug(error)
-        return new Map<string, string[]>() as ColumnsMap
-      }) as Record<string, string[]>
     return
   }
 
@@ -340,15 +359,24 @@ export class BIDSContext implements Context {
   }
 
   async asyncLoads() {
-    await Promise.allSettled([
-      this.loadSubjects(),
+    // loaders that may be depended on by other loaders
+    const initial = [
       this.loadSidecar(),
-      this.loadColumns(),
       this.loadAssociations(),
+    ]
+    // loaders that do not depend on other loaders
+    const independent = [
+      this.loadSubjects(),
       this.loadNiftiHeader(),
       this.loadJSON(),
       this.loadGzip(),
       this.loadTIFF(),
-    ])
+    ]
+
+    // Loaders with dependencies
+    await Promise.allSettled(initial)
+    await this.loadColumns()
+
+    await Promise.allSettled(independent)
   }
 }
