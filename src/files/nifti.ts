@@ -65,6 +65,7 @@ export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
       },
       qform_code: header.qform_code,
       sform_code: header.sform_code,
+      axis_codes: axisCodes(header.affine),
     } as NiftiHeader
   } catch (err) {
     throw { code: 'NIFTI_HEADER_UNREADABLE' }
