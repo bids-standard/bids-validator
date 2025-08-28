@@ -33,6 +33,7 @@ deno run -A jsr:@bids/validator
 user_guide/web.md
 user_guide/command-line.md
 user_guide/issues.md
+user_guide/faq.md
 ```
 
 ```{toctree}
