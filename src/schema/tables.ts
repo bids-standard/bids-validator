@@ -251,7 +251,7 @@ export function evalColumns(
     const spec = compileSignature(signature, schema.objects.formats)
 
     const issue = {
-      code: 'TSV_VALUE_INCORRECT_TYPE' + (requirement != 'required' ? '_NONREQUIRED' : ''),
+      code: 'TSV_VALUE_INCORRECT_TYPE',
       subCode: name,
       location: context.path,
       rule: schemaPath,
