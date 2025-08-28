@@ -94,7 +94,6 @@ export function evalCheck(src: string, context: BIDSContext) {
  * We associate theys keys from a rule object to a function adds an
  * issue to the context if the rule evaluation fails.
  */
-// @ts-expect-error
 const evalMap: Record<
   keyof GenericRule,
   (
@@ -105,9 +104,13 @@ const evalMap: Record<
   ) => boolean | void
 > = {
   checks: evalRuleChecks,
+  // @ts-expect-error
   columns: evalColumns,
+  // @ts-expect-error
   additional_columns: evalAdditionalColumns,
+  // @ts-expect-error
   initial_columns: evalInitialColumns,
+  // @ts-expect-error
   index_columns: evalIndexColumns,
   fields: evalJsonCheck,
 }
