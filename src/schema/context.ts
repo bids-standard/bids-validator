@@ -336,22 +336,6 @@ export class BIDSContext implements Context {
         'participant_id'
       ] as string[]
     }
-
-    // Load phenotype from phenotype/*.tsv
-    const phenotype_dir = this.dataset.tree.get('phenotype') as FileTree
-    if (phenotype_dir) {
-      const phenotypeFiles = phenotype_dir.files.filter((file) => file.name.endsWith('.tsv'))
-      // Collect observed participant_ids
-      const seen = new Set() as Set<string>
-      for (const file of phenotypeFiles) {
-        const phenotypeData = await loadTSV(file)
-        const participant_id = phenotypeData['participant_id'] as string[]
-        if (participant_id) {
-          participant_id.forEach((id) => seen.add(id))
-        }
-      }
-      this.dataset.subjects.phenotype = Array.from(seen)
-    }
   }
 
   async asyncLoads() {
