@@ -12,6 +12,7 @@ async function loadColumns(
   reader: ReadableStreamDefaultReader<string>,
   headers: string[],
   maxRows: number,
+  startRow: number = 0,
 ): Promise<ColumnsMap> {
   // Initialize columns in array for construction efficiency
   const initialCapacity = maxRows >= 0 ? maxRows : 1000
@@ -27,12 +28,12 @@ async function loadColumns(
     if (!value) {
       const nextRow = await reader.read()
       if (nextRow.done) break
-      throw { code: 'TSV_EMPTY_LINE', line: rowIndex + 2 }
+      throw { code: 'TSV_EMPTY_LINE', line: rowIndex + startRow + 1 }
     }
 
     const values = value.split('\t')
     if (values.length !== headers.length) {
-      throw { code: 'TSV_EQUAL_ROWS', line: rowIndex + 2 }
+      throw { code: 'TSV_EQUAL_ROWS', line: rowIndex + startRow + 1 }
     }
     columns.forEach((column, columnIndex) => {
       // Double array size if we exceed the current capacity
@@ -47,6 +48,30 @@ async function loadColumns(
   return new ColumnsMap(
     headers.map((header, index) => [header, columns[index].slice(0, rowIndex)]),
   )
+}
+
+export async function loadTSVGZ(
+  file: BIDSFile,
+  headers: string[],
+  maxRows: number = -1,
+): Promise<ColumnsMap> {
+  const reader = file.stream
+    .pipeThrough(new DecompressionStream('gzip'))
+    .pipeThrough(createUTF8Stream())
+    .pipeThrough(new TextLineStream())
+    .getReader()
+
+  try {
+    return await loadColumns(reader, headers, maxRows)
+  } catch (e: any) {
+    // Cancel the reader if we interrupted the read
+    // Cancelling for I/O errors will just re-trigger the error
+    if (e.code) {
+      await reader.cancel()
+      throw e
+    }
+    throw { code: 'INVALID_GZIP', location: file.path }
+  }
 }
 
 async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMap> {
@@ -67,7 +92,7 @@ async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMa
       }
     }
 
-    return await loadColumns(reader, headers, maxRows)
+    return await loadColumns(reader, headers, maxRows, 1)
   } finally {
     await reader.cancel()
   }
