@@ -6,7 +6,7 @@ import {
   assertStrictEquals,
 } from '@std/assert'
 import { pathToFile } from './filetree.ts'
-import { loadTSV } from './tsv.ts'
+import { loadTSV, loadTSVGZ } from './tsv.ts'
 import { streamFromString } from '../tests/utils.ts'
 import { ColumnsMap } from '../types/columns.ts'
 
@@ -177,4 +177,113 @@ Deno.test('TSV loading', async (t) => {
 
   // Tests will have populated the memoization cache
   loadTSV.cache.clear()
+})
+
+Deno.test('TSVGZ loading', async (t) => {
+  await t.step('No header and empty file produces empty map', async () => {
+    const file = pathToFile('/empty.tsv.gz')
+    file.stream = streamFromString('').pipeThrough(new CompressionStream('gzip'))
+
+    const map = await loadTSVGZ(file, [])
+    // map.size looks for a column called map, so work around it
+    assertEquals(Object.keys(map).length, 0)
+  })
+
+  await t.step('Empty file produces header-only map', async () => {
+    const file = pathToFile('/empty.tsv.gz')
+    file.stream = streamFromString('').pipeThrough(new CompressionStream('gzip'))
+
+    const map = await loadTSVGZ(file, ['a', 'b', 'c'])
+    assertEquals(map.a, [])
+    assertEquals(map.b, [])
+    assertEquals(map.c, [])
+  })
+
+  await t.step('Single column file produces single column maps', async () => {
+    const file = pathToFile('/single_column.tsv')
+    file.stream = streamFromString('1\n2\n3\n').pipeThrough(new CompressionStream('gzip'))
+
+    const map = await loadTSVGZ(file, ['a'])
+    assertEquals(map.a, ['1', '2', '3'])
+  })
+
+  await t.step('Mismatched header length throws issue', async () => {
+    const file = pathToFile('/single_column.tsv.gz')
+    file.stream = streamFromString('1\n2\n3\n').pipeThrough(new CompressionStream('gzip'))
+
+    try {
+      await loadTSVGZ(file, ['a', 'b'])
+    } catch (e: any) {
+      assertObjectMatch(e, { code: 'TSV_EQUAL_ROWS', line: 1 })
+    }
+  })
+
+  await t.step('Missing final newline is ignored', async () => {
+    const file = pathToFile('/missing_newline.tsv.gz')
+    file.stream = streamFromString('1\n2\n3').pipeThrough(new CompressionStream('gzip'))
+
+    const map = await loadTSVGZ(file, ['a'])
+    assertEquals(map.a, ['1', '2', '3'])
+  })
+
+  await t.step('Empty row throws issue', async () => {
+    const file = pathToFile('/empty_row.tsv.gz')
+    file.stream = streamFromString('1\t2\t3\n\n4\t5\t6\n').pipeThrough(new CompressionStream('gzip'))
+
+    try {
+      await loadTSVGZ(file, ['a', 'b', 'c'])
+    } catch (e: any) {
+      assertObjectMatch(e, { code: 'TSV_EMPTY_LINE', line: 2 })
+    }
+  })
+
+  await t.step('Mislabeled TSV throws issue', async () => {
+    const file = pathToFile('/mismatched_row.tsv.gz')
+    file.stream = streamFromString('a\tb\tc\n1\t2\t3\n4\t5\n')
+
+    try {
+      await loadTSVGZ(file, ['a', 'b', 'c'])
+    } catch (e: any) {
+      assertObjectMatch(e, { code: 'INVALID_GZIP' })
+    }
+  })
+
+  await t.step('maxRows limits the number of rows read', async () => {
+    const file = pathToFile('/long.tsv.gz')
+    // Use 1500 to avoid overlap with default initial capacity
+    const headers = ['a', 'b', 'c']
+    const text = '1\t2\t3\n'.repeat(1500)
+    file.stream = streamFromString(text).pipeThrough(new CompressionStream('gzip'))
+
+    let map = await loadTSVGZ(file, headers, 0)
+    assertEquals(map.a, [])
+    assertEquals(map.b, [])
+    assertEquals(map.c, [])
+
+    file.stream = streamFromString(text).pipeThrough(new CompressionStream('gzip'))
+    map = await loadTSVGZ(file, headers, 1)
+    assertEquals(map.a, ['1'])
+    assertEquals(map.b, ['2'])
+    assertEquals(map.c, ['3'])
+
+    file.stream = streamFromString(text).pipeThrough(new CompressionStream('gzip'))
+    map = await loadTSVGZ(file, headers, 2)
+    assertEquals(map.a, ['1', '1'])
+    assertEquals(map.b, ['2', '2'])
+    assertEquals(map.c, ['3', '3'])
+
+    file.stream = streamFromString(text).pipeThrough(new CompressionStream('gzip'))
+    map = await loadTSVGZ(file, headers, -1)
+    assertEquals(map.a, Array(1500).fill('1'))
+    assertEquals(map.b, Array(1500).fill('2'))
+    assertEquals(map.c, Array(1500).fill('3'))
+
+    // Check that maxRows does not truncate shorter files
+    file.stream = streamFromString('1\t2\t3\n4\t5\t6\n7\t8\t9\n').pipeThrough(new CompressionStream('gzip'))
+    map = await loadTSVGZ(file, headers, 4)
+    assertEquals(map.a, ['1', '4', '7'])
+    assertEquals(map.b, ['2', '5', '8'])
+    assertEquals(map.c, ['3', '6', '9'])
+  })
+
 })
