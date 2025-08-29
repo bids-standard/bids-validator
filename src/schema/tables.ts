@@ -1,9 +1,10 @@
 import type { GenericRule } from '../types/schema.ts'
-import type { Schema } from '@bids/schema/metaschema'
+import type { Schema, TabularData } from '@bids/schema/metaschema'
 import type { BIDSContext } from './context.ts'
 
 type ColumnSchema = Schema['objects']['columns'][keyof Schema['objects']['columns']]
 type Formats = Schema['objects']['formats']
+type ColumnRule = TabularData['RuleName']
 
 /* Common target for comparing schema and sidecar definitions */
 interface ValueSignature {
@@ -187,6 +188,15 @@ function checkValue(value: string, spec: ValueSpec): boolean {
       (spec.minimum === undefined || numValue >= spec.minimum)
   }
   return true
+}
+
+/* Utility functions for working with column rules */
+function getRequirement(rule: ColumnRule, name: string): string {
+  if (name in rule.columns) {
+    const requirementObj = rule.columns[name]
+    return typeof requirementObj === 'string' ? requirementObj : requirementObj.level
+  }
+  return rule?.additional_columns ?? 'n/a'
 }
 
 /**
