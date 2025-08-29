@@ -146,7 +146,7 @@ function mapEvalCheck(statements: string[], context: BIDSContext): boolean {
  * Classic rules interpreted like selectors. Examples in specification:
  * schema/rules/checks/*
  */
-function evalRuleChecks(
+export function evalRuleChecks(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,

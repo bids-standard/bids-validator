@@ -65,8 +65,91 @@ export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
       },
       qform_code: header.qform_code,
       sform_code: header.sform_code,
+      axis_codes: axisCodes(header.affine),
     } as NiftiHeader
   } catch (err) {
     throw { code: 'NIFTI_HEADER_UNREADABLE' }
   }
+}
+
+/** Vector addition */
+function add(a: number[], b: number[]): number[] {
+  return a.map((x, i) => x + b[i])
+}
+
+/** Vector subtraction */
+function sub(a: number[], b: number[]): number[] {
+  return a.map((x, i) => x - b[i])
+}
+
+/** Scalar multiplication */
+function scale(vec: number[], scalar: number): number[] {
+  return vec.map((x) => x * scalar)
+}
+
+/** Dot product */
+function dot(a: number[], b: number[]): number {
+  return a.map((x, i) => x * b[i]).reduce((acc, x) => acc + x, 0)
+}
+
+function argMax(arr: number[]): number {
+  return arr.reduce((acc, x, i) => (x > arr[acc] ? i : acc), 0)
+}
+
+/**
+ * Identify the nearest principle axes of an image affine.
+ *
+ * Affines transform indices in a data array into mm right, anterior and superior of
+ * an origin in "world coordinates". If moving along an axis in the positive direction
+ * predominantly moves right, that axis is labeled "R".
+ *
+ * @example The identity matrix is in "RAS" orientation:
+ *
+ * # Usage
+ *
+ * ```ts
+ * const affine = [[1, 0, 0, 0],
+ *                 [0, 1, 0, 0],
+ *                 [0, 0, 1, 0],
+ *                 [0, 0, 0, 1]]
+ *
+ * axisCodes(affine)
+ * ```
+ *
+ * # Result
+ * ```ts
+ * ['R', 'A', 'S']
+ * ```
+ *
+ * @returns character codes describing the orientation of an image affine.
+ */
+export function axisCodes(affine: number[][]): string[] {
+  // This function is an extract of the Python function transforms3d.affines.decompose44
+  // (https://github.com/matthew-brett/transforms3d/blob/6a43a98/transforms3d/affines.py#L10-L153)
+  //
+  // As an optimization, this only orthogonalizes the basis,
+  // and does not normalize to unit vectors.
+
+  // Operate on columns, which are the cosines that project input coordinates onto output axes
+  const [cosX, cosY, cosZ] = [0, 1, 2].map((j) => [0, 1, 2].map((i) => affine[i][j]))
+
+  // Orthogonalize cosY with respect to cosX
+  const orthY = sub(cosY, scale(cosX, dot(cosX, cosY)))
+
+  // Orthogonalize cosZ with respect to cosX and orthY
+  const orthZ = sub(
+    cosZ, add(scale(cosX, dot(cosX, cosZ)), scale(orthY, dot(orthY, cosZ)))
+  )
+
+  const basis = [cosX, orthY, orthZ]
+  const maxIndices = basis.map((row) => argMax(row.map(Math.abs)))
+
+  // Check that indices are 0, 1 and 2 in some order
+  if (maxIndices.toSorted().some((idx, i) => idx !== i)) {
+    throw { key: 'AMBIGUOUS_AFFINE' }
+  }
+
+  // Positive/negative codes for each world axis
+  const codes = ['RL', 'AP', 'SI']
+  return maxIndices.map((idx, i) => codes[idx][basis[i][idx] > 0 ? 0 : 1])
 }
