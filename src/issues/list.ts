@@ -133,6 +133,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     reason:
       'A column required in a TSV file has been redefined in a sidecar file. This redefinition is being ignored.',
   },
+  TSV_PSEUDO_AGE_DEPRECATED: {
+    severity: 'warning',
+    reason: 'Use of the value "89+" in column "age" is deprecated. Use 89 for all ages 89 and over.',
+  },
   MULTIPLE_INHERITABLE_FILES: {
     severity: 'error',
     reason: 'Multiple files in a directory were found to be valid candidates for inheritance.',
