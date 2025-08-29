@@ -1,4 +1,31 @@
 
+<a id='changelog-2.0.10'></a>
+# 2.0.10 — 2025-08-29
+
+## Added
+
+- Added a [FAQ] to the user guide. ([#215])
+
+[FAQ]: https://bids-validator.readthedocs.io/en/latest/user_guide/faq.html
+[#215]: https://github.com/bids-standard/bids-validator/issues/215
+
+## Changed
+
+- Improved handling of TSV columns with sidecar definitions.
+  `"Format"`, `"Minimum"` and `"Maximum"` keys are now supported.
+
+- `--datasetTypes` and `--blacklistModalities` options now accept a string array (`--datasetTypes raw,derivative`) and can be combined.
+
+## Fixed
+
+- A crash in the web validator prevented validation from taking place.
+
+## Infrastructure
+
+- Docker images will once again be pushed to [bids/validator][].
+
+[bids/validator]: https://hub.docker.com/r/bids/validator/
+
 <a id='changelog-"2.0.9"'></a>
 # "2.0.9" — 2025-08-26
 
