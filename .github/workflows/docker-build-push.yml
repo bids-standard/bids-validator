@@ -50,4 +50,4 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Verify Docker image
-        run: docker run --rm ${{ steps.meta.outputs.tags }} --version
+        run: docker run --rm ${{ fromJSON(steps.meta.outputs.json).tags[0] }} --version
