@@ -313,23 +313,32 @@ export function evalInitialColumns(
     return
   }
   const headers = [...Object.keys(context.columns)]
-  rule.initial_columns.map((ruleHeader: string, ruleIndex: number) => {
-    const ruleHeaderName = schema.objects.columns[ruleHeader].name
-    const contextIndex = headers.findIndex((x) => x === ruleHeaderName)
-    if (contextIndex === -1) {
+  // Collect the initial columns, index and requirement levels
+  // dropping any that are absent but not required
+  const columns = rule.initial_columns.map((ruleHeader: string) => {
+    const name = schema.objects.columns[ruleHeader].name
+    return {
+      name,
+      requirement: getRequirement(rule as ColumnRule, ruleHeader),
+      index: headers.indexOf(name),
+    }
+  }).filter(({ requirement, index }) => requirement === 'required' || index !== -1)
+  // Validate ordering of present and/or required initial columns
+  columns.forEach(({ name, requirement, index }, targetIndex) => {
+    if (index === -1) {
       context.dataset.issues.add({
         code: 'TSV_COLUMN_MISSING',
-        subCode: ruleHeaderName,
+        subCode: name,
         location: context.path,
-        issueMessage: `Column ${ruleIndex} (starting from 0) not found.`,
+        issueMessage: `Required initial column ${targetIndex + 1} not found.`,
         rule: schemaPath,
       })
-    } else if (ruleIndex !== contextIndex) {
+    } else if (index !== targetIndex) {
       context.dataset.issues.add({
         code: 'TSV_COLUMN_ORDER_INCORRECT',
-        subCode: ruleHeaderName,
+        subCode: name,
         location: context.path,
-        issueMessage: `Column ${ruleIndex} (starting from 0) found at index ${contextIndex}.`,
+        issueMessage: `Initial column ${targetIndex + 1} found at index ${index + 1}.`,
         rule: schemaPath,
       })
     }
