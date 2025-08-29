@@ -6,3 +6,4 @@ const errors = result.issues.get({ severity: 'error' })
 if (errors.length) {
   Deno.exit(16)
 }
+Deno.exit(0)
