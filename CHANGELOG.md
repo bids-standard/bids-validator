@@ -1,4 +1,11 @@
 
+<a id='changelog-2.0.11'></a>
+# 2.0.11 — 2025-08-29
+
+## Fixed
+
+- Docker build workflow should now run correctly on releases.
+
 <a id='changelog-2.0.10'></a>
 # 2.0.10 — 2025-08-29
 
