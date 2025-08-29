@@ -45,7 +45,7 @@ export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
       header.readHeader(data.buffer)
     }
     if (!header) {
-      throw { key: 'NIFTI_HEADER_UNREADABLE' }
+      throw { code: 'NIFTI_HEADER_UNREADABLE' }
     }
     const ndim = header.dims[0]
     return {
@@ -67,6 +67,6 @@ export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
       sform_code: header.sform_code,
     } as NiftiHeader
   } catch (err) {
-    throw { key: 'NIFTI_HEADER_UNREADABLE' }
+    throw { code: 'NIFTI_HEADER_UNREADABLE' }
   }
 }

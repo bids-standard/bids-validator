@@ -28,10 +28,15 @@ export type ValidatorOptions = {
   color?: boolean
   recursive?: boolean
   outfile?: string
+  datasetTypes: string[]
   blacklistModalities: string[]
   prune?: boolean
   maxRows?: number
 }
+
+const datasetType = new EnumType<string>(
+  schema.objects.metadata.DatasetType.enum as string[],
+)
 
 const modalityType = new EnumType<string>(
   Object.keys(schema.rules.modalities),
@@ -69,9 +74,15 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
     '--filenameMode',
     'Enable filename checks for newline separated filenames read from stdin',
   )
+  .type('datasetType', datasetType)
+  .option(
+    '--datasetTypes <datasetTypes:datasetType[]>',
+    'Permitted dataset types to validate against (default: all)',
+    { default: [] as string[] },
+  )
   .type('modality', modalityType)
   .option(
-    '--blacklistModalities <...modalities:modality>',
+    '--blacklistModalities <modalities:modality[]>',
     'Array of modalities to error on if detected.',
     { default: [] as string[] },
   )

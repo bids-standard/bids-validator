@@ -57,8 +57,8 @@ export async function validate(
   const dsContext = new BIDSContextDataset({ options, schema, tree: fileTree })
   if (ddFile) {
     dsContext.dataset_description = await loadJSON(ddFile).catch((error) => {
-      if (error.key) {
-        dsContext.issues.add({ code: error.key, location: ddFile.path })
+      if (error.code) {
+        dsContext.issues.add({ ...error, location: ddFile.path })
         return {} as Record<string, unknown>
       } else {
         throw error
@@ -70,6 +70,18 @@ export async function validate(
       code: 'MISSING_DATASET_DESCRIPTION',
       affects: ['/dataset_description.json'],
     })
+  }
+
+  // Empty list defaults to allow all
+  if (options.datasetTypes?.length) {
+    const datasetType = (dsContext.dataset_description.DatasetType ?? 'raw') as string
+    if (!options.datasetTypes.includes(datasetType)) {
+      dsContext.issues.add({
+        code: 'UNSUPPORTED_DATASET_TYPE',
+        location: '/dataset_description.json',
+        issueMessage: `"DatasetType": "${datasetType}"`,
+      })
+    }
   }
 
   const bidsDerivatives: FileTree[] = []

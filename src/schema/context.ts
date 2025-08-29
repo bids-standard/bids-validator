@@ -244,8 +244,8 @@ export class BIDSContext implements Context {
     ) return
 
     this.nifti_header = await loadHeader(this.file).catch((error) => {
-      if (error.key) {
-        this.dataset.issues.add({ code: error.key, location: this.file.path })
+      if (error.code) {
+        this.dataset.issues.add({ ...error, location: this.file.path })
         return undefined
       } else {
         throw error
@@ -260,8 +260,8 @@ export class BIDSContext implements Context {
 
     this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
       .catch((error) => {
-        if (error.key) {
-          this.dataset.issues.add({ code: error.key, location: this.file.path })
+        if (error.code) {
+          this.dataset.issues.add({ ...error, location: this.file.path })
         }
         logger.warn(
           `tsv file could not be opened by loadColumns '${this.file.path}'`,
@@ -284,8 +284,8 @@ export class BIDSContext implements Context {
       return
     }
     this.json = await loadJSON(this.file).catch((error) => {
-      if (error.key) {
-        this.dataset.issues.add({ code: error.key, location: this.file.path })
+      if (error.code) {
+        this.dataset.issues.add({ ...error, location: this.file.path })
         return {}
       } else {
         throw error
@@ -332,9 +332,10 @@ export class BIDSContext implements Context {
     const participants_tsv = this.dataset.tree.get('participants.tsv') as BIDSFile
     if (participants_tsv) {
       const participantsData = await loadTSV(participants_tsv)
-      this.dataset.subjects.participant_id = participantsData[
-        'participant_id'
-      ] as string[]
+        .catch((error) => {
+          return new Map()
+        }) as Record<string, string[]>
+      this.dataset.subjects.participant_id = participantsData['participant_id']
     }
   }
 
