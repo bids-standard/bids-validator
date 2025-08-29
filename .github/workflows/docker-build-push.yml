@@ -23,9 +23,10 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v5
         with:
-          fetch-tags: true
           fetch-depth: 200
           filter: blob:none
+          # fetch-tags: true breaks on tags
+          fetch-tags: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
       - name: Log in to Docker Hub
         if: github.event_name == 'push'
