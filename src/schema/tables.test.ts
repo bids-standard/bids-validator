@@ -69,7 +69,7 @@ Deno.test('tables eval* tests', async (t) => {
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
     evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
     assertEquals(
-      context.dataset.issues.get({ code: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' }).length,
+      context.dataset.issues.get({ code: 'TSV_VALUE_INCORRECT_TYPE' }).length,
       1,
     )
   })
@@ -159,7 +159,7 @@ Deno.test('tables eval* tests', async (t) => {
 
     // Overriding the default sex definition uses the provided values
     // Values in the default definition may raise issues
-    issues = context.dataset.issues.get({ code: 'TSV_VALUE_INCORRECT_TYPE_NONREQUIRED' })
+    issues = context.dataset.issues.get({ code: 'TSV_VALUE_INCORRECT_TYPE' })
     assertEquals(issues.length, 1)
     assertEquals(issues[0].subCode, 'sex')
     assertEquals(issues[0].line, 4)
