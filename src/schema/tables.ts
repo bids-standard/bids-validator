@@ -207,7 +207,7 @@ export function evalColumns(
   schema: Schema,
   schemaPath: string,
 ): void {
-  if (!rule.columns || context.extension !== '.tsv') return
+  if (!rule.columns || !['.tsv', '.tsv.gz'].includes(context.extension)) return
   const headers = [...Object.keys(context.columns)]
   for (const [ruleHeader, requirement] of Object.entries(rule.columns)) {
     const columnObject: ColumnSchema = schema.objects.columns[ruleHeader]
@@ -284,7 +284,7 @@ export function evalInitialColumns(
   schemaPath: string,
 ): void {
   if (
-    !rule?.columns || !rule?.initial_columns || context.extension !== '.tsv'
+    !rule?.columns || !rule?.initial_columns || !['.tsv', '.tsv.gz'].includes(context.extension)
   ) {
     return
   }
@@ -318,7 +318,7 @@ export function evalAdditionalColumns(
   schema: Schema,
   schemaPath: string,
 ): void {
-  if (context.extension !== '.tsv') return
+  if (!['.tsv', '.tsv.gz'].includes(context.extension)) return
   const headers = Object.keys(context?.columns)
   if (rule.columns) {
     if (!rule.additional_columns || rule.additional_columns === 'n/a') {
@@ -362,7 +362,7 @@ export function evalIndexColumns(
     !rule?.columns ||
     !rule?.index_columns ||
     !rule?.index_columns.length ||
-    context.extension !== '.tsv'
+    !['.tsv', '.tsv.gz'].includes(context.extension)
   ) {
     return
   }
