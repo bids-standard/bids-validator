@@ -257,9 +257,23 @@ export function evalColumns(
       rule: schemaPath,
     }
 
+    const ageCheck = name === 'age'
+    let ageWarningIssued = false
+
     const column = context.columns[name] as string[]
     for (const [index, value] of column.entries()) {
       if (!checkValue(value, spec)) {
+        if (ageCheck && value === '89+') {
+          if (!ageWarningIssued) {
+            ageWarningIssued = true
+            context.dataset.issues.add({
+              code: 'TSV_PSEUDO_AGE_DEPRECATED',
+              location: context.path,
+              line: index + 2,
+            })
+          }
+          continue
+        }
         const issueMessage = `'${value}'` +
           (value.match(/^\s*(NA|na|nan|NaN|n\/a)\s*$/) ? ", did you mean 'n/a'?" : '')
         context.dataset.issues.add({

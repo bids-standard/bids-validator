@@ -166,6 +166,25 @@ Deno.test('tables eval* tests', async (t) => {
     assertEquals(issues[0].issueMessage, "'f'")
   })
 
+  await t.step('verify pseudo-age deprecation', () => {
+    const context = {
+      path: '/participants.tsv',
+      extension: '.tsv',
+      sidecar: {},
+      columns: {
+        participant_id: ['sub-01', 'sub-02', 'sub-03'],
+        age: ['10', '89+', '89+'],
+      },
+      dataset: { issues: new DatasetIssues() },
+    }
+    const rule = schemaDefs.rules.tabular_data.modality_agnostic.Participants
+    evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Participants')
+
+    // age gets a warning
+    let issues = context.dataset.issues.get({ code: 'TSV_PSEUDO_AGE_DEPRECATED' })
+    assertEquals(issues.length, 1)
+  })
+
   await t.step('verify column ordering', () => {
     const context = {
       path: '/sub-01/sub-01_scans.tsv',
