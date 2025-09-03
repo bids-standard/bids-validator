@@ -124,6 +124,7 @@ export async function validate(
     }
     await summary.update(context)
   }
+
   for (const check of perDSChecks) {
     await check(schema as unknown as GenericSchema, dsContext)
   }
