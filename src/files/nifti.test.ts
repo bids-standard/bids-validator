@@ -1,8 +1,8 @@
-import { assert, assertObjectMatch } from '@std/assert'
+import { assert, assertEquals, assertObjectMatch } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSFileDeno } from './deno.ts'
 
-import { loadHeader } from './nifti.ts'
+import { loadHeader, axisCodes } from './nifti.ts'
 
 Deno.test('Test loading nifti header', async (t) => {
   const ignore = new FileIgnoreRules([])
@@ -71,5 +71,28 @@ Deno.test('Test loading nifti header', async (t) => {
       qform_code: 0,
       sform_code: 2,
     })
+  })
+})
+
+Deno.test('Test extracting axis codes', async (t) => {
+  await t.step('Identify RAS', async () => {
+    const affine = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+    assertEquals(axisCodes(affine), ['R', 'A', 'S'])
+  })
+  await t.step('Identify LPS (flips)', async () => {
+    const affine = [[-1, 0, 0, 0], [0, -1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+    assertEquals(axisCodes(affine), ['L', 'P', 'S'])
+  })
+  await t.step('Identify SPL (flips + swap)', async () => {
+    const affine = [[0, 0, -1, 0], [0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]]
+    assertEquals(axisCodes(affine), ['S', 'P', 'L'])
+  })
+  await t.step('Identify SLP (flips + rotate)', async () => {
+    const affine = [[0, -1, 0, 0], [0, 0, -1, 0], [1, 0, 0, 0], [0, 0, 0, 1]]
+    assertEquals(axisCodes(affine), ['S', 'L', 'P'])
+  })
+  await t.step('Identify ASR (rotate)', async () => {
+    const affine = [[0, 0, 1, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
+    assertEquals(axisCodes(affine), ['A', 'S', 'R'])
   })
 })
