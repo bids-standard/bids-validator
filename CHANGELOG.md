@@ -1,4 +1,34 @@
 
+<a id='changelog-2.1.0'></a>
+# 2.1.0 — 2025-09-03
+
+This release adds support for BIDS 1.10.1.
+
+## Added
+
+- Load `.tsv.gz` column contents for validation.
+
+- Issue deprecation warning for `"89+"` in `age` columns, per
+  [bids-standard/bids-specification#2162][].
+
+- Added support for extracting image orientation from NIfTI headers,
+  added to the BIDS schema in 1.10.1.
+
+## Changed
+
+- Raise errors for all TSV type check failures.
+  Previously, recommended and optional fields would raise warnings.
+
+- Updated `@bids/schema` to ~1.1.0, corresponding to BIDS version 1.10.1.
+
+## Fixed
+
+- Avoid descending into opaque directories (such as `*.zarr/`) when checking
+  for unused sidecars. ([#227])
+
+[#227]: https://github.com/bids-standard/bids-validator/issues/227
+[bids-standard/bids-specification#2162]: https://github.com/bids-standard/bids-specification/pull/2162
+
 <a id='changelog-2.0.11'></a>
 # 2.0.11 — 2025-08-29
 
