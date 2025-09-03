@@ -123,11 +123,6 @@ export const bidsIssues: IssueDefinitionRecord = {
     reason:
       'A value in a column did not match the acceptable type for that column headers specified format.',
   },
-  TSV_VALUE_INCORRECT_TYPE_NONREQUIRED: {
-    severity: 'warning',
-    reason:
-      'A value in a column did not match the acceptable type for that column headers specified format.',
-  },
   TSV_COLUMN_TYPE_REDEFINED: {
     severity: 'warning',
     reason:
