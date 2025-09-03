@@ -257,7 +257,7 @@ export function evalColumns(
       rule: schemaPath,
     }
 
-    const ageCheck = name == 'age'
+    const ageCheck = name === 'age'
     let ageWarningIssued = false
 
     const column = context.columns[name] as string[]
