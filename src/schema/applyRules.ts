@@ -7,7 +7,6 @@ import { memoize } from '../utils/memoize.ts'
 import { compile } from '../validators/json.ts'
 import type { DefinedError } from '@ajv'
 import {
-  evalAdditionalColumns,
   evalColumns,
   evalIndexColumns,
   evalInitialColumns,
@@ -106,8 +105,6 @@ const evalMap: Record<
   checks: evalRuleChecks,
   // @ts-expect-error
   columns: evalColumns,
-  // @ts-expect-error
-  additional_columns: evalAdditionalColumns,
   // @ts-expect-error
   initial_columns: evalInitialColumns,
   // @ts-expect-error

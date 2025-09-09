@@ -236,6 +236,12 @@ export function evalColumns(
     let signature: ValueSignature
     if (!ruleHeader) { // Additional column
       if (requirement === 'not_allowed' || !sidecarDef) {
+        const code = requirement === 'not_allowed'
+          ? 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED'
+          : requirement === 'allowed_if_defined'
+          ? 'TSV_ADDITIONAL_COLUMNS_MUST_DEFINE'
+          : 'TSV_ADDITIONAL_COLUMNS_UNDEFINED'
+        context.dataset.issues.add({ code, ...issue })
         continue
       }
       signature = extractDefinition(sidecarDef)
@@ -347,46 +353,6 @@ export function evalInitialColumns(
       })
     }
   })
-}
-
-export function evalAdditionalColumns(
-  rule: GenericRule,
-  context: BIDSContext,
-  schema: Schema,
-  schemaPath: string,
-): void {
-  if (!['.tsv', '.tsv.gz'].includes(context.extension)) return
-  const headers = Object.keys(context?.columns)
-  if (rule.columns) {
-    if (!rule.additional_columns || rule.additional_columns === 'n/a') {
-      // Old schemas might be missing the field, so be permissive.
-      // New schemas indicate it is not applicable with 'n/a'.
-      return
-    }
-    const ruleHeadersNames = Object.keys(rule.columns).map(
-      (x) => schema.objects.columns[x].name,
-    )
-    let extraCols = headers.filter(
-      (header) => !ruleHeadersNames.includes(header),
-    )
-
-    if (rule.additional_columns?.startsWith('allowed')) {
-      extraCols = extraCols.filter((header) => !(header in context.sidecar))
-    }
-    const code = rule.additional_columns === 'not_allowed'
-      ? 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED'
-      : rule.additional_columns === 'allowed_if_defined'
-      ? 'TSV_ADDITIONAL_COLUMNS_MUST_DEFINE'
-      : 'TSV_ADDITIONAL_COLUMNS_UNDEFINED'
-    const issue = {
-      code,
-      location: context.path,
-      rule: schemaPath,
-    }
-    for (const col of extraCols) {
-      context.dataset.issues.add({ ...issue, subCode: col })
-    }
-  }
 }
 
 export function evalIndexColumns(
