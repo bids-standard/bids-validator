@@ -221,19 +221,11 @@ Deno.test('tables eval* tests', async (t) => {
       sidecar: {},
       columns: {
         onset: ['1900-01-01:00:00', '1900-01-01:00:00'],
+        filename: ['func/sub-01_task-rest_bold.nii.gz', 'func/sub-01_task-rest_bold.nii.gz']
       },
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
-    evalIndexColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
-    assertEquals(
-      context.dataset.issues.get({ code: 'TSV_COLUMN_MISSING' }).length,
-      1,
-    )
-    context.columns['filename'] = [
-      'func/sub-01_task-rest_bold.nii.gz',
-      'func/sub-01_task-rest_bold.nii.gz',
-    ]
     evalIndexColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
     assertEquals(
       context.dataset.issues.get({ code: 'TSV_INDEX_VALUE_NOT_UNIQUE' }).length,

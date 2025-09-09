@@ -406,20 +406,10 @@ export function evalIndexColumns(
   ) {
     return
   }
-  const headers = Object.keys(context?.columns)
   const uniqueIndexValues = new Set()
   const index_columns = rule.index_columns.map((col: string) => {
     return schema.objects.columns[col].name
-  })
-  const missing = index_columns.filter((col: string) => !headers.includes(col))
-  for (const col of missing) {
-    context.dataset.issues.add({
-      code: 'TSV_COLUMN_MISSING',
-      subCode: col,
-      location: context.path,
-      rule: schemaPath,
-    })
-  }
+  }).filter((col: string) => col in context.columns)
 
   const rowCount = (context.columns[index_columns[0]] as string[])?.length || 0
   for (let i = 0; i < rowCount; i++) {
