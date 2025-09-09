@@ -14,6 +14,7 @@ For top level release notes, leave all the headers commented out.
 ### Changed
 
 - Initial column TSV checks now support missing, optional initial columns.
+- Index column TSV checks now support missing, optional index columns.
 
 <!--
 ### Fixed
