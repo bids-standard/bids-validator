@@ -9,6 +9,8 @@ import { walkBack } from '../files/inheritance.ts'
 import { evalCheck } from './applyRules.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 
+import { readText } from '../files/access.ts'
+
 function defaultAssociation(file: BIDSFile, _options: any): Promise<{ path: string }> {
   return Promise.resolve({ path: file.path })
 }
@@ -47,7 +49,7 @@ const associationLookup = {
     }
   },
   bval: async (file: BIDSFile, options: any): Promise<Bval> => {
-    const contents = await file.text()
+    const contents = await readText(file)
     const rows = parseBvalBvec(contents)
     return {
       path: file.path,
@@ -58,7 +60,7 @@ const associationLookup = {
     }
   },
   bvec: async (file: BIDSFile, options: any): Promise<Bvec> => {
-    const contents = await file.text()
+    const contents = await readText(file)
     const rows = parseBvalBvec(contents)
 
     if (rows.some((row) => row.length !== rows[0].length)) {

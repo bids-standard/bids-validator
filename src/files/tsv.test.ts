@@ -9,6 +9,7 @@ import { pathToFile } from './filetree.ts'
 import { loadTSV, loadTSVGZ } from './tsv.ts'
 import { streamFromString } from '../tests/utils.ts'
 import { ColumnsMap } from '../types/columns.ts'
+import { testAsyncFileAccess } from './access.test.ts'
 
 function compressedStreamFromString(str: string): ReadableStream<Uint8Array<ArrayBuffer>> {
   return streamFromString(str).pipeThrough(new CompressionStream('gzip')) as ReadableStream<
@@ -292,3 +293,5 @@ Deno.test('TSVGZ loading', async (t) => {
     assertEquals(map.c, ['3', '6', '9'])
   })
 })
+
+testAsyncFileAccess('Test file access errors for loadTSV', loadTSV)

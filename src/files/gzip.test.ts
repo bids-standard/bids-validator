@@ -1,6 +1,7 @@
 import { assert, assertObjectMatch } from '@std/assert'
 import { parseGzip } from './gzip.ts'
 import { BIDSFileDeno } from './deno.ts'
+import { testAsyncFileAccess } from './access.test.ts'
 
 Deno.test('parseGzip', async (t) => {
   await t.step('parses anonymized file', async () => {
@@ -40,3 +41,5 @@ Deno.test('parseGzip', async (t) => {
     assert(!gzip)
   })
 })
+
+testAsyncFileAccess('Test file access errors for parseGzip', parseGzip)
