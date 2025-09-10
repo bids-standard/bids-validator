@@ -225,7 +225,9 @@ export class BIDSContext implements Context {
             code: 'SIDECAR_FIELD_OVERRIDE',
             subCode: key,
             location: overrideLocation,
-            issueMessage: `Sidecar key defined in ${file.path} overrides previous value (${json[key]}) from ${overrideLocation}`,
+            issueMessage: `Sidecar key defined in ${file.path} overrides previous value (${
+              json[key]
+            }) from ${overrideLocation}`,
           })
         }
       }
@@ -267,7 +269,7 @@ export class BIDSContext implements Context {
           return new Map<string, string[]>() as ColumnsMap
         }) as Record<string, string[]>
     } else if (this.extension == '.tsv.gz') {
-      const headers = this.sidecar.Columns as string[];
+      const headers = this.sidecar.Columns as string[]
       if (!headers || this.size === 0) {
         // Missing Columns will be caught by sidecar rules
         // Note that these rules currently select for suffix, and will need to be generalized

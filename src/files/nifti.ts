@@ -138,7 +138,8 @@ export function axisCodes(affine: number[][]): string[] {
 
   // Orthogonalize cosZ with respect to cosX and orthY
   const orthZ = sub(
-    cosZ, add(scale(cosX, dot(cosX, cosZ)), scale(orthY, dot(orthY, cosZ)))
+    cosZ,
+    add(scale(cosX, dot(cosX, cosZ)), scale(orthY, dot(orthY, cosZ))),
   )
 
   const basis = [cosX, orthY, orthZ]

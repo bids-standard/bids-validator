@@ -130,7 +130,8 @@ export const bidsIssues: IssueDefinitionRecord = {
   },
   TSV_PSEUDO_AGE_DEPRECATED: {
     severity: 'warning',
-    reason: 'Use of the value "89+" in column "age" is deprecated. Use 89 for all ages 89 and over.',
+    reason:
+      'Use of the value "89+" in column "age" is deprecated. Use 89 for all ages 89 and over.',
   },
   INVALID_GZIP: {
     severity: 'error',

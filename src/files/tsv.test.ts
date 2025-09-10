@@ -228,7 +228,9 @@ Deno.test('TSVGZ loading', async (t) => {
 
   await t.step('Empty row throws issue', async () => {
     const file = pathToFile('/empty_row.tsv.gz')
-    file.stream = streamFromString('1\t2\t3\n\n4\t5\t6\n').pipeThrough(new CompressionStream('gzip'))
+    file.stream = streamFromString('1\t2\t3\n\n4\t5\t6\n').pipeThrough(
+      new CompressionStream('gzip'),
+    )
 
     try {
       await loadTSVGZ(file, ['a', 'b', 'c'])
@@ -279,11 +281,12 @@ Deno.test('TSVGZ loading', async (t) => {
     assertEquals(map.c, Array(1500).fill('3'))
 
     // Check that maxRows does not truncate shorter files
-    file.stream = streamFromString('1\t2\t3\n4\t5\t6\n7\t8\t9\n').pipeThrough(new CompressionStream('gzip'))
+    file.stream = streamFromString('1\t2\t3\n4\t5\t6\n7\t8\t9\n').pipeThrough(
+      new CompressionStream('gzip'),
+    )
     map = await loadTSVGZ(file, headers, 4)
     assertEquals(map.a, ['1', '4', '7'])
     assertEquals(map.b, ['2', '5', '8'])
     assertEquals(map.c, ['3', '6', '9'])
   })
-
 })

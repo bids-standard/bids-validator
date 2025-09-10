@@ -221,7 +221,7 @@ Deno.test('tables eval* tests', async (t) => {
       sidecar: {},
       columns: {
         onset: ['1900-01-01:00:00', '1900-01-01:00:00'],
-        filename: ['func/sub-01_task-rest_bold.nii.gz', 'func/sub-01_task-rest_bold.nii.gz']
+        filename: ['func/sub-01_task-rest_bold.nii.gz', 'func/sub-01_task-rest_bold.nii.gz'],
       },
       dataset: { issues: new DatasetIssues() },
     }
