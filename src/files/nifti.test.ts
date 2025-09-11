@@ -2,7 +2,7 @@ import { assert, assertEquals, assertObjectMatch } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSFileDeno } from './deno.ts'
 
-import { loadHeader, axisCodes } from './nifti.ts'
+import { axisCodes, loadHeader } from './nifti.ts'
 
 Deno.test('Test loading nifti header', async (t) => {
   const ignore = new FileIgnoreRules([])

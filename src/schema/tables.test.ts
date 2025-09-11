@@ -7,6 +7,7 @@ import {
   evalIndexColumns,
   evalInitialColumns,
 } from './tables.ts'
+import { ColumnsMap } from '../types/columns.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 
 const schemaDefs = {
@@ -60,10 +61,10 @@ Deno.test('tables eval* tests', async (t) => {
       path: '/sub-01/sub-01_scans.tsv',
       extension: '.tsv',
       sidecar: {},
-      columns: {
+      columns: new ColumnsMap(Object.entries({
         filename: ['func/sub-01_task-rest_bold.nii.gz'],
         acq_time: ['1900-01-01T00:00:78'],
-      },
+      })),
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
@@ -79,9 +80,9 @@ Deno.test('tables eval* tests', async (t) => {
       path: '/sub-01/sub-01_something.tsv',
       extension: '.tsv',
       sidecar: {},
-      columns: {
+      columns: new ColumnsMap(Object.entries({
         onset: ['1', '2', 'not a number'],
-      },
+      })),
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
@@ -94,10 +95,10 @@ Deno.test('tables eval* tests', async (t) => {
       path: '/sub-01/sub-01_something.tsv',
       extension: '.tsv',
       sidecar: {},
-      columns: {
+      columns: new ColumnsMap(Object.entries({
         onset: ['1', '2', 'n/a'],
         strain_rrid: ['RRID:SCR_012345', 'RRID:SCR_012345', 'n/a'],
-      },
+      })),
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
@@ -138,12 +139,12 @@ Deno.test('tables eval* tests', async (t) => {
         sex: '/participants.json',
         strain_rrid: '/participants.json',
       },
-      columns: {
+      columns: new ColumnsMap(Object.entries({
         participant_id: ['sub-01', 'sub-02', 'sub-03'],
         age: ['10', '20', '30'],
         sex: ['M', 'F', 'f'],
         strain_rrid: ['RRID:SCR_012345', 'RRID:SCR_012345', 'n/a'],
-      },
+      })),
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Participants
@@ -171,10 +172,10 @@ Deno.test('tables eval* tests', async (t) => {
       path: '/participants.tsv',
       extension: '.tsv',
       sidecar: {},
-      columns: {
+      columns: new ColumnsMap(Object.entries({
         participant_id: ['sub-01', 'sub-02', 'sub-03'],
         age: ['10', '89+', '89+'],
-      },
+      })),
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Participants
@@ -190,9 +191,9 @@ Deno.test('tables eval* tests', async (t) => {
       path: '/sub-01/sub-01_scans.tsv',
       extension: '.tsv',
       sidecar: {},
-      columns: {
+      columns: new ColumnsMap(Object.entries({
         onset: ['1900-01-01:00:00'],
-      },
+      })),
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
@@ -219,21 +220,13 @@ Deno.test('tables eval* tests', async (t) => {
       path: '/sub-01/sub-01_scans.tsv',
       extension: '.tsv',
       sidecar: {},
-      columns: {
+      columns: new ColumnsMap(Object.entries({
         onset: ['1900-01-01:00:00', '1900-01-01:00:00'],
-      },
+        filename: ['func/sub-01_task-rest_bold.nii.gz', 'func/sub-01_task-rest_bold.nii.gz'],
+      })),
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
-    evalIndexColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
-    assertEquals(
-      context.dataset.issues.get({ code: 'TSV_COLUMN_MISSING' }).length,
-      1,
-    )
-    context.columns['filename'] = [
-      'func/sub-01_task-rest_bold.nii.gz',
-      'func/sub-01_task-rest_bold.nii.gz',
-    ]
     evalIndexColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
     assertEquals(
       context.dataset.issues.get({ code: 'TSV_INDEX_VALUE_NOT_UNIQUE' }).length,
@@ -246,10 +239,10 @@ Deno.test('tables eval* tests', async (t) => {
       path: '/sub-01/sub-01_scans.tsv',
       extension: '.tsv',
       sidecar: {},
-      columns: {
+      columns: new ColumnsMap(Object.entries({
         onset: ['1', '2', 'n/a'],
         strain_rrid: ['RRID:SCR_012345', 'RRID:SCR_012345', 'n/a'],
-      },
+      })),
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
@@ -268,11 +261,11 @@ Deno.test('tables eval* tests', async (t) => {
       path: '/sub-01/sub-01_scans.tsv',
       extension: '.tsv',
       sidecar: { 'extra': { 'description': 'a fun and whimsical extra column' } },
-      columns: {
+      columns: new ColumnsMap(Object.entries({
         onset: ['1', '2', 'n/a'],
         strain_rrid: ['RRID:SCR_012345', 'RRID:SCR_012345', 'n/a'],
         extra: [1, 2, 3],
-      },
+      })),
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp

@@ -54,6 +54,9 @@
     "proseWrap": "preserve",
     "include": [
       "src/"
+    ],
+    "exclude": [
+      "src/tests/bom-utf8.json"
     ]
   }
 }
