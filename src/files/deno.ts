@@ -45,7 +45,7 @@ export class BIDSFileDeno implements BIDSFile {
     return this.#fileInfo ? this.#fileInfo.size : -1
   }
 
-  get stream(): ReadableStream<Uint8Array> {
+  get stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
     const handle = this.#openHandle()
     return handle.readable
   }
