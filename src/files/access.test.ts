@@ -1,4 +1,4 @@
-import { assert, assertObjectMatch } from '@std/assert'
+import { assert, assertArrayIncludes, assertObjectMatch } from '@std/assert'
 import { basename, dirname } from '@std/path'
 import { BIDSFileDeno } from './deno.ts'
 
@@ -16,9 +16,9 @@ export function testAsyncFileAccess(
       } catch (e: any) {
         assertObjectMatch(e, {
           code: 'FILE_READ',
-          subCode: 'NotFound',
           location: '/broken-symlink',
         })
+        assertArrayIncludes(['NotFound', 'FilesystemLoop'], [e.subCode])
       }
     })
     await t.step('Insufficient permissions', async () => {

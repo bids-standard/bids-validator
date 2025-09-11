@@ -4,7 +4,7 @@ import { type Issue } from '../types/issues.ts'
 function IOErrorToIssue(err: { code: string; name: string }): Issue {
   const subcode = err.name
   let issueMessage: string | undefined = undefined
-  if (err.code === 'ENOENT') {
+  if (err.code === 'ENOENT' || err.code === 'ELOOP') {
     issueMessage = 'Possible dangling symbolic link'
   }
   return { code: 'FILE_READ', subCode: err.name, issueMessage }
