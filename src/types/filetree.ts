@@ -10,7 +10,7 @@ export interface BIDSFile {
   // BIDS ignore status of the file
   ignored: boolean
   // ReadableStream to file raw contents
-  stream: ReadableStream<Uint8Array>
+  stream: ReadableStream<Uint8Array<ArrayBuffer>>
   // Resolve stream to decoded utf-8 text
   text: () => Promise<string>
   // Read a range of bytes
