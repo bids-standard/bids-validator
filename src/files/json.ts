@@ -1,4 +1,5 @@
 import type { BIDSFile } from '../types/filetree.ts'
+import { readBytes } from './access.ts'
 
 async function readJSONText(file: BIDSFile): Promise<string> {
   // Read JSON text from a file
@@ -6,7 +7,7 @@ async function readJSONText(file: BIDSFile): Promise<string> {
   const decoder = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true })
   // Streaming TextDecoders are buggy in Deno and Chrome, so read the
   // entire file into memory before decoding and parsing
-  const data = await file.readBytes(file.size)
+  const data = await readBytes(file, file.size)
   try {
     const text = decoder.decode(data)
     if (text.startsWith('\uFEFF')) {

@@ -1,6 +1,7 @@
 import { assert, assertEquals, assertObjectMatch } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSFileDeno } from './deno.ts'
+import { testAsyncFileAccess } from './access.test.ts'
 
 import { axisCodes, loadHeader } from './nifti.ts'
 
@@ -96,3 +97,5 @@ Deno.test('Test extracting axis codes', async (t) => {
     assertEquals(axisCodes(affine), ['A', 'S', 'R'])
   })
 })
+
+testAsyncFileAccess('Test file access errors for loadHeader', loadHeader)

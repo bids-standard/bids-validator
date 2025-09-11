@@ -1,6 +1,7 @@
 import { type assert, assertObjectMatch } from '@std/assert'
 import type { BIDSFile } from '../types/filetree.ts'
 import type { FileIgnoreRules } from './ignore.ts'
+import { testAsyncFileAccess } from './access.test.ts'
 
 import { loadJSON } from './json.ts'
 
@@ -61,3 +62,5 @@ Deno.test('Test JSON error conditions', async (t) => {
     assertObjectMatch(error, { code: 'JSON_INVALID' })
   })
 })
+
+testAsyncFileAccess('Test file access errors for loadJSON', loadJSON)
