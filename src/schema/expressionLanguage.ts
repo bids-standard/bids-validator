@@ -90,6 +90,12 @@ export const expressionFunctions = {
     }
     return null
   },
+  unique: <T>(list: T[]): T[] | null => {
+    if (list !== null) {
+        return [...new Set(list)]
+    }
+    return null
+  },
   count: <T>(list: T[], val: T): number => {
     return list.filter((x) => x === val).length
   },
