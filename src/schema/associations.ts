@@ -5,7 +5,7 @@ import type { BIDSFile } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { parseBvalBvec } from '../files/dwi.ts'
-import { walkBack } from '../files/inheritance.ts'
+import { readSidecars, walkBack } from '../files/inheritance.ts'
 import { evalCheck } from './applyRules.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 
@@ -83,6 +83,17 @@ const associationLookup = {
       sampling_frequency: columns.get('sampling_frequency'),
     }
   },
+  physio: async (
+    file: BIDSFile,
+    options: any,
+  ): Promise<{ path: string; sidecar: Record<string, unknown> }> => {
+    const sidecars = await readSidecars(file)
+    return {
+      path: file.path,
+      // Note ordering here gives precedence to the more specific sidecar
+      sidecar: sidecars.values().reduce((acc, json) => ({ ...json, ...acc }), {}),
+    }
+  },
 }
 
 export async function buildAssociations(
@@ -124,12 +135,8 @@ export async function buildAssociations(
       if (Array.isArray(file)) {
         file = file[0]
       }
-    } catch (error) {
-      if (
-        error && typeof error === 'object' && 'code' in error &&
-        error.code === 'MULTIPLE_INHERITABLE_FILES'
-      ) {
-        // @ts-expect-error
+    } catch (error: any) {
+      if (error?.code === 'MULTIPLE_INHERITABLE_FILES') {
         context.dataset.issues.add(error)
         break
       } else {
