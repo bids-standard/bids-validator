@@ -112,8 +112,19 @@ export async function buildAssociations(
   // @ts-expect-error
   context.exists.bind(context)
 
-  for (const key of Object.keys(schema.meta.associations)) {
-    const rule = schema.meta.associations[key] as AugmentedRuleType
+  const keys = new Set(Object.keys(schema.meta.associations))
+  keys.add('physio')
+
+  for (const key of keys) {
+    let rule = schema.meta.associations[key] as AugmentedRuleType
+    // BEP020 patch
+    if (key === 'physio') {
+      rule = {
+        selectors: ['suffix == "events"', 'extension == ".tsv"'],
+        target: {suffix: 'physio', extension: ['.tsv.gz']},
+        inherit: false,
+      }
+    }
     if (!rule.selectors!.every((x) => evalCheck(x, context))) {
       continue
     }
