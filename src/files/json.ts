@@ -1,3 +1,4 @@
+import { filememoizeAsync } from '../utils/memoize.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 
 async function readJSONText(file: BIDSFile): Promise<string> {
@@ -20,7 +21,7 @@ async function readJSONText(file: BIDSFile): Promise<string> {
   }
 }
 
-export async function loadJSON(file: BIDSFile): Promise<Record<string, unknown>> {
+async function _loadJSON(file: BIDSFile): Promise<Record<string, unknown>> {
   const text = await readJSONText(file) // Raise encoding errors
   let parsedText
   try {
@@ -36,3 +37,5 @@ export async function loadJSON(file: BIDSFile): Promise<Record<string, unknown>>
   }
   return parsedText
 }
+
+export const loadJSON = filememoizeAsync(_loadJSON)
