@@ -1,4 +1,6 @@
+import { filememoizeAsync } from '../utils/memoize.ts'
 import type { BIDSFile } from '../types/filetree.ts'
+import { readBytes } from './access.ts'
 
 async function readJSONText(file: BIDSFile): Promise<string> {
   // Read JSON text from a file
@@ -6,7 +8,7 @@ async function readJSONText(file: BIDSFile): Promise<string> {
   const decoder = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true })
   // Streaming TextDecoders are buggy in Deno and Chrome, so read the
   // entire file into memory before decoding and parsing
-  const data = await file.readBytes(file.size)
+  const data = await readBytes(file, file.size)
   try {
     const text = decoder.decode(data)
     if (text.startsWith('\uFEFF')) {
@@ -20,7 +22,7 @@ async function readJSONText(file: BIDSFile): Promise<string> {
   }
 }
 
-export async function loadJSON(file: BIDSFile): Promise<Record<string, unknown>> {
+async function _loadJSON(file: BIDSFile): Promise<Record<string, unknown>> {
   const text = await readJSONText(file) // Raise encoding errors
   let parsedText
   try {
@@ -36,3 +38,5 @@ export async function loadJSON(file: BIDSFile): Promise<Record<string, unknown>>
   }
   return parsedText
 }
+
+export const loadJSON = filememoizeAsync(_loadJSON)
