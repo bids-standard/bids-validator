@@ -5,6 +5,7 @@
 import type { Ome, Tiff } from '@bids/schema/context'
 import * as XML from '@libs/xml'
 import type { BIDSFile } from '../types/filetree.ts'
+import { readBytes } from './access.ts'
 
 function getImageDescription(
   dataview: DataView<ArrayBuffer>,
@@ -44,7 +45,7 @@ export async function parseTIFF(
   file: BIDSFile,
   OME: boolean,
 ): Promise<{ tiff?: Tiff; ome?: Ome }> {
-  const buf = await file.readBytes(4096)
+  const buf = await readBytes(file, 4096)
   const dataview = new DataView(buf.buffer, buf.byteOffset, buf.byteLength)
   const magic = dataview.getUint16(0, true)
   const littleEndian = magic === 0x4949
