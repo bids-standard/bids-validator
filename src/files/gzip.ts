@@ -4,6 +4,7 @@
  */
 import type { Gzip } from '@bids/schema/context'
 import type { BIDSFile } from '../types/filetree.ts'
+import { readBytes } from './access.ts'
 
 /**
  * Parse a gzip header from a file
@@ -19,7 +20,7 @@ export async function parseGzip(
   file: BIDSFile,
   maxBytes: number = 512,
 ): Promise<Gzip | undefined> {
-  const buf = await file.readBytes(maxBytes)
+  const buf = await readBytes(file, maxBytes)
   const view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength)
   if (view.byteLength < 2 || view.getUint16(0, false) !== 0x1f8b) return undefined
 
