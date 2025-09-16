@@ -16,7 +16,7 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
   private decoder: TextDecoder
   private firstChunk: boolean
 
-  constructor(fatal: boolean = false) {
+  constructor({fatal: boolean = false}) {
     this.decoder = new TextDecoder('utf-8', {fatal})
     this.firstChunk = true
   }
