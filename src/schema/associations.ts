@@ -96,6 +96,12 @@ const associationLookup = {
       sampling_frequency: columns.get('sampling_frequency'),
     }
   },
+  physio: async (file: BIDSFile, options: any): Promise<{path: string} & WithSidecar> => {
+    return {
+      path: file.path,
+      sidecar: await constructSidecar(file),
+    }
+  },
 }
 
 export async function buildAssociations(
