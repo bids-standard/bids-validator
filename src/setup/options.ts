@@ -33,6 +33,7 @@ export type ValidatorOptions = {
   prune?: boolean
   maxRows?: number
   schemaAddon?: string
+  printSchema?: boolean
 }
 
 const datasetType = new EnumType<string>(
@@ -102,6 +103,10 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   .option(
     '--schema-addon <file:string>',
     'Json file to be merged with loaded schema.',
+  )
+  .option(
+    '--printSchema',
+    'Print schema that was loaded and exit.',
   )
 
 // Disabling color output is only available in Deno

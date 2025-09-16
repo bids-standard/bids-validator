@@ -27,7 +27,7 @@ function merge(obj1, obj2) {
  *
  * version is ignored when the network cannot be accessed
  */
-export async function loadSchema(version?: string, patch?: string): Promise<Schema> {
+export async function loadSchema(version?: string, patch?: string, print?: boolean): Promise<Schema> {
   let schemaUrl = version
   const bidsSchema = typeof Deno !== 'undefined' ? Deno.env.get('BIDS_SCHEMA') : undefined
   if (bidsSchema !== undefined) {
@@ -64,6 +64,10 @@ export async function loadSchema(version?: string, patch?: string): Promise<Sche
     schema = merge(schema, patchJson)
   }
 
+  if (print) {
+    console.log(JSON.stringify(schema))
+    Deno.exit(0)
+  }
   setCustomMetadataFormats(schema)
   return schema
 }
