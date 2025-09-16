@@ -57,6 +57,8 @@ jobs:
     defaults:
       run:
         shell: bash
+    env:
+      BIDS_SCHEMA: https://bids-specification--2214.org.readthedocs.build/en/2214/schema.json
 
     steps:
       - uses: actions/checkout@v4
