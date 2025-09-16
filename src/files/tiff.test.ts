@@ -1,6 +1,7 @@
 import { assert, assertObjectMatch } from '@std/assert'
 import { parseTIFF } from './tiff.ts'
 import { BIDSFileDeno } from './deno.ts'
+import { testAsyncFileAccess } from './access.test.ts'
 
 Deno.test('parseTIFF', async (t) => {
   await t.step('parse example file as TIFF', async () => {
@@ -53,3 +54,5 @@ Deno.test('parseTIFF', async (t) => {
     })
   })
 })
+
+testAsyncFileAccess('Test file access errors for parseTIFF', parseTIFF)

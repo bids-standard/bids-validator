@@ -1,7 +1,9 @@
 import { type assert, assertObjectMatch } from '@std/assert'
 import type { BIDSFile } from '../types/filetree.ts'
 import type { FileIgnoreRules } from './ignore.ts'
+import { testAsyncFileAccess } from './access.test.ts'
 
+import { pathsToTree } from '../files/filetree.ts'
 import { loadJSON } from './json.ts'
 
 function encodeUTF16(text: string) {
@@ -17,9 +19,12 @@ function encodeUTF16(text: string) {
   return buffer
 }
 
-function makeFile(text: string, encoding: string): BIDSFile {
+function makeFile(path: string, text: string, encoding: string): BIDSFile {
   const bytes = encoding === 'utf-8' ? new TextEncoder().encode(text) : encodeUTF16(text)
+  const file = pathsToTree([path]).get(path) as BIDSFile
   return {
+    path: file.path,
+    parent: file.parent,
     readBytes: async (size: number) => {
       return new Uint8Array(bytes)
     },
@@ -29,13 +34,13 @@ function makeFile(text: string, encoding: string): BIDSFile {
 
 Deno.test('Test JSON error conditions', async (t) => {
   await t.step('Load valid JSON', async () => {
-    const JSONfile = makeFile('{"a": 1}', 'utf-8')
+    const JSONfile = makeFile('/valid-contents.json', '{"a": 1}', 'utf-8')
     const result = await loadJSON(JSONfile)
     assertObjectMatch(result, { a: 1 })
   })
 
   await t.step('Error on BOM', async () => {
-    const BOMfile = makeFile('\uFEFF{"a": 1}', 'utf-8')
+    const BOMfile = makeFile('/BOM.json', '\uFEFF{"a": 1}', 'utf-8')
     let error: any = undefined
     await loadJSON(BOMfile).catch((e) => {
       error = e
@@ -44,7 +49,7 @@ Deno.test('Test JSON error conditions', async (t) => {
   })
 
   await t.step('Error on UTF-16', async () => {
-    const UTF16file = makeFile('{"a": 1}', 'utf-16')
+    const UTF16file = makeFile('/utf16.json', '{"a": 1}', 'utf-16')
     let error: any = undefined
     await loadJSON(UTF16file).catch((e) => {
       error = e
@@ -53,11 +58,14 @@ Deno.test('Test JSON error conditions', async (t) => {
   })
 
   await t.step('Error on invalid JSON syntax', async () => {
-    const badJSON = makeFile('{"a": 1]', 'utf-8')
+    const badJSON = makeFile('/bad-syntax.json', '{"a": 1]', 'utf-8')
     let error: any = undefined
     await loadJSON(badJSON).catch((e) => {
       error = e
     })
     assertObjectMatch(error, { code: 'JSON_INVALID' })
   })
+  loadJSON.cache.clear()
 })
+
+testAsyncFileAccess('Test file access errors for loadJSON', loadJSON)

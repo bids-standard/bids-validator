@@ -29,8 +29,8 @@ export class BIDSFileBrowser implements BIDSFile {
     return this.#file.size
   }
 
-  get stream(): ReadableStream<Uint8Array> {
-    return this.#file.stream()
+  get stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
+    return this.#file.stream() as ReadableStream<Uint8Array<ArrayBuffer>>
   }
 
   get ignored(): boolean {

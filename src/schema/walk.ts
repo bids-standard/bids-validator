@@ -2,6 +2,7 @@ import { BIDSContext, type BIDSContextDataset } from './context.ts'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { loadTSV } from '../files/tsv.ts'
+import { loadJSON } from '../files/json.ts'
 
 function* quickWalk(dir: FileTree): Generator<BIDSFile> {
   for (const file of dir.files) {
@@ -49,6 +50,7 @@ async function* _walkFileTree(
     }
   }
   loadTSV.cache.delete(fileTree.path)
+  loadJSON.cache.delete(fileTree.path)
 }
 
 /** Walk all files in the dataset and construct a context for each one */

@@ -2,6 +2,7 @@ import { isCompressed, isNIFTI1, isNIFTI2, NIFTI1, NIFTI2 } from '@mango/nifti'
 import type { BIDSFile } from '../types/filetree.ts'
 import { logger } from '../utils/logger.ts'
 import type { NiftiHeader } from '@bids/schema/context'
+import { readBytes } from './access.ts'
 
 async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array<ArrayBuffer>> {
   // The fflate decompression that is used in nifti-reader does not like
@@ -32,8 +33,8 @@ async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array<A
 }
 
 export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
+  const buf = await readBytes(file, 1024)
   try {
-    const buf = await file.readBytes(1024)
     const data = isCompressed(buf.buffer) ? await extract(buf, 540) : buf.slice(0, 540)
     let header
     if (isNIFTI1(data.buffer)) {
