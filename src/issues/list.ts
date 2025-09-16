@@ -199,6 +199,11 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'warning',
     reason: 'The validation on this HED string returned a warning.',
   },
+  CASE_COLLISION: {
+    severity: 'error',
+    reason: 'Files with the same name but different casing have been found.',
+  },
+
 }
 
 export const nonSchemaIssues = { ...bidsIssues }
