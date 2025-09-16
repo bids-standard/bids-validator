@@ -52,11 +52,14 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        allow-net: [true, false]
+        # Resume disabled network tests when draft schema is not needed
+        allow-net: [true]  #, false]
       fail-fast: false
     defaults:
       run:
         shell: bash
+    env:
+      BIDS_SCHEMA: https://bids-specification--1128.org.readthedocs.build/en/1128/schema.json
 
     steps:
       - uses: actions/checkout@v4
