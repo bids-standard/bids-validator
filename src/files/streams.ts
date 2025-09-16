@@ -16,15 +16,23 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
   private decoder: TextDecoder
   private firstChunk: boolean
 
-  constructor() {
-    this.decoder = new TextDecoder('utf-8')
+  constructor(fatal: boolean = false) {
+    this.decoder = new TextDecoder('utf-8', {fatal})
     this.firstChunk = true
   }
 
   transform(chunk: Uint8Array, controller: TransformStreamDefaultController<string>) {
     // Check first chunk for UTF-16 BOM
     if (this.firstChunk) {
-      const decoded = this.decoder.decode(chunk, { stream: true })
+      let decoded
+      try {
+        decoded = this.decoder.decode(chunk, { stream: true })
+      } catch {
+        throw { code: 'INVALID_FILE_ENCODING' }
+      }
+      if (decoded === undefined) {
+        throw { code: 'FILE_DECODING_ERROR' }
+      }
       if (decoded.startsWith('\uFFFD')) {
         throw new UnicodeDecodeError('This file appears to be UTF-16')
       }
@@ -46,6 +54,6 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
 /**
  * Creates a TransformStream that validates and decodes UTF-8 text
  */
-export function createUTF8Stream() {
-  return new TransformStream(new UTF8StreamTransformer())
+export function createUTF8Stream(fatal: boolean = false) {
+  return new TransformStream(new UTF8StreamTransformer(fatal))
 }

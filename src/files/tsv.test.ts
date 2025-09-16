@@ -6,6 +6,7 @@ import {
   assertStrictEquals,
 } from '@std/assert'
 import { pathToFile } from './filetree.ts'
+import { BIDSFileDeno } from './deno.ts'
 import { loadTSV, loadTSVGZ } from './tsv.ts'
 import { streamFromString } from '../tests/utils.ts'
 import { ColumnsMap } from '../types/columns.ts'
@@ -181,6 +182,18 @@ Deno.test('TSV loading', async (t) => {
       assertObjectMatch(e, { code: 'TSV_COLUMN_HEADER_DUPLICATE', issueMessage: 'a, a' })
     }
   })
+
+  await t.step('Raises issue on non utf-8', async () => {
+    const file = new BIDSFileDeno('', './tests/data/iso8859.tsv')
+
+    try {
+      await loadTSV(file)
+      assert(false, 'Expected error')
+    } catch (e: any) {
+      assertObjectMatch(e, { code: 'INVALID_FILE_ENCODING' })
+    }
+  })
+
 
   // Tests will have populated the memoization cache
   loadTSV.cache.clear()
