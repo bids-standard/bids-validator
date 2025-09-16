@@ -103,7 +103,7 @@ function App() {
           </ul>
           <Summary data={validation.summary} />
           <a
-            href={`data:application/json:${JSON.stringify(validation)}`}
+            href={`data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(validation))}`}
             target="_blank"
             download="bids-validator-output.json"
           >
