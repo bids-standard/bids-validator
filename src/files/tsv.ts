@@ -7,6 +7,7 @@ import { ColumnsMap } from '../types/columns.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { filememoizeAsync } from '../utils/memoize.ts'
 import { createUTF8Stream } from './streams.ts'
+import { openStream } from './access.ts'
 
 async function loadColumns(
   reader: ReadableStreamDefaultReader<string>,
@@ -55,7 +56,7 @@ export async function loadTSVGZ(
   headers: string[],
   maxRows: number = -1,
 ): Promise<ColumnsMap> {
-  const reader = file.stream
+  const reader = openStream(file)
     .pipeThrough(new DecompressionStream('gzip'))
     .pipeThrough(createUTF8Stream())
     .pipeThrough(new TextLineStream())
@@ -75,7 +76,7 @@ export async function loadTSVGZ(
 }
 
 async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMap> {
-  const reader = file.stream
+  const reader = openStream(file)
     .pipeThrough(createUTF8Stream())
     .pipeThrough(new TextLineStream())
     .getReader()
