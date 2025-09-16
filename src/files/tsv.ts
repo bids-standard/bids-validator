@@ -78,7 +78,7 @@ export async function loadTSVGZ(
 
 async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMap> {
   const reader = openStream(file)
-    .pipeThrough(createUTF8Stream(true))
+    .pipeThrough(createUTF8Stream({ fatal: true }))
     .pipeThrough(new TextLineStream())
     .getReader()
 
