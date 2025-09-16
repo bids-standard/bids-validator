@@ -46,7 +46,7 @@ export async function validate(
   config?: Config,
 ): Promise<ValidationResult> {
   const summary = new Summary()
-  const schema = await loadSchema(options.schema)
+  const schema = await loadSchema(options.schema, options?.schemaAddon)
   summary.schemaVersion = schema.schema_version
 
   /* There should be a dataset_description in root, this will tell us if we
