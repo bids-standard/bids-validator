@@ -1,5 +1,5 @@
-import { assert } from '@std/assert'
-import { contextFunction, expressionFunctions } from './expressionLanguage.ts'
+import { assert, assertEquals } from '@std/assert'
+import { contextFunction, expressionFunctions, formatter, prepareContext } from './expressionLanguage.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import { BIDSContext } from './context.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -279,6 +279,38 @@ Deno.test('contextFunction test', async (t) => {
           nonEmptyCheck({ match, json: { Name }, pattern } as unknown as BIDSContext) === expected,
         )
       }
+    }
+  })
+})
+
+Deno.test('formatter test', async (t) => {
+  await t.step('simple strings', () => {
+    const context = {} as BIDSContext
+    for (
+      const str of [
+        'simple string',
+        'string with `backticks` and \\back\\slashes',
+      ]
+    ) {
+      assertEquals(formatter(str)(context), str)
+    }
+  })
+  await t.step('format strings', () => {
+    const context = prepareContext(
+      {a: 'stringa', b: 'stringb', c: 3, d: {e: 4}, f: [0, 1, 2], g: [1, 2, 3]} as unknown as BIDSContext
+    )
+    for (const [str, expected] of [
+      ['{a}', 'stringa'],
+      ['`{a}`', '`stringa`'],  // Backticks are preserved
+      ['`````{a}`````', '`````stringa`````'],
+      ['{a} and {b} and {c}', 'stringa and stringb and 3'],
+      ['{a}\\n{d.e}', 'stringa\\n4'],  // Backslashes are preserved
+      ['{intersects(f, g)}', '1,2'],  // expressions are evaluated
+      ['{z}', 'undefined'],
+      // Unsupported Pythonisms
+      // ['{{a}}', '{a}'],
+    ]) {
+      assertEquals(formatter(str)(context), expected)
     }
   })
 })
