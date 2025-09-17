@@ -140,6 +140,24 @@ function _contextFunction(expr: string): (context: BIDSContext) => any {
  */
 export const contextFunction = memoize(_contextFunction)
 
+function _formatter(format: string): (context: BIDSContext) => string {
+  if (!format.includes('{')) {
+    return (context: BIDSContext) => format
+  }
+  const template = format.replace(/{/g, '${').replace(/\\/g, '\\\\').replace(/`/g, '\\`')
+  return new Function('context', `with (context) { return \`${template}\` }`) as (
+    context: BIDSContext,
+  ) => string
+}
+
+/**
+ * Generate a function that formats a string using the BIDS context.
+ *
+ * Strings are expected to use Python-style formatting,
+ * e.g., "sub-{entities.sub}/ses-{entities.ses}".
+ */
+export const formatter = memoize(_formatter)
+
 function safeContext(context: BIDSContext): BIDSContext {
   return new Proxy(context, {
     has: () => true,

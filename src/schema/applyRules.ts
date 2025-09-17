@@ -1,7 +1,7 @@
 import type { GenericRule, GenericSchema, SchemaFields, SchemaTypeLike } from '../types/schema.ts'
 import type { Severity } from '../types/issues.ts'
 import type { BIDSContext } from './context.ts'
-import { contextFunction, prepareContext } from './expressionLanguage.ts'
+import { contextFunction, formatter, prepareContext } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
 import { compile } from '../validators/json.ts'
 import type { DefinedError } from '@ajv'
@@ -166,12 +166,13 @@ function _evalRuleChecks(
 ): boolean {
   if (rule.checks && !mapEvalCheck(rule.checks, context)) {
     if (rule.issue?.code && rule.issue?.message) {
+      const format = formatter(rule.issue.message)
       context.dataset.issues.add({
         code: rule.issue.code,
         location: context.path,
         rule: schemaPath,
         severity: rule.issue.level as Severity,
-      }, rule.issue.message)
+      }, format(context))
     } else {
       context.dataset.issues.add(
         { code: 'CHECK_ERROR', location: context.path, rule: schemaPath },
