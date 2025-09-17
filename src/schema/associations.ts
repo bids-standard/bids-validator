@@ -3,6 +3,7 @@ import type { Schema as MetaSchema } from '@bids/schema/metaschema'
 
 import type { BIDSFile } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
+import { loadJSON } from '../files/json.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { parseBvalBvec } from '../files/dwi.ts'
 import { walkBack } from '../files/inheritance.ts'
@@ -83,6 +84,16 @@ const associationLookup = {
       type: columns.get('type'),
       short_channel: columns.get('short_channel'),
       sampling_frequency: columns.get('sampling_frequency'),
+    }
+  },
+  coordsystem: async (file: BIDSFile, options: { maxRows: number }): Promise<Channels> => {
+    const keys = Object.keys(await loadJSON(file, options.maxRows)
+      .catch((e) => {
+        return new Map()
+      }))
+    return {
+      path: file.path,
+      keys: keys,
     }
   },
 }
