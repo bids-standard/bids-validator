@@ -92,7 +92,7 @@ export const expressionFunctions = {
   },
   unique: <T>(list: T[]): T[] | null => {
     if (list !== null) {
-        return [...new Set(list)]
+      return [...new Set(list)]
     }
     return null
   },
