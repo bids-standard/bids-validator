@@ -1,5 +1,5 @@
 import { assert } from '@std/assert'
-import { expressionFunctions } from './expressionLanguage.ts'
+import { contextFunction, expressionFunctions } from './expressionLanguage.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import { BIDSContext } from './context.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -233,5 +233,52 @@ Deno.test('test expression functions', async (t) => {
     assert(allequal(['a', 'b', 'a'], ['a', 'b', 'c']) === false)
     assert(allequal([1, 2, 1], [1, 2, 1, 2]) === false)
     assert(allequal([1, 2, 1, 2], [1, 2, 1]) === false)
+  })
+})
+
+Deno.test('contextFunction test', async (t) => {
+  const match = expressionFunctions.match
+  await t.step('check veridical reconstruction of match expressions', () => {
+    // match() functions frequently contain escapes in regex patterns
+    // We receive these from the schema as written in YAML, so we need to ensure
+    // that they are correctly reconstructed in the contextFunction() function
+    //
+    // The goal is to avoid schema authors needing to double-escape their regex patterns
+    // and other implementations to account for the double-escaping
+    let pattern = String.raw`^\.nii(\.gz)?$`
+
+    // Check both a literal and a variable pattern produce the same result
+    for (const check of ['match(extension, pattern)', `match(extension, '${pattern}')`]) {
+      const niftiCheck = contextFunction(check)
+      for (
+        const { extension, expected } of [
+          { extension: '.nii', expected: true },
+          { extension: '.nii.gz', expected: true },
+          { extension: '.tsv', expected: false },
+          { extension: ',nii,gz', expected: false }, // Check that . is not treated as a wildcard
+        ]
+      ) {
+        assert(match(extension, pattern) === expected)
+        // Pass in a context object to provide any needed variables
+        assert(niftiCheck({ match, extension, pattern } as unknown as BIDSContext) === expected)
+      }
+    }
+
+    pattern = String.raw`\S`
+    for (const check of ['match(json.Name, pattern)', `match(json.Name, '${pattern}')`]) {
+      const nonEmptyCheck = contextFunction(check)
+      for (
+        const { Name, expected } of [
+          { Name: 'test', expected: true },
+          { Name: '', expected: false },
+          { Name: ' ', expected: false },
+        ]
+      ) {
+        assert(match(Name, pattern) === expected)
+        assert(
+          nonEmptyCheck({ match, json: { Name }, pattern } as unknown as BIDSContext) === expected,
+        )
+      }
+    }
   })
 })

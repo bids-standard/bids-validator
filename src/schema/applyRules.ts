@@ -1,9 +1,8 @@
 import type { GenericRule, GenericSchema, SchemaFields, SchemaTypeLike } from '../types/schema.ts'
 import type { Severity } from '../types/issues.ts'
 import type { BIDSContext } from './context.ts'
-import { expressionFunctions } from './expressionLanguage.ts'
+import { contextFunction, prepareContext } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
-import { memoize } from '../utils/memoize.ts'
 import { compile } from '../validators/json.ts'
 import type { DefinedError } from '@ajv'
 import {
@@ -29,6 +28,35 @@ export function applyRules(
   context: BIDSContext,
   rootSchema?: GenericSchema,
   schemaPath?: string,
+): Promise<void> {
+  _applyRules(schema, prepareContext(context), rootSchema, schemaPath)
+  return Promise.resolve()
+}
+
+/** Evaluate a single expression in a BIDSContext.
+ */
+export function evalCheck(src: string, context: BIDSContext) {
+  return _evalCheck(src, prepareContext(context))
+}
+
+/**
+ * Classic rules interpreted like selectors. Examples in specification:
+ * schema/rules/checks/*
+ */
+export function evalRuleChecks(
+  rule: GenericRule,
+  context: BIDSContext,
+  schema: GenericSchema,
+  schemaPath: string,
+): boolean {
+  return _evalRuleChecks(rule, prepareContext(context), schema, schemaPath)
+}
+
+function _applyRules(
+  schema: GenericSchema,
+  context: BIDSContext,
+  rootSchema?: GenericSchema,
+  schemaPath?: string,
 ) {
   if (!rootSchema) {
     rootSchema = schema
@@ -45,9 +73,6 @@ export function applyRules(
       schemaPath = ''
     }
   }
-  Object.assign(context, expressionFunctions)
-  // @ts-expect-error
-  context.exists.bind(context)
   for (const key in schema) {
     if (!(schema[key].constructor === Object)) {
       continue
@@ -60,7 +85,7 @@ export function applyRules(
         `${schemaPath}.${key}`,
       )
     } else if (schema[key].constructor === Object) {
-      applyRules(
+      _applyRules(
         schema[key] as GenericSchema,
         context,
         rootSchema,
@@ -68,21 +93,12 @@ export function applyRules(
       )
     }
   }
-  return Promise.resolve()
 }
 
-export const evalConstructor = (src: string): Function =>
-  new Function('context', `with (context) { return ${src.replace(/\\/g, '\\\\')} }`)
-const safeHas = () => true
-const safeGet = (target: any, prop: any) => prop === Symbol.unscopables ? undefined : target[prop]
-
-const memoizedEvalConstructor = memoize(evalConstructor)
-
-export function evalCheck(src: string, context: BIDSContext) {
-  const test = memoizedEvalConstructor(src)
-  const safeContext = new Proxy(context, { has: safeHas, get: safeGet })
+function _evalCheck(src: string, context: BIDSContext) {
+  const test = contextFunction(src)
   try {
-    return test(safeContext)
+    return test(context)
   } catch (error) {
     logger.debug(error)
     return null
@@ -103,7 +119,7 @@ const evalMap: Record<
     schemaPath: string,
   ) => boolean | void
 > = {
-  checks: evalRuleChecks,
+  checks: _evalRuleChecks,
   // @ts-expect-error
   columns: evalColumns,
   // @ts-expect-error
@@ -139,14 +155,10 @@ function evalRule(
 }
 
 function mapEvalCheck(statements: string[], context: BIDSContext): boolean {
-  return statements.every((x) => evalCheck(x, context))
+  return statements.every((x) => _evalCheck(x, context))
 }
 
-/**
- * Classic rules interpreted like selectors. Examples in specification:
- * schema/rules/checks/*
- */
-export function evalRuleChecks(
+function _evalRuleChecks(
   rule: GenericRule,
   context: BIDSContext,
   schema: GenericSchema,
