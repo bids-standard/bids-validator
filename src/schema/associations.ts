@@ -103,10 +103,10 @@ const associationLookup = {
       sidecar: await constructSidecar(file),
     }
   },
-  coordsystem: async (file: BIDSFile, options: { maxRows: number }): Promise<Channels> => {
+  coordsystem: async (file: BIDSFile, options: { maxRows: number }): Promise<{path: string, keys: string[]}> => {
     const keys = Object.keys(await loadJSON(file, options.maxRows)
       .catch((e) => {
-        return new Map()
+        return []
       }))
     return {
       path: file.path,
