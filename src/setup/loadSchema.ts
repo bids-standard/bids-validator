@@ -9,11 +9,11 @@ export interface SchemaWithSource {
 }
 
 /**
- * Load the schema from the specification
+ * Load the schema from the specification with source tracking
  *
  * version is ignored when the network cannot be accessed
  */
-export async function loadSchema(version?: string): Promise<SchemaWithSource> {
+export async function loadSchemaWithSource(version?: string): Promise<SchemaWithSource> {
   let schemaUrl = version
   const bidsSchema = typeof Deno !== 'undefined' ? Deno.env.get('BIDS_SCHEMA') : undefined
   if (bidsSchema !== undefined) {
@@ -47,4 +47,14 @@ export async function loadSchema(version?: string): Promise<SchemaWithSource> {
   }
   setCustomMetadataFormats(schema)
   return { schema, source: actualSchemaSource }
+}
+
+/**
+ * Load the schema from the specification
+ *
+ * version is ignored when the network cannot be accessed
+ */
+export async function loadSchema(version?: string): Promise<Schema> {
+  const result = await loadSchemaWithSource(version)
+  return result.schema
 }

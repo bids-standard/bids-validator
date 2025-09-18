@@ -6,7 +6,7 @@ import type { GenericSchema } from '../types/schema.ts'
 import type { ValidationResult } from '../types/validation-result.ts'
 import { applyRules } from '../schema/applyRules.ts'
 import { walkFileTree } from '../schema/walk.ts'
-import { loadSchema } from '../setup/loadSchema.ts'
+import { loadSchemaWithSource } from '../setup/loadSchema.ts'
 import type { Config, ValidatorOptions } from '../setup/options.ts'
 import { Summary } from '../summary/summary.ts'
 import { filenameIdentify } from './filenameIdentify.ts'
@@ -46,7 +46,7 @@ export async function validate(
   config?: Config,
 ): Promise<ValidationResult> {
   const summary = new Summary()
-  const schemaResult = await loadSchema(options.schema)
+  const schemaResult = await loadSchemaWithSource(options.schema)
   const schema = schemaResult.schema
   summary.schemaVersion = schema.schema_version
   summary.schemaSource = schemaResult.source
