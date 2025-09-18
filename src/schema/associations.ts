@@ -104,7 +104,7 @@ const associationLookup = {
     }
   },
   coordsystem: async (file: BIDSFile, options: { maxRows: number }): Promise<{path: string, keys: string[]}> => {
-    const keys = Object.keys(await loadJSON(file).catch((e) => {}))
+    const keys = Object.keys(await loadJSON(file).catch((e) => {return {}}))
     return {
       path: file.path,
       keys: keys,
