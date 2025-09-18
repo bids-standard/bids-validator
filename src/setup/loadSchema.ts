@@ -3,12 +3,17 @@ import { objectPathHandler } from '../utils/objectPathHandler.ts'
 import { schema as schemaDefault } from '@bids/schema'
 import { setCustomMetadataFormats } from '../validators/json.ts'
 
+export interface SchemaWithSource {
+  schema: Schema
+  source?: string
+}
+
 /**
  * Load the schema from the specification
  *
  * version is ignored when the network cannot be accessed
  */
-export async function loadSchema(version?: string): Promise<Schema> {
+export async function loadSchema(version?: string): Promise<SchemaWithSource> {
   let schemaUrl = version
   const bidsSchema = typeof Deno !== 'undefined' ? Deno.env.get('BIDS_SCHEMA') : undefined
   if (bidsSchema !== undefined) {
@@ -21,6 +26,7 @@ export async function loadSchema(version?: string): Promise<Schema> {
     schemaDefault as object,
     objectPathHandler,
   ) as Schema
+  let actualSchemaSource: string | undefined
 
   if (schemaUrl !== undefined) {
     try {
@@ -30,6 +36,7 @@ export async function loadSchema(version?: string): Promise<Schema> {
         jsonData as object,
         objectPathHandler,
       ) as Schema
+      actualSchemaSource = schemaUrl
     } catch (error) {
       // No network access or other errors
       console.error(error)
@@ -39,5 +46,5 @@ export async function loadSchema(version?: string): Promise<Schema> {
     }
   }
   setCustomMetadataFormats(schema)
-  return schema
+  return { schema, source: actualSchemaSource }
 }
