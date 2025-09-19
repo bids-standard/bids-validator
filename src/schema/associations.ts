@@ -9,12 +9,15 @@ import { parseBvalBvec } from '../files/dwi.ts'
 import { readSidecars, walkBack } from '../files/inheritance.ts'
 import { evalCheck } from './applyRules.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
+import { readEntities } from './entities.ts'
 
 import { readText } from '../files/access.ts'
 
 interface WithSidecar {
   sidecar: Record<string, unknown>
 }
+type LoadFunction = (file: BIDSFile, options: any) => Promise<any>
+type MultiLoadFunction = (files: BIDSFile[], options: any) => Promise<any>
 
 function defaultAssociation(file: BIDSFile, _options: any): Promise<{ path: string }> {
   return Promise.resolve({ path: file.path })
@@ -34,7 +37,7 @@ async function constructSidecar(file: BIDSFile): Promise<Record<string, unknown>
  *
  * Many associations only consist of a path; this object is for more complex associations.
  */
-const associationLookup = {
+const associationLookup: Record<string, LoadFunction> = {
   events: async (file: BIDSFile, options: { maxRows: number }): Promise<Events & WithSidecar> => {
     const columns = await loadTSV(file, options.maxRows)
       .catch((e) => {
@@ -103,11 +106,22 @@ const associationLookup = {
       sidecar: await constructSidecar(file),
     }
   },
-  coordsystem: async (file: BIDSFile, options: { maxRows: number }): Promise<{path: string, keys: string[]}> => {
-    const keys = Object.keys(await loadJSON(file).catch((e) => {return {}}))
+}
+const multiAssociationLookup: Record<string, MultiLoadFunction> = {
+  coordsystems: async (
+    files: BIDSFile[],
+    options: any,
+  ): Promise<{ paths: string[]; spaces: string[]; parents: string[] }> => {
+    const jsons = await Promise.allSettled(
+      files.map((f) => loadJSON(f).catch(() => ({} as Record<string, unknown>))),
+    )
+    const parents = jsons.map((j) =>
+      j.status === 'fulfilled' ? j.value?.ParentCoordinateSystem : undefined
+    ).filter((p) => p) as string[]
     return {
-      path: file.path,
-      keys: keys,
+      paths: files.map((f) => f.path),
+      spaces: files.map((f) => readEntities(f.name).entities?.space),
+      ParentCoordinateSystems: parents,
     }
   },
 }
@@ -142,33 +156,37 @@ export async function buildAssociations(
         rule.target.suffix,
         rule.target?.entities ?? [],
       ).next().value
-      if (Array.isArray(file)) {
-        file = file[0]
-      }
-    } catch (error) {
-      if (
-        error && typeof error === 'object' && 'code' in error &&
-        error.code === 'MULTIPLE_INHERITABLE_FILES'
-      ) {
-        // @ts-expect-error
+    } catch (error: any) {
+      if (error?.code === 'MULTIPLE_INHERITABLE_FILES') {
         context.dataset.issues.add(error)
-        break
+        continue
       } else {
         throw error
       }
     }
 
-    if (file) {
-      // @ts-expect-error
-      const load = associationLookup[key] ?? defaultAssociation
-      // @ts-expect-error
-      associations[key] = await load(file, { maxRows: context.dataset.options?.maxRows }).catch(
-        (error: any) => {
-          if (error.code) {
-            context.dataset.issues.add({ ...error, location: file.path })
-          }
-        },
-      )
+    if (file && !(Array.isArray(file) && file.length === 0)) {
+      const options = { maxRows: context.dataset.options?.maxRows }
+      if (key in multiAssociationLookup) {
+        const load = multiAssociationLookup[key]
+        if (!Array.isArray(file)) {
+          file = [file]
+        }
+        associations[key as keyof Associations] = await load(file, options)
+      } else {
+        const load = associationLookup[key] ?? defaultAssociation
+        if (Array.isArray(file)) {
+          file = file[0]
+        }
+        const location = file.path
+        associations[key as keyof Associations] = await load(file, { maxRows: context.dataset.options?.maxRows }).catch(
+          (error: any) => {
+            if (error.code) {
+              context.dataset.issues.add({ ...error, location })
+            }
+          },
+        )
+      }
     }
   }
   return Promise.resolve(associations)
