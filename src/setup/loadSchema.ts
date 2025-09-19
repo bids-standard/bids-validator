@@ -6,7 +6,6 @@ import { setCustomMetadataFormats } from '../validators/json.ts'
 /**
  * Load the schema from the specification
  *
- * version is ignored when the network cannot be accessed
  */
 export async function loadSchema(version?: string): Promise<Schema> {
   let schemaUrl = version
@@ -31,10 +30,10 @@ export async function loadSchema(version?: string): Promise<Schema> {
         objectPathHandler,
       ) as Schema
     } catch (error) {
-      // No network access or other errors
+      // If a custom schema URL was explicitly provided, fail rather than falling back
       console.error(error)
-      console.error(
-        `Warning, could not load schema from ${schemaUrl}, falling back to internal version`,
+      throw new Error(
+        `Failed to load schema from ${schemaUrl}: ${error instanceof Error ? error.message : String(error)}`,
       )
     }
   }
