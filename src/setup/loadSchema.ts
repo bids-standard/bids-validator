@@ -11,7 +11,6 @@ export interface SchemaWithSource {
 /**
  * Load the schema from the specification with source tracking
  *
- * version is ignored when the network cannot be accessed
  */
 export async function loadSchemaWithSource(version?: string): Promise<SchemaWithSource> {
   let schemaUrl = version
@@ -38,10 +37,10 @@ export async function loadSchemaWithSource(version?: string): Promise<SchemaWith
       ) as Schema
       actualSchemaSource = schemaUrl
     } catch (error) {
-      // No network access or other errors
+      // If a custom schema URL was explicitly provided, fail rather than falling back
       console.error(error)
-      console.error(
-        `Warning, could not load schema from ${schemaUrl}, falling back to internal version`,
+      throw new Error(
+        `Failed to load schema from ${schemaUrl}: ${error instanceof Error ? error.message : String(error)}`,
       )
     }
   }
