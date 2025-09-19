@@ -163,7 +163,9 @@ export class BIDSContext implements Context {
     this.columns = new ColumnsMap() as Record<string, string[]>
     this.json = {}
     this.associations = {} as Associations
-    datatypeFromDirectory(this.dataset.schema, this)
+    if (this.dataset.schema.objects) {  // schema may be empty for some tests
+      datatypeFromDirectory(this.dataset.schema, this)
+    }
   }
 
   get schema(): Schema {

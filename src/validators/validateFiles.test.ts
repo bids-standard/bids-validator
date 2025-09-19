@@ -1,18 +1,19 @@
 import { assert, assertEquals } from '@std/assert'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
-import { BIDSContext } from '../schema/context.ts'
+import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import type { GenericSchema, Schema } from '../types/schema.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { pathToFile } from '../files/filetree.ts'
 
-const schema = await loadSchema() as unknown as GenericSchema
+const schema = await loadSchema()
 
-function validatePath(path: string): DatasetIssues {
-  const context = new BIDSContext(pathToFile(path))
-  filenameIdentify(schema, context)
-  filenameValidate(schema, context)
+async function validatePath(path: string): Promise<DatasetIssues> {
+  const dataset = new BIDSContextDataset({ schema })
+  const context = new BIDSContext(pathToFile(path), dataset)
+  await filenameIdentify(schema, context)
+  await filenameValidate(schema as unknown as GenericSchema, context)
   return context.dataset.issues
 }
 
@@ -54,7 +55,7 @@ Deno.test('test valid paths', async (t) => {
   ]
   for (const filename of validFiles) {
     await t.step(filename, async () => {
-      const issues = validatePath(filename)
+      const issues = await validatePath(filename)
       assertEquals(
         issues.get({ location: filename }).length,
         0,
@@ -111,9 +112,10 @@ Deno.test('test invalid paths', async (t) => {
   ]
   for (const filename of invalidFiles) {
     await t.step(filename, async () => {
-      const context = new BIDSContext(pathToFile(filename))
+      const dataset = new BIDSContextDataset({ schema })
+      const context = new BIDSContext(pathToFile(filename), dataset)
       await filenameIdentify(schema, context)
-      await filenameValidate(schema, context)
+      await filenameValidate(schema as unknown as GenericSchema, context)
       assert(
         context.dataset.issues.get({
           location: context.file.path,
