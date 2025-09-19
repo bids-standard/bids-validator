@@ -50,7 +50,7 @@ export function* walkBack<T extends string[]>(
     if (candidates.length > 1) {
       const exactMatch = candidates.find((file) => {
         const { entities } = readEntities(file.name)
-        return Object.keys(sourceParts.entities).every((entity) =>
+        return [...Object.keys(sourceParts.entities), ...(targetEntities ?? [])].every((entity) =>
           entities[entity] === sourceParts.entities[entity]
         )
       })
