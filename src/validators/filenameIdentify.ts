@@ -20,7 +20,7 @@ import type { CheckFunction } from '../types/check.ts'
 import { lookupEntityLiteral } from './filenameValidate.ts'
 
 const CHECKS: CheckFunction[] = [
-  datatypeFromDirectory,
+  // datatypeFromDirectory,
   findRuleMatches,
   hasMatch,
   cleanContext,
