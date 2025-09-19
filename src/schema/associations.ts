@@ -111,7 +111,7 @@ const multiAssociationLookup: Record<string, MultiLoadFunction> = {
   coordsystems: async (
     files: BIDSFile[],
     options: any,
-  ): Promise<{ paths: string[]; spaces: string[]; parents: string[] }> => {
+  ): Promise<{ paths: string[]; spaces: string[]; ParentCoordinateSystems: string[] }> => {
     const jsons = await Promise.allSettled(
       files.map((f) => loadJSON(f).catch(() => ({} as Record<string, unknown>))),
     )
