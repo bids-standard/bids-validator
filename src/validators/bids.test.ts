@@ -1,4 +1,4 @@
-import { assert } from '@std/assert'
+import { assert, assertRejects } from '@std/assert'
 import { pathsToTree } from '../files/filetree.ts'
 import { validate } from './bids.ts'
 
@@ -67,6 +67,9 @@ Deno.test('Smoke tests of main validation function', async (t) => {
     assert(warnings.get({ location: '/dataset_description.json' }).length === 0)
   })
   await t.step('Schema source is reported in validation output', async () => {
+    // Check network permission status
+    const netPermission = await Deno.permissions.query({ name: 'net' })
+
     // Test with default schema (no source should be provided)
     let result = await validate(dataset, {
       datasetPath: '/dataset',
@@ -78,46 +81,114 @@ Deno.test('Smoke tests of main validation function', async (t) => {
     assert(result.summary.schemaVersion)
     assert(result.summary.schemaSource === undefined)
 
-    // Test with custom schema URL
-    result = await validate(dataset, {
-      datasetPath: '/dataset',
-      debug: 'INFO',
-      ignoreNiftiHeaders: true,
-      blacklistModalities: [],
-      datasetTypes: [],
-      schema: 'https://example.com/schema.json',
-    })
-    assert(result.summary.schemaVersion)
-    // Since the URL won't be reachable, it should fall back to default and not set source
-    assert(result.summary.schemaSource === undefined)
+    // Test with custom schema URL - should throw error without network
+    if (netPermission.state !== 'granted') {
+      await assertRejects(
+        async () => await validate(dataset, {
+          datasetPath: '/dataset',
+          debug: 'INFO',
+          ignoreNiftiHeaders: true,
+          blacklistModalities: [],
+          datasetTypes: [],
+          schema: 'https://example.com/schema.json',
+        }),
+        Error,
+        'Failed to load schema'
+      )
+    } else {
+      // With network, might fail with 404 or succeed with source set
+      try {
+        result = await validate(dataset, {
+          datasetPath: '/dataset',
+          debug: 'INFO',
+          ignoreNiftiHeaders: true,
+          blacklistModalities: [],
+          datasetTypes: [],
+          schema: 'https://example.com/schema.json',
+        })
+        // If it works, source should be set
+        assert(result.summary.schemaVersion)
+        assert(result.summary.schemaSource === 'https://example.com/schema.json')
+      } catch (error) {
+        // Expected to fail with unreachable URL
+        assert(error instanceof Error)
+        assert(error.message.includes('Failed to load schema'))
+      }
+    }
 
     // Test with version tag
-    result = await validate(dataset, {
-      datasetPath: '/dataset',
-      debug: 'INFO',
-      ignoreNiftiHeaders: true,
-      blacklistModalities: [],
-      datasetTypes: [],
-      schema: 'v1.9.0',
-    })
-    assert(result.summary.schemaVersion)
-    // Since network fetch will likely fail, it should fall back to default
-    assert(result.summary.schemaSource === undefined)
+    if (netPermission.state !== 'granted') {
+      await assertRejects(
+        async () => await validate(dataset, {
+          datasetPath: '/dataset',
+          debug: 'INFO',
+          ignoreNiftiHeaders: true,
+          blacklistModalities: [],
+          datasetTypes: [],
+          schema: 'v1.9.0',
+        }),
+        Error,
+        'Failed to load schema'
+      )
+    } else {
+      // With network, might succeed
+      try {
+        result = await validate(dataset, {
+          datasetPath: '/dataset',
+          debug: 'INFO',
+          ignoreNiftiHeaders: true,
+          blacklistModalities: [],
+          datasetTypes: [],
+          schema: 'v1.9.0',
+        })
+        assert(result.summary.schemaVersion)
+        // If successful, source should be the constructed URL
+        if (result.summary.schemaSource) {
+          assert(result.summary.schemaSource.includes('v1.9.0'))
+        }
+      } catch (error) {
+        // Could fail if version doesn't exist
+        assert(error instanceof Error)
+        assert(error.message.includes('Failed to load schema'))
+      }
+    }
 
     // Test with BIDS_SCHEMA environment variable
     const originalEnv = Deno.env.get('BIDS_SCHEMA')
     try {
       Deno.env.set('BIDS_SCHEMA', 'https://custom-schema.example.com/schema.json')
-      result = await validate(dataset, {
-        datasetPath: '/dataset',
-        debug: 'INFO',
-        ignoreNiftiHeaders: true,
-        blacklistModalities: [],
-        datasetTypes: [],
-      })
-      assert(result.summary.schemaVersion)
-      // Environment variable should override, but since network will fail, source won't be set
-      assert(result.summary.schemaSource === undefined)
+
+      if (netPermission.state !== 'granted') {
+        await assertRejects(
+          async () => await validate(dataset, {
+            datasetPath: '/dataset',
+            debug: 'INFO',
+            ignoreNiftiHeaders: true,
+            blacklistModalities: [],
+            datasetTypes: [],
+          }),
+          Error,
+          'Failed to load schema'
+        )
+      } else {
+        // With network, might fail with 404
+        try {
+          result = await validate(dataset, {
+            datasetPath: '/dataset',
+            debug: 'INFO',
+            ignoreNiftiHeaders: true,
+            blacklistModalities: [],
+            datasetTypes: [],
+          })
+          assert(result.summary.schemaVersion)
+          if (result.summary.schemaSource) {
+            assert(result.summary.schemaSource === 'https://custom-schema.example.com/schema.json')
+          }
+        } catch (error) {
+          assert(error instanceof Error)
+          assert(error.message.includes('Failed to load schema'))
+        }
+      }
     } finally {
       if (originalEnv !== undefined) {
         Deno.env.set('BIDS_SCHEMA', originalEnv)
