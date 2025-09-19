@@ -156,6 +156,15 @@ function formatSummary(summary: SummaryOutput): string {
 
   output.push('')
 
+  // Add schema information
+  output.push(pad + colors.magenta('Schema Information:'))
+  output.push(pad + 'Version: ' + summary.schemaVersion)
+  if (summary.schemaSource) {
+    output.push(pad + 'Source: ' + summary.schemaSource)
+  }
+
+  output.push('')
+
   //Neurostars message
   output.push(
     colors.cyan(
