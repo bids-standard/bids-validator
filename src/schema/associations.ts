@@ -5,14 +5,24 @@ import type { BIDSFile } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { parseBvalBvec } from '../files/dwi.ts'
-import { walkBack } from '../files/inheritance.ts'
+import { readSidecars, walkBack } from '../files/inheritance.ts'
 import { evalCheck } from './applyRules.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 
 import { readText } from '../files/access.ts'
 
+interface WithSidecar {
+  sidecar: Record<string, unknown>
+}
+
 function defaultAssociation(file: BIDSFile, _options: any): Promise<{ path: string }> {
   return Promise.resolve({ path: file.path })
+}
+
+async function constructSidecar(file: BIDSFile): Promise<Record<string, unknown>> {
+  const sidecars = await readSidecars(file)
+  // Note ordering here gives precedence to the more specific sidecar
+  return sidecars.values().reduce((acc, json) => ({ ...json, ...acc }), {})
 }
 
 /**
@@ -24,7 +34,7 @@ function defaultAssociation(file: BIDSFile, _options: any): Promise<{ path: stri
  * Many associations only consist of a path; this object is for more complex associations.
  */
 const associationLookup = {
-  events: async (file: BIDSFile, options: { maxRows: number }): Promise<Events> => {
+  events: async (file: BIDSFile, options: { maxRows: number }): Promise<Events & WithSidecar> => {
     const columns = await loadTSV(file, options.maxRows)
       .catch((e) => {
         return new Map()
@@ -32,6 +42,7 @@ const associationLookup = {
     return {
       path: file.path,
       onset: columns.get('onset') || [],
+      sidecar: await constructSidecar(file),
     }
   },
   aslcontext: async (
@@ -85,6 +96,12 @@ const associationLookup = {
       sampling_frequency: columns.get('sampling_frequency'),
     }
   },
+  physio: async (file: BIDSFile, options: any): Promise<{path: string} & WithSidecar> => {
+    return {
+      path: file.path,
+      sidecar: await constructSidecar(file),
+    }
+  },
 }
 
 export async function buildAssociations(
@@ -93,18 +110,12 @@ export async function buildAssociations(
   const associations: Associations = {}
 
   const schema: MetaSchema = context.dataset.schema as MetaSchema
-  // Augment rule type with an entities field that should be present in BIDS 1.10.1+
-  type ruleType = MetaSchema['meta']['associations'][keyof MetaSchema['meta']['associations']]
-  type AugmentedRuleType = ruleType & {
-    target: ruleType['target'] & { entities?: string[] }
-  }
 
   Object.assign(context, expressionFunctions)
   // @ts-expect-error
   context.exists.bind(context)
 
-  for (const key of Object.keys(schema.meta.associations)) {
-    const rule = schema.meta.associations[key] as AugmentedRuleType
+  for (const [key, rule] of Object.entries(schema.meta.associations)) {
     if (!rule.selectors!.every((x) => evalCheck(x, context))) {
       continue
     }
