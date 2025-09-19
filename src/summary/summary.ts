@@ -167,9 +167,7 @@ export class Summary {
       pet: this.pet,
       dataTypes: Array.from(this.dataTypes),
       schemaVersion: this.schemaVersion,
-    }
-    if (this.schemaSource) {
-      output.schemaSource = this.schemaSource
+      schemaSource: this.schemaSource,
     }
     return output
   }

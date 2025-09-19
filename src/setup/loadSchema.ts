@@ -50,8 +50,6 @@ export async function loadSchemaWithSource(version?: string): Promise<SchemaWith
 
 /**
  * Load the schema from the specification
- *
- * version is ignored when the network cannot be accessed
  */
 export async function loadSchema(version?: string): Promise<Schema> {
   const result = await loadSchemaWithSource(version)
