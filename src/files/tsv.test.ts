@@ -194,7 +194,6 @@ Deno.test('TSV loading', async (t) => {
     }
   })
 
-
   // Tests will have populated the memoization cache
   loadTSV.cache.clear()
 })

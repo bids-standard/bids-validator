@@ -10,7 +10,6 @@ export interface SchemaWithSource {
 
 /**
  * Load the schema from the specification with source tracking
- *
  */
 export async function loadSchemaWithSource(version?: string): Promise<SchemaWithSource> {
   let schemaUrl = version
@@ -40,7 +39,9 @@ export async function loadSchemaWithSource(version?: string): Promise<SchemaWith
       // If a custom schema URL was explicitly provided, fail rather than falling back
       console.error(error)
       throw new Error(
-        `Failed to load schema from ${schemaUrl}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to load schema from ${schemaUrl}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       )
     }
   }
