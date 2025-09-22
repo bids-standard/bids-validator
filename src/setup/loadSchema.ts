@@ -5,7 +5,6 @@ import { setCustomMetadataFormats } from '../validators/json.ts'
 
 /**
  * Load the schema from the specification
- *
  */
 export async function loadSchema(version?: string): Promise<Schema> {
   let schemaUrl = version
@@ -33,7 +32,9 @@ export async function loadSchema(version?: string): Promise<Schema> {
       // If a custom schema URL was explicitly provided, fail rather than falling back
       console.error(error)
       throw new Error(
-        `Failed to load schema from ${schemaUrl}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to load schema from ${schemaUrl}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       )
     }
   }

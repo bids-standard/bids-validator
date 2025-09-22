@@ -10,11 +10,11 @@ export class UnicodeDecodeError extends Error {
 
 const _decode = TextDecoder.prototype.decode
 
-TextDecoder.prototype.decode = function(input, options) {
+TextDecoder.prototype.decode = function (input, options) {
   try {
     return _decode.call(this, input, options)
   } catch (error) {
-    throw { code: 'INVALID_FILE_ENCODING', message: error}
+    throw { code: 'INVALID_FILE_ENCODING', message: error }
   }
 }
 
@@ -26,7 +26,7 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
   private decoder: TextDecoder
   private firstChunk: boolean
 
-  constructor(options = {fatal: false}) {
+  constructor(options = { fatal: false }) {
     this.decoder = new TextDecoder('utf-8', options)
     this.firstChunk = true
   }
@@ -56,6 +56,6 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
 /**
  * Creates a TransformStream that validates and decodes UTF-8 text
  */
-export function createUTF8Stream(options = {fatal: false}) {
+export function createUTF8Stream(options = { fatal: false }) {
   return new TransformStream(new UTF8StreamTransformer(options))
 }
