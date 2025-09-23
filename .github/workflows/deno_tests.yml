@@ -91,6 +91,7 @@ jobs:
         if: ${{ always() }}
         with:
           files: coverage.lcov
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   publish-dry-run:
     runs-on: ubuntu-latest
