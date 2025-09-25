@@ -26,7 +26,6 @@ import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import type { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
-import { datatypeFromDirectory } from '../validators/filenameIdentify.ts'
 
 export class BIDSContextDataset implements Dataset {
   #dataset_description: Record<string, unknown> = {}
@@ -168,9 +167,6 @@ export class BIDSContext implements Context {
     this.columns = new ColumnsMap() as Record<string, string[]>
     this.json = {}
     this.associations = {} as Associations
-    if (this.dataset.schema.objects) {  // schema may be empty for some tests
-      datatypeFromDirectory(this.dataset.schema, this)
-    }
   }
 
   get schema(): Schema {
