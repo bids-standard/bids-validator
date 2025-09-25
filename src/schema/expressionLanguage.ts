@@ -1,4 +1,5 @@
 import type { BIDSContext } from './context.ts'
+import { memoize } from '../utils/memoize.ts'
 
 function exists(this: BIDSContext, list: string[], rule: string = 'dataset'): number {
   if (list == null) {
@@ -123,4 +124,50 @@ export const expressionFunctions = {
   allequal: <T>(a: T[], b: T[]): boolean => {
     return (a != null && b != null) && a.length === b.length && a.every((v, i) => v === b[i])
   },
+}
+
+/**
+ * Generate a function that evaluates an expression using the BIDS context.
+ */
+function _contextFunction(expr: string): (context: BIDSContext) => any {
+  return new Function('context', `with (context) { return ${expr.replace(/\\/g, '\\\\')} }`) as (
+    context: BIDSContext,
+  ) => any
+}
+
+/**
+ * Generate a function that evaluates an expression using the BIDS context.
+ */
+export const contextFunction = memoize(_contextFunction)
+
+function _formatter(format: string): (context: BIDSContext) => string {
+  if (!format.includes('{')) {
+    return (context: BIDSContext) => format
+  }
+  const template = format.replace(/{/g, '${').replace(/\\/g, '\\\\').replace(/`/g, '\\`')
+  return new Function('context', `with (context) { return \`${template}\` }`) as (
+    context: BIDSContext,
+  ) => string
+}
+
+/**
+ * Generate a function that formats a string using the BIDS context.
+ *
+ * Strings are expected to use Python-style formatting,
+ * e.g., "sub-{entities.sub}/ses-{entities.ses}".
+ */
+export const formatter = memoize(_formatter)
+
+function safeContext(context: BIDSContext): BIDSContext {
+  return new Proxy(context, {
+    has: () => true,
+    get: (target: any, prop: any) => prop === Symbol.unscopables ? undefined : target[prop],
+  })
+}
+
+export function prepareContext(context: BIDSContext): BIDSContext {
+  Object.assign(context, expressionFunctions)
+  // @ts-expect-error
+  context.exists.bind(context)
+  return safeContext(context)
 }
