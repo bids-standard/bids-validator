@@ -1,8 +1,9 @@
 import type { ContextCheckFunction } from '../types/check.ts'
 
 export const filenameCase: ContextCheckFunction = (schema, context) => {
+    const lowercase = context.file.name.toLowerCase()
     const caseCollision = context.file.parent?.files.filter(otherFile => {
-      return (context.file.name.toLowerCase() === otherFile.name.toLowerCase() && context.file.name != otherFile.name)
+      return (otherFile != context.file && otherFile.name.toLowerCase() === lowercase)
     })
     if (caseCollision?.length) {
       context.dataset.issues.add({
