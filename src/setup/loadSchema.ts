@@ -3,10 +3,15 @@ import { objectPathHandler } from '../utils/objectPathHandler.ts'
 import { schema as schemaDefault } from '@bids/schema'
 import { setCustomMetadataFormats } from '../validators/json.ts'
 
+export interface SchemaWithSource {
+  schema: Schema
+  source?: string
+}
+
 /**
- * Load the schema from the specification
+ * Load the schema from the specification with source tracking
  */
-export async function loadSchema(version?: string): Promise<Schema> {
+export async function loadSchemaWithSource(version?: string): Promise<SchemaWithSource> {
   let schemaUrl = version
   const bidsSchema = typeof Deno !== 'undefined' ? Deno.env.get('BIDS_SCHEMA') : undefined
   if (bidsSchema !== undefined) {
@@ -19,6 +24,7 @@ export async function loadSchema(version?: string): Promise<Schema> {
     schemaDefault as object,
     objectPathHandler,
   ) as Schema
+  let actualSchemaSource: string | undefined
 
   if (schemaUrl !== undefined) {
     try {
@@ -28,6 +34,7 @@ export async function loadSchema(version?: string): Promise<Schema> {
         jsonData as object,
         objectPathHandler,
       ) as Schema
+      actualSchemaSource = schemaUrl
     } catch (error) {
       // If a custom schema URL was explicitly provided, fail rather than falling back
       console.error(error)
@@ -39,5 +46,13 @@ export async function loadSchema(version?: string): Promise<Schema> {
     }
   }
   setCustomMetadataFormats(schema)
-  return schema
+  return { schema, source: actualSchemaSource }
+}
+
+/**
+ * Load the schema from the specification
+ */
+export async function loadSchema(version?: string): Promise<Schema> {
+  const result = await loadSchemaWithSource(version)
+  return result.schema
 }
