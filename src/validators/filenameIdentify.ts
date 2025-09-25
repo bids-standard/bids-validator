@@ -15,12 +15,10 @@
 import { globToRegExp, SEPARATOR_PATTERN } from '@std/path'
 import type { GenericSchema, Schema } from '../types/schema.ts'
 import type { BIDSContext } from '../schema/context.ts'
-import type { lookupModality } from '../schema/modalities.ts'
 import type { CheckFunction } from '../types/check.ts'
 import { lookupEntityLiteral } from './filenameValidate.ts'
 
 const CHECKS: CheckFunction[] = [
-  datatypeFromDirectory,
   findRuleMatches,
   hasMatch,
   cleanContext,
@@ -124,29 +122,6 @@ function matchStemRule(node, context): boolean {
     return node.datatypes.includes(context.datatype)
   }
   return true
-}
-
-export async function datatypeFromDirectory(schema, context) {
-  const subEntity = schema.objects.entities.subject.name
-  const sesEntity = schema.objects.entities.session.name
-  const parts = context.file.path.split(SEPARATOR_PATTERN)
-  const datatypeIndex = parts.length - 2
-  if (datatypeIndex < 1) {
-    return Promise.resolve()
-  }
-  const dirDatatype = parts[datatypeIndex]
-  if (dirDatatype === 'phenotype') {
-    // Phenotype is a pseudo-datatype for now.
-    context.datatype = dirDatatype
-    return Promise.resolve()
-  }
-  for (const key in schema.rules.modalities) {
-    if (schema.rules.modalities[key].datatypes.includes(dirDatatype)) {
-      context.modality = key
-      context.datatype = dirDatatype
-      return Promise.resolve()
-    }
-  }
 }
 
 export function hasMatch(schema, context) {
