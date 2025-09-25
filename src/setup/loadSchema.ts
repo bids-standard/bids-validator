@@ -3,10 +3,29 @@ import { objectPathHandler } from '../utils/objectPathHandler.ts'
 import { schema as schemaDefault } from '@bids/schema'
 import { setCustomMetadataFormats } from '../validators/json.ts'
 
+function merge(obj1, obj2) {
+  if (Array.isArray(obj1) && Array.isArray(obj2)) {
+    return [...obj1, ...obj2]
+  }
+
+  let  merged = obj1
+  if (typeof obj1 !== "object" || typeof obj2 !== "object") {
+    return merged
+  }
+  Object.keys(obj2).map(key => {
+    if (key in obj1) {
+      merged[key] = merge(obj1[key], obj2[key])
+    } else {
+      merged[key] = obj2[key]
+    }
+  })
+  return merged
+}
+
 /**
  * Load the schema from the specification
  */
-export async function loadSchema(version?: string): Promise<Schema> {
+export async function loadSchema(version?: string, patch?: string, print?: boolean): Promise<Schema> {
   let schemaUrl = version
   const bidsSchema = typeof Deno !== 'undefined' ? Deno.env.get('BIDS_SCHEMA') : undefined
   if (bidsSchema !== undefined) {
@@ -37,6 +56,17 @@ export async function loadSchema(version?: string): Promise<Schema> {
         }`,
       )
     }
+  }
+
+  if (patch) {
+    let patchText = await Deno.readTextFile(patch);
+    let patchJson = JSON.parse(patchText)
+    schema = merge(schema, patchJson)
+  }
+
+  if (print) {
+    console.log(JSON.stringify(schema))
+    Deno.exit(0)
   }
   setCustomMetadataFormats(schema)
   return schema
