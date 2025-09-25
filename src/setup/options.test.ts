@@ -12,6 +12,7 @@ Deno.test('options parsing', async (t) => {
       blacklistModalities: [],
       datasetTypes: [],
       maxRows: 1000,
+      format: 'text',
     })
   })
 })
