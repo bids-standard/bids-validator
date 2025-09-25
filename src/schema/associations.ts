@@ -172,7 +172,7 @@ export async function buildAssociations(
         if (!Array.isArray(file)) {
           file = [file]
         }
-        associations[key as keyof Associations] = await load(file, options)
+        associations[key as keyof Associations] = await load(file, options).catch((e: any) => {})
       } else {
         const load = associationLookup[key] ?? defaultAssociation
         if (Array.isArray(file)) {
