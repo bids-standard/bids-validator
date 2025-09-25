@@ -5,16 +5,15 @@ import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import type { GenericSchema, Schema } from '../types/schema.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
-import { pathToFile } from '../files/filetree.ts'
+import type { BIDSFile } from '../types/filetree.ts'
+import { pathsToTree } from '../files/filetree.ts'
 
 const schema = await loadSchema()
 
-async function validatePath(path: string): Promise<DatasetIssues> {
-  const dataset = new BIDSContextDataset({ schema })
-  const context = new BIDSContext(pathToFile(path), dataset)
-  await filenameIdentify(schema, context)
-  await filenameValidate(schema as unknown as GenericSchema, context)
-  return context.dataset.issues
+function makeContext(path: string): BIDSContext {
+  const tree = pathsToTree([path])
+  const dataset = new BIDSContextDataset({ schema, tree })
+  return new BIDSContext(tree.get(path) as BIDSFile, dataset)
 }
 
 Deno.test('test valid paths', async (t) => {
@@ -55,11 +54,13 @@ Deno.test('test valid paths', async (t) => {
   ]
   for (const filename of validFiles) {
     await t.step(filename, async () => {
-      const issues = await validatePath(filename)
+      const context = makeContext(filename)
+      await filenameIdentify(schema, context)
+      await filenameValidate(schema as unknown as GenericSchema, context)
       assertEquals(
-        issues.get({ location: filename }).length,
+        context.dataset.issues.get({ location: filename }).length,
         0,
-        Deno.inspect(issues),
+        Deno.inspect(context.dataset.issues),
       )
     })
   }
@@ -112,8 +113,7 @@ Deno.test('test invalid paths', async (t) => {
   ]
   for (const filename of invalidFiles) {
     await t.step(filename, async () => {
-      const dataset = new BIDSContextDataset({ schema })
-      const context = new BIDSContext(pathToFile(filename), dataset)
+      const context = makeContext(filename)
       await filenameIdentify(schema, context)
       await filenameValidate(schema as unknown as GenericSchema, context)
       assert(

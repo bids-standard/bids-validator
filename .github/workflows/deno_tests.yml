@@ -83,7 +83,7 @@ jobs:
             touch tests/data/bids-examples/${DS}/.SKIP_VALIDATION
           done
         if: github.ref_name != 'dev' && github.base_ref != 'dev'
-      - run: deno test --node-modules-dir=auto $PERMS --coverage=cov/ src/
+      - run: deno test --parallel --node-modules-dir=auto $PERMS --coverage=cov/ src/
       - name: Collect coverage
         run: deno coverage cov/ --lcov --output=coverage.lcov
         if: ${{ always() }}
@@ -91,6 +91,7 @@ jobs:
         if: ${{ always() }}
         with:
           files: coverage.lcov
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   publish-dry-run:
     runs-on: ubuntu-latest

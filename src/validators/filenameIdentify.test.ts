@@ -1,12 +1,7 @@
 import { assertEquals } from '@std/assert'
 import { SEPARATOR_PATTERN } from '@std/path'
 import { BIDSContext } from '../schema/context.ts'
-import {
-  _findRuleMatches,
-  datatypeFromDirectory,
-  findDirRuleMatches,
-  hasMatch,
-} from './filenameIdentify.ts'
+import { _findRuleMatches, findDirRuleMatches, hasMatch } from './filenameIdentify.ts'
 import { BIDSFileDeno } from '../files/deno.ts'
 import { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
@@ -48,19 +43,6 @@ Deno.test('test _findRuleMatches', async (t) => {
       assertEquals(context.filenameRules[0], `${schemaPath}.recurse`)
     },
   )
-})
-
-Deno.test('test datatypeFromDirectory', (t) => {
-  const filesToTest = [
-    ['/sub-01/ses-01/func/sub-01_ses-01_task-nback_run-01_bold.nii', 'func'],
-    ['/sub-01/ses-01/anat/sub-01_ses-01_T1w.nii', 'anat'],
-  ]
-  filesToTest.map((test) => {
-    const file = new BIDSFileDeno(PATH, test[0], ignore)
-    const context = new BIDSContext(file)
-    datatypeFromDirectory(schema, context)
-    assertEquals(context.datatype, test[1])
-  })
 })
 
 Deno.test('test hasMatch', async (t) => {
