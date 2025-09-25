@@ -179,7 +179,7 @@ export async function buildAssociations(
           file = file[0]
         }
         const location = file.path
-        associations[key as keyof Associations] = await load(file, { maxRows: context.dataset.options?.maxRows }).catch(
+        associations[key as keyof Associations] = await load(file, options).catch(
           (error: any) => {
             if (error.code) {
               context.dataset.issues.add({ ...error, location })
