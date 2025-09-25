@@ -8,7 +8,8 @@ For top level release notes, leave all the headers commented out.
 
 ### Added
 
-- New `associations.coordsystems` to collate coordsystem files.
+- Implement `associations.coordsystems` to collate multiple `coordsystem.json` files,
+  as required by BEP 042 (EMG).
 
 <!--
 ### Changed
