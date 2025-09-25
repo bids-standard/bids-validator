@@ -6,7 +6,6 @@ import { logger } from '../utils/logger.ts'
 import { compile } from '../validators/json.ts'
 import type { DefinedError } from '@ajv'
 import {
-  evalAdditionalColumns,
   evalColumns,
   evalIndexColumns,
   evalInitialColumns,
@@ -122,8 +121,6 @@ const evalMap: Record<
   checks: _evalRuleChecks,
   // @ts-expect-error
   columns: evalColumns,
-  // @ts-expect-error
-  additional_columns: evalAdditionalColumns,
   // @ts-expect-error
   initial_columns: evalInitialColumns,
   // @ts-expect-error
