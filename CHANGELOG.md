@@ -30,9 +30,11 @@
 
 - File access failures consistently produce `FILE_READ` errors across all file types.
 
-- Fixed json encoding issue in web log download (Issue #174).
+- Fixed json encoding issue in web log download ([#174]).
 
 - Throw utf-8 encoding error for tsv files similar to json files.
+
+[#174]: https://github.com/bids-standard/bids-validator/issues/174
 
 <a id='changelog-2.1.0'></a>
 # 2.1.0 — 2025-09-03
