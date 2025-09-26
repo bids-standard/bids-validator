@@ -1,4 +1,39 @@
 
+<a id='changelog-2.1.1'></a>
+# 2.1.1 — 2025-09-26
+
+## Added
+
+- Additional (dataset-defined) columns are now validated against the
+  definitions in the sidecar files.
+
+- Throw error on file name case collision.
+
+- Add support for the `unique()` function in schema expressions.
+
+- Support issues messages that access validation context variables.
+
+## Changed
+
+- Initial column TSV checks now support missing, optional initial columns.
+
+- Index column TSV checks now support missing, optional index columns.
+
+- Now supports Deno 2.5 and Typescript 5.9.2.
+
+- Parsed JSON files are now cached to reduce I/O and parsing costs.
+
+- Throw an error if specified schema (e.g. via `--schema` or `BIDS_SCHEMA` env
+  var) could not be loaded.
+
+## Fixed
+
+- File access failures consistently produce `FILE_READ` errors across all file types.
+
+- Fixed json encoding issue in web log download (Issue #174).
+
+- Throw utf-8 encoding error for tsv files similar to json files.
+
 <a id='changelog-2.1.0'></a>
 # 2.1.0 — 2025-09-03
 
