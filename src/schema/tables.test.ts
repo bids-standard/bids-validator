@@ -2,7 +2,6 @@
 import { assertEquals } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
 import {
-  evalAdditionalColumns,
   evalColumns,
   evalIndexColumns,
   evalInitialColumns,
@@ -186,6 +185,48 @@ Deno.test('tables eval* tests', async (t) => {
     assertEquals(issues.length, 1)
   })
 
+  await t.step('validate additional column with sidecar', () => {
+    const context = {
+      path: '/participants.tsv',
+      extension: '.tsv',
+      sidecar: {
+        myAge: {
+          Description: 'Age in weeks',
+          Format: 'number',
+        },
+        mySex: {
+          Description: 'Phenotypic sex',
+          Format: 'string',
+          Levels: {
+            'F': { Description: 'Female' },
+            'M': { Description: 'Male' },
+            'O': { Description: 'Other' },
+          },
+        },
+      },
+      sidecarKeyOrigin: {
+        myAge: '/participants.json',
+        mySex: '/participants.json',
+      },
+      columns: new ColumnsMap(Object.entries({
+        participant_id: ['sub-01', 'sub-02', 'sub-03'],
+        myAge: ['10', '20', '89+'],
+        mySex: ['M', 'F', 'O'],
+      })),
+      dataset: { issues: new DatasetIssues() },
+    }
+    const rule = schemaDefs.rules.tabular_data.modality_agnostic.Participants
+    evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Participants')
+
+    // myAge does not get the pseudo-age warning
+    // mySex doesn't raise issues
+    const issues = context.dataset.issues.get({ code: 'TSV_VALUE_INCORRECT_TYPE' })
+    assertEquals(issues.length, 1)
+    assertEquals(issues[0].subCode, 'myAge')
+    assertEquals(issues[0].line, 4)
+    assertEquals(issues[0].issueMessage, "'89+'")
+  })
+
   await t.step('verify column ordering', () => {
     const context = {
       path: '/sub-01/sub-01_scans.tsv',
@@ -246,11 +287,11 @@ Deno.test('tables eval* tests', async (t) => {
       dataset: { issues: new DatasetIssues() },
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
-    evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals(context.dataset.issues.size, 0)
 
     context.columns['extra'] = [1, 2, 3]
-    evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals(
       context.dataset.issues.get({ code: 'TSV_ADDITIONAL_COLUMNS_NOT_ALLOWED' }).length,
       1,
@@ -270,18 +311,18 @@ Deno.test('tables eval* tests', async (t) => {
     }
     const rule = schemaDefs.rules.tabular_data.made_up.MadeUp
     rule.additional_columns = 'allowed_if_defined'
-    evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals(context.dataset.issues.size, 0)
 
     context['sidecar'] = {}
-    evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals(
       context.dataset.issues.get({ code: 'TSV_ADDITIONAL_COLUMNS_MUST_DEFINE' }).length,
       1,
     )
 
     rule.additional_columns = 'allowed'
-    evalAdditionalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
+    evalColumns(rule, context, schema, 'rules.tabular_data.made_up.MadeUp')
     assertEquals(
       context.dataset.issues.get({ code: 'TSV_ADDITIONAL_COLUMNS_UNDEFINED' }).length,
       1,

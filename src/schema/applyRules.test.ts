@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { assert, assertEquals } from '@std/assert'
-import { applyRules, evalCheck, evalConstructor } from './applyRules.ts'
+import { applyRules, evalCheck } from './applyRules.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 
@@ -107,48 +107,3 @@ Deno.test(
     assertEquals(context.dataset.issues.get({ code: 'CHECK_ERROR' }).length, 1)
   },
 )
-
-Deno.test('evalConstructor test', async (t) => {
-  const match = expressionFunctions.match
-  await t.step('check veridical reconstruction of match expressions', () => {
-    // match() functions frequently contain escapes in regex patterns
-    // We receive these from the schema as written in YAML, so we need to ensure
-    // that they are correctly reconstructed in the evalConstructor() function
-    //
-    // The goal is to avoid schema authors needing to double-escape their regex patterns
-    // and other implementations to account for the double-escaping
-    let pattern = String.raw`^\.nii(\.gz)?$`
-
-    // Check both a literal and a variable pattern produce the same result
-    for (const check of ['match(extension, pattern)', `match(extension, '${pattern}')`]) {
-      const niftiCheck = evalConstructor(check)
-      for (
-        const [extension, expected] of [
-          ['.nii', true],
-          ['.nii.gz', true],
-          ['.tsv', false],
-          [',nii,gz', false], // Check that . is not treated as a wildcard
-        ]
-      ) {
-        assert(match(extension, pattern) === expected)
-        // Pass in a context object to provide any needed variables
-        assert(niftiCheck({ match, extension, pattern }) === expected)
-      }
-    }
-
-    pattern = String.raw`\S`
-    for (const check of ['match(json.Name, pattern)', `match(json.Name, '${pattern}')`]) {
-      const nonEmptyCheck = evalConstructor(check)
-      for (
-        const [Name, expected] of [
-          ['test', true],
-          ['', false],
-          [' ', false],
-        ]
-      ) {
-        assert(match(Name, pattern) === expected)
-        assert(nonEmptyCheck({ match, json: { Name }, pattern }) === expected)
-      }
-    }
-  })
-})

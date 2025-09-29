@@ -72,4 +72,22 @@ Deno.test('walkback inheritance tests', async (t) => {
       assertEquals(rootElectrodes.path, '/space-talairach_electrodes.tsv')
     },
   )
+  await t.step(
+    'The presence of target entities does not trigger exact match logic',
+    async () => {
+      const rootFileTree = pathsToTree([
+        '/sub-01/ieeg/sub-01_task-rest_ieeg.edf',
+        '/sub-01/ieeg/sub-01_task-rest_space-anat_electrodes.tsv',
+        '/sub-01/ieeg/sub-01_task-rest_space-MNI_electrodes.tsv',
+      ])
+      const dataFile = rootFileTree.get('sub-01/ieeg/sub-01_task-rest_ieeg.edf') as BIDSFile
+      const electrodes = walkBack(dataFile, true, ['.tsv'], 'electrodes', ['space'])
+      const localElectrodes: BIDSFile[] = electrodes.next().value
+      assert(Array.isArray(localElectrodes))
+      assertEquals(localElectrodes.map((f) => f.path), [
+        '/sub-01/ieeg/sub-01_task-rest_space-anat_electrodes.tsv',
+        '/sub-01/ieeg/sub-01_task-rest_space-MNI_electrodes.tsv',
+      ])
+    },
+  )
 })

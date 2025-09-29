@@ -15,6 +15,7 @@ import type { BIDSFile } from '../types/filetree.ts'
 import { FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { readEntities } from './entities.ts'
+import { findDatatype } from './datatypes.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { walkBack } from '../files/inheritance.ts'
 import { parseGzip } from '../files/gzip.ts'
@@ -147,16 +148,20 @@ export class BIDSContext implements Context {
     dsContext?: BIDSContextDataset,
     fileTree?: FileTree,
   ) {
+    this.dataset = dsContext ? dsContext : new BIDSContextDataset({ tree: fileTree })
+
     this.filenameRules = []
     this.file = file
-    const bidsEntities = readEntities(file.name)
-    this.suffix = bidsEntities.suffix
-    this.extension = bidsEntities.extension
-    this.entities = bidsEntities.entities
-    this.dataset = dsContext ? dsContext : new BIDSContextDataset({ tree: fileTree })
+
+    const { entities, suffix, extension } = readEntities(file.name)
+    const { datatype, modality } = findDatatype(file, this.dataset.schema)
+    this.entities = entities
+    this.suffix = suffix
+    this.extension = extension
+    this.datatype = datatype
+    this.modality = modality
+
     this.subject = {} as Subject
-    this.datatype = ''
-    this.modality = ''
     this.sidecar = {}
     this.sidecarKeyOrigin = {}
     this.columns = new ColumnsMap() as Record<string, string[]>

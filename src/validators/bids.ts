@@ -9,6 +9,7 @@ import { walkFileTree } from '../schema/walk.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import type { Config, ValidatorOptions } from '../setup/options.ts'
 import { Summary } from '../summary/summary.ts'
+import { filenameCase } from './filenameCase.ts'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -27,6 +28,7 @@ const perContextChecks: ContextCheckFunction[] = [
   emptyFile,
   filenameIdentify,
   filenameValidate,
+  filenameCase,
   applyRules,
   hedValidate,
 ]
