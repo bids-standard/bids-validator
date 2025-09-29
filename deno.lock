@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@bids/schema@^1.2.0-dev": "1.2.0-dev.4+6404e2ee",
+    "jsr:@bids/schema@^1.2.0-dev": "1.2.0-dev.6+5e8d37f5",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
@@ -48,8 +48,8 @@
     "npm:ignore@^7.0.5": "7.0.5"
   },
   "jsr": {
-    "@bids/schema@1.2.0-dev.4+6404e2ee": {
-      "integrity": "6641289c08267e95ae5d76f2de7edbb667d53747d49bc850a6381fa712223644"
+    "@bids/schema@1.2.0-dev.6+5e8d37f5": {
+      "integrity": "c44fc13aff94dc972622a9a8855e8b90cf0c6afad08e073bb8185bea0b97b6e0"
     },
     "@cliffy/flags@1.0.0-rc.7": {
       "integrity": "318d9be98f6a6417b108e03dec427dea96cdd41a15beb21d2554ae6da450a781",
