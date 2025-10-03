@@ -32,7 +32,7 @@ export class FileTree {
   files: BIDSFile[]
   directories: FileTree[]
   viewed: boolean
-  parent?: FileTree
+  #parent?: WeakRef<FileTree>
   #ignore: FileIgnoreRules
 
   constructor(path: string, name: string, parent?: FileTree, ignore?: FileIgnoreRules) {
@@ -43,6 +43,14 @@ export class FileTree {
     this.parent = parent
     this.viewed = false
     this.#ignore = ignore ?? new FileIgnoreRules([])
+  }
+
+  get parent(): FileTree | undefined {
+    return this.#parent?.deref()
+  }
+
+  set parent(tree: FileTree | undefined) {
+    this.#parent = tree ? new WeakRef(tree) : undefined
   }
 
   get ignored(): boolean {
