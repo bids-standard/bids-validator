@@ -31,7 +31,7 @@
     "@bids/schema": "jsr:@bids/schema@~1.1.0",
     "@cliffy/command": "jsr:@effigies/cliffy-command@1.0.0-dev.8",
     "@cliffy/table": "jsr:@effigies/cliffy-table@1.0.0-dev.5",
-    "@hed/validator": "npm:hed-validator@~4.0.1",
+    "@hed/validator": "npm:hed-validator@~4.1.4",
     "@ignore": "npm:ignore@^7.0.5",
     "@libs/xml": "jsr:@libs/xml@^6.0.8",
     "@mango/nifti": "npm:@bids/nifti-reader-js@^0.6.9",
