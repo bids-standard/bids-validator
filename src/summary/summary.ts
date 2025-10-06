@@ -67,6 +67,7 @@ export class Summary {
   secondaryModalitiesCount: Record<string, number>
   dataTypes: Set<string>
   schemaVersion: string
+  schemaSource?: string
   constructor() {
     this.dataProcessed = false
     this.totalFiles = 0
@@ -153,7 +154,7 @@ export class Summary {
   }
 
   formatOutput(): SummaryOutput {
-    return {
+    const output: SummaryOutput = {
       sessions: Array.from(this.sessions),
       subjects: Array.from(this.subjects),
       subjectMetadata: this.subjectMetadata,
@@ -166,6 +167,8 @@ export class Summary {
       pet: this.pet,
       dataTypes: Array.from(this.dataTypes),
       schemaVersion: this.schemaVersion,
+      schemaSource: this.schemaSource,
     }
+    return output
   }
 }
