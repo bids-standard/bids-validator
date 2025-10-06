@@ -17,7 +17,7 @@ export class BIDSFileDeno implements BIDSFile {
   #ignore: FileIgnoreRules
   name: string
   path: string
-  parent: FileTree
+  #parent!: WeakRef<FileTree>
   #fileInfo?: Deno.FileInfo
   #datasetAbsPath: string
   viewed: boolean = false
@@ -39,6 +39,14 @@ export class BIDSFileDeno implements BIDSFile {
 
   private _getPath(): string {
     return join(this.#datasetAbsPath, this.path)
+  }
+
+  get parent(): FileTree {
+    return this.#parent.deref() as FileTree
+  }
+
+  set parent(tree: FileTree) {
+    this.#parent = new WeakRef(tree)
   }
 
   get size(): number {

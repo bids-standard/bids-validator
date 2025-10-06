@@ -12,7 +12,7 @@ export class BIDSFileBrowser implements BIDSFile {
   #file: File
   name: string
   path: string
-  parent: FileTree
+  #parent!: WeakRef<FileTree>
   viewed: boolean = false
 
   constructor(file: File, ignore: FileIgnoreRules, parent?: FileTree) {
@@ -23,6 +23,14 @@ export class BIDSFileBrowser implements BIDSFile {
     const prefixLength = relativePath.indexOf('/')
     this.path = relativePath.substring(prefixLength)
     this.parent = parent ?? new FileTree('', '/', undefined)
+  }
+
+  get parent(): FileTree {
+    return this.#parent.deref() as FileTree
+  }
+
+  set parent(tree: FileTree) {
+    this.#parent = new WeakRef(tree)
   }
 
   get size(): number {
