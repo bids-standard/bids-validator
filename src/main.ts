@@ -33,9 +33,14 @@ export async function main(): Promise<ValidationResult> {
   // Run the schema based validator
   const schemaResult = await validate(tree, options, config)
 
+  // Handle backward compatibility: if --json is used, override format
+  const outputFormat = options.json ? 'json' : (options.format || 'text')
+
   let output_string = ''
-  if (options.json) {
-    output_string = resultToJSONStr(schemaResult)
+  if (outputFormat === 'json') {
+    output_string = resultToJSONStr(schemaResult, false)
+  } else if (outputFormat === 'json_pp') {
+    output_string = resultToJSONStr(schemaResult, true)
   } else {
     output_string = consoleFormat(schemaResult, {
       verbose: options.verbose ? options.verbose : false,
