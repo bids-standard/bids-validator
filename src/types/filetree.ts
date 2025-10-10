@@ -1,24 +1,77 @@
+import { basename } from '@std/path'
 import { FileIgnoreRules } from '../files/ignore.ts'
 
-export interface BIDSFile {
-  // Filename
-  name: string
-  // Dataset relative path for the file
-  path: string
-  // File size in bytes
+// export interface BIDSFile {
+//   // Filename
+//   name: string
+//   // Dataset relative path for the file
+//   path: string
+//   // File size in bytes
+//   size: number
+//   // BIDS ignore status of the file
+//   ignored: boolean
+//   // ReadableStream to file raw contents
+//   stream: ReadableStream<Uint8Array<ArrayBuffer>>
+//   // Resolve stream to decoded utf-8 text
+//   text: () => Promise<string>
+//   // Read a range of bytes
+//   readBytes: (size: number, offset?: number) => Promise<Uint8Array<ArrayBuffer>>
+//   // Access the parent directory
+//   parent: FileTree
+//   // File has been viewed
+//   viewed: boolean
+// }
+
+export interface FileOpener {
   size: number
-  // BIDS ignore status of the file
-  ignored: boolean
-  // ReadableStream to file raw contents
-  stream: ReadableStream<Uint8Array<ArrayBuffer>>
-  // Resolve stream to decoded utf-8 text
+  stream: () => ReadableStream<Uint8Array<ArrayBuffer>>
   text: () => Promise<string>
-  // Read a range of bytes
   readBytes: (size: number, offset?: number) => Promise<Uint8Array<ArrayBuffer>>
-  // Access the parent directory
-  parent: FileTree
-  // File has been viewed
-  viewed: boolean
+}
+
+export class BIDSFile {
+  name: string
+  path: string
+  #parent!: WeakRef<FileTree>
+  viewed: boolean = false
+  #ignore: FileIgnoreRules
+  #opener: FileOpener
+
+  constructor(path: string, opener: FileOpener, ignore?: FileIgnoreRules, parent?: FileTree) {
+    this.path = path
+    this.name = basename(path)
+    this.#ignore = ignore ?? new FileIgnoreRules([])
+    this.#opener = opener
+    this.parent = parent ?? new FileTree('', '/', undefined)
+  }
+
+  get parent(): FileTree {
+    return this.#parent.deref() as FileTree
+  }
+
+  set parent(tree: FileTree) {
+    this.#parent = new WeakRef(tree)
+  }
+
+  get ignored(): boolean {
+    return this.#ignore.test(this.path)
+  }
+
+  get size(): number {
+    return this.#opener.size
+  }
+
+  async text(): Promise<string> {
+    return this.#opener.text()
+  }
+
+  async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
+    return this.#opener.readBytes(size, offset)
+  }
+
+  get stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
+    return this.#opener.stream()
+  }
 }
 
 /**

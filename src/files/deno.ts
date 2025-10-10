@@ -3,70 +3,41 @@
  */
 import { basename, join } from '@std/path'
 import * as posix from '@std/path/posix'
-import { type BIDSFile, FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree, type FileOpener } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 import { logger } from '../utils/logger.ts'
 import { createUTF8Stream } from './streams.ts'
-export { type BIDSFile, FileTree }
 
-/**
- * Deno implementation of BIDSFile
- */
-export class BIDSFileDeno implements BIDSFile {
-  #ignore: FileIgnoreRules
-  name: string
+class DenoOpener implements FileOpener {
   path: string
-  #parent!: WeakRef<FileTree>
-  #fileInfo?: Deno.FileInfo
-  #datasetAbsPath: string
-  viewed: boolean = false
+  #fileInfo!: Deno.FileInfo
 
-  constructor(datasetPath: string, path: string, ignore?: FileIgnoreRules, parent?: FileTree) {
-    this.#datasetAbsPath = datasetPath
-    this.path = path
-    this.name = basename(path)
-    this.#ignore = ignore ?? new FileIgnoreRules([])
+  constructor(datasetPath: string, path: string) {
+    this.path = join(datasetPath, path)
     try {
-      this.#fileInfo = Deno.statSync(this._getPath())
+      this.#fileInfo = Deno.statSync(this.path)
     } catch (error) {
       if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
-        this.#fileInfo = Deno.lstatSync(this._getPath())
+        this.#fileInfo = Deno.lstatSync(this.path)
       }
     }
-    this.parent = parent ?? new FileTree('', '/', undefined)
-  }
-
-  private _getPath(): string {
-    return join(this.#datasetAbsPath, this.path)
-  }
-
-  get parent(): FileTree {
-    return this.#parent.deref() as FileTree
-  }
-
-  set parent(tree: FileTree) {
-    this.#parent = new WeakRef(tree)
   }
 
   get size(): number {
     return this.#fileInfo ? this.#fileInfo.size : -1
   }
 
-  get stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
+  stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
     const handle = this.#openHandle()
     return handle.readable
-  }
-
-  get ignored(): boolean {
-    return this.#ignore.test(this.path)
   }
 
   /**
    * Read the entire file and decode as utf-8 text
    */
   async text(): Promise<string> {
-    const reader = this.stream.pipeThrough(createUTF8Stream()).getReader()
+    const reader = this.stream().pipeThrough(createUTF8Stream()).getReader()
     const chunks: string[] = []
     try {
       while (true) {
@@ -95,13 +66,14 @@ export class BIDSFileDeno implements BIDSFile {
     return buf.subarray(0, nbytes)
   }
 
-  /**
-   * Return a Deno file handle
-   */
   #openHandle(): Deno.FsFile {
-    // Avoid asking for write access
-    const openOptions = { read: true, write: false }
-    return Deno.openSync(this._getPath(), openOptions)
+    return Deno.openSync(this.path, { read: true, write: false })
+  }
+}
+
+export class BIDSFileDeno extends BIDSFile {
+  constructor(datasetPath: string, path: string, ignore?: FileIgnoreRules, parent?: FileTree) {
+    super(path, new DenoOpener(datasetPath, path), ignore, parent)
   }
 }
 
@@ -122,12 +94,12 @@ async function _readFileTree(
       continue
     }
     if (dirEntry.isFile || dirEntry.isSymlink) {
-      const file = new BIDSFileDeno(
-        rootPath,
+      const file = new BIDSFile(
         thisPath,
+        new DenoOpener(rootPath, thisPath),
         ignore,
+        tree,
       )
-      file.parent = tree
       tree.files.push(file)
     }
     if (dirEntry.isDirectory) {
