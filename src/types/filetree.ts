@@ -34,14 +34,22 @@ export class BIDSFile {
   path: string
   #parent!: WeakRef<FileTree>
   viewed: boolean = false
-  #ignore: FileIgnoreRules
-  #opener: FileOpener
+  #ignore: FileIgnoreRules | boolean
+  opener: FileOpener
 
-  constructor(path: string, opener: FileOpener, ignore?: FileIgnoreRules, parent?: FileTree) {
+  constructor(
+    path: string,
+    opener: FileOpener,
+    ignore?: FileIgnoreRules | boolean,
+    parent?: FileTree,
+  ) {
     this.path = path
     this.name = basename(path)
-    this.#ignore = ignore ?? new FileIgnoreRules([])
-    this.#opener = opener
+    if (this.path.endsWith('/')) {
+      this.name = `${this.name}/`
+    }
+    this.#ignore = ignore ?? false
+    this.opener = opener
     this.parent = parent ?? new FileTree('', '/', undefined)
   }
 
@@ -54,23 +62,24 @@ export class BIDSFile {
   }
 
   get ignored(): boolean {
+    if (typeof this.#ignore === 'boolean') return this.#ignore
     return this.#ignore.test(this.path)
   }
 
   get size(): number {
-    return this.#opener.size
+    return this.opener.size
   }
 
   async text(): Promise<string> {
-    return this.#opener.text()
+    return this.opener.text()
   }
 
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
-    return this.#opener.readBytes(size, offset)
+    return this.opener.readBytes(size, offset)
   }
 
   get stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
-    return this.#opener.stream()
+    return this.opener.stream()
   }
 }
 
@@ -84,7 +93,7 @@ export class FileTree {
   name: string
   files: BIDSFile[]
   directories: FileTree[]
-  viewed: boolean
+  viewed: boolean = false
   #parent?: WeakRef<FileTree>
   #ignore: FileIgnoreRules
 
@@ -94,7 +103,6 @@ export class FileTree {
     this.directories = []
     this.name = name
     this.parent = parent
-    this.viewed = false
     this.#ignore = ignore ?? new FileIgnoreRules([])
   }
 

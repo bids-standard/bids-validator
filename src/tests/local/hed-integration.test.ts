@@ -1,10 +1,10 @@
 import type { formatAssertIssue, validatePath } from './common.ts'
 import { assert, assertEquals } from '@std/assert'
-import { BIDSFileDeno, readFileTree } from '../../files/deno.ts'
+import { readFileTree } from '../../files/deno.ts'
 import type { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { loadSchema } from '../../setup/loadSchema.ts'
 import { BIDSContext, BIDSContextDataset } from '../../schema/context.ts'
-import type { BIDSFile, FileTree } from '../../types/filetree.ts'
+import { BIDSFile, FileTree } from '../../types/filetree.ts'
 import type { GenericSchema } from '../../types/schema.ts'
 import { hedValidate } from '../../validators/hed.ts'
 
@@ -20,7 +20,7 @@ Deno.test('hed-validator not triggered', async (t) => {
   await t.step('detect hed returns false', async () => {
     const eventFile = tree.get('sub-01/func/sub-01_task-rhymejudgment_events.tsv')
     assert(eventFile !== undefined)
-    assert(eventFile instanceof BIDSFileDeno)
+    assert(eventFile instanceof BIDSFile)
     const context = new BIDSContext(eventFile, dsContext)
     await context.asyncLoads()
     await hedValidate(schema as unknown as GenericSchema, context)
@@ -40,7 +40,7 @@ Deno.test('hed-validator fails with bad schema version', async (t) => {
   await t.step('detect hed returns false', async () => {
     const eventFile = tree.get('sub-002/eeg/sub-002_task-FacePerception_run-3_events.tsv')
     assert(eventFile !== undefined)
-    assert(eventFile instanceof BIDSFileDeno)
+    assert(eventFile instanceof BIDSFile)
     const context = new BIDSContext(eventFile, dsContext)
     await context.asyncLoads()
     await hedValidate(schema as unknown as GenericSchema, context)

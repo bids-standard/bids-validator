@@ -1,5 +1,5 @@
 import { BIDSContext, type BIDSContextDataset } from './context.ts'
-import type { BIDSFile, FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileOpener, FileTree } from '../types/filetree.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { loadJSON } from '../files/json.ts'
@@ -13,22 +13,24 @@ function* quickWalk(dir: FileTree): Generator<BIDSFile> {
   }
 }
 
-const nullFile = {
-  stream: new ReadableStream(),
-  text: async () => '',
-  readBytes: async (size: number, offset?: number) => new Uint8Array(),
+class NullFileOpener implements FileOpener {
+  size: number
+  constructor(size = 0) {
+    this.size = size
+  }
+  stream = () => new ReadableStream()
+  text = async () => ''
+  readBytes = async (size: number, offset?: number) => new Uint8Array()
 }
 
 function pseudoFile(dir: FileTree, opaque: boolean): BIDSFile {
-  return {
-    name: `${dir.name}/`,
-    path: `${dir.path}/`,
-    size: opaque ? [...quickWalk(dir)].reduce((acc, file) => acc + file.size, 0) : 0,
-    ignored: dir.ignored,
-    parent: dir.parent as FileTree,
-    viewed: dir.viewed,
-    ...nullFile,
-  }
+  return new BIDSFile(
+    // Use a trailing slash to indicate directory
+    `${dir.path}/`,
+    new NullFileOpener(opaque ? [...quickWalk(dir)].reduce((acc, file) => acc + file.size, 0) : 0),
+    dir.ignored,
+    dir.parent as FileTree,
+  )
 }
 
 /** Recursive algorithm for visiting each file in the dataset, creating a context */

@@ -17,7 +17,7 @@ class NullFileOpener implements FileOpener {
 
 export function pathToFile(path: string, ignored: boolean = false): BIDSFile {
   const name = path.split('/').pop() as string
-  return new BIDSFile(path, new NullFileOpener())
+  return new BIDSFile(path, new NullFileOpener(), ignored)
 }
 
 export function pathsToTree(paths: string[], ignore?: string[]): FileTree {

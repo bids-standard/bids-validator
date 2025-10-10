@@ -18,7 +18,7 @@ Deno.test('Regression tests', async (t) => {
     // Without ignore, NOT_INCLUDED is triggered for CT, but the scans file is happy
     let ds = pathsToTree(paths)
     let scans_tsv = ds.get('sub-01/sub-01_scans.tsv') as BIDSFile
-    scans_tsv.stream = streamFromString(scans_content)
+    scans_tsv.opener.stream = () => streamFromString(scans_content)
     let result = await validate(ds, {
       datasetPath: '/dataset',
       debug: 'ERROR',
@@ -32,7 +32,7 @@ Deno.test('Regression tests', async (t) => {
     // With ignore, NOT_INCLUDED is not triggered for CT, and the scans file is still happy
     ds = pathsToTree(paths, ignore)
     scans_tsv = ds.get('sub-01/sub-01_scans.tsv') as BIDSFile
-    scans_tsv.stream = streamFromString(scans_content)
+    scans_tsv.opener.stream = () => streamFromString(scans_content)
     result = await validate(ds, {
       datasetPath: '/dataset',
       debug: 'ERROR',
