@@ -1,9 +1,8 @@
-import { BIDSFile, FileTree, type FileOpener } from '../types/filetree.ts'
+import { BIDSFile, type FileOpener, FileTree } from '../types/filetree.ts'
 import { filesToTree } from './filetree.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 import { parse, SEPARATOR_PATTERN } from '@std/path'
 import * as posix from '@std/path/posix'
-
 
 class BrowserFileOpener implements FileOpener {
   file: File

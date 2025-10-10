@@ -3,7 +3,7 @@
  */
 import { basename, join } from '@std/path'
 import * as posix from '@std/path/posix'
-import { BIDSFile, FileTree, type FileOpener } from '../types/filetree.ts'
+import { BIDSFile, type FileOpener, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 import { logger } from '../utils/logger.ts'

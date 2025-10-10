@@ -1,15 +1,16 @@
 import { parse, SEPARATOR_PATTERN } from '@std/path'
 import * as posix from '@std/path/posix'
-import { BIDSFile, FileTree, FileOpener } from '../types/filetree.ts'
+import { BIDSFile, FileOpener, FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
 
 class NullFileOpener implements FileOpener {
   size = 0
-  stream = () => new ReadableStream({
-    start(controller) {
-      controller.close()
-    },
-  })
+  stream = () =>
+    new ReadableStream({
+      start(controller) {
+        controller.close()
+      },
+    })
   text = () => Promise.resolve('')
   readBytes = async (size: number, offset?: number) => new Uint8Array()
 }

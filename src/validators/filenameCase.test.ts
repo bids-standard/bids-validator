@@ -17,7 +17,7 @@ const filesToTest = [
   '/FILE.txt',
   '/file.TXT',
   '/dir/file.txt',
-  '/different_file.txt'
+  '/different_file.txt',
 ]
 
 const fileTree = pathsToTree(filesToTest)
@@ -27,6 +27,6 @@ Deno.test('test filenameCase', async (t) => {
   for await (const context of walkFileTree(dsContext)) {
     await filenameCase(schema as unknown as GenericSchema, context)
   }
-  const issues = dsContext.issues.get({code: 'CASE_COLLISION'})
+  const issues = dsContext.issues.get({ code: 'CASE_COLLISION' })
   assertEquals(issues.length, 4)
 })

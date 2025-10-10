@@ -1,11 +1,7 @@
 // @ts-nocheck
 import { assertEquals } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
-import {
-  evalColumns,
-  evalIndexColumns,
-  evalInitialColumns,
-} from './tables.ts'
+import { evalColumns, evalIndexColumns, evalInitialColumns } from './tables.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 
