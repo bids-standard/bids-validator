@@ -3,7 +3,7 @@ import { BIDSContext, BIDSContextDataset } from './context.ts'
 import { walkFileTree } from './walk.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { simpleDataset, simpleDatasetFileCount } from '../tests/simple-dataset.ts'
-import { pathsToTree } from '../files/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
 Deno.test('file tree walking', async (t) => {

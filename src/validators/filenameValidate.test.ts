@@ -4,7 +4,7 @@ import { assertEquals } from '@std/assert'
 import { BIDSContext } from '../schema/context.ts'
 import { type atRoot, type entityLabelCheck, missingLabel } from './filenameValidate.ts'
 import type { BIDSFileDeno } from '../files/deno.ts'
-import { pathToFile } from '../files/filetree.ts'
+import { pathToFile } from '../files/filetree.test.ts'
 import type { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 

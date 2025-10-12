@@ -1,4 +1,4 @@
-import { pathsToTree } from '../files/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 
 export const simpleDataset = pathsToTree([
   '/dataset_description.json',

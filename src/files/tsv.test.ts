@@ -5,7 +5,7 @@ import {
   assertObjectMatch,
   assertStrictEquals,
 } from '@std/assert'
-import { pathToFile } from './filetree.ts'
+import { pathToFile } from './filetree.test.ts'
 import { BIDSFileDeno } from './deno.ts'
 import { loadTSV, loadTSVGZ } from './tsv.ts'
 import { asyncStreamFromString } from '../tests/utils.ts'

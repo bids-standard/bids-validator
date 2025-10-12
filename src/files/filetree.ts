@@ -1,25 +1,7 @@
 import { parse, SEPARATOR_PATTERN } from '@std/path'
 import * as posix from '@std/path/posix'
-import { BIDSFile, FileOpener, FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
-import { asyncStreamFromString } from '../tests/utils.ts'
-
-class NullFileOpener implements FileOpener {
-  size = 0
-  stream = () => asyncStreamFromString('')
-  text = () => Promise.resolve('')
-  readBytes = async (size: number, offset?: number) => new Uint8Array()
-}
-
-export function pathToFile(path: string, ignored: boolean = false): BIDSFile {
-  const name = path.split('/').pop() as string
-  return new BIDSFile(path, new NullFileOpener(), ignored)
-}
-
-export function pathsToTree(paths: string[], ignore?: string[]): FileTree {
-  const ignoreRules = new FileIgnoreRules(ignore ?? [])
-  return filesToTree(paths.map((path) => pathToFile(path, ignoreRules.test(path))))
-}
 
 export function filesToTree(fileList: BIDSFile[], ignore?: FileIgnoreRules): FileTree {
   ignore = ignore ?? new FileIgnoreRules([])

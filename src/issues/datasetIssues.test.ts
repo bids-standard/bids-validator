@@ -1,5 +1,5 @@
 import { assert, assertEquals, assertThrows } from '@std/assert'
-import { pathsToTree } from '../files/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 import { DatasetIssues } from './datasetIssues.ts'
 
 Deno.test('DatasetIssues management class', async (t) => {
