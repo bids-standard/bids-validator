@@ -1,31 +1,7 @@
-import { BIDSFile, type FileOpener, FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { filesToTree } from './filetree.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
-import { parse, SEPARATOR_PATTERN } from '@std/path'
-import * as posix from '@std/path/posix'
-
-class BrowserFileOpener implements FileOpener {
-  file: File
-  constructor(file: File) {
-    this.file = file
-  }
-
-  get size(): number {
-    return this.file.size
-  }
-
-  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
-    return Promise.resolve(this.file.stream() as ReadableStream<Uint8Array<ArrayBuffer>>)
-  }
-
-  async text(): Promise<string> {
-    return this.file.text()
-  }
-
-  async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
-    return new Uint8Array(await this.file.slice(offset, size).arrayBuffer())
-  }
-}
+import { BrowserFileOpener } from './openers.ts'
 
 /**
  * Browser implement of BIDSFile wrapping native File/FileList types
