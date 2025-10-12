@@ -28,8 +28,8 @@ class DenoOpener implements FileOpener {
     return this.#fileInfo ? this.#fileInfo.size : -1
   }
 
-  stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
-    const handle = this.#openHandle()
+  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+    const handle = await this.#openHandle()
     return handle.readable
   }
 
@@ -37,7 +37,8 @@ class DenoOpener implements FileOpener {
    * Read the entire file and decode as utf-8 text
    */
   async text(): Promise<string> {
-    const reader = this.stream().pipeThrough(createUTF8Stream()).getReader()
+    const stream = await this.stream()
+    const reader = stream.pipeThrough(createUTF8Stream()).getReader()
     const chunks: string[] = []
     try {
       while (true) {
@@ -58,16 +59,16 @@ class DenoOpener implements FileOpener {
    * If EOF is encountered, the resulting array may be smaller.
    */
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
-    const handle = this.#openHandle()
+    const handle = await this.#openHandle()
     const buf = new Uint8Array(size)
     await handle.seek(offset, Deno.SeekMode.Start)
     const nbytes = await handle.read(buf) ?? 0
-    handle.close()
+    await handle.close()
     return buf.subarray(0, nbytes)
   }
 
-  #openHandle(): Deno.FsFile {
-    return Deno.openSync(this.path, { read: true, write: false })
+  async #openHandle(): Promise<Deno.FsFile> {
+    return Deno.open(this.path, { read: true, write: false })
   }
 }
 

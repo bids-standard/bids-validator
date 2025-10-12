@@ -24,7 +24,7 @@ import { FileIgnoreRules } from '../files/ignore.ts'
 
 export interface FileOpener {
   size: number
-  stream: () => ReadableStream<Uint8Array<ArrayBuffer>>
+  stream: () => Promise<ReadableStream<Uint8Array<ArrayBuffer>>>
   text: () => Promise<string>
   readBytes: (size: number, offset?: number) => Promise<Uint8Array<ArrayBuffer>>
 }
@@ -78,7 +78,7 @@ export class BIDSFile {
     return this.opener.readBytes(size, offset)
   }
 
-  get stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
+  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     return this.opener.stream()
   }
 }

@@ -14,8 +14,8 @@ class BrowserFileOpener implements FileOpener {
     return this.file.size
   }
 
-  stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
-    return this.file.stream() as ReadableStream<Uint8Array<ArrayBuffer>>
+  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+    return Promise.resolve(this.file.stream() as ReadableStream<Uint8Array<ArrayBuffer>>)
   }
 
   async text(): Promise<string> {

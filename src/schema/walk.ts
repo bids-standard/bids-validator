@@ -3,6 +3,7 @@ import { BIDSFile, FileOpener, FileTree } from '../types/filetree.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { loadJSON } from '../files/json.ts'
+import { asyncStreamFromString } from '../tests/utils.ts'
 
 function* quickWalk(dir: FileTree): Generator<BIDSFile> {
   for (const file of dir.files) {
@@ -18,7 +19,7 @@ class NullFileOpener implements FileOpener {
   constructor(size = 0) {
     this.size = size
   }
-  stream = () => new ReadableStream()
+  stream = () => asyncStreamFromString('')
   text = async () => ''
   readBytes = async (size: number, offset?: number) => new Uint8Array()
 }
