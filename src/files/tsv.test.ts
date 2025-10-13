@@ -5,23 +5,25 @@ import {
   assertObjectMatch,
   assertStrictEquals,
 } from '@std/assert'
-import { pathToFile } from './filetree.ts'
+import { pathToFile } from './filetree.test.ts'
 import { BIDSFileDeno } from './deno.ts'
 import { loadTSV, loadTSVGZ } from './tsv.ts'
-import { streamFromString } from '../tests/utils.ts'
+import { asyncStreamFromString } from '../tests/utils.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { testAsyncFileAccess } from './access.test.ts'
 
-function compressedStreamFromString(str: string): ReadableStream<Uint8Array<ArrayBuffer>> {
-  return streamFromString(str).pipeThrough(new CompressionStream('gzip')) as ReadableStream<
-    Uint8Array<ArrayBuffer>
-  >
+async function compressedStreamFromString(
+  str: string,
+): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+  return asyncStreamFromString(str).then((stream) =>
+    stream.pipeThrough(new CompressionStream('gzip')) as ReadableStream<Uint8Array<ArrayBuffer>>
+  )
 }
 
 Deno.test('TSV loading', async (t) => {
   await t.step('Empty file produces empty map', async () => {
     const file = pathToFile('/empty.tsv')
-    file.stream = streamFromString('')
+    file.opener.stream = () => asyncStreamFromString('')
 
     const map = await loadTSV(file)
     // map.size looks for a column called map, so work around it
@@ -30,7 +32,7 @@ Deno.test('TSV loading', async (t) => {
 
   await t.step('Single row file produces header-only map', async () => {
     const file = pathToFile('/single_row.tsv')
-    file.stream = streamFromString('a\tb\tc\n')
+    file.opener.stream = () => asyncStreamFromString('a\tb\tc\n')
 
     const map = await loadTSV(file)
     assertEquals(map.a, [])
@@ -40,7 +42,7 @@ Deno.test('TSV loading', async (t) => {
 
   await t.step('Single column file produces single column map', async () => {
     const file = pathToFile('/single_column.tsv')
-    file.stream = streamFromString('a\n1\n2\n3\n')
+    file.opener.stream = () => asyncStreamFromString('a\n1\n2\n3\n')
 
     const map = await loadTSV(file)
     assertEquals(map.a, ['1', '2', '3'])
@@ -48,7 +50,7 @@ Deno.test('TSV loading', async (t) => {
 
   await t.step('Missing final newline is ignored', async () => {
     const file = pathToFile('/missing_newline.tsv')
-    file.stream = streamFromString('a\n1\n2\n3')
+    file.opener.stream = () => asyncStreamFromString('a\n1\n2\n3')
 
     const map = await loadTSV(file)
     assertEquals(map.a, ['1', '2', '3'])
@@ -56,7 +58,7 @@ Deno.test('TSV loading', async (t) => {
 
   await t.step('Empty row throws issue', async () => {
     const file = pathToFile('/empty_row.tsv')
-    file.stream = streamFromString('a\tb\tc\n1\t2\t3\n\n4\t5\t6\n')
+    file.opener.stream = () => asyncStreamFromString('a\tb\tc\n1\t2\t3\n\n4\t5\t6\n')
 
     try {
       await loadTSV(file)
@@ -67,7 +69,7 @@ Deno.test('TSV loading', async (t) => {
 
   await t.step('Mismatched row length throws issue', async () => {
     const file = pathToFile('/mismatched_row.tsv')
-    file.stream = streamFromString('a\tb\tc\n1\t2\t3\n4\t5\n')
+    file.opener.stream = () => asyncStreamFromString('a\tb\tc\n1\t2\t3\n4\t5\n')
 
     try {
       await loadTSV(file)
@@ -80,7 +82,7 @@ Deno.test('TSV loading', async (t) => {
     const file = pathToFile('/long.tsv')
     // Use 1500 to avoid overlap with default initial capacity
     const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
-    file.stream = streamFromString(text)
+    file.opener.stream = () => asyncStreamFromString(text)
 
     let map = await loadTSV(file, 0)
     assertEquals(map.a, [])
@@ -89,21 +91,21 @@ Deno.test('TSV loading', async (t) => {
 
     // Do not assume that caching respects maxRows in this test
     loadTSV.cache.clear()
-    file.stream = streamFromString(text)
+    file.opener.stream = () => asyncStreamFromString(text)
     map = await loadTSV(file, 1)
     assertEquals(map.a, ['1'])
     assertEquals(map.b, ['2'])
     assertEquals(map.c, ['3'])
 
     loadTSV.cache.clear()
-    file.stream = streamFromString(text)
+    file.opener.stream = () => asyncStreamFromString(text)
     map = await loadTSV(file, 2)
     assertEquals(map.a, ['1', '1'])
     assertEquals(map.b, ['2', '2'])
     assertEquals(map.c, ['3', '3'])
 
     loadTSV.cache.clear()
-    file.stream = streamFromString(text)
+    file.opener.stream = () => asyncStreamFromString(text)
     map = await loadTSV(file, -1)
     assertEquals(map.a, Array(1500).fill('1'))
     assertEquals(map.b, Array(1500).fill('2'))
@@ -111,7 +113,7 @@ Deno.test('TSV loading', async (t) => {
 
     loadTSV.cache.clear()
     // Check that maxRows does not truncate shorter files
-    file.stream = streamFromString('a\tb\tc\n1\t2\t3\n4\t5\t6\n7\t8\t9\n')
+    file.opener.stream = () => asyncStreamFromString('a\tb\tc\n1\t2\t3\n4\t5\t6\n7\t8\t9\n')
     map = await loadTSV(file, 4)
     assertEquals(map.a, ['1', '4', '7'])
     assertEquals(map.b, ['2', '5', '8'])
@@ -123,7 +125,7 @@ Deno.test('TSV loading', async (t) => {
     const file = pathToFile('/long.tsv')
     // Use 1500 to avoid overlap with default initial capacity
     const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
-    file.stream = streamFromString(text)
+    file.opener.stream = () => asyncStreamFromString(text)
 
     let map = await loadTSV(file, 2)
     assertEquals(map.a, ['1', '1'])
@@ -131,7 +133,7 @@ Deno.test('TSV loading', async (t) => {
     assertEquals(map.c, ['3', '3'])
 
     // Replace stream to ensure cache does not depend on deep object equality
-    file.stream = streamFromString(text)
+    file.opener.stream = () => asyncStreamFromString(text)
     let repeatMap = await loadTSV(file, 2)
     assertStrictEquals(map, repeatMap)
 
@@ -149,21 +151,21 @@ Deno.test('TSV loading', async (t) => {
     const file = pathToFile('/long.tsv')
     // Use 1500 to avoid overlap with default initial capacity
     const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
-    file.stream = streamFromString(text)
+    file.opener.stream = () => asyncStreamFromString(text)
 
     let map = await loadTSV(file, 2)
     assertEquals(map.a, ['1', '1'])
     assertEquals(map.b, ['2', '2'])
     assertEquals(map.c, ['3', '3'])
 
-    file.stream = streamFromString(text)
+    file.opener.stream = () => asyncStreamFromString(text)
     let repeatMap = await loadTSV(file, 3)
     assertNotStrictEquals(map, repeatMap)
     assertEquals(repeatMap.a, ['1', '1', '1'])
     assertEquals(repeatMap.b, ['2', '2', '2'])
     assertEquals(repeatMap.c, ['3', '3', '3'])
 
-    file.stream = streamFromString(text)
+    file.opener.stream = () => asyncStreamFromString(text)
     repeatMap = await loadTSV(file, 2)
     assertStrictEquals(map, repeatMap)
     assertEquals(repeatMap.a, ['1', '1'])
@@ -173,7 +175,7 @@ Deno.test('TSV loading', async (t) => {
 
   await t.step('Raises issue on duplicate header', async () => {
     const file = pathToFile('/duplicate_header.tsv')
-    file.stream = streamFromString('a\ta\n1\t2\n')
+    file.opener.stream = () => asyncStreamFromString('a\ta\n1\t2\n')
 
     try {
       await loadTSV(file)
@@ -201,7 +203,7 @@ Deno.test('TSV loading', async (t) => {
 Deno.test('TSVGZ loading', async (t) => {
   await t.step('No header and empty file produces empty map', async () => {
     const file = pathToFile('/empty.tsv.gz')
-    file.stream = compressedStreamFromString('')
+    file.opener.stream = () => compressedStreamFromString('')
 
     const map = await loadTSVGZ(file, [])
     // map.size looks for a column called map, so work around it
@@ -210,7 +212,7 @@ Deno.test('TSVGZ loading', async (t) => {
 
   await t.step('Empty file produces header-only map', async () => {
     const file = pathToFile('/empty.tsv.gz')
-    file.stream = compressedStreamFromString('')
+    file.opener.stream = () => compressedStreamFromString('')
 
     const map = await loadTSVGZ(file, ['a', 'b', 'c'])
     assertEquals(map.a, [])
@@ -220,7 +222,7 @@ Deno.test('TSVGZ loading', async (t) => {
 
   await t.step('Single column file produces single column maps', async () => {
     const file = pathToFile('/single_column.tsv')
-    file.stream = compressedStreamFromString('1\n2\n3\n')
+    file.opener.stream = () => compressedStreamFromString('1\n2\n3\n')
 
     const map = await loadTSVGZ(file, ['a'])
     assertEquals(map.a, ['1', '2', '3'])
@@ -228,7 +230,7 @@ Deno.test('TSVGZ loading', async (t) => {
 
   await t.step('Mismatched header length throws issue', async () => {
     const file = pathToFile('/single_column.tsv.gz')
-    file.stream = compressedStreamFromString('1\n2\n3\n')
+    file.opener.stream = () => compressedStreamFromString('1\n2\n3\n')
 
     try {
       await loadTSVGZ(file, ['a', 'b'])
@@ -239,7 +241,7 @@ Deno.test('TSVGZ loading', async (t) => {
 
   await t.step('Missing final newline is ignored', async () => {
     const file = pathToFile('/missing_newline.tsv.gz')
-    file.stream = compressedStreamFromString('1\n2\n3')
+    file.opener.stream = () => compressedStreamFromString('1\n2\n3')
 
     const map = await loadTSVGZ(file, ['a'])
     assertEquals(map.a, ['1', '2', '3'])
@@ -247,7 +249,7 @@ Deno.test('TSVGZ loading', async (t) => {
 
   await t.step('Empty row throws issue', async () => {
     const file = pathToFile('/empty_row.tsv.gz')
-    file.stream = compressedStreamFromString('1\t2\t3\n\n4\t5\t6\n')
+    file.opener.stream = () => compressedStreamFromString('1\t2\t3\n\n4\t5\t6\n')
 
     try {
       await loadTSVGZ(file, ['a', 'b', 'c'])
@@ -258,7 +260,7 @@ Deno.test('TSVGZ loading', async (t) => {
 
   await t.step('Mislabeled TSV throws issue', async () => {
     const file = pathToFile('/mismatched_row.tsv.gz')
-    file.stream = streamFromString('a\tb\tc\n1\t2\t3\n4\t5\n')
+    file.opener.stream = () => asyncStreamFromString('a\tb\tc\n1\t2\t3\n4\t5\n')
 
     try {
       await loadTSVGZ(file, ['a', 'b', 'c'])
@@ -272,33 +274,33 @@ Deno.test('TSVGZ loading', async (t) => {
     // Use 1500 to avoid overlap with default initial capacity
     const headers = ['a', 'b', 'c']
     const text = '1\t2\t3\n'.repeat(1500)
-    file.stream = compressedStreamFromString(text)
+    file.opener.stream = () => compressedStreamFromString(text)
 
     let map = await loadTSVGZ(file, headers, 0)
     assertEquals(map.a, [])
     assertEquals(map.b, [])
     assertEquals(map.c, [])
 
-    file.stream = compressedStreamFromString(text)
+    file.opener.stream = () => compressedStreamFromString(text)
     map = await loadTSVGZ(file, headers, 1)
     assertEquals(map.a, ['1'])
     assertEquals(map.b, ['2'])
     assertEquals(map.c, ['3'])
 
-    file.stream = compressedStreamFromString(text)
+    file.opener.stream = () => compressedStreamFromString(text)
     map = await loadTSVGZ(file, headers, 2)
     assertEquals(map.a, ['1', '1'])
     assertEquals(map.b, ['2', '2'])
     assertEquals(map.c, ['3', '3'])
 
-    file.stream = compressedStreamFromString(text)
+    file.opener.stream = () => compressedStreamFromString(text)
     map = await loadTSVGZ(file, headers, -1)
     assertEquals(map.a, Array(1500).fill('1'))
     assertEquals(map.b, Array(1500).fill('2'))
     assertEquals(map.c, Array(1500).fill('3'))
 
     // Check that maxRows does not truncate shorter files
-    file.stream = compressedStreamFromString('1\t2\t3\n4\t5\t6\n7\t8\t9\n')
+    file.opener.stream = () => compressedStreamFromString('1\t2\t3\n4\t5\t6\n7\t8\t9\n')
     map = await loadTSVGZ(file, headers, 4)
     assertEquals(map.a, ['1', '4', '7'])
     assertEquals(map.b, ['2', '5', '8'])

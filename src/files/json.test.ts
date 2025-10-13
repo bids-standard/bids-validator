@@ -3,7 +3,7 @@ import type { BIDSFile } from '../types/filetree.ts'
 import type { FileIgnoreRules } from './ignore.ts'
 import { testAsyncFileAccess } from './access.test.ts'
 
-import { pathsToTree } from '../files/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 import { loadJSON } from './json.ts'
 
 function encodeUTF16(text: string) {

@@ -1,5 +1,5 @@
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
-import { pathsToTree } from '../files/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 import { nullReadBytes } from '../tests/nullReadBytes.ts'
 
 const anatJson = JSON.stringify({

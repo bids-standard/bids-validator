@@ -1,5 +1,5 @@
 import { assert } from '@std/assert'
-import { pathsToTree } from '../files/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 import { BIDSFileDeno } from '../files/deno.ts'
 import { citationValidate } from './citation.ts'
 import { BIDSContextDataset } from '../schema/context.ts'

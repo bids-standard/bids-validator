@@ -19,7 +19,7 @@ export type ValidatorOptions = {
   datasetPath: string
   schema?: string
   config?: string
-  json?: boolean  // Deprecated, kept for backward compatibility
+  json?: boolean // Deprecated, kept for backward compatibility
   format?: string
   verbose?: boolean
   ignoreNiftiHeaders?: boolean
@@ -58,7 +58,7 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   .option(
     '--format <format:format>',
     'Output format: text (default), json, or json_pp (pretty-printed JSON)',
-    { default: 'text' }
+    { default: 'text' },
   )
   .option(
     '-s, --schema <URL-or-tag:string>',

@@ -1,5 +1,5 @@
 import { assert } from '@std/assert'
-import { pathsToTree } from '../files/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 import { validate } from './bids.ts'
 
 const dataset = pathsToTree([

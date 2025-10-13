@@ -203,7 +203,6 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'Files with the same name but different casing have been found.',
   },
-
 }
 
 export const nonSchemaIssues = { ...bidsIssues }
