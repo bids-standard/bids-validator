@@ -1,27 +1,6 @@
 import { basename } from '@std/path'
 import { FileIgnoreRules } from '../files/ignore.ts'
 
-// export interface BIDSFile {
-//   // Filename
-//   name: string
-//   // Dataset relative path for the file
-//   path: string
-//   // File size in bytes
-//   size: number
-//   // BIDS ignore status of the file
-//   ignored: boolean
-//   // ReadableStream to file raw contents
-//   stream: ReadableStream<Uint8Array<ArrayBuffer>>
-//   // Resolve stream to decoded utf-8 text
-//   text: () => Promise<string>
-//   // Read a range of bytes
-//   readBytes: (size: number, offset?: number) => Promise<Uint8Array<ArrayBuffer>>
-//   // Access the parent directory
-//   parent: FileTree
-//   // File has been viewed
-//   viewed: boolean
-// }
-
 export interface FileOpener {
   size: number
   stream: () => Promise<ReadableStream<Uint8Array<ArrayBuffer>>>
