@@ -86,7 +86,7 @@ export async function readFileTree(
 ): Promise<FileTree> {
   prune ??= new FileIgnoreRules([], false)
   const ignore = new FileIgnoreRules([])
-  const tree = await _readFileTree({rootPath, relativePath: '/', ignore, prune, preferredRemote})
+  const tree = await _readFileTree({ rootPath, relativePath: '/', ignore, prune, preferredRemote })
   const bidsignore = tree.get('.bidsignore')
   if (bidsignore) {
     try {
