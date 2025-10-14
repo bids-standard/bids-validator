@@ -57,6 +57,9 @@ const result = await esbuild.build({
   ],
   allowOverwrite: true,
   sourcemap: flags.minify ? false : 'inline',
+  banner: {
+      js: "import { createRequire } from 'node:module';const require = createRequire(import.meta.url);"
+  },
 })
 
 if (result.warnings.length > 0) {
