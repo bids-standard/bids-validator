@@ -1,6 +1,6 @@
 {
   "name": "@bids/validator",
-  "version": "2.2.0-dev",
+  "version": "2.3.0-dev",
   "exports": {
     ".": "./src/bids-validator.ts",
     "./main": "./src/main.ts",
@@ -31,7 +31,7 @@
     "@bids/schema": "jsr:@bids/schema@^1.2.0-dev",
     "@cliffy/command": "jsr:@effigies/cliffy-command@1.0.0-dev.8",
     "@cliffy/table": "jsr:@effigies/cliffy-table@1.0.0-dev.5",
-    "@hed/validator": "npm:hed-validator@~4.0.1",
+    "@hed/validator": "npm:hed-validator@~4.1.4",
     "@ignore": "npm:ignore@^7.0.5",
     "@libs/xml": "jsr:@libs/xml@^6.0.8",
     "@mango/nifti": "npm:@bids/nifti-reader-js@^0.6.9",
@@ -42,7 +42,9 @@
     "@std/log": "jsr:@std/log@^0.224.14",
     "@std/path": "jsr:@std/path@^1.1.2",
     "@std/streams": "jsr:@std/streams@^1.0.12",
-    "@std/yaml": "jsr:@std/yaml@^1.0.9"
+    "@std/yaml": "jsr:@std/yaml@^1.0.9",
+    "isomorphic-git": "npm:isomorphic-git@^1.27.1",
+    "hash-wasm": "npm:hash-wasm@^4.12.0"
   },
   "tasks": {
     "test": "deno test -A src/"

@@ -19,7 +19,8 @@ export type ValidatorOptions = {
   datasetPath: string
   schema?: string
   config?: string
-  json?: boolean
+  json?: boolean // Deprecated, kept for backward compatibility
+  format?: string
   verbose?: boolean
   ignoreNiftiHeaders?: boolean
   ignoreWarnings?: boolean
@@ -32,6 +33,7 @@ export type ValidatorOptions = {
   blacklistModalities: string[]
   prune?: boolean
   maxRows?: number
+  preferredRemote?: string
 }
 
 const datasetType = new EnumType<string>(
@@ -42,6 +44,8 @@ const modalityType = new EnumType<string>(
   Object.keys(schema.rules.modalities),
 )
 
+const formatType = new EnumType<string>(['text', 'json', 'json_pp'])
+
 /** Extendable Cliffy Command with built in BIDS validator options */
 export const validateCommand: Command<void, void, any, string[], void> = new Command()
   .name('bids-validator')
@@ -50,7 +54,13 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
     'This tool checks if a dataset in a given directory is compatible with the Brain Imaging Data Structure specification. To learn more about Brain Imaging Data Structure visit http://bids.neuroimaging.io',
   )
   .arguments('<dataset_directory>')
-  .option('--json', 'Output machine readable JSON')
+  .option('--json', '[Deprecated] Use --format json instead. Output machine readable JSON')
+  .type('format', formatType)
+  .option(
+    '--format <format:format>',
+    'Output format: text (default), json, or json_pp (pretty-printed JSON)',
+    { default: 'text' },
+  )
   .option(
     '-s, --schema <URL-or-tag:string>',
     'Specify a schema version to use for validation',
@@ -97,6 +107,10 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   .option(
     '-o, --outfile <file:string>',
     'File to write validation results to.',
+  )
+  .option(
+    '--preferredRemote <preferredRemote:string>',
+    'Name of the preferred git-annex remote for accessing remote data (experimental)',
   )
 
 // Disabling color output is only available in Deno

@@ -1,6 +1,6 @@
 import { assert, assertEquals, assertThrows } from '@std/assert'
 import type { BIDSFile } from '../types/filetree.ts'
-import { pathsToTree } from './filetree.ts'
+import { pathsToTree } from './filetree.test.ts'
 import { walkBack } from './inheritance.ts'
 
 Deno.test('walkback inheritance tests', async (t) => {

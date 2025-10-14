@@ -10,12 +10,12 @@ function IOErrorToIssue(err: { code: string; name: string }): Issue {
   return { code: 'FILE_READ', subCode: err.name, issueMessage }
 }
 
-export function openStream(file: BIDSFile): ReadableStream<Uint8Array<ArrayBuffer>> {
-  try {
-    return file.stream
-  } catch (err: any) {
+export async function openStream(
+  file: BIDSFile,
+): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+  return file.stream().catch((err: any) => {
     throw { location: file.path, ...IOErrorToIssue(err) }
-  }
+  })
 }
 
 export async function readBytes(

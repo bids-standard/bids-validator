@@ -171,7 +171,8 @@ function helpUrl(code: string): string {
   return `https://neurostars.org/search?q=${code}`
 }
 
-export function resultToJSONStr(result: ValidationResult): string {
+export function resultToJSONStr(result: ValidationResult, pretty: boolean = false): string {
+  const indent = pretty ? 2 : 0
   return JSON.stringify(result, (key, value) => {
     if (value?.parent) {
       // Remove parent reference to avoid circular references
@@ -182,5 +183,5 @@ export function resultToJSONStr(result: ValidationResult): string {
     } else {
       return value
     }
-  })
+  }, indent)
 }

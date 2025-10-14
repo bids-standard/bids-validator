@@ -6,7 +6,7 @@ import { loadSchema } from '../setup/loadSchema.ts'
 import type { GenericSchema, Schema } from '../types/schema.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import type { BIDSFile } from '../types/filetree.ts'
-import { pathsToTree } from '../files/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 
 const schema = await loadSchema()
 

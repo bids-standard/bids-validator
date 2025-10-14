@@ -5,11 +5,7 @@ import { contextFunction, formatter, prepareContext } from './expressionLanguage
 import { logger } from '../utils/logger.ts'
 import { compile } from '../validators/json.ts'
 import type { DefinedError } from '@ajv'
-import {
-  evalColumns,
-  evalIndexColumns,
-  evalInitialColumns,
-} from './tables.ts'
+import { evalColumns, evalIndexColumns, evalInitialColumns } from './tables.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
