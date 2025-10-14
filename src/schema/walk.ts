@@ -18,7 +18,12 @@ class NullFileOpener implements FileOpener {
   constructor(size = 0) {
     this.size = size
   }
-  stream = async () => new ReadableStream({start(controller) { controller.close()} })
+  stream = async () =>
+    new ReadableStream({
+      start(controller) {
+        controller.close()
+      },
+    })
   text = async () => ''
   readBytes = async (size: number, offset?: number) => new Uint8Array()
 }
