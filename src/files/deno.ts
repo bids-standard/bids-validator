@@ -16,13 +16,23 @@ export class BIDSFileDeno extends BIDSFile {
   }
 }
 
-async function _readFileTree(
-  rootPath: string,
-  relativePath: string,
-  ignore: FileIgnoreRules,
-  prune: FileIgnoreRules,
-  parent?: FileTree,
-): Promise<FileTree> {
+type ReadFileTreeOptions = {
+  rootPath: string
+  relativePath: string
+  ignore: FileIgnoreRules
+  prune: FileIgnoreRules
+  parent?: FileTree
+  preferredRemote?: string
+}
+
+async function _readFileTree({
+  rootPath,
+  relativePath,
+  ignore,
+  prune,
+  parent,
+  preferredRemote,
+}: ReadFileTreeOptions): Promise<FileTree> {
   await requestReadPermission()
   const name = basename(relativePath)
   const tree = new FileTree(relativePath, name, parent, ignore)
@@ -43,7 +53,7 @@ async function _readFileTree(
         opener = new FsFileOpener(rootPath, thisPath, fileInfo)
       } catch (error) {
         try {
-          const { url, size } = await resolveAnnexedFile(fullPath, undefined, { cache, fs })
+          const { url, size } = await resolveAnnexedFile(fullPath, preferredRemote, { cache, fs })
           opener = new HTTPOpener(url, size)
         } catch (_) {
           throw error
@@ -52,13 +62,14 @@ async function _readFileTree(
       tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
     }
     if (dirEntry.isDirectory) {
-      const dirTree = await _readFileTree(
+      const dirTree = await _readFileTree({
         rootPath,
-        thisPath,
+        relativePath: thisPath,
         ignore,
         prune,
-        tree,
-      )
+        parent: tree,
+        preferredRemote,
+      })
       tree.directories.push(dirTree)
     }
   }
@@ -71,10 +82,11 @@ async function _readFileTree(
 export async function readFileTree(
   rootPath: string,
   prune?: FileIgnoreRules,
+  preferredRemote?: string,
 ): Promise<FileTree> {
   prune ??= new FileIgnoreRules([], false)
   const ignore = new FileIgnoreRules([])
-  const tree = await _readFileTree(rootPath, '/', ignore, prune)
+  const tree = await _readFileTree({rootPath, relativePath: '/', ignore, prune, preferredRemote})
   const bidsignore = tree.get('.bidsignore')
   if (bidsignore) {
     try {
