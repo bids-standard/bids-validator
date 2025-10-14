@@ -8,6 +8,7 @@ import * as esbuild from 'https://deno.land/x/esbuild@v0.24.0/mod.js'
 import { parse } from 'https://deno.land/std@0.223.0/flags/mod.ts'
 import { denoPlugin } from "jsr:@deno/esbuild-plugin@1.1.5";
 import * as path from "https://deno.land/std@0.223.0/path/mod.ts"
+import { nodeModulesPolyfillPlugin } from 'npm:esbuild-plugins-node-modules-polyfill'
 import { getVersion } from './src/version.ts'
 
 
@@ -50,6 +51,15 @@ const result = await esbuild.build({
   minify: flags.minify,
   target: ['chrome109', 'firefox109', 'safari16'],
   plugins: [
+    nodeModulesPolyfillPlugin({
+      globals: {
+        Buffer: true,
+      },
+      modules: {
+        'buffer': true,
+        'worker_threads': false,
+      },
+    }),
     versionPlugin,
     denoPlugin({
       configPath: path.join(dir, 'deno.json'),
@@ -57,9 +67,6 @@ const result = await esbuild.build({
   ],
   allowOverwrite: true,
   sourcemap: flags.minify ? false : 'inline',
-  banner: {
-      js: "import { createRequire } from 'node:module';const require = createRequire(import.meta.url);"
-  },
 })
 
 if (result.warnings.length > 0) {
