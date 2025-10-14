@@ -1,4 +1,30 @@
 
+<a id='changelog-"2.2.0"'></a>
+# "2.2.0" — 2025-10-14
+
+## Added
+
+- Added `--format` option to specify output format: `text` (default), `json`, or `json_pp` (pretty-printed JSON)
+- Pretty-printed JSON output support via `--format json_pp` option
+
+- Datalad/git-annex datasets with remote content in public S3 buckets can be validated
+  with the `--preferredRemote <remote-name>` flag. If a public S3 bucket is detected without
+  this flag, the most recent export is used.
+
+## Changed
+
+- Refactored file access classes to be more DRY.
+
+## Fixed
+
+- Circular references that could lead to a hanging process were mitigated. [#278]
+
+[#278]: https://github.com/bids-standard/bids-validator/issues/278
+
+## Deprecated
+
+- Deprecated `--json` option in favor of `--format json` (backward compatibility maintained)
+
 <a id='changelog-2.1.1'></a>
 # 2.1.1 — 2025-09-26
 
