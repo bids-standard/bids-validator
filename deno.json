@@ -42,7 +42,9 @@
     "@std/log": "jsr:@std/log@^0.224.14",
     "@std/path": "jsr:@std/path@^1.1.2",
     "@std/streams": "jsr:@std/streams@^1.0.12",
-    "@std/yaml": "jsr:@std/yaml@^1.0.9"
+    "@std/yaml": "jsr:@std/yaml@^1.0.9",
+    "isomorphic-git": "npm:isomorphic-git@^1.27.1",
+    "hash-wasm": "npm:hash-wasm@^4.12.0"
   },
   "tasks": {
     "test": "deno test -A src/"

@@ -26,7 +26,7 @@ export async function main(): Promise<ValidationResult> {
   const prune = options.prune
     ? new FileIgnoreRules(['derivatives', 'sourcedata', 'code'], false)
     : undefined
-  const tree = await readFileTree(absolutePath, prune)
+  const tree = await readFileTree(absolutePath, prune, options.preferredRemote)
 
   const config = options.config ? JSON.parse(Deno.readTextFileSync(options.config)) as Config : {}
 

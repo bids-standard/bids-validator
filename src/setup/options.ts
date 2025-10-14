@@ -33,6 +33,7 @@ export type ValidatorOptions = {
   blacklistModalities: string[]
   prune?: boolean
   maxRows?: number
+  preferredRemote?: string
 }
 
 const datasetType = new EnumType<string>(
@@ -106,6 +107,10 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   .option(
     '-o, --outfile <file:string>',
     'File to write validation results to.',
+  )
+  .option(
+    '--preferredRemote <preferredRemote:string>',
+    'Name of the preferred git-annex remote for accessing remote data (experimental)',
   )
 
 // Disabling color output is only available in Deno
