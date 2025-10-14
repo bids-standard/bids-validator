@@ -1,3 +1,6 @@
+/**
+ * Utilities for reading git-annex metadata
+ */
 import { dirname, join, parse, SEPARATOR_PATTERN } from '@std/path'
 import { default as git } from 'isomorphic-git'
 import { createMD5 } from 'hash-wasm'
@@ -23,18 +26,6 @@ export async function readAnnexPath(
   const { blob } = await git.readBlob({ oid, filepath, ...options })
   return textDecoder.decode(blob)
 }
-
-// Logic
-//
-//  stat file
-//  if found:
-//    use local opener
-//  if not:
-//    readlink -> (../)*.git/annex/objects/*/*/{key}/{key}
-//    determine git root
-//    load remotes by UUID (git-annex:remote.log)
-//    read rmet (git-annex:{md5(key)[0:3]}/{md5(key)[3:6]}/{key}.log.rmet)
-//    Construct URL
 
 /**
  * git-annex hashDirLower implementation based on https://git-annex.branchable.com/internals/hashing/
@@ -93,6 +84,9 @@ export async function readRemotes(options: any): Promise<Record<string, Record<s
   return byUUID
 }
 
+/**
+ * Resolve an annexed file location to an HTTP URL, if a public S3 remote is available
+ */
 export async function resolveAnnexedFile(
   path: string,
   remote?: string,
@@ -116,6 +110,11 @@ export async function resolveAnnexedFile(
   if (remote) {
     let matching: string | undefined
     for (const [u, r] of Object.entries(remotes)) {
+      // Only consider public S3 remotes.
+      // This will need to be expanded for other types of remotes in future
+      if (!r?.publicurl) {
+        continue
+      }
       if (r.name === remote) {
         matching = u
         break
@@ -130,8 +129,12 @@ export async function resolveAnnexedFile(
     uuid = Object.entries(rmet).toSorted((a, b) => +b[1].timestamp - +a[1].timestamp)[0][0]
   }
   const { publicurl } = remotes[uuid]
-  const metadata = rmet[uuid]
 
+  if (!publicurl) {
+    throw new Error(`No publicurl found for remote ${uuid}`)
+  }
+
+  const metadata = rmet[uuid]
   const url = `${publicurl}/${metadata.path}?versionId=${metadata.version}`
 
   return { url, size }
