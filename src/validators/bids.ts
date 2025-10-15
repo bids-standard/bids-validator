@@ -108,7 +108,7 @@ export async function validate(
     return false
   })
 
-  for await (const context of walkFileTree(dsContext)) {
+  for await (const context of walkFileTree(dsContext, 20)) {
     // TODO - Skip ignored files for now (some tests may reference ignored files)
     if (context.file.ignored) {
       continue
