@@ -142,6 +142,7 @@ export class BIDSContext implements Context {
   file: BIDSFile
   filenameRules: string[]
   sidecarKeyOrigin: Record<string, string>
+  loaded: Promise<void>
 
   constructor(
     file: BIDSFile,
@@ -167,6 +168,7 @@ export class BIDSContext implements Context {
     this.columns = new ColumnsMap() as Record<string, string[]>
     this.json = {}
     this.associations = {} as Associations
+    this.loaded = this.asyncLoads()
   }
 
   get schema(): Schema {

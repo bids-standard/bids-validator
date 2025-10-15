@@ -119,7 +119,7 @@ export async function validate(
     ) {
       continue
     }
-    await context.asyncLoads()
+    await context.loaded
     // Run majority of checks
     for (const check of perContextChecks) {
       await check(schema as unknown as GenericSchema, context)
