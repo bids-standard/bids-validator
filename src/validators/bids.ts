@@ -109,17 +109,12 @@ export async function validate(
   })
 
   for await (const context of walkFileTree(dsContext, 20)) {
-    // TODO - Skip ignored files for now (some tests may reference ignored files)
-    if (context.file.ignored) {
-      continue
-    }
     if (
       dsContext.dataset_description.DatasetType == 'raw' &&
       context.file.path.includes('derivatives')
     ) {
       continue
     }
-    await context.loaded
     // Run majority of checks
     for (const check of perContextChecks) {
       await check(schema as unknown as GenericSchema, context)

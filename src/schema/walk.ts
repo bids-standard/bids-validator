@@ -47,9 +47,15 @@ async function* _walkFileTree(
   dsContext: BIDSContextDataset,
 ): AsyncIterable<BIDSContext | CleanupFunction> {
   for (const file of fileTree.files) {
+    if (file.ignored) {
+      continue
+    }
     yield new BIDSContext(file, dsContext)
   }
   for (const dir of fileTree.directories) {
+    if (dir.ignored) {
+      continue
+    }
     const pseudo = dsContext.isPseudoFile(dir)
     const opaque = pseudo || dsContext.isOpaqueDirectory(dir)
     const context = new BIDSContext(pseudoFile(dir, opaque), dsContext)
@@ -70,12 +76,8 @@ export async function* walkFileTree(
   dsContext: BIDSContextDataset,
   bufferSize: number = 1,
 ): AsyncIterable<BIDSContext> {
-  for await (
-    await using context of queuedAsyncIterator(
-      _walkFileTree(dsContext.tree, dsContext),
-      bufferSize,
-    )
-  ) {
+  for await (const context of queuedAsyncIterator(_walkFileTree(dsContext.tree, dsContext), bufferSize)) {
+    await context.loaded
     yield context
   }
 }
