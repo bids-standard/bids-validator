@@ -12,9 +12,3 @@ export function streamFromUint8Array<T extends ArrayBufferLike>(
 export function streamFromString(str: string): ReadableStream<Uint8Array<ArrayBuffer>> {
   return streamFromUint8Array(new TextEncoder().encode(str) as Uint8Array<ArrayBuffer>)
 }
-
-export async function asyncStreamFromString(
-  str: string,
-): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
-  return Promise.resolve(streamFromString(str))
-}
