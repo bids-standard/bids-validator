@@ -2,18 +2,11 @@ import { assert, assertEquals } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSFile, type FileOpener, type FileTree } from '../types/filetree.ts'
 import { filesToTree } from './filetree.ts'
-import { asyncStreamFromString } from '../tests/utils.ts'
-
-class NullFileOpener implements FileOpener {
-  size = 0
-  stream = () => asyncStreamFromString('')
-  text = () => Promise.resolve('')
-  readBytes = async (size: number, offset?: number) => new Uint8Array()
-}
+import { StringOpener } from './openers.test.ts'
 
 export function pathToFile(path: string, ignored: boolean = false): BIDSFile {
   const name = path.split('/').pop() as string
-  return new BIDSFile(path, new NullFileOpener(), ignored)
+  return new BIDSFile(path, new StringOpener(''), ignored)
 }
 
 export function pathsToTree(paths: string[], ignore?: string[]): FileTree {

@@ -7,13 +7,16 @@ import type { GenericSchema, Schema } from '../types/schema.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
+import { StringOpener } from '../files/openers.test.ts'
 
 const schema = await loadSchema()
 
-function makeContext(path: string): BIDSContext {
+function makeContext(path: string, contents: string = ''): BIDSContext {
   const tree = pathsToTree([path])
   const dataset = new BIDSContextDataset({ schema, tree })
-  return new BIDSContext(tree.get(path) as BIDSFile, dataset)
+  const file = tree.get(path) as BIDSFile
+  file.opener = new StringOpener(contents)
+  return new BIDSContext(file, dataset)
 }
 
 Deno.test('test valid paths', async (t) => {
