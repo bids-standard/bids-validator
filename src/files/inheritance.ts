@@ -1,5 +1,6 @@
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { readEntities } from '../schema/entities.ts'
+import { loadJSON } from './json.ts'
 
 type Ret<T> = T extends [string, ...string[]] ? (BIDSFile | BIDSFile[]) : BIDSFile
 
@@ -76,4 +77,21 @@ export function* walkBack<T extends string[]>(
     if (!inherit) break
     fileTree = fileTree.parent
   }
+}
+
+export async function readSidecars(
+  source: BIDSFile,
+): Promise<Map<string, Record<string, unknown>>> {
+  const ret: Map<string, Record<string, unknown>> = new Map()
+  for (const file of walkBack(source)) {
+    try {
+      ret.set(file.path, await loadJSON(file))
+    } catch (e: any) {
+      // Expect JSON parsing errors to be handled when the file is loaded directly
+      if (!e?.code) {
+        throw e
+      }
+    }
+  }
+  return ret
 }

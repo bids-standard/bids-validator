@@ -17,7 +17,7 @@ import { ColumnsMap } from '../types/columns.ts'
 import { readEntities } from './entities.ts'
 import { findDatatype } from './datatypes.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
-import { walkBack } from '../files/inheritance.ts'
+import { readSidecars } from '../files/inheritance.ts'
 import { parseGzip } from '../files/gzip.ts'
 import { loadTSV, loadTSVGZ } from '../files/tsv.ts'
 import { parseTIFF } from '../files/tiff.ts'
@@ -201,29 +201,18 @@ export class BIDSContext implements Context {
     if (this.extension === '.json') {
       return
     }
-    let sidecars: BIDSFile[] = []
+    let sidecars: Map<string, Record<string, unknown>>
     try {
-      sidecars = [...walkBack(this.file)]
-    } catch (error) {
-      if (
-        error && typeof error === 'object' && 'code' in error &&
-        error.code === 'MULTIPLE_INHERITABLE_FILES'
-      ) {
-        // @ts-expect-error
+      sidecars = await readSidecars(this.file)
+    } catch (error: any) {
+      if (error?.code) {
         this.dataset.issues.add(error)
+        return
       } else {
         throw error
       }
     }
-    for (const file of sidecars) {
-      const json = await loadJSON(file).catch((error): Record<string, unknown> => {
-        if (error.key) {
-          this.dataset.issues.add({ code: error.key, location: file.path })
-          return {}
-        } else {
-          throw error
-        }
-      })
+    for (const [path, json] of sidecars.entries()) {
       const overrides = Object.keys(this.sidecar).filter((x) => Object.hasOwn(json, x))
       for (const key of overrides) {
         if (json[key] !== this.sidecar[key]) {
@@ -232,14 +221,14 @@ export class BIDSContext implements Context {
             code: 'SIDECAR_FIELD_OVERRIDE',
             subCode: key,
             location: overrideLocation,
-            issueMessage: `Sidecar key defined in ${file.path} overrides previous value (${
+            issueMessage: `Sidecar key defined in ${path} overrides previous value (${
               json[key]
             }) from ${overrideLocation}`,
           })
         }
       }
       this.sidecar = { ...json, ...this.sidecar }
-      Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= file.path)
+      Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= path)
     }
     // Hack: round RepetitionTime to 3 decimal places; schema should add rounding function
     if (typeof this.sidecar.RepetitionTime === 'number') {
