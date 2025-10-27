@@ -1,4 +1,19 @@
 
+<a id='changelog-"2.2.1"'></a>
+# "2.2.1" — 2025-10-27
+
+## Added
+
+- Support for `associations.physio` and `associations.events.sidecar`.
+
+- Implement `associations.coordsystems` to collate multiple `coordsystem.json` files,
+  as required by BEP 042 (EMG).
+
+## Changed
+
+- Validation context generation was tweaked to improve concurrency, giving 4x validation
+  speedups in some cases.
+
 <a id='changelog-"2.2.0"'></a>
 # "2.2.0" — 2025-10-14
 
