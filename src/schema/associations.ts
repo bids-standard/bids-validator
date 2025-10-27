@@ -3,16 +3,30 @@ import type { Schema as MetaSchema } from '@bids/schema/metaschema'
 
 import type { BIDSFile } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
+import { loadJSON } from '../files/json.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { parseBvalBvec } from '../files/dwi.ts'
-import { walkBack } from '../files/inheritance.ts'
+import { readSidecars, walkBack } from '../files/inheritance.ts'
 import { evalCheck } from './applyRules.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
+import { readEntities } from './entities.ts'
 
 import { readText } from '../files/access.ts'
 
+interface WithSidecar {
+  sidecar: Record<string, unknown>
+}
+type LoadFunction = (file: BIDSFile, options: any) => Promise<any>
+type MultiLoadFunction = (files: BIDSFile[], options: any) => Promise<any>
+
 function defaultAssociation(file: BIDSFile, _options: any): Promise<{ path: string }> {
   return Promise.resolve({ path: file.path })
+}
+
+async function constructSidecar(file: BIDSFile): Promise<Record<string, unknown>> {
+  const sidecars = await readSidecars(file)
+  // Note ordering here gives precedence to the more specific sidecar
+  return sidecars.values().reduce((acc, json) => ({ ...json, ...acc }), {})
 }
 
 /**
@@ -23,8 +37,8 @@ function defaultAssociation(file: BIDSFile, _options: any): Promise<{ path: stri
  *
  * Many associations only consist of a path; this object is for more complex associations.
  */
-const associationLookup = {
-  events: async (file: BIDSFile, options: { maxRows: number }): Promise<Events> => {
+const associationLookup: Record<string, LoadFunction> = {
+  events: async (file: BIDSFile, options: { maxRows: number }): Promise<Events & WithSidecar> => {
     const columns = await loadTSV(file, options.maxRows)
       .catch((e) => {
         return new Map()
@@ -32,6 +46,7 @@ const associationLookup = {
     return {
       path: file.path,
       onset: columns.get('onset') || [],
+      sidecar: await constructSidecar(file),
     }
   },
   aslcontext: async (
@@ -85,6 +100,30 @@ const associationLookup = {
       sampling_frequency: columns.get('sampling_frequency'),
     }
   },
+  physio: async (file: BIDSFile, options: any): Promise<{path: string} & WithSidecar> => {
+    return {
+      path: file.path,
+      sidecar: await constructSidecar(file),
+    }
+  },
+}
+const multiAssociationLookup: Record<string, MultiLoadFunction> = {
+  coordsystems: async (
+    files: BIDSFile[],
+    options: any,
+  ): Promise<{ paths: string[]; spaces: string[]; ParentCoordinateSystems: string[] }> => {
+    const jsons = await Promise.allSettled(
+      files.map((f) => loadJSON(f).catch(() => ({} as Record<string, unknown>))),
+    )
+    const parents = jsons.map((j) =>
+      j.status === 'fulfilled' ? j.value?.ParentCoordinateSystem : undefined
+    ).filter((p) => p) as string[]
+    return {
+      paths: files.map((f) => f.path),
+      spaces: files.map((f) => readEntities(f.name).entities?.space),
+      ParentCoordinateSystems: parents,
+    }
+  },
 }
 
 export async function buildAssociations(
@@ -93,18 +132,12 @@ export async function buildAssociations(
   const associations: Associations = {}
 
   const schema: MetaSchema = context.dataset.schema as MetaSchema
-  // Augment rule type with an entities field that should be present in BIDS 1.10.1+
-  type ruleType = MetaSchema['meta']['associations'][keyof MetaSchema['meta']['associations']]
-  type AugmentedRuleType = ruleType & {
-    target: ruleType['target'] & { entities?: string[] }
-  }
 
   Object.assign(context, expressionFunctions)
   // @ts-expect-error
   context.exists.bind(context)
 
-  for (const key of Object.keys(schema.meta.associations)) {
-    const rule = schema.meta.associations[key] as AugmentedRuleType
+  for (const [key, rule] of Object.entries(schema.meta.associations)) {
     if (!rule.selectors!.every((x) => evalCheck(x, context))) {
       continue
     }
@@ -123,33 +156,37 @@ export async function buildAssociations(
         rule.target.suffix,
         rule.target?.entities ?? [],
       ).next().value
-      if (Array.isArray(file)) {
-        file = file[0]
-      }
-    } catch (error) {
-      if (
-        error && typeof error === 'object' && 'code' in error &&
-        error.code === 'MULTIPLE_INHERITABLE_FILES'
-      ) {
-        // @ts-expect-error
+    } catch (error: any) {
+      if (error?.code === 'MULTIPLE_INHERITABLE_FILES') {
         context.dataset.issues.add(error)
-        break
+        continue
       } else {
         throw error
       }
     }
 
-    if (file) {
-      // @ts-expect-error
-      const load = associationLookup[key] ?? defaultAssociation
-      // @ts-expect-error
-      associations[key] = await load(file, { maxRows: context.dataset.options?.maxRows }).catch(
-        (error: any) => {
-          if (error.code) {
-            context.dataset.issues.add({ ...error, location: file.path })
-          }
-        },
-      )
+    if (file && !(Array.isArray(file) && file.length === 0)) {
+      const options = { maxRows: context.dataset.options?.maxRows }
+      if (key in multiAssociationLookup) {
+        const load = multiAssociationLookup[key]
+        if (!Array.isArray(file)) {
+          file = [file]
+        }
+        associations[key as keyof Associations] = await load(file, options).catch((e: any) => {})
+      } else {
+        const load = associationLookup[key] ?? defaultAssociation
+        if (Array.isArray(file)) {
+          file = file[0]
+        }
+        const location = file.path
+        associations[key as keyof Associations] = await load(file, options).catch(
+          (error: any) => {
+            if (error.code) {
+              context.dataset.issues.add({ ...error, location })
+            }
+          },
+        )
+      }
     }
   }
   return Promise.resolve(associations)
