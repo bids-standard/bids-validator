@@ -79,11 +79,23 @@ export const expressionFunctions = {
     }
     return typeof operand
   },
-  min: (list: number[]): number | null => {
-    return list != null ? Math.min(...list.map(Number).filter((x) => !isNaN(x))) : null
+  min: (list: number | number[]): number | null => {
+    if (list == null) {
+      return null
+    }
+    if (!Array.isArray(list)) {
+      list = [list]
+    }
+    return Math.min(...list.map(Number).filter((x) => !isNaN(x)))
   },
-  max: (list: number[]): number | null => {
-    return list != null ? Math.max(...list.map(Number).filter((x) => !isNaN(x))) : null
+  max: (list: number | number[]): number | null => {
+    if (list == null) {
+      return null
+    }
+    if (!Array.isArray(list)) {
+      list = [list]
+    }
+    return Math.max(...list.map(Number).filter((x) => !isNaN(x)))
   },
   length: <T>(list: T[]): number | null => {
     if (Array.isArray(list) || typeof list == 'string') {
