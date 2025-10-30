@@ -1,6 +1,7 @@
 import { BIDSContext, type BIDSContextDataset } from './context.ts'
-import { BIDSFile, FileOpener, FileTree } from '../types/filetree.ts'
+import { BIDSFile, type FileTree } from '../types/filetree.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
+import { NullFileOpener } from '../files/openers.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { loadJSON } from '../files/json.ts'
 import { queuedAsyncIterator } from '../utils/queue.ts'
@@ -12,21 +13,6 @@ function* quickWalk(dir: FileTree): Generator<BIDSFile> {
   for (const subdir of dir.directories) {
     yield* quickWalk(subdir)
   }
-}
-
-class NullFileOpener implements FileOpener {
-  size: number
-  constructor(size = 0) {
-    this.size = size
-  }
-  stream = async () =>
-    new ReadableStream({
-      start(controller) {
-        controller.close()
-      },
-    })
-  text = async () => ''
-  readBytes = async (size: number, offset?: number) => new Uint8Array()
 }
 
 function pseudoFile(dir: FileTree, opaque: boolean): BIDSFile {
