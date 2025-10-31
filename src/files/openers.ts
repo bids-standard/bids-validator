@@ -126,3 +126,18 @@ export class HTTPOpener implements FileOpener {
     return new Uint8Array(await response.arrayBuffer())
   }
 }
+
+export class NullFileOpener implements FileOpener {
+  size: number
+  constructor(size = 0) {
+    this.size = size
+  }
+  stream = async () =>
+    new ReadableStream({
+      start(controller) {
+        controller.close()
+      },
+    })
+  text = async () => ''
+  readBytes = async (size: number, offset?: number) => new Uint8Array()
+}

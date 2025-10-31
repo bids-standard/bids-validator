@@ -6,8 +6,8 @@ import * as posix from '@std/path/posix'
 import { BIDSFile, type FileOpener, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
-import { FsFileOpener, HTTPOpener } from './openers.ts'
-import { resolveAnnexedFile } from './repo.ts'
+import { FsFileOpener, HTTPOpener, NullFileOpener } from './openers.ts'
+import { parseAnnexedFile, resolveAnnexedFile } from './repo.ts'
 import fs from 'node:fs'
 
 export class BIDSFileDeno extends BIDSFile {
@@ -51,12 +51,13 @@ async function _readFileTree({
       try {
         const fileInfo = await Deno.stat(fullPath)
         opener = new FsFileOpener(rootPath, thisPath, fileInfo)
-      } catch (error) {
+      } catch (_) {
+        const { key, size, gitdir } = await parseAnnexedFile(fullPath)
         try {
-          const { url, size } = await resolveAnnexedFile(fullPath, preferredRemote, { cache, fs })
+          const { url } = await resolveAnnexedFile(key, preferredRemote, { cache, fs, gitdir })
           opener = new HTTPOpener(url, size)
         } catch (_) {
-          throw error
+          opener = new NullFileOpener(size)
         }
       }
       tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
