@@ -203,6 +203,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'Files with the same name but different casing have been found.',
   },
+  INVALID_FILE_ENCODING: {
+    severity: 'error',
+    reason: 'File encoding is not valid UTF-8.',
+  },
 }
 
 export const nonSchemaIssues = { ...bidsIssues }
