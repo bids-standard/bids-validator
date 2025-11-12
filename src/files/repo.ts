@@ -84,27 +84,29 @@ export async function readRemotes(options: any): Promise<Record<string, Record<s
   return byUUID
 }
 
+export async function parseAnnexedFile(
+  path: string,
+): Promise<{ key: string; size: number; gitdir: string }> {
+  const target = await Deno.readLink(path)
+  const { dir, base } = parse(target)
+
+  const dirs = dir.split(SEPARATOR_PATTERN)
+  const gitdir = join(dirname(path), ...dirs.slice(0, dirs.indexOf('.git') + 1))
+
+  const size = +base.match(annexKeyRegex)?.groups?.size!
+
+  return { key: base, size, gitdir }
+}
+
 /**
  * Resolve an annexed file location to an HTTP URL, if a public S3 remote is available
  */
 export async function resolveAnnexedFile(
-  path: string,
+  key: string,
   remote?: string,
   options?: any,
-): Promise<{ url: string; size: number }> {
-  // path is known to be a symlink
-  const target = await Deno.readLink(path)
-  const { dir, base } = parse(target)
-
-  if (!options?.gitdir) {
-    const dirs = dir.split(SEPARATOR_PATTERN)
-    const gitdir = join(dirname(path), ...dirs.slice(0, dirs.indexOf('.git') + 1))
-    options = { ...options, gitdir }
-  }
-
-  const size = +base.match(annexKeyRegex)?.groups?.size!
-
-  const rmet = await readRmet(base, options)
+): Promise<{ url: string }> {
+  const rmet = await readRmet(key, options)
   const remotes = await readRemotes(options)
   let uuid: string
   if (remote) {
@@ -137,5 +139,5 @@ export async function resolveAnnexedFile(
   const metadata = rmet[uuid]
   const url = `${publicurl}/${metadata.path}?versionId=${metadata.version}`
 
-  return { url, size }
+  return { url }
 }
