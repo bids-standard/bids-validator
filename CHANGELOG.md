@@ -1,4 +1,20 @@
 
+<a id='changelog-"2.2.2"'></a>
+# "2.2.2" — 2025-11-12
+
+## Changed
+
+- Support `min()` and `max()` of numbers in the expression language.
+  This allows for simpler rules when a field may be a number or array of numbers.
+
+- [Annexed](https://git-annex.branchable.com/) files that are not local are treated as
+  empty instead of erroring if a remote URL could not be constructed. The size of missing
+  files are included in the summary estimate of dataset size.
+
+## Fixed
+
+- `INVALID_FILE_ENCODING` issues now print sensible messages instead of crashing.
+
 <a id='changelog-"2.2.1"'></a>
 # "2.2.1" — 2025-10-27
 
