@@ -34,7 +34,7 @@
     "@hed/validator": "npm:hed-validator@~4.1.4",
     "@ignore": "npm:ignore@^7.0.5",
     "@libs/xml": "jsr:@libs/xml@^6.0.8",
-    "@mango/nifti": "npm:@bids/nifti-reader-js@^0.6.9",
+    "@mango/nifti": "npm:nifti-reader-js@^0.8.0",
     "@std/assert": "jsr:@std/assert@^1.0.14",
     "@std/fmt": "jsr:@std/fmt@^1.0.8",
     "@std/fs": "jsr:@std/fs@^1.0.19",
