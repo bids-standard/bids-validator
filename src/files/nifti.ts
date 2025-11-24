@@ -34,9 +34,9 @@ async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array<A
 
 export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
   const buf = await readBytes(file, 1024)
+  let header
   try {
     const data = isCompressed(buf.buffer) ? await extract(buf, 540) : buf.slice(0, 540)
-    let header
     if (isNIFTI1(data.buffer)) {
       header = new NIFTI1()
       // Truncate to 348 bytes to avoid attempting to parse extensions
@@ -48,29 +48,30 @@ export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
     if (!header) {
       throw { code: 'NIFTI_HEADER_UNREADABLE' }
     }
-    const ndim = header.dims[0]
-    return {
-      dim: header.dims,
-      // Hack: round pixdim to 3 decimal places; schema should add rounding function
-      pixdim: header.pixDims.map((pixdim) => Math.round(pixdim * 1000) / 1000),
-      shape: header.dims.slice(1, ndim + 1),
-      voxel_sizes: header.pixDims.slice(1, ndim + 1),
-      dim_info: {
-        freq: header.dim_info & 0x03,
-        phase: (header.dim_info >> 2) & 0x03,
-        slice: (header.dim_info >> 4) & 0x03,
-      },
-      xyzt_units: {
-        xyz: ['unknown', 'meter', 'mm', 'um'][header.xyzt_units & 0x03],
-        t: ['unknown', 'sec', 'msec', 'usec'][(header.xyzt_units >> 3) & 0x03],
-      },
-      qform_code: header.qform_code,
-      sform_code: header.sform_code,
-      axis_codes: axisCodes(header.affine),
-    } as NiftiHeader
   } catch (err) {
     throw { code: 'NIFTI_HEADER_UNREADABLE' }
   }
+
+  const ndim = header.dims[0]
+  return {
+    dim: header.dims,
+    // Hack: round pixdim to 3 decimal places; schema should add rounding function
+    pixdim: header.pixDims.map((pixdim) => Math.round(pixdim * 1000) / 1000),
+    shape: header.dims.slice(1, ndim + 1),
+    voxel_sizes: header.pixDims.slice(1, ndim + 1),
+    dim_info: {
+      freq: header.dim_info & 0x03,
+      phase: (header.dim_info >> 2) & 0x03,
+      slice: (header.dim_info >> 4) & 0x03,
+    },
+    xyzt_units: {
+      xyz: ['unknown', 'meter', 'mm', 'um'][header.xyzt_units & 0x03],
+      t: ['unknown', 'sec', 'msec', 'usec'][(header.xyzt_units >> 3) & 0x03],
+    },
+    qform_code: header.qform_code,
+    sform_code: header.sform_code,
+    axis_codes: axisCodes(header.affine),
+  } as NiftiHeader
 }
 
 /** Vector addition */
@@ -148,7 +149,7 @@ export function axisCodes(affine: number[][]): string[] {
 
   // Check that indices are 0, 1 and 2 in some order
   if (maxIndices.toSorted().some((idx, i) => idx !== i)) {
-    throw { key: 'AMBIGUOUS_AFFINE' }
+    throw { code: 'AMBIGUOUS_AFFINE' }
   }
 
   // Positive/negative codes for each world axis
