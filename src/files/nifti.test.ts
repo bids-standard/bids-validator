@@ -96,6 +96,10 @@ Deno.test('Test extracting axis codes', async (t) => {
     const affine = [[0, 0, 1, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
     assertEquals(axisCodes(affine), ['A', 'S', 'R'])
   })
+  await t.step('Fail gracefully on NaNs', async () => {
+    const affine = [[Number.NaN, 0, 1, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
+    assertEquals(axisCodes(affine), null)
+  })
 })
 
 testAsyncFileAccess('Test file access errors for loadHeader', loadHeader)
