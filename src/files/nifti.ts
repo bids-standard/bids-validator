@@ -125,12 +125,17 @@ function argMax(arr: number[]): number {
  *
  * @returns character codes describing the orientation of an image affine.
  */
-export function axisCodes(affine: number[][]): string[] {
+export function axisCodes(affine: number[][]): string[] | null {
   // This function is an extract of the Python function transforms3d.affines.decompose44
   // (https://github.com/matthew-brett/transforms3d/blob/6a43a98/transforms3d/affines.py#L10-L153)
   //
   // As an optimization, this only orthogonalizes the basis,
   // and does not normalize to unit vectors.
+
+  // Bad qforms result in NaNs in the rotation matrix
+  if (affine.some((row) => row.some((val) => !Number.isFinite(val)))) {
+    return null
+  }
 
   // Operate on columns, which are the cosines that project input coordinates onto output axes
   const [cosX, cosY, cosZ] = [0, 1, 2].map((j) => [0, 1, 2].map((i) => affine[i][j]))
