@@ -1,4 +1,13 @@
 
+<a id='changelog-"2.2.3"'></a>
+# "2.2.3" — 2025-11-25
+
+## Fixed
+
+- NIfTI files with bad qform matrices, resulting from non-normalized quaternions,
+  would previously raise a NIFTI_HEADER_UNREADABLE error. Now only the axis codes
+  are disabled, preventing orientation checks, but not raising errors.
+
 <a id='changelog-"2.2.2"'></a>
 # "2.2.2" — 2025-11-12
 
