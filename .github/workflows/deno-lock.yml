@@ -1,0 +1,64 @@
+name: Update dependencies
+
+on:
+  push:
+    branches:
+      - ci/update-deps
+  schedule:
+    - cron: "15 15 1-7,15-21 * 1"
+    - cron: "15 16 1-7 * 2"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Set compatible update
+        if: github.event.schedule != '15 16 1-7 * 2'
+        run: echo UPDATE_TYPE=compatible >> $GITHUB_ENV
+      - name: Set latest update
+        if: github.event.schedule == '15 16 1-7 * 2'
+        run: echo UPDATE_TYPE=latest >> $GITHUB_ENV
+      - name: Set git identity
+        run: |
+          git config --global user.name "bids[bot]"
+          git config --global user.email "bot@bids.neuroimaging.io"
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v7
+      - name: List updates
+        run: >
+          deno outdated --$UPDATE_TYPE |
+          perl -0 -pe 's/[^[:ascii:]]//g; s/\n\n/\n/g; s/(^|\n) */$1/g' |
+          uvx tabulate -f github -1 - |
+          tee /tmp/outdated.md
+        env:
+          NO_COLOR: 1
+      - name: Update dependencies
+        run: >
+          uvx datalad run -i deno.json -i deno.lock -o deno.json -o deno.lock --
+          bash -c
+          "deno update --compatible @bids/schema &&
+           deno update --$UPDATE_TYPE --minimum-dependency-age $MIN_AGE '!@bids/schema'"
+        env:
+          # Two weeks, in minutes
+          MIN_AGE: 20160
+      - name: Make pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: deps/${{ env.UPDATE_TYPE }}
+          title: "chore(deps): Update strategy ${{ env.UPDATE_TYPE }}"
+          body-path: /tmp/outdated.md
