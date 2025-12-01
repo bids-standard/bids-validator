@@ -35,8 +35,8 @@ jobs:
         run: echo UPDATE_TYPE=latest >> $GITHUB_ENV
       - name: Set git identity
         run: |
-          git config --global user.name "bids[bot]"
-          git config --global user.email "bot@bids.neuroimaging.io"
+          git config --global user.name "bids-maintenance"
+          git config --global user.email "bids.maintenance@gmail.com"
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v7
       - name: List updates
