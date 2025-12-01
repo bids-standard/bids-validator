@@ -8,7 +8,7 @@
     "jsr:@effigies/cliffy-command@1.0.0-dev.8": "1.0.0-dev.8",
     "jsr:@effigies/cliffy-table@1.0.0-dev.5": "1.0.0-dev.5",
     "jsr:@effigies/cliffy-table@^1.0.0-dev.5": "1.0.0-dev.5",
-    "jsr:@libs/xml@^6.0.8": "6.0.8",
+    "jsr:@libs/xml@^7.0.2": "7.0.2",
     "jsr:@std/assert@^1.0.16": "1.0.16",
     "jsr:@std/assert@~0.213.1": "0.213.1",
     "jsr:@std/bytes@^1.0.2-rc.3": "1.0.2",
@@ -84,8 +84,8 @@
     "@libs/typing@3.1.0": {
       "integrity": "091b59f57a99f84c9fccf8f59534f77f177705ac25183b575c83fd7aa6dcfafe"
     },
-    "@libs/xml@6.0.8": {
-      "integrity": "7aac7438ddd460fede488d6420e4973438919b54b8e882e851ed9a234716baa3"
+    "@libs/xml@7.0.2": {
+      "integrity": "b0f8eb46328cdfc443e89eeb02dce2a9022c292c6342f2cbddcad8cf06cd5adf"
     },
     "@std/assert@0.213.1": {
       "integrity": "24c28178b30c8e0782c18e8e94ea72b16282207569cdd10ffb9d1d26f2edebfe"
@@ -1114,7 +1114,7 @@
       "jsr:@bids/schema@~1.1.3",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
-      "jsr:@libs/xml@^6.0.8",
+      "jsr:@libs/xml@^7.0.2",
       "jsr:@std/assert@^1.0.16",
       "jsr:@std/fmt@^1.0.8",
       "jsr:@std/fs@^1.0.20",
