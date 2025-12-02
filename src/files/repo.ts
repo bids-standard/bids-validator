@@ -9,7 +9,8 @@ const textDecoder = new TextDecoder('utf-8')
 export const annexKeyRegex =
   /^(?<hashname>[A-Z0-9]+)-s(?<size>\d+)--(?<digest>[0-9a-fA-F]+)(?<ext>\.[\w\-. ]*)?/
 export const rmetLineRegex =
-  /^(?<timestamp>\d+(\.\d+)?)s (?<uuid>[0-9a-fA-F-]+):V \+(?<version>[^#]+)#(?<path>.+)/
+  /^(?<timestamp>\d+(\.\d+)?)s (?<uuid>[0-9a-fA-F-]+):V \+(?<version_str>.+)/
+export const versionRegex = /^(?<version>[^#]+)#(?<path>.+)/
 
 type Rmet = {
   timestamp: number
@@ -57,7 +58,20 @@ async function readRmet(key: string, options: any): Promise<Record<string, Rmet>
   for (const line of rmet.split('\n')) {
     const match = line.match(rmetLineRegex)
     if (match) {
-      ret[match!.groups!.uuid] = match!.groups as unknown as Rmet
+      const uuid = match!.groups!.uuid
+      const timestamp = parseFloat(match!.groups!.timestamp)
+      let versionStr = match!.groups!.version_str as string
+      // Base64 encoded version strings are prefixed with '!'
+      if (versionStr.startsWith('!')) {
+        versionStr = atob(versionStr.slice(1))
+      }
+      const versionMatch = versionStr.match(versionRegex)
+      ret[uuid] = {
+        timestamp,
+        uuid,
+        version: versionMatch!.groups!.version,
+        path: versionMatch!.groups!.path,
+      }
     }
   }
   return ret
