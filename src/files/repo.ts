@@ -40,6 +40,27 @@ export async function hashDirLower(annexKey: string): Promise<[string, string]> 
   return [digest.slice(0, 3), digest.slice(3, 6)]
 }
 
+export function parseRmetLine(line: string): Rmet | null {
+  const match = line.match(rmetLineRegex)
+  if (!match) {
+    return null
+  }
+  const uuid = match!.groups!.uuid
+  const timestamp = parseFloat(match!.groups!.timestamp)
+  let versionStr = match!.groups!.version_str as string
+  // Base64 encoded version strings are prefixed with '!'
+  if (versionStr.startsWith('!')) {
+    versionStr = atob(versionStr.slice(1))
+  }
+  const versionMatch = versionStr.match(versionRegex)
+  return {
+    timestamp,
+    uuid,
+    version: versionMatch!.groups!.version,
+    path: versionMatch!.groups!.path,
+  }
+}
+
 /**
  * Read remote metadata entries for a given annex key
  *
@@ -56,22 +77,9 @@ async function readRmet(key: string, options: any): Promise<Record<string, Rmet>
   const rmet = await readAnnexPath(join(...hashDirs, `${key}.log.rmet`), options)
   const ret: Record<string, Rmet> = {}
   for (const line of rmet.split('\n')) {
-    const match = line.match(rmetLineRegex)
-    if (match) {
-      const uuid = match!.groups!.uuid
-      const timestamp = parseFloat(match!.groups!.timestamp)
-      let versionStr = match!.groups!.version_str as string
-      // Base64 encoded version strings are prefixed with '!'
-      if (versionStr.startsWith('!')) {
-        versionStr = atob(versionStr.slice(1))
-      }
-      const versionMatch = versionStr.match(versionRegex)
-      ret[uuid] = {
-        timestamp,
-        uuid,
-        version: versionMatch!.groups!.version,
-        path: versionMatch!.groups!.path,
-      }
+    const entry = parseRmetLine(line)
+    if (entry) {
+      ret[entry.uuid] = entry
     }
   }
   return ret
