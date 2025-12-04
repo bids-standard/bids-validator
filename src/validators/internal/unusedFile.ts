@@ -42,6 +42,10 @@ function isSidecarFile(file: BIDSFile): boolean {
   if (standalone_json.includes(file.name)) {
     return false
   }
+  // prov files are not sidecars
+  if (file.path.startsWith('/prov/')) {
+    return false
+  }
   // coordsystem.json files are kind-of sidecars, and they're picked up by
   // associations. We may want to exclude them in the future.
   return true
