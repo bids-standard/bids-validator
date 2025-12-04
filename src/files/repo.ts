@@ -50,7 +50,7 @@ export function parseRmetLine(line: string): Rmet | null {
   let versionStr = match!.groups!.version_str as string
   // Base64 encoded version strings are prefixed with '!'
   if (versionStr.startsWith('!')) {
-    versionStr = atob(versionStr.slice(1))
+    versionStr = b64toUtf8(versionStr.slice(1))
   }
   const versionMatch = versionStr.match(versionRegex)
   return {
@@ -59,6 +59,12 @@ export function parseRmetLine(line: string): Rmet | null {
     version: versionMatch!.groups!.version,
     path: versionMatch!.groups!.path,
   }
+}
+
+function b64toUtf8(str: string): string {
+  const decoded = atob(str)
+  const bytes = Uint8Array.from({ length: decoded.length }, (_, i) => decoded.charCodeAt(i))
+  return textDecoder.decode(bytes)
 }
 
 /**
