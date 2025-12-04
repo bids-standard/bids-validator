@@ -281,17 +281,29 @@ async function invalidLocation(
   schema: GenericSchema,
   context: BIDSContext,
 ) {
-  const rule = schema[path]
-  if (!('entities' in rule)) {
+  if (context.directory) {
     return
   }
-  const sub: string | undefined = context.entities.sub
-  const ses: string | undefined = context.entities.ses
+  if (!context.entities.tpl) {
+    _validateLocation(context, 'sub', 'ses')
+  }
+  if (!context.entities.sub) {
+    _validateLocation(context, 'tpl', 'cohort')
+  }
+}
 
-  if (sub) {
-    let pattern = `/sub-${sub}/`
-    if (ses) {
-      pattern += `ses-${ses}/`
+function _validateLocation(
+  context: BIDSContext,
+  topent: string,
+  subent: string,
+) {
+  const topval: string | undefined = context.entities[topent]
+  const subval: string | undefined = context.entities[subent]
+
+  if (topval) {
+    let pattern = `/${topent}-${topval}/`
+    if (subval) {
+      pattern += `${subent}-${subval}/`
     }
     if (!context.path.startsWith(pattern)) {
       context.dataset.issues.add({
@@ -302,18 +314,18 @@ async function invalidLocation(
     }
   }
 
-  if (!sub && context.path.match(/^\/sub-/)) {
+  if (!topval && context.path.match(new RegExp(`^/${topent}-`))) {
     context.dataset.issues.add({
       code: 'INVALID_LOCATION',
       location: context.path,
       issueMessage: `Expected location: /${context.file.name}`,
     })
   }
-  if (!ses && context.path.match(/\/ses-/)) {
+  if (!subval && context.path.match(new RegExp(`/${subent}-`))) {
     context.dataset.issues.add({
       code: 'INVALID_LOCATION',
       location: context.path,
-      issueMessage: `Unexpected session directory`,
+      issueMessage: `Unexpected ${subent} directory`,
     })
   }
 }
