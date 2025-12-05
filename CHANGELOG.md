@@ -1,3 +1,11 @@
+# Changelog
+
+<a id='changelog-"2.2.4"'></a>
+# "2.2.4" — 2025-12-05
+
+## Added
+
+- Annexed files with base-64-encoded version information are now supported.
 
 <a id='changelog-"2.2.3"'></a>
 # "2.2.3" — 2025-11-25
