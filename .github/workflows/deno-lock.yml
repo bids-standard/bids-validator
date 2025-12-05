@@ -5,13 +5,17 @@ on:
     branches:
       - ci/update-deps
   schedule:
-    - cron: "15 15 1-7,15-21 * 1"
-    - cron: "15 16 1-7 * 2"
+    - cron: "15 15 3,17 * *"
+    - cron: "15 16 10 * *"
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  # Two weeks, in minutes
+  MIN_AGE: 20160
 
 jobs:
   update:
@@ -28,20 +32,20 @@ jobs:
         with:
           deno-version: v2.x
       - name: Set compatible update
-        if: github.event.schedule != '15 16 1-7 * 2'
+        if: github.event.schedule != '15 16 10 * *'
         run: echo UPDATE_TYPE=compatible >> $GITHUB_ENV
       - name: Set latest update
-        if: github.event.schedule == '15 16 1-7 * 2'
+        if: github.event.schedule == '15 16 10 * *'
         run: echo UPDATE_TYPE=latest >> $GITHUB_ENV
       - name: Set git identity
         run: |
-          git config --global user.name "bids[bot]"
-          git config --global user.email "bot@bids.neuroimaging.io"
+          git config --global user.name "bids-maintenance"
+          git config --global user.email "bids.maintenance@gmail.com"
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v7
       - name: List updates
         run: >
-          deno outdated --$UPDATE_TYPE |
+          deno outdated --minimum-dependency-age $MIN_AGE --$UPDATE_TYPE |
           perl -0 -pe 's/[^[:ascii:]]//g; s/\n\n/\n/g; s/(^|\n) */$1/g' |
           uvx tabulate -f github -1 - |
           tee /tmp/outdated.md
@@ -53,9 +57,6 @@ jobs:
           bash -c
           "deno update --compatible @bids/schema &&
            deno update --$UPDATE_TYPE --minimum-dependency-age $MIN_AGE '!@bids/schema'"
-        env:
-          # Two weeks, in minutes
-          MIN_AGE: 20160
       - name: Make pull request
         uses: peter-evans/create-pull-request@v7
         with:

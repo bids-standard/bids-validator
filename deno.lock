@@ -1,14 +1,14 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@bids/schema@^1.2.0-dev.9+6d002b21": "1.2.0-dev.9+6d002b21",
+    "jsr:@bids/schema@^1.2.0-dev.11+4473de10": "1.2.0-dev.11+4473de10",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@effigies/cliffy-command@1.0.0-dev.8": "1.0.0-dev.8",
     "jsr:@effigies/cliffy-table@1.0.0-dev.5": "1.0.0-dev.5",
     "jsr:@effigies/cliffy-table@^1.0.0-dev.5": "1.0.0-dev.5",
-    "jsr:@libs/xml@^6.0.8": "6.0.8",
+    "jsr:@libs/xml@^7.0.3": "7.0.3",
     "jsr:@std/assert@^1.0.16": "1.0.16",
     "jsr:@std/bytes@^1.0.5": "1.0.6",
     "jsr:@std/bytes@^1.0.6": "1.0.6",
@@ -34,8 +34,8 @@
     "npm:isomorphic-git@^1.35.1": "1.35.1"
   },
   "jsr": {
-    "@bids/schema@1.2.0-dev.9+6d002b21": {
-      "integrity": "72af008b2e85e3d3cb2cda8bae86b0dea01789559b524dac46fc9fd9ce558742"
+    "@bids/schema@1.2.0-dev.11+4473de10": {
+      "integrity": "fe8f6549d916a89316c2f7f87c8d9175434289a815839d516d8c26e8832ef7bf"
     },
     "@cliffy/flags@1.0.0-rc.7": {
       "integrity": "318d9be98f6a6417b108e03dec427dea96cdd41a15beb21d2554ae6da450a781",
@@ -69,8 +69,8 @@
         "jsr:@std/fmt@~1.0.2"
       ]
     },
-    "@libs/xml@6.0.8": {
-      "integrity": "7aac7438ddd460fede488d6420e4973438919b54b8e882e851ed9a234716baa3"
+    "@libs/xml@7.0.3": {
+      "integrity": "4caad75dfec0a4dd4ad5dc87dc559d9aa25ac53f17373923a9cd006f6c8d42e6"
     },
     "@std/assert@1.0.16": {
       "integrity": "6a7272ed1eaa77defe76e5ff63ca705d9c495077e2d5fd0126d2b53fc5bd6532",
@@ -839,10 +839,10 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@bids/schema@^1.2.0-dev.9+6d002b21",
+      "jsr:@bids/schema@^1.2.0-dev.11+4473de10",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
-      "jsr:@libs/xml@^6.0.8",
+      "jsr:@libs/xml@^7.0.3",
       "jsr:@std/assert@^1.0.16",
       "jsr:@std/fmt@^1.0.8",
       "jsr:@std/fs@^1.0.20",

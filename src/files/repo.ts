@@ -9,7 +9,8 @@ const textDecoder = new TextDecoder('utf-8')
 export const annexKeyRegex =
   /^(?<hashname>[A-Z0-9]+)-s(?<size>\d+)--(?<digest>[0-9a-fA-F]+)(?<ext>\.[\w\-. ]*)?/
 export const rmetLineRegex =
-  /^(?<timestamp>\d+(\.\d+)?)s (?<uuid>[0-9a-fA-F-]+):V \+(?<version>[^#]+)#(?<path>.+)/
+  /^(?<timestamp>\d+(\.\d+)?)s (?<uuid>[0-9a-fA-F-]+):V \+(?<version_str>.+)/
+export const versionRegex = /^(?<version>[^#]+)#(?<path>.+)/
 
 type Rmet = {
   timestamp: number
@@ -39,6 +40,33 @@ export async function hashDirLower(annexKey: string): Promise<[string, string]> 
   return [digest.slice(0, 3), digest.slice(3, 6)]
 }
 
+export function parseRmetLine(line: string): Rmet | null {
+  const match = line.match(rmetLineRegex)
+  if (!match) {
+    return null
+  }
+  const uuid = match!.groups!.uuid
+  const timestamp = parseFloat(match!.groups!.timestamp)
+  let versionStr = match!.groups!.version_str as string
+  // Base64 encoded version strings are prefixed with '!'
+  if (versionStr.startsWith('!')) {
+    versionStr = b64toUtf8(versionStr.slice(1))
+  }
+  const versionMatch = versionStr.match(versionRegex)
+  return {
+    timestamp,
+    uuid,
+    version: versionMatch!.groups!.version,
+    path: versionMatch!.groups!.path,
+  }
+}
+
+function b64toUtf8(str: string): string {
+  const decoded = atob(str)
+  const bytes = Uint8Array.from({ length: decoded.length }, (_, i) => decoded.charCodeAt(i))
+  return textDecoder.decode(bytes)
+}
+
 /**
  * Read remote metadata entries for a given annex key
  *
@@ -55,9 +83,9 @@ async function readRmet(key: string, options: any): Promise<Record<string, Rmet>
   const rmet = await readAnnexPath(join(...hashDirs, `${key}.log.rmet`), options)
   const ret: Record<string, Rmet> = {}
   for (const line of rmet.split('\n')) {
-    const match = line.match(rmetLineRegex)
-    if (match) {
-      ret[match!.groups!.uuid] = match!.groups as unknown as Rmet
+    const entry = parseRmetLine(line)
+    if (entry) {
+      ret[entry.uuid] = entry
     }
   }
   return ret
