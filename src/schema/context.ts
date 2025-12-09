@@ -249,6 +249,9 @@ export class BIDSContext implements Context {
         throw error
       }
     })
+    if (this.nifti_header && this.nifti_header.axis_codes === null) {
+      this.dataset.issues.add({ code: 'AMBIGUOUS_AFFINE', location: this.file.path })
+    }
   }
 
   async loadColumns(): Promise<void> {

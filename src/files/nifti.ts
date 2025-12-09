@@ -154,7 +154,7 @@ export function axisCodes(affine: number[][]): string[] | null {
 
   // Check that indices are 0, 1 and 2 in some order
   if (maxIndices.toSorted().some((idx, i) => idx !== i)) {
-    throw { code: 'AMBIGUOUS_AFFINE' }
+    return null
   }
 
   // Positive/negative codes for each world axis

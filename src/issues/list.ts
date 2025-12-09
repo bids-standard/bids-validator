@@ -146,6 +146,11 @@ export const bidsIssues: IssueDefinitionRecord = {
     reason:
       'We were unable to parse header data from this NIfTI file. Please ensure it is not corrupted or mislabeled.',
   },
+  AMBIGUOUS_AFFINE: {
+    severity: 'warning',
+    reason:
+      'The image orientation could not be determined. This may be the result of an invalid affine matrix.',
+  },
   CHECK_ERROR: {
     severity: 'error',
     reason: 'generic place holder for errors from failed `checks` evaluated from schema.',
