@@ -94,6 +94,10 @@ function dot(a: number[], b: number[]): number {
   return a.map((x, i) => x * b[i]).reduce((acc, x) => acc + x, 0)
 }
 
+function norm(vec: number[]): number[] {
+  return scale(vec, 1 / Math.sqrt(dot(vec, vec)))
+}
+
 function argMax(arr: number[]): number {
   return arr.reduce((acc, x, i) => (x > arr[acc] ? i : acc), 0)
 }
@@ -128,9 +132,6 @@ function argMax(arr: number[]): number {
 export function axisCodes(affine: number[][]): string[] | null {
   // This function is an extract of the Python function transforms3d.affines.decompose44
   // (https://github.com/matthew-brett/transforms3d/blob/6a43a98/transforms3d/affines.py#L10-L153)
-  //
-  // As an optimization, this only orthogonalizes the basis,
-  // and does not normalize to unit vectors.
 
   // Bad qforms result in NaNs in the rotation matrix
   if (affine.some((row) => row.some((val) => !Number.isFinite(val)))) {
@@ -140,24 +141,35 @@ export function axisCodes(affine: number[][]): string[] | null {
   // Operate on columns, which are the cosines that project input coordinates onto output axes
   const [cosX, cosY, cosZ] = [0, 1, 2].map((j) => [0, 1, 2].map((i) => affine[i][j]))
 
-  // Orthogonalize cosY with respect to cosX
-  const orthY = sub(cosY, scale(cosX, dot(cosX, cosY)))
+  const orthX = norm(cosX)
 
-  // Orthogonalize cosZ with respect to cosX and orthY
-  const orthZ = sub(
-    cosZ,
-    add(scale(cosX, dot(cosX, cosZ)), scale(orthY, dot(orthY, cosZ))),
+  // Orthogonalize cosY with respect to orthX
+  const orthY = norm(sub(cosY, scale(orthX, dot(orthX, cosY))))
+
+  // Orthogonalize cosZ with respect to orthX and orthY
+  const orthZ = norm(
+    sub(cosZ, add(scale(orthX, dot(orthX, cosZ)), scale(orthY, dot(orthY, cosZ)))),
   )
 
-  const basis = [cosX, orthY, orthZ]
-  const maxIndices = basis.map((row) => argMax(row.map(Math.abs)))
+  // Basis is transposed rotation matrix, for simpler access
+  const basis = [orthX, orthY, orthZ]
+  // Avoid duplicate calls to Math.abs, use to mark taken axes later
+  const magnitudes = [orthX.map(Math.abs), orthY.map(Math.abs), orthZ.map(Math.abs)]
 
-  // Check that indices are 0, 1 and 2 in some order
-  if (maxIndices.toSorted().some((idx, i) => idx !== i)) {
-    return null
-  }
+  // Fill the orientation codes in order of decreasing similarity to any world axis
+  const maxMags = magnitudes.map((row) => Math.max(...row))
+  // Reversed argsort. Sorry.
+  const dims = Object.entries(maxMags).toSorted((a, b) => b[1] - a[1]).map(([idx]) => +idx)
 
   // Positive/negative codes for each world axis
   const codes = ['RL', 'AP', 'SI']
-  return maxIndices.map((idx, i) => codes[idx][basis[i][idx] > 0 ? 0 : 1])
+  const result = Array(3).fill('')
+
+  for (const dim of dims) {
+    const idx = argMax(magnitudes[dim])
+    // Do not allow this world axis to be used again
+    magnitudes.forEach((row) => { row[idx] = 0 } )
+    result[dim] = codes[idx][basis[dim][idx] > 0 ? 0 : 1]
+  }
+  return result
 }
