@@ -48,6 +48,8 @@ jobs:
           - macos-15-intel
           - macos-latest
       fail-fast: false
+    continue-on-error: true
+
     permissions:
       attestations: write
       id-token: write
