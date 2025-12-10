@@ -1,6 +1,7 @@
 import { default as ignore } from '@ignore'
 import { nonSchemaIssues } from './list.ts'
 import type { Issue, IssueDefinition, IssueFile, Severity } from '../types/issues.ts'
+import { filterIssue } from '../types/issues.ts'
 export type { Issue, IssueDefinition, IssueFile, Severity }
 
 // Code is deprecated, return something unusual but JSON serializable
@@ -12,12 +13,15 @@ export class DatasetIssues {
   issues: Issue[]
   codeMessages: Map<string, string>
 
-  constructor() {
-    this.issues = []
-    this.codeMessages = new Map()
+  constructor({ issues, codeMessages }: { issues?: Issue[], codeMessages?: Map<string, string> } = {}) {
+    this.issues = issues ?? []
+    this.codeMessages = codeMessages ?? new Map()
   }
 
   add(issue: Issue, codeMessage?: string) {
+    // Ensure only relevant fields are kept, for protection when working with
+    // external validators
+    issue = filterIssue(issue)
     if (!codeMessage) {
       if (issue.code in nonSchemaIssues) {
         codeMessage = nonSchemaIssues[issue.code].reason
@@ -53,12 +57,11 @@ export class DatasetIssues {
   }
 
   filter(query: Partial<Issue>): DatasetIssues {
-    const results = new DatasetIssues()
-    const found = this.get(query)
-    for (const issue of found) {
-      results.add(issue, this.codeMessages.get(issue.code))
-    }
-    return results
+    const issues = this.get(query)
+    const codes = new Set<string>(query.code ? [query.code] : issues.map((issue) => issue.code))
+    const codeMessages = new Map([...this.codeMessages].filter(([code]) => codes.has(code)))
+
+    return new DatasetIssues({ issues, codeMessages })
   }
 
   get size(): number {
