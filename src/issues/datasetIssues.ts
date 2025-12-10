@@ -13,9 +13,9 @@ export class DatasetIssues {
   issues: Issue[]
   codeMessages: Map<string, string>
 
-  constructor() {
-    this.issues = []
-    this.codeMessages = new Map()
+  constructor({ issues, codeMessages }: { issues?: Issue[], codeMessages?: Map<string, string> } = {}) {
+    this.issues = issues ?? []
+    this.codeMessages = codeMessages ?? new Map()
   }
 
   add(issue: Issue, codeMessage?: string) {
@@ -33,10 +33,6 @@ export class DatasetIssues {
       }
     }
     issue.severity ??= 'error'
-    this._add(issue, codeMessage)
-  }
-
-  _add(issue: Issue, codeMessage: string) {
     if (!this.codeMessages.has(issue.code)) {
       this.codeMessages.set(issue.code, codeMessage)
     }
@@ -61,12 +57,11 @@ export class DatasetIssues {
   }
 
   filter(query: Partial<Issue>): DatasetIssues {
-    const results = new DatasetIssues()
-    const found = this.get(query)
-    for (const issue of found) {
-      results._add(issue, this.codeMessages.get(issue.code)!)
-    }
-    return results
+    const issues = this.get(query)
+    const codes = new Set<string>(query.code ? [query.code] : issues.map((issue) => issue.code))
+    const codeMessages = new Map([...this.codeMessages].filter(([code]) => codes.has(code)))
+
+    return new DatasetIssues({ issues, codeMessages })
   }
 
   get size(): number {
