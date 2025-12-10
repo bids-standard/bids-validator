@@ -100,6 +100,25 @@ Deno.test('Test extracting axis codes', async (t) => {
     const affine = [[Number.NaN, 0, 1, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
     assertEquals(axisCodes(affine), null)
   })
+  await t.step('Consistently label very oblique axes', async () => {
+    // The i and k axes both move most along the z axis.
+    let affine = [
+      [ 0.63260427,  0.43813722,  0.63862948, 0],
+      [-0.31581750,  0.89885806, -0.30383137, 0],
+      [-0.70715708, -0.00948534,  0.70699285, 0],
+      [0, 0, 0, 1],
+    ]
+    assertEquals(axisCodes(affine), ['I', 'A', 'R'])
+    affine = [
+      [ 0.63862948,  0.43813722, -0.63260427, 0],
+      [-0.30383137,  0.89885806,  0.31581750, 0],
+      [ 0.70699285, -0.00948534,  0.70715708, 0],
+      [0, 0, 0, 1],
+    ]
+    // Naive ordering would call this SAL, but the largest magnitude method
+    // would label k before i.
+    assertEquals(axisCodes(affine), ['R', 'A', 'S'])
+  })
 })
 
 testAsyncFileAccess('Test file access errors for loadHeader', loadHeader)
