@@ -1,6 +1,7 @@
 import { default as ignore } from '@ignore'
 import { nonSchemaIssues } from './list.ts'
 import type { Issue, IssueDefinition, IssueFile, Severity } from '../types/issues.ts'
+import { filterIssue } from '../types/issues.ts'
 export type { Issue, IssueDefinition, IssueFile, Severity }
 
 // Code is deprecated, return something unusual but JSON serializable
@@ -18,6 +19,9 @@ export class DatasetIssues {
   }
 
   add(issue: Issue, codeMessage?: string) {
+    // Ensure only relevant fields are kept, for protection when working with
+    // external validators
+    issue = filterIssue(issue)
     if (!codeMessage) {
       if (issue.code in nonSchemaIssues) {
         codeMessage = nonSchemaIssues[issue.code].reason
@@ -29,6 +33,10 @@ export class DatasetIssues {
       }
     }
     issue.severity ??= 'error'
+    this._add(issue, codeMessage)
+  }
+
+  _add(issue: Issue, codeMessage: string) {
     if (!this.codeMessages.has(issue.code)) {
       this.codeMessages.set(issue.code, codeMessage)
     }
@@ -56,7 +64,7 @@ export class DatasetIssues {
     const results = new DatasetIssues()
     const found = this.get(query)
     for (const issue of found) {
-      results.add(issue, this.codeMessages.get(issue.code))
+      results._add(issue, this.codeMessages.get(issue.code)!)
     }
     return results
   }
