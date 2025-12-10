@@ -1,5 +1,22 @@
 # Changelog
 
+<!-- scriv-insert-here -->
+
+<a id='changelog-"2.2.5"'></a>
+# "2.2.5" — 2025-12-10
+
+## Added
+
+- Support for template and cohort directories, as introduced in BEP038.
+
+## Fixed
+
+- The AMBIGUOUS_AFFINE issue was given an error message and set to warning.
+
+- Very oblique affines are no longer considered ambiguous.
+
+- Resolved TypeError when rendering issues for JSON outputs.
+
 <a id='changelog-"2.2.4"'></a>
 # "2.2.4" — 2025-12-05
 

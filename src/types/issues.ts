@@ -19,6 +19,38 @@ export interface Issue {
 }
 
 /**
+ * Filter an Issue to only include relevant fields for reporting
+ * This allows us to accept issues from different validators with extra fields
+ */
+export function filterIssue(issue: Issue): Issue {
+  // Unfortunately, no way to keep this synced with the Issue interface automatically
+  const {
+    code,
+    subCode,
+    severity,
+    location,
+    issueMessage,
+    suggestion,
+    affects,
+    rule,
+    line,
+    character,
+  } = issue
+  return {
+    code,
+    subCode,
+    severity,
+    location,
+    issueMessage,
+    suggestion,
+    affects,
+    rule,
+    line,
+    character,
+  }
+}
+
+/**
  * For defining internal issues quickly
  */
 export interface IssueDefinition {
