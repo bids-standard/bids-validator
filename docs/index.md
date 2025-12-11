@@ -44,6 +44,7 @@ user_guide/faq.md
 dev/using-the-api.md
 dev/contributing.md
 dev/environment.md
+dev/release-process.md
 ```
 
 ```{toctree}
