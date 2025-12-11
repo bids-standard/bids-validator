@@ -67,7 +67,7 @@ jobs:
           rm -r dist
 
       - name: Build wheels from sdist
-        uses: pypa/cibuildwheel@v2.23
+        uses: pypa/cibuildwheel@v3.3
 
       - name: Generate artifact attestation for wheels
         if: ${{ github.event_name != 'pull_request' }}
