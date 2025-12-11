@@ -6,12 +6,20 @@ updates:
     directory: '/'
     schedule:
       interval: 'monthly'
+    labels:
+      - "no changelog"
     groups:
       actions-infrastructure:
         patterns:
           - "actions/*"
+    cooldown:
+      default-days: 14
 
   - package-ecosystem: 'gitsubmodule'
     directory: '/'
     schedule:
       interval: 'monthly'
+    labels:
+      - "no changelog"
+    cooldown:
+      default-days: 14
