@@ -22,6 +22,15 @@ Documentation = "https://bids-validator.readthedocs.io/"
 "Source code" = "https://github.com/bids-standard/bids-validator"
 Issues = "https://github.com/bids-standard/bids-validator/issues"
 
+[dependency-groups]
+doc = [
+    "sphinx",
+    "myst_parser",
+    "sphinx-book-theme",
+    "sphinx-copybutton",
+    "sphinx-design",
+]
+
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
