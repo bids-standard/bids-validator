@@ -96,3 +96,35 @@ Finally, trigger an update of the web validator by
 
 [jq]: https://jqlang.org/
 [moreutils]: https://joeyh.name/code/moreutils/
+
+## Fixing wheels
+
+We generate [wheels](https://pythonwheels.com/) for distribution on PyPI as the
+[bids-validator-deno](https://pypi.org/project/bids-validator-deno/) package.
+The infrastructure for doing so is almost entirely separate from the Javascript package,
+so it may not be necessary to create a new release to fix the issue and upload wheels.
+
+To fix this, branch off of the tag that needs releasing using the `wheel/<version>` branch:
+
+```bash
+git checkout 2.2.6 -b wheel/2.2.6
+```
+
+Merge in the latest existing `wheel/*` branch to use the adapted CI:
+
+```bash
+git branch --list 'wheel/*'  # See wheel/2.2.5 as most recent
+git merge wheel/2.2.5
+```
+
+Make any additional changes, and push to upstream:
+
+```bash
+git push -u upstream wheel/2.2.6
+```
+
+The CI is set up to be fault tolerant.
+Any wheels that are successfully built that were not previously uploaded will be uploaded.
+Any duplicates will be ignored. You can iteratively fix wheels.
+
+To the extent possible, patch `main` as well before the next release, to make fixes less necessary.
