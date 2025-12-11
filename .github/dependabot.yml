@@ -23,3 +23,15 @@ updates:
       - "no changelog"
     cooldown:
       default-days: 14
+
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "no changelog"
+    groups:
+      build-dependencies:
+        patterns: ["*"]
+    cooldown:
+      default-days: 14
