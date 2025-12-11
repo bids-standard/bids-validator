@@ -35,6 +35,10 @@ export function consoleFormat(
   return output.join('\n')
 }
 
+function formatMessage(text: string): string {
+  return text.replaceAll('SPEC_ROOT/', 'https://bids-specification.readthedocs.io/en/stable/')
+}
+
 function formatIssues(
   dsIssues: DatasetIssues,
   options?: LoggingOptions,
@@ -47,7 +51,8 @@ function formatIssues(
     if (issues.size === 0 || typeof code !== 'string') {
       continue
     }
-    const codeMessage = issues.codeMessages.get(code) ?? ''
+
+    const codeMessage = formatMessage(issues.codeMessages.get(code) ?? '')
     output.push(
       '\t' +
         colors[color](
@@ -92,7 +97,11 @@ function formatFiles(issues: DatasetIssues, options?: LoggingOptions): string[] 
     const fileOut: string[] = []
     issueDetails.map((key) => {
       if (Object.hasOwn(issue, key) && issue[key]) {
-        fileOut.push(`${issue[key]}`)
+        let content = `${issue[key]}`
+        if (key === 'issueMessage') {
+          content = formatMessage(content)
+        }
+        fileOut.push(content)
       }
     })
     output.push('\t\t' + fileOut.join(' - '))
