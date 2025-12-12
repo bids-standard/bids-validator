@@ -36,14 +36,7 @@ export function consoleFormat(
 }
 
 function formatMessage(text: string): string {
-  let formatted =  text.replaceAll('SPEC_ROOT/', 'https://bids-specification.readthedocs.io/en/stable/')
-
-  formatted = formatted.replace(/\*\*(.*?)\*\*/g, (_, match) => {
-    return colors.bold(match)
-  })
-
-  return formatted
-
+  return text.replaceAll('SPEC_ROOT/', 'https://bids-specification.readthedocs.io/en/stable/')
 }
 
 function formatIssues(
