@@ -51,6 +51,10 @@ function renderTokens(tokenList: any[]): string {
       return colors.bold(renderTokens(token.tokens))
     }
 
+    if (token.type === 'em') {
+      return colors.italic(renderTokens(token.tokens))
+    }
+
     if (token.type === 'codespan') {
       return colors.cyan(token.text)
     }
