@@ -4,7 +4,7 @@
 import { Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
 import { format as prettyBytes } from '@std/fmt/bytes'
-import { marked } from 'npm:marked'
+import { marked } from 'npm:marked@15.0.4'
 import type { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
 import type { Issue, Severity } from '../types/issues.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
