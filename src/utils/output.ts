@@ -4,6 +4,7 @@
 import { Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
 import { format as prettyBytes } from '@std/fmt/bytes'
+import { marked } from 'npm:marked'
 import type { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
 import type { Issue, Severity } from '../types/issues.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -35,8 +36,52 @@ export function consoleFormat(
   return output.join('\n')
 }
 
+/**
+ * Render marked tokens to ANSI strings
+ */
+function renderTokens(tokenList: any[]): string {
+  if (!tokenList) return ''
+
+  return tokenList.map((token) => {
+    if (token.type === 'paragraph') {
+      return renderTokens(token.tokens)
+    }
+
+    if (token.type === 'strong') {
+      return colors.bold(renderTokens(token.tokens))
+    }
+
+    if (token.type === 'codespan') {
+      return colors.cyan(token.text)
+    }
+
+    if (token.type === 'link') {
+      return `${colors.blue(token.text)} (${colors.gray(token.href)})`
+    }
+
+    if (token.type === 'text') {
+      return token.text
+    }
+
+    // Render children or return raw text
+    return renderTokens(token.tokens || []) || token.raw || ''
+  }).join('')
+}
+
 function formatMessage(text: string): string {
-  return text.replaceAll('SPEC_ROOT/', 'https://bids-specification.readthedocs.io/en/stable/')
+  const cleanText = text.replaceAll('SPEC_ROOT/', 'https://bids-specification.readthedocs.io/en/stable/')
+
+  // Respect no-color flags or non-interactive environments
+  if (colors.getColorEnabled() === false) {
+     return cleanText
+  }
+
+  try {
+    const tokens = marked.lexer(cleanText)
+    return renderTokens(tokens)
+  } catch {
+    return cleanText
+  }
 }
 
 function formatIssues(
