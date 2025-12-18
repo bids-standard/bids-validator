@@ -124,11 +124,14 @@ jobs:
   deploy:
     needs: [build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     if: github.event_name != 'pull_request' && github.repository_owner == 'bids-standard'
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          token: ${{ secrets.PUSH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set credentials
         run: |
           git config --global user.name "BIDS-Bot"
