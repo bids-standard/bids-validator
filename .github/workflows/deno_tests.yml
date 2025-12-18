@@ -41,7 +41,7 @@ jobs:
           deno-version: v2.x
       - run: deno --node-modules-dir=auto -A ./build.ts
       - run: deno run -A ./dist/validator/bids-validator.js --version
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: main
           path: dist/validator
@@ -137,7 +137,7 @@ jobs:
         run: |
           git checkout --orphan deno-build
           git reset --hard
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: main
           path: main
