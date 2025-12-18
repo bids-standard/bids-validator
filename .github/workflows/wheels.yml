@@ -27,10 +27,10 @@ jobs:
       attestations: write
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
-      - uses: hynek/build-and-inspect-python-package@v2
+      - uses: hynek/build-and-inspect-python-package@efb823f52190ad02594531168b7a2d5790e66516 # v2
         with:
           attest-build-provenance-github: ${{ github.event_name != 'pull_request' }}
           skip-wheel: true
@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Download sdist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: Packages
           path: dist
@@ -67,7 +67,7 @@ jobs:
           rm -r dist
 
       - name: Build wheel from sdist
-        uses: pypa/cibuildwheel@v3.3
+        uses: pypa/cibuildwheel@63fd63b352a9a8bdcc24791c9dbee952ee9a8abc # v3.3
 
       - name: Generate artifact attestation for wheels
         if: ${{ github.event_name != 'pull_request' }}
@@ -75,7 +75,7 @@ jobs:
         with:
           subject-path: "wheelhouse/bids_validator_deno-*.whl"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: wheel-${{ matrix.os }}
           path: ./wheelhouse
@@ -90,13 +90,13 @@ jobs:
 
     steps:
       - name: Download sdist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: Packages
           path: dist
 
       - name: Download wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: wheel-*
           path: dist
@@ -106,7 +106,7 @@ jobs:
           rmdir dist/*/
 
       - name: Upload package to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
           skip-existing: true
@@ -121,13 +121,13 @@ jobs:
 
     steps:
       - name: Download sdist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: Packages
           path: dist
 
       - name: Download wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: wheel-*
           path: dist
@@ -137,4 +137,4 @@ jobs:
           rmdir dist/*/
 
       - name: Upload package to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # release/v1

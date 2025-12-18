@@ -16,7 +16,7 @@ jobs:
   debug_info:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
       - run: git status
@@ -30,18 +30,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
       - name: Save describe stamp
         id: describe
         run: echo version=$( git describe ) >> $GITHUB_OUTPUT
-      - uses: denoland/setup-deno@v2
+      - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2
         with:
           deno-version: v2.x
       - run: deno --node-modules-dir=auto -A ./build.ts
       - run: deno run -A ./dist/validator/bids-validator.js --version
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: main
           path: dist/validator
@@ -59,10 +59,10 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           submodules: true
-      - uses: denoland/setup-deno@v2
+      - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2
         with:
           deno-version: v2.x
       - name: Set permissions with network access
@@ -87,7 +87,7 @@ jobs:
       - name: Collect coverage
         run: deno coverage cov/ --lcov --output=coverage.lcov
         if: ${{ always() }}
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         if: ${{ always() }}
         with:
           files: coverage.lcov
@@ -96,8 +96,8 @@ jobs:
   publish-dry-run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: denoland/setup-deno@v2
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2
         with:
           deno-version: v2.x
       - run: deno publish --dry-run
@@ -111,12 +111,12 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Check tag matches ${{ github.ref_name }}
         run: jq -e ".version[:1] != \"v\" and .version==\"$TAG\"" deno.json
         env:
           TAG: ${{ github.ref_name }}
-      - uses: denoland/setup-deno@v2
+      - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2
         with:
           deno-version: v2.x
       - run: deno publish
@@ -126,7 +126,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' && github.repository_owner == 'bids-standard'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           token: ${{ secrets.PUSH_TOKEN }}
       - name: Set credentials
@@ -137,7 +137,7 @@ jobs:
         run: |
           git checkout --orphan deno-build
           git reset --hard
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: main
           path: main

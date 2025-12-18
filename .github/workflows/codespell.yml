@@ -17,5 +17,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: codespell-project/actions-codespell@master
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: codespell-project/actions-codespell@bca0a5887de255a8903221c67b6478c7501c5edc # master
