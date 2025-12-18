@@ -83,7 +83,7 @@ jobs:
   test-publish:
     name: Publish to test.pypi.org
     if: github.event_name == 'push'
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     needs: [wheel]
     permissions:
       id-token: write
@@ -114,7 +114,7 @@ jobs:
   publish:
     name: Publish
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     needs: [wheel]
     permissions:
       id-token: write
