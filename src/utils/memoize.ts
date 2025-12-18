@@ -15,11 +15,11 @@ export const memoize = <T>(
   return cached
 }
 
-export function filememoizeAsync<F extends FileLike, T>(
-  fn: (file: F, ...args: any[]) => Promise<T>,
-): WithCache<(file: F, ...args: any[]) => Promise<T>> {
+export function filememoize<F extends FileLike, T>(
+  fn: (file: F, ...args: any[]) => T,
+): WithCache<(file: F, ...args: any[]) => T> {
   const cache = new Map<string, Map<string, T>>()
-  const cached = async function (this: any, file: F, ...args: any[]): Promise<T> {
+  const cached = function (this: any, file: F, ...args: any[]): T {
     let subcache = cache.get(file.parent.path)
     if (!subcache) {
       subcache = new Map()
@@ -28,7 +28,7 @@ export function filememoizeAsync<F extends FileLike, T>(
     const key = `${file.path}:${args.join(',')}`
     let val = subcache.get(key)
     if (!val) {
-      val = await fn.call(this, file, ...args)
+      val = fn.call(this, file, ...args)
       subcache.set(key, val)
     }
     return val
