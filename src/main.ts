@@ -4,7 +4,8 @@ import * as colors from '@std/fmt/colors'
 import { readFileTree } from './files/deno.ts'
 import { fileListToTree } from './files/browser.ts'
 import { FileIgnoreRules } from './files/ignore.ts'
-import { resolve } from '@std/path'
+import { join, resolve } from '@std/path'
+import { exists } from "jsr:@std/fs/exists";
 import { validate } from './validators/bids.ts'
 import { consoleFormat, resultToJSONStr } from './utils/output.ts'
 import { setupLogging } from './utils/logger.ts'
@@ -28,7 +29,21 @@ export async function main(): Promise<ValidationResult> {
     : undefined
   const tree = await readFileTree(absolutePath, prune, options.preferredRemote)
 
-  const config = options.config ? JSON.parse(Deno.readTextFileSync(options.config)) as Config : {}
+  let config = {}
+  if (options.config) {
+    config = JSON.parse(Deno.readTextFileSync(options.config))
+  } else {
+       const defaultConfig = join(absolutePath, '.bids-validator-config.json') 
+    try {
+      await Deno.lstat(defaultConfig)
+       config = JSON.parse(Deno.readTextFileSync(defaultConfig))
+       options.config = defaultConfig
+    } catch {
+      if (!(err instanceof Deno.errors.NotFound)) {
+        throw err;
+      }
+    }
+  }
 
   // Run the schema based validator
   const schemaResult = await validate(tree, options, config)
