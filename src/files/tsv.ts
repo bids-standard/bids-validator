@@ -5,7 +5,7 @@
 import { TextLineStream } from '@std/streams'
 import { ColumnsMap } from '../types/columns.ts'
 import type { BIDSFile } from '../types/filetree.ts'
-import { filememoizeAsync } from '../utils/memoize.ts'
+import { filememoize } from '../utils/memoize.ts'
 import { createUTF8Stream } from './streams.ts'
 import { openStream } from './access.ts'
 import { BIDSFileDeno } from './deno.ts'
@@ -102,4 +102,4 @@ async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMa
   }
 }
 
-export const loadTSV = filememoizeAsync(_loadTSV)
+export const loadTSV = filememoize(_loadTSV)
