@@ -33,6 +33,22 @@ export function consoleFormat(
   output.push('')
   output.push(formatSummary(result.summary))
   output.push('')
+  if (result.derivativesSummary) {
+    for (const [key, derivResult] of Object.entries(result.derivativesSummary)) {
+      output.push(colors.blue(`Derivative: ${key}`))
+      
+      if (derivResult.issues.size === 0) {
+        output.push(colors.green('\tThis derivative appears to be BIDS compatible.'))
+      } else {
+        ;(['warning', 'error'] as Severity[]).map((severity) => {
+          output.push(...formatIssues(derivResult.issues.filter({ severity }), options, severity))
+        })
+      }
+      output.push(formatSummary(derivResult.summary))
+      output.push('')
+    }
+  }
+  
   return output.join('\n')
 }
 
@@ -216,13 +232,6 @@ function formatSummary(summary: SummaryOutput): string {
   output.push(table)
 
   output.push('')
-
-  //Neurostars message
-  output.push(
-    colors.cyan(
-      '\tIf you have any questions, please post on https://neurostars.org/tags/bids.',
-    ),
-  )
 
   return output.join('\n')
 }
