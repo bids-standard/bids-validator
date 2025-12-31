@@ -305,6 +305,14 @@ function _validateLocation(
     if (subval) {
       pattern += `${subent}-${subval}/`
     }
+    // if dataset is a derivative type dataset we're going to want to rebuild the topent/topval to suit
+    if (context.dataset.dataset_description?.DatasetType === 'derivative') {
+    const pretopval = context.path.match(new RegExp(`^.*?(?=sub-${topval})`))
+      if (pretopval) {
+        const prefix = pretopval[0].replace(/\/$/, '')
+        pattern = prefix + pattern
+      }
+    }
     if (!context.path.startsWith(pattern)) {
       context.dataset.issues.add({
         code: 'INVALID_LOCATION',

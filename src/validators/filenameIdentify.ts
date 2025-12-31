@@ -96,6 +96,39 @@ function findRuleMatches(schema, context) {
  * assume that this schema rule is applicable to this file.
  */
 export function _findRuleMatches(node, path, context) {
+  // Special case: top-level core files at root of derivative subdirectory
+  // Check if this rule is in rules.files.common.core and the file is in derivatives
+  if (path.startsWith('rules.files.common.core.')) {
+    const pathParts = context.file.path.split('/').filter(p => p !== '')
+    const isDerivativeRootFile =
+      (pathParts.length === 3 || pathParts.length === 2) && // ['derivatives', 'something', 'filename']
+      pathParts[0] === 'derivatives'
+
+    if (isDerivativeRootFile) {
+      // Check if this file matches the rule
+      let matches = false
+
+      if (node.path) {
+        // For rules with explicit path (dataset_description.json, CITATION.cff, etc.)
+        const expectedFilename = node.path.startsWith('/') ? node.path.slice(1) : node.path
+        matches = pathParts[2] === expectedFilename
+      } else if (node.stem && node.extensions) {
+        // For rules with stem and extensions (README, LICENSE)
+        const fileStem = context.file.name.split('.')[0]
+        const fileExt = context.file.name.includes('.')
+          ? context.file.name.substring(context.file.name.lastIndexOf('.'))
+          : ''
+        matches = fileStem === node.stem &&
+                  (node.extensions.includes(fileExt) || node.extensions.includes(''))
+      }
+
+      if (matches) {
+        context.filenameRules.push(path)
+        return
+      }
+    }
+  }
+  
   if (
     (`/${node.path}` === context.path) ||
     (node.stem && matchStemRule(node, context)) ||
