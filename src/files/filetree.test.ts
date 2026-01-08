@@ -105,4 +105,25 @@ Deno.test('extract subtrees', async (t) => {
       '/sub-01/anat/sub-01_desc-preproc_T1w.nii.gz',
     )
   })
+
+  await t.step('Subtree uses new bidsignore', async () => {
+    const tree = pathsToTree([
+      '/dataset_description.json',
+      '/.bidsignore',
+      '/ignored_file',
+      '/derivatives/pipeline/dataset_description.json',
+      '/derivatives/pipeline/.bidsignore',
+      '/derivatives/pipeline/ignored_file',
+      '/derivatives/pipeline/also_ignored_file',
+    ], ['ignored_file'])
+    const subignore = tree.get('derivatives/pipeline/.bidsignore') as BIDSFile
+    subignore.opener = new StringOpener('also_ignored_file\n')
+
+    assertEquals(tree.get('ignored_file')!.ignored, true)
+    assertEquals(tree.get('derivatives/pipeline/also_ignored_file')!.ignored, false)
+
+    const pipeline = await subtree(tree.get('derivatives/pipeline') as FileTree)
+    assertEquals(pipeline.get('also_ignored_file')!.ignored, true)
+    assertEquals(pipeline.get('ignored_file')!.ignored, false)
+  })
 })
