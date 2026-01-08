@@ -13,7 +13,9 @@ export class DatasetIssues {
   issues: Issue[]
   codeMessages: Map<string, string>
 
-  constructor({ issues, codeMessages }: { issues?: Issue[], codeMessages?: Map<string, string> } = {}) {
+  constructor(
+    { issues, codeMessages }: { issues?: Issue[]; codeMessages?: Map<string, string> } = {},
+  ) {
     this.issues = issues ?? []
     this.codeMessages = codeMessages ?? new Map()
   }

@@ -168,7 +168,9 @@ export function axisCodes(affine: number[][]): string[] | null {
   for (const dim of dims) {
     const idx = argMax(magnitudes[dim])
     // Do not allow this world axis to be used again
-    magnitudes.forEach((row) => { row[idx] = 0 } )
+    magnitudes.forEach((row) => {
+      row[idx] = 0
+    })
     result[dim] = codes[idx][basis[dim][idx] > 0 ? 0 : 1]
   }
   return result
