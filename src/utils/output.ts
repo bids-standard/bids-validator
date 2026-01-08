@@ -36,7 +36,7 @@ export function consoleFormat(
   if (result.derivativesSummary) {
     for (const [key, derivResult] of Object.entries(result.derivativesSummary)) {
       output.push(colors.blue(`Derivative: ${key}`))
-      
+
       if (derivResult.issues.size === 0) {
         output.push(colors.green('\tThis derivative appears to be BIDS compatible.'))
       } else {
@@ -48,7 +48,7 @@ export function consoleFormat(
       output.push('')
     }
   }
-  
+
   return output.join('\n')
 }
 

@@ -99,9 +99,8 @@ export function _findRuleMatches(node, path, context) {
   // Special case: top-level core files at root of derivative subdirectory
   // Check if this rule is in rules.files.common.core and the file is in derivatives
   if (path.startsWith('rules.files.common.core.')) {
-    const pathParts = context.file.path.split('/').filter(p => p !== '')
-    const isDerivativeRootFile =
-      (pathParts.length === 3 || pathParts.length === 2) && // ['derivatives', 'something', 'filename']
+    const pathParts = context.file.path.split('/').filter((p) => p !== '')
+    const isDerivativeRootFile = (pathParts.length === 3 || pathParts.length === 2) && // ['derivatives', 'something', 'filename']
       pathParts[0] === 'derivatives'
 
     if (isDerivativeRootFile) {
@@ -119,7 +118,7 @@ export function _findRuleMatches(node, path, context) {
           ? context.file.name.substring(context.file.name.lastIndexOf('.'))
           : ''
         matches = fileStem === node.stem &&
-                  (node.extensions.includes(fileExt) || node.extensions.includes(''))
+          (node.extensions.includes(fileExt) || node.extensions.includes(''))
       }
 
       if (matches) {
