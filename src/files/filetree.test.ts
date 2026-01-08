@@ -1,7 +1,7 @@
 import { assert, assertEquals } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSFile, type FileOpener, type FileTree } from '../types/filetree.ts'
-import { filesToTree } from './filetree.ts'
+import { filesToTree, subtree } from './filetree.ts'
 import { StringOpener } from './openers.test.ts'
 
 export function pathToFile(path: string, ignored: boolean = false): BIDSFile {
@@ -75,5 +75,34 @@ Deno.test('FileTree generation', async (t) => {
     ])
     const bad_file = tree.get('bad_file') as BIDSFile
     assert(bad_file.ignored)
+  })
+})
+
+Deno.test('extract subtrees', async (t) => {
+  await t.step('Successfully re-roots derivatives', async () => {
+    const tree = pathsToTree([
+      '/dataset_description.json',
+      '/sub-01/anat/sub-01_T1w.nii.gz',
+      '/derivatives/pipeline/dataset_description.json',
+      '/derivatives/pipeline/sub-01/anat/sub-01_desc-preproc_T1w.nii.gz',
+    ])
+    assertEquals(tree.directories.map((d) => d.name), ['sub-01', 'derivatives'])
+    assertEquals(tree.files.map((f) => f.name), ['dataset_description.json'])
+
+    const pipeline = tree.get('derivatives/pipeline') as FileTree
+    assertEquals(pipeline.path, '/derivatives/pipeline')
+    assertEquals(pipeline.directories.map((d) => d.path), ['/derivatives/pipeline/sub-01'])
+    assertEquals(pipeline.files.map((f) => f.path), [
+      '/derivatives/pipeline/dataset_description.json',
+    ])
+
+    const derivTree = await subtree(pipeline)
+    assertEquals(derivTree.path, '/')
+    assertEquals(derivTree.directories.map((d) => d.path), ['/sub-01'])
+    assertEquals(derivTree.files.map((f) => f.path), ['/dataset_description.json'])
+    assertEquals(
+      derivTree.get('sub-01/anat/sub-01_desc-preproc_T1w.nii.gz')!.path,
+      '/sub-01/anat/sub-01_desc-preproc_T1w.nii.gz',
+    )
   })
 })
