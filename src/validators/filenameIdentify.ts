@@ -128,7 +128,6 @@ export function _findRuleMatches(node, path, context) {
       }
     }
   }
-  
   if (
     (`/${node.path}` === context.path) ||
     (node.stem && matchStemRule(node, context)) ||
