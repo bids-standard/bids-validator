@@ -62,7 +62,9 @@ export async function* walkFileTree(
   dsContext: BIDSContextDataset,
   bufferSize: number = 1,
 ): AsyncIterable<BIDSContext> {
-  for await (const context of queuedAsyncIterator(_walkFileTree(dsContext.tree, dsContext), bufferSize)) {
+  for await (
+    const context of queuedAsyncIterator(_walkFileTree(dsContext.tree, dsContext), bufferSize)
+  ) {
     await context.loaded
     yield context
   }

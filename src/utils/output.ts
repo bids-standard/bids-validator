@@ -73,11 +73,14 @@ function renderTokens(tokenList: any[]): string {
 }
 
 function formatMessage(text: string): string {
-  const cleanText = text.replaceAll('SPEC_ROOT/', 'https://bids-specification.readthedocs.io/en/stable/')
+  const cleanText = text.replaceAll(
+    'SPEC_ROOT/',
+    'https://bids-specification.readthedocs.io/en/stable/',
+  )
 
   // Respect no-color flags or non-interactive environments
   if (colors.getColorEnabled() === false) {
-     return cleanText
+    return cleanText
   }
 
   try {
