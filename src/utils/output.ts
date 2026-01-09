@@ -18,6 +18,19 @@ interface LoggingOptions {
  *
  * Returns the full output string with newlines
  */
+function supportsHyperlinks(): boolean {
+  // If NO_COLOR is set, usually we shouldn't render fancy links either
+  if (Deno.env.get("NO_COLOR")) {
+    return false;
+  }
+  // Check specifically for terminals that support it (like iTerm, VSCode, etc.)
+  const termProgram = Deno.env.get("TERM_PROGRAM");
+  if (["iTerm.app", "vscode", "Apple_Terminal"].includes(termProgram || "")) {
+    return true;
+  }
+  return false;
+}
+
 export function consoleFormat(
   result: ValidationResult,
   options?: LoggingOptions,
@@ -59,32 +72,35 @@ function renderTokens(tokenList: any[]): string {
   if (!tokenList) return ''
 
   return tokenList.map((token) => {
-    if (token.type === 'paragraph') {
-      return renderTokens(token.tokens)
+    switch (token.type) {
+      case 'paragraph':
+        return renderTokens(token.tokens)
+      
+      case 'strong':
+        return colors.bold(renderTokens(token.tokens))
+      
+      case 'em':
+        return colors.italic(renderTokens(token.tokens))
+      
+      case 'codespan':
+        return colors.cyan(token.text)
+      
+      case 'link':
+        if (supportsHyperlinks()) {
+          // OSC-8 Hyperlink Sequence
+          return `\u001b]8;;${token.href}\u001b\\${token.text}\u001b]8;;\u001b\\`
+        } else {
+          // Fallback for terminals without support
+          return `${colors.blue(token.text)} (${colors.gray(token.href)})`
+        }
+      
+      case 'text':
+        return token.text
+      
+      default:
+        // Render children or return raw text
+        return renderTokens(token.tokens || []) || token.raw || ''
     }
-
-    if (token.type === 'strong') {
-      return colors.bold(renderTokens(token.tokens))
-    }
-
-    if (token.type === 'em') {
-      return colors.italic(renderTokens(token.tokens))
-    }
-
-    if (token.type === 'codespan') {
-      return colors.cyan(token.text)
-    }
-
-    if (token.type === 'link') {
-      return `${colors.blue(token.text)} (${colors.gray(token.href)})`
-    }
-
-    if (token.type === 'text') {
-      return token.text
-    }
-
-    // Render children or return raw text
-    return renderTokens(token.tokens || []) || token.raw || ''
   }).join('')
 }
 
