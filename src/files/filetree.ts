@@ -45,7 +45,7 @@ function rerootTree({
 }: RerootTreeOptions): FileTree {
   const tree = new FileTree(
     oldTree.path.substr(newRoot.length) || '/',
-    parent ? oldTree.name : '/',
+    parent ? oldTree.name : `${oldTree.path}/`,  // Set the name of the root to its full path
     parent,
     ignore,
   )
