@@ -5,6 +5,8 @@ import { Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
 import { format as prettyBytes } from '@std/fmt/bytes'
 import { marked } from 'marked'
+import supportsHyperlinks from 'npm:supports-hyperlinks'
+import ansiEscapes from 'npm:ansi-escapes'
 import type { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
 import type { Issue, Severity } from '../types/issues.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -18,19 +20,6 @@ interface LoggingOptions {
  *
  * Returns the full output string with newlines
  */
-function supportsHyperlinks(): boolean {
-  // If NO_COLOR is set, usually we shouldn't render fancy links either
-  if (Deno.env.get("NO_COLOR")) {
-    return false;
-  }
-  // Check specifically for terminals that support it (like iTerm, VSCode, etc.)
-  const termProgram = Deno.env.get("TERM_PROGRAM");
-  if (["iTerm.app", "vscode", "Apple_Terminal"].includes(termProgram || "")) {
-    return true;
-  }
-  return false;
-}
-
 export function consoleFormat(
   result: ValidationResult,
   options?: LoggingOptions,
@@ -86,9 +75,9 @@ function renderTokens(tokenList: any[]): string {
         return colors.cyan(token.text)
       
       case 'link':
-        if (supportsHyperlinks()) {
-          // OSC-8 Hyperlink Sequence
-          return `\u001b]8;;${token.href}\u001b\\${token.text}\u001b]8;;\u001b\\`
+        // Using the library to check for stdout support
+        if (supportsHyperlinks.stdout) {
+          return ansiEscapes.link(token.text, token.href)
         } else {
           // Fallback for terminals without support
           return `${colors.blue(token.text)} (${colors.gray(token.href)})`
