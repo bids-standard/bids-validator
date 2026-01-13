@@ -2,6 +2,34 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"2.2.7"'></a>
+# "2.2.7" — 2026-01-13
+
+## Added
+
+- Maintainer documentation for creating and fixing releases.
+
+- Support for rendering Markdown in validation messages in the terminal.
+
+- Display validation summaries for derivative datasets when recursive validation
+  (`-r`/`--recursive`) is run.
+
+- Support for presigning S3 URLs if AWS credentials are detected.
+
+## Fixed
+
+- Validate derivative file paths relative to the derivative dataset root.
+
+- Have all three calls to fetch in HttpOpener use same error handling.
+
+- Fix memoization memory leak for readRemotes.
+
+- Replace SPEC_ROOT placeholder with actual documentation link in CLI output
+
+## Infrastructure
+
+- Pin Deno to 2.5.6 in wheel builds to account for bugs with MacOS binaries compiled with 2.6.0.
+
 <a id='changelog-"2.2.5"'></a>
 # "2.2.5" — 2025-12-10
 
