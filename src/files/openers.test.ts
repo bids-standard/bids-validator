@@ -1,10 +1,13 @@
 /**
  * File openers for use in testing
  */
-import { assertEquals } from '@std/assert'
+import { assertEquals, assertRejects } from '@std/assert'
+import { resolvesNext, stub } from "@std/testing/mock";
 import { type FileOpener } from '../types/filetree.ts'
 import { streamFromString } from '../tests/utils.ts'
 import { createUTF8Stream } from './streams.ts'
+import { HTTPOpener } from './openers.ts'
+
 
 const textEncoder = new TextEncoder()
 const textDecoder = new TextDecoder()
@@ -152,3 +155,27 @@ Deno.test('Validate CompressedStringOpener', async (t) => {
     assertEquals(chunks.join(''), 'Hello, world!')
   })
 })
+
+Deno.test('Validate HTTPOpener', async (t) => {
+  const url = "http://example.com"
+  await t.step('Use successful fetch stub', async () => {
+    using _fetchStub = stub(
+      globalThis,
+      "fetch",
+      resolvesNext([new Response("Hello, world!")]),
+    );
+    const httpOpener = new HTTPOpener(url, 1)
+    assertEquals(await httpOpener.text(), "Hello, world!");
+  })
+  await t.step('Use failed fetch stub', async () => {
+    using _fetchStub = stub(
+      globalThis,
+      "fetch",
+      resolvesNext([new Response("Not Found", { status: 404, statusText: "Not Found" })])
+    );
+    const httpOpener = new HTTPOpener(url, 1)
+    assertRejects(httpOpener.text);
+    assertRejects(httpOpener.stream);
+    assertRejects(() => httpOpener.readBytes(1, 0));
+  })
+});
