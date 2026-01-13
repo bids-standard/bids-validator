@@ -157,7 +157,7 @@ async function _readRemotes(options: any): Promise<Record<string, Record<string,
   return byUUID
 }
 
-const readRemotes = memoize(_readRemotes)
+const readRemotes = memoize(_readRemotes, (options) => options?.gitdir)
 
 export async function parseAnnexedFile(
   path: string,
