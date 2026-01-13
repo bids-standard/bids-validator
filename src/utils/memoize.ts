@@ -6,10 +6,11 @@ interface FileLike {
 
 export const memoize = <T>(
   fn: (...args: any[]) => T,
+  resolver?: (...args: any[]) => any,
 ): WithCache<(...args: any[]) => T> => {
   const cache = new Map()
   const cached = function (this: any, ...args: any[]) {
-    const key = JSON.stringify(args)
+    const key = resolver ? resolver(...args) : JSON.stringify(args)
     return cache.has(key) ? cache.get(key) : cache.set(key, fn.apply(this, args)) && cache.get(key)
   }
   cached.cache = cache
