@@ -1,4 +1,4 @@
-export type WithCache<T> = T & { cache: Map<string, any> }
+export type WithCache<T> = T & { cache: Map<any, any> }
 interface FileLike {
   path: string
   parent: { path: string }
@@ -8,8 +8,9 @@ export const memoize = <T>(
   fn: (...args: any[]) => T,
 ): WithCache<(...args: any[]) => T> => {
   const cache = new Map()
-  const cached = function (this: any, val: T) {
-    return cache.has(val) ? cache.get(val) : cache.set(val, fn.call(this, val)) && cache.get(val)
+  const cached = function (this: any, ...args: any[]) {
+    const key = JSON.stringify(args)
+    return cache.has(key) ? cache.get(key) : cache.set(key, fn.apply(this, args)) && cache.get(key)
   }
   cached.cache = cache
   return cached
