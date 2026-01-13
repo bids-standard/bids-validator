@@ -22,7 +22,8 @@ Deno.test('parseRmetLine', async (t) => {
       timestamp: 1714730995.499196097,
       uuid: '51d08fb4-c58a-4fd7-a171-e5ff8226ca2f',
       version: 'hmM3ejadqtX1G_.sUQ6bswAL.xTpRExo',
-      path: 'ds004194/derivatives/Brandsetal2024TemporalAdaptationECoG/data_subjects/sub-p11/epochs_b/epochs_b_channel32-Amber’s MacBook Pro.txt'
+      path:
+        'ds004194/derivatives/Brandsetal2024TemporalAdaptationECoG/data_subjects/sub-p11/epochs_b/epochs_b_channel32-Amber’s MacBook Pro.txt',
     })
   })
 })

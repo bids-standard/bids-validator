@@ -1,4 +1,4 @@
-import { filememoizeAsync } from '../utils/memoize.ts'
+import { filememoize } from '../utils/memoize.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { readBytes } from './access.ts'
 
@@ -39,4 +39,4 @@ async function _loadJSON(file: BIDSFile): Promise<Record<string, unknown>> {
   return parsedText
 }
 
-export const loadJSON = filememoizeAsync(_loadJSON)
+export const loadJSON = filememoize(_loadJSON)

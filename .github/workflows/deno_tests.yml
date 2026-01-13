@@ -14,9 +14,9 @@ concurrency:
 
 jobs:
   debug_info:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
       - run: git status
@@ -28,20 +28,20 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
       - name: Save describe stamp
         id: describe
         run: echo version=$( git describe ) >> $GITHUB_OUTPUT
-      - uses: denoland/setup-deno@v2
+      - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2
         with:
           deno-version: v2.x
       - run: deno --node-modules-dir=auto -A ./build.ts
       - run: deno run -A ./dist/validator/bids-validator.js --version
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: main
           path: dist/validator
@@ -59,10 +59,10 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           submodules: true
-      - uses: denoland/setup-deno@v2
+      - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2
         with:
           deno-version: v2.x
       - name: Set permissions with network access
@@ -87,23 +87,23 @@ jobs:
       - name: Collect coverage
         run: deno coverage cov/ --lcov --output=coverage.lcov
         if: ${{ always() }}
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         if: ${{ always() }}
         with:
           files: coverage.lcov
           token: ${{ secrets.CODECOV_TOKEN }}
 
   publish-dry-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
-      - uses: actions/checkout@v4
-      - uses: denoland/setup-deno@v2
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2
         with:
           deno-version: v2.x
       - run: deno publish --dry-run
 
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     needs: [test, publish-dry-run]
     if: github.ref_type == 'tag'
     permissions:
@@ -111,24 +111,27 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Check tag matches ${{ github.ref_name }}
         run: jq -e ".version[:1] != \"v\" and .version==\"$TAG\"" deno.json
         env:
           TAG: ${{ github.ref_name }}
-      - uses: denoland/setup-deno@v2
+      - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2
         with:
           deno-version: v2.x
       - run: deno publish
 
   deploy:
     needs: [build]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
+    permissions:
+      contents: write
     if: github.event_name != 'pull_request' && github.repository_owner == 'bids-standard'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          token: ${{ secrets.PUSH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set credentials
         run: |
           git config --global user.name "BIDS-Bot"
@@ -137,7 +140,7 @@ jobs:
         run: |
           git checkout --orphan deno-build
           git reset --hard
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: main
           path: main

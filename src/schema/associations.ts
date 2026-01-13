@@ -100,7 +100,7 @@ const associationLookup: Record<string, LoadFunction> = {
       sampling_frequency: columns.get('sampling_frequency'),
     }
   },
-  physio: async (file: BIDSFile, options: any): Promise<{path: string} & WithSidecar> => {
+  physio: async (file: BIDSFile, options: any): Promise<{ path: string } & WithSidecar> => {
     return {
       path: file.path,
       sidecar: await constructSidecar(file),

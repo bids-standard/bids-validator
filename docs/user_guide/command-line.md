@@ -58,14 +58,18 @@ bids-validator <dataset>
 | `-s URL`, `--schema URL`       | Specify an alternative [BIDS Schema] for validation                                                                                                                   |
 | `-c FILE`, `--config FILE`     | Provide a [configuration file](#configuration-file)                                                                                                                   |
 | `-r`, `--recursive`            | Validate datasets found in `derivatives/` subdirectories, recursively                                                                                                 |
+| `-p`, `--prune`                | Prune derivatives and sourcedata directories on load (disables `-r` and will underestimate dataset size). This can speed up validation of large datasets.             |
 | `-o FILE`, `--outfile FILE`    | Write validation results to file.                                                                                                                                     |
-| `--json`                       | Output results in machine-readable [JSON]                                                                                                                             |
+| `--format`                     | Output format. One of `text` (default), `json`, or `json_pp` (pretty-printed JSON)                                                                                    |
+| `--json`                       | Shorthand for `--format json`                                                                                                                                         |
 | `--ignoreWarnings`             | Do not report warnings                                                                                                                                                |
 | `--ignoreNiftiHeaders`         | Do not open NIfTI files, skipping any checks that rely on NIfTI header data                                                                                           |
 | `--filenameMode`               | Perform filename checks only on newline-separated filenames read from [stdin]                                                                                         |
 | `--blacklistModalities MOD...` | Raise error if passed modalities are detected in the dataset. Modalities may be any of `mri`, `eeg`, `ieeg`, `meg`, `beh`, `pet`, `micr`, `motion`, `nirs`, or `mrs`. |
+| `--datasetTypes TYPE...`       | Permitted dataset types to validate against (default: all). Types may be any of `raw`, `derivative`, `study`.                                                         |
 | `--debug LEVEL`                | Enable logging at the specified level. Default level is `ERROR`. Levels include (from most to least verbose): `NOTSET`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `CRITICAL`. |
 | `--color`, `--no-color`        | Enable/disable color. The validator also respects the [NO_COLOR] and [FORCE_COLOR] environment variables.                                                             |
+| `--preferredRemote`            | Name of the preferred git-annex remote for accessing remote data. This is experimental. The default is to use the most recently created S3 remote.                    |
 
 ## Configuration file
 

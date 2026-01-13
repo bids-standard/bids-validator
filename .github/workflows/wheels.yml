@@ -1,4 +1,4 @@
-name: Build wheels
+name: PyPI
 
 on:
   push:
@@ -20,25 +20,25 @@ defaults:
     shell: bash
 
 jobs:
-  build_sdist:
-    name: Build & verify package
-    runs-on: ubuntu-latest
+  sdist:
+    name: Build sdist
+    runs-on: ubuntu-slim
     permissions:
       attestations: write
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
-      - uses: hynek/build-and-inspect-python-package@v2
+      - uses: hynek/build-and-inspect-python-package@efb823f52190ad02594531168b7a2d5790e66516 # v2
         with:
           attest-build-provenance-github: ${{ github.event_name != 'pull_request' }}
           skip-wheel: true
 
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+  wheel:
+    name: Build wheel (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    needs: [build_sdist]
+    needs: [sdist]
     strategy:
       matrix:
         os:
@@ -48,13 +48,15 @@ jobs:
           - macos-15-intel
           - macos-latest
       fail-fast: false
+    continue-on-error: true
+
     permissions:
       attestations: write
       id-token: write
 
     steps:
       - name: Download sdist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: Packages
           path: dist
@@ -64,37 +66,37 @@ jobs:
           tar --strip-components=1 -xzvf dist/*.tar.gz
           rm -r dist
 
-      - name: Build wheels from sdist
-        uses: pypa/cibuildwheel@v2.23
+      - name: Build wheel from sdist
+        uses: pypa/cibuildwheel@63fd63b352a9a8bdcc24791c9dbee952ee9a8abc # v3.3
 
       - name: Generate artifact attestation for wheels
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
         with:
           subject-path: "wheelhouse/bids_validator_deno-*.whl"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: wheel-${{ matrix.os }}
           path: ./wheelhouse
 
   test-publish:
-    name: Push package to test.pypi.org
+    name: Publish to test.pypi.org
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    needs: [build_wheels]
+    needs: [wheel]
     permissions:
       id-token: write
 
     steps:
       - name: Download sdist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: Packages
           path: dist
 
       - name: Download wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           pattern: wheel-*
           path: dist
@@ -104,28 +106,28 @@ jobs:
           rmdir dist/*/
 
       - name: Upload package to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
           skip-existing: true
 
   publish:
-    name: Publish released package to pypi.org
+    name: Publish
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
-    needs: [build_wheels]
+    needs: [wheel]
     permissions:
       id-token: write
 
     steps:
       - name: Download sdist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: Packages
           path: dist
 
       - name: Download wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           pattern: wheel-*
           path: dist
@@ -135,4 +137,4 @@ jobs:
           rmdir dist/*/
 
       - name: Upload package to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # release/v1

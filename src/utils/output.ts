@@ -4,6 +4,7 @@
 import { Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
 import { format as prettyBytes } from '@std/fmt/bytes'
+import { marked } from 'marked'
 import type { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
 import type { Issue, Severity } from '../types/issues.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -32,7 +33,78 @@ export function consoleFormat(
   output.push('')
   output.push(formatSummary(result.summary))
   output.push('')
+  if (result.derivativesSummary) {
+    for (const [key, derivResult] of Object.entries(result.derivativesSummary)) {
+      output.push(colors.blue(`Derivative: ${key}`))
+      
+      if (derivResult.issues.size === 0) {
+        output.push(colors.green('\tThis derivative appears to be BIDS compatible.'))
+      } else {
+        ;(['warning', 'error'] as Severity[]).map((severity) => {
+          output.push(...formatIssues(derivResult.issues.filter({ severity }), options, severity))
+        })
+      }
+      output.push(formatSummary(derivResult.summary))
+      output.push('')
+    }
+  }
+  
   return output.join('\n')
+}
+
+/**
+ * Render marked tokens to ANSI strings
+ */
+function renderTokens(tokenList: any[]): string {
+  if (!tokenList) return ''
+
+  return tokenList.map((token) => {
+    if (token.type === 'paragraph') {
+      return renderTokens(token.tokens)
+    }
+
+    if (token.type === 'strong') {
+      return colors.bold(renderTokens(token.tokens))
+    }
+
+    if (token.type === 'em') {
+      return colors.italic(renderTokens(token.tokens))
+    }
+
+    if (token.type === 'codespan') {
+      return colors.cyan(token.text)
+    }
+
+    if (token.type === 'link') {
+      return `${colors.blue(token.text)} (${colors.gray(token.href)})`
+    }
+
+    if (token.type === 'text') {
+      return token.text
+    }
+
+    // Render children or return raw text
+    return renderTokens(token.tokens || []) || token.raw || ''
+  }).join('')
+}
+
+function formatMessage(text: string): string {
+  const cleanText = text.replaceAll(
+    'SPEC_ROOT/',
+    'https://bids-specification.readthedocs.io/en/stable/',
+  )
+
+  // Respect no-color flags or non-interactive environments
+  if (colors.getColorEnabled() === false) {
+    return cleanText
+  }
+
+  try {
+    const tokens = marked.lexer(cleanText)
+    return renderTokens(tokens)
+  } catch {
+    return cleanText
+  }
 }
 
 function formatIssues(
@@ -47,7 +119,8 @@ function formatIssues(
     if (issues.size === 0 || typeof code !== 'string') {
       continue
     }
-    const codeMessage = issues.codeMessages.get(code) ?? ''
+
+    const codeMessage = formatMessage(issues.codeMessages.get(code) ?? '')
     output.push(
       '\t' +
         colors[color](
@@ -92,7 +165,11 @@ function formatFiles(issues: DatasetIssues, options?: LoggingOptions): string[] 
     const fileOut: string[] = []
     issueDetails.map((key) => {
       if (Object.hasOwn(issue, key) && issue[key]) {
-        fileOut.push(`${issue[key]}`)
+        let content = `${issue[key]}`
+        if (key === 'issueMessage') {
+          content = formatMessage(content)
+        }
+        fileOut.push(content)
       }
     })
     output.push('\t\t' + fileOut.join(' - '))
@@ -155,13 +232,6 @@ function formatSummary(summary: SummaryOutput): string {
   output.push(table)
 
   output.push('')
-
-  //Neurostars message
-  output.push(
-    colors.cyan(
-      '\tIf you have any questions, please post on https://neurostars.org/tags/bids.',
-    ),
-  )
 
   return output.join('\n')
 }
