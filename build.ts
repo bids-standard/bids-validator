@@ -57,7 +57,6 @@ const result = await esbuild.build({
       },
       modules: {
         'buffer': true,
-        'process': true,
         'worker_threads': false,
       },
     }),
