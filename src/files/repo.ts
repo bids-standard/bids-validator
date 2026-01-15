@@ -212,7 +212,7 @@ export async function resolveAnnexedFile(
   }
 
   const metadata = rmet[uuid]
-  const client = await createS3Client({ endPoint: `https://${host}`, bucket })
+  const client = await createS3Client({ endPoint: `https://${host}`, bucket, region: 'us-east-1'})
   const url = await client.presignedGetObject(metadata.path, {versionId: metadata.version})
 
   return { url }

@@ -4,12 +4,12 @@ interface FileLike {
   parent: { path: string }
 }
 
-export const memoize = <T>(
-  fn: (...args: any[]) => T,
-  resolver?: (...args: any[]) => any,
-): WithCache<(...args: any[]) => T> => {
+export const memoize = <A extends any[], R>(
+  fn: (...args: A) => R,
+  resolver?: (...args: A) => any,
+): WithCache<(...args: A) => R> => {
   const cache = new Map()
-  const cached = function (this: any, ...args: any[]) {
+  const cached = function (this: any, ...args: A) {
     const key = resolver ? resolver(...args) : JSON.stringify(args)
     return cache.has(key) ? cache.get(key) : cache.set(key, fn.apply(this, args)) && cache.get(key)
   }
