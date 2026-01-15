@@ -2,6 +2,17 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"2.2.8"'></a>
+# "2.2.8" — 2026-01-15
+
+## Changed
+
+- Render Markdown links as OSC-8 links in terminals where support is detected.
+
+## Fixed
+
+- Fix typo in S3 URL generation code that prevented reading remote files.
+
 <a id='changelog-"2.2.7"'></a>
 # "2.2.7" — 2026-01-13
 
