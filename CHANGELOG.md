@@ -2,6 +2,17 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"2.2.10"'></a>
+# "2.2.10" — 2026-01-15
+
+## Changed
+
+- Improve types for memoized functions by passing argument and return types to callers.
+
+## Fixed
+
+- Extract AWS region from S3 special remote, defaulting to us-east-1.
+
 <a id='changelog-"2.2.9"'></a>
 # "2.2.9" — 2026-01-15
 

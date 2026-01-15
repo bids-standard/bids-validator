@@ -2,10 +2,10 @@ name: PyPI
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, dev, maint/*]
     tags: ['*']
   pull_request:
-    branches: [main, dev]
+    branches: [main, dev, maint/*]
   workflow_dispatch:
 
 concurrency:
