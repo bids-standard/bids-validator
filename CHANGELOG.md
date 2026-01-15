@@ -2,6 +2,13 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"2.2.9"'></a>
+# "2.2.9" — 2026-01-15
+
+## Changed
+
+- Reverted terminal URLs for the 2.2.x series. It should be back in 2.3.0.
+
 <a id='changelog-"2.2.8"'></a>
 # "2.2.8" — 2026-01-15
 
