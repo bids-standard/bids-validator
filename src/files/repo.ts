@@ -205,7 +205,7 @@ export async function resolveAnnexedFile(
     // Take the newest remote (reverse sort timestamps, take first)
     uuid = Object.entries(rmet).toSorted((a, b) => +b[1].timestamp - +a[1].timestamp)[0][0]
   }
-  const { host, bucket, region } = remotes[uuid]
+  let { host, bucket, region } = remotes[uuid]
 
   if (!host || !bucket) {
     throw new Error(`No public url found for remote ${uuid}`)
