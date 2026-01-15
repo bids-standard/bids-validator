@@ -30,12 +30,14 @@
     "npm:@bids/nifti-reader-js@~0.6.9": "0.6.9",
     "npm:@types/node@*": "24.2.0",
     "npm:ajv@8.17.1": "8.17.1",
+    "npm:ansi-escapes@^7.2.0": "7.2.0",
     "npm:esbuild-plugins-node-modules-polyfill@*": "1.7.1_esbuild@0.25.10",
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@~4.1.4": "4.1.4",
     "npm:ignore@^7.0.5": "7.0.5",
     "npm:isomorphic-git@^1.35.1": "1.35.1",
-    "npm:marked@^15.0.4": "15.0.12"
+    "npm:marked@^15.0.4": "15.0.12",
+    "npm:supports-hyperlinks@^4.4.0": "4.4.0"
   },
   "jsr": {
     "@bids/schema@1.2.0-dev.11+4473de10": {
@@ -305,6 +307,12 @@
         "require-from-string"
       ]
     },
+    "ansi-escapes@7.2.0": {
+      "integrity": "sha512-g6LhBsl+GBPRWGWsBtutpzBYuIIdBkLEvad5C/va/74Db018+5TZiyA26cZJAr3Rft5lprVqOIPxf5Vid6tqAw==",
+      "dependencies": [
+        "environment"
+      ]
+    },
     "async-lock@1.4.1": {
       "integrity": "sha512-Az2ZTpuytrtqENulXwO3GGv1Bztugx6TT37NIo7imr/Qo0gsYiGtSdBa2B6fsXhTpVZDNfu1Qn3pk531e3q+nQ=="
     },
@@ -388,6 +396,9 @@
         "es-errors",
         "gopd"
       ]
+    },
+    "environment@1.1.0": {
+      "integrity": "sha512-xUtoPkMggbz0MPyPiIWr1Kp4aeWJjDZ6SMvURhimjdZgsRuDplF5/s9hcgGhyXMhs+6vpnuoiZ2kFiu3FMnS8Q=="
     },
     "es-define-property@1.0.1": {
       "integrity": "sha512-e3nRfgfUZ4rNGL232gUgX06QNyyez04KdjFrF+LTRoOXmrOgFKDg4BCdsjW8EnT69eqdYGmRpJwiPVYNrCaW3g=="
@@ -501,6 +512,9 @@
     },
     "gopd@1.2.0": {
       "integrity": "sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg=="
+    },
+    "has-flag@5.0.1": {
+      "integrity": "sha512-CsNUt5x9LUdx6hnk/E2SZLsDyvfqANZSUq4+D3D8RzDJ2M+HDTIkF60ibS1vHaK55vzgiZw1bEPFG9yH7l33wA=="
     },
     "has-property-descriptors@1.0.2": {
       "integrity": "sha512-55JNKuIW+vq4Ke1BjOTjM2YctQIvCT7GFzHwmfZPGo5wnrgkid0YQtnAleFSqumZm4az3n2BS+erby5ipJdgrg==",
@@ -726,6 +740,16 @@
     "strnum@2.1.1": {
       "integrity": "sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw=="
     },
+    "supports-color@10.2.2": {
+      "integrity": "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g=="
+    },
+    "supports-hyperlinks@4.4.0": {
+      "integrity": "sha512-UKbpT93hN5Nr9go5UY7bopIB9YQlMz9nm/ct4IXt/irb5YRkn9WaqrOBJGZ5Pwvsd5FQzSVeYlGdXoCAPQZrPg==",
+      "dependencies": [
+        "has-flag",
+        "supports-color"
+      ]
+    },
     "to-buffer@1.2.2": {
       "integrity": "sha512-db0E3UJjcFhpDhAF4tLo03oli3pwl3dbnzXOUIlRKrp+ldk/VUxzpWYZENsw2SZiuBjHAk7DfB0VU7NKdpb6sw==",
       "dependencies": [
@@ -872,11 +896,13 @@
       "jsr:@std/yaml@^1.0.10",
       "npm:@bids/nifti-reader-js@~0.6.9",
       "npm:ajv@8.17.1",
+      "npm:ansi-escapes@^7.2.0",
       "npm:hash-wasm@^4.12.0",
       "npm:hed-validator@~4.1.4",
       "npm:ignore@^7.0.5",
       "npm:isomorphic-git@^1.35.1",
-      "npm:marked@^15.0.4"
+      "npm:marked@^15.0.4",
+      "npm:supports-hyperlinks@^4.4.0"
     ]
   }
 }
