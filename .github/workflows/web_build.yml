@@ -3,9 +3,9 @@ name: Web validator
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, dev, maint/*]
   pull_request:
-    branches: [main, dev]
+    branches: [main, dev, maint/*]
   release:
     types: [published]
   workflow_dispatch:
