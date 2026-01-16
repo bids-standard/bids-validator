@@ -47,7 +47,7 @@ const json_mock_validation_result = {
     "schemaVersion": "1.1.3"
   },
   "derivativesSummary": {
-    "/derivatives/qMRLab/": {
+    "/derivatives/mock/": {
       "issues": {
         "issues": [
           {
@@ -93,16 +93,16 @@ const mockValidationResultBadDerivatives: ValidationResult = {
   derivativesSummary: {
     "/derivatives/mock/": {
       issues: new DatasetIssues({
-        issues: json_mock_validation_result.derivativesSummary["/derivatives/qMRLab/"].issues.issues as Issue[],
+        issues: json_mock_validation_result.derivativesSummary["/derivatives/mock/"].issues.issues as Issue[],
       }),
-      summary: json_mock_validation_result.derivativesSummary["/derivatives/qMRLab/"].summary,
+      summary: json_mock_validation_result.derivativesSummary["/derivatives/mock/"].summary,
     }
   }
 }
 
 const mockValidationResultBadRawData: ValidationResult = {
   issues: new DatasetIssues({ 
-    issues: json_mock_validation_result.derivativesSummary["/derivatives/qMRLab/"].issues.issues as Issue[],
+    issues: json_mock_validation_result.derivativesSummary["/derivatives/mock/"].issues.issues as Issue[],
     }),
   summary: json_mock_validation_result.summary,
 }
