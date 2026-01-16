@@ -121,5 +121,26 @@ Deno.test('checkAllErrors properly collects errors from raw data', () => {
   assertEquals(errors[0].code, 'EMPTY_FILE')
   assertEquals(errors[0].severity, 'error')
   assertEquals(errors[0].location, '/README')
+})
+
+const mockValidationResultNoErrors: ValidationResult = {
+  issues: new DatasetIssues({
+    issues: [],
+    codeMessages: new Map(),
+  }),
+  summary: json_mock_validation_result.summary,
+  derivativesSummary: {
+    "/derivatives/mock/": {
+      issues: new DatasetIssues({
+        issues: [],
+        codeMessages: new Map(),
+      }),
+      summary: json_mock_validation_result.derivativesSummary["/derivatives/mock/"].summary,
+    }
   }
-)
+}
+
+Deno.test('checkAllErrors returns empty array when no errors found', () => {
+  const errors = checkAllErrors(mockValidationResultNoErrors)
+  assertEquals(errors.length, 0)
+})
