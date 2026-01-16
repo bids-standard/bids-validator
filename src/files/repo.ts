@@ -38,8 +38,8 @@ class NonSigningClient {
   async presignedGetObject(
     objectName: string,
     options: {
-      versionId: string,
-    }
+      versionId: string
+    },
   ): Promise<string> {
     return `${this.endPoint}/${this.bucket}/${objectName}?versionId=${options.versionId}`
   }
@@ -215,7 +215,7 @@ export async function resolveAnnexedFile(
 
   const metadata = rmet[uuid]
   const client = await createS3Client({ endPoint: `https://${host}`, bucket, region })
-  const url = await client.presignedGetObject(metadata.path, {versionId: metadata.version})
+  const url = await client.presignedGetObject(metadata.path, { versionId: metadata.version })
 
   return { url }
 }
