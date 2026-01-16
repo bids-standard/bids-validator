@@ -178,9 +178,15 @@ export function checkAllErrors(result: ValidationResult): Issue[] {
   for (const key in result) {
     if (key == "issues") {
       errors.push(...result[key].get({ severity: 'error' }))
+      if (errors.length > 0) {
+        return errors
+      }
     } else if (key == "derivativesSummary") {
       for (const derivative in result[key]) {
         errors.push(...checkAllErrors(result[key][derivative]))
+        if (errors.length > 0) {
+          return errors
+        }
       }
     }
   }
