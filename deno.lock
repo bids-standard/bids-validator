@@ -1,36 +1,32 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@bids/schema@~1.1.3": "1.1.3",
+    "jsr:@bids/schema@~1.1.5": "1.1.5",
     "jsr:@bradenmacdonald/s3-lite-client@~0.9.4": "0.9.4",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
-    "jsr:@deno/esbuild-plugin@1.1.5": "1.1.5",
-    "jsr:@deno/loader@~0.3.3": "0.3.11",
     "jsr:@effigies/cliffy-command@1.0.0-dev.8": "1.0.0-dev.8",
     "jsr:@effigies/cliffy-table@1.0.0-dev.5": "1.0.0-dev.5",
     "jsr:@effigies/cliffy-table@^1.0.0-dev.5": "1.0.0-dev.5",
     "jsr:@libs/xml@^7.0.3": "7.0.3",
     "jsr:@std/assert@^1.0.15": "1.0.16",
     "jsr:@std/assert@^1.0.16": "1.0.16",
-    "jsr:@std/async@^1.0.15": "1.0.15",
     "jsr:@std/bytes@^1.0.5": "1.0.6",
     "jsr:@std/bytes@^1.0.6": "1.0.6",
     "jsr:@std/data-structures@^1.0.9": "1.0.9",
     "jsr:@std/fmt@^1.0.5": "1.0.8",
     "jsr:@std/fmt@^1.0.8": "1.0.8",
     "jsr:@std/fmt@~1.0.2": "1.0.8",
-    "jsr:@std/fs@^1.0.11": "1.0.20",
-    "jsr:@std/fs@^1.0.19": "1.0.20",
-    "jsr:@std/fs@^1.0.20": "1.0.20",
+    "jsr:@std/fs@^1.0.11": "1.0.21",
+    "jsr:@std/fs@^1.0.19": "1.0.21",
+    "jsr:@std/fs@^1.0.21": "1.0.21",
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "jsr:@std/io@~0.225.2": "0.225.2",
     "jsr:@std/log@~0.224.14": "0.224.14",
-    "jsr:@std/path@^1.1.1": "1.1.3",
-    "jsr:@std/path@^1.1.2": "1.1.3",
-    "jsr:@std/path@^1.1.3": "1.1.3",
-    "jsr:@std/streams@^1.0.14": "1.0.14",
+    "jsr:@std/path@^1.1.2": "1.1.4",
+    "jsr:@std/path@^1.1.4": "1.1.4",
+    "jsr:@std/streams@^1.0.16": "1.0.16",
     "jsr:@std/testing@^1.0.16": "1.0.16",
     "jsr:@std/text@~1.0.7": "1.0.16",
     "jsr:@std/yaml@^1.0.10": "1.0.10",
@@ -41,13 +37,13 @@
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@~4.1.4": "4.1.4",
     "npm:ignore@^7.0.5": "7.0.5",
-    "npm:isomorphic-git@^1.35.1": "1.36.0",
-    "npm:marked@^15.0.4": "15.0.12",
+    "npm:isomorphic-git@^1.36.1": "1.36.1",
+    "npm:marked@^15.0.12": "15.0.12",
     "npm:supports-hyperlinks@^4.4.0": "4.4.0"
   },
   "jsr": {
-    "@bids/schema@1.1.3": {
-      "integrity": "cdac75e809079c7defa3c31df79889c3a793efffcba0ecfaf2415d2d522e8aa4"
+    "@bids/schema@1.1.5": {
+      "integrity": "1fd87c7726add4fc8d5797545b9684c67a5b6409ee14a1aecd92713b7f41d246"
     },
     "@bradenmacdonald/s3-lite-client@0.9.4": {
       "integrity": "f52e31c7efdaeb1ccdf65a1db995b5920d635717c96d45dcf9450c3cc47ecaaf"
@@ -66,16 +62,6 @@
       "dependencies": [
         "jsr:@std/fmt@~1.0.2"
       ]
-    },
-    "@deno/esbuild-plugin@1.1.5": {
-      "integrity": "c9cde95990b97802a0da6c73c26ab4a48f30d286818845e365dddcd8297abd7d",
-      "dependencies": [
-        "jsr:@deno/loader",
-        "jsr:@std/path@^1.1.1"
-      ]
-    },
-    "@deno/loader@0.3.11": {
-      "integrity": "7c62f4f09cdfc34e66ba25b5a775a1830cbb5266b3e39f67b0f620c75484df8d"
     },
     "@effigies/cliffy-command@1.0.0-dev.8": {
       "integrity": "d6489c66bf7f603225a426b26b62eaee32bf6da04b69056bcb015a1f17190087",
@@ -103,9 +89,6 @@
         "jsr:@std/internal"
       ]
     },
-    "@std/async@1.0.15": {
-      "integrity": "55d1d9d04f99403fe5730ab16bdcc3c47f658a6bf054cafb38a50f046238116e"
-    },
     "@std/bytes@1.0.6": {
       "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
     },
@@ -115,11 +98,11 @@
     "@std/fmt@1.0.8": {
       "integrity": "71e1fc498787e4434d213647a6e43e794af4fd393ef8f52062246e06f7e372b7"
     },
-    "@std/fs@1.0.20": {
-      "integrity": "e953206aae48d46ee65e8783ded459f23bec7dd1f3879512911c35e5484ea187",
+    "@std/fs@1.0.21": {
+      "integrity": "d720fe1056d78d43065a4d6e0eeb2b19f34adb8a0bc7caf3a4dbf1d4178252cd",
       "dependencies": [
         "jsr:@std/internal",
-        "jsr:@std/path@^1.1.3"
+        "jsr:@std/path@^1.1.4"
       ]
     },
     "@std/internal@1.0.12": {
@@ -139,14 +122,14 @@
         "jsr:@std/io"
       ]
     },
-    "@std/path@1.1.3": {
-      "integrity": "b015962d82a5e6daea980c32b82d2c40142149639968549c649031a230b1afb3",
+    "@std/path@1.1.4": {
+      "integrity": "1d2d43f39efb1b42f0b1882a25486647cb851481862dc7313390b2bb044314b5",
       "dependencies": [
         "jsr:@std/internal"
       ]
     },
-    "@std/streams@1.0.14": {
-      "integrity": "c0df6cdd73bd4bbcbe4baa89e323b88418c90ceb2d926f95aa99bdcdbfca2411",
+    "@std/streams@1.0.16": {
+      "integrity": "85030627befb1767c60d4f65cb30fa2f94af1d6ee6e5b2515b76157a542e89c4",
       "dependencies": [
         "jsr:@std/bytes@^1.0.6"
       ]
@@ -155,7 +138,6 @@
       "integrity": "a917ffdeb5924c9be436dc78bc32e511760e14d3a96e49c607fc5ecca86d0092",
       "dependencies": [
         "jsr:@std/assert@^1.0.15",
-        "jsr:@std/async",
         "jsr:@std/data-structures",
         "jsr:@std/fs@^1.0.19",
         "jsr:@std/internal",
@@ -596,8 +578,8 @@
     "isarray@2.0.5": {
       "integrity": "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw=="
     },
-    "isomorphic-git@1.36.0": {
-      "integrity": "sha512-22tU165ptowHYoDEwYJy5EKRzpHiuLMliaR01fH9ZwaUj1z/IqE++tGpjw/pD6eCWoxiOp6TPWX434aJ9zA4Lg==",
+    "isomorphic-git@1.36.1": {
+      "integrity": "sha512-fC8SRT8MwoaXDK8G4z5biPEbqf2WyEJUb2MJ2ftSd39/UIlsnoZxLGux+lae0poLZO4AEcx6aUVOh5bV+P8zFA==",
       "dependencies": [
         "async-lock",
         "clean-git-ref",
@@ -898,18 +880,18 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@bids/schema@~1.1.3",
+      "jsr:@bids/schema@~1.1.5",
       "jsr:@bradenmacdonald/s3-lite-client@~0.9.4",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
       "jsr:@libs/xml@^7.0.3",
       "jsr:@std/assert@^1.0.16",
       "jsr:@std/fmt@^1.0.8",
-      "jsr:@std/fs@^1.0.20",
+      "jsr:@std/fs@^1.0.21",
       "jsr:@std/io@~0.225.2",
       "jsr:@std/log@~0.224.14",
-      "jsr:@std/path@^1.1.3",
-      "jsr:@std/streams@^1.0.14",
+      "jsr:@std/path@^1.1.4",
+      "jsr:@std/streams@^1.0.16",
       "jsr:@std/testing@^1.0.16",
       "jsr:@std/yaml@^1.0.10",
       "npm:@bids/nifti-reader-js@~0.6.9",
@@ -918,8 +900,8 @@
       "npm:hash-wasm@^4.12.0",
       "npm:hed-validator@~4.1.4",
       "npm:ignore@^7.0.5",
-      "npm:isomorphic-git@^1.35.1",
-      "npm:marked@^15.0.4",
+      "npm:isomorphic-git@^1.36.1",
+      "npm:marked@^15.0.12",
       "npm:supports-hyperlinks@^4.4.0"
     ]
   }
