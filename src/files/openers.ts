@@ -106,8 +106,8 @@ export class HTTPOpener implements FileOpener {
     this.size = size
   }
 
-  async _fetch(headers={}): Promise<Response> {
-    return fetch(this.url, {headers}).then((response) => {
+  async _fetch(headers = {}): Promise<Response> {
+    return fetch(this.url, { headers }).then((response) => {
       if (!response.ok || !response.body) {
         throw new Error(`Failed to fetch ${this.url}: ${response.status} ${response.statusText}`)
       }
@@ -116,11 +116,11 @@ export class HTTPOpener implements FileOpener {
   }
 
   async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
-    return this._fetch().then(response => response.body!)
+    return this._fetch().then((response) => response.body!)
   }
 
   async text(): Promise<string> {
-    return this._fetch().then(response => response.text())
+    return this._fetch().then((response) => response.text())
   }
 
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
