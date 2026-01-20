@@ -18,10 +18,8 @@ Uncomment the section that is right (remove the HTML comment wrapper).
 -->
 ### Fixed
 
-- exit code returns non-zero status for invalid derivative datasets
-when -r/--recursive flag is used
+- Exit with a non-zero exit code if nested datasets are validated and found to have errors.
 
--->
 <!--
 ### Deprecated
 
