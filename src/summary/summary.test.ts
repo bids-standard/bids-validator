@@ -19,91 +19,93 @@ Deno.test('Summary class and helper functions', async (t) => {
 })
 
 const json_mock_validation_result = {
-  "issues": {
-    "issues": [],
-    "codeMessages": {}
+  'issues': {
+    'issues': [],
+    'codeMessages': {},
   },
-  "summary": {
-    "sessions": [],
-    "subjects": [
-      "01"
+  'summary': {
+    'sessions': [],
+    'subjects': [
+      '01',
     ],
-    "subjectMetadata": [],
-    "tasks": [],
-    "modalities": [
-      "MRI"
+    'subjectMetadata': [],
+    'tasks': [],
+    'modalities': [
+      'MRI',
     ],
-    "secondaryModalities": [
-      "MRI_Structural"
+    'secondaryModalities': [
+      'MRI_Structural',
     ],
-    "totalFiles": 14,
-    "size": 1513,
-    "dataProcessed": false,
-    "pet": {},
-    "dataTypes": [
-      "fmap",
-      "anat"
+    'totalFiles': 14,
+    'size': 1513,
+    'dataProcessed': false,
+    'pet': {},
+    'dataTypes': [
+      'fmap',
+      'anat',
     ],
-    "schemaVersion": "1.1.3"
+    'schemaVersion': '1.1.3',
   },
-  "derivativesSummary": {
-    "/derivatives/mock/": {
-      "issues": {
-        "issues": [
+  'derivativesSummary': {
+    '/derivatives/mock/': {
+      'issues': {
+        'issues': [
           {
-            "code": "EMPTY_FILE",
-            "severity": "error",
-            "location": "/README"
+            'code': 'EMPTY_FILE',
+            'severity': 'error',
+            'location': '/README',
           },
-        ]
+        ],
       },
-      "summary": {
-        "sessions": [],
-        "subjects": [
-          "01"
+      'summary': {
+        'sessions': [],
+        'subjects': [
+          '01',
         ],
-        "subjectMetadata": [],
-        "tasks": [],
-        "modalities": [
-          "MRI"
+        'subjectMetadata': [],
+        'tasks': [],
+        'modalities': [
+          'MRI',
         ],
-        "secondaryModalities": [
-          "MRI_Structural"
+        'secondaryModalities': [
+          'MRI_Structural',
         ],
-        "totalFiles": 12,
-        "size": 3715,
-        "dataProcessed": true,
-        "pet": {},
-        "dataTypes": [
-          "fmap",
-          "anat"
+        'totalFiles': 12,
+        'size': 3715,
+        'dataProcessed': true,
+        'pet': {},
+        'dataTypes': [
+          'fmap',
+          'anat',
         ],
-        "schemaVersion": "1.1.3"
-      }
-    }
-  }
+        'schemaVersion': '1.1.3',
+      },
+    },
+  },
 }
 
 const mockValidationResultBadDerivatives: ValidationResult = {
-  issues: new DatasetIssues({ 
+  issues: new DatasetIssues({
     issues: json_mock_validation_result.issues.issues as Issue[],
     codeMessages: new Map(Object.entries(json_mock_validation_result.issues.codeMessages)),
-    }),
+  }),
   summary: json_mock_validation_result.summary,
   derivativesSummary: {
-    "/derivatives/mock/": {
+    '/derivatives/mock/': {
       issues: new DatasetIssues({
-        issues: json_mock_validation_result.derivativesSummary["/derivatives/mock/"].issues.issues as Issue[],
+        issues: json_mock_validation_result.derivativesSummary['/derivatives/mock/'].issues
+          .issues as Issue[],
       }),
-      summary: json_mock_validation_result.derivativesSummary["/derivatives/mock/"].summary,
-    }
-  }
+      summary: json_mock_validation_result.derivativesSummary['/derivatives/mock/'].summary,
+    },
+  },
 }
 
 const mockValidationResultBadRawData: ValidationResult = {
-  issues: new DatasetIssues({ 
-    issues: json_mock_validation_result.derivativesSummary["/derivatives/mock/"].issues.issues as Issue[],
-    }),
+  issues: new DatasetIssues({
+    issues: json_mock_validation_result.derivativesSummary['/derivatives/mock/'].issues
+      .issues as Issue[],
+  }),
   summary: json_mock_validation_result.summary,
 }
 
@@ -124,14 +126,14 @@ const mockValidationResultNoErrors: ValidationResult = {
   }),
   summary: json_mock_validation_result.summary,
   derivativesSummary: {
-    "/derivatives/mock/": {
+    '/derivatives/mock/': {
       issues: new DatasetIssues({
         issues: [],
         codeMessages: new Map(),
       }),
-      summary: json_mock_validation_result.derivativesSummary["/derivatives/mock/"].summary,
-    }
-  }
+      summary: json_mock_validation_result.derivativesSummary['/derivatives/mock/'].summary,
+    },
+  },
 }
 
 Deno.test('detectErrors returns false when no errors found', () => {

@@ -45,7 +45,7 @@ function rerootTree({
 }: RerootTreeOptions): FileTree {
   const tree = new FileTree(
     oldTree.path.substr(newRoot.length) || '/',
-    parent ? oldTree.name : `${oldTree.path}/`,  // Set the name of the root to its full path
+    parent ? oldTree.name : `${oldTree.path}/`, // Set the name of the root to its full path
     parent,
     ignore,
   )
@@ -60,7 +60,7 @@ function rerootTree({
 
 export async function subtree(filetree: FileTree): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
-  const tree = rerootTree({oldTree: filetree, newRoot: filetree.path, ignore})
+  const tree = rerootTree({ oldTree: filetree, newRoot: filetree.path, ignore })
   const bidsignore = tree.get('.bidsignore')
   if (bidsignore) {
     try {
