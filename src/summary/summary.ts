@@ -172,23 +172,7 @@ export class Summary {
   }
 }
 
-export function checkAllErrors(result: ValidationResult): Issue[] {
-  const errors: Issue[] = []
-
-  for (const key in result) {
-    if (key == "issues") {
-      errors.push(...result[key].get({ severity: 'error' }))
-      if (errors.length > 0) {
-        return errors
-      }
-    } else if (key == "derivativesSummary") {
-      for (const derivative in result[key]) {
-        errors.push(...checkAllErrors(result[key][derivative]))
-        if (errors.length > 0) {
-          return errors
-        }
-      }
-    }
-  }
-  return errors
+export function detectErrors(result: ValidationResult): boolean {
+  return result.issues.get({ severity: 'error' }).length > 0 ||
+    Object.values(result.derivativesSummary ?? {}).some((res) => detectErrors(res))
 }

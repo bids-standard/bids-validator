@@ -1,6 +1,6 @@
 import { computeModalities, modalityPrettyLookup, Summary } from './summary.ts'
 import { assertEquals, type assertObjectMatch } from '@std/assert'
-import { checkAllErrors } from './summary.ts'
+import { detectErrors } from './summary.ts'
 import { ValidationResult } from '../types/validation-result.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import type { Issue } from '../types/issues.ts'
@@ -107,20 +107,14 @@ const mockValidationResultBadRawData: ValidationResult = {
   summary: json_mock_validation_result.summary,
 }
 
-Deno.test('checkAllErrors properly collects errors', () => {
-  const errors = checkAllErrors(mockValidationResultBadDerivatives)
-  assertEquals(errors.length, 1)
-  assertEquals(errors[0].code, 'EMPTY_FILE')
-  assertEquals(errors[0].severity, 'error')
-  assertEquals(errors[0].location, '/README')
+Deno.test('detectErrors properly collects errors', () => {
+  const errors = detectErrors(mockValidationResultBadDerivatives)
+  assertEquals(errors, true)
 })
 
-Deno.test('checkAllErrors properly collects errors from raw data', () => {
-  const errors = checkAllErrors(mockValidationResultBadRawData)
-  assertEquals(errors.length, 1)
-  assertEquals(errors[0].code, 'EMPTY_FILE')
-  assertEquals(errors[0].severity, 'error')
-  assertEquals(errors[0].location, '/README')
+Deno.test('detectErrors properly collects errors from raw data', () => {
+  const errors = detectErrors(mockValidationResultBadRawData)
+  assertEquals(errors, true)
 })
 
 const mockValidationResultNoErrors: ValidationResult = {
@@ -140,7 +134,7 @@ const mockValidationResultNoErrors: ValidationResult = {
   }
 }
 
-Deno.test('checkAllErrors returns empty array when no errors found', () => {
-  const errors = checkAllErrors(mockValidationResultNoErrors)
-  assertEquals(errors.length, 0)
+Deno.test('detectErrors returns false when no errors found', () => {
+  const errors = detectErrors(mockValidationResultNoErrors)
+  assertEquals(errors, false)
 })

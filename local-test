@@ -1,0 +1,4 @@
+#!/usr/bin/env -S deno test --allow-read --allow-write --allow-env --allow-run --allow-net --parallel --node-modules-dir=auto  --coverage=cov/ src/ 
+// This script runs the local copy of the validator, intended as a development aid.
+// You generally should run `deno run -A jsr:@bids/validator`
+`deno test --allow-read --allow-write --allow-env --allow-run --allow-net --parallel --node-modules-dir=auto  --coverage=cov/ src/`
