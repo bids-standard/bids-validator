@@ -158,7 +158,7 @@ export async function validate(
     await Promise.allSettled(
       bidsDerivatives.map(async (promise) => {
         const deriv = await promise
-        derivativesSummary[deriv.name] = await validate(deriv, options)
+        derivativesSummary[deriv.name] = await validate(deriv, options, config)
         return derivativesSummary[deriv.name]
       }),
     )
