@@ -18,8 +18,7 @@ Uncomment the section that is right (remove the HTML comment wrapper).
 -->
 ### Fixed
 
-- HED check was failing when HED key was null in sidecar/file, only fails
-now if key is present but empty/null.
+- Prevent HED check from failing for null values found in sidecar metadata.
 
 <!--
 ### Deprecated
