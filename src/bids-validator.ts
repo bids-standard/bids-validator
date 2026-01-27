@@ -1,9 +1,9 @@
 import { main } from './main.ts'
+import { detectErrors } from './summary/summary.ts'
 
 const result = await main()
 
-const errors = result.issues.get({ severity: 'error' })
-if (errors.length) {
+if (detectErrors(result)) {
   Deno.exit(16)
 }
 Deno.exit(0)

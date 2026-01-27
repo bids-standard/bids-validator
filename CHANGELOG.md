@@ -2,6 +2,21 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"2.3.0"'></a>
+# "2.3.0" — 2026-01-27
+
+## Changed
+
+- Improve types for memoized functions by passing argument and return types to callers.
+
+- Render Markdown links as OSC-8 links in terminals where support is detected.
+
+## Fixed
+
+- Exit with a non-zero exit code if nested datasets are validated and found to have errors.
+
+- Prevent HED check from failing for null values found in sidecar metadata.
+
 <a id='changelog-"2.2.10"'></a>
 # "2.2.10" — 2026-01-15
 
