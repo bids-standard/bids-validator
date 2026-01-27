@@ -1,6 +1,6 @@
 {
   "name": "@bids/validator",
-  "version": "2.3.0-dev",
+  "version": "2.3.0",
   "exports": {
     ".": "./src/bids-validator.ts",
     "./main": "./src/main.ts",
@@ -28,7 +28,7 @@
   },
   "imports": {
     "@ajv": "npm:ajv@^8.17.1",
-    "@bids/schema": "jsr:@bids/schema@~1.1.5",
+    "@bids/schema": "jsr:@bids/schema@~1.1.6",
     "@bradenmacdonald/s3-lite-client": "jsr:@bradenmacdonald/s3-lite-client@^0.9.4",
     "@cliffy/command": "jsr:@effigies/cliffy-command@1.0.0-dev.8",
     "@cliffy/table": "jsr:@effigies/cliffy-table@1.0.0-dev.5",
