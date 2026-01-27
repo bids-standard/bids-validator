@@ -38,7 +38,7 @@ export function consoleFormat(
   if (result.derivativesSummary) {
     for (const [key, derivResult] of Object.entries(result.derivativesSummary)) {
       output.push(colors.blue(`Derivative: ${key}`))
-      
+
       if (derivResult.issues.size === 0) {
         output.push(colors.green('\tThis derivative appears to be BIDS compatible.'))
       } else {
@@ -50,7 +50,7 @@ export function consoleFormat(
       output.push('')
     }
   }
-  
+
   return output.join('\n')
 }
 
@@ -64,16 +64,16 @@ function renderTokens(tokenList: any[]): string {
     switch (token.type) {
       case 'paragraph':
         return renderTokens(token.tokens)
-      
+
       case 'strong':
         return colors.bold(renderTokens(token.tokens))
-      
+
       case 'em':
         return colors.italic(renderTokens(token.tokens))
-      
+
       case 'codespan':
         return colors.cyan(token.text)
-      
+
       case 'link':
         // Using the library to check for stdout support
         if (supportsHyperlinks.stdout) {
@@ -82,10 +82,10 @@ function renderTokens(tokenList: any[]): string {
           // Fallback for terminals without support
           return `${colors.blue(token.text)} (${colors.gray(token.href)})`
         }
-      
+
       case 'text':
         return token.text
-      
+
       default:
         // Render children or return raw text
         return renderTokens(token.tokens || []) || token.raw || ''
