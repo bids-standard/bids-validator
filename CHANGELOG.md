@@ -2,6 +2,11 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"2.3.1"'></a>
+# "2.3.1" — 2026-01-27
+
+Mismatch between version and tag. Re-releasing for consistency. No other changes.
+
 <a id='changelog-"2.3.0"'></a>
 # "2.3.0" — 2026-01-27
 
