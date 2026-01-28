@@ -5,8 +5,10 @@ import { Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
 import { format as prettyBytes } from '@std/fmt/bytes'
 import { marked } from 'marked'
+// Imported libraries from import map (deno.json)
 import supportsHyperlinks from 'supports-hyperlinks'
 import ansiEscapes from 'ansi-escapes'
+
 import type { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
 import type { Issue, Severity } from '../types/issues.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -38,7 +40,7 @@ export function consoleFormat(
   if (result.derivativesSummary) {
     for (const [key, derivResult] of Object.entries(result.derivativesSummary)) {
       output.push(colors.blue(`Derivative: ${key}`))
-
+      
       if (derivResult.issues.size === 0) {
         output.push(colors.green('\tThis derivative appears to be BIDS compatible.'))
       } else {
@@ -50,7 +52,7 @@ export function consoleFormat(
       output.push('')
     }
   }
-
+  
   return output.join('\n')
 }
 
@@ -64,28 +66,29 @@ function renderTokens(tokenList: any[]): string {
     switch (token.type) {
       case 'paragraph':
         return renderTokens(token.tokens)
-
+      
       case 'strong':
         return colors.bold(renderTokens(token.tokens))
-
+      
       case 'em':
         return colors.italic(renderTokens(token.tokens))
-
+      
       case 'codespan':
         return colors.cyan(token.text)
-
+      
       case 'link':
-        // Using the library to check for stdout support
+        // Use the library to check for stdout support
         if (supportsHyperlinks.stdout) {
+          // OSC-8 Hyperlink Sequence via ansi-escapes
           return ansiEscapes.link(token.text, token.href)
         } else {
           // Fallback for terminals without support
           return `${colors.blue(token.text)} (${colors.gray(token.href)})`
         }
-
+      
       case 'text':
         return token.text
-
+      
       default:
         // Render children or return raw text
         return renderTokens(token.tokens || []) || token.raw || ''
