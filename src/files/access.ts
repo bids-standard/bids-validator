@@ -1,5 +1,6 @@
 import { type BIDSFile } from '../types/filetree.ts'
 import { type Issue } from '../types/issues.ts'
+import { filememoize } from '../utils/memoize.ts'
 
 function IOErrorToIssue(err: { code: string; name: string }): Issue {
   const subcode = err.name
@@ -18,7 +19,7 @@ export async function openStream(
   })
 }
 
-export async function readBytes(
+async function _readBytes(
   file: BIDSFile,
   size: number,
   offset = 0,
@@ -28,8 +29,12 @@ export async function readBytes(
   })
 }
 
-export async function readText(file: BIDSFile): Promise<string> {
+export const readBytes = filememoize(_readBytes)
+
+async function _readText(file: BIDSFile): Promise<string> {
   return file.text().catch((err: any) => {
     throw { location: file.path, ...IOErrorToIssue(err) }
   })
 }
+
+export const readText = filememoize(_readText)
