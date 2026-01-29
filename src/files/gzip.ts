@@ -18,7 +18,7 @@ import { readBytes } from './access.ts'
  */
 export async function parseGzip(
   file: BIDSFile,
-  maxBytes: number = 512,
+  maxBytes: number = 1024,
 ): Promise<Gzip | undefined> {
   const buf = await readBytes(file, maxBytes)
   const view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength)
