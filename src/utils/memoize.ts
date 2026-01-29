@@ -17,11 +17,11 @@ export const memoize = <A extends any[], R>(
   return cached
 }
 
-export function filememoize<F extends FileLike, T>(
-  fn: (file: F, ...args: any[]) => T,
-): WithCache<(file: F, ...args: any[]) => T> {
-  const cache = new Map<string, Map<string, T>>()
-  const cached = function (this: any, file: F, ...args: any[]): T {
+export function filememoize<F extends FileLike, A extends any[], R>(
+  fn: (file: F, ...args: A) => R,
+): WithCache<(file: F, ...args: A) => R> {
+  const cache = new Map<string, Map<string, R>>()
+  const cached = function (this: any, file: F, ...args: A): R {
     let subcache = cache.get(file.parent.path)
     if (!subcache) {
       subcache = new Map()
