@@ -317,7 +317,7 @@ export class BIDSContext implements Context {
     if (!this.extension.endsWith('.gz')) {
       return
     }
-    this.gzip = await parseGzip(this.file, 512).catch((error) => {
+    this.gzip = await parseGzip(this.file, 1024).catch((error) => {
       logger.debug('Error parsing gzip header', error)
       return undefined
     })
