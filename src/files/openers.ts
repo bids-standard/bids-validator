@@ -7,6 +7,7 @@ import { retry } from '@std/async'
 import { join } from '@std/path'
 import { type FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream } from './streams.ts'
+import { logger } from '../utils/logger.ts'
 
 export class FsFileOpener implements FileOpener {
   path: string
@@ -126,6 +127,7 @@ export class HTTPOpener implements FileOpener {
       return response
     }, {
       isRetriable: (error) => {
+        logger.info(`Failed to fetch ${this.url}: ${error}, retrying`)
         return (
           error instanceof TypeError ||
           error instanceof HttpError && (error.status == 429 || error.status >= 500)
