@@ -3,9 +3,11 @@
  *
  * These classes implement stream, text and random bytes access to BIDS resources.
  */
+import { retry } from '@std/async'
 import { join } from '@std/path'
 import { type FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream } from './streams.ts'
+import { logger } from '../utils/logger.ts'
 
 export class FsFileOpener implements FileOpener {
   path: string
@@ -97,6 +99,15 @@ export class BrowserFileOpener implements FileOpener {
   }
 }
 
+class HttpError extends Error {
+  status: number
+
+  constructor(status: number, message: string) {
+    super(`HTTP Error ${status}: ${message}`)
+    this.status = status
+  }
+}
+
 export class HTTPOpener implements FileOpener {
   url: string
   size: number
@@ -106,28 +117,53 @@ export class HTTPOpener implements FileOpener {
     this.size = size
   }
 
-  async _fetch(headers = {}): Promise<Response> {
-    return fetch(this.url, { headers }).then((response) => {
+  async _fetch(options: RequestInit = {}): Promise<Response> {
+    // Fetch with retries, for transient errors
+    return retry(async () => {
+      const response = await fetch(this.url, options)
       if (!response.ok || !response.body) {
-        throw new Error(`Failed to fetch ${this.url}: ${response.status} ${response.statusText}`)
+        throw new HttpError(response.status, response.statusText)
       }
       return response
+    }, {
+      isRetriable: (error) => {
+        logger.info(`Failed to fetch ${this.url}: ${error}, retrying`)
+        return (
+          error instanceof TypeError ||
+          error instanceof HttpError && (error.status == 429 || error.status >= 500)
+        )
+      },
     })
   }
 
   async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+    // Streams should not timeout
     return this._fetch().then((response) => response.body!)
   }
 
   async text(): Promise<string> {
-    return this._fetch().then((response) => response.text())
+    // Timeout after 5 seconds and retry; many connections can result in timeouts
+    return await retry(
+      () => this._fetch({ signal: AbortSignal.timeout(5000) }).then((response) => response.text()),
+      {
+        isRetriable: (error) => error instanceof DOMException && error.name === 'TimeoutError',
+      },
+    )
   }
 
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
     const headers = new Headers()
     headers.append('Range', `bytes=${offset}-${offset + size - 1}`)
-    const response = await this._fetch({ headers })
-    return new Uint8Array(await response.arrayBuffer())
+    // Timeout after 5 seconds and retry; many connections can result in timeouts
+    return await retry(
+      () =>
+        this._fetch({ headers, signal: AbortSignal.timeout(5000) }).then((response) =>
+          response.bytes()
+        ),
+      {
+        isRetriable: (error) => error instanceof DOMException && error.name === 'TimeoutError',
+      },
+    )
   }
 }
 
