@@ -1,3 +1,3 @@
-### Feat
+### Changed
 
- - render markdown in web validator
+ - The web validator now renders Markdown in issue messages.
