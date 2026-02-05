@@ -2,6 +2,23 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"2.3.2"'></a>
+# "2.3.2" — 2026-02-02
+
+## Changed
+
+- File reads are temporarily cached to avoid multiple fetches/opens.
+
+## Fixed
+
+- Retrieval of remote data on S3 is now more robust, avoiding resource leaks
+  by setting timeouts and a reasonable retry protocol.
+
+<a id='changelog-"2.3.1"'></a>
+# "2.3.1" — 2026-01-27
+
+Mismatch between version and tag. Re-releasing for consistency. No other changes.
+
 <a id='changelog-"2.3.0"'></a>
 # "2.3.0" — 2026-01-27
 

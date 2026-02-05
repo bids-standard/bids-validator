@@ -107,6 +107,7 @@ export async function validate(
     return false
   })
 
+  logger.info('Performing file-level validation...')
   for await (const context of walkFileTree(dsContext, 20)) {
     if (
       dsContext.dataset_description.DatasetType == 'raw' &&
@@ -121,6 +122,7 @@ export async function validate(
     await summary.update(context)
   }
 
+  logger.info('Performing dataset-level validation...')
   for (const check of perDSChecks) {
     await check(schema as unknown as GenericSchema, dsContext)
   }
