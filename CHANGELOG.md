@@ -2,6 +2,13 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"2.4.0"'></a>
+# "2.4.0" — 2026-02-05
+
+## Changed
+
+- Update to BIDS Schema v1.2.0 (BIDS v1.11.0)
+
 <a id='changelog-"2.3.2"'></a>
 # "2.3.2" — 2026-02-02
 
