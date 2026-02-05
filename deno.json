@@ -50,7 +50,6 @@
     "isomorphic-git": "npm:isomorphic-git@^1.36.1",
     "hash-wasm": "npm:hash-wasm@^4.12.0",
     "marked": "npm:marked@^15.0.12",
-    "react-markdown": "npm:react-markdown@^10.1.0",
     "supports-hyperlinks": "npm:supports-hyperlinks@^4.4.0"
   },
   "nodeModulesDir": "auto",
