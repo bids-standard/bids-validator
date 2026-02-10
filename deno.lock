@@ -40,10 +40,8 @@
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@~4.1.4": "4.1.4",
     "npm:ignore@^7.0.5": "7.0.5",
-    "npm:isomorphic-git@^1.35.1": "1.36.3",
-    "npm:isomorphic-git@^1.36.1": "1.36.3",
-    "npm:marked@^15.0.12": "15.0.12",
-    "npm:marked@^15.0.4": "15.0.12",
+    "npm:isomorphic-git@^1.36.3": "1.36.3",
+    "npm:marked@^17.0.1": "17.0.1",
     "npm:supports-hyperlinks@^4.4.0": "4.4.0"
   },
   "jsr": {
@@ -633,8 +631,8 @@
     "lodash@4.17.21": {
       "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
     },
-    "marked@15.0.12": {
-      "integrity": "sha512-8dD6FusOQSrpv9Z1rdNMdlSgQOIP880DHqnohobOmYLElGEqAL/JvxvuxZO16r4HtjTlfPRDC1hbvxC9dPN2nA==",
+    "marked@17.0.1": {
+      "integrity": "sha512-boeBdiS0ghpWcSwoNm/jJBwdpFaMnZWRzjA6SkUMYb40SVaN1x7mmfGKp0jvexGcx+7y2La5zRZsYFZI6Qpypg==",
       "bin": true
     },
     "math-intrinsics@1.1.0": {
@@ -802,8 +800,8 @@
     "unicode-name@1.1.0": {
       "integrity": "sha512-2XBI32vZP6a1tJmMDSUBabiIZuY+1udwZUoS7i5BTSU2c4ELMy6YJrTPF9uvYOVMU4vTMlHH6HG/TsHjCEsazA=="
     },
-    "which-typed-array@1.1.19": {
-      "integrity": "sha512-rEvr90Bck4WZt9HHFC4DJMsjvu7x+r6bImz0/BrbWb7A2djJ8hnZMrWnHo9F8ssv0OMErasDhftrfROTyqSDrw==",
+    "which-typed-array@1.1.20": {
+      "integrity": "sha512-LYfpUkmqwl0h9A2HL09Mms427Q1RZWuOHsukfVcKRq9q95iQxdw0ix1JQrqbcDR9PH1QDwf5Qo8OZb5lksZ8Xg==",
       "dependencies": [
         "available-typed-arrays",
         "call-bind",
@@ -928,8 +926,8 @@
       "npm:hash-wasm@^4.12.0",
       "npm:hed-validator@~4.1.4",
       "npm:ignore@^7.0.5",
-      "npm:isomorphic-git@^1.36.1",
-      "npm:marked@^15.0.12",
+      "npm:isomorphic-git@^1.36.3",
+      "npm:marked@^17.0.1",
       "npm:supports-hyperlinks@^4.4.0"
     ]
   }
