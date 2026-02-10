@@ -20,7 +20,7 @@ The validator uses a "walk back" algorithm to find inherited files:
 ```python
 def walkBack(file, extension):
     fileParts = parsePath(file.path)
-    
+
     fileTree = file.parent
     while fileTree:
         for child in fileTree.children:
