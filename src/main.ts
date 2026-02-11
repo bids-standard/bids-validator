@@ -33,15 +33,9 @@ export async function main(): Promise<ValidationResult> {
   if (options.config) {
     config = JSON.parse(Deno.readTextFileSync(options.config))
   } else {
-       const defaultConfig = join(absolutePath, '.bids-validator-config.json') 
-    try {
-      await Deno.lstat(defaultConfig)
-       config = JSON.parse(Deno.readTextFileSync(defaultConfig))
-       options.config = defaultConfig
-    } catch {
-      if (!(err instanceof Deno.errors.NotFound)) {
-        throw err;
-      }
+    const configFile = tree.get('.bids-validator-config.json') as BIDSFile
+    if (configFile) {
+      config = await configFile.text().then((text) => JSON.parse(text))
     }
   }
 
