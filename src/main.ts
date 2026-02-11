@@ -4,13 +4,15 @@ import * as colors from '@std/fmt/colors'
 import { readFileTree } from './files/deno.ts'
 import { fileListToTree } from './files/browser.ts'
 import { FileIgnoreRules } from './files/ignore.ts'
-import { resolve } from '@std/path'
+import { join, resolve } from '@std/path'
+import { exists } from "jsr:@std/fs/exists";
 import { validate } from './validators/bids.ts'
 import { consoleFormat, resultToJSONStr } from './utils/output.ts'
-import { setupLogging } from './utils/logger.ts'
+import { setupLogging, logger } from './utils/logger.ts'
 import type { ValidationResult } from './types/validation-result.ts'
 export type { ValidationResult } from './types/validation-result.ts'
 export { getVersion } from './version.ts'
+import { loadJSON } from './files/json.ts'
 
 /**
  * Validation entrypoint intended for command line usage with Deno
@@ -28,8 +30,24 @@ export async function main(): Promise<ValidationResult> {
     : undefined
   const tree = await readFileTree(absolutePath, prune, options.preferredRemote)
 
-  const config = options.config ? JSON.parse(Deno.readTextFileSync(options.config)) as Config : {}
+  let config = {}
 
+  try {
+    if (options.config) {
+      config = JSON.parse(Deno.readTextFileSync(options.config))
+    } else {
+      const configFile = tree.get('.bids-validator-config.json') as BIDSFile
+      if (configFile) {
+        config = await loadJSON(configFile)
+      }
+    }
+  } catch(error) {
+    logger.error(`
+      Failed to load ${ options.config ?? '.bids-validator-config.json' }. Using empty configuration object.
+      ${error.stack || JSON.stringify(error)}
+    `)
+  }
+  
   // Run the schema based validator
   const schemaResult = await validate(tree, options, config)
 
