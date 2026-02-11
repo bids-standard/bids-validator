@@ -79,14 +79,14 @@ function App() {
     const dirHandle = await directoryOpen({
       recursive: true,
     })
+    const fileTree = await fileListToTree(dirHandle)
     let config = {}
-    const configFile = dirHandle.find(file => file.name ==='.bids-validator-config.json') 
+    const configFile = fileTree.get('.bids-validator-config.json') as BIDSFile
     if (configFile) {
-      config = configFile.text().then(text => JSON.parse(text)).catch((err) => {
+      config = await configFile.text().then(text => JSON.parse(text)).catch((err) => {
         alert(`Failed to load ".bids-validator-config.json". \n\nUsing empty configuration object:\n\n${err}`)
       })
     }
-    const fileTree = await fileListToTree(dirHandle)
     setValidation(await validate(fileTree, config))
   }
 
