@@ -31,7 +31,7 @@ export async function main(): Promise<ValidationResult> {
   const tree = await readFileTree(absolutePath, prune, options.preferredRemote)
 
   let config = {}
-  let configFile = options.config ?? '.bids-validator-config.json'
+
   try {
     if (options.config) {
       config = JSON.parse(Deno.readTextFileSync(options.config))
@@ -43,7 +43,7 @@ export async function main(): Promise<ValidationResult> {
     }
   } catch(error) {
     logger.error(`
-      Failed to load ${ options.config ?? '.bids-validator-config.json' } using empty configuration object.
+      Failed to load ${ options.config ?? '.bids-validator-config.json' }. Using empty configuration object.
       ${error.stack || JSON.stringify(error)}
     `)
   }
