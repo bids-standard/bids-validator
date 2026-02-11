@@ -15,7 +15,6 @@ For top level release notes, leave all the headers commented out.
 
 ### Fixed
 
-- Uncaught error caused during directory rule matching when datasetType is not a known value to the schema.
 - Atlas description files added to the unused file check exemption list.
 
 <!--
