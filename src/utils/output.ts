@@ -192,6 +192,8 @@ function formatFiles(issues: DatasetIssues, options?: LoggingOptions): string[] 
  */
 function formatSummary(summary: SummaryOutput): string {
   const output = []
+  output.push(`\t${colors.magenta("Schema Version:")} ${summary.schemaVersion}`)
+  output.push('')
   const numSessions = summary.sessions.length > 0 ? summary.sessions.length : 1
 
   // data

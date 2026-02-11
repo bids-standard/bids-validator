@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@bids/schema@~1.1.6": "1.1.6",
+    "jsr:@bids/schema@1.2": "1.2.0",
     "jsr:@bradenmacdonald/s3-lite-client@~0.9.4": "0.9.4",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
@@ -11,7 +11,7 @@
     "jsr:@libs/xml@^7.0.3": "7.0.3",
     "jsr:@std/assert@^1.0.16": "1.0.17",
     "jsr:@std/assert@^1.0.17": "1.0.17",
-    "jsr:@std/async@^1.1.0": "1.1.0",
+    "jsr:@std/async@^1.1.0": "1.1.1",
     "jsr:@std/bytes@^1.0.6": "1.0.6",
     "jsr:@std/fmt@^1.0.5": "1.0.9",
     "jsr:@std/fmt@^1.0.8": "1.0.9",
@@ -38,8 +38,8 @@
     "npm:supports-hyperlinks@^4.4.0": "4.4.0"
   },
   "jsr": {
-    "@bids/schema@1.1.6": {
-      "integrity": "ffc0c775946bcc60fca49fa414f4860d5c775b7236451993dba7a048a4f2954d"
+    "@bids/schema@1.2.0": {
+      "integrity": "56695afb639ca04a35102260116aa9eb69f4b99febe6af368fbf878eb0f378b6"
     },
     "@bradenmacdonald/s3-lite-client@0.9.4": {
       "integrity": "f52e31c7efdaeb1ccdf65a1db995b5920d635717c96d45dcf9450c3cc47ecaaf"
@@ -80,6 +80,9 @@
     },
     "@std/async@1.1.0": {
       "integrity": "72418df08d1be84668a53e48aab3520d68ae6882182f8a5ca75c6d1f087220d1"
+    },
+    "@std/async@1.1.1": {
+      "integrity": "8a79beb3378cc229ce65ba2c746cfd03e4855ddd891d1eb6b9e32128e0d5339c"
     },
     "@std/bytes@1.0.6": {
       "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
@@ -874,7 +877,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@bids/schema@~1.1.6",
+      "jsr:@bids/schema@1.2",
       "jsr:@bradenmacdonald/s3-lite-client@~0.9.4",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",

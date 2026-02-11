@@ -43,6 +43,9 @@ export async function findDirRuleMatches(schema, context) {
   const directoryRule = schema[schemaPath]
   const schemaObjects = schema['objects']
   const schemaEntities = schema['objects.entities']
+  if (!directoryRule) {
+    return Promise.resolve()
+  }
   loop: for (const key of Object.keys(directoryRule)) {
     const path = `${schemaPath}.${key}`
     const node = directoryRule[key]

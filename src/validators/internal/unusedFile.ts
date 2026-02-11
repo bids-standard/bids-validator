@@ -33,7 +33,7 @@ export async function unusedStimulus(
   }
 }
 
-const standalone_json = ['dataset_description.json', 'genetic_info.json']
+const standalone_json = ['dataset_description.json', 'genetic_info.json', 'atlas-.*_description.json']
 
 export async function sidecarWithoutDatafile(
   schema: GenericSchema,
@@ -41,7 +41,7 @@ export async function sidecarWithoutDatafile(
 ) {
   const unusedSidecars = [...walkFileTree(dsContext.tree, dsContext)].filter(
     (file) => (!file.viewed && file.name.endsWith('.json') &&
-      !standalone_json.includes(file.name)),
+      !standalone_json.some((x) => (new RegExp(x)).test(file.name))),
   )
   unusedSidecars.forEach((sidecar) => {
     dsContext.issues.add({ code: 'SIDECAR_WITHOUT_DATAFILE', location: sidecar.path })
