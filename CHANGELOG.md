@@ -2,6 +2,102 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"2.4.0"'></a>
+# "2.4.0" — 2026-02-05
+
+## Changed
+
+- Update to BIDS Schema v1.2.0 (BIDS v1.11.0)
+
+<a id='changelog-"2.3.2"'></a>
+# "2.3.2" — 2026-02-02
+
+## Changed
+
+- File reads are temporarily cached to avoid multiple fetches/opens.
+
+## Fixed
+
+- Retrieval of remote data on S3 is now more robust, avoiding resource leaks
+  by setting timeouts and a reasonable retry protocol.
+
+<a id='changelog-"2.3.1"'></a>
+# "2.3.1" — 2026-01-27
+
+Mismatch between version and tag. Re-releasing for consistency. No other changes.
+
+<a id='changelog-"2.3.0"'></a>
+# "2.3.0" — 2026-01-27
+
+## Changed
+
+- Improve types for memoized functions by passing argument and return types to callers.
+
+- Render Markdown links as OSC-8 links in terminals where support is detected.
+
+## Fixed
+
+- Exit with a non-zero exit code if nested datasets are validated and found to have errors.
+
+- Prevent HED check from failing for null values found in sidecar metadata.
+
+<a id='changelog-"2.2.10"'></a>
+# "2.2.10" — 2026-01-15
+
+## Changed
+
+- Improve types for memoized functions by passing argument and return types to callers.
+
+## Fixed
+
+- Extract AWS region from S3 special remote, defaulting to us-east-1.
+
+<a id='changelog-"2.2.9"'></a>
+# "2.2.9" — 2026-01-15
+
+## Changed
+
+- Reverted terminal URLs for the 2.2.x series. It should be back in 2.3.0.
+
+<a id='changelog-"2.2.8"'></a>
+# "2.2.8" — 2026-01-15
+
+## Changed
+
+- Render Markdown links as OSC-8 links in terminals where support is detected.
+
+## Fixed
+
+- Fix typo in S3 URL generation code that prevented reading remote files.
+
+<a id='changelog-"2.2.7"'></a>
+# "2.2.7" — 2026-01-13
+
+## Added
+
+- Maintainer documentation for creating and fixing releases.
+
+- Support for rendering Markdown in validation messages in the terminal.
+
+- Display validation summaries for derivative datasets when recursive validation
+  (`-r`/`--recursive`) is run.
+
+- Support for presigning S3 URLs if AWS credentials are detected.
+
+## Fixed
+
+- Validate derivative file paths relative to the derivative dataset root.
+
+- Have all three calls to fetch in HttpOpener use same error handling.
+
+- Fix memoization memory leak for readRemotes.
+
+- Replace SPEC_ROOT placeholder with actual documentation link in CLI output
+
+## Infrastructure
+
+- Pin Deno to 2.5.6 in wheel builds to account for bugs with MacOS binaries compiled with 2.6.0.
+
 <a id='changelog-"2.2.5"'></a>
 # "2.2.5" — 2025-12-10
 

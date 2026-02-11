@@ -12,10 +12,6 @@ const schema = await loadSchema()
 const makeFile = (path: string): BIDSFile => pathsToTree([path]).get(path) as BIDSFile
 
 Deno.test('test modalityTable', async (t) => {
-  await t.step('empty schema', () => {
-    assertObjectMatch(modalityTable({}), {})
-  })
-
   await t.step('real schema', async () => {
     const table = modalityTable(schema)
     // Memoization check

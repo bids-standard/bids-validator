@@ -21,12 +21,27 @@ def pdm_build_initialize(context):
     if deno is None:
         raise OSError("Deno is not installed or not in PATH")
 
+    permissions = [
+        # Access filesystem for reading BIDS datasets
+        "--allow-read",
+        # Accept environment variables
+        "--allow-env",
+        # Access network for fetching remote schemas
+        "--allow-net",
+        # Allow writing results to file
+        "--allow-write",
+        # Run git to get version info
+        "--allow-run=git",
+    ]
+    if sysconfig.get_platform().startswith("win"):
+        # Terminal detection code in supports-hyperlinks calls osRelease
+        permissions.append("--allow-sys=osRelease")
+
     subprocess.run(
         [
             deno,
             "compile",
-            "-ERNW",
-            "--allow-run",
+            *permissions,
             # Types are checked elsewhere. Type checking at wheel build
             # is painful if some platforms have newer typescript than others.
             "--no-check",

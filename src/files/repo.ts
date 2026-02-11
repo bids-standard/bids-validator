@@ -3,7 +3,11 @@
  */
 import { dirname, join, parse, SEPARATOR_PATTERN } from '@std/path'
 import { default as git } from 'isomorphic-git'
+import { S3Client } from '@bradenmacdonald/s3-lite-client'
+import type { S3ClientOptions } from '@bradenmacdonald/s3-lite-client'
 import { createMD5 } from 'hash-wasm'
+import { memoize } from '../utils/memoize.ts'
+import { requestEnvPermission } from '../setup/requestPermissions.ts'
 
 const textDecoder = new TextDecoder('utf-8')
 export const annexKeyRegex =
@@ -18,6 +22,47 @@ type Rmet = {
   version: string
   path: string
 }
+
+class NonSigningClient {
+  endPoint: string
+  bucket: string
+
+  constructor({
+    endPoint,
+    bucket,
+  }: S3ClientOptions) {
+    this.endPoint = endPoint!
+    this.bucket = bucket!
+  }
+
+  async presignedGetObject(
+    objectName: string,
+    options: {
+      versionId: string
+    },
+  ): Promise<string> {
+    return `${this.endPoint}/${this.bucket}/${objectName}?versionId=${options.versionId}`
+  }
+}
+
+async function _createS3Client(options: S3ClientOptions): Promise<S3Client | NonSigningClient> {
+  const envPermission = await requestEnvPermission()
+  if (envPermission) {
+    const accessKey = Deno.env.get('AWS_ACCESS_KEY_ID') || ''
+    const secretKey = Deno.env.get('AWS_SECRET_ACCESS_KEY') || ''
+
+    if (accessKey && secretKey) {
+      return new S3Client({
+        accessKey,
+        secretKey,
+        ...options,
+      })
+    }
+  }
+  return new NonSigningClient(options)
+}
+
+const createS3Client = memoize(_createS3Client)
 
 export async function readAnnexPath(
   filepath: string,
@@ -102,7 +147,7 @@ async function readRmet(key: string, options: any): Promise<Record<string, Rmet>
  *    publicurl
  *    timestamp
  */
-export async function readRemotes(options: any): Promise<Record<string, Record<string, string>>> {
+async function _readRemotes(options: any): Promise<Record<string, Record<string, string>>> {
   const remotesText = await readAnnexPath('remote.log', options)
   const byUUID: Record<string, Record<string, string>> = {}
   for (const line of remotesText.split('\n')) {
@@ -111,6 +156,8 @@ export async function readRemotes(options: any): Promise<Record<string, Record<s
   }
   return byUUID
 }
+
+const readRemotes = memoize(_readRemotes, (options) => options?.gitdir)
 
 export async function parseAnnexedFile(
   path: string,
@@ -158,14 +205,17 @@ export async function resolveAnnexedFile(
     // Take the newest remote (reverse sort timestamps, take first)
     uuid = Object.entries(rmet).toSorted((a, b) => +b[1].timestamp - +a[1].timestamp)[0][0]
   }
-  const { publicurl } = remotes[uuid]
+  let { host, bucket, region } = remotes[uuid]
 
-  if (!publicurl) {
-    throw new Error(`No publicurl found for remote ${uuid}`)
+  if (!host || !bucket) {
+    throw new Error(`No public url found for remote ${uuid}`)
   }
 
+  region ??= 'us-east-1'
+
   const metadata = rmet[uuid]
-  const url = `${publicurl}/${metadata.path}?versionId=${metadata.version}`
+  const client = await createS3Client({ endPoint: `https://${host}`, bucket, region })
+  const url = await client.presignedGetObject(metadata.path, { versionId: metadata.version })
 
   return { url }
 }

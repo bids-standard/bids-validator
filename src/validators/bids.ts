@@ -20,6 +20,7 @@ import type { parseOptions } from '../setup/options.ts'
 import { hedValidate } from './hed.ts'
 import { citationValidate } from './citation.ts'
 import { logger } from '../utils/logger.ts'
+import { subtree } from '../files/filetree.ts'
 
 /**
  * Ordering of checks to apply
@@ -86,7 +87,7 @@ export async function validate(
     }
   }
 
-  const bidsDerivatives: FileTree[] = []
+  const bidsDerivatives: Promise<FileTree>[] = []
   const nonstdDerivatives: FileTree[] = []
   fileTree.directories = fileTree.directories.filter((dir) => {
     if (['sourcedata', 'code'].includes(dir.name)) {
@@ -97,9 +98,7 @@ export async function validate(
     }
     for (const deriv of dir.directories) {
       if (deriv.get('dataset_description.json')) {
-        // New root for the derivative dataset
-        deriv.parent = undefined
-        bidsDerivatives.push(deriv)
+        bidsDerivatives.push(subtree(deriv))
       } else {
         nonstdDerivatives.push(deriv)
       }
@@ -108,6 +107,7 @@ export async function validate(
     return false
   })
 
+  logger.info('Performing file-level validation...')
   for await (const context of walkFileTree(dsContext, 20)) {
     if (
       dsContext.dataset_description.DatasetType == 'raw' &&
@@ -122,6 +122,7 @@ export async function validate(
     await summary.update(context)
   }
 
+  logger.info('Performing dataset-level validation...')
   for (const check of perDSChecks) {
     await check(schema as unknown as GenericSchema, dsContext)
   }
@@ -157,7 +158,8 @@ export async function validate(
   const derivativesSummary: Record<string, ValidationResult> = {}
   if (options.recursive) {
     await Promise.allSettled(
-      bidsDerivatives.map(async (deriv) => {
+      bidsDerivatives.map(async (promise) => {
+        const deriv = await promise
         derivativesSummary[deriv.name] = await validate(deriv, options)
         return derivativesSummary[deriv.name]
       }),

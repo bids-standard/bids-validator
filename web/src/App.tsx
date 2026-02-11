@@ -2,10 +2,19 @@ import React, { useState } from "react"
 import "./App.css"
 import { directoryOpen, fileOpen } from "https://esm.sh/browser-fs-access@0.35.0"
 import confetti from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.module.mjs';
+import Markdown from "react-markdown"
 import { fileListToTree, validate, getVersion } from "../dist/validator/main.js"
 import type { ValidationResult } from "../../src/types/validation-result.ts"
 import { Collapse } from "./Collapse.tsx"
 import { Summary } from "./Summary.tsx"
+
+function formatMessage(text) {
+  if (!text) return ""
+  return text.replaceAll(
+    'SPEC_ROOT/',
+    'https://bids-specification.readthedocs.io/en/stable/',
+  )
+}
 
 function Files({ issues }) {
   const unique = new Map(issues.map(({ location, issueMessage }) => {
@@ -14,8 +23,22 @@ function Files({ issues }) {
   return (
     <ul>
       {[...unique.values()].map(({ location, issueMessage }) => {
-        return <li key={location}>{location}
-          { issueMessage && ` (${issueMessage})` }</li>
+        return (
+          <li key={location}>
+            {location}
+            {issueMessage && (
+              <>
+                {' ('}
+                <span style={{ display: "inline-block", verticalAlign: "top" }}>
+                  <Markdown components={{ p: 'span' }}>
+                    {formatMessage(issueMessage)}
+                  </Markdown>
+                </span>
+                {')'}
+              </>
+            )}
+          </li>
+        )
       })}
     </ul>
   )
@@ -32,7 +55,9 @@ function Issue({ data }) {
     ret.push(
       <div className={severity}>
         <Collapse label={label}>
-          <div>{data.codeMessages.get(code)}</div>
+          <div className="markdown-text">
+            <Markdown>{formatMessage(data.codeMessages.get(code))}</Markdown>
+          </div>
           <Files issues={subIssues.issues}></Files>
           <p>
             <a href={`https://neurostars.org/search?q=${code}`}>

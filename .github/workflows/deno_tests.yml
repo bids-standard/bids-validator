@@ -3,10 +3,10 @@ name: Deno build
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, dev, maint/*]
     tags: ['*']
   pull_request:
-    branches: [main, dev]
+    branches: [main, dev, maint/*]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -38,7 +38,7 @@ jobs:
         run: echo version=$( git describe ) >> $GITHUB_OUTPUT
       - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2
         with:
-          deno-version: v2.x
+          deno-version: v2.6.6
       - run: deno --node-modules-dir=auto -A ./build.ts
       - run: deno run -A ./dist/validator/bids-validator.js --version
       - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5

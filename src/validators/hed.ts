@@ -13,7 +13,7 @@ function sidecarHasHed(sidecarData: BIDSContext['sidecar']): boolean {
 }
 
 function sidecarValueHasHed(sidecarValue: { HED?: string }): boolean {
-  return typeof sidecarValue.HED !== 'undefined'
+  return typeof sidecarValue?.HED !== 'undefined'
 }
 
 async function setHedSchemas(dataset: BIDSContextDataset): Promise<HedIssue[]> {
