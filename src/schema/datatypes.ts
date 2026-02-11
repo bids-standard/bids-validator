@@ -14,7 +14,7 @@ function _modalityTable(schema: Schema): Record<string, string> {
 }
 
 // Construct once per schema; should only be multiple in tests
-export const modalityTable = memoize(_modalityTable)
+export const modalityTable = memoize(_modalityTable, (schema) => schema)
 
 export function findDatatype(
   file: BIDSFile,

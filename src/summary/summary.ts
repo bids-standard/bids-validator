@@ -1,6 +1,8 @@
 import { collectSubjectMetadata } from './collectSubjectMetadata.ts'
 import type { SubjectMetadata, SummaryOutput } from '../types/validation-result.ts'
 import type { BIDSContext } from '../schema/context.ts'
+import type { ValidationResult } from '../types/validation-result.ts'
+import type { Issue } from '../types/issues.ts'
 
 export const modalityPrettyLookup: Record<string, string> = {
   mri: 'MRI',
@@ -168,4 +170,9 @@ export class Summary {
       schemaVersion: this.schemaVersion,
     }
   }
+}
+
+export function detectErrors(result: ValidationResult): boolean {
+  return result.issues.get({ severity: 'error' }).length > 0 ||
+    Object.values(result.derivativesSummary ?? {}).some((res) => detectErrors(res))
 }

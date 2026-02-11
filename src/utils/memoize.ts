@@ -1,25 +1,27 @@
-export type WithCache<T> = T & { cache: Map<string, any> }
+export type WithCache<T> = T & { cache: Map<any, any> }
 interface FileLike {
   path: string
   parent: { path: string }
 }
 
-export const memoize = <T>(
-  fn: (...args: any[]) => T,
-): WithCache<(...args: any[]) => T> => {
+export const memoize = <A extends any[], R>(
+  fn: (...args: A) => R,
+  resolver?: (...args: A) => any,
+): WithCache<(...args: A) => R> => {
   const cache = new Map()
-  const cached = function (this: any, val: T) {
-    return cache.has(val) ? cache.get(val) : cache.set(val, fn.call(this, val)) && cache.get(val)
+  const cached = function (this: any, ...args: A) {
+    const key = resolver ? resolver(...args) : JSON.stringify(args)
+    return cache.has(key) ? cache.get(key) : cache.set(key, fn.apply(this, args)) && cache.get(key)
   }
   cached.cache = cache
   return cached
 }
 
-export function filememoize<F extends FileLike, T>(
-  fn: (file: F, ...args: any[]) => T,
-): WithCache<(file: F, ...args: any[]) => T> {
-  const cache = new Map<string, Map<string, T>>()
-  const cached = function (this: any, file: F, ...args: any[]): T {
+export function filememoize<F extends FileLike, A extends any[], R>(
+  fn: (file: F, ...args: A) => R,
+): WithCache<(file: F, ...args: A) => R> {
+  const cache = new Map<string, Map<string, R>>()
+  const cached = function (this: any, file: F, ...args: A): R {
     let subcache = cache.get(file.parent.path)
     if (!subcache) {
       subcache = new Map()

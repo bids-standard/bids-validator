@@ -111,4 +111,13 @@ Deno.test('test directoryIdentify', async (t) => {
     assertEquals(context.filenameRules.length, 1)
     assertEquals(context.filenameRules[0], 'rules.directories.raw.datatype')
   })
+  await t.step('Test unknown DatasetType', async () => {
+    const fileName = '/func/'
+    const file = new BIDSFileDeno(`${PATH}/sub-01/ses-01`, fileName, ignore)
+    const context = await makeBIDSContext(file)
+    context.directory = true
+    context.dataset.dataset_description.DatasetType = 'unknown'
+    await findDirRuleMatches(schema, context)
+    assertEquals(context.filenameRules.length, 0)
+  })
 })

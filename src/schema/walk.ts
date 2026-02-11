@@ -4,6 +4,7 @@ import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { NullFileOpener } from '../files/openers.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { loadJSON } from '../files/json.ts'
+import { readBytes, readText } from '../files/access.ts'
 import { queuedAsyncIterator } from '../utils/queue.ts'
 
 function* quickWalk(dir: FileTree): Generator<BIDSFile> {
@@ -54,6 +55,8 @@ async function* _walkFileTree(
   yield () => {
     loadTSV.cache.delete(fileTree.path)
     loadJSON.cache.delete(fileTree.path)
+    readBytes.cache.delete(fileTree.path)
+    readText.cache.delete(fileTree.path)
   }
 }
 
@@ -62,7 +65,9 @@ export async function* walkFileTree(
   dsContext: BIDSContextDataset,
   bufferSize: number = 1,
 ): AsyncIterable<BIDSContext> {
-  for await (const context of queuedAsyncIterator(_walkFileTree(dsContext.tree, dsContext), bufferSize)) {
+  for await (
+    const context of queuedAsyncIterator(_walkFileTree(dsContext.tree, dsContext), bufferSize)
+  ) {
     await context.loaded
     yield context
   }
