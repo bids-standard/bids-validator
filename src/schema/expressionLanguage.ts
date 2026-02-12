@@ -136,6 +136,9 @@ export const expressionFunctions = {
   allequal: <T>(a: T[], b: T[]): boolean => {
     return (a != null && b != null) && a.length === b.length && a.every((v, i) => v === b[i])
   },
+  zip: <T>(a: T[], b: T[]): T[] => {
+    return a.map((elem, index) => [a[index], b[index]])
+  }
 }
 
 /**
