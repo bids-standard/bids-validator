@@ -35,15 +35,29 @@ export async function unusedStimulus(
 
 const standalone_json = ['dataset_description.json', 'genetic_info.json']
 
+function isSidecarFile(file: BIDSFile): boolean {
+  if (!file.name.endsWith('.json')) {
+    return false
+  }
+  if (standalone_json.includes(file.name)) {
+    return false
+  }
+  // prov files are not sidecars
+  if (file.path.startsWith('/prov/')) {
+    return false
+  }
+  // coordsystem.json files are kind-of sidecars, and they're picked up by
+  // associations. We may want to exclude them in the future.
+  return true
+}
+
 export async function sidecarWithoutDatafile(
   schema: GenericSchema,
   dsContext: BIDSContextDataset,
 ) {
-  const unusedSidecars = [...walkFileTree(dsContext.tree, dsContext)].filter(
-    (file) => (!file.viewed && file.name.endsWith('.json') &&
-      !standalone_json.includes(file.name)),
-  )
-  unusedSidecars.forEach((sidecar) => {
-    dsContext.issues.add({ code: 'SIDECAR_WITHOUT_DATAFILE', location: sidecar.path })
-  })
+  for (const file of walkFileTree(dsContext.tree, dsContext)) {
+    if (!file.viewed && isSidecarFile(file)) {
+      dsContext.issues.add({ code: 'SIDECAR_WITHOUT_DATAFILE', location: file.path })
+    }
+  }
 }
