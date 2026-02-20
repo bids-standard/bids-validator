@@ -2,6 +2,27 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"2.4.1"'></a>
+# "2.4.1" — 2026-02-20
+
+## Changed
+
+- Update to BIDS Schema v1.2.1 (BIDS v1.11.1)
+
+- The web validator now renders Markdown in issue messages.
+
+## Fixed
+
+- Validating directory names is now skipped for unknown `DatasetType`s in
+  `dataset_description.json`. Previously this would crash, preventing the error
+  in `DatasetType` values from being reported to the user.
+
+## Infrastructure
+
+- Added a [pre-commit](https://pre-commit.com/) configuration for developers.
+  To enable, run `pre-commit install`. For speed, we recommend installing `pre-commit`
+  via `uv tool install pre-commit --with=pre-commit-uv`.
+
 <a id='changelog-"2.4.0"'></a>
 # "2.4.0" — 2026-02-05
 
