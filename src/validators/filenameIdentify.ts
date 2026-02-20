@@ -40,7 +40,7 @@ export async function filenameIdentify(schema, context) {
 export async function findDirRuleMatches(schema, context) {
   const datasetType = context.dataset.dataset_description?.DatasetType || 'raw'
   const schemaPath = `rules.directories.${datasetType}`
-  const directoryRule = schema[schemaPath]
+  const directoryRule = schema[schemaPath] ?? {}
   const schemaObjects = schema['objects']
   const schemaEntities = schema['objects.entities']
   loop: for (const key of Object.keys(directoryRule)) {
