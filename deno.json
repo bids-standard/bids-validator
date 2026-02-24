@@ -1,6 +1,6 @@
 {
   "name": "@bids/validator",
-  "version": "2.4.1-dev",
+  "version": "2.4.2-dev",
   "exports": {
     ".": "./src/bids-validator.ts",
     "./main": "./src/main.ts",
@@ -28,7 +28,7 @@
   },
   "imports": {
     "@ajv": "npm:ajv@8.17.1",
-    "@bids/schema": "jsr:@bids/schema@~1.2.0",
+    "@bids/schema": "jsr:@bids/schema@~1.2.1",
     "@bradenmacdonald/s3-lite-client": "jsr:@bradenmacdonald/s3-lite-client@^0.9.4",
     "@cliffy/command": "jsr:@effigies/cliffy-command@1.0.0-dev.8",
     "@cliffy/table": "jsr:@effigies/cliffy-table@1.0.0-dev.5",
@@ -36,11 +36,11 @@
     "@ignore": "npm:ignore@^7.0.5",
     "@libs/xml": "jsr:@libs/xml@^7.0.3",
     "@mango/nifti": "npm:@bids/nifti-reader-js@^0.6.9",
-    "@std/assert": "jsr:@std/assert@^1.0.17",
-    "@std/async": "jsr:@std/async@^1.1.0",
+    "@std/assert": "jsr:@std/assert@^1.0.18",
+    "@std/async": "jsr:@std/async@^1.1.1",
     "@std/fmt": "jsr:@std/fmt@^1.0.9",
     "@std/fs": "jsr:@std/fs@^1.0.22",
-    "@std/io": "jsr:@std/io@^0.225.2",
+    "@std/io": "jsr:@std/io@^0.225.3",
     "@std/log": "jsr:@std/log@^0.224.14",
     "@std/path": "jsr:@std/path@^1.1.4",
     "@std/streams": "jsr:@std/streams@^1.0.17",
