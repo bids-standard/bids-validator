@@ -29,47 +29,52 @@ function formatBEIssue(issue: Issue) {
   )
 }
 
-Deno.test('validate bids-examples', async (t) => {
-  const prefix = 'tests/data/bids-examples'
-  const dirEntries = Array.from(Deno.readDirSync(prefix))
+Deno.test({
+  name: 'validate bids-examples',
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async (t) => {
+    const prefix = 'tests/data/bids-examples'
+    const dirEntries = Array.from(Deno.readDirSync(prefix))
 
-  for (const dirEntry of dirEntries.sort((a, b) => a.name.localeCompare(b.name))) {
-    if (!dirEntry.isDirectory || dirEntry.name.startsWith('.')) {
-      continue
-    }
-    const path = `${prefix}/${dirEntry.name}`
-
-    try {
-      if (Deno.statSync(`${path}/.SKIP_VALIDATION`).isFile) {
+    for (const dirEntry of dirEntries.sort((a, b) => a.name.localeCompare(b.name))) {
+      if (!dirEntry.isDirectory || dirEntry.name.startsWith('.')) {
         continue
       }
-    } catch (e) {}
-    const { tree, result } = await validatePath(t, path, options, config)
-    const dsIssues = result.issues.filter({ 'severity': 'error' })
-    await t.step(`${path} has no issues`, () => {
-      assertEquals(dsIssues.size, 0)
-    })
-    if (dsIssues.size === 0) {
-      continue
-    }
+      const path = `${prefix}/${dirEntry.name}`
 
-    errors.push(
-      Row.from([
-        new Cell(colors.cyan(dirEntry.name)).colSpan(4),
-        undefined,
-        undefined,
-        undefined,
-      ]).border(true),
-    )
-    dsIssues.issues.map((x) => formatBEIssue(x))
+      try {
+        if (Deno.statSync(`${path}/.SKIP_VALIDATION`).isFile) {
+          continue
+        }
+      } catch (e) {}
+      const { tree, result } = await validatePath(t, path, options, config)
+      const dsIssues = result.issues.filter({ 'severity': 'error' })
+      await t.step(`${path} has no issues`, () => {
+        assertEquals(dsIssues.size, 0)
+      })
+      if (dsIssues.size === 0) {
+        continue
+      }
+
+      errors.push(
+        Row.from([
+          new Cell(colors.cyan(dirEntry.name)).colSpan(4),
+          undefined,
+          undefined,
+          undefined,
+        ]).border(true),
+      )
+      dsIssues.issues.map((x) => formatBEIssue(x))
+    }
+    const table = new Table()
+      .header(header)
+      .body(errors)
+      .border(false)
+      .padding(1)
+      .indent(2)
+      .maxColWidth(40)
+      .toString()
+    console.log(table)
   }
-  const table = new Table()
-    .header(header)
-    .body(errors)
-    .border(false)
-    .padding(1)
-    .indent(2)
-    .maxColWidth(40)
-    .toString()
-  console.log(table)
 })
