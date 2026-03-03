@@ -2,7 +2,7 @@
   "version": "5",
   "specifiers": {
     "jsr:@bids/schema@~1.2.1": "1.2.1",
-    "jsr:@bradenmacdonald/s3-lite-client@~0.9.4": "0.9.4",
+    "jsr:@bradenmacdonald/s3-lite-client@~0.9.5": "0.9.5",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
@@ -34,21 +34,21 @@
     "npm:@bids/nifti-reader-js@~0.6.9": "0.6.9",
     "npm:@types/node@*": "24.2.0",
     "npm:ajv@8.17.1": "8.17.1",
-    "npm:ansi-escapes@^7.2.0": "7.2.0",
+    "npm:ansi-escapes@^7.3.0": "7.3.0",
     "npm:esbuild-plugins-node-modules-polyfill@*": "1.7.1_esbuild@0.25.10",
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@~4.1.4": "4.1.4",
     "npm:ignore@^7.0.5": "7.0.5",
-    "npm:isomorphic-git@^1.36.3": "1.36.3",
-    "npm:marked@^17.0.1": "17.0.1",
+    "npm:isomorphic-git@^1.37.1": "1.37.1",
+    "npm:marked@^17.0.2": "17.0.2",
     "npm:supports-hyperlinks@^4.4.0": "4.4.0"
   },
   "jsr": {
     "@bids/schema@1.2.1": {
       "integrity": "9894f5604be3e4986ae2046f84f782920add451733cc94ccbc60f52e9bd17420"
     },
-    "@bradenmacdonald/s3-lite-client@0.9.4": {
-      "integrity": "f52e31c7efdaeb1ccdf65a1db995b5920d635717c96d45dcf9450c3cc47ecaaf"
+    "@bradenmacdonald/s3-lite-client@0.9.5": {
+      "integrity": "8ed243c0f8d0d34579c4a23d116b490fd43b16d28d7a8c0513d6fdc1a5ae220b"
     },
     "@cliffy/flags@1.0.0-rc.7": {
       "integrity": "318d9be98f6a6417b108e03dec427dea96cdd41a15beb21d2554ae6da450a781",
@@ -321,8 +321,8 @@
         "require-from-string"
       ]
     },
-    "ansi-escapes@7.2.0": {
-      "integrity": "sha512-g6LhBsl+GBPRWGWsBtutpzBYuIIdBkLEvad5C/va/74Db018+5TZiyA26cZJAr3Rft5lprVqOIPxf5Vid6tqAw==",
+    "ansi-escapes@7.3.0": {
+      "integrity": "sha512-BvU8nYgGQBxcmMuEeUEmNTvrMVjJNSH7RgW24vXexN4Ven6qCvy4TntnvlnwnMLTVlcRQQdbRY8NKnaIoeWDNg==",
       "dependencies": [
         "environment"
       ]
@@ -589,8 +589,8 @@
     "isarray@2.0.5": {
       "integrity": "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw=="
     },
-    "isomorphic-git@1.36.3": {
-      "integrity": "sha512-bHF1nQTjL0IfSo13BHDO8oQ6SvYNQduTAdPJdSmrJ5JwZY2fsyjLujEXav5hqPCegSCAnc75ZsBUHqT/NqR7QA==",
+    "isomorphic-git@1.37.1": {
+      "integrity": "sha512-3r98kY+X24i6za2zwoNnISGobykIdc4aP7ScJGHpN3wbWSCbJZ2Kp/8WIsHJwvOCVUBjUHNkcB+4ty5iNv6RQA==",
       "dependencies": [
         "async-lock",
         "clean-git-ref",
@@ -620,8 +620,8 @@
     "lodash@4.17.21": {
       "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
     },
-    "marked@17.0.1": {
-      "integrity": "sha512-boeBdiS0ghpWcSwoNm/jJBwdpFaMnZWRzjA6SkUMYb40SVaN1x7mmfGKp0jvexGcx+7y2La5zRZsYFZI6Qpypg==",
+    "marked@17.0.2": {
+      "integrity": "sha512-s5HZGFQea7Huv5zZcAGhJLT3qLpAfnY7v7GWkICUr0+Wd5TFEtdlRR2XUL5Gg+RH7u2Df595ifrxR03mBaw7gA==",
       "bin": true
     },
     "math-intrinsics@1.1.0": {
@@ -895,7 +895,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@bids/schema@~1.2.1",
-      "jsr:@bradenmacdonald/s3-lite-client@~0.9.4",
+      "jsr:@bradenmacdonald/s3-lite-client@~0.9.5",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
       "jsr:@libs/xml@^7.0.3",
@@ -911,12 +911,12 @@
       "jsr:@std/yaml@^1.0.11",
       "npm:@bids/nifti-reader-js@~0.6.9",
       "npm:ajv@8.17.1",
-      "npm:ansi-escapes@^7.2.0",
+      "npm:ansi-escapes@^7.3.0",
       "npm:hash-wasm@^4.12.0",
       "npm:hed-validator@~4.1.4",
       "npm:ignore@^7.0.5",
-      "npm:isomorphic-git@^1.36.3",
-      "npm:marked@^17.0.1",
+      "npm:isomorphic-git@^1.37.1",
+      "npm:marked@^17.0.2",
       "npm:supports-hyperlinks@^4.4.0"
     ]
   }
