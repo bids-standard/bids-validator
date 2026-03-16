@@ -4,6 +4,7 @@ import {
   expressionFunctions,
   formatter,
   prepareContext,
+  glob
 } from './expressionLanguage.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import type { BIDSContext } from './context.ts'
@@ -13,6 +14,12 @@ import type { DatasetIssues } from '../issues/datasetIssues.ts'
 Deno.test('test expression functions', async (t) => {
   const context = await makeBIDSContext(dataFile, undefined, rootFileTree)
 
+  await t.step('glob function', () => {
+    assert(glob.bind(context)('sub-*').length === 1)
+    assert(glob.bind(context)('wat-*').length === 0)
+    assert(glob.bind(context)('**/*task-*').length === 6)
+    assert(glob.bind(context)('*/**/*task-*').length === 4)
+  })
   await t.step('index function', () => {
     const index = expressionFunctions.index
     assert(index([1, 2, 3], 2) === 1)

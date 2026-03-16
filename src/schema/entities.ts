@@ -1,3 +1,4 @@
+import { SEPARATOR_PATTERN } from '@std/path'
 import { memoize } from '../utils/memoize.ts'
 
 interface BIDSFileParts {
@@ -25,8 +26,20 @@ function _readEntities(filename: string): BIDSFileParts {
     const [entity, label] = part.split(/-(.+)/)
     entities[entity] = label || 'NOENTITY'
   }
-
   return { stem, entities, suffix, extension }
 }
 
+function _readDirEntities(filePath: string): Record<string, string> {
+  const parts = filePath.split(SEPARATOR_PATTERN)
+  const entities: Record<string, string> = {}
+  parts.pop()
+  for (const part of parts) {
+    const [entity, label] = part.split(/-(.+)/)
+    if (!entity) continue;
+    entities[entity] = label || 'NOENTITY'
+  }
+  return entities
+}
+  
 export const readEntities = memoize(_readEntities)
+export const readDirEntities = memoize(_readDirEntities)
