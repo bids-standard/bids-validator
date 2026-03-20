@@ -123,10 +123,12 @@ export function* matchRecursive(
 }
 
 export function glob(this: BIDSContext, toMatch: string): string[] {
-  toMatch = toMatch.startsWith('/') ? toMatch : `/${toMatch}`
-  const re = path.globToRegExp(toMatch)
-  const files = _walk(this.dataset.tree)
-  return files.filter((x) => re.test(x)).map((x) => x.replace(/^\//, ''))
+  const components = parsePattern(toMatch)
+  if (components.length === 0) {
+    return []
+  }
+
+  return Array.from(matchRecursive(this.dataset.tree, components, ''))
 }
 
 // Source: https://matyasfodor.com/blog/efficient-zip#how-javascript-could-do-it
