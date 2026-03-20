@@ -51,6 +51,16 @@ function _walk(tree: BIDSContext['dataset']['tree']): string[] {
   return ret
 }
 
+export function parsePattern(pattern: string): string[] {
+  // Remove leading/trailing slashes
+  pattern = pattern.replace(/^\/+|\/+$/g, '')
+
+  if (!pattern) return []
+
+  // Split by '/', filter out empty strings
+  return pattern.split('/').filter((c) => c.length > 0)
+}
+
 export function glob(this: BIDSContext, toMatch: string): string[] {
   toMatch = toMatch.startsWith('/') ? toMatch : `/${toMatch}`
   const re = path.globToRegExp(toMatch)
