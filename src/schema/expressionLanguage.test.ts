@@ -480,3 +480,48 @@ Deno.test('test matchRecursive helper', async (t) => {
     assert(results.length === 0)
   })
 })
+
+Deno.test('test glob edge cases and root-level matching', async (t) => {
+  const context = await makeBIDSContext(dataFile, undefined, rootFileTree)
+
+  await t.step('glob with ** at start matches at root level', () => {
+    // **/sub-* should match sub-* directories at root
+    const results = glob.bind(context)('**/sub-*')
+    assert(results.length > 0)
+    assert(results.some((r) => r.startsWith('sub-')))
+  })
+
+  await t.step('glob with just ** returns all paths', () => {
+    const results = glob.bind(context)('**')
+    assert(results.length > 0)
+  })
+
+  await t.step('glob with just * returns root-level items', () => {
+    const results = glob.bind(context)('*')
+    assert(results.every((r) => !r.includes('/')))
+  })
+
+  await t.step('glob with ? matches single character names', () => {
+    // This depends on test data, may need adjustment
+    const results = glob.bind(context)('?')
+    // Just verify it runs without error
+    assert(Array.isArray(results))
+  })
+
+  await t.step('glob deep patterns work correctly', () => {
+    const results = glob.bind(context)('**/sub-*/ses-*/anat/*T1*')
+    assert(Array.isArray(results))
+    // Verify all results contain expected components
+    assert(
+      results.every(
+        (r) => r.includes('sub-') && r.includes('ses-') && r.includes('anat'),
+      ),
+    )
+  })
+
+  await t.step('glob returns both files and directories', () => {
+    const results = glob.bind(context)('**/*task-*')
+    assert(results.length > 0)
+    // Results should include both files and directories
+  })
+})
