@@ -39,19 +39,6 @@ function exists(this: BIDSContext, list: string[], rule: string = 'dataset'): nu
   }
 }
 
-/* Simplified walk producing paths of directories and files as strings */
-function _walk(tree: BIDSContext['dataset']['tree']): string[] {
-  let ret: string[] = []
-  tree.directories.map((dir) => {
-    ret.push(dir.path)
-    ret.push(..._walk(dir))
-  })
-  tree.files.map((file) => {
-    ret.push(file.path)
-  })
-  return ret
-}
-
 export function parsePattern(pattern: string): string[] {
   // Remove leading/trailing slashes
   pattern = pattern.replace(/^\/+|\/+$/g, '')
@@ -93,6 +80,26 @@ export function* matchRecursive(
 
   const component = components[0]
   const remaining = components.slice(1)
+
+  // Special handling for '**': match zero or more directories
+  if (component === '**') {
+    if (remaining.length === 0) {
+      // Just '**' - match all files and directories recursively
+      yield* matchAll(tree, currentPath)
+      return
+    }
+
+    // '**' followed by more patterns
+    // Try to match the next pattern at this level (zero directories)
+    yield* matchRecursive(tree, remaining, currentPath)
+
+    // Also try deeper (one or more directories)
+    for (const dir of tree.directories) {
+      yield* matchRecursive(dir, components, `${currentPath}/${dir.name}`.replace(/^\//, ''))
+    }
+    return
+  }
+
   const matcher = createMatcher(component)
 
   // Check files at this level
@@ -114,11 +121,18 @@ export function* matchRecursive(
         yield* matchRecursive(dir, remaining, `${currentPath}/${dir.name}`.replace(/^\//, ''))
       }
     }
+  }
+}
 
-    // Special handling for '**': also recurse without consuming the pattern
-    if (component === '**') {
-      yield* matchRecursive(dir, components, `${currentPath}/${dir.name}`.replace(/^\//, ''))
-    }
+// Helper to match all files and directories recursively
+function* matchAll(tree: FileTree, currentPath: string): Generator<string> {
+  for (const file of tree.files) {
+    yield currentPath ? `${currentPath}/${file.name}` : file.name
+  }
+  for (const dir of tree.directories) {
+    const newPath = `${currentPath}/${dir.name}`.replace(/^\//, '')
+    yield newPath
+    yield* matchAll(dir, newPath)
   }
 }
 
