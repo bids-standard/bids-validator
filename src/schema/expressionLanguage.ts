@@ -53,9 +53,9 @@ function _walk(tree: BIDSContext["dataset"]["tree"]): string[] {
 
 export function glob(this: BIDSContext, toMatch: string): string[] {
   toMatch = toMatch.startsWith('/') ? toMatch : `/${toMatch}`
-  let re = path.globToRegExp(toMatch)
-  let files = _walk(this.dataset.tree)
-  return files.filter(x => re.test(x))
+  const re = path.globToRegExp(toMatch)
+  const files = _walk(this.dataset.tree)
+  return files.filter((x) => re.test(x)).map((x) => x.replace(/^\//, ''))
 }
 
 
@@ -174,7 +174,7 @@ export const expressionFunctions = {
     return (a != null && b != null) && a.length === b.length && a.every((v, i) => v === b[i])
   },
   zip: <T extends any[]>(...args: T): T[][] => {
-    return Array.from(_zip(args))
+    return Array.from(_zip(...args))
   },
   glob: glob
 }
