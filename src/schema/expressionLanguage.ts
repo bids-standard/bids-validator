@@ -1,7 +1,7 @@
 import type { BIDSContext } from './context.ts'
 import { memoize } from '../utils/memoize.ts'
 import { deepEquals } from '../utils/deepEquals.ts'
-import * as path from "@std/path";
+import * as path from '@std/path'
 
 function exists(this: BIDSContext, list: string[], rule: string = 'dataset'): number {
   if (list == null) {
@@ -39,13 +39,13 @@ function exists(this: BIDSContext, list: string[], rule: string = 'dataset'): nu
 }
 
 /* Simplified walk producing paths of directories and files as strings */
-function _walk(tree: BIDSContext["dataset"]["tree"]): string[] {
+function _walk(tree: BIDSContext['dataset']['tree']): string[] {
   let ret: string[] = []
-  tree.directories.map(dir => {
+  tree.directories.map((dir) => {
     ret.push(dir.path)
     ret.push(..._walk(dir))
   })
-  tree.files.map(file => {
+  tree.files.map((file) => {
     ret.push(file.path)
   })
   return ret
@@ -58,19 +58,18 @@ export function glob(this: BIDSContext, toMatch: string): string[] {
   return files.filter((x) => re.test(x)).map((x) => x.replace(/^\//, ''))
 }
 
-
 // Source: https://matyasfodor.com/blog/efficient-zip#how-javascript-could-do-it
-function* _zip <T extends any[]>(...iterables: T) {
+function* _zip<T extends any[]>(...iterables: T) {
   // Get the iterators
-  const iterators = iterables.map((iterable) => iterable[Symbol.iterator]());
+  const iterators = iterables.map((iterable) => iterable[Symbol.iterator]())
   // Keep track of the current iteration state in `iterStates`
-  let iterStates = iterators.map((iterator) => iterator.next());
+  let iterStates = iterators.map((iterator) => iterator.next())
   // Loop until none of the iterators are exhausted
   while (iterStates.some(({ done }) => !done)) {
     // The current values of the iterators are yielded
-    yield iterStates.map(({ value, done }) => (!done ? value : null));
+    yield iterStates.map(({ value, done }) => (!done ? value : null))
     // The current iterator states are updated from the iterator
-    iterStates = iterators.map((iterator) => iterator.next());
+    iterStates = iterators.map((iterator) => iterator.next())
   }
 }
 
@@ -97,7 +96,7 @@ export const expressionFunctions = {
       return false
     }
 
-    const intersection = a.filter((x) => b.some(y => deepEquals(y, x)))
+    const intersection = a.filter((x) => b.some((y) => deepEquals(y, x)))
     if (intersection.length === 0) {
       return false
     }
@@ -176,7 +175,7 @@ export const expressionFunctions = {
   zip: <T extends any[]>(...args: T): T[][] => {
     return Array.from(_zip(...args))
   },
-  glob: glob
+  glob: glob,
 }
 
 /**

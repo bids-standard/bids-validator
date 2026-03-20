@@ -3,8 +3,8 @@ import {
   contextFunction,
   expressionFunctions,
   formatter,
+  glob,
   prepareContext,
-  glob
 } from './expressionLanguage.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import type { BIDSContext } from './context.ts'

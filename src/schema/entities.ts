@@ -35,11 +35,11 @@ function _readDirEntities(filePath: string): Record<string, string> {
   parts.pop()
   for (const part of parts) {
     const [entity, label] = part.split(/-(.+)/)
-    if (!entity) continue;
+    if (!entity) continue
     entities[entity] = label || 'NOENTITY'
   }
   return entities
 }
-  
+
 export const readEntities = memoize(_readEntities)
 export const readDirEntities = memoize(_readDirEntities)
