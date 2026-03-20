@@ -1,6 +1,7 @@
 import { assert, assertEquals, equal } from '@std/assert'
 import {
   contextFunction,
+  createMatcher,
   expressionFunctions,
   formatter,
   glob,
@@ -397,5 +398,48 @@ Deno.test('test parsePattern helper', async (t) => {
     assert(equal(parsePattern(''), []))
     assert(equal(parsePattern('/'), []))
     assert(equal(parsePattern('///'), []))
+  })
+})
+
+Deno.test('test createMatcher helper', async (t) => {
+  await t.step('createMatcher ** matches everything', () => {
+    const matcher = createMatcher('**')
+    assert(matcher('anything') === true)
+    assert(matcher('sub-01') === true)
+    assert(matcher('') === true)
+  })
+
+  await t.step('createMatcher * matches any name', () => {
+    const matcher = createMatcher('*')
+    assert(matcher('sub-01') === true)
+    assert(matcher('anything') === true)
+    assert(matcher('a') === true)
+  })
+
+  await t.step('createMatcher ? matches single character', () => {
+    const matcher = createMatcher('?')
+    assert(matcher('a') === true)
+    assert(matcher('1') === true)
+    assert(matcher('ab') === false)
+    assert(matcher('') === false)
+  })
+
+  await t.step('createMatcher literal glob patterns', () => {
+    const subMatcher = createMatcher('sub-*')
+    assert(subMatcher('sub-01') === true)
+    assert(subMatcher('sub-02') === true)
+    assert(subMatcher('ses-01') === false)
+
+    const taskMatcher = createMatcher('*task-*')
+    assert(taskMatcher('task-rest') === true)
+    assert(taskMatcher('boldtask-rest') === true)
+    assert(taskMatcher('no-match') === false)
+  })
+
+  await t.step('createMatcher ? in patterns', () => {
+    const matcher = createMatcher('sub-?')
+    assert(matcher('sub-0') === true)
+    assert(matcher('sub-a') === true)
+    assert(matcher('sub-01') === false)
   })
 })
