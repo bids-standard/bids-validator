@@ -5,6 +5,7 @@ import {
   expressionFunctions,
   formatter,
   glob,
+  matchRecursive,
   parsePattern,
   prepareContext,
 } from './expressionLanguage.ts'
@@ -441,5 +442,41 @@ Deno.test('test createMatcher helper', async (t) => {
     assert(matcher('sub-0') === true)
     assert(matcher('sub-a') === true)
     assert(matcher('sub-01') === false)
+  })
+})
+
+Deno.test('test matchRecursive helper', async (t) => {
+  const context = await makeBIDSContext(dataFile, undefined, rootFileTree)
+
+  await t.step('matchRecursive basic functionality', () => {
+    // Match at root level
+    const results = Array.from(
+      matchRecursive(context.dataset.tree, ['sub-*'], ''),
+    ) as string[]
+    assert(results.length > 0)
+    assert(results.some((r) => r.startsWith('sub-')))
+  })
+
+  await t.step('matchRecursive with multiple components', () => {
+    // Match nested directories
+    const results = Array.from(
+      matchRecursive(context.dataset.tree, ['sub-*', 'ses-*'], ''),
+    ) as string[]
+    assert(results.every((r) => r.includes('sub-') && r.includes('ses-')))
+  })
+
+  await t.step('matchRecursive with ** at start', () => {
+    // ** at start should match sub-* at root level
+    const results = Array.from(
+      matchRecursive(context.dataset.tree, ['**', 'sub-*'], ''),
+    ) as string[]
+    assert(results.some((r) => r.startsWith('sub-')))
+  })
+
+  await t.step('matchRecursive with no matches', () => {
+    const results = Array.from(
+      matchRecursive(context.dataset.tree, ['nonexistent-*'], ''),
+    ) as string[]
+    assert(results.length === 0)
   })
 })
