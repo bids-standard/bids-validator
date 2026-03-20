@@ -1,4 +1,5 @@
 import type { BIDSContext } from './context.ts'
+import type { FileTree } from '../types/filetree.ts'
 import { memoize } from '../utils/memoize.ts'
 import { deepEquals } from '../utils/deepEquals.ts'
 import * as path from '@std/path'
@@ -79,6 +80,46 @@ export function createMatcher(component: string): (name: string) => boolean {
   const pattern = '^' + component.replace(/\*/g, '.*').replace(/\?/g, '.') + '$'
   const re = new RegExp(pattern)
   return (name) => re.test(name)
+}
+
+export function* matchRecursive(
+  tree: FileTree,
+  components: string[],
+  currentPath: string,
+): Generator<string> {
+  if (components.length === 0) {
+    return
+  }
+
+  const component = components[0]
+  const remaining = components.slice(1)
+  const matcher = createMatcher(component)
+
+  // Check files at this level
+  for (const file of tree.files) {
+    if (matcher(file.name)) {
+      if (remaining.length === 0) {
+        yield currentPath ? `${currentPath}/${file.name}` : file.name
+      }
+    }
+  }
+
+  // Check directories at this level
+  for (const dir of tree.directories) {
+    if (matcher(dir.name)) {
+      if (remaining.length === 0) {
+        yield currentPath ? `${currentPath}/${dir.name}` : dir.name
+      } else {
+        // Recurse into matched directory
+        yield* matchRecursive(dir, remaining, `${currentPath}/${dir.name}`.replace(/^\//, ''))
+      }
+    }
+
+    // Special handling for '**': also recurse without consuming the pattern
+    if (component === '**') {
+      yield* matchRecursive(dir, components, `${currentPath}/${dir.name}`.replace(/^\//, ''))
+    }
+  }
 }
 
 export function glob(this: BIDSContext, toMatch: string): string[] {
