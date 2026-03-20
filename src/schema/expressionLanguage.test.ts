@@ -3,8 +3,8 @@ import {
   contextFunction,
   expressionFunctions,
   formatter,
+  glob,
   prepareContext,
-  glob
 } from './expressionLanguage.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import type { BIDSContext } from './context.ts'
@@ -236,6 +236,43 @@ Deno.test('test expression functions', async (t) => {
         '5',
         '625',
       ]),
+    )
+  })
+  await t.step('zip function', () => {
+    const zip = expressionFunctions.zip
+    const array_equal = (a: any[], b: any[]) =>
+      a.length === b.length &&
+      a.every((v: any, i: number) =>
+        Array.isArray(v) && Array.isArray(b[i])
+          ? v.length === b[i].length && v.every((x: any, j: number) => x === b[i][j])
+          : v === b[i]
+      )
+    // Equal-length arrays: element-wise pairing
+    // @ts-ignore: zip type inference is too strict for test assertions
+    assert(array_equal(zip([1, 2, 3], [4, 5, 6]), [[1, 4], [2, 5], [3, 6]]))
+    // @ts-ignore
+    assert(array_equal(zip(['a', 'b'], ['c', 'd']), [['a', 'c'], ['b', 'd']]))
+    // Unequal-length arrays: shorter array pads with undefined
+    // @ts-ignore
+    const unequal = zip([1, 2], [3, 4, 5])
+    assert(unequal.length === 3)
+    // Empty arrays
+    // @ts-ignore
+    assert(array_equal(zip([], []), []))
+  })
+  await t.step('dirEntities context', () => {
+    // The context is created from dataFile at sub-01/ses-01/anat/sub-01_ses-01_T1w.nii.gz
+    // dirEntities should extract entities from directory components
+    assert(context.dirEntities.sub === '01')
+    assert(context.dirEntities.ses === '01')
+  })
+  await t.step('glob multi-level patterns', () => {
+    // Multi-level glob pattern matching sub-*/ses-* directories
+    const matches = glob.bind(context)('sub-*/ses-*')
+    assert(matches.length > 0)
+    // Paths should not have leading slash
+    assert(
+      matches.every((m: string) => m.startsWith('sub-') && m.includes('ses-')),
     )
   })
   await t.step('allequal function', () => {
