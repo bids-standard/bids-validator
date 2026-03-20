@@ -61,6 +61,26 @@ export function parsePattern(pattern: string): string[] {
   return pattern.split('/').filter((c) => c.length > 0)
 }
 
+export function createMatcher(component: string): (name: string) => boolean {
+  if (component === '**') {
+    return () => true // Special case, handled in recursion
+  }
+
+  if (component === '*') {
+    return (name) => true // Match any single name
+  }
+
+  if (component === '?') {
+    return (name) => name.length === 1
+  }
+
+  // Glob pattern with * and ? wildcards
+  // Convert to regex: sub-* → /^sub-.*$/
+  const pattern = '^' + component.replace(/\*/g, '.*').replace(/\?/g, '.') + '$'
+  const re = new RegExp(pattern)
+  return (name) => re.test(name)
+}
+
 export function glob(this: BIDSContext, toMatch: string): string[] {
   toMatch = toMatch.startsWith('/') ? toMatch : `/${toMatch}`
   const re = path.globToRegExp(toMatch)
