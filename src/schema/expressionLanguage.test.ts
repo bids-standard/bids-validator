@@ -1,9 +1,10 @@
-import { assert, assertEquals } from '@std/assert'
+import { assert, assertEquals, equal } from '@std/assert'
 import {
   contextFunction,
   expressionFunctions,
   formatter,
   glob,
+  parsePattern,
   prepareContext,
 } from './expressionLanguage.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
@@ -371,5 +372,30 @@ Deno.test('formatter test', async (t) => {
     ) {
       assertEquals(formatter(str)(context), expected)
     }
+  })
+})
+
+Deno.test('test parsePattern helper', async (t) => {
+  await t.step('parsePattern normalizes input', () => {
+    // Leading/trailing slashes removed
+    assert(equal(parsePattern('/sub-*'), ['sub-*']))
+    assert(equal(parsePattern('sub-*'), ['sub-*']))
+    assert(equal(parsePattern('sub-*/'), ['sub-*']))
+    assert(equal(parsePattern('/sub-*/'), ['sub-*']))
+  })
+
+  await t.step('parsePattern splits by /', () => {
+    assert(equal(parsePattern('sub-*/ses-*'), ['sub-*', 'ses-*']))
+  })
+
+  await t.step('parsePattern preserves ** as single component', () => {
+    assert(equal(parsePattern('**/*task-*'), ['**', '*task-*']))
+    assert(equal(parsePattern('**/sub-*/ses-*'), ['**', 'sub-*', 'ses-*']))
+  })
+
+  await t.step('parsePattern handles edge cases', () => {
+    assert(equal(parsePattern(''), []))
+    assert(equal(parsePattern('/'), []))
+    assert(equal(parsePattern('///'), []))
   })
 })
