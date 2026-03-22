@@ -53,6 +53,9 @@ export async function hedValidate(
   _schema: GenericSchema,
   context: BIDSContext,
 ): Promise<void> {
+  if (context.dataset.hedSchemas === null) {
+    return;
+  }
   // This logic was previously lower down, now we check it first to save 8MB
   let isHedFile = false
   if (
@@ -82,7 +85,7 @@ export async function hedValidate(
     const hedValidationIssues = await setHedSchemas(context.dataset, hedValidator)
 
     if (hedValidationIssues.length === 0) {
-      const fileIssues = file.validate(context.dataset.hedSchemas || undefined) ?? [] as HedIssue[]
+      const fileIssues = file.validate(context.dataset.hedSchemas) ?? [] as HedIssue[]
       hedValidationIssues.push(...fileIssues)
     }
 
