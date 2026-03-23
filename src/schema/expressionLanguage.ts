@@ -103,9 +103,9 @@ export function* matchRecursive(
   const matcher = createMatcher(component)
 
   // Check files at this level
-  for (const file of tree.files) {
-    if (matcher(file.name)) {
-      if (remaining.length === 0) {
+  if (remaining.length === 0) {
+    for (const file of tree.files) {
+      if (matcher(file.name)) {
         yield currentPath ? `${currentPath}/${file.name}` : file.name
       }
     }
