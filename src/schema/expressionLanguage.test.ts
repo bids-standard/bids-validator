@@ -12,6 +12,8 @@ import {
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import type { BIDSContext } from './context.ts'
 import { makeBIDSContext } from './context.test.ts'
+import type { BIDSFile } from '../types/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 
 Deno.test('test expression functions', async (t) => {
@@ -522,6 +524,19 @@ Deno.test('test glob edge cases and root-level matching', async (t) => {
         (r) => r.includes('sub-') && r.includes('ses-') && r.includes('anat'),
       ),
     )
+  })
+
+  await t.step('** does not result in duplicate matches', async () => {
+    const tree = pathsToTree(['/a/b/c/d/e'])
+    const datafile = tree.get('a/b/c/d/e') as BIDSFile
+    const context = await makeBIDSContext(datafile, undefined, tree)
+
+    let results = glob.bind(context)('a/**/e')
+    assertEquals(results.length, 1)
+    results = glob.bind(context)('a/*/**/e')
+    assertEquals(results.length, 1)
+    results = glob.bind(context)('a/**/*/e')
+    assertEquals(results.length, 1)
   })
 
   await t.step('glob returns both files and directories', () => {
