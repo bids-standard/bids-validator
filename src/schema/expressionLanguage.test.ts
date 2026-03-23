@@ -393,6 +393,7 @@ Deno.test('test parsePattern helper', async (t) => {
   await t.step('parsePattern preserves ** as single component', () => {
     assert(equal(parsePattern('**/*task-*'), ['**', '*task-*']))
     assert(equal(parsePattern('**/sub-*/ses-*'), ['**', 'sub-*', 'ses-*']))
+    assert(equal(parsePattern('sub-*/**/*_T1w.nii.gz'), ['sub-*', '**', '*_T1w.nii.gz']))
   })
 
   await t.step('parsePattern handles edge cases', () => {
@@ -453,8 +454,8 @@ Deno.test('test matchRecursive helper', async (t) => {
     const results = Array.from(
       matchRecursive(context.dataset.tree, ['sub-*'], ''),
     ) as string[]
-    assert(results.length > 0)
-    assert(results.some((r) => r.startsWith('sub-')))
+    assert(results.length == 1)
+    assert(results[0].startsWith('sub-'))
   })
 
   await t.step('matchRecursive with multiple components', () => {
@@ -470,7 +471,9 @@ Deno.test('test matchRecursive helper', async (t) => {
     const results = Array.from(
       matchRecursive(context.dataset.tree, ['**', 'sub-*'], ''),
     ) as string[]
+    assert(results.length > 1)
     assert(results.some((r) => r.startsWith('sub-')))
+    assert(results.every((r) => r == 'sub-01' || r.includes('/sub-01_')))
   })
 
   await t.step('matchRecursive with no matches', () => {
@@ -501,11 +504,13 @@ Deno.test('test glob edge cases and root-level matching', async (t) => {
     assert(results.every((r) => !r.includes('/')))
   })
 
-  await t.step('glob with ? matches single character names', () => {
-    // This depends on test data, may need adjustment
-    const results = glob.bind(context)('?')
-    // Just verify it runs without error
-    assert(Array.isArray(results))
+  await t.step('glob with ? matches single characters', () => {
+    let results = glob.bind(context)('?')
+    assert(results.length === 0)
+    results = glob.bind(context)('?ataset_description.json')
+    assert(results.length === 1)
+    results = glob.bind(context)('sub-??')
+    assert(results.length === 1)
   })
 
   await t.step('glob deep patterns work correctly', () => {
@@ -520,8 +525,8 @@ Deno.test('test glob edge cases and root-level matching', async (t) => {
   })
 
   await t.step('glob returns both files and directories', () => {
-    const results = glob.bind(context)('**/*task-*')
-    assert(results.length > 0)
-    // Results should include both files and directories
+    const results = glob.bind(context)('**/*')
+    assert(results.some((r) => r.endsWith('anat'))) // Directory
+    assert(results.some((r) => r.endsWith('T1w.nii.gz'))) // File
   })
 })
