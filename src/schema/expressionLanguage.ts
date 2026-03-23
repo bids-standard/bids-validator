@@ -1,4 +1,5 @@
 import type { BIDSContext } from './context.ts'
+import type { FileTree } from '../types/filetree.ts'
 import { memoize } from '../utils/memoize.ts'
 import { deepEquals } from '../utils/deepEquals.ts'
 import * as path from '@std/path'
@@ -38,24 +39,110 @@ function exists(this: BIDSContext, list: string[], rule: string = 'dataset'): nu
   }
 }
 
-/* Simplified walk producing paths of directories and files as strings */
-function _walk(tree: BIDSContext['dataset']['tree']): string[] {
-  let ret: string[] = []
-  tree.directories.map((dir) => {
-    ret.push(dir.path)
-    ret.push(..._walk(dir))
-  })
-  tree.files.map((file) => {
-    ret.push(file.path)
-  })
-  return ret
+export function parsePattern(pattern: string): string[] {
+  // Remove leading/trailing slashes
+  pattern = pattern.replace(/^\/+|\/+$/g, '')
+
+  if (!pattern) return []
+
+  // Split by '/', filter out empty strings
+  return pattern.split('/').filter((c) => c.length > 0)
+}
+
+export function createMatcher(component: string): (name: string) => boolean {
+  if (component === '**') {
+    return () => true // Special case, handled in recursion
+  }
+
+  if (component === '*') {
+    return (name) => true // Match any single name
+  }
+
+  if (component === '?') {
+    return (name) => name.length === 1
+  }
+
+  // Glob pattern with * and ? wildcards
+  // Convert to regex: sub-* → /^sub-.*$/
+  const pattern = '^' + component.replace(/\*/g, '.*').replace(/\?/g, '.') + '$'
+  const re = new RegExp(pattern)
+  return (name) => re.test(name)
+}
+
+export function* matchRecursive(
+  tree: FileTree,
+  components: string[],
+  currentPath: string,
+): Generator<string> {
+  if (components.length === 0) {
+    return
+  }
+
+  const component = components[0]
+  const remaining = components.slice(1)
+
+  // Special handling for '**': match zero or more directories
+  if (component === '**') {
+    if (remaining.length === 0) {
+      // Just '**' - match all files and directories recursively
+      yield* matchAll(tree, currentPath)
+      return
+    }
+
+    // '**' followed by more patterns
+    // Try to match the next pattern at this level (zero directories)
+    yield* matchRecursive(tree, remaining, currentPath)
+
+    // Also try deeper (one or more directories)
+    for (const dir of tree.directories) {
+      yield* matchRecursive(dir, components, `${currentPath}/${dir.name}`.replace(/^\//, ''))
+    }
+    return
+  }
+
+  const matcher = createMatcher(component)
+
+  // Check files at this level
+  if (remaining.length === 0) {
+    for (const file of tree.files) {
+      if (matcher(file.name)) {
+        yield currentPath ? `${currentPath}/${file.name}` : file.name
+      }
+    }
+  }
+
+  // Check directories at this level
+  for (const dir of tree.directories) {
+    if (matcher(dir.name)) {
+      if (remaining.length === 0) {
+        yield currentPath ? `${currentPath}/${dir.name}` : dir.name
+      } else {
+        // Recurse into matched directory
+        yield* matchRecursive(dir, remaining, `${currentPath}/${dir.name}`.replace(/^\//, ''))
+      }
+    }
+  }
+}
+
+// Helper to match all files and directories recursively
+function* matchAll(tree: FileTree, currentPath: string): Generator<string> {
+  for (const file of tree.files) {
+    yield currentPath ? `${currentPath}/${file.name}` : file.name
+  }
+  for (const dir of tree.directories) {
+    const newPath = `${currentPath}/${dir.name}`.replace(/^\//, '')
+    yield newPath
+    yield* matchAll(dir, newPath)
+  }
 }
 
 export function glob(this: BIDSContext, toMatch: string): string[] {
-  toMatch = toMatch.startsWith('/') ? toMatch : `/${toMatch}`
-  const re = path.globToRegExp(toMatch)
-  const files = _walk(this.dataset.tree)
-  return files.filter((x) => re.test(x)).map((x) => x.replace(/^\//, ''))
+  const components = parsePattern(toMatch)
+  if (components.length === 0) {
+    return []
+  }
+
+  return Array.from(matchRecursive(this.dataset.tree, components, ''))
 }
 
 // Source: https://matyasfodor.com/blog/efficient-zip#how-javascript-could-do-it
