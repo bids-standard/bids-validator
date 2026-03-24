@@ -211,7 +211,7 @@ function evalJsonCheck(
           context.dataset.issues.add({
             code: requirement.issue.code,
             subCode: keyName,
-            location: requirement.issue?.location ?? context.path,
+            location: requirement.issue.location ?? context.path,
             severity,
             rule: schemaPath,
             issueMessage,
