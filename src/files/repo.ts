@@ -171,18 +171,37 @@ async function _readRemotes(
 
 const readRemotes = memoize(_readRemotes, (options) => options?.gitdir)
 
+/**
+ * Parse a git-annex symlink target string and return the key and size.
+ * The target is the full relative path such as:
+ *   ../../.git/annex/objects/jJ/2v/MD5E-s5712417--0d1e...nii.gz/MD5E-s5712417--0d1e...nii.gz
+ * Returns null if the target does not match the expected annex key format.
+ */
+export function parseAnnexKey(target: string): { key: string; size: number } | null {
+  const { base } = parse(target)
+  const match = base.match(annexKeyRegex)
+  if (!match) {
+    return null
+  }
+  const size = +match.groups!.size
+  return { key: base, size }
+}
+
 export async function parseAnnexedFile(
   path: string,
 ): Promise<{ key: string; size: number; gitdir: string }> {
   const target = await Deno.readLink(path)
-  const { dir, base } = parse(target)
+  const { dir } = parse(target)
 
   const dirs = dir.split(SEPARATOR_PATTERN)
   const gitdir = join(dirname(path), ...dirs.slice(0, dirs.indexOf('.git') + 1))
 
-  const size = +base.match(annexKeyRegex)?.groups?.size!
+  const parsed = parseAnnexKey(target)
+  if (!parsed) {
+    throw new Error(`Could not parse annex key from symlink target: ${target}`)
+  }
 
-  return { key: base, size, gitdir }
+  return { key: parsed.key, size: parsed.size, gitdir }
 }
 
 /**
