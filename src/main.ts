@@ -2,6 +2,7 @@ import { parseOptions } from './setup/options.ts'
 import type { Config } from './setup/options.ts'
 import * as colors from '@std/fmt/colors'
 import { readFileTree } from './files/deno.ts'
+import { readGitTree } from './files/git.ts'
 import { fileListToTree } from './files/browser.ts'
 import { FileIgnoreRules } from './files/ignore.ts'
 import { resolve } from '@std/path'
@@ -26,7 +27,9 @@ export async function main(): Promise<ValidationResult> {
   const prune = options.prune
     ? new FileIgnoreRules(['derivatives', 'sourcedata', 'code'], false)
     : undefined
-  const tree = await readFileTree(absolutePath, prune, options.preferredRemote)
+  const tree = options.gitRef
+    ? await readGitTree(absolutePath, options.gitRef, prune, options.preferredRemote)
+    : await readFileTree(absolutePath, prune, options.preferredRemote)
 
   const config = options.config ? JSON.parse(Deno.readTextFileSync(options.config)) as Config : {}
 
@@ -61,4 +64,4 @@ export async function main(): Promise<ValidationResult> {
   return schemaResult
 }
 
-export { fileListToTree, validate }
+export { fileListToTree, readGitTree, validate }

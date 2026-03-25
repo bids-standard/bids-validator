@@ -34,6 +34,7 @@ export type ValidatorOptions = {
   prune?: boolean
   maxRows?: number
   preferredRemote?: string
+  gitRef?: string
 }
 
 const datasetType = new EnumType<string>(
@@ -113,6 +114,10 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
     '--preferredRemote <preferredRemote:string>',
     'Name of the preferred git-annex remote for accessing remote data (experimental)',
   )
+  .option(
+    '--git-ref [ref:string]',
+    'Validate files from a git tree instead of the filesystem. Optional ref defaults to HEAD.',
+  )
 
 // Disabling color output is only available in Deno
 if (typeof Deno !== 'undefined') {
@@ -140,5 +145,6 @@ export async function parseOptions(
     datasetPath: args[0],
     ...options,
     debug: options.debug as LevelName,
+    gitRef: options.gitRef === true ? 'HEAD' : options.gitRef as string | undefined,
   }
 }
