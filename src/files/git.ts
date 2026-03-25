@@ -15,6 +15,7 @@ import { filesToTree } from './filetree.ts'
 import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 import { hashDirLower, parseAnnexKey, resolveAnnexedFile } from './repo.ts'
 import { FsFileOpener, HTTPOpener, NullFileOpener } from './openers.ts'
+import { streamFromUint8Array } from './streams.ts'
 
 export interface GitOptions {
   // deno-lint-ignore no-explicit-any
@@ -45,12 +46,7 @@ export class GitFileOpener implements FileOpener {
 
   async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     const blob = await this.#loadBlob()
-    return new ReadableStream({
-      start(controller) {
-        controller.enqueue(blob)
-        controller.close()
-      },
-    })
+    return streamFromUint8Array(blob)
   }
 
   async text(): Promise<string> {

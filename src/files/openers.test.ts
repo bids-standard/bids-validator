@@ -4,8 +4,7 @@
 import { assertEquals, assertRejects } from '@std/assert'
 import { resolvesNext, stub } from '@std/testing/mock'
 import type { FileOpener } from '../types/filetree.ts'
-import { streamFromString } from '../tests/utils.ts'
-import { createUTF8Stream } from './streams.ts'
+import { createUTF8Stream, streamFromString, streamFromUint8Array } from './streams.ts'
 import { HTTPOpener } from './openers.ts'
 
 const textEncoder = new TextEncoder()
@@ -29,15 +28,7 @@ export class BytesOpener implements FileOpener {
   }
 
   stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
-    const contents = this.contents
-    return Promise.resolve(
-      new ReadableStream({
-        start(controller) {
-          controller.enqueue(contents)
-          controller.close()
-        },
-      }),
-    )
+    return Promise.resolve(streamFromUint8Array(this.contents))
   }
 }
 
