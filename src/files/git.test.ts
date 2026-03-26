@@ -12,6 +12,19 @@ import { validate } from '../validators/bids.ts'
 const REPO_URL = 'https://github.com/openneurodatasets/ds000001.git'
 const REF = '1.0.0'
 
+async function commandExists(cmd: string): Promise<boolean> {
+  try {
+    const proc = new Deno.Command(cmd, { args: ['--help'], stdout: 'null', stderr: 'null' })
+    const { success } = await proc.output()
+    return success
+  } catch {
+    return false
+  }
+}
+
+const hasGit = await commandExists('git')
+const hasGitAnnex = await commandExists('git-annex')
+
 async function run(cmd: string[]): Promise<void> {
   const proc = new Deno.Command(cmd[0], {
     args: cmd.slice(1),
@@ -58,6 +71,7 @@ async function setupRepo(repoPath: string): Promise<void> {
 Deno.test(
   {
     name: 'Integration: validate bare git-annex repo (ds000001 @ 1.0.0)',
+    ignore: !hasGit || !hasGitAnnex,
     sanitizeResources: false,
     sanitizeOps: false,
   },
