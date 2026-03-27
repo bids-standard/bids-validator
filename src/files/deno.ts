@@ -5,7 +5,8 @@ import { basename, join } from '@std/path'
 import * as posix from '@std/path/posix'
 import { BIDSFile, type FileOpener, FileTree } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
-import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
+import { FileIgnoreRules } from './ignore.ts'
+import { loadBidsIgnore } from './filetree.ts'
 import { FsFileOpener } from './openers.ts'
 import { parseAnnexedFile } from './repo.ts'
 import { AnnexedGitFileOpener } from './git.ts'
@@ -90,13 +91,5 @@ export async function readFileTree(
   prune ??= new FileIgnoreRules([], false)
   const ignore = new FileIgnoreRules([])
   const tree = await _readFileTree({ rootPath, relativePath: '/', ignore, prune, preferredRemote })
-  const bidsignore = tree.get('.bidsignore')
-  if (bidsignore) {
-    try {
-      ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
-    } catch (err) {
-      console.log(`Failed to read '.bidsignore' file with the following error:\n${err}`)
-    }
-  }
-  return tree
+  return loadBidsIgnore(tree, ignore)
 }

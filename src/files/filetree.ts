@@ -58,9 +58,19 @@ function rerootTree({
   return tree
 }
 
-export async function subtree(filetree: FileTree): Promise<FileTree> {
+export function subtree(filetree: FileTree): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
-  const tree = rerootTree({ oldTree: filetree, newRoot: filetree.path, ignore })
+  return loadBidsIgnore(rerootTree({ oldTree: filetree, newRoot: filetree.path, ignore }), ignore)
+}
+
+/**
+ * Load .bidsignore file from the given tree and add the rules to the provided ignore object
+ *
+ * @param tree The file tree to search for a .bidsignore file
+ * @param ignore The ignore object to add the rules to
+ * @returns The original tree
+ */
+export async function loadBidsIgnore(tree: FileTree, ignore: FileIgnoreRules): Promise<FileTree> {
   const bidsignore = tree.get('.bidsignore')
   if (bidsignore) {
     try {

@@ -11,8 +11,8 @@ import fs from 'node:fs'
 import * as posix from '@std/path/posix'
 import { join } from '@std/path'
 import { BIDSFile, type FileOpener, type FileTree } from '../types/filetree.ts'
-import { filesToTree } from './filetree.ts'
-import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
+import { filesToTree, loadBidsIgnore } from './filetree.ts'
+import { FileIgnoreRules } from './ignore.ts'
 import { hashDirLower, parseAnnexKey, resolveAnnexedFile } from './repo.ts'
 import { FsFileOpener, HTTPOpener, NullFileOpener } from './openers.ts'
 import { streamFromUint8Array } from './streams.ts'
@@ -345,14 +345,5 @@ export async function readGitTree(
     }
   }
 
-  const tree = filesToTree(files, ignore)
-  const bidsignore = tree.get('.bidsignore')
-  if (bidsignore) {
-    try {
-      ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
-    } catch (err) {
-      console.log(`Failed to read '.bidsignore' file with the following error:\n${err}`)
-    }
-  }
-  return tree
+  return loadBidsIgnore(filesToTree(files, ignore), ignore)
 }
