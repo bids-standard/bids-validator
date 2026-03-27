@@ -28,7 +28,11 @@ Deno.test('hed-validator not triggered', async (t) => {
   })
 })
 
-Deno.test('hed-validator fails with bad schema version', async (t) => {
+Deno.test({
+  name: 'hed-validator fails with bad schema version',
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn :async (t) => {
   const PATH = 'tests/data/bids-examples/eeg_ds003645s_hed_library'
   const tree = await readFileTree(PATH)
   const schema = await loadSchema()
@@ -46,4 +50,4 @@ Deno.test('hed-validator fails with bad schema version', async (t) => {
     assertEquals(context.dataset.issues.size, 1)
     assertEquals(context.dataset.issues.get({ code: 'HED_ERROR' }).length, 1)
   })
-})
+}})
