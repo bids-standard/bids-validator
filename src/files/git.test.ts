@@ -28,11 +28,14 @@ const hasGitAnnex = await commandExists('git-annex')
 async function run(cmd: string[]): Promise<void> {
   const proc = new Deno.Command(cmd[0], {
     args: cmd.slice(1),
-    stdout: 'inherit',
-    stderr: 'inherit',
+    stdout: 'piped',
+    stderr: 'piped',
   })
   const status = await proc.output()
   if (!status.success) {
+    const stdout = new TextDecoder().decode(status.stdout).trim()
+    const stderr = new TextDecoder().decode(status.stderr).trim()
+    console.error(`Command failed: ${cmd.join(' ')}\n\tstdout: ${stdout}\n\tstderr: ${stderr}`)
     throw new Error(`Command failed: ${cmd.join(' ')}`)
   }
 }
