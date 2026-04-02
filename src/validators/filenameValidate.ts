@@ -285,7 +285,7 @@ async function invalidLocation(
     return
   }
   if (context.entities.prov && context.path.startsWith('/prov/prov-')) {
-    if (context.path.startsWith(`/prov/prov-${context.entities.prov}`)) {
+    if (!context.path.startsWith(`/prov/prov-${context.entities.prov}`)) {
       context.dataset.issues.add({
         code: 'INVALID_LOCATION',
         location: context.path,
