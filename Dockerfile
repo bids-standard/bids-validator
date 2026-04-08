@@ -15,4 +15,4 @@ FROM ${BASE_IMAGE} AS min
 WORKDIR /src
 COPY --from=build /src/dist/validator/bids-validator.js .
 
-ENTRYPOINT ["deno", "-A", "./bids-validator.js"]
+ENTRYPOINT ["deno", "-A", "/src/bids-validator.js"]
