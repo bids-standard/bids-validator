@@ -5,10 +5,11 @@
  * annex object, then validates at tag 1.0.0 and asserts exact output.
  */
 import { join } from '@std/path'
-import { assertEquals, assertExists } from '@std/assert'
+import { assertEquals, assertExists, assertRejects } from '@std/assert'
 import { readGitTree } from './git.ts'
 import { validate } from '../validators/bids.ts'
 import type { BIDSFile } from '../types/filetree.ts'
+import { FileIgnoreRules } from './ignore.ts'
 
 const REPO_URL = 'https://github.com/openneurodatasets/ds000001.git'
 const REF = '1.0.0'
@@ -303,5 +304,164 @@ Deno.test(
         assertEquals(broken, undefined, 'broken.txt should be dropped')
       },
     )
+  },
+)
+
+// ---------------------------------------------------------------------------
+// Error paths
+// ---------------------------------------------------------------------------
+
+Deno.test(
+  {
+    name: 'readGitTree: error on non-git directory',
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    const tmpDir = await Deno.makeTempDir()
+    try {
+      await assertRejects(
+        () => readGitTree(tmpDir, 'HEAD'),
+        Error,
+      )
+    } finally {
+      await Deno.remove(tmpDir, { recursive: true })
+    }
+  },
+)
+
+Deno.test(
+  {
+    name: 'readGitTree: error on repo with no commits',
+    ignore: !hasGit,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    const tmpDir = await Deno.makeTempDir()
+    try {
+      await run(['git', 'init', tmpDir])
+      await assertRejects(
+        () => readGitTree(tmpDir, 'HEAD'),
+        Error,
+        'has no commits',
+      )
+    } finally {
+      await Deno.remove(tmpDir, { recursive: true })
+    }
+  },
+)
+
+Deno.test(
+  {
+    name: 'readGitTree: error on nonexistent ref',
+    ignore: !hasGit,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.writeTextFile(join(repo, 'f.txt'), 'content')
+      },
+      async (repo) => {
+        await assertRejects(
+          () => readGitTree(repo, 'nonexistent-ref'),
+          Error,
+          "Could not resolve ref 'nonexistent-ref'",
+        )
+      },
+    )
+  },
+)
+
+// ---------------------------------------------------------------------------
+// Abbreviated SHA resolution
+// ---------------------------------------------------------------------------
+
+Deno.test(
+  {
+    name: 'readGitTree: abbreviated SHA resolution',
+    ignore: !hasGit,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.writeTextFile(join(repo, 'f.txt'), 'sha test')
+      },
+      async (repo) => {
+        const fullSha = await capture(['git', '-C', repo, 'rev-parse', 'HEAD'])
+        const abbrev = fullSha.slice(0, 7)
+        const tree = await readGitTree(repo, abbrev)
+        const f = tree.get('f.txt')
+        assertExists(f, 'f.txt should be in tree')
+        assertEquals(await (f as BIDSFile).text(), 'sha test')
+      },
+    )
+  },
+)
+
+// ---------------------------------------------------------------------------
+// Pruning
+// ---------------------------------------------------------------------------
+
+Deno.test(
+  {
+    name: 'readGitTree: pruning directories',
+    ignore: !hasGit,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.writeTextFile(join(repo, 'keep.txt'), 'kept')
+        await Deno.mkdir(join(repo, 'derivatives'))
+        await Deno.writeTextFile(join(repo, 'derivatives', 'pruned.txt'), 'pruned')
+      },
+      async (repo) => {
+        const prune = new FileIgnoreRules(['derivatives'], false)
+        const tree = await readGitTree(repo, 'HEAD', prune)
+        const keep = tree.get('keep.txt')
+        assertExists(keep, 'keep.txt should be in tree')
+        assertEquals(tree.get('derivatives'), undefined, 'derivatives should be pruned')
+      },
+    )
+  },
+)
+
+// ---------------------------------------------------------------------------
+// Bare repository
+// ---------------------------------------------------------------------------
+
+Deno.test(
+  {
+    name: 'readGitTree: bare repository',
+    ignore: !hasGit,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    const tmpDir = await Deno.makeTempDir()
+    const srcPath = join(tmpDir, 'src')
+    const barePath = join(tmpDir, 'bare.git')
+    try {
+      await run(['git', 'init', srcPath])
+      await run(['git', '-C', srcPath, 'config', 'user.email', 'test@test.com'])
+      await run(['git', '-C', srcPath, 'config', 'user.name', 'Test'])
+      await Deno.writeTextFile(join(srcPath, 'data.txt'), 'bare test')
+      await run(['git', '-C', srcPath, 'add', '-A'])
+      await run(['git', '-C', srcPath, 'commit', '-m', 'init'])
+      await run(['git', 'clone', '--bare', srcPath, barePath])
+      const tree = await readGitTree(barePath, 'HEAD')
+      const data = tree.get('data.txt')
+      assertExists(data, 'data.txt should be in tree')
+      assertEquals(await (data as BIDSFile).text(), 'bare test')
+    } finally {
+      await new Deno.Command('chmod', { args: ['-R', '+w', tmpDir] }).output()
+      await Deno.remove(tmpDir, { recursive: true })
+    }
   },
 )
