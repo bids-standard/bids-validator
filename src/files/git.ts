@@ -275,6 +275,8 @@ export async function readGitTree(
 
         // Directories
         if (entryType === 'tree') {
+          // The root entry '.' must always be walked
+          if (filepath === '.') return undefined
           // Null prevents walk from descending
           if (prune && prune.test('/' + filepath)) return null
           return undefined

@@ -320,9 +320,13 @@ Deno.test(
   async () => {
     const tmpDir = await Deno.makeTempDir()
     try {
+      // An empty directory with no .git is treated as a bare repo path,
+      // so isomorphic-git fails to find HEAD → "has no commits" rather
+      // than "not a git repository".
       await assertRejects(
         () => readGitTree(tmpDir, 'HEAD'),
         Error,
+        'has no commits',
       )
     } finally {
       await Deno.remove(tmpDir, { recursive: true })
