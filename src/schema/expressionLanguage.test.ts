@@ -1,18 +1,30 @@
-import { assert, assertEquals } from '@std/assert'
+import { assert, assertEquals, equal } from '@std/assert'
 import {
   contextFunction,
+  createMatcher,
   expressionFunctions,
   formatter,
+  glob,
+  matchRecursive,
+  parsePattern,
   prepareContext,
 } from './expressionLanguage.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import type { BIDSContext } from './context.ts'
 import { makeBIDSContext } from './context.test.ts'
+import type { BIDSFile } from '../types/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 
 Deno.test('test expression functions', async (t) => {
   const context = await makeBIDSContext(dataFile, undefined, rootFileTree)
 
+  await t.step('glob function', () => {
+    assert(glob.bind(context)('sub-*').length === 1)
+    assert(glob.bind(context)('wat-*').length === 0)
+    assert(glob.bind(context)('**/*task-*').length === 6)
+    assert(glob.bind(context)('*/**/*task-*').length === 4)
+  })
   await t.step('index function', () => {
     const index = expressionFunctions.index
     assert(index([1, 2, 3], 2) === 1)
@@ -231,6 +243,43 @@ Deno.test('test expression functions', async (t) => {
       ]),
     )
   })
+  await t.step('zip function', () => {
+    const zip = expressionFunctions.zip
+    const array_equal = (a: any[], b: any[]) =>
+      a.length === b.length &&
+      a.every((v: any, i: number) =>
+        Array.isArray(v) && Array.isArray(b[i])
+          ? v.length === b[i].length && v.every((x: any, j: number) => x === b[i][j])
+          : v === b[i]
+      )
+    // Equal-length arrays: element-wise pairing
+    // @ts-ignore: zip type inference is too strict for test assertions
+    assert(array_equal(zip([1, 2, 3], [4, 5, 6]), [[1, 4], [2, 5], [3, 6]]))
+    // @ts-ignore
+    assert(array_equal(zip(['a', 'b'], ['c', 'd']), [['a', 'c'], ['b', 'd']]))
+    // Unequal-length arrays: shorter array pads with undefined
+    // @ts-ignore
+    const unequal = zip([1, 2], [3, 4, 5])
+    assert(unequal.length === 3)
+    // Empty arrays
+    // @ts-ignore
+    assert(array_equal(zip([], []), []))
+  })
+  await t.step('dirEntities context', () => {
+    // The context is created from dataFile at sub-01/ses-01/anat/sub-01_ses-01_T1w.nii.gz
+    // dirEntities should extract entities from directory components
+    assert(context.dirEntities.sub === '01')
+    assert(context.dirEntities.ses === '01')
+  })
+  await t.step('glob multi-level patterns', () => {
+    // Multi-level glob pattern matching sub-*/ses-* directories
+    const matches = glob.bind(context)('sub-*/ses-*')
+    assert(matches.length > 0)
+    // Paths should not have leading slash
+    assert(
+      matches.every((m: string) => m.startsWith('sub-') && m.includes('ses-')),
+    )
+  })
   await t.step('allequal function', () => {
     const allequal = expressionFunctions.allequal
     assert(allequal([1, 2, 1], [1, 2, 1]) === true)
@@ -327,5 +376,172 @@ Deno.test('formatter test', async (t) => {
     ) {
       assertEquals(formatter(str)(context), expected)
     }
+  })
+})
+
+Deno.test('test parsePattern helper', async (t) => {
+  await t.step('parsePattern normalizes input', () => {
+    // Leading/trailing slashes removed
+    assert(equal(parsePattern('/sub-*'), ['sub-*']))
+    assert(equal(parsePattern('sub-*'), ['sub-*']))
+    assert(equal(parsePattern('sub-*/'), ['sub-*']))
+    assert(equal(parsePattern('/sub-*/'), ['sub-*']))
+  })
+
+  await t.step('parsePattern splits by /', () => {
+    assert(equal(parsePattern('sub-*/ses-*'), ['sub-*', 'ses-*']))
+  })
+
+  await t.step('parsePattern preserves ** as single component', () => {
+    assert(equal(parsePattern('**/*task-*'), ['**', '*task-*']))
+    assert(equal(parsePattern('**/sub-*/ses-*'), ['**', 'sub-*', 'ses-*']))
+    assert(equal(parsePattern('sub-*/**/*_T1w.nii.gz'), ['sub-*', '**', '*_T1w.nii.gz']))
+  })
+
+  await t.step('parsePattern handles edge cases', () => {
+    assert(equal(parsePattern(''), []))
+    assert(equal(parsePattern('/'), []))
+    assert(equal(parsePattern('///'), []))
+  })
+})
+
+Deno.test('test createMatcher helper', async (t) => {
+  await t.step('createMatcher ** matches everything', () => {
+    const matcher = createMatcher('**')
+    assert(matcher('anything') === true)
+    assert(matcher('sub-01') === true)
+    assert(matcher('') === true)
+  })
+
+  await t.step('createMatcher * matches any name', () => {
+    const matcher = createMatcher('*')
+    assert(matcher('sub-01') === true)
+    assert(matcher('anything') === true)
+    assert(matcher('a') === true)
+  })
+
+  await t.step('createMatcher ? matches single character', () => {
+    const matcher = createMatcher('?')
+    assert(matcher('a') === true)
+    assert(matcher('1') === true)
+    assert(matcher('ab') === false)
+    assert(matcher('') === false)
+  })
+
+  await t.step('createMatcher literal glob patterns', () => {
+    const subMatcher = createMatcher('sub-*')
+    assert(subMatcher('sub-01') === true)
+    assert(subMatcher('sub-02') === true)
+    assert(subMatcher('ses-01') === false)
+
+    const taskMatcher = createMatcher('*task-*')
+    assert(taskMatcher('task-rest') === true)
+    assert(taskMatcher('boldtask-rest') === true)
+    assert(taskMatcher('no-match') === false)
+  })
+
+  await t.step('createMatcher ? in patterns', () => {
+    const matcher = createMatcher('sub-?')
+    assert(matcher('sub-0') === true)
+    assert(matcher('sub-a') === true)
+    assert(matcher('sub-01') === false)
+  })
+})
+
+Deno.test('test matchRecursive helper', async (t) => {
+  const context = await makeBIDSContext(dataFile, undefined, rootFileTree)
+
+  await t.step('matchRecursive basic functionality', () => {
+    // Match at root level
+    const results = Array.from(
+      matchRecursive(context.dataset.tree, ['sub-*'], ''),
+    ) as string[]
+    assert(results.length == 1)
+    assert(results[0].startsWith('sub-'))
+  })
+
+  await t.step('matchRecursive with multiple components', () => {
+    // Match nested directories
+    const results = Array.from(
+      matchRecursive(context.dataset.tree, ['sub-*', 'ses-*'], ''),
+    ) as string[]
+    assert(results.every((r) => r.includes('sub-') && r.includes('ses-')))
+  })
+
+  await t.step('matchRecursive with ** at start', () => {
+    // ** at start should match sub-* at root level
+    const results = Array.from(
+      matchRecursive(context.dataset.tree, ['**', 'sub-*'], ''),
+    ) as string[]
+    assert(results.length > 1)
+    assert(results.some((r) => r.startsWith('sub-')))
+    assert(results.every((r) => r == 'sub-01' || r.includes('/sub-01_')))
+  })
+
+  await t.step('matchRecursive with no matches', () => {
+    const results = Array.from(
+      matchRecursive(context.dataset.tree, ['nonexistent-*'], ''),
+    ) as string[]
+    assert(results.length === 0)
+  })
+})
+
+Deno.test('test glob edge cases and root-level matching', async (t) => {
+  const context = await makeBIDSContext(dataFile, undefined, rootFileTree)
+
+  await t.step('glob with ** at start matches at root level', () => {
+    // **/sub-* should match sub-* directories at root
+    const results = glob.bind(context)('**/sub-*')
+    assert(results.length > 0)
+    assert(results.some((r) => r.startsWith('sub-')))
+  })
+
+  await t.step('glob with just ** returns all paths', () => {
+    const results = glob.bind(context)('**')
+    assert(results.length > 0)
+  })
+
+  await t.step('glob with just * returns root-level items', () => {
+    const results = glob.bind(context)('*')
+    assert(results.every((r) => !r.includes('/')))
+  })
+
+  await t.step('glob with ? matches single characters', () => {
+    let results = glob.bind(context)('?')
+    assert(results.length === 0)
+    results = glob.bind(context)('?ataset_description.json')
+    assert(results.length === 1)
+    results = glob.bind(context)('sub-??')
+    assert(results.length === 1)
+  })
+
+  await t.step('glob deep patterns work correctly', () => {
+    const results = glob.bind(context)('**/sub-*/ses-*/anat/*T1*')
+    assert(Array.isArray(results))
+    // Verify all results contain expected components
+    assert(
+      results.every(
+        (r) => r.includes('sub-') && r.includes('ses-') && r.includes('anat'),
+      ),
+    )
+  })
+
+  await t.step('** does not result in duplicate matches', async () => {
+    const tree = pathsToTree(['/a/b/c/d/e'])
+    const datafile = tree.get('a/b/c/d/e') as BIDSFile
+    const context = await makeBIDSContext(datafile, undefined, tree)
+
+    let results = glob.bind(context)('a/**/e')
+    assertEquals(results.length, 1)
+    results = glob.bind(context)('a/*/**/e')
+    assertEquals(results.length, 1)
+    results = glob.bind(context)('a/**/*/e')
+    assertEquals(results.length, 1)
+  })
+
+  await t.step('glob returns both files and directories', () => {
+    const results = glob.bind(context)('**/*')
+    assert(results.some((r) => r.endsWith('anat'))) // Directory
+    assert(results.some((r) => r.endsWith('T1w.nii.gz'))) // File
   })
 })
