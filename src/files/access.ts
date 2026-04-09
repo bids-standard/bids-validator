@@ -1,5 +1,5 @@
-import { type BIDSFile } from '../types/filetree.ts'
-import { type Issue } from '../types/issues.ts'
+import type { BIDSFile } from '../types/filetree.ts'
+import type { Issue } from '../types/issues.ts'
 import { filememoize } from '../utils/memoize.ts'
 import { logger } from '../utils/logger.ts'
 

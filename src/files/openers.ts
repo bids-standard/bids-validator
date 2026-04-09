@@ -5,7 +5,7 @@
  */
 import { retry } from '@std/async'
 import { join } from '@std/path'
-import { type FileOpener } from '../types/filetree.ts'
+import type { FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream } from './streams.ts'
 import { logger } from '../utils/logger.ts'
 

@@ -1,4 +1,4 @@
-import { assert, assertArrayIncludes, assertObjectMatch } from '@std/assert'
+import { type assert, type assertArrayIncludes, assertObjectMatch } from '@std/assert'
 import { parseRmetLine } from './repo.ts'
 
 Deno.test('parseRmetLine', async (t) => {

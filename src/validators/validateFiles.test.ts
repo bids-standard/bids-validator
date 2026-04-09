@@ -1,7 +1,7 @@
 import { assert, assertEquals } from '@std/assert'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
-import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
+import { type BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { makeBIDSContext } from '../schema/context.test.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import type { GenericSchema, Schema } from '../types/schema.ts'

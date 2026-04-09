@@ -12,7 +12,7 @@
  * object in the schema for reference.
  */
 // @ts-nocheck
-import { globToRegExp, SEPARATOR_PATTERN } from '@std/path'
+import { globToRegExp, type SEPARATOR_PATTERN } from '@std/path'
 import type { GenericSchema, Schema } from '../types/schema.ts'
 import type { BIDSContext } from '../schema/context.ts'
 import type { CheckFunction } from '../types/check.ts'

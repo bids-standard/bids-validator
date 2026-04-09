@@ -3,7 +3,7 @@
  */
 import { assertEquals, assertRejects } from '@std/assert'
 import { resolvesNext, stub } from '@std/testing/mock'
-import { type FileOpener } from '../types/filetree.ts'
+import type { FileOpener } from '../types/filetree.ts'
 import { streamFromString } from '../tests/utils.ts'
 import { createUTF8Stream } from './streams.ts'
 import { HTTPOpener } from './openers.ts'

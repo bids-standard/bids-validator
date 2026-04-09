@@ -76,5 +76,5 @@ Deno.test({
       .maxColWidth(40)
       .toString()
     console.log(table)
-  }
+  },
 })

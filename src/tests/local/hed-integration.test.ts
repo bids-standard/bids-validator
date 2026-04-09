@@ -5,7 +5,7 @@ import type { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { loadSchema } from '../../setup/loadSchema.ts'
 import { BIDSContextDataset } from '../../schema/context.ts'
 import { makeBIDSContext } from '../../schema/context.test.ts'
-import { BIDSFile, FileTree } from '../../types/filetree.ts'
+import { BIDSFile, type FileTree } from '../../types/filetree.ts'
 import type { GenericSchema } from '../../types/schema.ts'
 import { hedValidate } from '../../validators/hed.ts'
 
@@ -32,22 +32,23 @@ Deno.test({
   name: 'hed-validator fails with bad schema version',
   sanitizeOps: false,
   sanitizeResources: false,
-  fn :async (t) => {
-  const PATH = 'tests/data/bids-examples/eeg_ds003645s_hed_library'
-  const tree = await readFileTree(PATH)
-  const schema = await loadSchema()
-  const dsContext = new BIDSContextDataset({
-    dataset_description: {
-      'HEDVersion': ['bad_version'],
-    },
-  })
-  await t.step('detect hed returns false', async () => {
-    const eventFile = tree.get('sub-002/eeg/sub-002_task-FacePerception_run-3_events.tsv')
-    assert(eventFile !== undefined)
-    assert(eventFile instanceof BIDSFile)
-    const context = await makeBIDSContext(eventFile, dsContext)
-    await hedValidate(schema as unknown as GenericSchema, context)
-    assertEquals(context.dataset.issues.size, 1)
-    assertEquals(context.dataset.issues.get({ code: 'HED_ERROR' }).length, 1)
-  })
-}})
+  fn: async (t) => {
+    const PATH = 'tests/data/bids-examples/eeg_ds003645s_hed_library'
+    const tree = await readFileTree(PATH)
+    const schema = await loadSchema()
+    const dsContext = new BIDSContextDataset({
+      dataset_description: {
+        'HEDVersion': ['bad_version'],
+      },
+    })
+    await t.step('detect hed returns false', async () => {
+      const eventFile = tree.get('sub-002/eeg/sub-002_task-FacePerception_run-3_events.tsv')
+      assert(eventFile !== undefined)
+      assert(eventFile instanceof BIDSFile)
+      const context = await makeBIDSContext(eventFile, dsContext)
+      await hedValidate(schema as unknown as GenericSchema, context)
+      assertEquals(context.dataset.issues.size, 1)
+      assertEquals(context.dataset.issues.get({ code: 'HED_ERROR' }).length, 1)
+    })
+  },
+})

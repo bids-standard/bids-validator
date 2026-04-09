@@ -1,6 +1,6 @@
 import { isCompressed, isNIFTI1, isNIFTI2, NIFTI1, NIFTI2 } from '@mango/nifti'
 import type { BIDSFile } from '../types/filetree.ts'
-import { logger } from '../utils/logger.ts'
+import type { logger } from '../utils/logger.ts'
 import type { NiftiHeader } from '@bids/schema/context'
 import { readBytes } from './access.ts'
 

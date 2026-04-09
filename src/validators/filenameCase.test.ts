@@ -3,10 +3,10 @@ import { filenameCase } from './filenameCase.ts'
 import { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
-import { BIDSFileDeno } from '../files/deno.ts'
-import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
+import type { BIDSFileDeno } from '../files/deno.ts'
+import { type BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { walkFileTree } from '../schema/walk.ts'
-import { GenericSchema } from '../types/schema.ts'
+import type { GenericSchema } from '../types/schema.ts'
 
 const schema = await loadSchema()
 const ignore = new FileIgnoreRules([])

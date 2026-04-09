@@ -1,7 +1,7 @@
 import { assert, assertObjectMatch } from '@std/assert'
 import { readEntities } from './entities.ts'
 import { nullReadBytes } from '../tests/nullReadBytes.ts'
-import { generateBIDSFilename } from '../tests/generate-filenames.ts'
+import type { generateBIDSFilename } from '../tests/generate-filenames.ts'
 
 Deno.test('test readEntities', async (t) => {
   await t.step('test readEntities with a BIDSFile-like object', async () => {

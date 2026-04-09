@@ -1,6 +1,6 @@
 import { assert, assertObjectMatch } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
-import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
+import type { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 

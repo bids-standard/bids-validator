@@ -23,7 +23,7 @@ async function setHedSchemas(
   if (dataset.hedSchemas !== undefined) {
     return [] as HedIssue[]
   }
-  
+
   const datasetDescriptionData = new hedValidator.BidsJsonFile(
     '/dataset_description.json',
     null,
@@ -54,7 +54,7 @@ export async function hedValidate(
   context: BIDSContext,
 ): Promise<void> {
   if (context.dataset.hedSchemas === null) {
-    return;
+    return
   }
   // This logic was previously lower down, now we check it first to save 8MB
   let isHedFile = false

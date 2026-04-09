@@ -8,7 +8,7 @@ import type { BIDSFile } from '../types/filetree.ts'
 import { filememoize } from '../utils/memoize.ts'
 import { createUTF8Stream } from './streams.ts'
 import { openStream } from './access.ts'
-import { BIDSFileDeno } from './deno.ts'
+import type { BIDSFileDeno } from './deno.ts'
 
 async function loadColumns(
   reader: ReadableStreamDefaultReader<string>,
