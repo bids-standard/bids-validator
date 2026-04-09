@@ -1,7 +1,7 @@
 /**
  * Utilities for reading git-annex metadata
  */
-import { dirname, join, parse, SEPARATOR_PATTERN } from '@std/path'
+import { basename, dirname, join, SEPARATOR_PATTERN } from '@std/path'
 import { default as git } from 'isomorphic-git'
 import { S3Client } from '@bradenmacdonald/s3-lite-client'
 import type { S3ClientOptions } from '@bradenmacdonald/s3-lite-client'
@@ -178,20 +178,20 @@ const readRemotes = memoize(_readRemotes, (options) => options?.gitdir)
  * Returns null if the target does not match the expected annex key format.
  */
 export function parseAnnexKey(target: string): { key: string; size: number } | null {
-  const { base } = parse(target)
-  const match = base.match(annexKeyRegex)
+  const key = basename(target)
+  const match = key.match(annexKeyRegex)
   if (!match) {
     return null
   }
   const size = +match.groups!.size
-  return { key: base, size }
+  return { key, size }
 }
 
 export async function parseAnnexedFile(
   path: string,
 ): Promise<{ key: string; size: number; gitdir: string }> {
   const target = await Deno.readLink(path)
-  const { dir } = parse(target)
+  const dir = dirname(target)
 
   const dirs = dir.split(SEPARATOR_PATTERN)
   const gitdir = join(dirname(path), ...dirs.slice(0, dirs.indexOf('.git') + 1))
