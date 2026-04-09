@@ -9,7 +9,9 @@ function sidecarHasHed(sidecarData: BIDSContext['sidecar']): boolean {
   if (!sidecarData) {
     return false
   }
-  return Object.keys(sidecarData).some((x) => sidecarValueHasHed(sidecarData[x]))
+  return Object.keys(sidecarData).some((x) =>
+    sidecarValueHasHed(sidecarData[x] as { HED?: string })
+  )
 }
 
 function sidecarValueHasHed(sidecarValue: { HED?: string }): boolean {

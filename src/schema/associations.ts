@@ -1,6 +1,7 @@
 import type { Aslcontext, Associations, Bval, Bvec, Channels, Events } from '@bids/schema/context'
 import type { Schema as MetaSchema } from '@bids/schema/metaschema'
 
+import type { Issue } from '../types/issues.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
 import { loadJSON } from '../files/json.ts'
@@ -16,10 +17,11 @@ import { readText } from '../files/access.ts'
 interface WithSidecar {
   sidecar: Record<string, unknown>
 }
-type LoadFunction = (file: BIDSFile, options: any) => Promise<any>
-type MultiLoadFunction = (files: BIDSFile[], options: any) => Promise<any>
+type LoadOptions = { maxRows?: number }
+type LoadFunction = (file: BIDSFile, options: LoadOptions) => Promise<object>
+type MultiLoadFunction = (files: BIDSFile[], options: LoadOptions) => Promise<object>
 
-function defaultAssociation(file: BIDSFile, _options: any): Promise<{ path: string }> {
+function defaultAssociation(file: BIDSFile, _options: LoadOptions): Promise<{ path: string }> {
   return Promise.resolve({ path: file.path })
 }
 
@@ -38,7 +40,7 @@ async function constructSidecar(file: BIDSFile): Promise<Record<string, unknown>
  * Many associations only consist of a path; this object is for more complex associations.
  */
 const associationLookup: Record<string, LoadFunction> = {
-  events: async (file: BIDSFile, options: { maxRows: number }): Promise<Events & WithSidecar> => {
+  events: async (file: BIDSFile, options: LoadOptions): Promise<Events & WithSidecar> => {
     const columns = await loadTSV(file, options.maxRows)
       .catch((_e) => {
         return new Map()
@@ -51,7 +53,7 @@ const associationLookup: Record<string, LoadFunction> = {
   },
   aslcontext: async (
     file: BIDSFile,
-    options: { maxRows: number },
+    options: LoadOptions,
   ): Promise<Aslcontext> => {
     const columns = await loadTSV(file, options.maxRows)
       .catch((_e) => {
@@ -63,7 +65,7 @@ const associationLookup: Record<string, LoadFunction> = {
       volume_type: columns.get('volume_type') || [],
     }
   },
-  bval: async (file: BIDSFile, _options: any): Promise<Bval> => {
+  bval: async (file: BIDSFile, _options: LoadOptions): Promise<Bval> => {
     const contents = await readText(file)
     const rows = parseBvalBvec(contents)
     return {
@@ -74,7 +76,7 @@ const associationLookup: Record<string, LoadFunction> = {
       values: rows[0],
     }
   },
-  bvec: async (file: BIDSFile, _options: any): Promise<Bvec> => {
+  bvec: async (file: BIDSFile, _options: LoadOptions): Promise<Bvec> => {
     const contents = await readText(file)
     const rows = parseBvalBvec(contents)
 
@@ -88,7 +90,7 @@ const associationLookup: Record<string, LoadFunction> = {
       n_rows: rows ? rows.length : 0,
     }
   },
-  channels: async (file: BIDSFile, options: { maxRows: number }): Promise<Channels> => {
+  channels: async (file: BIDSFile, options: LoadOptions): Promise<Channels> => {
     const columns = await loadTSV(file, options.maxRows)
       .catch((_e) => {
         return new Map()
@@ -100,7 +102,10 @@ const associationLookup: Record<string, LoadFunction> = {
       sampling_frequency: columns.get('sampling_frequency'),
     }
   },
-  physio: async (file: BIDSFile, _options: any): Promise<{ path: string } & WithSidecar> => {
+  physio: async (
+    file: BIDSFile,
+    _options: LoadOptions,
+  ): Promise<{ path: string } & WithSidecar> => {
     return {
       path: file.path,
       sidecar: await constructSidecar(file),
@@ -110,7 +115,7 @@ const associationLookup: Record<string, LoadFunction> = {
 const multiAssociationLookup: Record<string, MultiLoadFunction> = {
   coordsystems: async (
     files: BIDSFile[],
-    _options: any,
+    _options: LoadOptions,
   ): Promise<{ paths: string[]; spaces: string[]; ParentCoordinateSystems: string[] }> => {
     const jsons = await Promise.allSettled(
       files.map((f) => loadJSON(f).catch(() => ({} as Record<string, unknown>))),
@@ -156,9 +161,12 @@ export async function buildAssociations(
         rule.target.suffix,
         rule.target?.entities ?? [],
       ).next().value
-    } catch (error: any) {
-      if (error?.code === 'MULTIPLE_INHERITABLE_FILES') {
-        context.dataset.issues.add(error)
+    } catch (error: unknown) {
+      if (
+        error && typeof error === 'object' && 'code' in error &&
+        error.code === 'MULTIPLE_INHERITABLE_FILES'
+      ) {
+        context.dataset.issues.add(error as Issue)
         continue
       } else {
         throw error
@@ -172,20 +180,25 @@ export async function buildAssociations(
         if (!Array.isArray(file)) {
           file = [file]
         }
-        associations[key as keyof Associations] = await load(file, options).catch((_e: any) => {})
+        Object.assign(associations, {
+          [key]: await load(file, options).catch((_e: unknown) => undefined),
+        })
       } else {
         const load = associationLookup[key] ?? defaultAssociation
         if (Array.isArray(file)) {
           file = file[0]
         }
         const location = file.path
-        associations[key as keyof Associations] = await load(file, options).catch(
-          (error: any) => {
-            if (error.code) {
-              context.dataset.issues.add({ ...error, location })
-            }
-          },
-        )
+        Object.assign(associations, {
+          [key]: await load(file, options).catch(
+            (error: unknown) => {
+              if (error && typeof error === 'object' && 'code' in error) {
+                context.dataset.issues.add({ ...(error as Issue), location })
+              }
+              return undefined
+            },
+          ),
+        })
       }
     }
   }

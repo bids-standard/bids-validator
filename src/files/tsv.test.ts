@@ -53,8 +53,8 @@ Deno.test('TSV loading', async (t) => {
 
     try {
       await loadTSV(file)
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'TSV_EMPTY_LINE', line: 3 })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EMPTY_LINE', line: 3 })
     }
   })
 
@@ -64,8 +64,8 @@ Deno.test('TSV loading', async (t) => {
 
     try {
       await loadTSV(file)
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'TSV_EQUAL_ROWS', line: 3 })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EQUAL_ROWS', line: 3 })
     }
   })
 
@@ -165,8 +165,11 @@ Deno.test('TSV loading', async (t) => {
     try {
       await loadTSV(file)
       assert(false, 'Expected error')
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'TSV_COLUMN_HEADER_DUPLICATE', issueMessage: 'a, a' })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, {
+        code: 'TSV_COLUMN_HEADER_DUPLICATE',
+        issueMessage: 'a, a',
+      })
     }
   })
 
@@ -176,8 +179,8 @@ Deno.test('TSV loading', async (t) => {
     try {
       await loadTSV(file)
       assert(false, 'Expected error')
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'INVALID_FILE_ENCODING' })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'INVALID_FILE_ENCODING' })
     }
   })
 
@@ -219,8 +222,8 @@ Deno.test('TSVGZ loading', async (t) => {
 
     try {
       await loadTSVGZ(file, ['a', 'b'])
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'TSV_EQUAL_ROWS', line: 1 })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EQUAL_ROWS', line: 1 })
     }
   })
 
@@ -238,8 +241,8 @@ Deno.test('TSVGZ loading', async (t) => {
 
     try {
       await loadTSVGZ(file, ['a', 'b', 'c'])
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'TSV_EMPTY_LINE', line: 2 })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EMPTY_LINE', line: 2 })
     }
   })
 
@@ -249,8 +252,8 @@ Deno.test('TSVGZ loading', async (t) => {
 
     try {
       await loadTSVGZ(file, ['a', 'b', 'c'])
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'INVALID_GZIP' })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'INVALID_GZIP' })
     }
   })
 

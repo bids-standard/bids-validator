@@ -48,18 +48,18 @@ Deno.test('Test loading nifti header', async (t) => {
     const path = 'sub-01/func/sub-01_task-rhymejudgment_events.tsv'
     const root = './tests/data/valid_headers'
     const file = new BIDSFileDeno(root, path, ignore)
-    let error: any = undefined
+    let error: unknown = undefined
     const _header = await loadHeader(file).catch((e) => {
       error = e
     })
-    assertObjectMatch(error, { code: 'NIFTI_HEADER_UNREADABLE' })
+    assertObjectMatch(error as Record<PropertyKey, unknown>, { code: 'NIFTI_HEADER_UNREADABLE' })
   })
 
   await t.step('Tolerate big headers', async () => {
     const path = 'big_header.nii.gz'
     const root = './tests/data/'
     const file = new BIDSFileDeno(root, path, ignore)
-    const _error: any = undefined
+    const _error: unknown = undefined
     const header = await loadHeader(file)
     assert(header !== undefined)
     assertObjectMatch(header, {

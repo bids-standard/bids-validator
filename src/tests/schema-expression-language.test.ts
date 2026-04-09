@@ -26,7 +26,7 @@ Deno.test('validate schema expression tests', async (t) => {
       Object.assign(context, expressionFunctions)
       // @ts-expect-error exists is added via Object.assign and not declared on BIDSContext
       context.exists.bind(context)
-      const actual_result = evalCheck(test.expression, context)
+      const actual_result = evalCheck(test.expression, context) as string | null
       if (equal(actual_result, test.result)) {
         results.push([
           colors.cyan(test.expression),

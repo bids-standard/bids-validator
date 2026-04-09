@@ -63,7 +63,7 @@ export class Summary {
   totalFiles: number
   size: number
   dataProcessed: boolean
-  pet: Record<string, any>
+  pet: Record<string, unknown>
   modalitiesCount: Record<string, number>
   secondaryModalitiesCount: Record<string, number>
   dataTypes: Set<string>

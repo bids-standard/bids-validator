@@ -68,10 +68,13 @@ const createS3Client = memoize(_createS3Client)
 
 export async function readAnnexPath(
   filepath: string,
-  options: any,
+  // deno-lint-ignore no-explicit-any
+  options: Record<string, any>,
 ): Promise<string> {
-  const oid = await git.resolveRef({ ref: 'git-annex', ...options })
-  const { blob } = await git.readBlob({ oid, filepath, ...options })
+  // deno-lint-ignore no-explicit-any
+  const oid = await git.resolveRef({ ref: 'git-annex', ...options } as any)
+  // deno-lint-ignore no-explicit-any
+  const { blob } = await git.readBlob({ oid, filepath, ...options } as any)
   return textDecoder.decode(blob)
 }
 
@@ -125,7 +128,11 @@ function b64toUtf8(str: string): string {
  * The general form is <uuid>:<key> [+-]<value> and is an append-only log
  * We may at some point care about doing this correctly.
  */
-async function readRmet(key: string, options: any): Promise<Record<string, Rmet>> {
+async function readRmet(
+  key: string,
+  // deno-lint-ignore no-explicit-any
+  options: Record<string, any>,
+): Promise<Record<string, Rmet>> {
   const hashDirs = await hashDirLower(key)
   const rmet = await readAnnexPath(join(...hashDirs, `${key}.log.rmet`), options)
   const ret: Record<string, Rmet> = {}
@@ -149,7 +156,10 @@ async function readRmet(key: string, options: any): Promise<Record<string, Rmet>
  *    publicurl
  *    timestamp
  */
-async function _readRemotes(options: any): Promise<Record<string, Record<string, string>>> {
+async function _readRemotes(
+  // deno-lint-ignore no-explicit-any
+  options: Record<string, any>,
+): Promise<Record<string, Record<string, string>>> {
   const remotesText = await readAnnexPath('remote.log', options)
   const byUUID: Record<string, Record<string, string>> = {}
   for (const line of remotesText.split('\n')) {
@@ -181,10 +191,11 @@ export async function parseAnnexedFile(
 export async function resolveAnnexedFile(
   key: string,
   remote?: string,
-  options?: any,
+  // deno-lint-ignore no-explicit-any
+  options?: Record<string, any>,
 ): Promise<{ url: string }> {
-  const rmet = await readRmet(key, options)
-  const remotes = await readRemotes(options)
+  const rmet = await readRmet(key, options ?? {})
+  const remotes = await readRemotes(options ?? {})
   let uuid: string
   if (remote) {
     let matching: string | undefined

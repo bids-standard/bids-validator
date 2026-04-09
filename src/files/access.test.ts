@@ -3,7 +3,9 @@ import { BIDSFileDeno } from './deno.ts'
 
 export function testAsyncFileAccess(
   name: string,
+  // deno-lint-ignore no-explicit-any
   fn: (file: BIDSFileDeno, ...args: any[]) => Promise<any>,
+  // deno-lint-ignore no-explicit-any
   ...args: any[]
 ) {
   Deno.test({
@@ -15,12 +17,14 @@ export function testAsyncFileAccess(
         try {
           await fn(file, ...args)
           assert(false, 'Expected error')
-        } catch (e: any) {
-          assertObjectMatch(e, {
+        } catch (e: unknown) {
+          assertObjectMatch(e as Record<PropertyKey, unknown>, {
             code: 'FILE_READ',
             location: '/broken-symlink',
           })
-          assertArrayIncludes(['NotFound', 'FilesystemLoop'], [e.subCode])
+          assertArrayIncludes(['NotFound', 'FilesystemLoop'], [
+            (e as Record<string, unknown>).subCode,
+          ])
         }
       })
       await t.step('Insufficient permissions', async () => {
@@ -30,8 +34,11 @@ export function testAsyncFileAccess(
         try {
           await fn(file, ...args)
           assert(false, 'Expected error')
-        } catch (e: any) {
-          assertObjectMatch(e, { code: 'FILE_READ', subCode: 'PermissionDenied' })
+        } catch (e: unknown) {
+          assertObjectMatch(e as Record<PropertyKey, unknown>, {
+            code: 'FILE_READ',
+            subCode: 'PermissionDenied',
+          })
         }
       })
     },

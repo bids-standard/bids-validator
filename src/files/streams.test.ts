@@ -27,9 +27,9 @@ Deno.test('createUTF8Stream', async (t) => {
       reader = rawStream.pipeThrough(createUTF8Stream()).getReader()
       const { value } = await reader.read()
       assert(false, 'Expected UnicodeDecodeError, got ' + value)
-    } catch (e: any) {
+    } catch (e: unknown) {
       assertEquals(e instanceof UnicodeDecodeError, true)
-      assertEquals(e?.message, 'This file appears to be UTF-16')
+      assertEquals(e instanceof Error ? e.message : undefined, 'This file appears to be UTF-16')
     } finally {
       if (reader) await reader.cancel
     }

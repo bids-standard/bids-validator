@@ -57,6 +57,7 @@ export function consoleFormat(
 /**
  * Render marked tokens to ANSI strings
  */
+// deno-lint-ignore no-explicit-any
 function renderTokens(tokenList: any[]): string {
   if (!tokenList) return ''
 

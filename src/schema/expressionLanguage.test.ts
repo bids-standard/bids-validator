@@ -23,7 +23,7 @@ Deno.test('test expression functions', async (t) => {
     const intersects = expressionFunctions.intersects
     const equal = expressionFunctions.allequal
 
-    const truthy = (a: any): boolean => !!a
+    const truthy = (a: unknown): boolean => !!a
 
     assert(truthy(intersects([1, 2, 3], [2, 3, 4])))
     assert(intersects([1, 2, 3], [4, 5, 6]) === false)
@@ -177,7 +177,7 @@ Deno.test('test expression functions', async (t) => {
   })
   await t.step('sorted(..., "numeric") function', () => {
     const sorted = expressionFunctions.sorted
-    const array_equal = (a: any[], b: any[]) =>
+    const array_equal = (a: unknown[], b: unknown[]) =>
       a.length === b.length && a.every((v, i) => v === b[i])
     assert(array_equal(sorted([3, 2, 1], 'numeric'), [1, 2, 3]))
     assert(array_equal(sorted([1, 2, 3], 'numeric'), [1, 2, 3]))
@@ -192,7 +192,7 @@ Deno.test('test expression functions', async (t) => {
   })
   await t.step('sorted(..., "lexical") function', () => {
     const sorted = expressionFunctions.sorted
-    const array_equal = (a: any[], b: any[]) =>
+    const array_equal = (a: unknown[], b: unknown[]) =>
       a.length === b.length && a.every((v, i) => v === b[i])
     assert(array_equal(sorted([3, 2, 1], 'lexical'), [1, 2, 3]))
     assert(array_equal(sorted([1, 2, 3], 'lexical'), [1, 2, 3]))
@@ -218,7 +218,7 @@ Deno.test('test expression functions', async (t) => {
   })
   await t.step('sorted(..., "auto") function', () => {
     const sorted = expressionFunctions.sorted
-    const array_equal = (a: any[], b: any[]) =>
+    const array_equal = (a: unknown[], b: unknown[]) =>
       a.length === b.length && a.every((v, i) => v === b[i])
     assert(array_equal(sorted([125, 25, 5, 625], 'auto'), [5, 25, 125, 625]))
     assert(

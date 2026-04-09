@@ -47,6 +47,7 @@ const modalityType = new EnumType<string>(
 const formatType = new EnumType<string>(['text', 'json', 'json_pp'])
 
 /** Extendable Cliffy Command with built in BIDS validator options */
+// deno-lint-ignore no-explicit-any
 export const validateCommand: Command<void, void, any, string[], void> = new Command()
   .name('bids-validator')
   .type('debugLevel', new EnumType(LogLevelNames))

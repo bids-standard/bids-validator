@@ -141,10 +141,10 @@ export const expressionFunctions = {
 /**
  * Generate a function that evaluates an expression using the BIDS context.
  */
-function _contextFunction(expr: string): (context: BIDSContext) => any {
+function _contextFunction(expr: string): (context: BIDSContext) => unknown {
   return new Function('context', `with (context) { return ${expr.replace(/\\/g, '\\\\')} }`) as (
     context: BIDSContext,
-  ) => any
+  ) => unknown
 }
 
 /**
@@ -173,7 +173,8 @@ export const formatter = memoize(_formatter)
 function safeContext(context: BIDSContext): BIDSContext {
   return new Proxy(context, {
     has: () => true,
-    get: (target: any, prop: any) => prop === Symbol.unscopables ? undefined : target[prop],
+    get: (target: BIDSContext, prop: string | symbol) =>
+      prop === Symbol.unscopables ? undefined : target[prop as keyof BIDSContext],
   })
 }
 

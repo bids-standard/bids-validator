@@ -65,10 +65,10 @@ export async function loadTSVGZ(
 
   try {
     return await loadColumns(reader, headers, maxRows)
-  } catch (e: any) {
+  } catch (e: unknown) {
     // Cancel the reader if we interrupted the read
     // Cancelling for I/O errors will just re-trigger the error
-    if (e.code) {
+    if (e && typeof e === 'object' && 'code' in e && e.code) {
       await reader.cancel()
       throw e
     }

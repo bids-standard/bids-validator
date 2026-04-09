@@ -58,6 +58,7 @@ export async function parseTIFF(
   }
 
   const imageDescription = getImageDescription(dataview, littleEndian, version === 42 ? 12 : 20)
+  // deno-lint-ignore no-explicit-any
   const omexml = await XML.parse(imageDescription || '') as { [key: string]: any }
   const Pixels = omexml?.OME?.Image?.Pixels
   if (!Pixels) return { tiff: { version } }
