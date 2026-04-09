@@ -12,5 +12,4 @@ export const filenameCase: ContextCheckFunction = (_schema, context) => {
       affects: caseCollision.map((file) => file.path),
     })
   }
-  return Promise.resolve()
 }

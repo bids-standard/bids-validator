@@ -8,5 +8,4 @@ export const emptyFile: ContextCheckFunction = (_schema, context) => {
       location: context.path,
     })
   }
-  return Promise.resolve()
 }

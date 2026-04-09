@@ -23,9 +23,8 @@ export function applyRules(
   context: BIDSContext,
   rootSchema?: GenericSchema,
   schemaPath?: string,
-): Promise<void> {
+): void {
   _applyRules(schema, prepareContext(context), rootSchema, schemaPath)
-  return Promise.resolve()
 }
 
 /** Evaluate a single expression in a BIDSContext.
