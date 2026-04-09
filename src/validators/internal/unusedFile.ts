@@ -23,7 +23,7 @@ function* walkFileTree(fileTree: FileTree, dsContext: BIDSContextDataset): Gener
 export function unusedStimulus(
   _schema: GenericSchema,
   dsContext: BIDSContextDataset,
-): Promise<void> {
+): void {
   const stimDir = dsContext.tree.get('stimuli') as FileTree
   const unusedStimuli = [...walkFileTree(stimDir, dsContext)].filter((stimulus) =>
     !stimulus.viewed
@@ -31,7 +31,6 @@ export function unusedStimulus(
   if (unusedStimuli.length) {
     dsContext.issues.add({ code: 'UNUSED_STIMULUS', affects: unusedStimuli.map((s) => s.path) })
   }
-  return Promise.resolve()
 }
 
 const standalone_json = ['dataset_description.json', 'genetic_info.json']
@@ -39,7 +38,7 @@ const standalone_json = ['dataset_description.json', 'genetic_info.json']
 export function sidecarWithoutDatafile(
   _schema: GenericSchema,
   dsContext: BIDSContextDataset,
-): Promise<void> {
+): void {
   const unusedSidecars = [...walkFileTree(dsContext.tree, dsContext)].filter(
     (file) => (!file.viewed && file.name.endsWith('.json') &&
       !standalone_json.includes(file.name)),
@@ -47,5 +46,4 @@ export function sidecarWithoutDatafile(
   unusedSidecars.forEach((sidecar) => {
     dsContext.issues.add({ code: 'SIDECAR_WITHOUT_DATAFILE', location: sidecar.path })
   })
-  return Promise.resolve()
 }
