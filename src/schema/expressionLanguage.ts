@@ -154,7 +154,7 @@ export const contextFunction = memoize(_contextFunction)
 
 function _formatter(format: string): (context: BIDSContext) => string {
   if (!format.includes('{')) {
-    return (context: BIDSContext) => format
+    return (_context: BIDSContext) => format
   }
   const template = format.replace(/{/g, '${').replace(/\\/g, '\\\\').replace(/`/g, '\\`')
   return new Function('context', `with (context) { return \`${template}\` }`) as (

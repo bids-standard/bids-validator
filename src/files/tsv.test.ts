@@ -8,7 +8,6 @@ import {
 import { pathToFile } from './filetree.test.ts'
 import { BIDSFileDeno } from './deno.ts'
 import { loadTSV, loadTSVGZ } from './tsv.ts'
-import type { ColumnsMap } from '../types/columns.ts'
 import { testAsyncFileAccess } from './access.test.ts'
 import { CompressedStringOpener, StringOpener } from './openers.test.ts'
 

@@ -5,7 +5,7 @@ import type { Entity, Format, GenericSchema, Schema } from '../types/schema.ts'
 import { SEPARATOR_PATTERN } from '@std/path'
 import { hasProp } from '../utils/objectPathHandler.ts'
 
-const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
+const _sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 const CHECKS: ContextCheckFunction[] = [
   missingLabel,
@@ -43,7 +43,7 @@ export function missingLabel(
     (key) => context.entities[key] === 'NOENTITY',
   )
 
-  const fileEntities = Object.keys(context.entities).filter(
+  const _fileEntities = Object.keys(context.entities).filter(
     (key) => !fileNoLabelEntities.includes(key),
   )
 
@@ -57,7 +57,7 @@ export function missingLabel(
   return Promise.resolve()
 }
 
-export function atRoot(schema: GenericSchema, context: BIDSContext) {
+export function atRoot(_schema: GenericSchema, _context: BIDSContext) {
   /*
   if (fileIsAtRoot && !sidecarExtensions.includes(context.extension)) {
     // create issue for data file in root of dataset
@@ -112,7 +112,7 @@ export function entityLabelCheck(
     throw new Error('schema missing keys')
   }
   const formats = schema.objects.formats as unknown as Record<string, Format>
-  const entities = schema.objects.entities as unknown as Record<string, Entity>
+  const _entities = schema.objects.entities as unknown as Record<string, Entity>
   Object.keys(context.entities).map((fileEntity) => {
     const entity = getEntityByLiteral(fileEntity, schema)
     if (
@@ -277,8 +277,8 @@ function extensionMismatch(
 }
 
 function invalidLocation(
-  path: string,
-  schema: GenericSchema,
+  _path: string,
+  _schema: GenericSchema,
   context: BIDSContext,
 ) {
   if (context.directory) {

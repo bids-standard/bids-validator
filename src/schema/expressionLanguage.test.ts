@@ -8,7 +8,6 @@ import {
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import type { BIDSContext } from './context.ts'
 import { makeBIDSContext } from './context.test.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
 
 Deno.test('test expression functions', async (t) => {
   const context = await makeBIDSContext(dataFile, undefined, rootFileTree)

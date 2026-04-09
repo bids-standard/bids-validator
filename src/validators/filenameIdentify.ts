@@ -12,8 +12,8 @@
  * object in the schema for reference.
  */
 // @ts-nocheck functions use dynamic schema indexing with untyped parameters throughout
-import { globToRegExp, type SEPARATOR_PATTERN } from '@std/path'
-import type { GenericSchema, Schema } from '../types/schema.ts'
+import { globToRegExp } from '@std/path'
+import type { GenericSchema } from '../types/schema.ts'
 import type { BIDSContext } from '../schema/context.ts'
 import type { CheckFunction } from '../types/check.ts'
 import { lookupEntityLiteral } from './filenameValidate.ts'

@@ -1,11 +1,8 @@
-import type { FileTree } from '../types/filetree.ts'
 import type { GenericSchema } from '../types/schema.ts'
 import { assertEquals } from '@std/assert'
 import { makeBIDSContext } from '../schema/context.test.ts'
-import { type atRoot, type entityLabelCheck, missingLabel } from './filenameValidate.ts'
-import type { BIDSFileDeno } from '../files/deno.ts'
+import { missingLabel } from './filenameValidate.ts'
 import { pathToFile } from '../files/filetree.test.ts'
-import type { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
 const schema = (await loadSchema()) as unknown as GenericSchema

@@ -1,11 +1,9 @@
-import type { formatAssertIssue, validatePath } from './common.ts'
 import { assert, assertEquals } from '@std/assert'
 import { readFileTree } from '../../files/deno.ts'
-import type { DatasetIssues } from '../../issues/datasetIssues.ts'
 import { loadSchema } from '../../setup/loadSchema.ts'
 import { BIDSContextDataset } from '../../schema/context.ts'
 import { makeBIDSContext } from '../../schema/context.test.ts'
-import { BIDSFile, type FileTree } from '../../types/filetree.ts'
+import { BIDSFile } from '../../types/filetree.ts'
 import type { GenericSchema } from '../../types/schema.ts'
 import { hedValidate } from '../../validators/hed.ts'
 

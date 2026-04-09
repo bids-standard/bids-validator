@@ -1,11 +1,10 @@
 import { assert, assertEquals } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
-import { BIDSFile, type FileOpener, type FileTree } from '../types/filetree.ts'
+import { BIDSFile, type FileTree } from '../types/filetree.ts'
 import { filesToTree, subtree } from './filetree.ts'
 import { StringOpener } from './openers.test.ts'
 
 export function pathToFile(path: string, ignored: boolean = false): BIDSFile {
-  const name = path.split('/').pop() as string
   return new BIDSFile(path, new StringOpener(''), ignored)
 }
 

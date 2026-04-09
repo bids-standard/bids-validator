@@ -2,7 +2,6 @@ import { collectSubjectMetadata } from './collectSubjectMetadata.ts'
 import type { SubjectMetadata, SummaryOutput } from '../types/validation-result.ts'
 import type { BIDSContext } from '../schema/context.ts'
 import type { ValidationResult } from '../types/validation-result.ts'
-import type { Issue } from '../types/issues.ts'
 
 export const modalityPrettyLookup: Record<string, string> = {
   mri: 'MRI',

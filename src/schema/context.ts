@@ -352,7 +352,7 @@ export class BIDSContext implements Context {
     const participants_tsv = this.dataset.tree.get('participants.tsv') as BIDSFile
     if (participants_tsv) {
       const participantsData = await loadTSV(participants_tsv)
-        .catch((error) => {
+        .catch((_error) => {
           return new Map()
         }) as Record<string, string[]>
       this.dataset.subjects.participant_id = participantsData['participant_id']

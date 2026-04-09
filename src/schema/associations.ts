@@ -40,7 +40,7 @@ async function constructSidecar(file: BIDSFile): Promise<Record<string, unknown>
 const associationLookup: Record<string, LoadFunction> = {
   events: async (file: BIDSFile, options: { maxRows: number }): Promise<Events & WithSidecar> => {
     const columns = await loadTSV(file, options.maxRows)
-      .catch((e) => {
+      .catch((_e) => {
         return new Map()
       })
     return {
@@ -54,7 +54,7 @@ const associationLookup: Record<string, LoadFunction> = {
     options: { maxRows: number },
   ): Promise<Aslcontext> => {
     const columns = await loadTSV(file, options.maxRows)
-      .catch((e) => {
+      .catch((_e) => {
         return new Map()
       })
     return {
@@ -63,7 +63,7 @@ const associationLookup: Record<string, LoadFunction> = {
       volume_type: columns.get('volume_type') || [],
     }
   },
-  bval: async (file: BIDSFile, options: any): Promise<Bval> => {
+  bval: async (file: BIDSFile, _options: any): Promise<Bval> => {
     const contents = await readText(file)
     const rows = parseBvalBvec(contents)
     return {
@@ -74,7 +74,7 @@ const associationLookup: Record<string, LoadFunction> = {
       values: rows[0],
     }
   },
-  bvec: async (file: BIDSFile, options: any): Promise<Bvec> => {
+  bvec: async (file: BIDSFile, _options: any): Promise<Bvec> => {
     const contents = await readText(file)
     const rows = parseBvalBvec(contents)
 
@@ -90,7 +90,7 @@ const associationLookup: Record<string, LoadFunction> = {
   },
   channels: async (file: BIDSFile, options: { maxRows: number }): Promise<Channels> => {
     const columns = await loadTSV(file, options.maxRows)
-      .catch((e) => {
+      .catch((_e) => {
         return new Map()
       })
     return {
@@ -100,7 +100,7 @@ const associationLookup: Record<string, LoadFunction> = {
       sampling_frequency: columns.get('sampling_frequency'),
     }
   },
-  physio: async (file: BIDSFile, options: any): Promise<{ path: string } & WithSidecar> => {
+  physio: async (file: BIDSFile, _options: any): Promise<{ path: string } & WithSidecar> => {
     return {
       path: file.path,
       sidecar: await constructSidecar(file),
@@ -110,7 +110,7 @@ const associationLookup: Record<string, LoadFunction> = {
 const multiAssociationLookup: Record<string, MultiLoadFunction> = {
   coordsystems: async (
     files: BIDSFile[],
-    options: any,
+    _options: any,
   ): Promise<{ paths: string[]; spaces: string[]; ParentCoordinateSystems: string[] }> => {
     const jsons = await Promise.allSettled(
       files.map((f) => loadJSON(f).catch(() => ({} as Record<string, unknown>))),
@@ -172,7 +172,7 @@ export async function buildAssociations(
         if (!Array.isArray(file)) {
           file = [file]
         }
-        associations[key as keyof Associations] = await load(file, options).catch((e: any) => {})
+        associations[key as keyof Associations] = await load(file, options).catch((_e: any) => {})
       } else {
         const load = associationLookup[key] ?? defaultAssociation
         if (Array.isArray(file)) {

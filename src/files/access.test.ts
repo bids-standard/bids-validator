@@ -1,5 +1,4 @@
 import { assert, assertArrayIncludes, assertObjectMatch } from '@std/assert'
-import type { basename, dirname } from '@std/path'
 import { BIDSFileDeno } from './deno.ts'
 
 export function testAsyncFileAccess(

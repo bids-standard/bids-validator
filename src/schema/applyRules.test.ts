@@ -2,7 +2,6 @@
 import { assert, assertEquals } from '@std/assert'
 import { applyRules, evalCheck } from './applyRules.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
-import type { expressionFunctions } from './expressionLanguage.ts'
 
 const ruleContextData = [
   {

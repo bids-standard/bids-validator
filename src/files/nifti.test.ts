@@ -49,7 +49,7 @@ Deno.test('Test loading nifti header', async (t) => {
     const root = './tests/data/valid_headers'
     const file = new BIDSFileDeno(root, path, ignore)
     let error: any = undefined
-    const header = await loadHeader(file).catch((e) => {
+    const _header = await loadHeader(file).catch((e) => {
       error = e
     })
     assertObjectMatch(error, { code: 'NIFTI_HEADER_UNREADABLE' })
@@ -59,7 +59,7 @@ Deno.test('Test loading nifti header', async (t) => {
     const path = 'big_header.nii.gz'
     const root = './tests/data/'
     const file = new BIDSFileDeno(root, path, ignore)
-    const error: any = undefined
+    const _error: any = undefined
     const header = await loadHeader(file)
     assert(header !== undefined)
     assertObjectMatch(header, {

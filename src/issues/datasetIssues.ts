@@ -5,7 +5,7 @@ import { filterIssue } from '../types/issues.ts'
 export type { Issue, IssueDefinition, IssueFile, Severity }
 
 // Code is deprecated, return something unusual but JSON serializable
-const CODE_DEPRECATED = Number.MIN_SAFE_INTEGER
+const _CODE_DEPRECATED = Number.MIN_SAFE_INTEGER
 
 type Group = Map<Issue[keyof Issue], DatasetIssues | Group | undefined>
 

@@ -1,5 +1,4 @@
 import { assert, assertEquals, assertObjectMatch } from '@std/assert'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import type { FileTree } from '../types/filetree.ts'
 import type { BIDSContextDataset } from './context.ts'
@@ -20,14 +19,14 @@ export async function makeBIDSContext(
 Deno.test('test context LoadSidecar', async (t) => {
   const context = await makeBIDSContext(dataFile)
   await t.step('sidecar overwrites correct fields', () => {
-    const { rootOverwrite, subOverwrite } = context.sidecar
+    const { rootOverwrite: _rootOverwrite, subOverwrite: _subOverwrite } = context.sidecar
     assertObjectMatch(context.sidecar, {
       rootOverwrite: 'anat',
       subOverwrite: 'anat',
     })
   })
   await t.step('sidecar adds new fields at each level', () => {
-    const { rootValue, subValue, anatValue } = context.sidecar
+    const { rootValue: _rootValue, subValue: _subValue, anatValue: _anatValue } = context.sidecar
     assertObjectMatch(context.sidecar, {
       rootValue: 'root',
       subValue: 'subject',

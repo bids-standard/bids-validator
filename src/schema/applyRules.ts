@@ -1,4 +1,4 @@
-import type { GenericRule, GenericSchema, SchemaFields, SchemaTypeLike } from '../types/schema.ts'
+import type { GenericRule, GenericSchema, SchemaFields } from '../types/schema.ts'
 import type { Severity } from '../types/issues.ts'
 import type { BIDSContext } from './context.ts'
 import { contextFunction, formatter, prepareContext } from './expressionLanguage.ts'
@@ -154,7 +154,7 @@ function mapEvalCheck(statements: string[], context: BIDSContext): boolean {
 function _evalRuleChecks(
   rule: GenericRule,
   context: BIDSContext,
-  schema: GenericSchema,
+  _schema: GenericSchema,
   schemaPath: string,
 ): boolean {
   if (rule.checks && !mapEvalCheck(rule.checks, context)) {

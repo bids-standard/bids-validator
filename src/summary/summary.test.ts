@@ -1,5 +1,5 @@
 import { computeModalities, modalityPrettyLookup, Summary } from './summary.ts'
-import { assertEquals, type assertObjectMatch } from '@std/assert'
+import { assertEquals } from '@std/assert'
 import { detectErrors } from './summary.ts'
 import type { ValidationResult } from '../types/validation-result.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'

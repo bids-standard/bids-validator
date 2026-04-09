@@ -1,6 +1,5 @@
 import { BIDSContext, type BIDSContextDataset } from './context.ts'
 import { BIDSFile, type FileTree } from '../types/filetree.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { NullFileOpener } from '../files/openers.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { loadJSON } from '../files/json.ts'

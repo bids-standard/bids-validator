@@ -14,7 +14,7 @@ Deno.test('walkback inheritance tests', async (t) => {
     assertThrows(() => {
       try {
         const sidecars = walkBack(dataFile)
-        for (const f of sidecars) {
+        for (const _f of sidecars) {
           continue
         }
       } catch (error) {
