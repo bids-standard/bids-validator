@@ -37,10 +37,10 @@ async function getLocalVersion(path: string): Promise<string> {
     const command = new Deno.Command('git', {
       args: ['-C', path, '-c', 'safe.directory=*', 'describe', '--tags', '--always'],
     })
-    const { success, stdout } = await command.output()
+    const { success: _success, stdout } = await command.output()
     const description = new TextDecoder().decode(stdout).trim()
     return description
-  } catch (err) {
+  } catch (_err) {
     return ''
   }
 }

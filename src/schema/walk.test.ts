@@ -1,7 +1,6 @@
 import { assert, assertEquals } from '@std/assert'
 import { BIDSContext, BIDSContextDataset } from './context.ts'
 import { walkFileTree } from './walk.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { simpleDataset, simpleDatasetFileCount } from '../tests/simple-dataset.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
 import { loadSchema } from '../setup/loadSchema.ts'

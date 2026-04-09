@@ -5,7 +5,7 @@
  */
 import { retry } from '@std/async'
 import { join } from '@std/path'
-import { type FileOpener } from '../types/filetree.ts'
+import type { FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream } from './streams.ts'
 import { logger } from '../utils/logger.ts'
 
@@ -71,7 +71,7 @@ export class FsFileOpener implements FileOpener {
     return buf.subarray(0, nbytes)
   }
 
-  async open(): Promise<Deno.FsFile> {
+  open(): Promise<Deno.FsFile> {
     return Deno.open(this.path, { read: true, write: false })
   }
 }
@@ -86,11 +86,11 @@ export class BrowserFileOpener implements FileOpener {
     return this.file.size
   }
 
-  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+  stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     return Promise.resolve(this.file.stream() as ReadableStream<Uint8Array<ArrayBuffer>>)
   }
 
-  async text(): Promise<string> {
+  text(): Promise<string> {
     return this.file.text()
   }
 
@@ -117,7 +117,7 @@ export class HTTPOpener implements FileOpener {
     this.size = size
   }
 
-  async _fetch(options: RequestInit = {}): Promise<Response> {
+  _fetch(options: RequestInit = {}): Promise<Response> {
     // Fetch with retries, for transient errors
     return retry(async () => {
       const response = await fetch(this.url, options)
@@ -136,7 +136,7 @@ export class HTTPOpener implements FileOpener {
     })
   }
 
-  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+  stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     // Streams should not timeout
     return this._fetch().then((response) => response.body!)
   }
@@ -172,12 +172,14 @@ export class NullFileOpener implements FileOpener {
   constructor(size = 0) {
     this.size = size
   }
-  stream = async () =>
-    new ReadableStream({
-      start(controller) {
-        controller.close()
-      },
-    })
-  text = async () => ''
-  readBytes = async (size: number, offset?: number) => new Uint8Array()
+  stream = () =>
+    Promise.resolve(
+      new ReadableStream({
+        start(controller) {
+          controller.close()
+        },
+      }),
+    )
+  text = () => Promise.resolve('')
+  readBytes = (_size: number, _offset?: number) => Promise.resolve(new Uint8Array())
 }

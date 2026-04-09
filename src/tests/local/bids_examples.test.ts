@@ -1,10 +1,9 @@
 // Deno runtime tests for tests/data/valid_dataset
-import { type assert, assertEquals } from '@std/assert'
+import { assertEquals } from '@std/assert'
 import { Cell, Row, Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
 import type { Issue } from '../../types/issues.ts'
-import type { DatasetIssues } from '../../issues/datasetIssues.ts'
-import { type formatAssertIssue, validatePath } from './common.ts'
+import { validatePath } from './common.ts'
 import { type Config, parseOptions } from '../../setup/options.ts'
 
 const options = await parseOptions(['fake_dataset_arg', ...Deno.args])
@@ -47,8 +46,8 @@ Deno.test({
         if (Deno.statSync(`${path}/.SKIP_VALIDATION`).isFile) {
           continue
         }
-      } catch (e) {}
-      const { tree, result } = await validatePath(t, path, options, config)
+      } catch (_e) { /* .SKIP_VALIDATION not found */ }
+      const { tree: _tree, result } = await validatePath(t, path, options, config)
       const dsIssues = result.issues.filter({ 'severity': 'error' })
       await t.step(`${path} has no issues`, () => {
         assertEquals(dsIssues.size, 0)
@@ -76,5 +75,5 @@ Deno.test({
       .maxColWidth(40)
       .toString()
     console.log(table)
-  }
+  },
 })

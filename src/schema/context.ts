@@ -24,6 +24,7 @@ import { parseTIFF } from '../files/tiff.ts'
 import { loadJSON } from '../files/json.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
+import type { Issue } from '../types/issues.ts'
 import type { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
 
@@ -73,7 +74,7 @@ export class BIDSContextDataset implements Dataset {
           ?.map((dir) => `/${dir.name}`)
         : [],
     )
-    // @ts-ignore
+    // @ts-expect-error Subjects type does not include null, but null is used as a sentinel for "not yet loaded"
     this.subjects = args.subjects || null
   }
 
@@ -129,10 +130,10 @@ export class BIDSContext implements Context {
   suffix: string
   extension: string
   modality: string
-  sidecar: Record<string, any>
+  sidecar: Record<string, unknown>
   associations: Associations
   columns: Record<string, string[]>
-  json: Record<string, any>
+  json: Record<string, unknown>
   gzip?: Gzip
   nifti_header?: NiftiHeader
   ome?: Ome
@@ -204,9 +205,9 @@ export class BIDSContext implements Context {
     let sidecars: Map<string, Record<string, unknown>>
     try {
       sidecars = await readSidecars(this.file)
-    } catch (error: any) {
-      if (error?.code) {
-        this.dataset.issues.add(error)
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'code' in error) {
+        this.dataset.issues.add(error as Issue)
         return
       } else {
         throw error
@@ -352,7 +353,7 @@ export class BIDSContext implements Context {
     const participants_tsv = this.dataset.tree.get('participants.tsv') as BIDSFile
     if (participants_tsv) {
       const participantsData = await loadTSV(participants_tsv)
-        .catch((error) => {
+        .catch((_error) => {
           return new Map()
         }) as Record<string, string[]>
       this.dataset.subjects.participant_id = participantsData['participant_id']

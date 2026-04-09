@@ -11,9 +11,9 @@
  * or too many are there for this rule. All while being able to point at an
  * object in the schema for reference.
  */
-// @ts-nocheck
-import { globToRegExp, SEPARATOR_PATTERN } from '@std/path'
-import type { GenericSchema, Schema } from '../types/schema.ts'
+// @ts-nocheck functions use dynamic schema indexing with untyped parameters throughout
+import { globToRegExp } from '@std/path'
+import type { GenericSchema } from '../types/schema.ts'
 import type { BIDSContext } from '../schema/context.ts'
 import type { CheckFunction } from '../types/check.ts'
 import { lookupEntityLiteral } from './filenameValidate.ts'
@@ -30,14 +30,14 @@ const DIR_CHECKS: CheckFunction[] = [
   cleanContext,
 ]
 
-export async function filenameIdentify(schema, context) {
+export function filenameIdentify(schema, context) {
   const checks = context?.directory ? DIR_CHECKS : CHECKS
   for (const check of checks) {
-    await check(schema as unknown as GenericSchema, context)
+    check(schema as unknown as GenericSchema, context)
   }
 }
 
-export async function findDirRuleMatches(schema, context) {
+export function findDirRuleMatches(schema, context) {
   const datasetType = context.dataset.dataset_description?.DatasetType || 'raw'
   const schemaPath = `rules.directories.${datasetType}`
   const directoryRule = schema[schemaPath] ?? {}
@@ -53,7 +53,7 @@ export async function findDirRuleMatches(schema, context) {
       }
     }
     if ('entity' in node) {
-      let entityDef = schemaEntities[node.entity]
+      const entityDef = schemaEntities[node.entity]
       if (
         entityDef && 'name' in entityDef && context.file.name.startsWith(`${entityDef['name']}-`)
       ) {
@@ -72,7 +72,6 @@ export async function findDirRuleMatches(schema, context) {
       }
     }
   }
-  return Promise.resolve()
 }
 function findRuleMatches(schema, context) {
   const schemaPath = 'rules.files'
@@ -86,7 +85,6 @@ function findRuleMatches(schema, context) {
     const path = `${schemaPath}.${key}`
     _findRuleMatches(schema[path], path, context)
   })
-  return Promise.resolve()
 }
 
 /* Schema rules specifying valid filenames follow a variety of patterns.
@@ -162,8 +160,6 @@ export function hasMatch(schema, context) {
       context.filenameRules = entExtMatch
     }
   }
-
-  return Promise.resolve()
 }
 
 /* Test if all of a given context's extension and entities are present in a

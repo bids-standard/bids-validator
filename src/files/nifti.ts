@@ -1,6 +1,5 @@
 import { isCompressed, isNIFTI1, isNIFTI2, NIFTI1, NIFTI2 } from '@mango/nifti'
 import type { BIDSFile } from '../types/filetree.ts'
-import { logger } from '../utils/logger.ts'
 import type { NiftiHeader } from '@bids/schema/context'
 import { readBytes } from './access.ts'
 
@@ -48,7 +47,7 @@ export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
     if (!header) {
       throw { code: 'NIFTI_HEADER_UNREADABLE' }
     }
-  } catch (err) {
+  } catch (_err) {
     throw { code: 'NIFTI_HEADER_UNREADABLE' }
   }
 

@@ -1,11 +1,10 @@
 import { assert, assertEquals } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
-import { BIDSFile, type FileOpener, type FileTree } from '../types/filetree.ts'
+import { BIDSFile, type FileTree } from '../types/filetree.ts'
 import { filesToTree, subtree } from './filetree.ts'
 import { StringOpener } from './openers.test.ts'
 
 export function pathToFile(path: string, ignored: boolean = false): BIDSFile {
-  const name = path.split('/').pop() as string
   return new BIDSFile(path, new StringOpener(''), ignored)
 }
 
@@ -15,13 +14,13 @@ export function pathsToTree(paths: string[], ignore?: string[]): FileTree {
 }
 
 Deno.test('FileTree generation', async (t) => {
-  await t.step('converts a basic list', async () => {
+  await t.step('converts a basic list', () => {
     const tree = pathsToTree(['/dataset_description.json', '/README.md'])
     assertEquals(tree.directories, [])
     assertEquals(tree.files.map((f) => f.name), ['dataset_description.json', 'README.md'])
   })
 
-  await t.step('converts a simple list with several levels', async () => {
+  await t.step('converts a simple list with several levels', () => {
     const tree = pathsToTree([
       '/dataset_description.json',
       '/participants.tsv',
@@ -61,7 +60,7 @@ Deno.test('FileTree generation', async (t) => {
     assert(tree.contains(['sub-01', 'anat']))
     assert(tree.contains(['sub-01', 'anat', 'sub-01_T1w.nii.gz']))
   })
-  await t.step('converts a list with ignores', async () => {
+  await t.step('converts a list with ignores', () => {
     const tree = pathsToTree(
       ['/dataset_description.json', '/README.md', '/.bidsignore', '/bad_file'],
       ['bad_file'],

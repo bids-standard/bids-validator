@@ -49,7 +49,7 @@ Deno.test('Deno implementation of BIDSFile', async (t) => {
       const bomDir = join(testPath, '..', '..', 'tests')
       const bomFilename = 'bom-utf16.tsv'
       const file = new BIDSFileDeno(bomDir, bomFilename, ignore)
-      await assertRejects(async () => file.text(), UnicodeDecodeError)
+      await assertRejects(() => file.text(), UnicodeDecodeError)
     },
   )
   await t.step(
@@ -69,7 +69,7 @@ Deno.test('Deno implementation of FileTree', async (t) => {
   const srcdir = dirname(testDir)
   const parent = basename(testDir)
   const tree = await readFileTree(srcdir)
-  await t.step('uses POSIX relative paths', async () => {
+  await t.step('uses POSIX relative paths', () => {
     assertEquals(tree.path, '/')
     const parentObj = tree.get(parent) as FileTree
     assert(parentObj !== undefined)

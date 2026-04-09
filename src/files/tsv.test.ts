@@ -8,7 +8,6 @@ import {
 import { pathToFile } from './filetree.test.ts'
 import { BIDSFileDeno } from './deno.ts'
 import { loadTSV, loadTSVGZ } from './tsv.ts'
-import { ColumnsMap } from '../types/columns.ts'
 import { testAsyncFileAccess } from './access.test.ts'
 import { CompressedStringOpener, StringOpener } from './openers.test.ts'
 
@@ -54,8 +53,8 @@ Deno.test('TSV loading', async (t) => {
 
     try {
       await loadTSV(file)
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'TSV_EMPTY_LINE', line: 3 })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EMPTY_LINE', line: 3 })
     }
   })
 
@@ -65,8 +64,8 @@ Deno.test('TSV loading', async (t) => {
 
     try {
       await loadTSV(file)
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'TSV_EQUAL_ROWS', line: 3 })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EQUAL_ROWS', line: 3 })
     }
   })
 
@@ -116,7 +115,7 @@ Deno.test('TSV loading', async (t) => {
     const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
     file.opener = new StringOpener(text)
 
-    let map = await loadTSV(file, 2)
+    const map = await loadTSV(file, 2)
     assertEquals(map.a, ['1', '1'])
     assertEquals(map.b, ['2', '2'])
     assertEquals(map.c, ['3', '3'])
@@ -141,7 +140,7 @@ Deno.test('TSV loading', async (t) => {
     const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
     file.opener = new StringOpener(text)
 
-    let map = await loadTSV(file, 2)
+    const map = await loadTSV(file, 2)
     assertEquals(map.a, ['1', '1'])
     assertEquals(map.b, ['2', '2'])
     assertEquals(map.c, ['3', '3'])
@@ -166,8 +165,11 @@ Deno.test('TSV loading', async (t) => {
     try {
       await loadTSV(file)
       assert(false, 'Expected error')
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'TSV_COLUMN_HEADER_DUPLICATE', issueMessage: 'a, a' })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, {
+        code: 'TSV_COLUMN_HEADER_DUPLICATE',
+        issueMessage: 'a, a',
+      })
     }
   })
 
@@ -177,8 +179,8 @@ Deno.test('TSV loading', async (t) => {
     try {
       await loadTSV(file)
       assert(false, 'Expected error')
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'INVALID_FILE_ENCODING' })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'INVALID_FILE_ENCODING' })
     }
   })
 
@@ -220,8 +222,8 @@ Deno.test('TSVGZ loading', async (t) => {
 
     try {
       await loadTSVGZ(file, ['a', 'b'])
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'TSV_EQUAL_ROWS', line: 1 })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EQUAL_ROWS', line: 1 })
     }
   })
 
@@ -239,8 +241,8 @@ Deno.test('TSVGZ loading', async (t) => {
 
     try {
       await loadTSVGZ(file, ['a', 'b', 'c'])
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'TSV_EMPTY_LINE', line: 2 })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EMPTY_LINE', line: 2 })
     }
   })
 
@@ -250,8 +252,8 @@ Deno.test('TSVGZ loading', async (t) => {
 
     try {
       await loadTSVGZ(file, ['a', 'b', 'c'])
-    } catch (e: any) {
-      assertObjectMatch(e, { code: 'INVALID_GZIP' })
+    } catch (e: unknown) {
+      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'INVALID_GZIP' })
     }
   })
 

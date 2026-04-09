@@ -1,18 +1,17 @@
 import { assert, assertEquals } from '@std/assert'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
-import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
+import { type BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { makeBIDSContext } from '../schema/context.test.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
-import type { GenericSchema, Schema } from '../types/schema.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
+import type { GenericSchema } from '../types/schema.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
 import { StringOpener } from '../files/openers.test.ts'
 
 const schema = await loadSchema()
 
-async function makeContext(path: string, contents: string = ''): Promise<BIDSContext> {
+function makeContext(path: string, contents: string = ''): Promise<BIDSContext> {
   const tree = pathsToTree([path])
   const dataset = new BIDSContextDataset({ schema, tree })
   const file = tree.get(path) as BIDSFile
@@ -59,8 +58,8 @@ Deno.test('test valid paths', async (t) => {
   for (const filename of validFiles) {
     await t.step(filename, async () => {
       const context = await makeContext(filename, '{"valid": "json"}')
-      await filenameIdentify(schema, context)
-      await filenameValidate(schema as unknown as GenericSchema, context)
+      filenameIdentify(schema, context)
+      filenameValidate(schema as unknown as GenericSchema, context)
       assertEquals(
         context.dataset.issues.get({ location: filename }).length,
         0,
@@ -118,8 +117,8 @@ Deno.test('test invalid paths', async (t) => {
   for (const filename of invalidFiles) {
     await t.step(filename, async () => {
       const context = await makeContext(filename)
-      await filenameIdentify(schema, context)
-      await filenameValidate(schema as unknown as GenericSchema, context)
+      filenameIdentify(schema, context)
+      filenameValidate(schema as unknown as GenericSchema, context)
       assert(
         context.dataset.issues.get({
           location: context.file.path,

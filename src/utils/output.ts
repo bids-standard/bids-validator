@@ -57,6 +57,7 @@ export function consoleFormat(
 /**
  * Render marked tokens to ANSI strings
  */
+// deno-lint-ignore no-explicit-any
 function renderTokens(tokenList: any[]): string {
   if (!tokenList) return ''
 
@@ -248,7 +249,7 @@ function helpUrl(code: string): string {
 
 export function resultToJSONStr(result: ValidationResult, pretty: boolean = false): string {
   const indent = pretty ? 2 : 0
-  return JSON.stringify(result, (key, value) => {
+  return JSON.stringify(result, (_key, value) => {
     if (value?.parent) {
       // Remove parent reference to avoid circular references
       value.parent = undefined

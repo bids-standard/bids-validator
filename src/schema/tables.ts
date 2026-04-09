@@ -1,3 +1,4 @@
+import type { Issue } from '../types/issues.ts'
 import type { GenericRule } from '../types/schema.ts'
 import type { Schema, TabularData } from '@bids/schema/metaschema'
 import type { BIDSContext } from './context.ts'
@@ -218,7 +219,7 @@ export function evalColumns(
   schemaPath: string,
 ): void {
   if (!rule.columns || !['.tsv', '.tsv.gz'].includes(context.extension)) return
-  const columns = rule.columns as Record<string, string | { level: string }>
+  const _columns = rule.columns as Record<string, string | { level: string }>
 
   const columnLookup = Object.fromEntries(
     Object.keys(rule.columns).map((col) => [schema.objects.columns[col].name, col]),
@@ -256,10 +257,10 @@ export function evalColumns(
 
       try {
         signature = getValueSignature(columnObject, sidecarDef)
-      } catch (e: any) {
-        if (e?.code) {
+      } catch (e: unknown) {
+        if (e && typeof e === 'object' && 'code' in e && e.code) {
           context.dataset.issues.add({
-            ...e,
+            ...(e as Issue),
             subCode: name,
             location: context.sidecarKeyOrigin[name],
             rule: schemaPath,
@@ -334,7 +335,7 @@ export function evalInitialColumns(
     }
   }).filter(({ requirement, index }) => requirement === 'required' || index !== -1)
   // Validate ordering of present and/or required initial columns
-  columns.forEach(({ name, requirement, index }, targetIndex) => {
+  columns.forEach(({ name, requirement: _requirement, index }, targetIndex) => {
     if (index === -1) {
       context.dataset.issues.add({
         code: 'TSV_COLUMN_MISSING',

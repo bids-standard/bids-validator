@@ -23,7 +23,7 @@ export interface SummaryOutput {
   totalFiles: number
   size: number
   dataProcessed: boolean
-  pet: Record<string, any>
+  pet: Record<string, unknown>
   dataTypes: string[]
   schemaVersion: string
 }
