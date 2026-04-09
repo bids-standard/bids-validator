@@ -53,7 +53,7 @@ export async function findDirRuleMatches(schema, context) {
       }
     }
     if ('entity' in node) {
-      let entityDef = schemaEntities[node.entity]
+      const entityDef = schemaEntities[node.entity]
       if (
         entityDef && 'name' in entityDef && context.file.name.startsWith(`${entityDef['name']}-`)
       ) {

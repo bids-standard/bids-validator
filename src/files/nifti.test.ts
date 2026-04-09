@@ -59,7 +59,7 @@ Deno.test('Test loading nifti header', async (t) => {
     const path = 'big_header.nii.gz'
     const root = './tests/data/'
     const file = new BIDSFileDeno(root, path, ignore)
-    let error: any = undefined
+    const error: any = undefined
     const header = await loadHeader(file)
     assert(header !== undefined)
     assertObjectMatch(header, {

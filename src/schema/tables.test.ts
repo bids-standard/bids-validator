@@ -177,7 +177,7 @@ Deno.test('tables eval* tests', async (t) => {
     evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Participants')
 
     // age gets a warning
-    let issues = context.dataset.issues.get({ code: 'TSV_PSEUDO_AGE_DEPRECATED' })
+    const issues = context.dataset.issues.get({ code: 'TSV_PSEUDO_AGE_DEPRECATED' })
     assertEquals(issues.length, 1)
   })
 

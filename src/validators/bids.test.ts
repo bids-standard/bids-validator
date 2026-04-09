@@ -46,7 +46,7 @@ Deno.test('Smoke tests of main validation function', async (t) => {
     assert(result.issues.get({ code: 'BLACKLISTED_MODALITY' }).length === 1)
   })
   await t.step('Validate configuration', async () => {
-    let result = await validate(
+    const result = await validate(
       dataset,
       {
         datasetPath: '/dataset',
@@ -58,9 +58,9 @@ Deno.test('Smoke tests of main validation function', async (t) => {
         ignore: [{ location: '/dataset_description.json' }],
       },
     )
-    let errors = result.issues.filter({ severity: 'error' })
-    let warnings = result.issues.filter({ severity: 'warning' })
-    let ignored = result.issues.filter({ severity: 'ignore' })
+    const errors = result.issues.filter({ severity: 'error' })
+    const warnings = result.issues.filter({ severity: 'warning' })
+    const ignored = result.issues.filter({ severity: 'ignore' })
     assert(errors.get({ code: 'JSON_KEY_RECOMMENDED' }).length === 0)
     assert(ignored.get({ code: 'JSON_KEY_RECOMMENDED' }).length > 0)
     assert(errors.get({ location: '/dataset_description.json' }).length === 0)

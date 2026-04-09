@@ -34,7 +34,7 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
   transform(chunk: Uint8Array, controller: TransformStreamDefaultController<string>) {
     // Check first chunk for UTF-16 BOM
     if (this.firstChunk) {
-      let decoded = this.decoder.decode(chunk, { stream: true })
+      const decoded = this.decoder.decode(chunk, { stream: true })
       if (decoded.startsWith('\uFFFD')) {
         throw new UnicodeDecodeError('This file appears to be UTF-16')
       }

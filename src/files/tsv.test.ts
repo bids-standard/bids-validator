@@ -116,7 +116,7 @@ Deno.test('TSV loading', async (t) => {
     const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
     file.opener = new StringOpener(text)
 
-    let map = await loadTSV(file, 2)
+    const map = await loadTSV(file, 2)
     assertEquals(map.a, ['1', '1'])
     assertEquals(map.b, ['2', '2'])
     assertEquals(map.c, ['3', '3'])
@@ -141,7 +141,7 @@ Deno.test('TSV loading', async (t) => {
     const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
     file.opener = new StringOpener(text)
 
-    let map = await loadTSV(file, 2)
+    const map = await loadTSV(file, 2)
     assertEquals(map.a, ['1', '1'])
     assertEquals(map.b, ['2', '2'])
     assertEquals(map.c, ['3', '3'])
