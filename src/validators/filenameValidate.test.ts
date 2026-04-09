@@ -14,7 +14,7 @@ Deno.test('test missingLabel', async (t) => {
     // otherwise this is trigger-happy.
     context.filenameRules = ['rules.files.raw.dwi.dwi']
 
-    await missingLabel(schema, context)
+    missingLabel(schema, context)
     assertEquals(
       context.dataset.issues
         .get({
@@ -32,7 +32,7 @@ Deno.test('test missingLabel', async (t) => {
       // Doesn't really matter that the rule doesn't apply
       context.filenameRules = ['rules.files.raw.dwi.dwi']
 
-      await missingLabel(schema, context)
+      missingLabel(schema, context)
       assertEquals(
         context.dataset.issues.get({
           location: context.file.path,

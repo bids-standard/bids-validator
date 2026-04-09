@@ -58,8 +58,8 @@ Deno.test('test valid paths', async (t) => {
   for (const filename of validFiles) {
     await t.step(filename, async () => {
       const context = await makeContext(filename, '{"valid": "json"}')
-      await filenameIdentify(schema, context)
-      await filenameValidate(schema as unknown as GenericSchema, context)
+      filenameIdentify(schema, context)
+      filenameValidate(schema as unknown as GenericSchema, context)
       assertEquals(
         context.dataset.issues.get({ location: filename }).length,
         0,
@@ -117,8 +117,8 @@ Deno.test('test invalid paths', async (t) => {
   for (const filename of invalidFiles) {
     await t.step(filename, async () => {
       const context = await makeContext(filename)
-      await filenameIdentify(schema, context)
-      await filenameValidate(schema as unknown as GenericSchema, context)
+      filenameIdentify(schema, context)
+      filenameValidate(schema as unknown as GenericSchema, context)
       assert(
         context.dataset.issues.get({
           location: context.file.path,

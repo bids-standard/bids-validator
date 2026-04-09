@@ -24,7 +24,7 @@ const fileTree = pathsToTree(filesToTest)
 Deno.test('test filenameCase', async (_t) => {
   const dsContext = new BIDSContextDataset({ tree: fileTree, schema: schema })
   for await (const context of walkFileTree(dsContext)) {
-    await filenameCase(schema as unknown as GenericSchema, context)
+    filenameCase(schema as unknown as GenericSchema, context)
   }
   const issues = dsContext.issues.get({ code: 'CASE_COLLISION' })
   assertEquals(issues.length, 4)
