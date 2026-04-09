@@ -5,7 +5,7 @@ import type { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 export type ContextCheckFunction = (
   schema: GenericSchema,
   context: BIDSContext,
-) => Promise<void>
+) => void | Promise<void>
 
 /** Function interface for a check of context against a specific rule as accessed by its path in the schema.  */
 export type RuleCheckFunction = (
@@ -17,4 +17,4 @@ export type RuleCheckFunction = (
 export type DSCheckFunction = (
   schema: GenericSchema,
   dsContext: BIDSContextDataset,
-) => Promise<void>
+) => void | Promise<void>
