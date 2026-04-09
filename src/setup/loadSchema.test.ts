@@ -13,7 +13,7 @@ Deno.test('schema loader', async (t) => {
         string,
         any
       >
-      if (top_level.hasOwnProperty('README')) {
+      if (Object.hasOwn(top_level, 'README')) {
         assertObjectMatch(top_level.README, {
           level: 'recommended',
           stem: 'README',

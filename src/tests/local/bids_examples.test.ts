@@ -47,7 +47,7 @@ Deno.test({
         if (Deno.statSync(`${path}/.SKIP_VALIDATION`).isFile) {
           continue
         }
-      } catch (e) {}
+      } catch (_e) { /* .SKIP_VALIDATION not found */ }
       const { tree, result } = await validatePath(t, path, options, config)
       const dsIssues = result.issues.filter({ 'severity': 'error' })
       await t.step(`${path} has no issues`, () => {
