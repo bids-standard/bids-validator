@@ -15,14 +15,13 @@ const CHECKS: ContextCheckFunction[] = [
   reconstructionFailure,
 ]
 
-export async function filenameValidate(
+export function filenameValidate(
   schema: GenericSchema,
   context: BIDSContext,
-) {
+): void {
   for (const check of CHECKS) {
-    await check(schema, context)
+    check(schema, context)
   }
-  return Promise.resolve()
 }
 
 export function isAtRoot(context: BIDSContext) {
@@ -35,9 +34,9 @@ export function isAtRoot(context: BIDSContext) {
 export function missingLabel(
   schema: GenericSchema,
   context: BIDSContext,
-): Promise<void> {
+): void {
   if (!context.filenameRules.some((rule) => 'suffixes' in schema[rule])) {
-    return Promise.resolve()
+    return
   }
   const fileNoLabelEntities = Object.keys(context.entities).filter(
     (key) => context.entities[key] === 'NOENTITY',
@@ -54,7 +53,6 @@ export function missingLabel(
       issueMessage: fileNoLabelEntities.join(', '),
     })
   }
-  return Promise.resolve()
 }
 
 export function atRoot(_schema: GenericSchema, _context: BIDSContext) {
@@ -63,7 +61,6 @@ export function atRoot(_schema: GenericSchema, _context: BIDSContext) {
     // create issue for data file in root of dataset
   }
   */
-  return Promise.resolve()
 }
 
 export function lookupEntityLiteral(name: string, schema: GenericSchema) {
@@ -107,7 +104,7 @@ function getEntityByLiteral(
 export function entityLabelCheck(
   schema: GenericSchema,
   context: BIDSContext,
-): Promise<void> {
+): void {
   if (!('formats' in schema.objects) || !('entities' in schema.objects)) {
     throw new Error('schema missing keys')
   }
@@ -136,7 +133,6 @@ export function entityLabelCheck(
       // unknown entity
     }
   })
-  return Promise.resolve()
 }
 
 const ruleChecks: RuleCheckFunction[] = [
@@ -146,7 +142,7 @@ const ruleChecks: RuleCheckFunction[] = [
   invalidLocation,
 ]
 
-function checkRules(schema: GenericSchema, context: BIDSContext): Promise<void> {
+function checkRules(schema: GenericSchema, context: BIDSContext): void {
   if (context.filenameRules.length === 1) {
     for (const check of ruleChecks) {
       check(
@@ -184,7 +180,6 @@ function checkRules(schema: GenericSchema, context: BIDSContext): Promise<void> 
       })
     }
   }
-  return Promise.resolve()
 }
 
 function entityRuleIssue(
@@ -333,9 +328,9 @@ function _validateLocation(
 function reconstructionFailure(
   schema: GenericSchema,
   context: BIDSContext,
-): Promise<void> {
+): void {
   if (Object.keys(context.entities).length === 0) {
-    return Promise.resolve()
+    return
   }
   const typedSchema = schema as unknown as Schema
   const entityKeys = typedSchema.rules.entities
@@ -351,5 +346,4 @@ function reconstructionFailure(
       issueMessage: `Expected filename: ${expectedFilename}`,
     })
   }
-  return Promise.resolve()
 }
