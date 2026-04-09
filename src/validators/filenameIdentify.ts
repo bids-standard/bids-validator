@@ -37,7 +37,7 @@ export async function filenameIdentify(schema, context) {
   }
 }
 
-export async function findDirRuleMatches(schema, context) {
+export function findDirRuleMatches(schema, context) {
   const datasetType = context.dataset.dataset_description?.DatasetType || 'raw'
   const schemaPath = `rules.directories.${datasetType}`
   const directoryRule = schema[schemaPath] ?? {}

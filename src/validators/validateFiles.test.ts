@@ -12,7 +12,7 @@ import { StringOpener } from '../files/openers.test.ts'
 
 const schema = await loadSchema()
 
-async function makeContext(path: string, contents: string = ''): Promise<BIDSContext> {
+function makeContext(path: string, contents: string = ''): Promise<BIDSContext> {
   const tree = pathsToTree([path])
   const dataset = new BIDSContextDataset({ schema, tree })
   const file = tree.get(path) as BIDSFile

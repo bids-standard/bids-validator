@@ -11,7 +11,7 @@ function IOErrorToIssue(err: { code: string; name: string }): Issue {
   return { code: 'FILE_READ', subCode: err.name, issueMessage }
 }
 
-export async function openStream(
+export function openStream(
   file: BIDSFile,
 ): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
   return file.stream().catch((err: any) => {
@@ -20,7 +20,7 @@ export async function openStream(
   })
 }
 
-async function _readBytes(
+function _readBytes(
   file: BIDSFile,
   size: number,
   offset = 0,
@@ -33,7 +33,7 @@ async function _readBytes(
 
 export const readBytes = filememoize(_readBytes)
 
-async function _readText(file: BIDSFile): Promise<string> {
+function _readText(file: BIDSFile): Promise<string> {
   return file.text().catch((err: any) => {
     logger.debug(`Error reading text from file ${file.path}: ${err}`)
     throw { location: file.path, ...IOErrorToIssue(err) }

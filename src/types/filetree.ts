@@ -49,15 +49,15 @@ export class BIDSFile {
     return this.opener.size
   }
 
-  async text(): Promise<string> {
+  text(): Promise<string> {
     return this.opener.text()
   }
 
-  async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
+  readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
     return this.opener.readBytes(size, offset)
   }
 
-  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+  stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     return this.opener.stream()
   }
 }

@@ -25,9 +25,7 @@ function makeFile(path: string, text: string, encoding: string): BIDSFile {
   return {
     path: file.path,
     parent: file.parent,
-    readBytes: async (size: number) => {
-      return new Uint8Array(bytes)
-    },
+    readBytes: (_size: number) => Promise.resolve(new Uint8Array(bytes)),
     size: bytes.byteLength,
   } as unknown as BIDSFile
 }

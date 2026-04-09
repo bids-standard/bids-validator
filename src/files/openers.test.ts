@@ -20,22 +20,24 @@ export class BytesOpener implements FileOpener {
     this.size = contents.length
   }
 
-  async text(): Promise<string> {
-    return textDecoder.decode(this.contents)
+  text(): Promise<string> {
+    return Promise.resolve(textDecoder.decode(this.contents))
   }
 
-  async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
-    return this.contents.slice(offset, offset + size)
+  readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
+    return Promise.resolve(this.contents.slice(offset, offset + size))
   }
 
-  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+  stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     const contents = this.contents
-    return new ReadableStream({
-      start(controller) {
-        controller.enqueue(contents)
-        controller.close()
-      },
-    })
+    return Promise.resolve(
+      new ReadableStream({
+        start(controller) {
+          controller.enqueue(contents)
+          controller.close()
+        },
+      }),
+    )
   }
 }
 
@@ -54,10 +56,10 @@ export class StreamOpener implements FileOpener {
     this.size = size
   }
 
-  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+  stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     const tee = this.#stream.tee()
     this.#stream = tee[1]
-    return tee[0]
+    return Promise.resolve(tee[0])
   }
 
   async text(): Promise<string> {
@@ -110,7 +112,7 @@ export class CompressedStringOpener extends StreamOpener {
 }
 
 async function testOpener(t: Deno.TestContext, opener: FileOpener) {
-  await t.step('size', async () => {
+  await t.step('size', () => {
     assertEquals(opener.size, 13)
   })
   await t.step('text()', async () => {
@@ -173,8 +175,8 @@ Deno.test('Validate HTTPOpener', async (t) => {
       resolvesNext([new Response('Not Found', { status: 404, statusText: 'Not Found' })]),
     )
     const httpOpener = new HTTPOpener(url, 1)
-    assertRejects(httpOpener.text)
-    assertRejects(httpOpener.stream)
-    assertRejects(() => httpOpener.readBytes(1, 0))
+    await assertRejects(httpOpener.text.bind(httpOpener))
+    await assertRejects(httpOpener.stream.bind(httpOpener))
+    await assertRejects(() => httpOpener.readBytes(1, 0))
   })
 })

@@ -32,10 +32,10 @@ export function isAtRoot(context: BIDSContext) {
   return true
 }
 
-export async function missingLabel(
+export function missingLabel(
   schema: GenericSchema,
   context: BIDSContext,
-) {
+): Promise<void> {
   if (!context.filenameRules.some((rule) => 'suffixes' in schema[rule])) {
     return Promise.resolve()
   }
@@ -104,10 +104,10 @@ function getEntityByLiteral(
   return null
 }
 
-export async function entityLabelCheck(
+export function entityLabelCheck(
   schema: GenericSchema,
   context: BIDSContext,
-) {
+): Promise<void> {
   if (!('formats' in schema.objects) || !('entities' in schema.objects)) {
     throw new Error('schema missing keys')
   }
@@ -146,7 +146,7 @@ const ruleChecks: RuleCheckFunction[] = [
   invalidLocation,
 ]
 
-async function checkRules(schema: GenericSchema, context: BIDSContext) {
+function checkRules(schema: GenericSchema, context: BIDSContext): Promise<void> {
   if (context.filenameRules.length === 1) {
     for (const check of ruleChecks) {
       check(
@@ -258,7 +258,7 @@ function datatypeMismatch(
   }
 }
 
-async function extensionMismatch(
+function extensionMismatch(
   path: string,
   schema: GenericSchema,
   context: BIDSContext,
@@ -276,7 +276,7 @@ async function extensionMismatch(
   }
 }
 
-async function invalidLocation(
+function invalidLocation(
   path: string,
   schema: GenericSchema,
   context: BIDSContext,
@@ -330,12 +330,12 @@ function _validateLocation(
   }
 }
 
-async function reconstructionFailure(
+function reconstructionFailure(
   schema: GenericSchema,
   context: BIDSContext,
-) {
+): Promise<void> {
   if (Object.keys(context.entities).length === 0) {
-    return
+    return Promise.resolve()
   }
   const typedSchema = schema as unknown as Schema
   const entityKeys = typedSchema.rules.entities
@@ -351,4 +351,5 @@ async function reconstructionFailure(
       issueMessage: `Expected filename: ${expectedFilename}`,
     })
   }
+  return Promise.resolve()
 }

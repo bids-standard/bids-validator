@@ -35,13 +35,15 @@ class NonSigningClient {
     this.bucket = bucket!
   }
 
-  async presignedGetObject(
+  presignedGetObject(
     objectName: string,
     options: {
       versionId: string
     },
   ): Promise<string> {
-    return `${this.endPoint}/${this.bucket}/${objectName}?versionId=${options.versionId}`
+    return Promise.resolve(
+      `${this.endPoint}/${this.bucket}/${objectName}?versionId=${options.versionId}`,
+    )
   }
 }
 

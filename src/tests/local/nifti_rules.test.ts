@@ -31,13 +31,13 @@ Deno.test('Test NIFTI-specific rules', async (t) => {
   const schema = await loadSchema() as Schema
   const NiftiPEDir = schema.rules?.checks?.nifti?.NiftiPEDir as GenericRule
 
-  await t.step('Test reading NIfTI axis codes', async () => {
+  await t.step('Test reading NIfTI axis codes', () => {
     assertEquals(RAS.axis_codes, ['R', 'A', 'S'])
     assertEquals(SPL.axis_codes, ['S', 'P', 'L'])
     assertEquals(AIR.axis_codes, ['A', 'I', 'R'])
   })
 
-  await t.step('Test rules.checks.nifti.NiftiPEDir', async () => {
+  await t.step('Test rules.checks.nifti.NiftiPEDir', () => {
     const schemaPath = 'rules.checks.nifti.NiftiPEDir'
 
     let context = prepContext(RAS, 'PA', 'j')
