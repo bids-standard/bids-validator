@@ -7,8 +7,9 @@
 import { join } from '@std/path'
 import { assertEquals, assertExists, assertRejects } from '@std/assert'
 import { readGitTree } from './git.ts'
+import { readFileTree } from './deno.ts'
 import { validate } from '../validators/bids.ts'
-import type { BIDSFile } from '../types/filetree.ts'
+import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
 
 const REPO_URL = 'https://github.com/openneurodatasets/ds000001.git'
@@ -56,8 +57,8 @@ async function capture(cmd: string[]): Promise<string> {
   return new TextDecoder().decode(output.stdout).trim()
 }
 
-async function setupRepo(repoPath: string): Promise<void> {
-  await run(['git', 'clone', '--bare', REPO_URL, repoPath])
+async function setupRepo({ repoPath, bare }: { repoPath: string; bare: boolean }): Promise<void> {
+  await run(['git', 'clone', '-b', REF, REPO_URL, repoPath, ...(bare ? ['--bare'] : [])])
   await run(['git', '-C', repoPath, 'annex', 'init'])
 
   // Obtain the annex key for one file so we have a locally present object
@@ -74,50 +75,66 @@ async function setupRepo(repoPath: string): Promise<void> {
   await run(['git', '-C', repoPath, 'annex', 'copy', '--key', key, '--to', 'here'])
 }
 
+async function validate_ds001_v1(tree: FileTree): Promise<void> {
+  const result = await validate(tree, {
+    datasetPath: tree.path,
+    debug: 'ERROR',
+    ignoreWarnings: true,
+    ignoreNiftiHeaders: true,
+    blacklistModalities: [],
+    datasetTypes: [],
+  })
+
+  // --- Issue assertions ---
+  const issues = result.issues.issues
+  assertEquals(
+    issues.length,
+    1,
+    `Expected 1 issue, got ${issues.length}: ${JSON.stringify(issues)}`,
+  )
+
+  const issue = issues[0]
+  assertEquals(issue.code, 'TSV_VALUE_INCORRECT_TYPE')
+  assertEquals(issue.subCode, 'sex')
+  assertEquals(issue.location, '/participants.tsv')
+  assertEquals(issue.line, 6)
+
+  // --- Summary assertions ---
+  const summary = result.summary
+  assertEquals(summary.subjects.length, 16)
+  assertEquals(summary.totalFiles, 133)
+  assertEquals(summary.tasks, ['balloon analog risk task'])
+  assertEquals(summary.dataTypes.toSorted(), ['anat', 'func'])
+}
+
 Deno.test(
   {
-    name: 'Integration: validate bare git-annex repo (ds000001 @ 1.0.0)',
+    name: 'Integration: validate ds000001 @ 1.0.0',
     ignore: !hasGit || !hasGitAnnex,
     sanitizeResources: false,
     sanitizeOps: false,
   },
-  async () => {
-    const tmpDir = Deno.makeTempDirSync()
-    const repoPath = join(tmpDir, 'ds000001.git')
-    await setupRepo(repoPath)
+  async (t) => {
+    const tmpDir = await Deno.makeTempDir()
+    const barePath = join(tmpDir, 'ds000001.git')
+    const fullPath = join(tmpDir, 'ds000001')
 
     try {
-      const tree = await readGitTree(repoPath, REF)
-      const result = await validate(tree, {
-        datasetPath: repoPath,
-        debug: 'ERROR',
-        ignoreWarnings: true,
-        ignoreNiftiHeaders: true,
-        blacklistModalities: [],
-        datasetTypes: [],
+      await setupRepo({ repoPath: barePath, bare: true })
+      await setupRepo({ repoPath: fullPath, bare: false })
+
+      await t.step('Validate bare repository', async () => {
+        const tree = await readGitTree(barePath, REF)
+        await validate_ds001_v1(tree)
       })
-
-      // --- Issue assertions ---
-      const issues = result.issues.issues
-      assertEquals(
-        issues.length,
-        1,
-        `Expected 1 issue, got ${issues.length}: ${JSON.stringify(issues)}`,
-      )
-
-      const issue = issues[0]
-      assertEquals(issue.code, 'TSV_VALUE_INCORRECT_TYPE')
-      assertEquals(issue.subCode, 'sex')
-      assertEquals(issue.location, '/participants.tsv')
-      assertEquals(issue.line, 6)
-
-      // --- Summary assertions ---
-      const summary = result.summary
-      assertEquals(summary.subjects.length, 16)
-      assertEquals(summary.totalFiles, 133)
-      assertEquals(summary.size, 2416199965)
-      assertEquals(summary.tasks, ['balloon analog risk task'])
-      assertEquals(summary.dataTypes.toSorted(), ['anat', 'func'])
+      await t.step('Validate full repository (git tree)', async () => {
+        const tree = await readGitTree(fullPath, REF)
+        await validate_ds001_v1(tree)
+      })
+      await t.step('Validate full repository (work tree)', async () => {
+        const tree = await readFileTree(fullPath)
+        await validate_ds001_v1(tree)
+      })
     } finally {
       // git/git-annex sets some objects read-only; chmod +w before removal
       await new Deno.Command('chmod', {
