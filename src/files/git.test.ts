@@ -25,6 +25,7 @@ async function commandExists(cmd: string): Promise<boolean> {
 }
 
 const hasGit = await commandExists('git')
+const isWindows = Deno.build.os === 'windows'
 const hasGitAnnex = await commandExists('git-annex')
 
 async function run(cmd: string[]): Promise<void> {
@@ -158,7 +159,7 @@ async function withRepo(
 Deno.test(
   {
     name: 'readGitTree: symlink to file in same directory',
-    ignore: !hasGit,
+    ignore: !hasGit || isWindows,
     sanitizeResources: false,
     sanitizeOps: false,
   },
@@ -183,7 +184,7 @@ Deno.test(
 Deno.test(
   {
     name: 'readGitTree: symlink targeting file in parent directory',
-    ignore: !hasGit,
+    ignore: !hasGit || isWindows,
     sanitizeResources: false,
     sanitizeOps: false,
   },
@@ -207,7 +208,7 @@ Deno.test(
 Deno.test(
   {
     name: 'readGitTree: symlink chain A -> B -> file',
-    ignore: !hasGit,
+    ignore: !hasGit || isWindows,
     sanitizeResources: false,
     sanitizeOps: false,
   },
@@ -231,7 +232,7 @@ Deno.test(
 Deno.test(
   {
     name: 'readGitTree: symlink chain to annex key',
-    ignore: !hasGit,
+    ignore: !hasGit || isWindows,
     sanitizeResources: false,
     sanitizeOps: false,
   },
@@ -259,7 +260,7 @@ Deno.test(
 Deno.test(
   {
     name: 'readGitTree: symlink cycle is silently dropped',
-    ignore: !hasGit,
+    ignore: !hasGit || isWindows,
     sanitizeResources: false,
     sanitizeOps: false,
   },
@@ -286,7 +287,7 @@ Deno.test(
 Deno.test(
   {
     name: 'readGitTree: broken symlink is silently dropped',
-    ignore: !hasGit,
+    ignore: !hasGit || isWindows,
     sanitizeResources: false,
     sanitizeOps: false,
   },
