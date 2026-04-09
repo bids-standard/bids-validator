@@ -31,17 +31,17 @@ Deno.test('test expression functions', async (t) => {
     assert(truthy(intersects(['abc', 'def'], ['def'])))
     assert(intersects(['abc', 'def'], ['ghi']) === false)
     // Just checking values, I'm not concerned about types here
-    // @ts-expect-error
+    // @ts-expect-error intersects returns T[]|boolean, but allequal expects T[]
     assert(equal(intersects([1, 2, 3], [2, 3, 4]), [2, 3]))
-    // @ts-expect-error
+    // @ts-expect-error intersects returns T[]|boolean, but allequal expects T[]
     assert(equal(intersects(['abc', 'def'], ['def']), ['def']))
 
     // Promote scalars to arrays
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string where T[] is expected
     assert(truthy(intersects('abc', ['abc', 'def'])))
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string where T[] is expected
     assert(intersects('abc', ['a', 'b', 'c']) === false)
-    // @ts-expect-error
+    // @ts-expect-error intersects returns T[]|boolean, but allequal expects T[]
     assert(equal(intersects('abc', ['abc', 'def']), ['abc']))
   })
   await t.step('match function', () => {
@@ -66,13 +66,13 @@ Deno.test('test expression functions', async (t) => {
     assert(min([1, 2, 3]) === 1)
     assert(min([3, 2, 1]) === 1)
     assert(min([]) === Infinity)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(min(['3', '2', '1']) === 1)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(min(['3', 'string', '1']) === 1)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(min(['3', 'n/a', '1']) === 1)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where number|number[] is expected
     assert(min(null) === null)
   })
   await t.step('max function', () => {
@@ -80,27 +80,27 @@ Deno.test('test expression functions', async (t) => {
     assert(max([1, 2, 3]) === 3)
     assert(max([3, 2, 1]) === 3)
     assert(max([]) === -Infinity)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(max(['3', '2', '1']) === 3)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(max(['3', 'string', '1']) === 3)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(max(['3', 'n/a', '1']) === 3)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where number|number[] is expected
     assert(max(null) === null)
   })
   await t.step('length function', () => {
     const length = expressionFunctions.length
     assert(length([1, 2, 3]) === 3)
     // Out-of-scope (but permitted) inputs
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string where T[] is expected
     assert(length('abc') === 3)
     // Out-of-scope inputs
-    // @ts-ignore
+    // @ts-expect-error intentionally passing object where T[] is expected
     assert(length({ a: 1, b: 2 }) === null)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing boolean where T[] is expected
     assert(length(true) === null)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where T[] is expected
     assert(length(null) === null)
   })
   await t.step('count function', () => {
@@ -169,11 +169,11 @@ Deno.test('test expression functions', async (t) => {
     assert(substr('abc', 2, 3) === 'c')
     assert(substr('abc', 3, 4) === '')
     assert(substr('abc', 0, 4) === 'abc')
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where string is expected
     assert(substr(null, 0, 1) === null)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where number is expected
     assert(substr('abc', null, 1) === null)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where number is expected
     assert(substr('abc', 0, null) === null)
   })
   await t.step('sorted(..., "numeric") function', () => {

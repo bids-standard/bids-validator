@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck test file uses inline schema stubs that do not satisfy full Schema type
 import { assertEquals } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { evalColumns, evalIndexColumns, evalInitialColumns } from './tables.ts'

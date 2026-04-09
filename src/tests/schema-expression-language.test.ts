@@ -24,7 +24,7 @@ Deno.test('validate schema expression tests', async (t) => {
     await t.step(`${test.expression} evals to ${test.result}`, () => {
       const context = { file: { parent: null }, dataset: { tree: null } } as unknown as BIDSContext
       Object.assign(context, expressionFunctions)
-      // @ts-expect-error
+      // @ts-expect-error exists is added via Object.assign and not declared on BIDSContext
       context.exists.bind(context)
       const actual_result = evalCheck(test.expression, context)
       if (equal(actual_result, test.result)) {

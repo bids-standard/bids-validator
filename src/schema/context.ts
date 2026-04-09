@@ -73,7 +73,7 @@ export class BIDSContextDataset implements Dataset {
           ?.map((dir) => `/${dir.name}`)
         : [],
     )
-    // @ts-ignore
+    // @ts-expect-error Subjects type does not include null, but null is used as a sentinel for "not yet loaded"
     this.subjects = args.subjects || null
   }
 

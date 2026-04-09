@@ -62,7 +62,7 @@ function _applyRules(
   if (schemaPath === undefined) {
     if (Object.hasOwn(schema, 'rules')) {
       schemaPath = 'rules'
-      // @ts-expect-error
+      // @ts-expect-error GenericSchema index signature does not include 'rules' as a GenericSchema subtype
       schema = schema.rules
     } else {
       schemaPath = ''
@@ -115,11 +115,11 @@ const evalMap: Record<
   ) => boolean | void
 > = {
   checks: _evalRuleChecks,
-  // @ts-expect-error
+  // @ts-expect-error evalColumns signature differs from the evalMap callback type
   columns: evalColumns,
-  // @ts-expect-error
+  // @ts-expect-error evalInitialColumns signature differs from the evalMap callback type
   initial_columns: evalInitialColumns,
-  // @ts-expect-error
+  // @ts-expect-error evalIndexColumns signature differs from the evalMap callback type
   index_columns: evalIndexColumns,
   fields: evalJsonCheck,
 }
@@ -142,7 +142,7 @@ function evalRule(
   Object.keys(rule)
     .filter((key) => key in evalMap)
     .map((key) => {
-      // @ts-expect-error
+      // @ts-expect-error dynamic key lookup on evalMap is not narrowed by filter
       evalMap[key](rule, context, schema, schemaPath)
     })
 }
@@ -198,7 +198,7 @@ function evalJsonCheck(
 
   const json: Record<string, any> = sidecarRule ? context.sidecar : context.json
   for (const [key, requirement] of Object.entries(rule.fields)) {
-    // @ts-expect-error
+    // @ts-expect-error dynamic nested index access on GenericSchema is not typed
     const metadataDef = schema.objects.metadata[key]
     const keyName: string = metadataDef.name
     const value = json[keyName]

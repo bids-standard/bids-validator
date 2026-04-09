@@ -70,7 +70,7 @@ const associationLookup: Record<string, LoadFunction> = {
       path: file.path,
       n_cols: rows ? rows[0].length : 0,
       n_rows: rows ? rows.length : 0,
-      // @ts-expect-error values is expected to be a number[], coerce lazily
+      // @ts-expect-error parseBvalBvec returns string[][], but Bval.values expects number[]
       values: rows[0],
     }
   },
@@ -134,7 +134,7 @@ export async function buildAssociations(
   const schema: MetaSchema = context.dataset.schema as MetaSchema
 
   Object.assign(context, expressionFunctions)
-  // @ts-expect-error
+  // @ts-expect-error exists is added via Object.assign and not declared on BIDSContext
   context.exists.bind(context)
 
   for (const [key, rule] of Object.entries(schema.meta.associations)) {

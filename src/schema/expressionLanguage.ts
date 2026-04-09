@@ -179,7 +179,7 @@ function safeContext(context: BIDSContext): BIDSContext {
 
 export function prepareContext(context: BIDSContext): BIDSContext {
   Object.assign(context, expressionFunctions)
-  // @ts-expect-error
+  // @ts-expect-error exists is added via Object.assign and not declared on BIDSContext
   context.exists.bind(context)
   return safeContext(context)
 }
