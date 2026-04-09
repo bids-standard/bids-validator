@@ -30,10 +30,10 @@ const DIR_CHECKS: CheckFunction[] = [
   cleanContext,
 ]
 
-export async function filenameIdentify(schema, context) {
+export function filenameIdentify(schema, context) {
   const checks = context?.directory ? DIR_CHECKS : CHECKS
   for (const check of checks) {
-    await check(schema as unknown as GenericSchema, context)
+    check(schema as unknown as GenericSchema, context)
   }
 }
 
@@ -72,7 +72,6 @@ export function findDirRuleMatches(schema, context) {
       }
     }
   }
-  return Promise.resolve()
 }
 function findRuleMatches(schema, context) {
   const schemaPath = 'rules.files'
@@ -86,7 +85,6 @@ function findRuleMatches(schema, context) {
     const path = `${schemaPath}.${key}`
     _findRuleMatches(schema[path], path, context)
   })
-  return Promise.resolve()
 }
 
 /* Schema rules specifying valid filenames follow a variety of patterns.
@@ -162,8 +160,6 @@ export function hasMatch(schema, context) {
       context.filenameRules = entExtMatch
     }
   }
-
-  return Promise.resolve()
 }
 
 /* Test if all of a given context's extension and entities are present in a
