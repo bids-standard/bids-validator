@@ -2,6 +2,7 @@ import { assert, assertEquals } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { filesToTree, subtree } from './filetree.ts'
+import { NullFileOpener } from './openers.ts'
 import { StringOpener } from './openers.test.ts'
 
 export function pathToFile(path: string, ignored: boolean = false): BIDSFile {
@@ -148,4 +149,33 @@ Deno.test('FileTree.isPathIgnored delegates to its FileIgnoreRules', () => {
   const tree = new FileTree('/', '/', undefined, rules)
   assertEquals(tree.isPathIgnored('/ignored/foo.txt'), true)
   assertEquals(tree.isPathIgnored('/kept/bar.txt'), false)
+})
+
+Deno.test('filesToTree attaches unresolved links to their parent directory', () => {
+  const file = new BIDSFile('/sub-01/anat/sub-01_T1w.json', new NullFileOpener(0))
+  const tree = filesToTree([file], undefined, [
+    {
+      path: '/sub-01/anat/broken.nii.gz',
+      target: '../nope.nii.gz',
+      reason: 'broken',
+    },
+  ])
+
+  const anat = tree.get('sub-01/anat')
+  assert(anat !== undefined, 'sub-01/anat should exist in tree')
+  assertEquals((anat as FileTree).links.length, 1)
+  assertEquals((anat as FileTree).links[0].path, '/sub-01/anat/broken.nii.gz')
+})
+
+Deno.test('filesToTree creates intermediate directories for a link-only path', () => {
+  const tree = filesToTree([], undefined, [
+    {
+      path: '/a/b/c/dangling.txt',
+      target: 'nowhere',
+      reason: 'broken',
+    },
+  ])
+  const c = tree.get('a/b/c')
+  assert(c !== undefined, '/a/b/c should be created for the link')
+  assertEquals((c as FileTree).links.length, 1)
 })
