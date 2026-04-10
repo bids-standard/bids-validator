@@ -1,10 +1,19 @@
 import { BIDSContext, type BIDSContextDataset } from './context.ts'
-import { BIDSFile, type FileTree } from '../types/filetree.ts'
+import { BIDSFile, type FileTree, type SymlinkReason } from '../types/filetree.ts'
 import { NullFileOpener } from '../files/openers.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { loadJSON } from '../files/json.ts'
 import { readBytes, readText } from '../files/access.ts'
+import type { bidsIssues } from '../issues/list.ts'
 import { queuedAsyncIterator } from '../utils/queue.ts'
+
+const REASON_TO_CODE: Record<SymlinkReason, keyof typeof bidsIssues> = {
+  'broken': 'SYMLINK_BROKEN',
+  'cycle': 'SYMLINK_CYCLE',
+  'out-of-tree': 'SYMLINK_OUT_OF_TREE',
+  'submodule': 'SYMLINK_IN_SUBMODULE',
+  'directory-unsupported': 'SYMLINK_DIRECTORY_UNSUPPORTED',
+}
 
 function* quickWalk(dir: FileTree): Generator<BIDSFile> {
   for (const file of dir.files) {
@@ -32,6 +41,13 @@ async function* _walkFileTree(
   fileTree: FileTree,
   dsContext: BIDSContextDataset,
 ): AsyncIterable<BIDSContext | CleanupFunction> {
+  for (const link of fileTree.links) {
+    if (fileTree.isPathIgnored(link.path)) continue
+    dsContext.issues.add({
+      code: REASON_TO_CODE[link.reason],
+      location: link.path,
+    })
+  }
   for (const file of fileTree.files) {
     if (file.ignored) {
       continue
