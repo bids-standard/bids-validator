@@ -64,7 +64,6 @@ async function _readFileTree({
         const opener = new AnnexedGitFileOpener(
           annexParsed.key,
           annexParsed.size,
-          gitdir,
           { cache, fs, gitdir },
           preferredRemote,
         )

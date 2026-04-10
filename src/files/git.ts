@@ -80,7 +80,6 @@ export class GitFileOpener implements FileOpener {
 export class AnnexedGitFileOpener implements FileOpener {
   size: number
   #key: string
-  #gitdir: string
   #gitOptions: GitOptions
   #preferredRemote: string | undefined
   #delegate: FileOpener | undefined
@@ -88,13 +87,11 @@ export class AnnexedGitFileOpener implements FileOpener {
   constructor(
     key: string,
     size: number,
-    gitdir: string,
     gitOptions: GitOptions,
     preferredRemote?: string,
   ) {
     this.#key = key
     this.size = size
-    this.#gitdir = gitdir
     this.#gitOptions = gitOptions
     this.#preferredRemote = preferredRemote
   }
@@ -106,7 +103,15 @@ export class AnnexedGitFileOpener implements FileOpener {
 
     // 1. Try local annex object store
     const [h0, h1] = await hashDirLower(this.#key)
-    const localPath = join(this.#gitdir, 'annex', 'objects', h0, h1, this.#key, this.#key)
+    const localPath = join(
+      this.#gitOptions.gitdir,
+      'annex',
+      'objects',
+      h0,
+      h1,
+      this.#key,
+      this.#key,
+    )
     try {
       await Deno.stat(localPath)
       this.#delegate = new FsFileOpener('', localPath)
@@ -219,7 +224,6 @@ async function resolveSymlinkInTree(
   filepath: string,
   target: string,
   commitOid: string,
-  gitdir: string,
   gitOptions: GitOptions,
   symlinkMap: Map<string, string>,
   preferredRemote?: string,
@@ -242,7 +246,6 @@ async function resolveSymlinkInTree(
           opener: new AnnexedGitFileOpener(
             annexParsed.key,
             annexParsed.size,
-            gitdir,
             gitOptions,
             preferredRemote,
           ),
@@ -389,7 +392,6 @@ export async function readGitTree(
             opener = new AnnexedGitFileOpener(
               annexParsed.key,
               annexParsed.size,
-              gitdir,
               gitOptions,
               preferredRemote,
             )
@@ -421,7 +423,6 @@ export async function readGitTree(
       filepath,
       target,
       resolvedOid,
-      gitdir,
       gitOptions,
       symlinkMap,
       preferredRemote,
