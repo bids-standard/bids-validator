@@ -46,6 +46,7 @@ async function* _walkFileTree(
     dsContext.issues.add({
       code: REASON_TO_CODE[link.reason],
       location: link.path,
+      issueMessage: `Target: ${link.target}`,
     })
   }
   for (const file of fileTree.files) {
