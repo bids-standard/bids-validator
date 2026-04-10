@@ -7,6 +7,8 @@ import { BIDSFileDeno, readFileTree } from './deno.ts'
 import { UnicodeDecodeError } from './streams.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules } from './ignore.ts'
+import { BIDSContextDataset } from '../schema/context.ts'
+import { walkFileTree } from '../schema/walk.ts'
 
 await requestReadPermission()
 
@@ -238,4 +240,35 @@ Deno.test({
   } finally {
     await Deno.remove(externalDir, { recursive: true })
   }
+})
+
+Deno.test({
+  name: 'readFileTree + walkFileTree: reports broken and cycle links end-to-end',
+  ignore: isWindows,
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async () => {
+  await withTempDataset(
+    async (root) => {
+      // One valid file so the tree is non-empty.
+      await Deno.writeTextFile(join(root, 'dataset_description.json'), '{}')
+      // Broken link.
+      await Deno.symlink('nowhere.txt', join(root, 'broken.txt'))
+      // Cycle.
+      await Deno.symlink('cycle-b', join(root, 'cycle-a'))
+      await Deno.symlink('cycle-a', join(root, 'cycle-b'))
+    },
+    async (root) => {
+      const tree = await readFileTree(root)
+      const ds = new BIDSContextDataset({ tree })
+      for await (const _ of walkFileTree(ds)) { /* consume */ }
+
+      const brokenIssues = ds.issues.get({ code: 'SYMLINK_BROKEN' })
+      assertEquals(brokenIssues.length, 1)
+      assertEquals(brokenIssues[0].location, '/broken.txt')
+
+      const cycleIssues = ds.issues.get({ code: 'SYMLINK_CYCLE' })
+      assertEquals(cycleIssues.length, 2)
+    },
+  )
 })
