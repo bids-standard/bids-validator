@@ -1,6 +1,6 @@
 import { assert, assertEquals } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
-import { BIDSFile, type FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { filesToTree, subtree } from './filetree.ts'
 import { StringOpener } from './openers.test.ts'
 
@@ -125,4 +125,20 @@ Deno.test('extract subtrees', async (t) => {
     assertEquals(pipeline.get('also_ignored_file')!.ignored, true)
     assertEquals(pipeline.get('ignored_file')!.ignored, false)
   })
+})
+
+Deno.test('FileTree initialises an empty links array', () => {
+  const tree = new FileTree('/some/path', 'path')
+  assertEquals(tree.links, [])
+})
+
+Deno.test('FileTree.links accepts UnresolvedLink records', () => {
+  const tree = new FileTree('/some/path', 'path')
+  tree.links.push({
+    path: '/some/path/broken',
+    target: '../does-not-exist',
+    reason: 'broken',
+  })
+  assertEquals(tree.links.length, 1)
+  assertEquals(tree.links[0].reason, 'broken')
 })
