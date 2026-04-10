@@ -189,6 +189,7 @@ symlinks are treated as file symlinks, and if the target path happens not to
 match a blob, they are silently dropped.
 
 Complications:
+
 - Chains of directory symlinks require recursive grafting.
 - A directory symlink to a path that itself contains symlinks (file or
   directory) requires the grafted subtree to resolve its own symlinks.
@@ -312,15 +313,34 @@ For each scenario where a symlink cannot be fully resolved, the choices are:
 - **warn** — warning is raised, validation continues
 - **ignore** — symlink is silently omitted from the tree
 
-| Scenario             | Git tree           | Work tree          |
-| -------------------- | ------------------ | ------------------ |
-| Out-of-tree file     | ?                  | valid (OS follows) |
-| Out-of-tree dir      | unresolvable       | valid (recurse)    |
-| In-tree dir          | graft? (see §5)    | valid (recurse)    |
-| Broken (target gone) | ?                  | ?                  |
-| Cyclic               | ?                  | ?                  |
-| Submodule (file)     | ?                  | ?                  |
-| Submodule (dir)      | ?                  | ?                  |
+| Target location | Target type | Git tree | Work tree          |
+| --------------- | ----------- | -------- | ------------------ |
+| Out-of-tree     | File        | ERROR    | valid (OS follows) |
+| Out-of-tree     | Directory   | ERROR    | valid (OS follows) |
+| Out-of-tree     | Missing     | ERROR    | ERROR              |
+| In-tree         | File        | valid    | valid (OS follows) |
+| In-tree         | Directory   | valid    | valid (OS follows) |
+| In-tree         | Missing     | ERROR    | ERROR              |
+| Submodule       | File        | WARN     | valid (OS follows) |
+| Submodule       | Directory   | WARN     | valid (OS follows) |
+| Submodule       | Missing     | WARN     | ERROR              |
+| Cyclic          | N/A         | ERROR    | ERROR              |
+
+Using OS resolution, we are unaware of git submodules.
+The link is resolvable, dangling, or cyclic.
+
+Walking a git tree, we reject out-of-tree objects. In-tree objects are resolvable.
+Submodules are detectable, and therefore we can warn,
+but cannot distinguish files/directories/broken links.
+
+In-tree directory resolution requires loop detection as well.
+Resolving this may be out-of-scope for work trees, but is required for git.
+
+Deferred:
+
+- Identifying uninitialized submodules in work trees.
+- Descending into initialized submodules in git trees (full clones)
+- Resolving and descending into uninitialized submodules in git trees.
 
 ### 3. How should dangling symlinks be represented?
 
@@ -389,6 +409,12 @@ tree.directories.push(new FileTree(path, name, tree, ignore))
 Pro: code that makes either assumption finds something.
 Con: search/enumeration code may be confused by a path appearing as both.
 
+**Decision**:
+
+C. However, dangling links will be treated as absent. Including them in the
+`FileTree` object allows the issues to be generated when walking the tree,
+and allows us to be forgiving of dangling links in opaque directories.
+
 ### 4. Where should errors be reported?
 
 Tree-building currently has no issue collector. Options:
@@ -417,11 +443,22 @@ through the walk functions.
 
 ```typescript
 // Would require changing signatures:
-async function readFileTree(rootPath, prune, preferredRemote, issues): Promise<FileTree>
+async function readFileTree(
+  rootPath,
+  prune,
+  preferredRemote,
+  issues,
+): Promise<FileTree>
 ```
 
 **C. Logged during tree building.** Issues appear in logs but not in
 structured validation output.
+
+**Decision**:
+
+Errors should be reported when visiting the parent directory in `schema/walk.ts:_walkFileTree`.
+
+Further question: Should bidsignore adjust behavior?
 
 ### 5. Should the work-tree backend use explicit symlink resolution?
 
@@ -489,6 +526,10 @@ Con: breaks the BIDS view use case unless out-of-tree is explicitly allowed
 **Option C: Hybrid.** Default to OS resolution (option A). Add an optional
 strict mode (e.g., `--strict-symlinks`) that uses explicit resolution and
 reports out-of-tree symlinks.
+
+**Decision**:
+
+Deferred to implementation. Clear logic and resolving bugs is the priority.
 
 ## Summary of Current Bugs
 
