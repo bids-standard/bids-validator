@@ -9,6 +9,15 @@ const _CODE_DEPRECATED = Number.MIN_SAFE_INTEGER
 
 type Group = Map<Issue[keyof Issue], DatasetIssues | Group | undefined>
 
+/**
+ * Container for {@link Issue}s accumulated during validation.
+ *
+ * Holds a flat list of issues plus a `codeMessages` map that records the
+ * human-readable description for each distinct issue code seen so far.
+ * Most validators interact with a `DatasetIssues` via the `issues`
+ * property of a `BIDSContext` or `BIDSContextDataset` rather than
+ * constructing one directly.
+ */
 export class DatasetIssues {
   issues: Issue[]
   codeMessages: Map<string, string>
@@ -20,6 +29,23 @@ export class DatasetIssues {
     this.codeMessages = codeMessages ?? new Map()
   }
 
+  /**
+   * Append an issue to the collection.
+   *
+   * If `codeMessage` is not provided, `add` looks up `issue.code` in the
+   * built-in non-schema issue catalogue and uses its description and
+   * default severity. The catalogue is defined in
+   * `src/issues/list.ts`.
+   *
+   * @param issue - The issue to record. Only the fields recognised by
+   *   `filterIssue` are kept; extras are dropped to protect against
+   *   payloads from external validators.
+   * @param codeMessage - Optional human-readable description for
+   *   `issue.code`. Required when `issue.code` is not in the non-schema
+   *   issue catalogue.
+   * @throws {Error} If `codeMessage` is not provided and `issue.code`
+   *   is not a key in the non-schema issue catalogue.
+   */
   add(issue: Issue, codeMessage?: string) {
     // Ensure only relevant fields are kept, for protection when working with
     // external validators
