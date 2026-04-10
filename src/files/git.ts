@@ -10,7 +10,13 @@ import type { WalkerEntry } from 'isomorphic-git'
 import fs from 'node:fs'
 import * as posix from '@std/path/posix'
 import { join } from '@std/path'
-import { BIDSFile, type FileOpener, type FileTree } from '../types/filetree.ts'
+import {
+  BIDSFile,
+  type FileOpener,
+  type FileTree,
+  type SymlinkReason,
+  type UnresolvedLink,
+} from '../types/filetree.ts'
 import { filesToTree, loadBidsIgnore } from './filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { hashDirLower, parseAnnexKey, resolveAnnexedFile } from './repo.ts'
@@ -138,13 +144,76 @@ export class AnnexedGitFileOpener implements FileOpener {
 
 const MAX_SYMLINK_DEPTH = 10
 
+type SymlinkResolution =
+  | { kind: 'file'; opener: GitFileOpener | AnnexedGitFileOpener }
+  | { kind: 'unresolved'; reason: SymlinkReason }
+
+/**
+ * Resolve a target path relative to a directory inside a git tree.
+ *
+ * Walks segments explicitly so we can distinguish paths that would escape
+ * the repository root from paths that stay inside. Returns null for
+ * absolute targets or any relative target that pops above index 0.
+ */
+function resolveInTree(dir: string, target: string): string | null {
+  if (target.startsWith('/')) return null
+  const joined = (dir ? dir.split('/') : []).concat(target.split('/'))
+  const out: string[] = []
+  for (const seg of joined) {
+    if (seg === '' || seg === '.') continue
+    if (seg === '..') {
+      if (out.length === 0) return null
+      out.pop()
+    } else {
+      out.push(seg)
+    }
+  }
+  return out.join('/')
+}
+
+/**
+ * Walk prefixes of a resolved path looking for a gitlink entry (submodule).
+ * Returns true as soon as any prefix tree contains an entry matching the
+ * next segment with type 'commit'. Returns false if the walk completes
+ * without seeing a gitlink, or if any prefix lookup itself throws.
+ */
+async function ancestorIsSubmodule(
+  resolvedPath: string,
+  commitOid: string,
+  gitOptions: GitOptions,
+): Promise<boolean> {
+  const segments = resolvedPath.split('/').filter((s) => s !== '')
+  let prefix = ''
+  for (const segment of segments) {
+    try {
+      const parentObj = await git.readObject({
+        oid: commitOid,
+        filepath: prefix,
+        ...gitOptions,
+      })
+      if (parentObj.type !== 'tree') return false
+      // The tree type exposes `entries` as an array of { mode, path, oid, type }.
+      // deno-lint-ignore no-explicit-any
+      const entries = (parentObj as unknown as { object: { entries: any[] } }).object.entries
+      const match = entries.find((e: { path: string }) => e.path === segment)
+      if (!match) return false
+      if (match.type === 'commit') return true
+      if (match.type !== 'tree') return false
+      prefix = prefix === '' ? segment : `${prefix}/${segment}`
+    } catch {
+      return false
+    }
+  }
+  return false
+}
+
 /**
  * Resolve a non-annex symlink within the git tree.
  *
- * Uses the symlink map (collected during the walk) to follow chains of symlinks
- * up to MAX_SYMLINK_DEPTH, then reads the final target blob from the commit tree.
- * Returns a FileOpener for the resolved target, or undefined if the target
- * cannot be resolved (outside tree, broken link, or cycle).
+ * Returns a file opener for in-tree blob targets, an annex opener when the
+ * chain terminates in an annex key, or an unresolved verdict with a reason
+ * code for broken, cyclic, out-of-tree, submodule-traversing, or
+ * directory-target symlinks.
  */
 async function resolveSymlinkInTree(
   filepath: string,
@@ -154,50 +223,64 @@ async function resolveSymlinkInTree(
   gitOptions: GitOptions,
   symlinkMap: Map<string, string>,
   preferredRemote?: string,
-): Promise<GitFileOpener | AnnexedGitFileOpener | undefined> {
+): Promise<SymlinkResolution> {
   let currentTarget = target
   let currentDir = posix.dirname(filepath)
 
   for (let depth = 0; depth < MAX_SYMLINK_DEPTH; depth++) {
-    // Resolve relative target against the current directory
-    const resolvedPath = posix.resolve('/' + currentDir, currentTarget).slice(1)
+    const resolvedPath = resolveInTree(currentDir, currentTarget)
+    if (resolvedPath === null) {
+      return { kind: 'unresolved', reason: 'out-of-tree' }
+    }
 
-    // Check if the resolved path is another symlink we saw during the walk
     const nextTarget = symlinkMap.get(resolvedPath)
     if (nextTarget !== undefined) {
-      // It's a symlink — check if it's an annex pointer first
       const annexParsed = parseAnnexKey(nextTarget)
       if (annexParsed !== null) {
-        return new AnnexedGitFileOpener(
-          annexParsed.key,
-          annexParsed.size,
-          gitdir,
-          gitOptions,
-          preferredRemote,
-        )
+        return {
+          kind: 'file',
+          opener: new AnnexedGitFileOpener(
+            annexParsed.key,
+            annexParsed.size,
+            gitdir,
+            gitOptions,
+            preferredRemote,
+          ),
+        }
       }
-      // Follow the chain
       currentDir = posix.dirname(resolvedPath)
       currentTarget = nextTarget
       continue
     }
 
-    // Not a symlink — try to read the blob from the tree
+    let obj: Awaited<ReturnType<typeof git.readObject>>
     try {
-      const { oid, blob } = await git.readBlob({
+      obj = await git.readObject({
         oid: commitOid,
         filepath: resolvedPath,
         ...gitOptions,
       })
-      return new GitFileOpener(oid, blob.length, gitOptions)
     } catch {
-      // Target does not exist in the tree
-      return undefined
+      if (await ancestorIsSubmodule(resolvedPath, commitOid, gitOptions)) {
+        return { kind: 'unresolved', reason: 'submodule' }
+      }
+      return { kind: 'unresolved', reason: 'broken' }
     }
+
+    if (obj.type === 'tree') {
+      return { kind: 'unresolved', reason: 'directory-unsupported' }
+    }
+    if (obj.type === 'blob') {
+      const { blob } = await git.readBlob({ oid: obj.oid, ...gitOptions })
+      return {
+        kind: 'file',
+        opener: new GitFileOpener(obj.oid, blob.length, gitOptions),
+      }
+    }
+    return { kind: 'unresolved', reason: 'broken' }
   }
 
-  // Exceeded max depth — likely a cycle
-  return undefined
+  return { kind: 'unresolved', reason: 'cycle' }
 }
 
 /**
@@ -331,8 +414,10 @@ export async function readGitTree(
     )
   }
 
+  const unresolvedLinks: UnresolvedLink[] = []
+
   for (const { filepath, target } of deferredSymlinks) {
-    const opener = await resolveSymlinkInTree(
+    const result = await resolveSymlinkInTree(
       filepath,
       target,
       resolvedOid,
@@ -341,11 +426,16 @@ export async function readGitTree(
       symlinkMap,
       preferredRemote,
     )
-    if (opener) {
-      const file = new BIDSFile('/' + filepath, opener, ignore)
-      files.push(file)
+    if (result.kind === 'file') {
+      files.push(new BIDSFile('/' + filepath, result.opener, ignore))
+    } else {
+      unresolvedLinks.push({
+        path: '/' + filepath,
+        target,
+        reason: result.reason,
+      })
     }
   }
 
-  return loadBidsIgnore(filesToTree(files, ignore), ignore)
+  return loadBidsIgnore(filesToTree(files, ignore, unresolvedLinks), ignore)
 }
