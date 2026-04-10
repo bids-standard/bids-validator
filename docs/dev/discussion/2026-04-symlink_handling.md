@@ -4,6 +4,21 @@
 
 Discussion document. Not yet a specification.
 
+## Implementation status
+
+Bugs 1, 2, and 3 from the "Summary of Current Bugs" section are fixed on
+branch `fix/symlink-handling`:
+
+- Work-tree directory symlinks now fall through to directory recursion.
+- Work-tree dangling non-annex symlinks are recorded as broken link
+  entries on `FileTree.links` instead of crashing `parseAnnexedFile`.
+- Git-tree unresolvable symlinks (broken, cyclic, out-of-tree, submodule,
+  directory target) are recorded on `FileTree.links` and surfaced as
+  `SYMLINK_*` issues during validation, gated by `.bidsignore`.
+
+Directory-symlink grafting in the git tree remains deferred (see Design
+Question 5 and the "directory-unsupported" reason on `UnresolvedLink`).
+
 ## Problem
 
 The validator has two tree-building backends: work tree (`deno.ts`, reads the
