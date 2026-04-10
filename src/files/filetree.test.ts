@@ -106,6 +106,38 @@ Deno.test('extract subtrees', async (t) => {
     )
   })
 
+  await t.step('Subtree preserves unresolved links with rebased paths', async () => {
+    const tree = pathsToTree([
+      '/dataset_description.json',
+      '/derivatives/pipeline/dataset_description.json',
+    ])
+    const pipeline = tree.get('derivatives/pipeline') as FileTree
+    pipeline.links.push({
+      path: '/derivatives/pipeline/broken.txt',
+      target: '../does-not-exist',
+      reason: 'broken',
+    })
+    const anat = new FileTree(
+      '/derivatives/pipeline/sub-01',
+      'sub-01',
+      pipeline,
+    )
+    anat.links.push({
+      path: '/derivatives/pipeline/sub-01/dangling.nii.gz',
+      target: 'nowhere.nii.gz',
+      reason: 'broken',
+    })
+    pipeline.directories.push(anat)
+
+    const derivTree = await subtree(pipeline)
+    assertEquals(derivTree.links.length, 1)
+    assertEquals(derivTree.links[0].path, '/broken.txt')
+    assertEquals(derivTree.links[0].reason, 'broken')
+    const subdir = derivTree.get('sub-01') as FileTree
+    assertEquals(subdir.links.length, 1)
+    assertEquals(subdir.links[0].path, '/sub-01/dangling.nii.gz')
+  })
+
   await t.step('Subtree uses new bidsignore', async () => {
     const tree = pathsToTree([
       '/dataset_description.json',
