@@ -8,9 +8,10 @@ policy, and changelog conventions, see [the contributing guide](contributing.md)
 
 - [Deno](https://deno.com/) (the BIDS Validator targets the Deno runtime).
 - [git](https://git-scm.com/).
-- Optional: [`uv`](https://docs.astral.sh/uv/) (or `pipx`) so you can run
-  Python tools like [`scriv`](https://scriv.readthedocs.io/) and
-  [`pre-commit`](https://pre-commit.com/) without installing them globally.
+- Optional: [`uv`](https://docs.astral.sh/uv/) so you can run Python
+  tools like [`scriv`](https://scriv.readthedocs.io/) and
+  [`pre-commit`](https://pre-commit.com/) via `uvx` without installing
+  them globally.
 
 ## Cloning
 
@@ -22,10 +23,10 @@ $ git clone https://github.com/<your-user>/bids-validator
 $ cd bids-validator
 ```
 
-## Test datasets (required for the test suite)
+## Test datasets (required for the full test suite)
 
-The test suite depends on a collection of sample BIDS datasets that live
-in a git submodule under `tests/data/bids-examples/` (about 60 MB).
+Several tests exercise the validator against sample BIDS datasets that
+live in a git submodule under `tests/data/bids-examples/` (about 60 MB).
 Initialize it before running tests:
 
 ```console
@@ -65,7 +66,11 @@ $ deno install -Agf --reload src/bids-validator.ts
 ```
 
 Deno places the binary in its `bin` directory (typically
-`$HOME/.deno/bin`), which you may need to add to your `PATH`.
+`$HOME/.deno/bin` on Unix systems), which you may need to add to your
+`PATH`. The `-Agf` form here matches the existing
+[contributing guide](contributing.md); to install with the same tighter
+permissions used above for `deno run`, substitute
+`-ERWNgf --reload` and the installed `bids-validator` will still work.
 
 ## Running tests
 
