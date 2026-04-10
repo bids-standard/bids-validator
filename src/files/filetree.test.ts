@@ -142,3 +142,10 @@ Deno.test('FileTree.links accepts UnresolvedLink records', () => {
   assertEquals(tree.links.length, 1)
   assertEquals(tree.links[0].reason, 'broken')
 })
+
+Deno.test('FileTree.isPathIgnored delegates to its FileIgnoreRules', () => {
+  const rules = new FileIgnoreRules(['/ignored/**'])
+  const tree = new FileTree('/', '/', undefined, rules)
+  assertEquals(tree.isPathIgnored('/ignored/foo.txt'), true)
+  assertEquals(tree.isPathIgnored('/kept/bar.txt'), false)
+})
