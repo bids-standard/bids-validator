@@ -276,7 +276,7 @@ Deno.test(
 
 Deno.test(
   {
-    name: 'readGitTree: symlink cycle is silently dropped',
+    name: 'readGitTree: symlink cycle is recorded as a cycle link entry',
     ignore: !hasGit || isWindows,
     sanitizeResources: false,
     sanitizeOps: false,
@@ -292,34 +292,10 @@ Deno.test(
         const tree = await readGitTree(repo)
         const safe = tree.get('safe.txt')
         assertExists(safe, 'safe.txt should be in tree')
-        const cycleA = tree.get('cycle_a')
-        const cycleB = tree.get('cycle_b')
-        assertEquals(cycleA, undefined, 'cycle_a should be dropped')
-        assertEquals(cycleB, undefined, 'cycle_b should be dropped')
-      },
-    )
-  },
-)
-
-Deno.test(
-  {
-    name: 'readGitTree: broken symlink is silently dropped',
-    ignore: !hasGit || isWindows,
-    sanitizeResources: false,
-    sanitizeOps: false,
-  },
-  async () => {
-    await withRepo(
-      async (repo) => {
-        await Deno.writeTextFile(join(repo, 'exists.txt'), 'here')
-        await run(['ln', '-s', 'nonexistent.txt', join(repo, 'broken.txt')])
-      },
-      async (repo) => {
-        const tree = await readGitTree(repo)
-        const exists = tree.get('exists.txt')
-        assertExists(exists, 'exists.txt should be in tree')
-        const broken = tree.get('broken.txt')
-        assertEquals(broken, undefined, 'broken.txt should be dropped')
+        assertEquals(tree.get('cycle_a'), undefined, 'cycle_a should not be in files')
+        assertEquals(tree.get('cycle_b'), undefined, 'cycle_b should not be in files')
+        const cycleLinks = tree.links.filter((l) => l.reason === 'cycle')
+        assertEquals(cycleLinks.length, 2, 'both cycle_a and cycle_b should be reported')
       },
     )
   },
@@ -485,5 +461,105 @@ Deno.test(
       await new Deno.Command('chmod', { args: ['-R', '+w', tmpDir] }).output()
       await Deno.remove(tmpDir, { recursive: true })
     }
+  },
+)
+
+// ---------------------------------------------------------------------------
+// SymlinkReason surface tests
+// ---------------------------------------------------------------------------
+
+Deno.test(
+  {
+    name: 'readGitTree: absolute-target symlink is out-of-tree',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await run(['ln', '-s', '/etc/passwd', join(repo, 'abs.txt')])
+      },
+      async (repo) => {
+        const tree = await readGitTree(repo)
+        assertEquals(tree.get('abs.txt'), undefined, 'abs.txt must not be in files')
+        assertEquals(tree.links.length, 1)
+        assertEquals(tree.links[0].reason, 'out-of-tree')
+        assertEquals(tree.links[0].path, '/abs.txt')
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'readGitTree: relative symlink escaping repo root is out-of-tree',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.mkdir(join(repo, 'sub'))
+        await run(['ln', '-s', '../../outside', join(repo, 'sub', 'escape.txt')])
+      },
+      async (repo) => {
+        const tree = await readGitTree(repo)
+        const escapeLinks = tree.links.filter((l) => l.reason === 'out-of-tree')
+        assertEquals(escapeLinks.length, 1)
+        assertEquals(escapeLinks[0].path, '/sub/escape.txt')
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'readGitTree: symlink to a committed directory is directory-unsupported',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.mkdir(join(repo, 'real-dir'))
+        await Deno.writeTextFile(join(repo, 'real-dir', 'inside.txt'), 'content')
+        await run(['ln', '-s', 'real-dir', join(repo, 'linked-dir')])
+      },
+      async (repo) => {
+        const tree = await readGitTree(repo)
+        assertEquals(tree.get('linked-dir'), undefined, 'linked-dir must not be in files')
+        const dirLinks = tree.links.filter((l) => l.reason === 'directory-unsupported')
+        assertEquals(dirLinks.length, 1)
+        assertEquals(dirLinks[0].path, '/linked-dir')
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'readGitTree: broken symlink is recorded as a broken link entry',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.writeTextFile(join(repo, 'exists.txt'), 'here')
+        await run(['ln', '-s', 'nonexistent.txt', join(repo, 'broken.txt')])
+      },
+      async (repo) => {
+        const tree = await readGitTree(repo)
+        assertEquals(tree.get('broken.txt'), undefined, 'broken.txt must not be in files')
+        const brokenLinks = tree.links.filter((l) => l.reason === 'broken')
+        assertEquals(brokenLinks.length, 1)
+        assertEquals(brokenLinks[0].path, '/broken.txt')
+        assertEquals(brokenLinks[0].target, 'nonexistent.txt')
+      },
+    )
   },
 )
