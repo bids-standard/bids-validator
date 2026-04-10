@@ -506,7 +506,10 @@ Deno.test(
       },
       async (repo) => {
         const tree = await readGitTree(repo)
-        const escapeLinks = tree.links.filter((l) => l.reason === 'out-of-tree')
+        // The link lives under /sub, so look in the sub directory node
+        const subTree = tree.get('sub')
+        assertExists(subTree, 'sub directory should exist')
+        const escapeLinks = (subTree as FileTree).links.filter((l) => l.reason === 'out-of-tree')
         assertEquals(escapeLinks.length, 1)
         assertEquals(escapeLinks[0].path, '/sub/escape.txt')
       },
