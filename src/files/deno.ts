@@ -8,7 +8,7 @@ import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { loadBidsIgnore } from './filetree.ts'
 import { FsFileOpener } from './openers.ts'
-import { parseAnnexedFile, parseAnnexKey } from './repo.ts'
+import { gitdirFromLink, parseAnnexKey } from './repo.ts'
 import { AnnexedGitFileOpener } from './git.ts'
 import fs from 'node:fs'
 
@@ -60,7 +60,7 @@ async function _readFileTree({
       // Annex pointers are identified from the raw target string; no stat needed.
       const annexParsed = parseAnnexKey(target)
       if (annexParsed !== null) {
-        const { gitdir } = await parseAnnexedFile(fullPath)
+        const gitdir = gitdirFromLink(fullPath, target)
         const opener = new AnnexedGitFileOpener(
           annexParsed.key,
           annexParsed.size,
