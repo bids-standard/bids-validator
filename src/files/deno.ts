@@ -3,12 +3,12 @@
  */
 import { basename, join } from '@std/path'
 import * as posix from '@std/path/posix'
-import { BIDSFile, type FileOpener, FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree, type SymlinkReason } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { loadBidsIgnore } from './filetree.ts'
 import { FsFileOpener } from './openers.ts'
-import { parseAnnexedFile } from './repo.ts'
+import { parseAnnexedFile, parseAnnexKey } from './repo.ts'
 import { AnnexedGitFileOpener } from './git.ts'
 import fs from 'node:fs'
 
@@ -47,25 +47,47 @@ async function _readFileTree({
     if (prune.test(thisPath)) {
       continue
     }
-    if (dirEntry.isFile || dirEntry.isSymlink) {
-      let opener: FileOpener
+
+    // Symlinks are classified here and then fall through to the file or
+    // directory branches below via the effective flags computed from stat().
+    let { isFile, isDirectory } = dirEntry
+    let fileInfo: Deno.FileInfo | undefined
+
+    if (dirEntry.isSymlink) {
       const fullPath = join(rootPath, thisPath)
-      try {
-        const fileInfo = await Deno.stat(fullPath)
-        opener = new FsFileOpener(rootPath, thisPath, fileInfo)
-      } catch (_) {
-        const { key, size, gitdir } = await parseAnnexedFile(fullPath)
-        opener = new AnnexedGitFileOpener(
-          key,
-          size,
+      const target = await Deno.readLink(fullPath)
+
+      // Annex pointers are identified from the raw target string; no stat needed.
+      const annexParsed = parseAnnexKey(target)
+      if (annexParsed !== null) {
+        const { gitdir } = await parseAnnexedFile(fullPath)
+        const opener = new AnnexedGitFileOpener(
+          annexParsed.key,
+          annexParsed.size,
           gitdir,
           { cache, fs, gitdir },
           preferredRemote,
         )
+        tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
+        continue
       }
-      tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
+
+      try {
+        fileInfo = await Deno.stat(fullPath)
+      } catch (err) {
+        const code = (err as { code?: string }).code
+        const reason: SymlinkReason = code === 'ELOOP' ? 'cycle' : 'broken'
+        tree.links.push({ path: '/' + thisPath.replace(/^\/+/, ''), target, reason })
+        continue
+      }
+
+      ;({ isFile, isDirectory } = fileInfo)
     }
-    if (dirEntry.isDirectory) {
+
+    if (isFile) {
+      const opener = new FsFileOpener(rootPath, thisPath, fileInfo)
+      tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
+    } else if (isDirectory) {
       const dirTree = await _readFileTree({
         rootPath,
         relativePath: thisPath,
