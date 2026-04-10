@@ -6,8 +6,8 @@ Discussion document. Not yet a specification.
 
 ## Implementation status
 
-Bugs 1, 2, and 3 from the "Summary of Current Bugs" section are fixed on
-branch `fix/symlink-handling`:
+Bugs 1, 2, and 3 from the "Summary of Current Bugs" section are fixed in
+PR [#380](https://github.com/bids-standard/bids-validator/pull/380):
 
 - Work-tree directory symlinks now fall through to directory recursion.
 - Work-tree dangling non-annex symlinks are recorded as broken link
