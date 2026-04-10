@@ -70,6 +70,10 @@ function rerootTree({
   tree.directories = oldTree.directories.map((dir) =>
     rerootTree({ oldTree: dir, newRoot, ignore, parent: tree })
   )
+  tree.links = oldTree.links.map((link) => ({
+    ...link,
+    path: link.path.substr(newRoot.length),
+  }))
   return tree
 }
 
