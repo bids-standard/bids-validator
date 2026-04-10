@@ -2,18 +2,17 @@ import { isCompressed, isNIFTI1, isNIFTI2, NIFTI1, NIFTI2 } from '@mango/nifti'
 import type { BIDSFile } from '../types/filetree.ts'
 import type { NiftiHeader } from '@bids/schema/context'
 import { readBytes } from './access.ts'
+import { streamFromUint8Array } from './streams.ts'
 
-async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array<ArrayBuffer>> {
+async function extract(
+  buffer: Uint8Array<ArrayBuffer>,
+  nbytes: number,
+): Promise<Uint8Array<ArrayBuffer>> {
   // The fflate decompression that is used in nifti-reader does not like
   // truncated data, so pretend that we have a stream and stop reading
   // when we have enough bytes.
   const result = new Uint8Array(nbytes)
-  const stream = new ReadableStream({
-    start(controller) {
-      controller.enqueue(buffer)
-      controller.close()
-    },
-  })
+  const stream = streamFromUint8Array(buffer)
   const reader = stream.pipeThrough(new DecompressionStream('gzip')).getReader()
   let offset = 0
   try {
