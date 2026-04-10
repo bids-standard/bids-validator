@@ -43,9 +43,17 @@ console.log(`${result.issues.size} issues found`)
 console.log(`Validated against schema ${result.summary.schemaVersion}`)
 ```
 
-`readFileTree` requires read access to the dataset directory; run the
-program with `deno run -R=/path/to/dataset script.ts` (or `-ERWN` for
-the same set of permissions used by the published CLI).
+`readFileTree` requires read access to the dataset directory. In
+practice the validator also reads the `BIDS_SCHEMA` environment
+variable and may fetch a schema over the network, so the simplest
+approach is to use the same permission set as the published CLI:
+
+```sh
+deno run -ERWN script.ts
+```
+
+If you want tighter scoping, grant only what the validator actually
+needs: `-R=/path/to/dataset -E=BIDS_SCHEMA -W=/path/to/dataset -N=bids-specification.readthedocs.io`.
 
 ## Working with the result
 
