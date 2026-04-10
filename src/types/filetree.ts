@@ -113,6 +113,10 @@ export class FileTree {
     return this.#ignore.test(this.path)
   }
 
+  isPathIgnored(path: string): boolean {
+    return this.#ignore.test(path)
+  }
+
   _get(parts: string[]): BIDSFile | FileTree | undefined {
     if (parts.length === 0) {
       return undefined
