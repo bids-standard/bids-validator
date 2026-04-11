@@ -1,8 +1,8 @@
 import { assertEquals } from '@std/assert'
 import { join } from '@std/path'
-import type { ResolveVerdict, TreeSource } from './gitResolver.ts'
 import * as posix from '@std/path/posix'
-import { findSubmoduleAncestor } from './gitResolver.ts'
+import type { FollowBudget, ResolveVerdict, TreeSource } from './gitResolver.ts'
+import { findSubmoduleAncestor, resolveSymlink } from './gitResolver.ts'
 import { hasGit, isWindows, withRepo } from './utils.test.ts'
 
 type objType = 'tree' | 'blob' | 'commit'
@@ -170,3 +170,127 @@ Deno.test(
     )
   },
 )
+
+function budget(n = 10): FollowBudget {
+  return { remaining: n }
+}
+
+Deno.test('resolveSymlink: terminal file-blob resolves', async () => {
+  const source = fakeTreeSource([
+    blob('a/foo.txt'),
+    blob('a/b/link', '../foo.txt', linkMode),
+  ])
+
+  const verdict = await resolveSymlink('a/b/link', '../foo.txt', source, budget())
+  assertEquals(verdict.kind, 'file-blob')
+  if (verdict.kind === 'file-blob') {
+    assertEquals(verdict.oid, 'a-foo-txt')
+  }
+})
+
+Deno.test('resolveSymlink: absolute target is out-of-tree', async () => {
+  const source = fakeTreeSource([])
+  const verdict = await resolveSymlink('link', '/etc/passwd', source, budget())
+  assertEquals(verdict, { kind: 'unresolved', reason: 'out-of-tree' })
+})
+
+Deno.test('resolveSymlink: relative escape above root is out-of-tree', async () => {
+  const source = fakeTreeSource([])
+  const verdict = await resolveSymlink('a/link', '../../../etc/passwd', source, budget())
+  assertEquals(verdict, { kind: 'unresolved', reason: 'out-of-tree' })
+})
+
+Deno.test('resolveSymlink: missing target is broken', async () => {
+  const source = fakeTreeSource([
+    blob('a/link', '../nowhere.txt', linkMode),
+  ])
+  const verdict = await resolveSymlink('a/link', '../nowhere.txt', source, budget())
+  assertEquals(verdict, { kind: 'unresolved', reason: 'broken' })
+})
+
+Deno.test('resolveSymlink: terminal tree returns a tree verdict', async () => {
+  const source = fakeTreeSource([
+    blob('real/.gitkeep', ''),
+    blob('linkdir', 'real/', linkMode),
+  ])
+  const verdict = await resolveSymlink('linkdir', 'real/', source, budget())
+  assertEquals(verdict.kind, 'tree')
+  if (verdict.kind === 'tree') {
+    assertEquals(verdict.treePath, 'real')
+    assertEquals(verdict.originalDir, '')
+  }
+})
+
+Deno.test('resolveSymlink: follows a chain of file symlinks', async () => {
+  const source = fakeTreeSource([
+    blob('a', 'b', linkMode),
+    blob('b', 'c', linkMode),
+    blob('c', 'real.txt', linkMode),
+    blob('real.txt'),
+  ])
+  const verdict = await resolveSymlink('a', 'b', source, budget())
+  assertEquals(verdict.kind, 'file-blob')
+  if (verdict.kind === 'file-blob') {
+    assertEquals(verdict.oid, 'real-txt')
+  }
+})
+
+Deno.test('resolveSymlink: terminal chain resolving to an annex key', async () => {
+  const annexKey = 'MD5E-s1234--d41d8cd98f00b204e9800998ecf8427e.nii.gz'
+  const annexTarget = `../.git/annex/objects/xx/yy/${annexKey}/${annexKey}`
+  const source = fakeTreeSource([
+    blob('link', annexTarget, linkMode),
+    blob('alias', 'link', linkMode),
+  ])
+  const verdict = await resolveSymlink('alias', 'link', source, budget())
+  assertEquals(verdict.kind, 'annex')
+  if (verdict.kind === 'annex') {
+    assertEquals(verdict.key, annexKey)
+    assertEquals(verdict.size, 1234)
+  }
+})
+
+Deno.test('resolveSymlink: follows intermediate directory symlink during segment walk', async () => {
+  // Layout (Unix physical-path semantics):
+  //   a/c is a symlink to "../d/e/" (escapes 'a/' to root, then into d/e/)
+  //   a/b/link is a symlink to "../c/file" (pops to 'a', resolves 'a/c' then 'file')
+  //   d/e/file is a regular blob with content
+  const source = fakeTreeSource([
+    blob('a/b/link', '../c/file', linkMode),
+    blob('a/c', '../d/e/', linkMode),
+    blob('d/e/file'),
+  ])
+
+  const verdict = await resolveSymlink('a/b/link', '../c/file', source, budget())
+  assertEquals(verdict.kind, 'file-blob')
+  if (verdict.kind === 'file-blob') {
+    assertEquals(verdict.oid, 'd-e-file')
+  }
+})
+
+Deno.test('resolveSymlink: budget exhaustion returns cycle', async () => {
+  // Build a chain of 12 symlinks all pointing to the next (link0..link11 are
+  // symlinks, link12 is the terminal blob). Starting at target 'link1' means
+  // the resolver needs 11 follows to reach link12 — budget of 10 trips.
+  const objs: ObjSpec[] = []
+  for (let i = 0; i < 13; i++) {
+    const name = `link${i}`
+    if (i < 12) {
+      objs.push(blob(name, `link${i + 1}`, linkMode))
+    } else {
+      objs.push(blob(name, 'terminal'))
+    }
+  }
+  const source = fakeTreeSource(objs)
+  const verdict = await resolveSymlink('link0', 'link1', source, budget(10))
+  assertEquals(verdict, { kind: 'unresolved', reason: 'cycle' })
+})
+
+Deno.test('resolveSymlink: mutual cycle a <-> b returns cycle', async () => {
+  const source = fakeTreeSource([
+    blob('a', 'b', linkMode),
+    blob('b', 'a', linkMode),
+  ])
+  const verdict = await resolveSymlink('a', 'b', source, budget())
+  assertEquals(verdict, { kind: 'unresolved', reason: 'cycle' })
+})

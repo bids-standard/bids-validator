@@ -14,11 +14,13 @@
  * See docs/dev/discussion/2026-04-git_directory_symlink_grafting.md for
  * the full design.
  */
+import * as posix from '@std/path/posix'
 import { default as git } from 'isomorphic-git'
 import type { ParsedTreeObject, ReadObjectResult } from 'isomorphic-git'
 import type { BIDSFile, SymlinkReason, UnresolvedLink } from '../types/filetree.ts'
 import type { GitOptions } from './git.ts'
 import type { FileIgnoreRules } from './ignore.ts'
+import { parseAnnexKey } from './repo.ts'
 
 export interface TreeSource {
   readonly commitOid: string
@@ -118,15 +120,112 @@ export async function findSubmoduleAncestor(
   return null
 }
 
-// Segment-aware resolver. Filled in by Task 3.
-export function resolveSymlink(
-  _originalPath: string,
-  _target: string,
-  _source: TreeSource,
-  _budget: FollowBudget,
+/**
+ * Resolve a symlink target against a TreeSource using Unix physical-path
+ * semantics: relative path components are anchored at the directory where
+ * the current symlink blob physically lives in the git tree.
+ *
+ * The resolver walks one segment at a time. On each symlink follow
+ * (intermediate or terminal), it decrements the shared `budget`; when the
+ * budget hits zero it returns `{ kind: 'unresolved', reason: 'cycle' }`.
+ *
+ * Note on `prune`: accepted but currently unused in the resolver itself.
+ * `prune` is applied by the graft walker at grafted paths. A future
+ * optimization may short-circuit resolution for targets that land under a
+ * pruned prefix.
+ */
+export async function resolveSymlink(
+  originalPath: string,
+  target: string,
+  source: TreeSource,
+  budget: FollowBudget,
   _prune?: FileIgnoreRules,
 ): Promise<ResolveVerdict> {
-  return Promise.reject(new Error('resolveSymlink: not implemented yet'))
+  // Reject absolute targets immediately; the git tree has no OS filesystem root.
+  if (target.startsWith('/')) {
+    return { kind: 'unresolved', reason: 'out-of-tree' }
+  }
+
+  // `accumulated` is the resolved path walked so far (relative to source root).
+  // Starts at the dirname of the original symlink: Unix physical-path rule.
+  let accumulated = posix.dirname(originalPath)
+  if (accumulated === '.') accumulated = ''
+
+  // `segments` is the queue of remaining components from the target string,
+  // plus any components pushed onto the front when we follow a chain.
+  let segments = target.split('/')
+
+  while (segments.length > 0) {
+    const seg = segments.shift() as string
+    if (seg === '' || seg === '.') continue
+    if (seg === '..') {
+      if (accumulated === '') {
+        return { kind: 'unresolved', reason: 'out-of-tree' }
+      }
+      accumulated = posix.dirname(accumulated)
+      if (accumulated === '.') accumulated = ''
+      continue
+    }
+    const candidate = accumulated === '' ? seg : `${accumulated}/${seg}`
+
+    // Intermediate or terminal symlink? Consult symlinkMap first.
+    const nextTarget = source.symlinkMap.get(candidate)
+    if (nextTarget !== undefined) {
+      if (budget.remaining <= 0) {
+        return { kind: 'unresolved', reason: 'cycle' }
+      }
+      budget.remaining--
+
+      // Annex keys may only terminate a resolution — annex blobs are opaque
+      // content, not directories. If the chain is about to continue into an
+      // annex key, treat that as a not-a-directory broken link.
+      const annex = parseAnnexKey(nextTarget)
+      if (annex !== null) {
+        if (segments.length === 0) {
+          return { kind: 'annex', source, ...annex }
+        }
+        return { kind: 'unresolved', reason: 'broken' }
+      }
+
+      // Follow: reset accumulated to the dirname of the followed symlink,
+      // prepend the new target's segments to whatever remained.
+      accumulated = posix.dirname(candidate)
+      if (accumulated === '.') accumulated = ''
+      segments = [...nextTarget.split('/'), ...segments]
+      continue
+    }
+
+    // Not a symlink; consult the tree object model.
+    const obj = await readObjectAt(source, candidate)
+    if (obj === null) {
+      const boundary = await findSubmoduleAncestor(posix.join(candidate, ...segments), source)
+      if (boundary !== null) {
+        return { kind: 'submodule-boundary', source, ...boundary }
+      }
+      return { kind: 'unresolved', reason: 'broken' }
+    }
+    if (obj.type === 'blob') {
+      if (segments.length > 0) {
+        // Blob with more segments to resolve — "not a directory".
+        return { kind: 'unresolved', reason: 'broken' }
+      }
+      return { kind: 'file-blob', oid: obj.oid, size: obj.object.length, source }
+    }
+    // deno-coverage-ignore-start
+    if (obj.type !== 'tree') {
+      throw new Error(`Unhandled object type: ${(obj as { type: string }).type}`)
+      // deno-coverage-ignore-stop
+    }
+    accumulated = candidate
+  }
+
+  // We've exited the loop without finding a blob, link or missing target
+  return {
+    kind: 'tree',
+    treePath: accumulated,
+    originalDir: posix.dirname(originalPath) === '.' ? '' : posix.dirname(originalPath),
+    source,
+  }
 }
 
 // Directory graft walker. Filled in by Task 5.
