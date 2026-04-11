@@ -11,51 +11,10 @@ import { readFileTree } from './deno.ts'
 import { validate } from '../validators/bids.ts'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
+import { capture, hasGit, hasGitAnnex, isWindows, run, withRepo } from './utils.test.ts'
 
 const REPO_URL = 'https://github.com/openneurodatasets/ds000001.git'
 const REF = '1.0.0'
-
-async function commandExists(cmd: string): Promise<boolean> {
-  try {
-    const proc = new Deno.Command(cmd, { args: ['--help'], stdout: 'null', stderr: 'null' })
-    const { success } = await proc.output()
-    return success
-  } catch {
-    return false
-  }
-}
-
-const hasGit = await commandExists('git')
-const isWindows = Deno.build.os === 'windows'
-const hasGitAnnex = await commandExists('git-annex')
-
-async function run(cmd: string[]): Promise<void> {
-  const proc = new Deno.Command(cmd[0], {
-    args: cmd.slice(1),
-    stdout: 'piped',
-    stderr: 'piped',
-  })
-  const status = await proc.output()
-  if (!status.success) {
-    const stdout = new TextDecoder().decode(status.stdout).trim()
-    const stderr = new TextDecoder().decode(status.stderr).trim()
-    console.error(`Command failed: ${cmd.join(' ')}\n\tstdout: ${stdout}\n\tstderr: ${stderr}`)
-    throw new Error(`Command failed: ${cmd.join(' ')}`)
-  }
-}
-
-async function capture(cmd: string[]): Promise<string> {
-  const proc = new Deno.Command(cmd[0], {
-    args: cmd.slice(1),
-    stdout: 'piped',
-    stderr: 'inherit',
-  })
-  const output = await proc.output()
-  if (!output.success) {
-    throw new Error(`Command failed: ${cmd.join(' ')}`)
-  }
-  return new TextDecoder().decode(output.stdout).trim()
-}
 
 async function setupRepo({ repoPath, bare }: { repoPath: string; bare: boolean }): Promise<void> {
   await run(['git', 'clone', '-b', REF, REPO_URL, repoPath, ...(bare ? ['--bare'] : [])])
@@ -148,30 +107,6 @@ Deno.test(
 // ---------------------------------------------------------------------------
 // Lightweight symlink resolution tests
 // ---------------------------------------------------------------------------
-
-/**
- * Create a temporary git repo, run a setup callback to populate it,
- * commit everything, then run a test callback with the repo path.
- * Cleans up the temp directory in `finally`.
- */
-async function withRepo(
-  setup: (repoPath: string) => Promise<void>,
-  test: (repoPath: string) => Promise<void>,
-): Promise<void> {
-  const tmpDir = await Deno.makeTempDir()
-  try {
-    await run(['git', 'init', tmpDir])
-    await run(['git', '-C', tmpDir, 'config', 'user.email', 'test@test.com'])
-    await run(['git', '-C', tmpDir, 'config', 'user.name', 'Test'])
-    await setup(tmpDir)
-    await run(['git', '-C', tmpDir, 'add', '-A'])
-    await run(['git', '-C', tmpDir, 'commit', '-m', 'init'])
-    await test(tmpDir)
-  } finally {
-    await new Deno.Command('chmod', { args: ['-R', '+w', tmpDir] }).output()
-    await Deno.remove(tmpDir, { recursive: true })
-  }
-}
 
 Deno.test(
   {
