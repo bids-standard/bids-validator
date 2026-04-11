@@ -474,9 +474,6 @@ Deno.test(
         assertExists(grafted, 'linked-dir/inside.txt should be in tree')
         assertEquals(await original.text(), 'content')
         assertEquals(await grafted.text(), 'content')
-        // No unresolved 'directory-unsupported' links any more.
-        const dirLinks = tree.links.filter((l) => l.reason === 'directory-unsupported')
-        assertEquals(dirLinks.length, 0)
       },
     )
   },

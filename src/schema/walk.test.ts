@@ -94,7 +94,6 @@ Deno.test('walkFileTree emits one issue per link with the correct code', async (
     { path: '/b', target: 't2', reason: 'cycle' },
     { path: '/c', target: 't3', reason: 'out-of-tree' },
     { path: '/d', target: 't4', reason: 'submodule' },
-    { path: '/e', target: 't5', reason: 'directory-unsupported' },
   ]
   for (const link of cases) tree.links.push(link)
   const ds = datasetFor(tree)
@@ -105,5 +104,4 @@ Deno.test('walkFileTree emits one issue per link with the correct code', async (
   assertEquals(ds.issues.get({ code: 'SYMLINK_CYCLE' }).length, 1)
   assertEquals(ds.issues.get({ code: 'SYMLINK_OUT_OF_TREE' }).length, 1)
   assertEquals(ds.issues.get({ code: 'SYMLINK_IN_SUBMODULE' }).length, 1)
-  assertEquals(ds.issues.get({ code: 'SYMLINK_DIRECTORY_UNSUPPORTED' }).length, 1)
 })

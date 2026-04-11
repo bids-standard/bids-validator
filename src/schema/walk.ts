@@ -12,7 +12,6 @@ const REASON_TO_CODE: Record<SymlinkReason, keyof typeof bidsIssues> = {
   'cycle': 'SYMLINK_CYCLE',
   'out-of-tree': 'SYMLINK_OUT_OF_TREE',
   'submodule': 'SYMLINK_IN_SUBMODULE',
-  'directory-unsupported': 'SYMLINK_DIRECTORY_UNSUPPORTED',
 }
 
 function* quickWalk(dir: FileTree): Generator<BIDSFile> {
