@@ -369,6 +369,51 @@ Deno.test(
   },
 )
 
+// ---------------------------------------------------------------------------
+// Documented inherent asymmetry: out-of-tree symlinks are valid in a work
+// tree (the OS follows them) but unresolvable in a git tree (no external
+// filesystem to consult). This test does NOT use assertTreeEquivalent; it
+// exists to pin down the one place the backends legitimately diverge.
+// ---------------------------------------------------------------------------
+
+Deno.test(
+  {
+    name:
+      'cross-backend asymmetry: out-of-tree symlink is valid in fs tree, out-of-tree in git tree',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    const externalFile = await Deno.makeTempFile({ prefix: 'bids-symlink-ext-' })
+    await Deno.writeTextFile(externalFile, 'external-content')
+    try {
+      await withRepo(
+        async (repo) => {
+          await Deno.writeTextFile(join(repo, '.keep'), '')
+          await run(['ln', '-s', externalFile, join(repo, 'outside')])
+        },
+        async (repo) => {
+          const gitTree = await readGitTree(repo, 'HEAD', gitPrune)
+          const fsTree = await readFileTree(repo, gitPrune)
+
+          // Git tree: outside is absent from files and present as an out-of-tree link.
+          assertEquals(gitTree.get('outside'), undefined)
+          const outOfTreeLinks = collectLinks(gitTree).filter((l) => l.reason === 'out-of-tree')
+          assertEquals(outOfTreeLinks.length, 1)
+          assertEquals(outOfTreeLinks[0].path, '/outside')
+
+          // Fs tree: outside is a regular file whose content is the external file.
+          const fsOutside = fsTree.get('outside') as BIDSFile
+          assertEquals(await fsOutside.text(), 'external-content')
+        },
+      )
+    } finally {
+      await Deno.remove(externalFile)
+    }
+  },
+)
+
 export {
   assertTreeEquivalent,
   collectDirPaths,
