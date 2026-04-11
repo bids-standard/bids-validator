@@ -16,11 +16,16 @@
  */
 import * as posix from '@std/path/posix'
 import { default as git } from 'isomorphic-git'
-import type { ParsedTreeObject, ReadObjectResult } from 'isomorphic-git'
+import type { FsClient, ParsedTreeObject, ReadObjectResult } from 'isomorphic-git'
 import type { BIDSFile, SymlinkReason, UnresolvedLink } from '../types/filetree.ts'
-import type { GitOptions } from './git.ts'
 import type { FileIgnoreRules } from './ignore.ts'
 import { parseAnnexKey } from './repo.ts'
+
+export interface GitOptions {
+  fs: FsClient
+  gitdir: string
+  cache: object
+}
 
 export interface TreeSource {
   readonly commitOid: string
