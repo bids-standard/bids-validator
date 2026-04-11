@@ -121,6 +121,95 @@ Deno.test(
   },
 )
 
+Deno.test(
+  {
+    name: 'cross-backend: grafted subtree contains nested file symlink with ..',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        // foo.txt lives at the root
+        await Deno.writeTextFile(join(repo, 'foo.txt'), 'the-content')
+        // target/link.txt is a symlink to "../foo.txt"
+        await Deno.mkdir(join(repo, 'target'))
+        await run(['ln', '-s', '../foo.txt', join(repo, 'target', 'link.txt')])
+        // view -> target/
+        await run(['ln', '-s', 'target', join(repo, 'view')])
+      },
+      async (repo) => {
+        const gitTree = await readGitTree(repo, 'HEAD', gitPrune)
+        const fsTree = await readFileTree(repo, gitPrune)
+        await assertTreeEquivalent(gitTree, fsTree)
+
+        const viewLink = gitTree.get('view/link.txt') as BIDSFile
+        assertEquals(await viewLink.text(), 'the-content')
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'cross-backend: grafted subtree contains nested directory symlink',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.mkdir(join(repo, 'sibling'))
+        await Deno.writeTextFile(join(repo, 'sibling', 'payload.txt'), 'sibling-payload')
+        await Deno.mkdir(join(repo, 'target'))
+        // target/inner -> ../sibling/ (nested directory symlink inside the graft source)
+        await run(['ln', '-s', '../sibling', join(repo, 'target', 'inner')])
+        // view -> target/
+        await run(['ln', '-s', 'target', join(repo, 'view')])
+      },
+      async (repo) => {
+        const gitTree = await readGitTree(repo, 'HEAD', gitPrune)
+        const fsTree = await readFileTree(repo, gitPrune)
+        await assertTreeEquivalent(gitTree, fsTree)
+
+        const viewInner = gitTree.get('view/inner/payload.txt') as BIDSFile
+        assertEquals(await viewInner.text(), 'sibling-payload')
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'cross-backend: nested broken symlink reports at both original and grafted paths',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.mkdir(join(repo, 'target'))
+        await Deno.writeTextFile(join(repo, 'target', 'ok.txt'), 'fine')
+        // target/orphan -> nonexistent (relative target inside target/)
+        await run(['ln', '-s', 'missing.txt', join(repo, 'target', 'orphan')])
+        await run(['ln', '-s', 'target', join(repo, 'view')])
+      },
+      async (repo) => {
+        const gitTree = await readGitTree(repo, 'HEAD', gitPrune)
+        const fsTree = await readFileTree(repo, gitPrune)
+        await assertTreeEquivalent(gitTree, fsTree)
+
+        const allLinks = collectLinks(gitTree).filter((l) => l.reason === 'broken')
+        const paths = allLinks.map((l) => l.path).sort()
+        assertEquals(paths, ['/target/orphan', '/view/orphan'])
+      },
+    )
+  },
+)
+
 export {
   assertTreeEquivalent,
   collectDirPaths,
