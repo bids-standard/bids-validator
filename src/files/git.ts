@@ -331,6 +331,11 @@ export async function readGitTree(
       case 'unresolved':
         unresolvedLinks.push({ path: '/' + filepath, target, reason: verdict.reason })
         break
+
+      default: {
+        const _exhaustive: never = verdict
+        throw new Error(`Unhandled ResolveVerdict kind: ${(verdict as { kind: string }).kind}`)
+      }
     }
   }
 
