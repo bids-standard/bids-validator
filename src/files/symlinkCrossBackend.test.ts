@@ -210,6 +210,69 @@ Deno.test(
   },
 )
 
+Deno.test(
+  {
+    name: 'cross-backend: mutual directory symlinks produce cycles at both paths',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.writeTextFile(join(repo, '.keep'), '')
+        await run(['ln', '-s', 'b', join(repo, 'a')])
+        await run(['ln', '-s', 'a', join(repo, 'b')])
+      },
+      async (repo) => {
+        const gitTree = await readGitTree(repo, 'HEAD', gitPrune)
+        const fsTree = await readFileTree(repo, gitPrune)
+        await assertTreeEquivalent(gitTree, fsTree)
+
+        const cycleLinks = collectLinks(gitTree).filter((l) => l.reason === 'cycle')
+        const paths = cycleLinks.map((l) => l.path).sort()
+        assertEquals(paths, ['/a', '/b'])
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'cross-backend: dir symlink back into ancestor terminates with a cycle link',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.mkdir(join(repo, 'd'))
+        await Deno.writeTextFile(join(repo, 'd', 'file.txt'), 'payload')
+        // d/sub -> ../a/ (symlink)
+        await run(['ln', '-s', '../a', join(repo, 'd', 'sub')])
+        // a -> d/ (directory symlink at root)
+        await run(['ln', '-s', 'd', join(repo, 'a')])
+      },
+      async (repo) => {
+        const gitTree = await readGitTree(repo, 'HEAD', gitPrune)
+        const fsTree = await readFileTree(repo, gitPrune)
+
+        const gitFiles = collectFiles(gitTree)
+        const fsFiles = collectFiles(fsTree)
+
+        // Finite: neither backend should produce thousands of entries.
+        assertEquals(gitFiles.size < 500, true, 'git tree did not terminate')
+        assertEquals(fsFiles.size < 500, true, 'fs tree did not terminate')
+
+        // The real /d/file.txt exists in both.
+        assertEquals(gitFiles.has('/d/file.txt'), true)
+        assertEquals(fsFiles.has('/d/file.txt'), true)
+      },
+    )
+  },
+)
+
 export {
   assertTreeEquivalent,
   collectDirPaths,
