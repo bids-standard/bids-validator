@@ -273,6 +273,102 @@ Deno.test(
   },
 )
 
+Deno.test(
+  {
+    name: 'cross-backend: .bidsignore applies at grafted paths',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        await Deno.mkdir(join(repo, 'target'))
+        await Deno.writeTextFile(join(repo, 'target', 'keep.txt'), 'kept')
+        await Deno.writeTextFile(join(repo, 'target', 'skip.txt'), 'skipped')
+        await run(['ln', '-s', 'target', join(repo, 'view')])
+      },
+      async (repo) => {
+        // Prune rule: ignore /view/skip.txt at the grafted path, plus .git.
+        // Pass the prune via the prune argument — it should test grafted paths
+        // in both backends and produce identical results.
+        const prune = new FileIgnoreRules(['/view/skip.txt', '.git', '.git/**'])
+        const gitTree = await readGitTree(repo, 'HEAD', prune)
+        const fsTree = await readFileTree(repo, prune)
+        await assertTreeEquivalent(gitTree, fsTree)
+
+        const gitFiles = collectFiles(gitTree)
+        assertEquals(gitFiles.has('/view/keep.txt'), true)
+        assertEquals(gitFiles.has('/view/skip.txt'), false)
+        // Original source files are still present.
+        assertEquals(gitFiles.has('/target/keep.txt'), true)
+        assertEquals(gitFiles.has('/target/skip.txt'), true)
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'cross-backend: symlink with intermediate directory-symlink segment resolves',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (repo) => {
+        // Layout:
+        //   d/e/file.txt      — actual content
+        //   a/c               — symlink to ../d/e/
+        //   a/b/link          — symlink to ../c/file.txt
+        //                         resolves (via intermediate a/c) to d/e/file.txt
+        await Deno.mkdir(join(repo, 'd', 'e'), { recursive: true })
+        await Deno.writeTextFile(join(repo, 'd', 'e', 'file.txt'), 'deep-content')
+        await Deno.mkdir(join(repo, 'a', 'b'), { recursive: true })
+        await run(['ln', '-s', '../d/e', join(repo, 'a', 'c')])
+        await run(['ln', '-s', '../c/file.txt', join(repo, 'a', 'b', 'link')])
+      },
+      async (repo) => {
+        const gitTree = await readGitTree(repo, 'HEAD', gitPrune)
+        const fsTree = await readFileTree(repo, gitPrune)
+        await assertTreeEquivalent(gitTree, fsTree)
+
+        const link = gitTree.get('a/b/link') as BIDSFile
+        assertEquals(await link.text(), 'deep-content')
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'cross-backend: annex pointer symlink inside a grafted subtree reports size',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    const annexKey = 'MD5E-s4242--00112233445566778899aabbccddeeff.nii.gz'
+    const annexTarget = `../.git/annex/objects/xx/yy/${annexKey}/${annexKey}`
+    await withRepo(
+      async (repo) => {
+        await Deno.mkdir(join(repo, 'target'))
+        await run(['ln', '-s', annexTarget, join(repo, 'target', 'scan.nii.gz')])
+        await run(['ln', '-s', 'target', join(repo, 'view')])
+      },
+      async (repo) => {
+        const gitTree = await readGitTree(repo, 'HEAD', gitPrune)
+        const fsTree = await readFileTree(repo, gitPrune)
+        await assertTreeEquivalent(gitTree, fsTree)
+
+        const grafted = gitTree.get('view/scan.nii.gz') as BIDSFile
+        assertEquals(grafted.size, 4242)
+      },
+    )
+  },
+)
+
 export {
   assertTreeEquivalent,
   collectDirPaths,

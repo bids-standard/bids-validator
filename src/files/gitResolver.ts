@@ -333,6 +333,25 @@ async function walkSubtree(
       }
       const target = source.symlinkMap.get(entryPath)
       if (target === undefined) continue
+      // Annex pointer symlinks are identified from the raw target string
+      // and do not need chain resolution. This mirrors the top-level walk
+      // in readGitTree, which short-circuits annex pointers before any
+      // resolver call.
+      const annexParsed = parseAnnexKey(target)
+      if (annexParsed !== null) {
+        result.files.push(
+          new BIDSFile(
+            outPath,
+            new AnnexedGitFileOpener(
+              annexParsed.key,
+              annexParsed.size,
+              source.gitOptions,
+              source.preferredRemote,
+            ),
+          ),
+        )
+        continue
+      }
       // Resolve nested symlinks against their ORIGINAL path (entryPath),
       // not their grafted path (outPath). Unix physical-path semantics.
       const subVerdict = await resolveSymlink(entryPath, target, source, budget, prune)
