@@ -16,8 +16,10 @@
  */
 import * as posix from '@std/path/posix'
 import { default as git } from 'isomorphic-git'
-import type { FsClient, ParsedTreeObject, ReadObjectResult } from 'isomorphic-git'
-import type { BIDSFile, SymlinkReason, UnresolvedLink } from '../types/filetree.ts'
+import type { FsClient, ParsedTreeObject, ReadObjectResult, TreeEntry } from 'isomorphic-git'
+import { BIDSFile } from '../types/filetree.ts'
+import type { SymlinkReason, UnresolvedLink } from '../types/filetree.ts'
+import { AnnexedGitFileOpener, GitFileOpener } from './git.ts'
 import type { FileIgnoreRules } from './ignore.ts'
 import { parseAnnexKey } from './repo.ts'
 
@@ -110,9 +112,7 @@ export async function findSubmoduleAncestor(
   let prefix = ''
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i]
-    const parentObj = await readObjectAt(source, prefix)
-    if (!parentObj || parentObj.type !== 'tree') return null
-    const match = (parentObj as ParsedTreeObject).object.find((e) => e.path === segment)
+    const match = (await listTreeEntries(source, prefix)).find((e) => e.path === segment)
     if (!match) return null
     if (match.type === 'commit') {
       const mountPath = prefix === '' ? segment : `${prefix}/${segment}`
@@ -233,13 +233,149 @@ export async function resolveSymlink(
   }
 }
 
-// Directory graft walker. Filled in by Task 5.
-export function graftTree(
-  _graftPath: string,
-  _verdict: Extract<ResolveVerdict, { kind: 'tree' }>,
-  _budget: FollowBudget,
-  _visited: Set<string>,
-  _prune?: FileIgnoreRules,
+async function listTreeEntries(
+  source: TreeSource,
+  treePath: string,
+): Promise<TreeEntry[]> {
+  const obj = await readObjectAt(source, treePath)
+  if (!obj || obj.type !== 'tree') return []
+  return (obj as ParsedTreeObject).object
+}
+
+/**
+ * Recursively walk a target subtree inside `source` and produce
+ * BIDSFile entries at `graftPath/...` plus UnresolvedLink entries for
+ * anything that fails to resolve. See
+ * docs/dev/discussion/2026-04-git_directory_symlink_grafting.md §
+ * "Algorithm: directory graft walker" for the full behavior.
+ */
+export async function graftTree(
+  graftPath: string,
+  verdict: Extract<ResolveVerdict, { kind: 'tree' }>,
+  budget: FollowBudget,
+  visited: Set<string>,
+  prune?: FileIgnoreRules,
 ): Promise<GraftResult> {
-  return Promise.reject(new Error('graftTree: not implemented yet'))
+  if (visited.has(graftPath)) {
+    return {
+      files: [],
+      links: [{ path: graftPath, target: verdict.treePath, reason: 'cycle' }],
+    }
+  }
+  visited.add(graftPath)
+  try {
+    return await walkSubtree(
+      graftPath,
+      verdict.treePath,
+      verdict.source,
+      budget,
+      visited,
+      prune,
+    )
+  } finally {
+    visited.delete(graftPath)
+  }
+}
+
+async function walkSubtree(
+  graftPath: string,
+  treePath: string,
+  source: TreeSource,
+  budget: FollowBudget,
+  visited: Set<string>,
+  prune?: FileIgnoreRules,
+): Promise<GraftResult> {
+  const result: GraftResult = { files: [], links: [] }
+  const entries = await listTreeEntries(source, treePath)
+
+  for (const entry of entries) {
+    const entryPath = treePath === '' ? entry.path : `${treePath}/${entry.path}`
+    const outPath = graftPath === '/' || graftPath === ''
+      ? `/${entry.path}`
+      : `${graftPath}/${entry.path}`
+
+    if (prune && prune.test(outPath)) continue
+
+    if (entry.type === 'tree') {
+      // Recurse with the child outPath as the new graftPath and the
+      // child entryPath as the new treePath. Forwarding the parent
+      // graftPath would mis-anchor grafted file paths.
+      const nested = await walkSubtree(
+        outPath,
+        entryPath,
+        source,
+        budget,
+        visited,
+        prune,
+      )
+      result.files.push(...nested.files)
+      result.links.push(...nested.links)
+      continue
+    }
+
+    if (entry.type === 'commit') {
+      // Gitlink nested inside a grafted subtree — unsupported today.
+      result.links.push({ path: outPath, target: '', reason: 'submodule' })
+      continue
+    }
+
+    if (entry.type === 'blob') {
+      if (entry.mode !== '120000') {
+        const obj = await readObjectAt(source, entryPath)
+        if (!obj || obj.type !== 'blob') continue
+        result.files.push(
+          new BIDSFile(
+            outPath,
+            new GitFileOpener(obj.oid, obj.object.length, source.gitOptions),
+          ),
+        )
+        continue
+      }
+      const target = source.symlinkMap.get(entryPath)
+      if (target === undefined) continue
+      // Resolve nested symlinks against their ORIGINAL path (entryPath),
+      // not their grafted path (outPath). Unix physical-path semantics.
+      const subVerdict = await resolveSymlink(entryPath, target, source, budget, prune)
+      switch (subVerdict.kind) {
+        case 'file-blob':
+          result.files.push(
+            new BIDSFile(
+              outPath,
+              new GitFileOpener(
+                subVerdict.oid,
+                subVerdict.size,
+                subVerdict.source.gitOptions,
+              ),
+            ),
+          )
+          break
+        case 'annex':
+          result.files.push(
+            new BIDSFile(
+              outPath,
+              new AnnexedGitFileOpener(
+                subVerdict.key,
+                subVerdict.size,
+                subVerdict.source.gitOptions,
+                subVerdict.source.preferredRemote,
+              ),
+            ),
+          )
+          break
+        case 'tree': {
+          const nested = await graftTree(outPath, subVerdict, budget, visited, prune)
+          result.files.push(...nested.files)
+          result.links.push(...nested.links)
+          break
+        }
+        case 'submodule-boundary':
+          result.links.push({ path: outPath, target, reason: 'submodule' })
+          break
+        case 'unresolved':
+          result.links.push({ path: outPath, target, reason: subVerdict.reason })
+          break
+      }
+    }
+  }
+  return result
 }

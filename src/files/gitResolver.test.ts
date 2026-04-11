@@ -1,8 +1,9 @@
-import { assertEquals } from '@std/assert'
+import { assertEquals, assertExists } from '@std/assert'
 import { join } from '@std/path'
 import * as posix from '@std/path/posix'
 import type { FollowBudget, ResolveVerdict, TreeSource } from './gitResolver.ts'
-import { findSubmoduleAncestor, resolveSymlink } from './gitResolver.ts'
+import { findSubmoduleAncestor, graftTree, resolveSymlink } from './gitResolver.ts'
+import { FileIgnoreRules } from './ignore.ts'
 import { hasGit, isWindows, withRepo } from './utils.test.ts'
 
 type objType = 'tree' | 'blob' | 'commit'
@@ -293,4 +294,118 @@ Deno.test('resolveSymlink: mutual cycle a <-> b returns cycle', async () => {
   ])
   const verdict = await resolveSymlink('a', 'b', source, budget())
   assertEquals(verdict, { kind: 'unresolved', reason: 'cycle' })
+})
+
+function treeVerdict(
+  treePath: string,
+  originalDir: string,
+  source: TreeSource,
+): Extract<ResolveVerdict, { kind: 'tree' }> {
+  return { kind: 'tree', treePath, originalDir, source }
+}
+
+Deno.test('graftTree: grafts a flat directory', async () => {
+  const source = fakeTreeSource([
+    blob('target/a.txt'),
+    blob('target/b.txt'),
+    blob('view', 'target/', linkMode),
+  ])
+  const verdict = treeVerdict('target', '', source)
+
+  const result = await graftTree('/view', verdict, budget(), new Set())
+  const paths = result.files.map((f) => f.path).sort()
+  assertEquals(paths, ['/view/a.txt', '/view/b.txt'])
+  assertEquals(result.links, [])
+})
+
+Deno.test('graftTree: recurses into nested directories', async () => {
+  const source = fakeTreeSource([
+    blob('target/top.txt'),
+    blob('target/sub/deep.txt'),
+    blob('view', 'target/', linkMode),
+  ])
+  const verdict = treeVerdict('target', '', source)
+
+  const result = await graftTree('/view', verdict, budget(), new Set())
+  const paths = result.files.map((f) => f.path).sort()
+  assertEquals(paths, ['/view/sub/deep.txt', '/view/top.txt'])
+})
+
+Deno.test('graftTree: emits cycle at graftPath when visited set already contains it', async () => {
+  const source = fakeTreeSource([])
+  const verdict = treeVerdict('target', '', source)
+  const visited = new Set<string>(['/view'])
+
+  const result = await graftTree('/view', verdict, budget(), visited)
+  assertEquals(result.files, [])
+  assertEquals(result.links.length, 1)
+  assertEquals(result.links[0].path, '/view')
+  assertEquals(result.links[0].reason, 'cycle')
+})
+
+Deno.test('graftTree: respects prune at the grafted path', async () => {
+  const source = fakeTreeSource([
+    blob('target/keep.txt'),
+    blob('target/skip.txt'),
+  ])
+  const verdict = treeVerdict('target', '', source)
+  const prune = new FileIgnoreRules(['/view/skip.txt'])
+
+  const result = await graftTree('/view', verdict, budget(), new Set(), prune)
+  const paths = result.files.map((f) => f.path).sort()
+  assertEquals(paths, ['/view/keep.txt'])
+})
+
+Deno.test('graftTree: grafts nested file symlink with original-location semantics', async () => {
+  // /target/link.txt is a symlink to "../foo.txt"
+  // Under Unix physical-path rules, that resolves to /foo.txt, not /view/foo.txt.
+  const source = fakeTreeSource([
+    blob('foo.txt'),
+    blob('target/link.txt', '../foo.txt', linkMode),
+    blob('view', 'target/', linkMode),
+  ])
+  const verdict = treeVerdict('target', '', source)
+
+  const result = await graftTree('/view', verdict, budget(), new Set())
+  const paths = result.files.map((f) => f.path).sort()
+  assertEquals(paths, ['/view/link.txt'])
+  // The grafted file's opener points at foo.txt's oid — assert via the internal
+  // opener structure. GitFileOpener stores `oid` as a public property.
+  const grafted = result.files.find((f) => f.path === '/view/link.txt')
+  assertExists(grafted)
+  // deno-lint-ignore no-explicit-any
+  assertEquals((grafted.opener as any).oid, 'foo-txt')
+})
+
+Deno.test('graftTree: mutual dir symlinks a<->b produce no files and a cycle link', async () => {
+  const source = fakeTreeSource([
+    blob('a', 'b/', linkMode),
+    blob('b', 'a/', linkMode),
+  ])
+  const verdict = await resolveSymlink('a', 'b/', source, budget())
+  assertEquals(verdict, { kind: 'unresolved', reason: 'cycle' })
+})
+
+Deno.test('graftTree: dir symlink back into ancestor produces finite recursion', async () => {
+  const source = fakeTreeSource([
+    blob('a', 'd/', linkMode),
+    blob('d/sub', '../a/', linkMode),
+    blob('d/file.txt'),
+  ])
+  const b = budget(10)
+  const topVerdict = await resolveSymlink('a', 'd/', source, b)
+  assertEquals(topVerdict.kind, 'tree')
+  if (topVerdict.kind !== 'tree') return
+
+  const result = await graftTree('/a', topVerdict, b, new Set())
+  // We should see a finite number of /a/file.txt entries (one per recursion
+  // level reached before the budget ran out) plus at least one cycle link.
+  const fileTxtPaths = result.files
+    .map((f) => f.path)
+    .filter((p) => p.endsWith('/file.txt'))
+  assertEquals(fileTxtPaths.length > 0, true, 'expected at least one grafted file')
+  const cycleLinks = result.links.filter((l) => l.reason === 'cycle')
+  assertEquals(cycleLinks.length > 0, true, 'expected at least one cycle link')
+  // Sanity: recursion terminates.
+  assertEquals(result.files.length < 1000, true, 'recursion did not terminate')
 })
