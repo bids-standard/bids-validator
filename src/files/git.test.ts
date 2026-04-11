@@ -454,7 +454,7 @@ Deno.test(
 
 Deno.test(
   {
-    name: 'readGitTree: symlink to a committed directory is directory-unsupported',
+    name: 'readGitTree: in-tree directory symlink is grafted',
     ignore: !hasGit || isWindows,
     sanitizeResources: false,
     sanitizeOps: false,
@@ -468,10 +468,15 @@ Deno.test(
       },
       async (repo) => {
         const tree = await readGitTree(repo)
-        assertEquals(tree.get('linked-dir'), undefined, 'linked-dir must not be in files')
+        const original = tree.get('real-dir/inside.txt') as BIDSFile
+        const grafted = tree.get('linked-dir/inside.txt') as BIDSFile
+        assertExists(original, 'real-dir/inside.txt should be in tree')
+        assertExists(grafted, 'linked-dir/inside.txt should be in tree')
+        assertEquals(await original.text(), 'content')
+        assertEquals(await grafted.text(), 'content')
+        // No unresolved 'directory-unsupported' links any more.
         const dirLinks = tree.links.filter((l) => l.reason === 'directory-unsupported')
-        assertEquals(dirLinks.length, 1)
-        assertEquals(dirLinks[0].path, '/linked-dir')
+        assertEquals(dirLinks.length, 0)
       },
     )
   },

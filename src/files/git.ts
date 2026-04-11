@@ -20,11 +20,7 @@ import { FileIgnoreRules } from './ignore.ts'
 import { hashDirLower, parseAnnexKey, resolveAnnexedFile } from './repo.ts'
 import { FsFileOpener, HTTPOpener, NullFileOpener } from './openers.ts'
 import { streamFromUint8Array } from './streams.ts'
-import {
-  // graftTree is imported in Task 6 when the tree verdict is wired up.
-  MAX_SYMLINK_FOLLOWS,
-  resolveSymlink,
-} from './gitResolver.ts'
+import { graftTree, MAX_SYMLINK_FOLLOWS, resolveSymlink } from './gitResolver.ts'
 import type { FollowBudget, GitOptions, TreeSource } from './gitResolver.ts'
 
 export class GitFileOpener implements FileOpener {
@@ -313,16 +309,23 @@ export async function readGitTree(
         )
         break
 
-      case 'tree':
-        // Directory grafting lands in Task 6. Until then, keep the
-        // pre-change behavior so the existing directory-unsupported test
-        // passes.
-        unresolvedLinks.push({
-          path: '/' + filepath,
-          target,
-          reason: 'directory-unsupported',
-        })
+      case 'tree': {
+        // graftTree manages the visited set itself via add/delete, so we
+        // pass an empty Set per top-level graft. The shared `budget` is
+        // the same FollowBudget allocated for this iteration so nested
+        // resolveSymlink calls inside the walk share its countdown.
+        const visited = new Set<string>()
+        const graft = await graftTree(
+          '/' + filepath,
+          verdict,
+          budget,
+          visited,
+          prune,
+        )
+        files.push(...graft.files)
+        unresolvedLinks.push(...graft.links)
         break
+      }
 
       case 'submodule-boundary':
         unresolvedLinks.push({ path: '/' + filepath, target, reason: 'submodule' })
