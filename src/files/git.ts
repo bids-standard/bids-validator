@@ -113,8 +113,8 @@ export class AnnexedGitFileOpener implements FileOpener {
       this.#key,
     )
     try {
-      await Deno.stat(localPath)
-      this.#delegate = new FsFileOpener('', localPath)
+      const fileInfo = await Deno.stat(localPath)
+      this.#delegate = new FsFileOpener('', localPath, fileInfo)
       return this.#delegate
     } catch {
       // Local object not present; fall through to remote resolution
