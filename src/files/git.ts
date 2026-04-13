@@ -197,7 +197,7 @@ async function ancestorIsSubmodule(
         ...gitOptions,
       })
       if (parentObj.type !== 'tree') return false
-      // The tree type exposes `entries` as an array of { mode, path, oid, type }.
+      // isomorphic-git `ParsedTreeObject` exposes `object` as `TreeEntry[]`, with TreeEntry being an object with fields { mode, path, oid, type }.
       // deno-lint-ignore no-explicit-any
       const entries = (parentObj as unknown as { object: { entries: any[] } }).object.entries
       const match = entries.find((e: { path: string }) => e.path === segment)
