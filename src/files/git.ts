@@ -205,8 +205,9 @@ async function ancestorIsSubmodule(
       if (match.type === 'commit') return true
       if (match.type !== 'tree') return false
       prefix = prefix === '' ? segment : `${prefix}/${segment}`
-    } catch {
-      return false
+    } catch (err: unknown) {
+      if (err && typeof err == 'object' && 'isIsomorphicGitError' in err) return false
+      throw err
     }
   }
   return false
