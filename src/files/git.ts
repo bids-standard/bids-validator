@@ -6,7 +6,7 @@
  * readGitTree() to walk a ref and build a FileTree.
  */
 import { default as git, TREE } from 'isomorphic-git'
-import type { WalkerEntry } from 'isomorphic-git'
+import type { ParsedTreeObject, WalkerEntry } from 'isomorphic-git'
 import fs from 'node:fs'
 import * as posix from '@std/path/posix'
 import { join } from '@std/path'
@@ -197,10 +197,9 @@ async function ancestorIsSubmodule(
         ...gitOptions,
       })
       if (parentObj.type !== 'tree') return false
-      // isomorphic-git `ParsedTreeObject` exposes `object` as `TreeEntry[]`, with TreeEntry being an object with fields { mode, path, oid, type }.
-      // deno-lint-ignore no-explicit-any
-      const entries = (parentObj as unknown as { object: { entries: any[] } }).object.entries
-      const match = entries.find((e: { path: string }) => e.path === segment)
+      // isomorphic-git `ParsedTreeObject` exposes `object` as `Array<{ mode, path, oid, type }>`.
+      const children = (parentObj as ParsedTreeObject).object
+      const match = children.find((e: { path: string }) => e.path === segment)
       if (!match) return false
       if (match.type === 'commit') return true
       if (match.type !== 'tree') return false
