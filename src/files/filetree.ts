@@ -5,8 +5,9 @@ import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 
 /**
  * Walk a posix path and return the FileTree corresponding to its directory,
- * creating intermediate directory nodes as needed. Does not attach the final
- * segment; that's the caller's job.
+ * creating intermediate directory nodes as needed.
+ * Pass the parent directory of the object to insert.
+ * Inserting the file or link is the caller's responsibility.
  */
 function descendTo(root: FileTree, dir: string, ignore: FileIgnoreRules): FileTree {
   if (dir === '/') return root
