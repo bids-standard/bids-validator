@@ -75,7 +75,14 @@ async function _readFileTree({
         fileInfo = await Deno.stat(fullPath)
       } catch (err) {
         const code = (err as { code?: string }).code
-        const reason: SymlinkReason = code === 'ELOOP' ? 'cycle' : 'broken'
+        let reason: SymlinkReason
+        if (code === 'ELOOP') {
+          reason = 'cycle'
+        } else if (code === 'ENOENT') {
+          reason = 'broken'
+        } else {
+          throw err
+        }
         tree.links.push({ path: '/' + thisPath.replace(/^\/+/, ''), target, reason })
         continue
       }
