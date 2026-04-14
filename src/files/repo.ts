@@ -187,21 +187,12 @@ export function parseAnnexKey(target: string): { key: string; size: number } | n
   return { key, size }
 }
 
-export async function parseAnnexedFile(
-  path: string,
-): Promise<{ key: string; size: number; gitdir: string }> {
-  const target = await Deno.readLink(path)
-  const dir = dirname(target)
-
-  const dirs = dir.split(SEPARATOR_PATTERN)
-  const gitdir = join(dirname(path), ...dirs.slice(0, dirs.indexOf('.git') + 1))
-
-  const parsed = parseAnnexKey(target)
-  if (!parsed) {
-    throw new Error(`Could not parse annex key from symlink target: ${target}`)
-  }
-
-  return { key: parsed.key, size: parsed.size, gitdir }
+/**
+ * Extract a git directory from the path and target of a git-annex link
+ */
+export function gitdirFromLink(path: string, target: string): string {
+  const dirs = dirname(target).split(SEPARATOR_PATTERN)
+  return join(dirname(path), ...dirs.slice(0, dirs.indexOf('.git') + 1))
 }
 
 /**

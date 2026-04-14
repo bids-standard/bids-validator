@@ -8,6 +8,19 @@ export interface FileOpener {
   readBytes: (size: number, offset?: number) => Promise<Uint8Array<ArrayBuffer>>
 }
 
+export type SymlinkReason =
+  | 'broken'
+  | 'cycle'
+  | 'submodule'
+  | 'out-of-tree'
+  | 'directory-unsupported'
+
+export interface UnresolvedLink {
+  path: string
+  target: string
+  reason: SymlinkReason
+}
+
 export class BIDSFile {
   name: string
   path: string
@@ -72,6 +85,7 @@ export class FileTree {
   name: string
   files: BIDSFile[]
   directories: FileTree[]
+  links: UnresolvedLink[]
   viewed: boolean = false
   #parent?: WeakRef<FileTree>
   #ignore: FileIgnoreRules
@@ -80,6 +94,7 @@ export class FileTree {
     this.path = path
     this.files = []
     this.directories = []
+    this.links = []
     this.name = name
     this.parent = parent
     this.#ignore = ignore ?? new FileIgnoreRules([])
@@ -96,6 +111,10 @@ export class FileTree {
   get ignored(): boolean {
     if (!this.parent) return false
     return this.#ignore.test(this.path)
+  }
+
+  isPathIgnored(path: string): boolean {
+    return this.#ignore.test(path)
   }
 
   _get(parts: string[]): BIDSFile | FileTree | undefined {

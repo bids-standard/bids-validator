@@ -7,6 +7,8 @@ import { BIDSFileDeno, readFileTree } from './deno.ts'
 import { UnicodeDecodeError } from './streams.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules } from './ignore.ts'
+import { BIDSContextDataset } from '../schema/context.ts'
+import { walkFileTree } from '../schema/walk.ts'
 
 await requestReadPermission()
 
@@ -90,4 +92,183 @@ Deno.test('Deno implementation of FileTree', async (t) => {
     const prunedTree = await readFileTree(dsDir, prune)
     assert(!prunedTree.get(derivFile))
   })
+})
+
+const isWindows = Deno.build.os === 'windows'
+
+async function withTempDataset(
+  setup: (root: string) => Promise<void>,
+  body: (root: string) => Promise<void>,
+): Promise<void> {
+  const root = await Deno.makeTempDir()
+  try {
+    await setup(root)
+    await body(root)
+  } finally {
+    await new Deno.Command('chmod', { args: ['-R', '+w', root] }).output()
+    await Deno.remove(root, { recursive: true })
+  }
+}
+
+Deno.test({
+  name: 'readFileTree: symlink to in-tree file resolves',
+  ignore: isWindows,
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async () => {
+  await withTempDataset(
+    async (root) => {
+      await Deno.writeTextFile(join(root, 'real.txt'), 'hello')
+      await Deno.symlink('real.txt', join(root, 'link.txt'))
+    },
+    async (root) => {
+      const tree = await readFileTree(root)
+      const link = tree.get('link.txt')
+      assert(link !== undefined, 'link.txt should be in tree.files')
+      assertEquals(tree.links.length, 0, 'no unresolved links expected')
+    },
+  )
+})
+
+Deno.test({
+  name: 'readFileTree: symlink to in-tree directory recurses (bug 1 regression)',
+  ignore: isWindows,
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async () => {
+  await withTempDataset(
+    async (root) => {
+      await Deno.mkdir(join(root, 'real-dir'))
+      await Deno.writeTextFile(join(root, 'real-dir', 'inner.txt'), 'content')
+      await Deno.symlink('real-dir', join(root, 'linked-dir'))
+    },
+    async (root) => {
+      const tree = await readFileTree(root)
+      const inner = tree.get('linked-dir/inner.txt')
+      assert(inner !== undefined, 'linked-dir/inner.txt should appear via directory symlink')
+      assertEquals(tree.links.length, 0)
+    },
+  )
+})
+
+Deno.test({
+  name: 'readFileTree: dangling symlink produces a broken link entry (bug 2 regression)',
+  ignore: isWindows,
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async () => {
+  await withTempDataset(
+    async (root) => {
+      await Deno.symlink('nowhere.txt', join(root, 'broken.txt'))
+    },
+    async (root) => {
+      const tree = await readFileTree(root)
+      assertEquals(tree.get('broken.txt'), undefined, 'broken link should not be in tree.files')
+      assertEquals(tree.links.length, 1)
+      assertEquals(tree.links[0].path, '/broken.txt')
+      assertEquals(tree.links[0].target, 'nowhere.txt')
+      assertEquals(tree.links[0].reason, 'broken')
+    },
+  )
+})
+
+Deno.test({
+  name: 'readFileTree: cyclic symlinks produce a cycle link entry',
+  ignore: isWindows,
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async () => {
+  await withTempDataset(
+    async (root) => {
+      await Deno.symlink('cycle-b', join(root, 'cycle-a'))
+      await Deno.symlink('cycle-a', join(root, 'cycle-b'))
+    },
+    async (root) => {
+      const tree = await readFileTree(root)
+      const cycleLinks = tree.links.filter((l) => l.reason === 'cycle')
+      assertEquals(cycleLinks.length, 2, 'both cycle-a and cycle-b should report cycle')
+    },
+  )
+})
+
+Deno.test({
+  name: 'readFileTree: annex pointer symlink is classified as a file',
+  ignore: isWindows,
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async () => {
+  const annexTarget =
+    '../../.git/annex/objects/xx/yy/MD5E-s1234--d41d8cd98f00b204e9800998ecf8427e.nii.gz/MD5E-s1234--d41d8cd98f00b204e9800998ecf8427e.nii.gz'
+  await withTempDataset(
+    async (root) => {
+      await Deno.mkdir(join(root, '.git', 'annex', 'objects'), { recursive: true })
+      await Deno.mkdir(join(root, 'sub-01', 'func'), { recursive: true })
+      await Deno.symlink(
+        annexTarget,
+        join(root, 'sub-01', 'func', 'sub-01_task-rest_bold.nii.gz'),
+      )
+    },
+    async (root) => {
+      const tree = await readFileTree(root)
+      const file = tree.get('sub-01/func/sub-01_task-rest_bold.nii.gz')
+      assert(file !== undefined, 'annex pointer should appear in tree.files')
+      assertEquals(tree.links.length, 0, 'annex pointer should not be in tree.links')
+    },
+  )
+})
+
+Deno.test({
+  name: 'readFileTree: out-of-tree file symlink is transparently followed',
+  ignore: isWindows,
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async () => {
+  const externalDir = await Deno.makeTempDir()
+  await Deno.writeTextFile(join(externalDir, 'external.txt'), 'outside')
+  try {
+    await withTempDataset(
+      async (root) => {
+        await Deno.symlink(join(externalDir, 'external.txt'), join(root, 'external.txt'))
+      },
+      async (root) => {
+        const tree = await readFileTree(root)
+        const ext = tree.get('external.txt')
+        assert(ext !== undefined, 'out-of-tree file symlink should appear via OS resolution')
+        assertEquals(tree.links.length, 0)
+      },
+    )
+  } finally {
+    await Deno.remove(externalDir, { recursive: true })
+  }
+})
+
+Deno.test({
+  name: 'readFileTree + walkFileTree: reports broken and cycle links end-to-end',
+  ignore: isWindows,
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async () => {
+  await withTempDataset(
+    async (root) => {
+      // One valid file so the tree is non-empty.
+      await Deno.writeTextFile(join(root, 'dataset_description.json'), '{}')
+      // Broken link.
+      await Deno.symlink('nowhere.txt', join(root, 'broken.txt'))
+      // Cycle.
+      await Deno.symlink('cycle-b', join(root, 'cycle-a'))
+      await Deno.symlink('cycle-a', join(root, 'cycle-b'))
+    },
+    async (root) => {
+      const tree = await readFileTree(root)
+      const ds = new BIDSContextDataset({ tree })
+      for await (const _ of walkFileTree(ds)) { /* consume */ }
+
+      const brokenIssues = ds.issues.get({ code: 'SYMLINK_BROKEN' })
+      assertEquals(brokenIssues.length, 1)
+      assertEquals(brokenIssues[0].location, '/broken.txt')
+
+      const cycleIssues = ds.issues.get({ code: 'SYMLINK_CYCLE' })
+      assertEquals(cycleIssues.length, 2)
+    },
+  )
 })

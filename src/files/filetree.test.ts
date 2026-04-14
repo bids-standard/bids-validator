@@ -1,7 +1,8 @@
 import { assert, assertEquals } from '@std/assert'
 import { FileIgnoreRules } from './ignore.ts'
-import { BIDSFile, type FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { filesToTree, subtree } from './filetree.ts'
+import { NullFileOpener } from './openers.ts'
 import { StringOpener } from './openers.test.ts'
 
 export function pathToFile(path: string, ignored: boolean = false): BIDSFile {
@@ -105,6 +106,38 @@ Deno.test('extract subtrees', async (t) => {
     )
   })
 
+  await t.step('Subtree preserves unresolved links with rebased paths', async () => {
+    const tree = pathsToTree([
+      '/dataset_description.json',
+      '/derivatives/pipeline/dataset_description.json',
+    ])
+    const pipeline = tree.get('derivatives/pipeline') as FileTree
+    pipeline.links.push({
+      path: '/derivatives/pipeline/broken.txt',
+      target: '../does-not-exist',
+      reason: 'broken',
+    })
+    const anat = new FileTree(
+      '/derivatives/pipeline/sub-01',
+      'sub-01',
+      pipeline,
+    )
+    anat.links.push({
+      path: '/derivatives/pipeline/sub-01/dangling.nii.gz',
+      target: 'nowhere.nii.gz',
+      reason: 'broken',
+    })
+    pipeline.directories.push(anat)
+
+    const derivTree = await subtree(pipeline)
+    assertEquals(derivTree.links.length, 1)
+    assertEquals(derivTree.links[0].path, '/broken.txt')
+    assertEquals(derivTree.links[0].reason, 'broken')
+    const subdir = derivTree.get('sub-01') as FileTree
+    assertEquals(subdir.links.length, 1)
+    assertEquals(subdir.links[0].path, '/sub-01/dangling.nii.gz')
+  })
+
   await t.step('Subtree uses new bidsignore', async () => {
     const tree = pathsToTree([
       '/dataset_description.json',
@@ -125,4 +158,56 @@ Deno.test('extract subtrees', async (t) => {
     assertEquals(pipeline.get('also_ignored_file')!.ignored, true)
     assertEquals(pipeline.get('ignored_file')!.ignored, false)
   })
+})
+
+Deno.test('FileTree initialises an empty links array', () => {
+  const tree = new FileTree('/some/path', 'path')
+  assertEquals(tree.links, [])
+})
+
+Deno.test('FileTree.links accepts UnresolvedLink records', () => {
+  const tree = new FileTree('/some/path', 'path')
+  tree.links.push({
+    path: '/some/path/broken',
+    target: '../does-not-exist',
+    reason: 'broken',
+  })
+  assertEquals(tree.links.length, 1)
+  assertEquals(tree.links[0].reason, 'broken')
+})
+
+Deno.test('FileTree.isPathIgnored delegates to its FileIgnoreRules', () => {
+  const rules = new FileIgnoreRules(['/ignored/**'])
+  const tree = new FileTree('/', '/', undefined, rules)
+  assertEquals(tree.isPathIgnored('/ignored/foo.txt'), true)
+  assertEquals(tree.isPathIgnored('/kept/bar.txt'), false)
+})
+
+Deno.test('filesToTree attaches unresolved links to their parent directory', () => {
+  const file = new BIDSFile('/sub-01/anat/sub-01_T1w.json', new NullFileOpener(0))
+  const tree = filesToTree([file], undefined, [
+    {
+      path: '/sub-01/anat/broken.nii.gz',
+      target: '../nope.nii.gz',
+      reason: 'broken',
+    },
+  ])
+
+  const anat = tree.get('sub-01/anat')
+  assert(anat !== undefined, 'sub-01/anat should exist in tree')
+  assertEquals((anat as FileTree).links.length, 1)
+  assertEquals((anat as FileTree).links[0].path, '/sub-01/anat/broken.nii.gz')
+})
+
+Deno.test('filesToTree creates intermediate directories for a link-only path', () => {
+  const tree = filesToTree([], undefined, [
+    {
+      path: '/a/b/c/dangling.txt',
+      target: 'nowhere',
+      reason: 'broken',
+    },
+  ])
+  const c = tree.get('a/b/c')
+  assert(c !== undefined, '/a/b/c should be created for the link')
+  assertEquals((c as FileTree).links.length, 1)
 })
