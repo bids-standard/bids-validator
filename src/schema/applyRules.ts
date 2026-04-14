@@ -177,7 +177,7 @@ function _evalRuleChecks(
 /**
  * For evaluating field requirements and values that should exist in a json
  * sidecar for a file. Will need to implement an additional check/error for
- * `prohibitied` fields. Examples in specification:
+ * `prohibited` fields. Examples in specification:
  * schema/rules/sidecars/*
  */
 function evalJsonCheck(
@@ -230,7 +230,7 @@ function evalJsonCheck(
       }
 
       /* Regardless of if key is required/recommended/optional, we do no
-       * further valdiation if it is not present in sidecar.
+       * further validation if it is not present in sidecar.
        */
       continue
     }
