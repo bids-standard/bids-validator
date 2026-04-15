@@ -296,6 +296,19 @@ Deno.test('resolveSymlink: mutual cycle a <-> b returns cycle', async () => {
   assertEquals(verdict, { kind: 'unresolved', reason: 'cycle' })
 })
 
+Deno.test('resolveSymlink: symlink into submodule returns submodule-boundary', async () => {
+  const source = fakeTreeSource([
+    blob('link', 'sub/inner/file.txt', linkMode),
+    submodule('sub'),
+  ])
+  const verdict = await resolveSymlink('link', 'sub/inner/file.txt', source, budget())
+  assertEquals(verdict.kind, 'submodule-boundary')
+  if (verdict.kind === 'submodule-boundary') {
+    assertEquals(verdict.mountPath, 'sub')
+    assertEquals(verdict.remainder, 'inner/file.txt')
+  }
+})
+
 function treeVerdict(
   treePath: string,
   originalDir: string,
