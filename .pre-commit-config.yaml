@@ -16,3 +16,4 @@ repos:
     rev: db9b2333832fdbbb36b9c36d252cd52c2f9d41dc # 0.1.0
     hooks:
       - id: deno-fmt
+      - id: deno-lint
