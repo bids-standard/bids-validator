@@ -281,7 +281,7 @@ export async function readGitTree(
 
   for (const { filepath, target } of deferredSymlinks) {
     const budget: FollowBudget = { remaining: MAX_SYMLINK_FOLLOWS }
-    const verdict = await resolveSymlink(filepath, target, source, budget, prune)
+    const verdict = await resolveSymlink(filepath, target, source, budget)
 
     switch (verdict.kind) {
       case 'file-blob':

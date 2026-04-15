@@ -133,18 +133,12 @@ export async function findSubmoduleAncestor(
  * The resolver walks one segment at a time. On each symlink follow
  * (intermediate or terminal), it decrements the shared `budget`; when the
  * budget hits zero it returns `{ kind: 'unresolved', reason: 'cycle' }`.
- *
- * Note on `prune`: accepted but currently unused in the resolver itself.
- * `prune` is applied by the graft walker at grafted paths. A future
- * optimization may short-circuit resolution for targets that land under a
- * pruned prefix.
  */
 export async function resolveSymlink(
   originalPath: string,
   target: string,
   source: TreeSource,
   budget: FollowBudget,
-  _prune?: FileIgnoreRules,
 ): Promise<ResolveVerdict> {
   // Reject absolute targets immediately; the git tree has no OS filesystem root.
   if (target.startsWith('/')) {
@@ -354,7 +348,7 @@ async function walkSubtree(
       }
       // Resolve nested symlinks against their ORIGINAL path (entryPath),
       // not their grafted path (outPath). Unix physical-path semantics.
-      const subVerdict = await resolveSymlink(entryPath, target, source, budget, prune)
+      const subVerdict = await resolveSymlink(entryPath, target, source, budget)
       switch (subVerdict.kind) {
         case 'file-blob':
           result.files.push(
