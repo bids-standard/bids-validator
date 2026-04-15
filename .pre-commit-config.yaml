@@ -1,3 +1,8 @@
+ci:
+  autoupdate_schedule: quarterly
+  autoupdate_commit_message: 'chore: update pre-commit hooks'
+  autofix_prs: false
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
@@ -16,3 +21,4 @@ repos:
     rev: db9b2333832fdbbb36b9c36d252cd52c2f9d41dc # 0.1.0
     hooks:
       - id: deno-fmt
+      - id: deno-lint
