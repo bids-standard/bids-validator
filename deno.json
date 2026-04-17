@@ -2,7 +2,7 @@
   "name": "@bids/validator",
   "version": "3.0.0-dev",
   "exports": {
-    ".": "./src/bids-validator.ts",
+    ".": "./src/api/app.ts",
     "./validate": "./src/api/validate/mod.ts",
     "./files": "./src/api/files/mod.ts",
     "./filetree": "./src/api/filetree/mod.ts",
