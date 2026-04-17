@@ -1,11 +1,8 @@
-import type { FileTree } from '../types/filetree.ts'
 import type { GenericSchema } from '../types/schema.ts'
 import { assertEquals } from '@std/assert'
 import { makeBIDSContext } from '../schema/context.test.ts'
-import { type atRoot, type entityLabelCheck, missingLabel } from './filenameValidate.ts'
-import type { BIDSFileDeno } from '../files/deno.ts'
+import { missingLabel } from './filenameValidate.ts'
 import { pathToFile } from '../files/filetree.test.ts'
-import type { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 
 const schema = (await loadSchema()) as unknown as GenericSchema
@@ -17,7 +14,7 @@ Deno.test('test missingLabel', async (t) => {
     // otherwise this is trigger-happy.
     context.filenameRules = ['rules.files.raw.dwi.dwi']
 
-    await missingLabel(schema, context)
+    missingLabel(schema, context)
     assertEquals(
       context.dataset.issues
         .get({
@@ -35,7 +32,7 @@ Deno.test('test missingLabel', async (t) => {
       // Doesn't really matter that the rule doesn't apply
       context.filenameRules = ['rules.files.raw.dwi.dwi']
 
-      await missingLabel(schema, context)
+      missingLabel(schema, context)
       assertEquals(
         context.dataset.issues.get({
           location: context.file.path,

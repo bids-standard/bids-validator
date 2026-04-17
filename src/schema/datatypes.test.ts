@@ -1,6 +1,5 @@
 import { assert, assertObjectMatch } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
-import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 
@@ -12,7 +11,7 @@ const schema = await loadSchema()
 const makeFile = (path: string): BIDSFile => pathsToTree([path]).get(path) as BIDSFile
 
 Deno.test('test modalityTable', async (t) => {
-  await t.step('real schema', async () => {
+  await t.step('real schema', () => {
     const table = modalityTable(schema)
     // Memoization check
     assert(modalityTable(schema) == table)
@@ -26,19 +25,19 @@ Deno.test('test modalityTable', async (t) => {
 })
 
 Deno.test('test findDatatype', async (t) => {
-  await t.step('root files', async () => {
+  await t.step('root files', () => {
     const path = makeFile('/participants.tsv')
     assertObjectMatch(findDatatype(path, schema), { datatype: '', modality: '' })
   })
-  await t.step('non-datatype parent', async () => {
+  await t.step('non-datatype parent', () => {
     const path = makeFile('/stimuli/image.png')
     assertObjectMatch(findDatatype(path, schema), { datatype: '', modality: '' })
   })
-  await t.step('phenotype file', async () => {
+  await t.step('phenotype file', () => {
     const path = makeFile('/phenotype/survey.tsv')
     assertObjectMatch(findDatatype(path, schema), { datatype: 'phenotype', modality: '' })
   })
-  await t.step('data files', async () => {
+  await t.step('data files', () => {
     for (
       const [filename, datatype, modality] of [
         ['/sub-01/anat/sub-01_T1w.nii.gz', 'anat', 'mri'],

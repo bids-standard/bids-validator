@@ -3,11 +3,13 @@
  */
 import { basename, join } from '@std/path'
 import * as posix from '@std/path/posix'
-import { BIDSFile, type FileOpener, FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree, type SymlinkReason } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
-import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
-import { FsFileOpener, HTTPOpener, NullFileOpener } from './openers.ts'
-import { parseAnnexedFile, resolveAnnexedFile } from './repo.ts'
+import { FileIgnoreRules } from './ignore.ts'
+import { loadBidsIgnore } from './filetree.ts'
+import { FsFileOpener } from './openers.ts'
+import { gitdirFromLink, parseAnnexKey } from './repo.ts'
+import { AnnexedGitFileOpener } from './git.ts'
 import fs from 'node:fs'
 
 export class BIDSFileDeno extends BIDSFile {
@@ -45,24 +47,53 @@ async function _readFileTree({
     if (prune.test(thisPath)) {
       continue
     }
-    if (dirEntry.isFile || dirEntry.isSymlink) {
-      let opener: FileOpener
+
+    // Symlinks are classified here and then fall through to the file or
+    // directory branches below via the effective flags computed from stat().
+    let { isFile, isDirectory } = dirEntry
+    let fileInfo: Deno.FileInfo | undefined
+
+    if (dirEntry.isSymlink) {
       const fullPath = join(rootPath, thisPath)
-      try {
-        const fileInfo = await Deno.stat(fullPath)
-        opener = new FsFileOpener(rootPath, thisPath, fileInfo)
-      } catch (_) {
-        const { key, size, gitdir } = await parseAnnexedFile(fullPath)
-        try {
-          const { url } = await resolveAnnexedFile(key, preferredRemote, { cache, fs, gitdir })
-          opener = new HTTPOpener(url, size)
-        } catch (_) {
-          opener = new NullFileOpener(size)
-        }
+      const target = await Deno.readLink(fullPath)
+
+      // Annex pointers are identified from the raw target string; no stat needed.
+      const annexParsed = parseAnnexKey(target)
+      if (annexParsed !== null) {
+        const gitdir = gitdirFromLink(fullPath, target)
+        const opener = new AnnexedGitFileOpener(
+          annexParsed.key,
+          annexParsed.size,
+          { cache, fs, gitdir },
+          preferredRemote,
+        )
+        tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
+        continue
       }
-      tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
+
+      try {
+        fileInfo = await Deno.stat(fullPath)
+      } catch (err) {
+        const code = (err as { code?: string }).code
+        let reason: SymlinkReason
+        if (code === 'ELOOP') {
+          reason = 'cycle'
+        } else if (code === 'ENOENT') {
+          reason = 'broken'
+        } else {
+          throw err
+        }
+        tree.links.push({ path: '/' + thisPath.replace(/^\/+/, ''), target, reason })
+        continue
+      }
+
+      ;({ isFile, isDirectory } = fileInfo)
     }
-    if (dirEntry.isDirectory) {
+
+    if (isFile) {
+      const opener = new FsFileOpener(rootPath, thisPath, fileInfo)
+      tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
+    } else if (isDirectory) {
       const dirTree = await _readFileTree({
         rootPath,
         relativePath: thisPath,
@@ -88,13 +119,5 @@ export async function readFileTree(
   prune ??= new FileIgnoreRules([], false)
   const ignore = new FileIgnoreRules([])
   const tree = await _readFileTree({ rootPath, relativePath: '/', ignore, prune, preferredRemote })
-  const bidsignore = tree.get('.bidsignore')
-  if (bidsignore) {
-    try {
-      ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
-    } catch (err) {
-      console.log(`Failed to read '.bidsignore' file with the following error:\n${err}`)
-    }
-  }
-  return tree
+  return loadBidsIgnore(tree, ignore)
 }

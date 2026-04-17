@@ -65,6 +65,13 @@ jobs:
       - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2
         with:
           deno-version: v2.x
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+      - name: Install git-annex
+        run: uv tool install git-annex
+      - name: Configure git user
+        run: |
+          git config --global user.name 'CI runner'
+          git config --global user.email 'ci@example.com'
       - name: Set permissions with network access
         run: echo 'PERMS=--allow-read --allow-write --allow-env --allow-run --allow-net' >> $GITHUB_ENV
         if: ${{ matrix.allow-net }}

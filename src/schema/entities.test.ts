@@ -1,10 +1,9 @@
 import { assert, assertObjectMatch } from '@std/assert'
 import { readEntities } from './entities.ts'
 import { nullReadBytes } from '../tests/nullReadBytes.ts'
-import { generateBIDSFilename } from '../tests/generate-filenames.ts'
 
 Deno.test('test readEntities', async (t) => {
-  await t.step('test readEntities with a BIDSFile-like object', async () => {
+  await t.step('test readEntities with a BIDSFile-like object', () => {
     const testFile = {
       name: 'task-rhymejudgment_bold.json',
       path: '/task-rhymejudgment_bold.json',
@@ -21,7 +20,7 @@ Deno.test('test readEntities', async (t) => {
     assert(context.suffix === 'bold', 'failed to match suffix')
   })
 
-  await t.step('test readEntities("sub-01")', async () => {
+  await t.step('test readEntities("sub-01")', () => {
     assertObjectMatch(readEntities('sub-01'), {
       stem: 'sub-01',
       entities: { sub: '01' },
@@ -29,7 +28,7 @@ Deno.test('test readEntities', async (t) => {
       extension: '',
     })
   })
-  await t.step('test readEntities("dataset_description.json")', async () => {
+  await t.step('test readEntities("dataset_description.json")', () => {
     assertObjectMatch(readEntities('dataset_description.json'), {
       stem: 'dataset_description',
       entities: { 'dataset': 'NOENTITY' },
@@ -37,7 +36,7 @@ Deno.test('test readEntities', async (t) => {
       extension: '.json',
     })
   })
-  await t.step('test readEntities("participants.tsv")', async () => {
+  await t.step('test readEntities("participants.tsv")', () => {
     assertObjectMatch(readEntities('participants.tsv'), {
       stem: 'participants',
       entities: {},
@@ -45,7 +44,7 @@ Deno.test('test readEntities', async (t) => {
       extension: '.tsv',
     })
   })
-  await t.step('test readEntities("sub-01_ses-01_T1w.nii.gz")', async () => {
+  await t.step('test readEntities("sub-01_ses-01_T1w.nii.gz")', () => {
     assertObjectMatch(readEntities('sub-01_ses-01_T1w.nii.gz'), {
       stem: 'sub-01_ses-01_T1w',
       entities: { sub: '01', ses: '01' },
@@ -53,7 +52,7 @@ Deno.test('test readEntities', async (t) => {
       extension: '.nii.gz',
     })
   })
-  await t.step('test readEntities("sub-01_SEM.ome.zarr")', async () => {
+  await t.step('test readEntities("sub-01_SEM.ome.zarr")', () => {
     assertObjectMatch(readEntities('sub-01_SEM.ome.zarr'), {
       stem: 'sub-01_SEM',
       entities: { sub: '01' },
@@ -61,7 +60,7 @@ Deno.test('test readEntities', async (t) => {
       extension: '.ome.zarr',
     })
   })
-  await t.step('test readEntities("sub-01_task-nback_meg")', async () => {
+  await t.step('test readEntities("sub-01_task-nback_meg")', () => {
     assertObjectMatch(readEntities('sub-01_task-nback_meg'), {
       stem: 'sub-01_task-nback_meg',
       entities: { sub: '01', task: 'nback' },

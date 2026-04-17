@@ -1,4 +1,4 @@
-import * as hedValidator from '@hed/validator'
+import type * as HedValidator from '@hed/validator'
 import type { GenericSchema } from '../types/schema.ts'
 import type { Issue } from '../types/issues.ts'
 import type { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
@@ -9,17 +9,23 @@ function sidecarHasHed(sidecarData: BIDSContext['sidecar']): boolean {
   if (!sidecarData) {
     return false
   }
-  return Object.keys(sidecarData).some((x) => sidecarValueHasHed(sidecarData[x]))
+  return Object.keys(sidecarData).some((x) =>
+    sidecarValueHasHed(sidecarData[x] as { HED?: string })
+  )
 }
 
 function sidecarValueHasHed(sidecarValue: { HED?: string }): boolean {
   return typeof sidecarValue?.HED !== 'undefined'
 }
 
-async function setHedSchemas(dataset: BIDSContextDataset): Promise<HedIssue[]> {
+async function setHedSchemas(
+  dataset: BIDSContextDataset,
+  hedValidator: typeof HedValidator,
+): Promise<HedIssue[]> {
   if (dataset.hedSchemas !== undefined) {
     return [] as HedIssue[]
   }
+
   const datasetDescriptionData = new hedValidator.BidsJsonFile(
     '/dataset_description.json',
     null,
@@ -52,22 +58,33 @@ export async function hedValidate(
   if (context.dataset.hedSchemas === null) {
     return
   }
+  // This logic was previously lower down, now we check it first to save 8MB
+  let isHedFile = false
+  if (
+    context.extension === '.tsv' && context.columns &&
+    ('HED' in context.columns || sidecarHasHed(context.sidecar))
+  ) {
+    isHedFile = true
+  } else if (context.extension === '.json' && sidecarHasHed(context.json)) {
+    isHedFile = true
+  }
+
+  // If it's not a HED file, return early without loading the library!
+  if (!isHedFile) {
+    return
+  }
 
   try {
-    let file
+    const hedValidator = await import('@hed/validator')
 
-    if (
-      context.extension === '.tsv' && context.columns &&
-      ('HED' in context.columns || sidecarHasHed(context.sidecar))
-    ) {
-      file = buildHedTsvFile(context)
-    } else if (context.extension === '.json' && sidecarHasHed(context.json)) {
-      file = buildHedSidecarFile(context)
+    let file
+    if (context.extension === '.tsv') {
+      file = buildHedTsvFile(context, hedValidator)
     } else {
-      return
+      file = buildHedSidecarFile(context, hedValidator)
     }
 
-    const hedValidationIssues = await setHedSchemas(context.dataset)
+    const hedValidationIssues = await setHedSchemas(context.dataset, hedValidator)
 
     if (hedValidationIssues.length === 0) {
       const fileIssues = file.validate(context.dataset.hedSchemas) ?? [] as HedIssue[]
@@ -87,7 +104,10 @@ export async function hedValidate(
   }
 }
 
-function buildHedTsvFile(context: BIDSContext): hedValidator.BidsTsvFile {
+function buildHedTsvFile(
+  context: BIDSContext,
+  hedValidator: typeof HedValidator,
+): HedValidator.BidsTsvFile {
   return new hedValidator.BidsTsvFile(
     context.path,
     context.file,
@@ -96,7 +116,10 @@ function buildHedTsvFile(context: BIDSContext): hedValidator.BidsTsvFile {
   )
 }
 
-function buildHedSidecarFile(context: BIDSContext): hedValidator.BidsSidecar {
+function buildHedSidecarFile(
+  context: BIDSContext,
+  hedValidator: typeof HedValidator,
+): HedValidator.BidsSidecar {
   return new hedValidator.BidsSidecar(
     context.path,
     context.file,

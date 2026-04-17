@@ -101,7 +101,7 @@ nifti_header:
 ```
 
 Fields from this context can be queried using object dot notation.
-For example, `sidecar.MagneticFieldStrengh` has the integer value `3`,
+For example, `sidecar.MagneticFieldStrength` has the integer value `3`,
 and `entities.subject` has the string value `"01"`.
 This permits the use of boolean expressions, such as
 `sidecar.RepetitionTime == nifti_header.pixdim[4]`.

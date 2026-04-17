@@ -45,6 +45,7 @@ dev/using-the-api.md
 dev/contributing.md
 dev/environment.md
 dev/release-process.md
+dev/process.md
 ```
 
 ```{toctree}
