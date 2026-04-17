@@ -93,7 +93,7 @@ export class BIDSFile {
 /**
  * Directory node in a BIDS dataset tree.
  *
- * Works across all environments (Deno, browser, Python). The `parent`
+ * Works across all environments (Deno, browser, git). The `parent`
  * property is held via `WeakRef` to avoid preventing garbage collection of
  * ancestor nodes.
  *
