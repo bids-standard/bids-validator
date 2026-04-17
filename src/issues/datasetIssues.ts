@@ -57,8 +57,8 @@ export class DatasetIssues {
    * @param codeMessage - Optional human-readable description for
    *   `issue.code`. Required when `issue.code` is not in the non-schema
    *   issue catalogue.
-   * @throws {Error} If `codeMessage` is not provided and `issue.code`
-   *   is not a key in the non-schema issue catalogue.
+   * @throws {UnknownIssueCodeError} If `codeMessage` is not provided and
+   *   `issue.code` is not a key in the non-schema issue catalogue.
    */
   add(issue: Issue, codeMessage?: string) {
     // Ensure only relevant fields are kept, for protection when working with

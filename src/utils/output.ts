@@ -16,9 +16,11 @@ interface LoggingOptions {
 }
 
 /**
- * Format for Unix consoles
+ * Format a validation result for Unix console display.
  *
- * Returns the full output string with newlines
+ * @param result - The validation result to format.
+ * @param options - Logging options; `verbose` includes extra detail per issue.
+ * @returns The full ANSI-coloured output string with newlines.
  */
 export function consoleFormat(
   result: ValidationResult,
@@ -247,6 +249,16 @@ function helpUrl(code: string): string {
   return `https://neurostars.org/search?q=${code}`
 }
 
+/**
+ * Serialize a validation result to a JSON string.
+ *
+ * Circular `parent` references are stripped and `Map` instances are
+ * converted to plain objects during serialization.
+ *
+ * @param result - The validation result to serialize.
+ * @param pretty - When `true`, indent with two spaces.
+ * @returns The JSON string.
+ */
 export function resultToJSONStr(result: ValidationResult, pretty: boolean = false): string {
   const indent = pretty ? 2 : 0
   return JSON.stringify(result, (_key, value) => {
