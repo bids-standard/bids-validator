@@ -56,7 +56,7 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
 /**
  * Creates a TransformStream that validates and decodes UTF-8 text
  */
-export function createUTF8Stream(options = { fatal: false }) {
+export function createUTF8Stream(options = { fatal: false }): TransformStream<Uint8Array, string> {
   return new TransformStream(new UTF8StreamTransformer(options))
 }
 

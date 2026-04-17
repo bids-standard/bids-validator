@@ -172,7 +172,7 @@ export class NullFileOpener implements FileOpener {
   constructor(size = 0) {
     this.size = size
   }
-  stream = () =>
+  stream = (): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> =>
     Promise.resolve(
       new ReadableStream({
         start(controller) {
@@ -180,6 +180,7 @@ export class NullFileOpener implements FileOpener {
         },
       }),
     )
-  text = () => Promise.resolve('')
-  readBytes = (_size: number, _offset?: number) => Promise.resolve(new Uint8Array())
+  text = (): Promise<string> => Promise.resolve('')
+  readBytes = (_size: number, _offset?: number): Promise<Uint8Array<ArrayBuffer>> =>
+    Promise.resolve(new Uint8Array())
 }

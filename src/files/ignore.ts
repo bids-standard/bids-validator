@@ -2,7 +2,7 @@ import type { BIDSFile } from '../types/filetree.ts'
 import { default as ignore } from '@ignore'
 import type { Ignore } from '@ignore'
 
-export async function readBidsIgnore(file: BIDSFile) {
+export async function readBidsIgnore(file: BIDSFile): Promise<string[]> {
   const value = await file.text()
   if (value) {
     const lines = value.split('\n')
