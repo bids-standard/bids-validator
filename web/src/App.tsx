@@ -3,7 +3,7 @@ import "./App.css"
 import { directoryOpen } from "https://esm.sh/browser-fs-access@0.35.0"
 import confetti from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.module.mjs';
 import Markdown from "react-markdown"
-import { fileListToTree, validate, getVersion } from "../dist/validator/main.js"
+import { fileListToTree, validate, getVersion } from "../dist/validator/web.js"
 import type { ValidationResult } from "../../src/types/validation-result.ts"
 import { Collapse } from "./Collapse.tsx"
 import { Summary } from "./Summary.tsx"
