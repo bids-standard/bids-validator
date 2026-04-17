@@ -171,6 +171,15 @@ export class Summary {
   }
 }
 
+/**
+ * Check whether a validation result contains any errors.
+ *
+ * Returns `true` if the result's issues include at least one error, or if
+ * any derivative result (when recursive validation is used) contains errors.
+ *
+ * @param result - The validation result to check.
+ * @returns `true` if any error-severity issues exist.
+ */
 export function detectErrors(result: ValidationResult): boolean {
   return result.issues.get({ severity: 'error' }).length > 0 ||
     Object.values(result.derivativesSummary ?? {}).some((res) => detectErrors(res))

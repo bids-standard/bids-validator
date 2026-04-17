@@ -69,8 +69,8 @@ const perDSChecks: DSCheckFunction[] = [
  *
  * @example
  * ```ts
- * import { readFileTree } from '@bids/validator/files'
- * import { validate } from '@bids/validator/main'
+ * import { readFileTree } from '@bids/validator/files/deno'
+ * import { validate } from '@bids/validator/validate'
  *
  * const tree = await readFileTree('/path/to/dataset')
  * const result = await validate(tree, {
