@@ -108,6 +108,12 @@ class HttpError extends Error {
   }
 }
 
+/**
+ * {@link FileOpener} that fetches content over HTTP with automatic retries.
+ *
+ * @param url - The URL to fetch content from.
+ * @param size - Known file size in bytes, or `-1` if unknown.
+ */
 export class HTTPOpener implements FileOpener {
   url: string
   size: number
@@ -167,6 +173,14 @@ export class HTTPOpener implements FileOpener {
   }
 }
 
+/**
+ * No-op {@link FileOpener} that returns empty content.
+ *
+ * Used as a placeholder when file content is unavailable (e.g. an
+ * unresolvable git-annex object).
+ *
+ * @param size - Reported file size; defaults to `0`.
+ */
 export class NullFileOpener implements FileOpener {
   size: number
   constructor(size = 0) {

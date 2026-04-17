@@ -2,6 +2,12 @@ import type { BIDSFile } from '../types/filetree.ts'
 import { default as ignore } from '@ignore'
 import type { Ignore } from '@ignore'
 
+/**
+ * Read a `.bidsignore` file and return its lines as ignore patterns.
+ *
+ * @param file - The `.bidsignore` file to read.
+ * @returns An array of gitignore-style patterns.
+ */
 export async function readBidsIgnore(file: BIDSFile): Promise<string[]> {
   const value = await file.text()
   if (value) {
@@ -22,7 +28,11 @@ const defaultIgnores = [
 ]
 
 /**
- * Deno implementation of .bidsignore style rules
+ * Gitignore-style path matcher for `.bidsignore` rules.
+ *
+ * @param config - Array of gitignore-style patterns.
+ * @param addDefaults - When `true` (the default), standard BIDS ignores
+ *   (`.git**`, `sourcedata/`, `code/`, etc.) are prepended.
  */
 export class FileIgnoreRules {
   #ignore: Ignore
