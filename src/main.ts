@@ -3,15 +3,12 @@ import type { Config } from './setup/options.ts'
 import * as colors from '@std/fmt/colors'
 import { readFileTree } from './files/deno.ts'
 import { readGitTree } from './files/git.ts'
-import { fileListToTree } from './files/browser.ts'
 import { FileIgnoreRules } from './files/ignore.ts'
 import { resolve } from '@std/path'
 import { validate } from './validators/bids.ts'
 import { consoleFormat, resultToJSONStr } from './utils/output.ts'
 import { setupLogging } from './utils/logger.ts'
 import type { ValidationResult } from './types/validation-result.ts'
-export type { ValidationResult } from './types/validation-result.ts'
-export { getVersion } from './version.ts'
 
 /**
  * Validation entrypoint intended for command line usage with Deno
@@ -63,5 +60,3 @@ export async function main(): Promise<ValidationResult> {
 
   return schemaResult
 }
-
-export { fileListToTree, readGitTree, validate }
