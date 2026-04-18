@@ -142,6 +142,47 @@ export class AnnexedGitFileOpener implements FileOpener {
 }
 
 /**
+ * Find the gitdir for a repository path, and resolve the requested ref to a commit OID.
+ */
+async function resolveRef(
+  repoPath: string,
+  ref: string,
+): Promise<{ commit: string; gitOptions: GitOptions }> {
+  const dotGitPath = join(repoPath, '.git')
+  let gitdir: string
+  try {
+    const stat = await Deno.stat(dotGitPath)
+    gitdir = stat.isDirectory ? dotGitPath : repoPath
+  } catch {
+    gitdir = repoPath
+  }
+
+  const gitOptions: GitOptions = { fs, gitdir, cache: {} }
+
+  // Resolve HEAD to verify this is a git repository and it has commits.
+  try {
+    const head = await git.resolveRef({ ref: 'HEAD', ...gitOptions })
+    if (ref === 'HEAD') {
+      return { commit: head, gitOptions }
+    }
+  } catch {
+    throw new Error(`Repository ${repoPath} is not a git repository or has no commits`)
+  }
+
+  // Now resolve the requested ref, which may be a branch, tag, or commit SHA
+  try {
+    return { commit: await git.resolveRef({ ref, ...gitOptions }), gitOptions }
+  } catch {
+    // resolveRef doesn't handle abbreviated SHAs; try expandOid
+    try {
+      return { commit: await git.expandOid({ oid: ref, ...gitOptions }), gitOptions }
+    } catch {
+      throw new Error(`Could not resolve ref '${ref}' in ${repoPath}`)
+    }
+  }
+}
+
+/**
  * Walk a git ref and build a FileTree from all blobs found.
  *
  * Uses isomorphic-git walk() with TREE to enumerate files at the given ref,
@@ -153,59 +194,17 @@ export async function readGitTree(
   prune?: FileIgnoreRules,
   preferredRemote?: string,
 ): Promise<FileTree> {
-  const cache = {}
+  const { commit, gitOptions } = await resolveRef(repoPath, ref)
+
   const ignore = new FileIgnoreRules([])
-
-  // Detect gitdir: if repoPath contains .git, use it; otherwise treat as bare
-  const dotGitPath = join(repoPath, '.git')
-  let gitdir: string
-  try {
-    const stat = Deno.statSync(dotGitPath)
-    gitdir = stat.isDirectory ? dotGitPath : repoPath
-  } catch {
-    gitdir = repoPath
-  }
-
-  const gitOptions: GitOptions = { fs, gitdir, cache }
-
-  // Validate the repo and resolve the requested ref, with clear error messages.
-  // We always resolve HEAD first so we can distinguish three cases:
-  //   1. Path is not a git repo at all (NotGitRepository)
-  //   2. Repo exists but has no commits (HEAD → NotFoundError)
-  //   3. Repo has commits but the requested ref doesn't exist
-  let resolvedOid: string
-  try {
-    await git.resolveRef({ ref: 'HEAD', ...gitOptions })
-  } catch (err: unknown) {
-    const code = (err as { code?: string }).code
-    if (code === 'NotGitRepository') {
-      throw new Error(`${repoPath} is not a git repository`)
-    }
-    throw new Error(`Repository ${repoPath} has no commits`)
-  }
-  try {
-    resolvedOid = await git.resolveRef({ ref, ...gitOptions })
-  } catch {
-    // resolveRef doesn't handle abbreviated SHAs; try expandOid
-    try {
-      resolvedOid = await git.expandOid({ oid: ref, ...gitOptions })
-    } catch {
-      throw new Error(`Could not resolve ref '${ref}' in ${repoPath}`)
-    }
-  }
-
   const files: BIDSFile[] = []
-
-  // Map of all symlinks found during the walk (filepath → target)
-  // Used to follow chains of symlinks during deferred resolution
   const symlinkMap = new Map<string, string>()
-  // Deferred symlink entries that need resolution after the walk completes
   const deferredSymlinks: { filepath: string; target: string }[] = []
 
   try {
     await git.walk({
       ...gitOptions,
-      trees: [TREE({ ref: resolvedOid })],
+      trees: [TREE({ ref: commit })],
       map: async (filepath: string, [entry]: Array<WalkerEntry | null>) => {
         if (!entry) return null
 
@@ -263,13 +262,7 @@ export async function readGitTree(
     )
   }
 
-  const source: TreeSource = {
-    commitOid: resolvedOid,
-    gitOptions,
-    symlinkMap,
-    preferredRemote,
-  }
-
+  const source: TreeSource = { commitOid: commit, gitOptions, symlinkMap, preferredRemote }
   const unresolvedLinks: UnresolvedLink[] = []
 
   for (const { filepath, target } of deferredSymlinks) {
