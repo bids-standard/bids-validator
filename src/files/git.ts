@@ -13,6 +13,7 @@ import {
   BIDSFile,
   type FileOpener,
   type FileTree,
+  type SymlinkReason,
   type UnresolvedLink,
 } from '../types/filetree.ts'
 import { filesToTree, loadBidsIgnore } from './filetree.ts'
@@ -215,11 +216,8 @@ export async function readGitTree(
 
         // Directories
         if (entryType === 'tree') {
-          // The root entry '.' must always be walked
-          if (filepath === '.') return undefined
-          // Null prevents walk from descending
-          if (prune && prune.test('/' + filepath)) return null
-          return undefined
+          // Null prevents walk from descending, anything but root may be pruned
+          return filepath !== '.' && prune?.test('/' + filepath) ? null : undefined
         }
 
         // Only process blobs
@@ -241,14 +239,9 @@ export async function readGitTree(
           const target = new TextDecoder().decode(content)
           // Record all symlinks so chain resolution can follow through them
           symlinkMap.set(filepath, target)
-          const annexParsed = parseAnnexKey(target)
-          if (annexParsed !== null) {
-            opener = new AnnexedGitFileOpener(
-              annexParsed.key,
-              annexParsed.size,
-              gitOptions,
-              preferredRemote,
-            )
+          const { key, size } = parseAnnexKey(target) ?? {} as { key?: string; size: number }
+          if (key) {
+            opener = new AnnexedGitFileOpener(key, size, gitOptions, preferredRemote)
           } else {
             // Non-annex symlink — defer resolution until walk completes
             deferredSymlinks.push({ filepath, target })
@@ -283,62 +276,38 @@ export async function readGitTree(
     const budget: FollowBudget = { remaining: MAX_SYMLINK_FOLLOWS }
     const verdict = await resolveSymlink(filepath, target, source, budget)
 
-    switch (verdict.kind) {
-      case 'file-blob':
-        files.push(
-          new BIDSFile(
-            '/' + filepath,
-            new GitFileOpener(verdict.oid, verdict.size, verdict.source.gitOptions),
-            ignore,
-          ),
-        )
-        break
-
-      case 'annex':
-        files.push(
-          new BIDSFile(
-            '/' + filepath,
-            new AnnexedGitFileOpener(
-              verdict.key,
-              verdict.size,
-              verdict.source.gitOptions,
-              verdict.source.preferredRemote,
-            ),
-            ignore,
-          ),
-        )
-        break
-
-      case 'tree': {
-        // graftTree manages the visited set itself via add/delete, so we
-        // pass an empty Set per top-level graft. The shared `budget` is
-        // the same FollowBudget allocated for this iteration so nested
-        // resolveSymlink calls inside the walk share its countdown.
-        const visited = new Set<string>()
-        const graft = await graftTree(
-          '/' + filepath,
-          verdict,
-          budget,
-          visited,
-          prune,
-        )
-        files.push(...graft.files)
-        unresolvedLinks.push(...graft.links)
-        break
+    if (verdict.kind === 'tree') {
+      const graft = await graftTree('/' + filepath, verdict, budget, new Set(), prune)
+      files.push(...graft.files)
+      unresolvedLinks.push(...graft.links)
+      continue
+    }
+    // Identify files and failures
+    const outcome = ((): FileOpener | SymlinkReason => {
+      switch (verdict.kind) {
+        case 'file-blob':
+          return new GitFileOpener(verdict.oid, verdict.size, verdict.source.gitOptions)
+        case 'annex': {
+          const { key, size, source: { gitOptions, preferredRemote } } = verdict
+          return new AnnexedGitFileOpener(key, size, gitOptions, preferredRemote)
+        }
+        case 'submodule-boundary':
+          return 'submodule'
+        case 'unresolved':
+          return verdict.reason
+        // deno-coverage-ignore-start
+        default: {
+          const _exhaustive: never = verdict
+          throw new Error(`Unhandled ResolveVerdict kind: ${(verdict as { kind: string }).kind}`)
+          // deno-coverage-ignore-stop
+        }
       }
-
-      case 'submodule-boundary':
-        unresolvedLinks.push({ path: '/' + filepath, target, reason: 'submodule' })
-        break
-
-      case 'unresolved':
-        unresolvedLinks.push({ path: '/' + filepath, target, reason: verdict.reason })
-        break
-
-      default: {
-        const _exhaustive: never = verdict
-        throw new Error(`Unhandled ResolveVerdict kind: ${(verdict as { kind: string }).kind}`)
-      }
+    })()
+    // Record files and failures
+    if (typeof outcome !== 'string') {
+      files.push(new BIDSFile('/' + filepath, outcome, ignore))
+    } else {
+      unresolvedLinks.push({ path: '/' + filepath, target, reason: outcome })
     }
   }
 
