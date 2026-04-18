@@ -211,8 +211,8 @@ export async function readGitTree(
 
         const entryType = await entry.type()
 
-        // TODO: Handle submodules (entryType === 'commit')
-        if (entryType === 'commit') return null
+        // TODO: Handle submodules
+        // if (entryType === 'commit') {}
 
         // Directories
         if (entryType === 'tree') {
