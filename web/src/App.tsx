@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import "./App.css"
-import { directoryOpen } from "https://esm.sh/browser-fs-access@0.35.0"
+import { directoryOpen, fileOpen } from "https://esm.sh/browser-fs-access@0.35.0"
 import confetti from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.module.mjs';
 import Markdown from "react-markdown"
 import { fileListToTree, validate, getVersion } from "../dist/validator/main.js"
@@ -75,11 +75,19 @@ function App() {
   const [validation, setValidation] = useState<ValidationResult>()
 
   async function validateDir() {
+    
     const dirHandle = await directoryOpen({
       recursive: true,
     })
     const fileTree = await fileListToTree(dirHandle)
-    setValidation(await validate(fileTree, {}))
+    let config = {}
+    const configFile = fileTree.get('.bids-validator-config.json') as BIDSFile
+    if (configFile) {
+      config = await configFile.text().then(text => JSON.parse(text)).catch((err) => {
+        alert(`Failed to load ".bids-validator-config.json". \n\nUsing empty configuration object:\n\n${err}`)
+      })
+    }
+    setValidation(await validate(fileTree, config))
   }
 
   const [version, setVersion] = useState<string>()
