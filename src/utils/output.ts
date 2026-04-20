@@ -6,10 +6,17 @@ import * as colors from '@std/fmt/colors'
 import { format as prettyBytes } from '@std/fmt/bytes'
 import { marked } from 'marked'
 import supportsHyperlinks from 'supports-hyperlinks'
-import ansiEscapes from 'ansi-escapes'
 import type { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
 import type { Issue, Severity } from '../types/issues.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
+
+// ansi-escapes attempts to use the system permissions on Windows at import time.
+// Limiting the frequency of that request to times when it is needed is nicer to users
+// and avoids the need to give the permission to tests on Windows CI.
+let ansiEscapes: typeof import('ansi-escapes') | undefined
+if (supportsHyperlinks.stdout) {
+  ansiEscapes = await import('ansi-escapes')
+}
 
 interface LoggingOptions {
   verbose: boolean
@@ -79,7 +86,7 @@ function renderTokens(tokenList: any[]): string {
 
       case 'link':
         // Using the library to check for stdout support
-        if (supportsHyperlinks.stdout) {
+        if (ansiEscapes) {
           return ansiEscapes.link(token.text, token.href)
         } else {
           // Fallback for terminals without support
