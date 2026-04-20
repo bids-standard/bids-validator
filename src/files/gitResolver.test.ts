@@ -1,4 +1,4 @@
-import { assertEquals, assertExists } from '@std/assert'
+import { assertEquals, assertExists, assertObjectMatch } from '@std/assert'
 import { join } from '@std/path'
 import * as posix from '@std/path/posix'
 import type { FollowBudget, ResolveVerdict, TreeSource } from './gitResolver.ts'
@@ -444,4 +444,83 @@ Deno.test('graftTree: dir symlink back into ancestor produces finite recursion',
   assertEquals(cycleLinks.length > 0, true, 'expected at least one cycle link')
   // Sanity: recursion terminates.
   assertEquals(result.files.length < 1000, true, 'recursion did not terminate')
+})
+
+Deno.test('graftTree: handles submodules directly within a grafted directory', async () => {
+  const source = fakeTreeSource([
+    // A directory that contains a file and a submodule
+    blob('real_dir/file.txt'),
+    submodule('real_dir/sub'),
+    // A symlink that points to this directory, which will be grafted
+    blob('view', 'real_dir/', linkMode),
+  ])
+
+  const verdict = await resolveSymlink('view', 'real_dir/', source, budget())
+  assertEquals(verdict.kind, 'tree')
+  if (verdict.kind !== 'tree') return
+
+  const result = await graftTree('/view', verdict, budget(), new Set())
+
+  const paths = result.files.map((f) => f.path)
+  assertEquals(paths, ['/view/file.txt'])
+
+  assertEquals(result.links.length, 1)
+  assertObjectMatch(result.links[0], {
+    path: '/view/sub',
+    reason: 'submodule',
+  })
+})
+
+Deno.test('graftTree: handles nested symlinks pointing into a submodule', async () => {
+  const source = fakeTreeSource([
+    submodule('sub'),
+    blob('real_dir/link_to_sub', '../sub/some/file.txt', linkMode),
+    blob('view', 'real_dir/', linkMode),
+  ])
+
+  const verdict = await resolveSymlink('view', 'real_dir/', source, budget())
+  assertEquals(verdict.kind, 'tree')
+  if (verdict.kind !== 'tree') return
+
+  const result = await graftTree('/view', verdict, budget(), new Set())
+
+  assertEquals(result.files.length, 0)
+  assertEquals(result.links.length, 1)
+  assertObjectMatch(result.links[0], {
+    path: '/view/link_to_sub',
+    target: '../sub/some/file.txt', // Target is the original symlink content
+    reason: 'submodule',
+  })
+})
+
+Deno.test('graftTree: resolves symlink chains to annexed files', async () => {
+  const key = 'MD5E-s1234--d41d8cd98f00b204e9800998ecf8427e.nii.gz'
+  const annexTarget = `../../../.git/annex/objects/xx/yy/${key}/${key}`
+
+  const source = fakeTreeSource([
+    blob('original/deep/location/file.nii.gz', annexTarget, linkMode),
+    // Direct link to annexed file
+    blob('real_dir/alias.nii.gz', '../original/deep/location/file.nii.gz', linkMode),
+    // Indirect link to annexed file
+    blob('real_dir/shallow', '../original/deep/location', linkMode),
+
+    // Graft real_dir and find both kinds of reference
+    blob('view', 'real_dir', linkMode),
+  ])
+
+  const verdict = await resolveSymlink('view', 'real_dir', source, budget())
+  assertEquals(verdict.kind, 'tree')
+  if (verdict.kind !== 'tree') return
+
+  const result = await graftTree('/view', verdict, budget(), new Set())
+
+  // Assertions
+  assertEquals(result.files.length, 2)
+  const paths = result.files.map((f) => f.path)
+  assertEquals(
+    paths.includes('/view/shallow/file.nii.gz'),
+    true,
+    'expected /view/shallow/file.nii.gz',
+  )
+  assertEquals(paths.includes('/view/alias.nii.gz'), true, 'expected /view/alias.nii.gz')
 })
