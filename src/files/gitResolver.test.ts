@@ -201,6 +201,15 @@ Deno.test('resolveSymlink: relative escape above root is out-of-tree', async () 
   assertEquals(verdict, { kind: 'unresolved', reason: 'out-of-tree' })
 })
 
+Deno.test('resolveSymlink: blob as intermediate path is broken', async () => {
+  const source = fakeTreeSource([
+    blob('a/foo'),
+    blob('link', 'a/foo/subfile', linkMode),
+  ])
+  const verdict = await resolveSymlink('link', 'a/foo/subfile', source, budget())
+  assertEquals(verdict, { kind: 'unresolved', reason: 'broken' })
+})
+
 Deno.test('resolveSymlink: missing target is broken', async () => {
   const source = fakeTreeSource([
     blob('a/link', '../nowhere.txt', linkMode),
@@ -248,6 +257,20 @@ Deno.test('resolveSymlink: terminal chain resolving to an annex key', async () =
   if (verdict.kind === 'annex') {
     assertEquals(verdict.key, annexKey)
     assertEquals(verdict.size, 1234)
+  }
+})
+
+Deno.test('resolveSymlink: annex keys must not be directories', async () => {
+  const annexKey = 'MD5E-s1234--d41d8cd98f00b204e9800998ecf8427e.nii.gz'
+  const annexTarget = `../.git/annex/objects/xx/yy/${annexKey}/${annexKey}`
+  const source = fakeTreeSource([
+    blob('link', annexTarget, linkMode),
+    blob('alias', 'link/child', linkMode),
+  ])
+  const verdict = await resolveSymlink('alias', 'link/child', source, budget())
+  assertEquals(verdict.kind, 'unresolved')
+  if (verdict.kind === 'unresolved') {
+    assertEquals(verdict.reason, 'broken')
   }
 })
 
