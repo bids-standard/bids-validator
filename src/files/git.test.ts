@@ -386,7 +386,7 @@ Deno.test(
       await run(['git', '-C', srcPath, 'config', 'user.name', 'Test'])
       await Deno.writeTextFile(join(srcPath, 'data.txt'), 'bare test')
       await run(['git', '-C', srcPath, 'add', '-A'])
-      await run(['git', '-C', srcPath, 'commit', '-m', 'init'])
+      await run(['git', '-C', srcPath, 'commit', '--no-gpg-sign', '-m', 'init'])
       await run(['git', 'clone', '--bare', srcPath, barePath])
       const tree = await readGitTree(barePath, 'HEAD')
       const data = tree.get('data.txt')

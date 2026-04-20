@@ -56,7 +56,7 @@ export async function withRepo(
     await run(['git', '-C', tmpDir, 'config', 'user.name', 'Test'])
     await setup(tmpDir)
     await run(['git', '-C', tmpDir, 'add', '-A'])
-    await run(['git', '-C', tmpDir, 'commit', '-m', 'init'])
+    await run(['git', '-C', tmpDir, 'commit', '--no-gpg-sign', '-m', 'init'])
     await test(tmpDir)
   } finally {
     await new Deno.Command('chmod', { args: ['-R', '+w', tmpDir] }).output()
