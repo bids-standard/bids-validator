@@ -43,12 +43,16 @@ const perDSChecks: DSCheckFunction[] = [
  *
  * Loads the BIDS schema, walks the file tree, and applies file-level and
  * dataset-level checks, accumulating any issues into the returned
- * {@link ValidationResult}. Derivative datasets nested under
- * `derivatives/` are detected via their own `dataset_description.json`;
- * when `options.recursive` is set, BIDS-conformant derivatives are
- * validated and their results attached to `derivativesSummary` on the
- * returned object. Non-BIDS derivatives and the `sourcedata`, `code`
- * directories are ignored.
+ * {@link ValidationResult}. Nested BIDS datasets are detected via their
+ * own `dataset_description.json` under any of `derivatives/`,
+ * `rawbids/`, or `sourcedata/` — either at the container's immediate
+ * level (e.g. `rawbids/dataset_description.json`) or one level deeper
+ * (e.g. `derivatives/fmriprep/dataset_description.json`). When
+ * `options.recursive` is set, each nested BIDS dataset is validated
+ * and its result is attached to `derivativesSummary` on the returned
+ * object (the key name is retained for API compatibility but now also
+ * covers non-derivative nested datasets). The `code` directory is
+ * always ignored, as are non-BIDS contents of the nesting containers.
  *
  * `validate` does not throw on validation failures — it records them as
  * issues on the result. The returned `issues` collection can be filtered
@@ -126,23 +130,33 @@ export async function validate(
     }
   }
 
-  const bidsDerivatives: Promise<FileTree>[] = []
+  // Directories that may contain nested BIDS datasets — either the directory
+  // itself is a BIDS dataset (e.g. `rawbids/dataset_description.json`) or its
+  // immediate subdirectories are (e.g. `derivatives/fmriprep/`,
+  // `sourcedata/ds00003/`).
+  const nestingContainers = ['derivatives', 'rawbids', 'sourcedata']
+  const bidsNestedDatasets: Promise<FileTree>[] = []
   const nonstdDerivatives: FileTree[] = []
   fileTree.directories = fileTree.directories.filter((dir) => {
-    if (['sourcedata', 'code'].includes(dir.name)) {
+    if (dir.name === 'code') {
       return false
     }
-    if (dir.name !== 'derivatives') {
+    if (!nestingContainers.includes(dir.name)) {
       return true
     }
-    for (const deriv of dir.directories) {
-      if (deriv.get('dataset_description.json')) {
-        bidsDerivatives.push(subtree(deriv))
-      } else {
-        nonstdDerivatives.push(deriv)
+    if (dir.get('dataset_description.json')) {
+      bidsNestedDatasets.push(subtree(dir))
+    } else {
+      for (const sub of dir.directories) {
+        if (sub.get('dataset_description.json')) {
+          bidsNestedDatasets.push(subtree(sub))
+        } else {
+          nonstdDerivatives.push(sub)
+        }
       }
     }
-    // Remove derivatives from the main fileTree
+    // Always remove nesting containers from the main fileTree; their own
+    // validation (if any) happens recursively below.
     return false
   })
 
@@ -194,13 +208,13 @@ export async function validate(
     })
   })
 
-  const derivativesSummary: Record<string, ValidationResult> = {}
+  const nestedDatasetsSummary: Record<string, ValidationResult> = {}
   if (options.recursive) {
     await Promise.allSettled(
-      bidsDerivatives.map(async (promise) => {
-        const deriv = await promise
-        derivativesSummary[deriv.name] = await validate(deriv, options)
-        return derivativesSummary[deriv.name]
+      bidsNestedDatasets.map(async (promise) => {
+        const nested = await promise
+        nestedDatasetsSummary[nested.name] = await validate(nested, options)
+        return nestedDatasetsSummary[nested.name]
       }),
     )
   }
@@ -224,8 +238,10 @@ export async function validate(
     summary: summary.formatOutput(),
   }
 
-  if (Object.keys(derivativesSummary).length) {
-    output['derivativesSummary'] = derivativesSummary
+  if (Object.keys(nestedDatasetsSummary).length) {
+    // Keep the field name `derivativesSummary` for API stability; it now
+    // holds results for all nested BIDS datasets, not just derivatives.
+    output['derivativesSummary'] = nestedDatasetsSummary
   }
   return output
 }
