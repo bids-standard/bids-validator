@@ -84,11 +84,9 @@ export class BIDSContextDataset implements Dataset {
     }
     const datasetType = this.dataset_description.DatasetType as string
     this.opaqueDirectories = new Set<string>(
-      this.schema?.rules?.directories
-        ? Object.values(this.schema.rules.directories[datasetType] ?? {})
-          ?.filter((rule) => rule?.opaque && 'name' in rule)
-          ?.map((dir) => `/${dir.name}`)
-        : [],
+      Object.values(this.schema?.rules?.directories[datasetType] ?? {})
+        .filter((rule) => rule.opaque)
+        .map((dir) => `/${dir.name}`),
     )
   }
 
