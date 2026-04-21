@@ -41,7 +41,7 @@ export class BIDSContextDataset implements Dataset {
   options?: ValidatorOptions
   schema: Schema
   pseudofileExtensions: Set<string>
-  opaqueDirectories: Set<string>
+  opaqueDirectories!: Set<string>
 
   // Opaque object for HED validator
   hedSchemas: HedSchemas | undefined | null = undefined
@@ -67,20 +67,8 @@ export class BIDSContextDataset implements Dataset {
           ?.filter((ext) => ext.endsWith('/'))
         : [],
     )
-    this.opaqueDirectories = new Set<string>()
-    this.#refreshOpaqueDirectories()
     // @ts-expect-error Subjects type does not include null, but null is used as a sentinel for "not yet loaded"
     this.subjects = args.subjects || null
-  }
-
-  #refreshOpaqueDirectories(): void {
-    if (!this.schema?.rules?.directories) return
-    const datasetType = (this.dataset_description.DatasetType ?? 'raw') as string
-    this.opaqueDirectories = new Set<string>(
-      Object.values(this.schema.rules.directories[datasetType] ?? {})
-        ?.filter((rule) => rule?.opaque && 'name' in rule)
-        ?.map((dir) => `/${dir.name}`),
-    )
   }
 
   get dataset_description(): Record<string, unknown> {
@@ -94,7 +82,14 @@ export class BIDSContextDataset implements Dataset {
         ? 'derivative'
         : 'raw'
     }
-    this.#refreshOpaqueDirectories()
+    const datasetType = this.dataset_description.DatasetType as string
+    this.opaqueDirectories = new Set<string>(
+      this.schema?.rules?.directories
+        ? Object.values(this.schema.rules.directories[datasetType] ?? {})
+          ?.filter((rule) => rule?.opaque && 'name' in rule)
+          ?.map((dir) => `/${dir.name}`)
+        : [],
+    )
   }
 
   isPseudoFile(file: FileTree): boolean {
