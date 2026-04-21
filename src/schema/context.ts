@@ -67,15 +67,20 @@ export class BIDSContextDataset implements Dataset {
           ?.filter((ext) => ext.endsWith('/'))
         : [],
     )
-    this.opaqueDirectories = new Set<string>(
-      args.schema
-        ? Object.values(this.schema.rules.directories.raw)
-          ?.filter((rule) => rule?.opaque && 'name' in rule)
-          ?.map((dir) => `/${dir.name}`)
-        : [],
-    )
+    this.opaqueDirectories = new Set<string>()
+    this.#refreshOpaqueDirectories()
     // @ts-expect-error Subjects type does not include null, but null is used as a sentinel for "not yet loaded"
     this.subjects = args.subjects || null
+  }
+
+  #refreshOpaqueDirectories(): void {
+    if (!this.schema?.rules?.directories) return
+    const datasetType = (this.dataset_description.DatasetType ?? 'raw') as string
+    this.opaqueDirectories = new Set<string>(
+      Object.values(this.schema.rules.directories[datasetType] ?? {})
+        ?.filter((rule) => rule?.opaque && 'name' in rule)
+        ?.map((dir) => `/${dir.name}`),
+    )
   }
 
   get dataset_description(): Record<string, unknown> {
@@ -89,6 +94,7 @@ export class BIDSContextDataset implements Dataset {
         ? 'derivative'
         : 'raw'
     }
+    this.#refreshOpaqueDirectories()
   }
 
   isPseudoFile(file: FileTree): boolean {
