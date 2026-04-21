@@ -503,3 +503,44 @@ Deno.test(
     )
   },
 )
+
+Deno.test(
+  {
+    name: 'readGitTree: submodule cannot (yet) be descended',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (childRepo) => {
+        await Deno.writeTextFile(join(childRepo, 'a.txt'), 'content')
+      },
+      async (childRepo) => {
+        await withRepo(
+          async (repo) => {
+            await run([
+              'git',
+              '-C',
+              repo,
+              '-c',
+              'protocol.file.allow=always',
+              'submodule',
+              'add',
+              childRepo,
+              'submod',
+            ])
+            await run(['ln', '-s', 'submod/a.txt', join(repo, 'a.txt')])
+            await run(['git', '-C', repo, 'commit', '-a', '--no-gpg-sign', '-m', 'add submodule'])
+          },
+          async (repo) => {
+            const tree = await readGitTree(repo)
+            assertEquals(tree.get('a.png'), undefined, 'a.png must not be in files')
+            assertEquals(tree.links.length, 1)
+            assertEquals(tree.links[0].reason, 'submodule')
+          },
+        )
+      },
+    )
+  },
+)
