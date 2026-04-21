@@ -37,10 +37,10 @@ export function consoleFormat(
   output.push('')
   if (result.derivativesSummary) {
     for (const [key, derivResult] of Object.entries(result.derivativesSummary)) {
-      output.push(colors.blue(`Derivative: ${key}`))
+      output.push(colors.blue(`Nested dataset: ${key}`))
 
       if (derivResult.issues.size === 0) {
-        output.push(colors.green('\tThis derivative appears to be BIDS compatible.'))
+        output.push(colors.green('\tThis nested dataset appears to be BIDS compatible.'))
       } else {
         ;(['warning', 'error'] as Severity[]).map((severity) => {
           output.push(...formatIssues(derivResult.issues.filter({ severity }), options, severity))
