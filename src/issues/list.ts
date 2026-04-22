@@ -228,10 +228,6 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'warning',
     reason: 'Symbolic link target lies within an uninitialized git submodule.',
   },
-  SYMLINK_DIRECTORY_UNSUPPORTED: {
-    severity: 'warning',
-    reason: 'Symbolic link to a directory is not yet supported when reading from a git tree.',
-  },
 }
 
 export const nonSchemaIssues = { ...bidsIssues }

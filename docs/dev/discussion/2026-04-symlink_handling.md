@@ -16,8 +16,11 @@ PR [#380](https://github.com/bids-standard/bids-validator/pull/380):
   directory target) are recorded on `FileTree.links` and surfaced as
   `SYMLINK_*` issues during validation, gated by `.bidsignore`.
 
-Directory-symlink grafting in the git tree remains deferred (see Design
-Question 5 and the "directory-unsupported" reason on `UnresolvedLink`).
+Directory-symlink grafting in the git tree is now implemented on branch
+`feat/git-dir-symlink-grafting`. See
+`2026-04-git_directory_symlink_grafting.md` for the design and the set
+of cross-backend tests that pin down behavioral parity with the work
+tree.
 
 ## Problem
 

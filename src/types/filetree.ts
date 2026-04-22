@@ -13,7 +13,6 @@ export type SymlinkReason =
   | 'cycle'
   | 'submodule'
   | 'out-of-tree'
-  | 'directory-unsupported'
 
 export interface UnresolvedLink {
   path: string
