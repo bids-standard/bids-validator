@@ -173,5 +173,6 @@ export class Summary {
 
 export function detectErrors(result: ValidationResult): boolean {
   return result.issues.get({ severity: 'error' }).length > 0 ||
-    Object.values(result.derivativesSummary ?? {}).some((res) => detectErrors(res))
+    Object.values(result.derivativesSummary ?? {}).some((res) => detectErrors(res)) ||
+    Object.values(result.sourcesSummary ?? {}).some((res) => detectErrors(res))
 }

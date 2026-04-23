@@ -49,10 +49,11 @@ const perDSChecks: DSCheckFunction[] = [
  * level (e.g. `rawbids/dataset_description.json`) or one level deeper
  * (e.g. `derivatives/fmriprep/dataset_description.json`). When
  * `options.recursive` is set, each nested BIDS dataset is validated
- * and its result is attached to `derivativesSummary` on the returned
- * object (the key name is retained for API compatibility but now also
- * covers non-derivative nested datasets). The `code` directory is
- * always ignored, as are non-BIDS contents of the nesting containers.
+ * and its result is attached to the returned object:
+ *   - Derivatives under `derivatives/` go into `derivativesSummary`.
+ *   - Sources under `rawbids/` or `sourcedata/` go into `sourcesSummary`.
+ * The `code` directory is always ignored, as are non-BIDS contents of
+ * the nesting containers.
  *
  * `validate` does not throw on validation failures — it records them as
  * issues on the result. The returned `issues` collection can be filtered
@@ -133,23 +134,32 @@ export async function validate(
   // Directories that may contain nested BIDS datasets — either the directory
   // itself is a BIDS dataset (e.g. `rawbids/dataset_description.json`) or its
   // immediate subdirectories are (e.g. `derivatives/fmriprep/`,
-  // `sourcedata/ds00003/`).
-  const nestingContainers = ['derivatives', 'rawbids', 'sourcedata']
-  const bidsNestedDatasets: Promise<FileTree>[] = []
+  // `sourcedata/ds00003/`).  Split into two buckets so the returned
+  // ValidationResult can separate derivatives from sources.
+  type NestedBucket = 'derivatives' | 'sources'
+  const nestingContainerBucket: Record<string, NestedBucket> = {
+    derivatives: 'derivatives',
+    rawbids: 'sources',
+    sourcedata: 'sources',
+  }
+  const bidsDerivatives: Promise<FileTree>[] = []
+  const bidsSources: Promise<FileTree>[] = []
   const nonstdDerivatives: FileTree[] = []
   fileTree.directories = fileTree.directories.filter((dir) => {
     if (dir.name === 'code') {
       return false
     }
-    if (!nestingContainers.includes(dir.name)) {
+    const bucket = nestingContainerBucket[dir.name]
+    if (!bucket) {
       return true
     }
+    const collect = bucket === 'derivatives' ? bidsDerivatives : bidsSources
     if (dir.get('dataset_description.json')) {
-      bidsNestedDatasets.push(subtree(dir))
+      collect.push(subtree(dir))
     } else {
       for (const sub of dir.directories) {
         if (sub.get('dataset_description.json')) {
-          bidsNestedDatasets.push(subtree(sub))
+          collect.push(subtree(sub))
         } else {
           nonstdDerivatives.push(sub)
         }
@@ -208,15 +218,24 @@ export async function validate(
     })
   })
 
-  const nestedDatasetsSummary: Record<string, ValidationResult> = {}
+  const derivativesSummary: Record<string, ValidationResult> = {}
+  const sourcesSummary: Record<string, ValidationResult> = {}
   if (options.recursive) {
-    await Promise.allSettled(
-      bidsNestedDatasets.map(async (promise) => {
-        const nested = await promise
-        nestedDatasetsSummary[nested.name] = await validate(nested, options)
-        return nestedDatasetsSummary[nested.name]
-      }),
-    )
+    const validateInto = (
+      trees: Promise<FileTree>[],
+      into: Record<string, ValidationResult>,
+    ) =>
+      Promise.allSettled(
+        trees.map(async (promise) => {
+          const nested = await promise
+          into[nested.name] = await validate(nested, options)
+          return into[nested.name]
+        }),
+      )
+    await Promise.all([
+      validateInto(bidsDerivatives, derivativesSummary),
+      validateInto(bidsSources, sourcesSummary),
+    ])
   }
 
   if (config) {
@@ -238,10 +257,11 @@ export async function validate(
     summary: summary.formatOutput(),
   }
 
-  if (Object.keys(nestedDatasetsSummary).length) {
-    // Keep the field name `derivativesSummary` for API stability; it now
-    // holds results for all nested BIDS datasets, not just derivatives.
-    output['derivativesSummary'] = nestedDatasetsSummary
+  if (Object.keys(derivativesSummary).length) {
+    output['derivativesSummary'] = derivativesSummary
+  }
+  if (Object.keys(sourcesSummary).length) {
+    output['sourcesSummary'] = sourcesSummary
   }
   return output
 }

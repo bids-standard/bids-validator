@@ -35,20 +35,29 @@ export function consoleFormat(
   output.push('')
   output.push(formatSummary(result.summary))
   output.push('')
-  if (result.derivativesSummary) {
-    for (const [key, derivResult] of Object.entries(result.derivativesSummary)) {
-      output.push(colors.blue(`Nested dataset: ${key}`))
+  const formatNested = (
+    label: string,
+    nested: Record<string, ValidationResult>,
+  ) => {
+    for (const [key, nestedResult] of Object.entries(nested)) {
+      output.push(colors.blue(`${label}: ${key}`))
 
-      if (derivResult.issues.size === 0) {
-        output.push(colors.green('\tThis nested dataset appears to be BIDS compatible.'))
+      if (nestedResult.issues.size === 0) {
+        output.push(colors.green(`\tThis ${label.toLowerCase()} appears to be BIDS compatible.`))
       } else {
         ;(['warning', 'error'] as Severity[]).map((severity) => {
-          output.push(...formatIssues(derivResult.issues.filter({ severity }), options, severity))
+          output.push(...formatIssues(nestedResult.issues.filter({ severity }), options, severity))
         })
       }
-      output.push(formatSummary(derivResult.summary))
+      output.push(formatSummary(nestedResult.summary))
       output.push('')
     }
+  }
+  if (result.derivativesSummary) {
+    formatNested('Derivative', result.derivativesSummary)
+  }
+  if (result.sourcesSummary) {
+    formatNested('Source', result.sourcesSummary)
   }
 
   return output.join('\n')
