@@ -5,6 +5,7 @@ import { Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
 import { format as prettyBytes } from '@std/fmt/bytes'
 import { marked } from 'marked'
+import pluralize from 'pluralize'
 import supportsHyperlinks from 'supports-hyperlinks'
 import ansiEscapes from 'ansi-escapes'
 import type { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
@@ -18,28 +19,27 @@ interface LoggingOptions {
 /**
  * Format for Unix consoles
  *
- * Returns the full output string with newlines
+ * Returns the full output string with newlines.
+ *
+ * Output order: nested datasets first (Sources before Derivatives;
+ * within Sources, `sourcedata/` entries before `rawbids/`), then the
+ * root dataset itself with a roll-up of nested-dataset issue counts.
+ * The root section comes last so a quick `tail` shows the
+ * top-level dataset's status and aggregate health at a glance.
  */
 export function consoleFormat(
   result: ValidationResult,
   options?: LoggingOptions,
 ): string {
-  const output = []
-  if (result.issues.size === 0) {
-    output.push(colors.green('This dataset appears to be BIDS compatible.'))
-  } else {
-    ;(['warning', 'error'] as Severity[]).map((severity) => {
-      output.push(...formatIssues(result.issues.filter({ severity }), options, severity))
-    })
-  }
-  output.push('')
-  output.push(formatSummary(result.summary))
-  output.push('')
+  const output: string[] = []
   const formatNested = (
     label: string,
     nested: Record<string, ValidationResult>,
+    keyOrder: string[],
   ) => {
-    for (const [key, nestedResult] of Object.entries(nested)) {
+    for (const key of keyOrder) {
+      const nestedResult = nested[key]
+      if (!nestedResult) continue
       output.push(colors.blue(`${label}: ${key}`))
 
       if (nestedResult.issues.size === 0) {
@@ -53,14 +53,77 @@ export function consoleFormat(
       output.push('')
     }
   }
-  if (result.derivativesSummary) {
-    formatNested('Derivative', result.derivativesSummary)
-  }
+
+  // Sources: sourcedata first, then rawbids; alphabetical within each group.
   if (result.sourcesSummary) {
-    formatNested('Source', result.sourcesSummary)
+    const sourceKeys = Object.keys(result.sourcesSummary).sort((a, b) => {
+      const rank = (k: string) => k.startsWith('/sourcedata') ? 0 : k.startsWith('/rawbids') ? 1 : 2
+      return rank(a) - rank(b) || a.localeCompare(b)
+    })
+    formatNested('Source', result.sourcesSummary, sourceKeys)
+  }
+  // Derivatives: alphabetical.
+  if (result.derivativesSummary) {
+    const derivKeys = Object.keys(result.derivativesSummary).sort()
+    formatNested('Derivative', result.derivativesSummary, derivKeys)
+  }
+
+  // Root dataset section, last.
+  output.push(colors.blue('Root dataset:'))
+  if (result.issues.size === 0) {
+    output.push(colors.green('\tThis dataset appears to be BIDS compatible.'))
+  } else {
+    ;(['warning', 'error'] as Severity[]).map((severity) => {
+      output.push(...formatIssues(result.issues.filter({ severity }), options, severity))
+    })
+  }
+  output.push('')
+  output.push(formatSummary(result.summary))
+
+  // Roll-up of nested-dataset issue counts, embedded in the root section.
+  const rollup = formatNestedRollup(result)
+  if (rollup) {
+    output.push(rollup)
   }
 
   return output.join('\n')
+}
+
+/** Tally errors/warnings across nested datasets and render a brief table. */
+function formatNestedRollup(result: ValidationResult): string {
+  const tally = (nested: Record<string, ValidationResult> | undefined) => {
+    if (!nested) return undefined
+    let errors = 0
+    let warnings = 0
+    for (const r of Object.values(nested)) {
+      errors += r.issues.get({ severity: 'error' }).length
+      warnings += r.issues.get({ severity: 'warning' }).length
+    }
+    return { count: Object.keys(nested).length, errors, warnings }
+  }
+  const sources = tally(result.sourcesSummary)
+  const derivs = tally(result.derivativesSummary)
+  if (!sources && !derivs) return ''
+
+  const rows: string[][] = []
+  const row = (label: string, t: { count: number; errors: number; warnings: number }) => [
+    colors.magenta(label),
+    pluralize('dataset', t.count, true),
+    pluralize('error', t.errors, true),
+    pluralize('warning', t.warnings, true),
+  ]
+  if (sources) {
+    rows.push(row('Sources:', sources))
+  }
+  if (derivs) {
+    rows.push(row('Derivatives:', derivs))
+  }
+  return [
+    '',
+    colors.magenta('Nested datasets summary:'),
+    new Table().body(rows).border(false).padding(2).indent(2).toString(),
+    '',
+  ].join('\n')
 }
 
 /**

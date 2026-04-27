@@ -42,6 +42,7 @@
     "npm:ignore@^7.0.5": "7.0.5",
     "npm:isomorphic-git@^1.37.4": "1.37.4",
     "npm:marked@^17.0.5": "17.0.5",
+    "npm:pluralize@8": "8.0.0",
     "npm:supports-hyperlinks@^4.4.0": "4.4.0"
   },
   "jsr": {
@@ -918,6 +919,7 @@
       "npm:ignore@^7.0.5",
       "npm:isomorphic-git@^1.37.4",
       "npm:marked@^17.0.5",
+      "npm:pluralize@8",
       "npm:supports-hyperlinks@^4.4.0"
     ]
   }

@@ -9,8 +9,11 @@
   `ValidationResult`, derivatives populate `derivativesSummary` (as
   before) and `rawbids/`/`sourcedata/` nested datasets populate the new
   `sourcesSummary` field. In text output they render as `Derivative:`
-  and `Source:` sections respectively.  See
-  [#390](https://github.com/bids-standard/bids-validator/pull/390).
+  and `Source:` sections respectively.  Sections are now printed in
+  bottom-up order — Sources (`sourcedata/` before `rawbids/`) →
+  Derivatives → Root dataset — so the parent dataset's status and a
+  roll-up of nested errors/warnings appear at the end of the output.
+  See [#390](https://github.com/bids-standard/bids-validator/pull/390).
 
 ### Fixed
 
