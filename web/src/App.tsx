@@ -7,6 +7,12 @@ import { fileListToTree, getVersion, validate } from "../dist/validator/web.js";
 import type { ValidationResult } from "../../src/types/validation-result.ts";
 import { Collapse } from "./Collapse.tsx";
 import { Summary } from "./Summary.tsx";
+import { SchemaPicker } from "./SchemaPicker.tsx";
+import {
+  computeEffectiveSchema,
+  isSchemaLoadError,
+  type SchemaFile,
+} from "./schemaOption.ts";
 
 function formatMessage(text) {
   if (!text) return "";
@@ -74,19 +80,54 @@ function Issue({ data }) {
 
 function App() {
   const [validation, setValidation] = useState<ValidationResult>();
+  const [schemaText, setSchemaText] = useState<string>("");
+  const [schemaFile, setSchemaFile] = useState<
+    (SchemaFile & { name: string }) | null
+  >(null);
+  const [schemaError, setSchemaError] = useState<string | undefined>();
 
   async function validateDir() {
-    const dirHandle = await directoryOpen({
-      recursive: true,
-    });
+    const dirHandle = await directoryOpen({ recursive: true });
     const fileTree = await fileListToTree(dirHandle);
-    setValidation(await validate(fileTree, {}));
+    const schema = computeEffectiveSchema(schemaText, schemaFile);
+    try {
+      setValidation(await validate(fileTree, { schema }));
+      setSchemaError(undefined);
+    } catch (err) {
+      if (isSchemaLoadError(err)) {
+        setSchemaError(
+          err instanceof Error ? err.message : String(err),
+        );
+        setValidation(undefined);
+      } else {
+        setSchemaError(
+          `Validation failed: ${
+            err instanceof Error ? err.message : String(err)
+          }`,
+        );
+        setValidation(undefined);
+      }
+    }
   }
 
   const [version, setVersion] = useState<string>();
   getVersion().then((v) => {
     setVersion(v);
   });
+
+  const advanced = (
+    <>
+      <Collapse label="Advanced options">
+        <SchemaPicker
+          text={schemaText}
+          onTextChange={setSchemaText}
+          file={schemaFile}
+          onFileChange={setSchemaFile}
+        />
+      </Collapse>
+      {schemaError && <div className="error schema-error">{schemaError}</div>}
+    </>
+  );
 
   let validatorOutput;
 
@@ -129,6 +170,7 @@ function App() {
     validatorOutput = (
       <>
         <button onClick={validateDir}>Reselect Files</button>
+        {advanced}
         <div>
           <ul className="issues-list">
             {errorList}
@@ -161,6 +203,7 @@ function App() {
           to validate.
         </h2>
         <button onClick={validateDir}>Select Dataset Files</button>
+        {advanced}
       </>
     );
   }
