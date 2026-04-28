@@ -161,6 +161,54 @@ git push -u origin feat/short-desc
 
 Open PR, set base branch to `dev`.
 
+### What to include in a pull request
+
+#### Test-driven development
+
+If you are fixing a bug, or adding a feature, it is strongly recommended to follow this pattern:
+
+1. Verify that tests pass: `deno test -A src`
+2. Write a test that fails (again, verify) because it reproduces your bug
+   or exercises the feature that does not yet exist.
+   This is a code-based specification of the behavior change.
+3. Commit the test before doing any further development.
+4. Fix the bug or implement the feature, and verify that tests now pass.
+
+Some rules to keep you honest:
+
+1. You can use several commits to implement your changes, but at the end, tests must pass.
+2. Changes to the tests must be in their own commits
+   and the commit message should explain why the specification has changed.
+
+By developing in this way, you ensure that the feature works as expected,
+and that there will be a problem if somebody else breaks the contract you wrote.
+
+#### Documentation
+
+As code changes, there is always a threat that documentation will no longer
+accurately describe the software.
+It is important to read the documentation to see whether
+the behavior you're changing is documented.
+If so, it needs to be updated.
+If not, consider whether you wish it already had been,
+and be the change you want to see in the world!
+
+Seriously, documentation is extremely important,
+and we know we don't do it enough.
+Contributions that are only documentation are very much appreciated.
+
+#### API
+
+We provide a programmatic API for downstream tools to build on the validator.
+The API lives in `src/api/`, and exports components that.
+
+If you're writing a new class, interface, type or function,
+consider whether it will be useful for downstream developers to have access.
+
+If you're tempted to create a `/tools` or `/util` submodule,
+it probably does not need to be in the API.
+If you really think it's important, let's talk.
+
 ### Conventions for branches, commits and changelogs
 
 The following conventions are intended to make contributions legible to other contributors
@@ -229,7 +277,7 @@ so we can focus on the content of the work.
 
 Even with these, it is possible that when you go to commit your changes,
 you have changed more than you intended to.
-One reason this can happen is that we might have forgetten to autoformat our code.
+One reason this can happen is that we might have forgotten to autoformat our code.
 
 One tool for this situation is `git add --patch` (or `-p`).
 This tool shows you each change in turn, allowing you to decide whether or not to
@@ -247,6 +295,22 @@ This will generally have the effect of introducing merge conflicts,
 so we may refrain from doing it for a while.
 If you're feeling the urge, it's best to ask!
 
+### Checking your work
+
+We use various tools to help us keep the repository in good shape.
+We already mentioned `deno fmt`.
+Additionally, we use:
+
+* `deno lint` - A tool that identifies potential bugs or maintenance debt
+* `deno check` - Run type checks without running the full test suite
+* `deno publish --dry-run --allow-dirty` - Test the repository for release readiness
+
+It's also a good idea to make sure that the docs build, if you're updating them:
+
+```console
+uv sync --locked --group=doc
+uv run make -C docs clean html
+```
 
 [link_git]: https://git-scm.com/
 [link_handbook]: https://guides.github.com/introduction/git-handbook/

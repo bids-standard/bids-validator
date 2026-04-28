@@ -25,6 +25,17 @@ function descendTo(root: FileTree, dir: string, ignore: FileIgnoreRules): FileTr
   return current
 }
 
+/**
+ * Build a {@link FileTree} from a flat list of {@link BIDSFile} objects.
+ *
+ * Intermediate directory nodes are created as needed. Any unresolved
+ * symlinks are attached to the appropriate directory.
+ *
+ * @param fileList - Files to insert into the tree.
+ * @param ignore - Optional ignore rules applied to every node.
+ * @param unresolvedLinks - Symlinks that could not be followed.
+ * @returns The root `FileTree`.
+ */
 export function filesToTree(
   fileList: BIDSFile[],
   ignore?: FileIgnoreRules,
@@ -78,6 +89,16 @@ function rerootTree({
   return tree
 }
 
+/**
+ * Re-root a sub-directory as an independent {@link FileTree}.
+ *
+ * All paths inside the returned tree are relative to `filetree` rather
+ * than the original dataset root. `.bidsignore` rules are reloaded from
+ * the new root.
+ *
+ * @param filetree - The directory node to promote to root.
+ * @returns A new `FileTree` rooted at `filetree`.
+ */
 export function subtree(filetree: FileTree): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
   return loadBidsIgnore(rerootTree({ oldTree: filetree, newRoot: filetree.path, ignore }), ignore)

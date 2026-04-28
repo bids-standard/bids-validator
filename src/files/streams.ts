@@ -54,14 +54,20 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
 }
 
 /**
- * Creates a TransformStream that validates and decodes UTF-8 text
+ * Create a `TransformStream` that validates and decodes UTF-8 text.
+ *
+ * @param options - Decoder options; set `fatal: true` to throw on invalid bytes.
+ * @returns A transform stream from raw bytes to decoded strings.
  */
-export function createUTF8Stream(options = { fatal: false }) {
+export function createUTF8Stream(options = { fatal: false }): TransformStream<Uint8Array, string> {
   return new TransformStream(new UTF8StreamTransformer(options))
 }
 
 /**
- * Creates a byte stream from a Uint8Array
+ * Create a single-chunk `ReadableStream` from a `Uint8Array`.
+ *
+ * @param arr - The byte array to wrap.
+ * @returns A readable stream that emits `arr` and closes.
  */
 export function streamFromUint8Array<T extends ArrayBufferLike>(
   arr: Uint8Array<T>,
@@ -75,7 +81,10 @@ export function streamFromUint8Array<T extends ArrayBufferLike>(
 }
 
 /**
- * Creates a byte stream from a string
+ * Create a single-chunk `ReadableStream` by UTF-8-encoding a string.
+ *
+ * @param str - The string to encode.
+ * @returns A readable stream of the encoded bytes.
  */
 export function streamFromString(str: string): ReadableStream<Uint8Array<ArrayBuffer>> {
   return streamFromUint8Array(new TextEncoder().encode(str) as Uint8Array<ArrayBuffer>)

@@ -7,6 +7,20 @@ export type { Issue, IssueDefinition, IssueFile, Severity }
 // Code is deprecated, return something unusual but JSON serializable
 const _CODE_DEPRECATED = Number.MIN_SAFE_INTEGER
 
+/**
+ * Thrown by {@link DatasetIssues.add} when the caller supplies an issue
+ * whose `code` is not defined in the non-schema issue catalogue and does
+ * not pass a `codeMessage` argument to describe it.
+ */
+export class UnknownIssueCodeError extends Error {
+  readonly code: string
+  constructor(code: string) {
+    super(`key: ${code} does not exist in non-schema issues definitions`)
+    this.name = 'UnknownIssueCodeError'
+    this.code = code
+  }
+}
+
 type Group = Map<Issue[keyof Issue], DatasetIssues | Group | undefined>
 
 /**
@@ -43,8 +57,8 @@ export class DatasetIssues {
    * @param codeMessage - Optional human-readable description for
    *   `issue.code`. Required when `issue.code` is not in the non-schema
    *   issue catalogue.
-   * @throws {Error} If `codeMessage` is not provided and `issue.code`
-   *   is not a key in the non-schema issue catalogue.
+   * @throws {UnknownIssueCodeError} If `codeMessage` is not provided and
+   *   `issue.code` is not a key in the non-schema issue catalogue.
    */
   add(issue: Issue, codeMessage?: string) {
     // Ensure only relevant fields are kept, for protection when working with
@@ -55,9 +69,7 @@ export class DatasetIssues {
         codeMessage = nonSchemaIssues[issue.code].reason
         issue.severity ??= nonSchemaIssues[issue.code].severity
       } else {
-        throw new Error(
-          `key: ${issue.code} does not exist in non-schema issues definitions`,
-        )
+        throw new UnknownIssueCodeError(issue.code)
       }
     }
     issue.severity ??= 'error'

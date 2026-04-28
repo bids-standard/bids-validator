@@ -30,6 +30,15 @@ export interface GitOptions {
   cache: object
 }
 
+/**
+ * {@link FileOpener} that reads blob content from a git object store.
+ *
+ * Content is loaded lazily on first access via `isomorphic-git`.
+ *
+ * @param oid - Git object ID of the blob.
+ * @param size - Blob size in bytes.
+ * @param gitOptions - Repository-level git configuration.
+ */
 export class GitFileOpener implements FileOpener {
   oid: string
   size: number
@@ -287,10 +296,20 @@ async function resolveSymlinkInTree(
 }
 
 /**
- * Walk a git ref and build a FileTree from all blobs found.
+ * Walk a git ref and build a {@link FileTree} from all blobs found.
  *
- * Uses isomorphic-git walk() with TREE to enumerate files at the given ref,
- * creates BIDSFile objects backed by GitFileOpener, and assembles via filesToTree().
+ * Works with both work-tree checkouts and bare repositories.
+ * `ref` can be a branch name, tag, commit SHA, abbreviated SHA, or tree
+ * SHA. Symlinks within the tree are resolved where possible; annex
+ * pointer files are wrapped with {@link AnnexedGitFileOpener}.
+ *
+ * @param repoPath - Path to the repository (work-tree or bare `.git` dir).
+ * @param ref - Git ref to walk; defaults to `"HEAD"`.
+ * @param prune - Optional rules for paths to skip entirely.
+ * @param preferredRemote - Preferred git-annex remote for fetching content.
+ * @returns The root `FileTree` with `.bidsignore` rules applied.
+ * @throws {Error} If `repoPath` is not a git repository, has no commits,
+ *   or `ref` cannot be resolved.
  */
 export async function readGitTree(
   repoPath: string,

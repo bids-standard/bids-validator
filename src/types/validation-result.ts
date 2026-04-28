@@ -1,5 +1,6 @@
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
 
+/** Per-participant demographics extracted from `participants.tsv`. */
 export interface SubjectMetadata {
   participantId: string
   age?: number | null | '89+'
@@ -13,6 +14,7 @@ export interface SubjectMetadata {
     TracerRadionuclide: {},
 */
 
+/** Aggregated run statistics produced by a validation pass. */
 export interface SummaryOutput {
   sessions: string[]
   subjects: string[]
