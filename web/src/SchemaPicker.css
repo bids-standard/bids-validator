@@ -1,0 +1,32 @@
+.schema-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.schema-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.schema-picker-row > span {
+  min-width: 12rem;
+}
+
+.schema-picker-row input[type="text"] {
+  flex: 1;
+  min-width: 18rem;
+}
+
+.schema-picker-filename {
+  font-style: italic;
+}
+
+.schema-picker-hint {
+  margin: 0;
+  font-size: 0.9em;
+  opacity: 0.8;
+}
