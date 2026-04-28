@@ -36,5 +36,9 @@ export interface SummaryOutput {
 export interface ValidationResult {
   issues: DatasetIssues
   summary: SummaryOutput
+  /** Per-derivative validation results, keyed by their relative path. */
   derivativesSummary?: Record<string, ValidationResult>
+  /** Per-source validation results (nested datasets under `rawbids/` or
+   * `sourcedata/`), keyed by their relative path. */
+  sourcesSummary?: Record<string, ValidationResult>
 }

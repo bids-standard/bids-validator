@@ -76,12 +76,32 @@ export class BIDSContextDataset implements Dataset {
   }
 
   set dataset_description(value: Record<string, unknown>) {
-    this.#dataset_description = value
-    if (!this.dataset_description.DatasetType) {
-      this.dataset_description.DatasetType = this.dataset_description.GeneratedBy
-        ? 'derivative'
-        : 'raw'
+    // Work on a shallow copy so we don't mutate the caller's object (e.g. the
+    // memoized dataset_description.json used by JSON schema validation, which
+    // should still see the original DatasetType value to flag enum violations).
+    const copy: Record<string, unknown> = { ...value }
+    // Default missing / falsy DatasetType per the spec: "For backwards
+    // compatibility, the default value is `raw`"; infer `derivative` when
+    // `GeneratedBy` is set (matches the prior setter behavior on main and
+    // the "GeneratedBy infers derivative" test in context.test.ts).
+    if (!copy.DatasetType) {
+      copy.DatasetType = copy.GeneratedBy ? 'derivative' : 'raw'
+    } else {
+      // For a truthy value, cross-check against the schema's enum when one is
+      // available.  A mismatch (e.g. "Raw" capitalization typo) would make
+      // `rules.directories[DatasetType]` resolve to undefined and cascade into
+      // spurious NOT_INCLUDED errors; fall back to the default as above.  If
+      // the schema isn't loaded (test construction without a schema) we can't
+      // check — leave the value untouched.
+      // @ts-expect-error `metadata` is not declared on SchemaObjects; access is dynamic
+      const validTypes = this.schema?.objects?.metadata?.DatasetType?.enum as
+        | string[]
+        | undefined
+      if (validTypes && !validTypes.includes(copy.DatasetType as string)) {
+        copy.DatasetType = copy.GeneratedBy ? 'derivative' : 'raw'
+      }
     }
+    this.#dataset_description = copy
     const datasetType = this.dataset_description.DatasetType as string
     this.opaqueDirectories = new Set<string>(
       Object.values(this.schema?.rules?.directories[datasetType] ?? {})

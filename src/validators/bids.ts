@@ -43,12 +43,17 @@ const perDSChecks: DSCheckFunction[] = [
  *
  * Loads the BIDS schema, walks the file tree, and applies file-level and
  * dataset-level checks, accumulating any issues into the returned
- * {@link ValidationResult}. Derivative datasets nested under
- * `derivatives/` are detected via their own `dataset_description.json`;
- * when `options.recursive` is set, BIDS-conformant derivatives are
- * validated and their results attached to `derivativesSummary` on the
- * returned object. Non-BIDS derivatives and the `sourcedata`, `code`
- * directories are ignored.
+ * {@link ValidationResult}. Nested BIDS datasets are detected via their
+ * own `dataset_description.json` under any of `derivatives/`,
+ * `rawbids/`, or `sourcedata/` — either at the container's immediate
+ * level (e.g. `rawbids/dataset_description.json`) or one level deeper
+ * (e.g. `derivatives/fmriprep/dataset_description.json`). When
+ * `options.recursive` is set, each nested BIDS dataset is validated
+ * and its result is attached to the returned object:
+ *   - Derivatives under `derivatives/` go into `derivativesSummary`.
+ *   - Sources under `rawbids/` or `sourcedata/` go into `sourcesSummary`.
+ * The `code` directory is always ignored, as are non-BIDS contents of
+ * the nesting containers.
  *
  * `validate` does not throw on validation failures — it records them as
  * issues on the result. The returned `issues` collection can be filtered
@@ -126,23 +131,42 @@ export async function validate(
     }
   }
 
+  // Directories that may contain nested BIDS datasets — either the directory
+  // itself is a BIDS dataset (e.g. `rawbids/dataset_description.json`) or its
+  // immediate subdirectories are (e.g. `derivatives/fmriprep/`,
+  // `sourcedata/ds00003/`).  Split into two buckets so the returned
+  // ValidationResult can separate derivatives from sources.
+  type NestedBucket = 'derivatives' | 'sources'
+  const nestingContainerBucket: Record<string, NestedBucket> = {
+    derivatives: 'derivatives',
+    rawbids: 'sources',
+    sourcedata: 'sources',
+  }
   const bidsDerivatives: Promise<FileTree>[] = []
+  const bidsSources: Promise<FileTree>[] = []
   const nonstdDerivatives: FileTree[] = []
   fileTree.directories = fileTree.directories.filter((dir) => {
-    if (['sourcedata', 'code'].includes(dir.name)) {
+    if (dir.name === 'code') {
       return false
     }
-    if (dir.name !== 'derivatives') {
+    const bucket = nestingContainerBucket[dir.name]
+    if (!bucket) {
       return true
     }
-    for (const deriv of dir.directories) {
-      if (deriv.get('dataset_description.json')) {
-        bidsDerivatives.push(subtree(deriv))
-      } else {
-        nonstdDerivatives.push(deriv)
+    const collect = bucket === 'derivatives' ? bidsDerivatives : bidsSources
+    if (dir.get('dataset_description.json')) {
+      collect.push(subtree(dir))
+    } else {
+      for (const sub of dir.directories) {
+        if (sub.get('dataset_description.json')) {
+          collect.push(subtree(sub))
+        } else {
+          nonstdDerivatives.push(sub)
+        }
       }
     }
-    // Remove derivatives from the main fileTree
+    // Always remove nesting containers from the main fileTree; their own
+    // validation (if any) happens recursively below.
     return false
   })
 
@@ -195,14 +219,23 @@ export async function validate(
   })
 
   const derivativesSummary: Record<string, ValidationResult> = {}
+  const sourcesSummary: Record<string, ValidationResult> = {}
   if (options.recursive) {
-    await Promise.allSettled(
-      bidsDerivatives.map(async (promise) => {
-        const deriv = await promise
-        derivativesSummary[deriv.name] = await validate(deriv, options)
-        return derivativesSummary[deriv.name]
-      }),
-    )
+    const validateInto = (
+      trees: Promise<FileTree>[],
+      into: Record<string, ValidationResult>,
+    ) =>
+      Promise.allSettled(
+        trees.map(async (promise) => {
+          const nested = await promise
+          into[nested.name] = await validate(nested, options)
+          return into[nested.name]
+        }),
+      )
+    await Promise.all([
+      validateInto(bidsDerivatives, derivativesSummary),
+      validateInto(bidsSources, sourcesSummary),
+    ])
   }
 
   if (config) {
@@ -226,6 +259,9 @@ export async function validate(
 
   if (Object.keys(derivativesSummary).length) {
     output['derivativesSummary'] = derivativesSummary
+  }
+  if (Object.keys(sourcesSummary).length) {
+    output['sourcesSummary'] = sourcesSummary
   }
   return output
 }
