@@ -30,3 +30,19 @@ Currently there's a "papercut" for Deno users:
 
 - peer dependencies need to be referenced in `vite.config.js` - in this example
   it is `react` and `react-dom` packages that need to be referenced
+
+## Custom schemas
+
+The web app exposes an "Advanced options" panel beside the dataset selector.
+Use it to validate against a non-default schema:
+
+- **Schema version or URL** — accepts the same values as the CLI's `-s` flag:
+  a version tag (`stable`, `latest`, `v1.10.0`), or an `https://` URL pointing
+  at a `schema.json`.
+- **Use local schema file** — pick a local `schema.json` to validate against.
+  Mirrors the CLI's `file:///` URL support. The file takes precedence over the
+  text field.
+
+Leave both empty to use the schema bundled with the validator. Schema-load
+failures appear inline so you can fix the input and retry without re-selecting
+files.
