@@ -12,6 +12,14 @@ import { gitdirFromLink, parseAnnexKey } from './repo.ts'
 import { AnnexedGitFileOpener } from './git.ts'
 import fs from 'node:fs'
 
+/**
+ * Deno-specific {@link BIDSFile} backed by the local filesystem.
+ *
+ * @param datasetPath - Absolute path to the dataset root on disk.
+ * @param path - Dataset-relative POSIX path of the file.
+ * @param ignore - Optional ignore rules for this file.
+ * @param parent - Parent directory node.
+ */
 export class BIDSFileDeno extends BIDSFile {
   constructor(datasetPath: string, path: string, ignore?: FileIgnoreRules, parent?: FileTree) {
     super(path, new FsFileOpener(datasetPath, path), ignore, parent)
@@ -109,7 +117,17 @@ async function _readFileTree({
 }
 
 /**
- * Read in the target directory structure and return a FileTree
+ * Recursively walk a local directory and build a {@link FileTree}.
+ *
+ * Symlinks to git-annex objects are detected and wrapped with
+ * {@link AnnexedGitFileOpener}. Broken or cyclic symlinks are recorded
+ * as unresolved links on the tree.
+ *
+ * @param rootPath - Absolute path to the dataset root directory.
+ * @param prune - Optional rules for directories to skip entirely.
+ * @param preferredRemote - Preferred git-annex remote name for fetching
+ *   content that is not locally present.
+ * @returns The root `FileTree` with `.bidsignore` rules applied.
  */
 export async function readFileTree(
   rootPath: string,

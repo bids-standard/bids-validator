@@ -6,19 +6,28 @@ import * as colors from '@std/fmt/colors'
 import { format as prettyBytes } from '@std/fmt/bytes'
 import { marked } from 'marked'
 import supportsHyperlinks from 'supports-hyperlinks'
-import ansiEscapes from 'ansi-escapes'
 import type { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
 import type { Issue, Severity } from '../types/issues.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
+
+// ansi-escapes attempts to use the system permissions on Windows at import time.
+// Limiting the frequency of that request to times when it is needed is nicer to users
+// and avoids the need to give the permission to tests on Windows CI.
+let ansiEscapes: typeof import('ansi-escapes') | undefined
+if (supportsHyperlinks.stdout) {
+  ansiEscapes = await import('ansi-escapes')
+}
 
 interface LoggingOptions {
   verbose: boolean
 }
 
 /**
- * Format for Unix consoles
+ * Format a validation result for Unix console display.
  *
- * Returns the full output string with newlines
+ * @param result - The validation result to format.
+ * @param options - Logging options; `verbose` includes extra detail per issue.
+ * @returns The full ANSI-coloured output string with newlines.
  */
 export function consoleFormat(
   result: ValidationResult,
@@ -77,7 +86,7 @@ function renderTokens(tokenList: any[]): string {
 
       case 'link':
         // Using the library to check for stdout support
-        if (supportsHyperlinks.stdout) {
+        if (ansiEscapes) {
           return ansiEscapes.link(token.text, token.href)
         } else {
           // Fallback for terminals without support
@@ -247,6 +256,16 @@ function helpUrl(code: string): string {
   return `https://neurostars.org/search?q=${code}`
 }
 
+/**
+ * Serialize a validation result to a JSON string.
+ *
+ * Circular `parent` references are stripped and `Map` instances are
+ * converted to plain objects during serialization.
+ *
+ * @param result - The validation result to serialize.
+ * @param pretty - When `true`, indent with two spaces.
+ * @returns The JSON string.
+ */
 export function resultToJSONStr(result: ValidationResult, pretty: boolean = false): string {
   const indent = pretty ? 2 : 0
   return JSON.stringify(result, (_key, value) => {

@@ -47,7 +47,7 @@ const perDSChecks: DSCheckFunction[] = [
  * `derivatives/` are detected via their own `dataset_description.json`;
  * when `options.recursive` is set, BIDS-conformant derivatives are
  * validated and their results attached to `derivativesSummary` on the
- * returned object. Non-BIDS derivatives and the `sourcedata`/`code`
+ * returned object. Non-BIDS derivatives and the `sourcedata`, `code`
  * directories are ignored.
  *
  * `validate` does not throw on validation failures — it records them as
@@ -69,8 +69,8 @@ const perDSChecks: DSCheckFunction[] = [
  *
  * @example
  * ```ts
- * import { readFileTree } from '@bids/validator/files'
- * import { validate } from '@bids/validator/main'
+ * import { readFileTree } from '@bids/validator/files/deno'
+ * import { validate } from '@bids/validator/validate'
  *
  * const tree = await readFileTree('/path/to/dataset')
  * const result = await validate(tree, {

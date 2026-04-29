@@ -108,6 +108,12 @@ class HttpError extends Error {
   }
 }
 
+/**
+ * {@link FileOpener} that fetches content over HTTP with automatic retries.
+ *
+ * @param url - The URL to fetch content from.
+ * @param size - Known file size in bytes, or `-1` if unknown.
+ */
 export class HTTPOpener implements FileOpener {
   url: string
   size: number
@@ -167,12 +173,20 @@ export class HTTPOpener implements FileOpener {
   }
 }
 
+/**
+ * No-op {@link FileOpener} that returns empty content.
+ *
+ * Used as a placeholder when file content is unavailable (e.g. an
+ * unresolvable git-annex object).
+ *
+ * @param size - Reported file size; defaults to `0`.
+ */
 export class NullFileOpener implements FileOpener {
   size: number
   constructor(size = 0) {
     this.size = size
   }
-  stream = () =>
+  stream = (): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> =>
     Promise.resolve(
       new ReadableStream({
         start(controller) {
@@ -180,6 +194,7 @@ export class NullFileOpener implements FileOpener {
         },
       }),
     )
-  text = () => Promise.resolve('')
-  readBytes = (_size: number, _offset?: number) => Promise.resolve(new Uint8Array())
+  text = (): Promise<string> => Promise.resolve('')
+  readBytes = (_size: number, _offset?: number): Promise<Uint8Array<ArrayBuffer>> =>
+    Promise.resolve(new Uint8Array())
 }

@@ -18,7 +18,7 @@ function getModuleDir(importMeta: ImportMeta): string {
 
 const dir = getModuleDir(import.meta);
 
-const MAIN_ENTRY = path.join(dir, 'src', 'main.ts')
+const MAIN_ENTRY = path.join(dir, 'src', 'web.ts')
 const CLI_ENTRY = path.join(dir, 'src', 'bids-validator.ts')
 
 const flags = parse(Deno.args, {

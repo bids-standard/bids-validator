@@ -27,8 +27,8 @@ The smallest useful program loads a dataset from disk into a `FileTree`
 and runs `validate` against it:
 
 ```ts
-import { readFileTree } from '@bids/validator/files'
-import { validate } from '@bids/validator/main'
+import { readFileTree } from '@bids/validator/files/deno'
+import { validate } from '@bids/validator/validate'
 
 const datasetPath = '/path/to/dataset'
 const tree = await readFileTree(datasetPath)
@@ -98,7 +98,8 @@ drag-and-drop event rather than a path on disk. Use `fileListToTree`
 to construct a `FileTree` directly from the file list:
 
 ```ts
-import { fileListToTree, validate } from '@bids/validator/main'
+import { fileListToTree } from '@bids/validator/files/browser'
+import { validate } from '@bids/validator/validate'
 
 async function validateUserSelection(files: File[]) {
   const tree = await fileListToTree(files)

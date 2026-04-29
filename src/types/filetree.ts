@@ -1,6 +1,7 @@
 import { basename } from '@std/path'
 import { FileIgnoreRules } from '../files/ignore.ts'
 
+/** Contract for reading file content as a stream, text, or byte slice. */
 export interface FileOpener {
   size: number
   stream: () => Promise<ReadableStream<Uint8Array<ArrayBuffer>>>
@@ -8,6 +9,7 @@ export interface FileOpener {
   readBytes: (size: number, offset?: number) => Promise<Uint8Array<ArrayBuffer>>
 }
 
+/** Reason a symlink could not be resolved during tree construction. */
 export type SymlinkReason =
   | 'broken'
   | 'cycle'
@@ -15,12 +17,25 @@ export type SymlinkReason =
   | 'out-of-tree'
   | 'directory-unsupported'
 
+/** A symlink that could not be followed, with the reason it was skipped. */
 export interface UnresolvedLink {
   path: string
   target: string
   reason: SymlinkReason
 }
 
+/**
+ * A single file in a BIDS dataset.
+ *
+ * Wraps a {@link FileOpener} that provides lazy access to the file's
+ * content. The `parent` property is held via `WeakRef` so that a file
+ * does not prevent its containing {@link FileTree} from being collected.
+ *
+ * @param path - Dataset-relative POSIX path (e.g. `"/sub-01/anat/sub-01_T1w.nii.gz"`).
+ * @param opener - Provides `stream`, `text`, and `readBytes` access.
+ * @param ignore - Ignore rules or a boolean override for this file.
+ * @param parent - The directory node that contains this file.
+ */
 export class BIDSFile {
   name: string
   path: string
@@ -76,7 +91,16 @@ export class BIDSFile {
 }
 
 /**
- * Abstract FileTree for all environments (Deno, Browser, Python)
+ * Directory node in a BIDS dataset tree.
+ *
+ * Works across all environments (Deno, browser, git). The `parent`
+ * property is held via `WeakRef` to avoid preventing garbage collection of
+ * ancestor nodes.
+ *
+ * @param path - Dataset-relative POSIX path of this directory.
+ * @param name - The directory's own name (final path component).
+ * @param parent - Parent directory node, if any.
+ * @param ignore - Ignore rules applied when testing paths under this tree.
  */
 export class FileTree {
   // Relative path to this FileTree location
@@ -136,6 +160,15 @@ export class FileTree {
     return this._get(path.split('/'))
   }
 
+  /**
+   * Test whether a path exists in this tree.
+   *
+   * Side-effect: sets `viewed = true` on the matched node so that
+   * validators can later detect unreferenced files.
+   *
+   * @param parts - Path segments to look up (e.g. `['sub-01', 'anat', 'sub-01_T1w.nii.gz']`).
+   * @returns `true` if the path resolves to a file or directory.
+   */
   contains(parts: string[]): boolean {
     const value = this._get(parts)
     return value ? (value.viewed = true) : false

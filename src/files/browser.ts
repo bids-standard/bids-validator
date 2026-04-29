@@ -4,7 +4,11 @@ import { FileIgnoreRules } from './ignore.ts'
 import { BrowserFileOpener } from './openers.ts'
 
 /**
- * Browser implement of BIDSFile wrapping native File/FileList types
+ * Browser-specific {@link BIDSFile} wrapping the native `File` API.
+ *
+ * @param file - A `File` obtained from an `<input webkitdirectory>` element.
+ * @param ignore - Ignore rules for this file.
+ * @param parent - Parent directory node.
  */
 export class BIDSFileBrowser extends BIDSFile {
   constructor(file: File, ignore: FileIgnoreRules, parent?: FileTree) {
@@ -16,7 +20,11 @@ export class BIDSFileBrowser extends BIDSFile {
 }
 
 /**
- * Convert from FileList (created with webkitDirectory: true) to FileTree for validator use
+ * Convert a browser `File[]` (from `<input webkitdirectory>`) into a
+ * {@link FileTree} suitable for validation.
+ *
+ * @param files - Files selected via the browser file picker.
+ * @returns The root `FileTree` with `.bidsignore` rules applied.
  */
 export function fileListToTree(files: File[]): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
