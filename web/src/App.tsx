@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { directoryOpen } from "https://esm.sh/browser-fs-access@0.35.0";
 import confetti from "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.module.mjs";
@@ -111,9 +111,8 @@ function App() {
   }
 
   const [version, setVersion] = useState<string>();
-  getVersion().then((v) => {
-    setVersion(v);
-  });
+  // useEffect avoids rerunning getVersion on every render
+  useEffect(() => getVersion().then(setVersion), []);
 
   const advanced = (
     <>
