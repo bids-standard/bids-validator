@@ -41,7 +41,10 @@ Deno.test('test context LoadSidecar', async (t) => {
 
 Deno.test('BIDSContextDataset opaqueDirectories respects DatasetType', async (t) => {
   const schema = {
-    objects: { extensions: {} },
+    objects: {
+      extensions: {},
+      metadata: { DatasetType: { enum: ['raw', 'derivative'] } },
+    },
     rules: {
       directories: {
         raw: {
@@ -96,6 +99,26 @@ Deno.test('BIDSContextDataset opaqueDirectories respects DatasetType', async (t)
     const ds = new BIDSContextDataset({
       schema,
       dataset_description: { GeneratedBy: [{ Name: 'foo' }] },
+    })
+    assertEquals(ds.dataset_description.DatasetType, 'derivative')
+    assertEquals(ds.opaqueDirectories.has('/c'), true)
+    assertEquals(ds.opaqueDirectories.has('/a'), false)
+  })
+
+  await t.step('invalid DatasetType normalizes to raw without GeneratedBy', () => {
+    const ds = new BIDSContextDataset({
+      schema,
+      dataset_description: { DatasetType: 'Raw' },
+    })
+    assertEquals(ds.dataset_description.DatasetType, 'raw')
+    assertEquals(ds.opaqueDirectories.has('/a'), true)
+    assertEquals(ds.opaqueDirectories.has('/c'), false)
+  })
+
+  await t.step('invalid DatasetType normalizes to derivative with GeneratedBy', () => {
+    const ds = new BIDSContextDataset({
+      schema,
+      dataset_description: { DatasetType: 'Derivative', GeneratedBy: [{ Name: 'x' }] },
     })
     assertEquals(ds.dataset_description.DatasetType, 'derivative')
     assertEquals(ds.opaqueDirectories.has('/c'), true)
