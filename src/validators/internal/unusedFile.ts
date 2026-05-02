@@ -41,7 +41,7 @@ export function sidecarWithoutDatafile(
 ): void {
   const unusedSidecars = [...walkFileTree(dsContext.tree, dsContext)].filter(
     (file) => (!file.viewed && file.name.endsWith('.json') &&
-      !standalone_json.includes(file.name)),
+      !standalone_json.includes(file.name) && !file.path.startsWith('/prov')),
   )
   unusedSidecars.forEach((sidecar) => {
     dsContext.issues.add({ code: 'SIDECAR_WITHOUT_DATAFILE', location: sidecar.path })
