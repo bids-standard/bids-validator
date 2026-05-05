@@ -10,6 +10,24 @@ Deno.test('Test schema pruning', async (t) => {
     const filter: SchemaFilter = {path}
     assert(schema[path])
     const newSchema = pruneSchema(schema, [filter])
+    assert(schema[path])
     assert(newSchema[path] == undefined)
+  })
+  await t.step('Test delete matching rules', async () => {
+    const path = 'rules.sidecars'
+    const testPath = `${path}.derivatives.atlas.TemplateNonStandard`
+    const filter: SchemaFilter = {
+      path,
+      match: {
+        selectors: [
+          'dataset.dataset_description.DatasetType == "derivative"'
+        ]
+      }
+    }
+    assert(schema[testPath])
+    const newSchema = pruneSchema(schema, [filter])
+    assert(schema[path])
+    assert(schema[testPath])
+    assert(newSchema[testPath] == undefined)
   })
 })

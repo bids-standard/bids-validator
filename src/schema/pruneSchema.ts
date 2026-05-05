@@ -47,16 +47,21 @@ function _applyFilter(
       Object.assign(schema[path], filter.update)
     } else {
       delete schema[path]
-      return
     }
   }
-  for (const key in schema) {
+  for (const key in schema[path]) {
     _applyFilter(schema, filter, `${path}.${key}`)
   }
   return
 }
 
 function ruleMatch(rule: GenericRule, match: Partial<GenericRule>): boolean {
-  // @ts-expect-error 
-  return Object.keys(match).every((key) => key in rule && (JSON.stringify(rule[key]) == JSON.stringify(match[key])))
+  return (Object.keys(match) as (keyof GenericRule)[]).every((key) => {
+    if (typeof rule[key] == 'undefined') return false
+    if (Array.isArray(match[key])) {
+      return match[key].every(entry => Array.isArray(rule[key]) && rule[key].includes(entry))
+    }
+    // TODO matches for rule fields that are strings or records
+    return false
+  })
 }
