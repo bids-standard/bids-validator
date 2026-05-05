@@ -205,28 +205,42 @@ function evalJsonCheck(
 
     if (value === undefined) {
       const severity = getFieldSeverity(requirement, context)
-      if (severity && severity !== 'ignore') {
-        if (requirement.issue?.code && requirement.issue?.message) {
-          context.dataset.issues.add({
-            code: requirement.issue.code,
-            subCode: keyName,
-            location: context.path,
-            severity,
-            rule: schemaPath,
-            issueMessage,
-          }, requirement.issue.message)
-        } else {
-          const keyType = sidecarRule ? 'SIDECAR_KEY' : 'JSON_KEY'
-          const level = severity === 'error' ? 'REQUIRED' : 'RECOMMENDED'
-          context.dataset.issues.add({
-            code: `${keyType}_${level}`,
-            subCode: keyName,
-            location: context.path,
-            severity,
-            rule: schemaPath,
-            issueMessage,
-          })
-        }
+      if (severity && (severity === 'ignore')) {
+        continue
+      }
+
+      /*
+       * quoth derivatives introduction in the specification:
+       *
+       * "Unless specified otherwise, individual sidecar JSON files and all metadata fields within are OPTIONAL."
+       */
+      if (
+        context.dataset.dataset_description.DatasetType === 'derivative' &&
+        !rule.selectors?.includes('dataset.dataset_description.DatasetType == "derivative"')
+      ) {
+        continue
+      }
+
+      if (requirement.issue?.code && requirement.issue?.message) {
+        context.dataset.issues.add({
+          code: requirement.issue.code,
+          subCode: keyName,
+          location: context.path,
+          severity,
+          rule: schemaPath,
+          issueMessage,
+        }, requirement.issue.message)
+      } else {
+        const keyType = sidecarRule ? 'SIDECAR_KEY' : 'JSON_KEY'
+        const level = severity === 'error' ? 'REQUIRED' : 'RECOMMENDED'
+        context.dataset.issues.add({
+          code: `${keyType}_${level}`,
+          subCode: keyName,
+          location: context.path,
+          severity,
+          rule: schemaPath,
+          issueMessage,
+        })
       }
 
       /* Regardless of if key is required/recommended/optional, we do no
