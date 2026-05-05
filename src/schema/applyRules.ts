@@ -216,8 +216,7 @@ function evalJsonCheck(
        */
       if (
         context.dataset.dataset_description.DatasetType === 'derivative' &&
-        schemaPath.startsWith('rules.sidecars') &&
-        !schemaPath.startsWith('rules.sidecars.derivatives')
+        !rule.selectors.includes('dataset.dataset_description.DatasetType == "derivative"')
       ) {
         continue
       }
