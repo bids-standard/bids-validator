@@ -11,51 +11,10 @@ import { readFileTree } from './deno.ts'
 import { validate } from '../validators/bids.ts'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
+import { capture, hasGit, hasGitAnnex, isWindows, run, withRepo } from './utils.test.ts'
 
 const REPO_URL = 'https://github.com/openneurodatasets/ds000001.git'
 const REF = '1.0.0'
-
-async function commandExists(cmd: string): Promise<boolean> {
-  try {
-    const proc = new Deno.Command(cmd, { args: ['--help'], stdout: 'null', stderr: 'null' })
-    const { success } = await proc.output()
-    return success
-  } catch {
-    return false
-  }
-}
-
-const hasGit = await commandExists('git')
-const isWindows = Deno.build.os === 'windows'
-const hasGitAnnex = await commandExists('git-annex')
-
-async function run(cmd: string[]): Promise<void> {
-  const proc = new Deno.Command(cmd[0], {
-    args: cmd.slice(1),
-    stdout: 'piped',
-    stderr: 'piped',
-  })
-  const status = await proc.output()
-  if (!status.success) {
-    const stdout = new TextDecoder().decode(status.stdout).trim()
-    const stderr = new TextDecoder().decode(status.stderr).trim()
-    console.error(`Command failed: ${cmd.join(' ')}\n\tstdout: ${stdout}\n\tstderr: ${stderr}`)
-    throw new Error(`Command failed: ${cmd.join(' ')}`)
-  }
-}
-
-async function capture(cmd: string[]): Promise<string> {
-  const proc = new Deno.Command(cmd[0], {
-    args: cmd.slice(1),
-    stdout: 'piped',
-    stderr: 'inherit',
-  })
-  const output = await proc.output()
-  if (!output.success) {
-    throw new Error(`Command failed: ${cmd.join(' ')}`)
-  }
-  return new TextDecoder().decode(output.stdout).trim()
-}
 
 async function setupRepo({ repoPath, bare }: { repoPath: string; bare: boolean }): Promise<void> {
   await run(['git', 'clone', '-b', REF, REPO_URL, repoPath, ...(bare ? ['--bare'] : [])])
@@ -148,30 +107,6 @@ Deno.test(
 // ---------------------------------------------------------------------------
 // Lightweight symlink resolution tests
 // ---------------------------------------------------------------------------
-
-/**
- * Create a temporary git repo, run a setup callback to populate it,
- * commit everything, then run a test callback with the repo path.
- * Cleans up the temp directory in `finally`.
- */
-async function withRepo(
-  setup: (repoPath: string) => Promise<void>,
-  test: (repoPath: string) => Promise<void>,
-): Promise<void> {
-  const tmpDir = await Deno.makeTempDir()
-  try {
-    await run(['git', 'init', tmpDir])
-    await run(['git', '-C', tmpDir, 'config', 'user.email', 'test@test.com'])
-    await run(['git', '-C', tmpDir, 'config', 'user.name', 'Test'])
-    await setup(tmpDir)
-    await run(['git', '-C', tmpDir, 'add', '-A'])
-    await run(['git', '-C', tmpDir, 'commit', '-m', 'init'])
-    await test(tmpDir)
-  } finally {
-    await new Deno.Command('chmod', { args: ['-R', '+w', tmpDir] }).output()
-    await Deno.remove(tmpDir, { recursive: true })
-  }
-}
 
 Deno.test(
   {
@@ -451,7 +386,7 @@ Deno.test(
       await run(['git', '-C', srcPath, 'config', 'user.name', 'Test'])
       await Deno.writeTextFile(join(srcPath, 'data.txt'), 'bare test')
       await run(['git', '-C', srcPath, 'add', '-A'])
-      await run(['git', '-C', srcPath, 'commit', '-m', 'init'])
+      await run(['git', '-C', srcPath, 'commit', '--no-gpg-sign', '-m', 'init'])
       await run(['git', 'clone', '--bare', srcPath, barePath])
       const tree = await readGitTree(barePath, 'HEAD')
       const data = tree.get('data.txt')
@@ -519,7 +454,7 @@ Deno.test(
 
 Deno.test(
   {
-    name: 'readGitTree: symlink to a committed directory is directory-unsupported',
+    name: 'readGitTree: in-tree directory symlink is grafted',
     ignore: !hasGit || isWindows,
     sanitizeResources: false,
     sanitizeOps: false,
@@ -533,10 +468,12 @@ Deno.test(
       },
       async (repo) => {
         const tree = await readGitTree(repo)
-        assertEquals(tree.get('linked-dir'), undefined, 'linked-dir must not be in files')
-        const dirLinks = tree.links.filter((l) => l.reason === 'directory-unsupported')
-        assertEquals(dirLinks.length, 1)
-        assertEquals(dirLinks[0].path, '/linked-dir')
+        const original = tree.get('real-dir/inside.txt') as BIDSFile
+        const grafted = tree.get('linked-dir/inside.txt') as BIDSFile
+        assertExists(original, 'real-dir/inside.txt should be in tree')
+        assertExists(grafted, 'linked-dir/inside.txt should be in tree')
+        assertEquals(await original.text(), 'content')
+        assertEquals(await grafted.text(), 'content')
       },
     )
   },
@@ -562,6 +499,47 @@ Deno.test(
         assertEquals(brokenLinks.length, 1)
         assertEquals(brokenLinks[0].path, '/broken.txt')
         assertEquals(brokenLinks[0].target, 'nonexistent.txt')
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'readGitTree: submodule cannot (yet) be descended',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    await withRepo(
+      async (childRepo) => {
+        await Deno.writeTextFile(join(childRepo, 'a.txt'), 'content')
+      },
+      async (childRepo) => {
+        await withRepo(
+          async (repo) => {
+            await run([
+              'git',
+              '-C',
+              repo,
+              '-c',
+              'protocol.file.allow=always',
+              'submodule',
+              'add',
+              childRepo,
+              'submod',
+            ])
+            await run(['ln', '-s', 'submod/a.txt', join(repo, 'a.txt')])
+            await run(['git', '-C', repo, 'commit', '-a', '--no-gpg-sign', '-m', 'add submodule'])
+          },
+          async (repo) => {
+            const tree = await readGitTree(repo)
+            assertEquals(tree.get('a.png'), undefined, 'a.png must not be in files')
+            assertEquals(tree.links.length, 1)
+            assertEquals(tree.links[0].reason, 'submodule')
+          },
+        )
       },
     )
   },

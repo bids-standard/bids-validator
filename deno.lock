@@ -43,6 +43,7 @@
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@~4.1.4": "4.1.4",
     "npm:ignore@^7.0.5": "7.0.5",
+    "npm:isomorphic-git@1.37.4": "1.37.4",
     "npm:isomorphic-git@^1.37.4": "1.37.4",
     "npm:marked@^17.0.5": "17.0.5",
     "npm:supports-hyperlinks@^4.4.0": "4.4.0"
