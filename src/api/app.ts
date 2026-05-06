@@ -9,17 +9,17 @@
  *
  * For programmatic use, import from the subpath modules:
  *
- * | Module                                      | Purpose                                       |
- * | ------------------------------------------- | --------------------------------------------- |
- * | [/validate]{@linkcode ./validate}           | Run validation and inspect results            |
- * | [/files]{@linkcode ./files}                 | Tools for building and typing file accessors  |
- * | [/files/browser]{@linkcode ./files/browser} | Access files using the browser File API       |
- * | [/files/deno]{@linkcode ./files/deno}       | Access filesystem files using Deno            |
- * | [/files/git]{@linkcode ./files/git}         | Access files in git/git-annex repositories    |
- * | [/filetree]{@linkcode ./filetree}           | Build and manipulate file trees               |
- * | [/issues]{@linkcode ./issues}               | Issue types and the `DatasetIssues` container |
- * | [/output]{@linkcode ./output}               | Result formatting for CLIs and UIs            |
- * | [/cli]{@linkcode ./cli}                     | Extensible Cliffy command (`validateCommand`) |
+ * | Module                  | Purpose                                       |
+ * | ----------------------- | --------------------------------------------- |
+ * | {@link [validate]}      | Run validation and inspect results            |
+ * | {@link [files]}         | Tools for building and typing file accessors  |
+ * | {@link [files/browser]} | Access files using the browser File API       |
+ * | {@link [files/deno]}    | Access filesystem files using Deno            |
+ * | {@link [files/git]}     | Access files in git/git-annex repositories    |
+ * | {@link [filetree]}      | Build and manipulate file trees               |
+ * | {@link [issues]}        | Issue types and the `DatasetIssues` container |
+ * | {@link [output]}        | Result formatting for CLIs and UIs            |
+ * | {@link [cli]}           | Extensible Cliffy command (`validateCommand`) |
  *
  * @example Command-line usage
  * ```bash
@@ -28,8 +28,8 @@
  *
  * @module
  */
-import { main } from '@bids/validator/main'
-import { detectErrors } from '@bids/validator/validate'
+import { main } from '../main.ts'
+import { detectErrors } from '../summary/summary.ts'
 
 const result = await main()
 

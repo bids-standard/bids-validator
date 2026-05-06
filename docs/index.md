@@ -60,6 +60,7 @@ validation-model/index.md
 :hidden:
 :caption: Reference
 
+changelog.md
 API Reference <https://jsr.io/@bids/validator/doc>
 ```
 
