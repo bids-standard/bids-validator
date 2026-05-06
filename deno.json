@@ -1,6 +1,6 @@
 {
   "name": "@bids/validator",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "exports": {
     ".": "./src/api/app.ts",
     "./validate": "./src/api/validate/mod.ts",
