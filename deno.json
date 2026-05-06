@@ -19,10 +19,16 @@
     "docs/",
     "tools/",
     "web/",
+    "changelog.d/",
     ".*",
+    "CHANGELOG.md",
     "CITATION.cff",
     "Dockerfile",
     "build.ts",
+    "pyproject.toml",
+    "pdm_build.py",
+    "uv.lock",
+    "local-test",
     "local-run"
   ],
   "publish": {
