@@ -2,16 +2,16 @@
 import { resolve } from '@std/path'
 import * as colors from '@std/fmt/colors'
 /* Exported API */
-import { readFileTree } from '@bids/validator/files/deno'
-import { readGitTree } from '@bids/validator/files/git'
-import { FileIgnoreRules } from '@bids/validator/filetree'
-import { validate } from '@bids/validator/validate'
-import { consoleFormat, resultToJSONStr } from '@bids/validator/output'
+import { readFileTree } from './api/files/deno/mod.ts'
+import { readGitTree } from './api/files/git/mod.ts'
+import { FileIgnoreRules } from './api/filetree/mod.ts'
+import { validate } from './api/validate/mod.ts'
+import { consoleFormat, resultToJSONStr } from './api/output/mod.ts'
 /* Purely internal */
 import { setupLogging } from './utils/logger.ts'
 import { parseOptions } from './setup/options.ts'
 /* Types */
-import type { Config, ValidationResult } from '@bids/validator/validate'
+import type { Config, ValidationResult } from './api/validate/mod.ts'
 
 /**
  * Validation entrypoint intended for command line usage with Deno
