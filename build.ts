@@ -59,6 +59,7 @@ const result = await esbuild.build({
       modules: {
         'buffer': true,
         'process': true,
+        'crypto': true,
         'worker_threads': false,
       },
     }),
