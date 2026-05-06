@@ -153,10 +153,8 @@ jobs:
           path: main
       - name: Commit to new branch
         run: |
-          mv main/bids-validator.js .
-          git add bids-validator.js
-          # Probably only runs once, but avoids accidents. Can be removed in a bit.
-          git rm --ignore-unmatch main.js
+          mv main/*-*.js .
+          git add *-*.js
           git commit -m "BLD: $VERSION [skip ci]" || true
         env:
           VERSION: ${{ needs.build.describe.version }}
