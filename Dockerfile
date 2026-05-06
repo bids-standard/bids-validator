@@ -13,6 +13,6 @@ RUN deno run -A ./build.ts
 
 FROM ${BASE_IMAGE} AS min
 WORKDIR /src
-COPY --from=build /src/dist/validator/bids-validator.js .
+COPY --from=build /src/dist/validator/*-*.js .
 
 ENTRYPOINT ["deno", "-A", "/src/bids-validator.js"]
