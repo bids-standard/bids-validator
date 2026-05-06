@@ -44,6 +44,7 @@ const versionPlugin = {
 }
 
 const result = await esbuild.build({
+  splitting: true,
   format: 'esm',
   entryPoints: [MAIN_ENTRY, CLI_ENTRY],
   bundle: true,
