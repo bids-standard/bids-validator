@@ -28,8 +28,8 @@
  *
  * @module
  */
-import { main } from '@bids/validator/main'
-import { detectErrors } from '@bids/validator/validate'
+import { main } from '../main.ts'
+import { detectErrors } from '../summary/summary.ts'
 
 const result = await main()
 
