@@ -9,17 +9,17 @@
  *
  * For programmatic use, import from the subpath modules:
  *
- * | Module                              | Purpose                                       |
- * | ----------------------------------- | --------------------------------------------- |
- * | [/validate](doc/validate)           | Run validation and inspect results            |
- * | [/files](doc/files)                 | Tools for building and typing file accessors  |
- * | [/files/browser](doc/files/browser) | Access files using the browser File API       |
- * | [/files/deno](doc/files/deno)       | Access filesystem files using Deno            |
- * | [/files/git](doc/files/git)         | Access files in git/git-annex repositories    |
- * | [/filetree](doc/filetree)           | Build and manipulate file trees               |
- * | [/issues](doc/issues)               | Issue types and the `DatasetIssues` container |
- * | [/output](doc/output)               | Result formatting for CLIs and UIs            |
- * | [/cli](doc/cli)                     | Extensible Cliffy command (`validateCommand`) |
+ * | Module                  | Purpose                                       |
+ * | ----------------------- | --------------------------------------------- |
+ * | {@link [validate]}      | Run validation and inspect results            |
+ * | {@link [files]}         | Tools for building and typing file accessors  |
+ * | {@link [files/browser]} | Access files using the browser File API       |
+ * | {@link [files/deno]}    | Access filesystem files using Deno            |
+ * | {@link [files/git]}     | Access files in git/git-annex repositories    |
+ * | {@link [filetree]}      | Build and manipulate file trees               |
+ * | {@link [issues]}        | Issue types and the `DatasetIssues` container |
+ * | {@link [output]}        | Result formatting for CLIs and UIs            |
+ * | {@link [cli]}           | Extensible Cliffy command (`validateCommand`) |
  *
  * @example Command-line usage
  * ```bash
