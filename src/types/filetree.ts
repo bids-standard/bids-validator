@@ -15,7 +15,6 @@ export type SymlinkReason =
   | 'cycle'
   | 'submodule'
   | 'out-of-tree'
-  | 'directory-unsupported'
 
 /** A symlink that could not be followed, with the reason it was skipped. */
 export interface UnresolvedLink {

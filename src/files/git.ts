@@ -6,9 +6,8 @@
  * readGitTree() to walk a ref and build a FileTree.
  */
 import { default as git, TREE } from 'isomorphic-git'
-import type { ParsedTreeObject, WalkerEntry } from 'isomorphic-git'
+import type { WalkerEntry } from 'isomorphic-git'
 import fs from 'node:fs'
-import * as posix from '@std/path/posix'
 import { join } from '@std/path'
 import {
   BIDSFile,
@@ -22,13 +21,8 @@ import { FileIgnoreRules } from './ignore.ts'
 import { hashDirLower, parseAnnexKey, resolveAnnexedFile } from './repo.ts'
 import { FsFileOpener, HTTPOpener, NullFileOpener } from './openers.ts'
 import { streamFromUint8Array } from './streams.ts'
-
-export interface GitOptions {
-  // deno-lint-ignore no-explicit-any
-  fs: any
-  gitdir: string
-  cache: object
-}
+import { graftTree, MAX_SYMLINK_FOLLOWS, resolveSymlink } from './gitResolver.ts'
+import type { FollowBudget, GitOptions, TreeSource } from './gitResolver.ts'
 
 /**
  * {@link FileOpener} that reads blob content from a git object store.
@@ -156,143 +150,45 @@ export class AnnexedGitFileOpener implements FileOpener {
   }
 }
 
-const MAX_SYMLINK_DEPTH = 10
-
-type SymlinkResolution =
-  | { kind: 'file'; opener: GitFileOpener | AnnexedGitFileOpener }
-  | { kind: 'unresolved'; reason: SymlinkReason }
-
 /**
- * Resolve a target path relative to a directory inside a git tree.
- *
- * Walks segments explicitly so we can distinguish paths that would escape
- * the repository root from paths that stay inside. Returns null for
- * absolute targets or any relative target that pops above index 0.
+ * Find the gitdir for a repository path, and resolve the requested ref to a commit OID.
  */
-function resolveInTree(dir: string, target: string): string | null {
-  if (target.startsWith('/')) return null
-  const joined = (dir ? dir.split('/') : []).concat(target.split('/'))
-  const out: string[] = []
-  for (const seg of joined) {
-    if (seg === '' || seg === '.') continue
-    if (seg === '..') {
-      if (out.length === 0) return null
-      out.pop()
-    } else {
-      out.push(seg)
-    }
+async function resolveRef(
+  repoPath: string,
+  ref: string,
+): Promise<{ commit: string; gitOptions: GitOptions }> {
+  const dotGitPath = join(repoPath, '.git')
+  let gitdir: string
+  try {
+    const stat = await Deno.stat(dotGitPath)
+    gitdir = stat.isDirectory ? dotGitPath : repoPath
+  } catch {
+    gitdir = repoPath
   }
-  return out.join('/')
-}
 
-/**
- * Walk prefixes of a resolved path looking for a gitlink entry (submodule).
- * Returns true as soon as any prefix tree contains an entry matching the
- * next segment with type 'commit'. Returns false if the walk completes
- * without seeing a gitlink, or if any prefix lookup itself throws.
- */
-async function ancestorIsSubmodule(
-  resolvedPath: string,
-  commitOid: string,
-  gitOptions: GitOptions,
-): Promise<boolean> {
-  const segments = resolvedPath.split('/').filter((s) => s !== '')
-  let prefix = ''
-  for (const segment of segments) {
-    try {
-      const parentObj = await git.readObject({
-        oid: commitOid,
-        filepath: prefix,
-        ...gitOptions,
-      })
-      if (parentObj.type !== 'tree') return false
-      // isomorphic-git `ParsedTreeObject` exposes `object` as `Array<{ mode, path, oid, type }>`.
-      const children = (parentObj as ParsedTreeObject).object
-      const match = children.find((e: { path: string }) => e.path === segment)
-      if (!match) return false
-      if (match.type === 'commit') return true
-      if (match.type !== 'tree') return false
-      prefix = prefix === '' ? segment : `${prefix}/${segment}`
-    } catch (err: unknown) {
-      if (err && typeof err == 'object' && 'isIsomorphicGitError' in err) return false
-      throw err
+  const gitOptions: GitOptions = { fs, gitdir, cache: {} }
+
+  // Resolve HEAD to verify this is a git repository and it has commits.
+  try {
+    const head = await git.resolveRef({ ref: 'HEAD', ...gitOptions })
+    if (ref === 'HEAD') {
+      return { commit: head, gitOptions }
     }
+  } catch {
+    throw new Error(`Repository ${repoPath} is not a git repository or has no commits`)
   }
-  return false
-}
 
-/**
- * Resolve a non-annex symlink within the git tree.
- *
- * Returns a file opener for in-tree blob targets, an annex opener when the
- * chain terminates in an annex key, or an unresolved verdict with a reason
- * code for broken, cyclic, out-of-tree, submodule-traversing, or
- * directory-target symlinks.
- */
-async function resolveSymlinkInTree(
-  filepath: string,
-  target: string,
-  commitOid: string,
-  gitOptions: GitOptions,
-  symlinkMap: Map<string, string>,
-  preferredRemote?: string,
-): Promise<SymlinkResolution> {
-  let currentTarget = target
-  let currentDir = posix.dirname(filepath)
-
-  for (let depth = 0; depth < MAX_SYMLINK_DEPTH; depth++) {
-    const resolvedPath = resolveInTree(currentDir, currentTarget)
-    if (resolvedPath === null) {
-      return { kind: 'unresolved', reason: 'out-of-tree' }
-    }
-
-    const nextTarget = symlinkMap.get(resolvedPath)
-    if (nextTarget !== undefined) {
-      const annexParsed = parseAnnexKey(nextTarget)
-      if (annexParsed !== null) {
-        return {
-          kind: 'file',
-          opener: new AnnexedGitFileOpener(
-            annexParsed.key,
-            annexParsed.size,
-            gitOptions,
-            preferredRemote,
-          ),
-        }
-      }
-      currentDir = posix.dirname(resolvedPath)
-      currentTarget = nextTarget
-      continue
-    }
-
-    let obj: Awaited<ReturnType<typeof git.readObject>>
+  // Now resolve the requested ref, which may be a branch, tag, or commit SHA
+  try {
+    return { commit: await git.resolveRef({ ref, ...gitOptions }), gitOptions }
+  } catch {
+    // resolveRef doesn't handle abbreviated SHAs; try expandOid
     try {
-      obj = await git.readObject({
-        oid: commitOid,
-        filepath: resolvedPath,
-        ...gitOptions,
-      })
+      return { commit: await git.expandOid({ oid: ref, ...gitOptions }), gitOptions }
     } catch {
-      if (await ancestorIsSubmodule(resolvedPath, commitOid, gitOptions)) {
-        return { kind: 'unresolved', reason: 'submodule' }
-      }
-      return { kind: 'unresolved', reason: 'broken' }
+      throw new Error(`Could not resolve ref '${ref}' in ${repoPath}`)
     }
-
-    if (obj.type === 'tree') {
-      return { kind: 'unresolved', reason: 'directory-unsupported' }
-    }
-    if (obj.type === 'blob') {
-      const { blob } = await git.readBlob({ oid: obj.oid, ...gitOptions })
-      return {
-        kind: 'file',
-        opener: new GitFileOpener(obj.oid, blob.length, gitOptions),
-      }
-    }
-    return { kind: 'unresolved', reason: 'broken' }
   }
-
-  return { kind: 'unresolved', reason: 'cycle' }
 }
 
 /**
@@ -317,74 +213,29 @@ export async function readGitTree(
   prune?: FileIgnoreRules,
   preferredRemote?: string,
 ): Promise<FileTree> {
-  const cache = {}
+  const { commit, gitOptions } = await resolveRef(repoPath, ref)
+
   const ignore = new FileIgnoreRules([])
-
-  // Detect gitdir: if repoPath contains .git, use it; otherwise treat as bare
-  const dotGitPath = join(repoPath, '.git')
-  let gitdir: string
-  try {
-    const stat = Deno.statSync(dotGitPath)
-    gitdir = stat.isDirectory ? dotGitPath : repoPath
-  } catch {
-    gitdir = repoPath
-  }
-
-  const gitOptions: GitOptions = { fs, gitdir, cache }
-
-  // Validate the repo and resolve the requested ref, with clear error messages.
-  // We always resolve HEAD first so we can distinguish three cases:
-  //   1. Path is not a git repo at all (NotGitRepository)
-  //   2. Repo exists but has no commits (HEAD → NotFoundError)
-  //   3. Repo has commits but the requested ref doesn't exist
-  let resolvedOid: string
-  try {
-    await git.resolveRef({ ref: 'HEAD', ...gitOptions })
-  } catch (err: unknown) {
-    const code = (err as { code?: string }).code
-    if (code === 'NotGitRepository') {
-      throw new Error(`${repoPath} is not a git repository`)
-    }
-    throw new Error(`Repository ${repoPath} has no commits`)
-  }
-  try {
-    resolvedOid = await git.resolveRef({ ref, ...gitOptions })
-  } catch {
-    // resolveRef doesn't handle abbreviated SHAs; try expandOid
-    try {
-      resolvedOid = await git.expandOid({ oid: ref, ...gitOptions })
-    } catch {
-      throw new Error(`Could not resolve ref '${ref}' in ${repoPath}`)
-    }
-  }
-
   const files: BIDSFile[] = []
-
-  // Map of all symlinks found during the walk (filepath → target)
-  // Used to follow chains of symlinks during deferred resolution
   const symlinkMap = new Map<string, string>()
-  // Deferred symlink entries that need resolution after the walk completes
   const deferredSymlinks: { filepath: string; target: string }[] = []
 
   try {
     await git.walk({
       ...gitOptions,
-      trees: [TREE({ ref: resolvedOid })],
+      trees: [TREE({ ref: commit })],
       map: async (filepath: string, [entry]: Array<WalkerEntry | null>) => {
         if (!entry) return null
 
         const entryType = await entry.type()
 
-        // TODO: Handle submodules (entryType === 'commit')
-        if (entryType === 'commit') return null
+        // TODO: Handle submodules
+        // if (entryType === 'commit') {}
 
         // Directories
         if (entryType === 'tree') {
-          // The root entry '.' must always be walked
-          if (filepath === '.') return undefined
-          // Null prevents walk from descending
-          if (prune && prune.test('/' + filepath)) return null
-          return undefined
+          // Null prevents walk from descending, anything but root may be pruned
+          return filepath !== '.' && prune?.test('/' + filepath) ? null : undefined
         }
 
         // Only process blobs
@@ -406,14 +257,9 @@ export async function readGitTree(
           const target = new TextDecoder().decode(content)
           // Record all symlinks so chain resolution can follow through them
           symlinkMap.set(filepath, target)
-          const annexParsed = parseAnnexKey(target)
-          if (annexParsed !== null) {
-            opener = new AnnexedGitFileOpener(
-              annexParsed.key,
-              annexParsed.size,
-              gitOptions,
-              preferredRemote,
-            )
+          const { key, size } = parseAnnexKey(target) ?? {} as { key?: string; size: number }
+          if (key) {
+            opener = new AnnexedGitFileOpener(key, size, gitOptions, preferredRemote)
           } else {
             // Non-annex symlink — defer resolution until walk completes
             deferredSymlinks.push({ filepath, target })
@@ -435,25 +281,45 @@ export async function readGitTree(
     )
   }
 
+  const source: TreeSource = { commitOid: commit, gitOptions, symlinkMap, preferredRemote }
   const unresolvedLinks: UnresolvedLink[] = []
 
   for (const { filepath, target } of deferredSymlinks) {
-    const result = await resolveSymlinkInTree(
-      filepath,
-      target,
-      resolvedOid,
-      gitOptions,
-      symlinkMap,
-      preferredRemote,
-    )
-    if (result.kind === 'file') {
-      files.push(new BIDSFile('/' + filepath, result.opener, ignore))
+    const budget: FollowBudget = { remaining: MAX_SYMLINK_FOLLOWS }
+    const verdict = await resolveSymlink(filepath, target, source, budget)
+
+    if (verdict.kind === 'tree') {
+      const graft = await graftTree('/' + filepath, verdict, budget, new Set(), prune)
+      files.push(...graft.files)
+      unresolvedLinks.push(...graft.links)
+      continue
+    }
+    // Identify files and failures
+    const outcome = ((): FileOpener | SymlinkReason => {
+      switch (verdict.kind) {
+        case 'file-blob':
+          return new GitFileOpener(verdict.oid, verdict.size, verdict.source.gitOptions)
+        case 'annex': {
+          const { key, size, source: { gitOptions, preferredRemote } } = verdict
+          return new AnnexedGitFileOpener(key, size, gitOptions, preferredRemote)
+        }
+        case 'submodule-boundary':
+          return 'submodule'
+        case 'unresolved':
+          return verdict.reason
+        // deno-coverage-ignore-start
+        default: {
+          const _exhaustive: never = verdict
+          throw new Error(`Unhandled ResolveVerdict kind: ${(verdict as { kind: string }).kind}`)
+          // deno-coverage-ignore-stop
+        }
+      }
+    })()
+    // Record files and failures
+    if (typeof outcome !== 'string') {
+      files.push(new BIDSFile('/' + filepath, outcome, ignore))
     } else {
-      unresolvedLinks.push({
-        path: '/' + filepath,
-        target,
-        reason: result.reason,
-      })
+      unresolvedLinks.push({ path: '/' + filepath, target, reason: outcome })
     }
   }
 
