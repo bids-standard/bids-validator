@@ -1,15 +1,38 @@
 import { basename } from '@std/path'
 import { FileIgnoreRules } from '../files/ignore.ts'
 
-/** Contract for reading file content as a stream, text, or byte slice. */
+/**
+ * Contract that a custom file source must implement to integrate with
+ * the BIDS validator.
+ *
+ * Implement this interface to add support for a new storage backend
+ * (e.g. a cloud object store). Pass an instance to the {@link BIDSFile}
+ * constructor as the `opener` argument.
+ */
 export interface FileOpener {
+  /** File size in bytes. */
   size: number
+  /** Open the file and return its content as a byte stream. */
   stream: () => Promise<ReadableStream<Uint8Array<ArrayBuffer>>>
+  /** Read the entire file and return it decoded as a UTF-8 string. */
   text: () => Promise<string>
+  /**
+   * Read up to `size` bytes starting at `offset`.
+   *
+   * @param size - Maximum number of bytes to read.
+   * @param offset - Byte offset at which to start reading (default `0`).
+   */
   readBytes: (size: number, offset?: number) => Promise<Uint8Array<ArrayBuffer>>
 }
 
-/** Reason a symlink could not be resolved during tree construction. */
+/**
+ * Reason a symlink could not be resolved during tree construction.
+ *
+ * - `'broken'` — the symlink target does not exist.
+ * - `'cycle'` — following the symlink would produce a cycle (`ELOOP`).
+ * - `'submodule'` — the symlink points into a git submodule boundary.
+ * - `'out-of-tree'` — the symlink target resolves outside the dataset root.
+ */
 export type SymlinkReason =
   | 'broken'
   | 'cycle'
@@ -18,8 +41,11 @@ export type SymlinkReason =
 
 /** A symlink that could not be followed, with the reason it was skipped. */
 export interface UnresolvedLink {
+  /** Dataset-relative POSIX path of the symlink itself. */
   path: string
+  /** Raw symlink target as stored on disk or in the git object. */
   target: string
+  /** Why the symlink could not be resolved. */
   reason: SymlinkReason
 }
 
@@ -36,11 +62,15 @@ export interface UnresolvedLink {
  * @param parent - The directory node that contains this file.
  */
 export class BIDSFile {
+  /** Filename component of {@link path} (final path segment). */
   name: string
+  /** Dataset-relative POSIX path, e.g. `"/sub-01/anat/sub-01_T1w.nii.gz"`. */
   path: string
   #parent!: WeakRef<FileTree>
+  /** `true` after a validator has accessed this file, used to detect unreferenced files. */
   viewed: boolean = false
   #ignore: FileIgnoreRules | boolean
+  /** The underlying {@link FileOpener} used to access file content. */
   opener: FileOpener
 
   constructor(
@@ -59,6 +89,7 @@ export class BIDSFile {
     this.parent = parent ?? new FileTree('', '/', undefined)
   }
 
+  /** The containing directory node; settable to re-parent this file. */
   get parent(): FileTree {
     return this.#parent.deref() as FileTree
   }
@@ -67,23 +98,33 @@ export class BIDSFile {
     this.#parent = new WeakRef(tree)
   }
 
+  /** `true` when the file's path matches the active ignore rules. */
   get ignored(): boolean {
     if (typeof this.#ignore === 'boolean') return this.#ignore
     return this.#ignore.test(this.path)
   }
 
+  /** File size in bytes, delegated to the underlying {@link FileOpener}. */
   get size(): number {
     return this.opener.size
   }
 
+  /** Read the entire file and return it decoded as a UTF-8 string. */
   text(): Promise<string> {
     return this.opener.text()
   }
 
+  /**
+   * Read up to `size` bytes starting at `offset`.
+   *
+   * @param size - Maximum number of bytes to read.
+   * @param offset - Byte offset at which to start reading (default `0`).
+   */
   readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
     return this.opener.readBytes(size, offset)
   }
 
+  /** Open the file and return its content as a byte stream. */
   stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     return this.opener.stream()
   }
@@ -103,12 +144,18 @@ export class BIDSFile {
  */
 export class FileTree {
   // Relative path to this FileTree location
+  /** Dataset-relative POSIX path of this directory node. */
   path: string
   // Name of this directory level
+  /** Name of this directory (final path component). */
   name: string
+  /** Direct file children of this directory node. */
   files: BIDSFile[]
+  /** Direct subdirectory children of this directory node. */
   directories: FileTree[]
+  /** Symlinks within this directory that could not be resolved. */
   links: UnresolvedLink[]
+  /** `true` after a validator has accessed this node, used to detect unreferenced directories. */
   viewed: boolean = false
   #parent?: WeakRef<FileTree>
   #ignore: FileIgnoreRules
@@ -123,6 +170,7 @@ export class FileTree {
     this.#ignore = ignore ?? new FileIgnoreRules([])
   }
 
+  /** The parent directory node, or `undefined` for the dataset root. */
   get parent(): FileTree | undefined {
     return this.#parent?.deref()
   }
@@ -131,11 +179,19 @@ export class FileTree {
     this.#parent = tree ? new WeakRef(tree) : undefined
   }
 
+  /** `true` when this directory's path matches the active ignore rules. */
   get ignored(): boolean {
     if (!this.parent) return false
     return this.#ignore.test(this.path)
   }
 
+  /**
+   * Test whether a given path is matched by the ignore rules in effect for
+   * this tree.
+   *
+   * @param path - Dataset-relative path to test.
+   * @returns `true` if the path should be ignored.
+   */
   isPathIgnored(path: string): boolean {
     return this.#ignore.test(path)
   }
@@ -152,6 +208,13 @@ export class FileTree {
     }
   }
 
+  /**
+   * Look up a file or directory by its dataset-relative path.
+   *
+   * @param path - Dataset-relative path, with or without a leading `/`.
+   * @returns The matching {@link BIDSFile} or {@link FileTree}, or `undefined`
+   *   if no node with that path exists under this tree.
+   */
   get(path: string): BIDSFile | FileTree | undefined {
     if (path.startsWith('/')) {
       path = path.slice(1)
