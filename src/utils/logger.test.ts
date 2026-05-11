@@ -29,4 +29,28 @@ Deno.test('logger', async (t) => {
       'loadHeader (file:///bids-validator/bids-validator/src/files/nifti.ts:18:12)',
     )
   })
+  await t.step('does not throw on WebKit-shaped Error.stack', () => {
+    // WebKit / JavaScriptCore (Safari, Tauri's WRY WebView, embedded JSC)
+    // emits a header-less, `function@file:line`-shaped stack that often
+    // has fewer than three frames. The original `lines[2].trim()` threw
+    // `TypeError: undefined is not an object` on the FIRST validator-
+    // internal logger access, regardless of log level, breaking
+    // validator use under any non-V8 runtime.
+    const webkitTwoFrame =
+      'get@file:///bids-validator/src/utils/logger.ts:30:32\nvalidate@file:///bids-validator/src/validators/bids.ts:110:18\n'
+    // Must not throw, and must return a defined-or-undefined value (the
+    // caller -- a template-literal interpolation -- handles both).
+    const result = parseStack(webkitTwoFrame)
+    if (result !== undefined && typeof result !== 'string') {
+      throw new Error(`parseStack returned non-string non-undefined: ${result}`)
+    }
+  })
+  await t.step('does not throw on an empty stack', () => {
+    // Defensive: some runtimes (e.g. when Error.stack is disabled or
+    // captureStackTrace returns "") emit empty strings.
+    const result = parseStack('')
+    if (result !== undefined && typeof result !== 'string') {
+      throw new Error(`parseStack returned non-string non-undefined: ${result}`)
+    }
+  })
 })
