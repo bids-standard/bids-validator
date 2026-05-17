@@ -59,7 +59,7 @@
     "@std/testing": "jsr:@std/testing@^1.0.18",
     "@std/yaml": "jsr:@std/yaml@^1.1.0",
     "ansi-escapes": "npm:ansi-escapes@^7.3.0",
-    "isomorphic-git": "npm:isomorphic-git@^1.37.5",
+    "isomorphic-git": "npm:isomorphic-git@^1.37.6",
     "hash-wasm": "npm:hash-wasm@^4.12.0",
     "marked": "npm:marked@^17.0.6",
     "supports-hyperlinks": "npm:supports-hyperlinks@^4.4.0"
