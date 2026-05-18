@@ -64,6 +64,13 @@ for their contributions to this release.
   `src/files/utils.test.ts` are skipped on Windows
   where `chmod` is not available.
 
+- Fixed crash in the web validator dev build: `useEffect
+  in `web/src/App.tsx` was implicitly returning the Promise
+  from `getVersion().then(setVersion)`.
+  React's strict mode double-invocation tried to call that
+  Promise as a cleanup function,
+  throwing `TypeError: destroy is not a function`.
+
 - Use absolute path to `.js` within Dockerfile ENTRYPOINT,
   so could be found by singularity execution from arbitrary
   working directory

@@ -112,7 +112,7 @@ function App() {
 
   const [version, setVersion] = useState<string>();
   // useEffect avoids rerunning getVersion on every render
-  useEffect(() => getVersion().then(setVersion), []);
+  useEffect(() => { getVersion().then(setVersion) }, []);
 
   const advanced = (
     <>
