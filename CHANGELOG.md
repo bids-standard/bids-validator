@@ -2,6 +2,19 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"3.0.0-alpha.3"'></a>
+# "3.0.0-alpha.3" — 2026-05-18
+
+## Fixed
+
+- Fixed crash in the web validator dev build: `useEffect` in `web/src/App.tsx`
+  was implicitly returning a Promise, causing React strict mode to throw
+  `TypeError: destroy is not a function`.
+
+- Replaced CDN imports of `canvas-confetti` (jsdelivr) and `browser-fs-access`
+  (esm.sh) in `web/src/App.tsx` with `npm:` specifiers so the CI build no longer
+  requires outbound HTTP access to external CDNs.
+
 <a id='changelog-3.0.0'></a>
 # 3.0.0 — To be determined
 
