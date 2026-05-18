@@ -33,6 +33,21 @@ type ReadFileTreeOptions = {
   prune: FileIgnoreRules
   parent?: FileTree
   preferredRemote?: string
+  /**
+   * Per-dataset isomorphic-git cache, shared across the entire walk so that
+   * pack-file inflation is amortised across all annex pointers we encounter.
+   * One cache per gitdir.
+   */
+  gitCaches?: Map<string, object>
+}
+
+function getGitCache(caches: Map<string, object>, gitdir: string): object {
+  let cache = caches.get(gitdir)
+  if (cache === undefined) {
+    cache = {}
+    caches.set(gitdir, cache)
+  }
+  return cache
 }
 
 async function _readFileTree({
@@ -42,13 +57,13 @@ async function _readFileTree({
   prune,
   parent,
   preferredRemote,
+  gitCaches,
 }: ReadFileTreeOptions): Promise<FileTree> {
   await requestReadPermission()
   const name = basename(relativePath)
   const tree = new FileTree(relativePath, name, parent, ignore)
 
-  // Opaque cache for passing to git operations
-  const cache = {}
+  gitCaches ??= new Map()
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     const thisPath = posix.join(relativePath, dirEntry.name)
@@ -69,6 +84,7 @@ async function _readFileTree({
       const annexParsed = parseAnnexKey(target)
       if (annexParsed !== null) {
         const gitdir = gitdirFromLink(fullPath, target)
+        const cache = getGitCache(gitCaches, gitdir)
         const opener = new AnnexedGitFileOpener(
           annexParsed.key,
           annexParsed.size,
@@ -109,6 +125,7 @@ async function _readFileTree({
         prune,
         parent: tree,
         preferredRemote,
+        gitCaches,
       })
       tree.directories.push(dirTree)
     }

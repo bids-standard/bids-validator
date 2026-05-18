@@ -66,13 +66,37 @@ async function _createS3Client(options: S3ClientOptions): Promise<S3Client | Non
 
 const createS3Client = memoize(_createS3Client)
 
+/**
+ * Per-gitdir cache of the git-annex branch OID. The git-annex ref is read
+ * once per dataset; without this, every annex pointer resolution re-runs
+ * resolveRef + the underlying pack-file decoding.
+ */
+const annexRefCache = new Map<string, Promise<string>>()
+
+function getAnnexRef(
+  // deno-lint-ignore no-explicit-any
+  options: Record<string, any>,
+): Promise<string> {
+  const key = options?.gitdir ?? ''
+  let oidPromise = annexRefCache.get(key)
+  if (!oidPromise) {
+    // deno-lint-ignore no-explicit-any
+    oidPromise = git.resolveRef({ ref: 'git-annex', ...options } as any).catch((err) => {
+      // Allow retry on the next call by evicting failed lookups.
+      annexRefCache.delete(key)
+      throw err
+    })
+    annexRefCache.set(key, oidPromise)
+  }
+  return oidPromise
+}
+
 export async function readAnnexPath(
   filepath: string,
   // deno-lint-ignore no-explicit-any
   options: Record<string, any>,
 ): Promise<string> {
-  // deno-lint-ignore no-explicit-any
-  const oid = await git.resolveRef({ ref: 'git-annex', ...options } as any)
+  const oid = await getAnnexRef(options)
   // deno-lint-ignore no-explicit-any
   const { blob } = await git.readBlob({ oid, filepath, ...options } as any)
   return textDecoder.decode(blob)
