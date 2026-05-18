@@ -56,11 +56,11 @@ for their contributions to this release.
 ## Fixed
 
 - Test suite now passes on Windows: `src/tests/bom-utf8.json`
-  is pinned to LF line endings via `.gitattributes` 
+  is pinned to LF line endings via `.gitattributes`
   (previously checked out as CRLF, breaking the
   BOM-stripping assertion).
-  
-- `chmod -R +w` cleanup calls in`src/files/git.test.ts` and 
+
+- `chmod -R +w` cleanup calls in`src/files/git.test.ts` and
   `src/files/utils.test.ts` are skipped on Windows
   where `chmod` is not available.
 
