@@ -96,9 +96,11 @@ Deno.test(
       })
     } finally {
       // git/git-annex sets some objects read-only; chmod +w before removal
-      await new Deno.Command('chmod', {
-        args: ['-R', '+w', tmpDir],
-      }).output()
+      if (!isWindows) {
+        await new Deno.Command('chmod', {
+          args: ['-R', '+w', tmpDir],
+        }).output()
+      }
       await Deno.remove(tmpDir, { recursive: true })
     }
   },
@@ -393,7 +395,9 @@ Deno.test(
       assertExists(data, 'data.txt should be in tree')
       assertEquals(await (data as BIDSFile).text(), 'bare test')
     } finally {
-      await new Deno.Command('chmod', { args: ['-R', '+w', tmpDir] }).output()
+      if (!isWindows) {
+        await new Deno.Command('chmod', { args: ['-R', '+w', tmpDir] }).output()
+      }
       await Deno.remove(tmpDir, { recursive: true })
     }
   },
