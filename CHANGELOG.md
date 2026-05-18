@@ -1,6 +1,58 @@
 # Changelog
 
-<!-- scriv-insert-here -->
+<!--
+A new scriv changelog fragment.
+
+Uncomment the section that is right (remove the HTML comment wrapper).
+For top level release notes, leave all the headers commented out.
+-->
+
+<!--
+### Added
+
+- A bullet item for the Added category.
+
+-->
+<!--
+### Changed
+
+- A bullet item for the Changed category.
+
+-->
+
+### Fixed
+
+- Fixed web validator build and runtime bugs: replaced `canvas-confetti` CDN
+  import (jsdelivr) with an `npm:` specifier to avoid outbound HTTP during CI
+  builds; fixed `useEffect` in `web/src/App.tsx` returning a Promise instead of
+  a cleanup function, causing a crash in React strict mode; fixed duplicate React
+  key warning in the `Files` component by using the composite
+  `${location}${issueMessage}` key rather than `location` alone.
+
+<!--
+### Deprecated
+
+- A bullet item for the Deprecated category.
+
+-->
+<!--
+### Removed
+
+- A bullet item for the Removed category.
+
+-->
+<!--
+### Security
+
+- A bullet item for the Security category.
+
+-->
+<!--
+### Infrastructure
+
+- A bullet item for the Infrastructure category.
+
+-->
 
 <a id='changelog-"3.0.0-alpha.3"'></a>
 # "3.0.0-alpha.3" — 2026-05-18
