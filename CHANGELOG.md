@@ -11,9 +11,14 @@
   was implicitly returning a Promise, causing React strict mode to throw
   `TypeError: destroy is not a function`.
 
-- Replaced CDN imports of `canvas-confetti` (jsdelivr) and `browser-fs-access`
-  (esm.sh) in `web/src/App.tsx` with `npm:` specifiers so the CI build no longer
-  requires outbound HTTP access to external CDNs.
+- Replaced CDN import of `canvas-confetti` (jsdelivr) in `web/src/App.tsx` with
+  an `npm:` specifier so the CI build no longer requires outbound HTTP access to
+  jsdelivr.net.
+
+- Fixed duplicate React key warning in the web validator: `Files` component was
+  using only `location` as the list key, but two issues at the same path with
+  different messages both survived deduplication and then collided. The key now
+  uses the composite `${location}${issueMessage}` string used for deduplication.
 
 <a id='changelog-3.0.0'></a>
 # 3.0.0 — To be determined
