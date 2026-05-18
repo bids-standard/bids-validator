@@ -7,6 +7,21 @@
 
 ## Fixed
 
+- Fixed web validator build and runtime bugs: replaced `canvas-confetti` CDN
+  import (jsdelivr) with an `npm:` specifier to avoid outbound HTTP during CI
+  builds; fixed `useEffect` in `web/src/App.tsx` returning a Promise instead of
+  a cleanup function, causing a crash in React strict mode; fixed duplicate React
+  key warning in the `Files` component by using the composite
+  `${location}${issueMessage}` key rather than `location` alone.
+
+<a id='changelog-"3.0.0-alpha.3"'></a>
+# "3.0.0-alpha.3" — 2026-05-18
+
+<a id='changelog-"3.0.0-alpha.3"'></a>
+# "3.0.0-alpha.3" — 2026-05-18
+
+## Fixed
+
 - Fixed crash in the web validator dev build: `useEffect` in `web/src/App.tsx`
   was implicitly returning a Promise, causing React strict mode to throw
   `TypeError: destroy is not a function`.
@@ -81,13 +96,6 @@ for their contributions to this release.
 - `chmod -R +w` cleanup calls in`src/files/git.test.ts` and
   `src/files/utils.test.ts` are skipped on Windows
   where `chmod` is not available.
-
-- Fixed crash in the web validator dev build: `useEffect
-  in `web/src/App.tsx` was implicitly returning the Promise
-  from `getVersion().then(setVersion)`.
-  React's strict mode double-invocation tried to call that
-  Promise as a cleanup function,
-  throwing `TypeError: destroy is not a function`.
 
 - Use absolute path to `.js` within Dockerfile ENTRYPOINT,
   so could be found by singularity execution from arbitrary
