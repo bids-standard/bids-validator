@@ -59,7 +59,9 @@ export async function withRepo(
     await run(['git', '-C', tmpDir, 'commit', '--no-gpg-sign', '-m', 'init'])
     await test(tmpDir)
   } finally {
-    await new Deno.Command('chmod', { args: ['-R', '+w', tmpDir] }).output()
+    if (!isWindows) {
+      await new Deno.Command('chmod', { args: ['-R', '+w', tmpDir] }).output()
+    }
     await Deno.remove(tmpDir, { recursive: true })
   }
 }
