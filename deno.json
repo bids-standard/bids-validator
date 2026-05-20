@@ -40,7 +40,7 @@
     "@bradenmacdonald/s3-lite-client": "jsr:@bradenmacdonald/s3-lite-client@^0.9.6",
     "@cliffy/command": "jsr:@effigies/cliffy-command@1.0.0-dev.8",
     "@cliffy/table": "jsr:@effigies/cliffy-table@1.0.0-dev.5",
-    "@hed/validator": "npm:hed-validator@^4.2.0",
+    "@hed/validator": "npm:@hed-validator@^4.2.0",
     "pluralize": "npm:pluralize@^8.0.0",
     "@ignore": "npm:ignore@^7.0.5",
     "@libs/xml": "jsr:@libs/xml@^7.0.4",
