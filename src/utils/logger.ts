@@ -18,11 +18,19 @@ export function setupLogging(level: LevelName) {
   })
 }
 
-export function parseStack(stack: string) {
+export function parseStack(stack: string): string | undefined {
   const lines = stack.split('\n')
-  const caller = lines[2].trim()
-  const token = caller.split('at ')
-  return token[1]
+  if (lines[0].trim() === 'Error') {
+    // V8 stack trace format
+    const caller = lines[2].trim()
+    const token = caller.split('at ')
+    return token[1]
+  } else if (lines[0].match(/^\w+@/)) {
+    // WebKit stack trace format
+    const caller = lines[1].trim()
+    const token = caller.split('@')
+    return `${token[0]} (${token[1]})`
+  }
 }
 
 const loggerProxyHandler = {
@@ -31,7 +39,7 @@ const loggerProxyHandler = {
     const logger = getLogger('@bids/validator')
     const stack = new Error().stack
     if (stack) {
-      const callerLocation = parseStack(stack)
+      const callerLocation = parseStack(stack) ?? '<unknown>'
       logger.debug(`Logger invoked at "${callerLocation}"`)
     }
     const logFunc = logger[prop] as typeof logger.warn
