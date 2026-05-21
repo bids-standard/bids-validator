@@ -18,7 +18,7 @@ function getModuleDir(importMeta: ImportMeta): string {
 
 const dir = getModuleDir(import.meta);
 
-const MAIN_ENTRY = path.join(dir, 'src', 'main.ts')
+const MAIN_ENTRY = path.join(dir, 'src', 'web.ts')
 const CLI_ENTRY = path.join(dir, 'src', 'bids-validator.ts')
 
 const flags = parse(Deno.args, {
@@ -44,6 +44,7 @@ const versionPlugin = {
 }
 
 const result = await esbuild.build({
+  splitting: true,
   format: 'esm',
   entryPoints: [MAIN_ENTRY, CLI_ENTRY],
   bundle: true,
@@ -58,6 +59,7 @@ const result = await esbuild.build({
       modules: {
         'buffer': true,
         'process': true,
+        'crypto': true,
         'worker_threads': false,
       },
     }),

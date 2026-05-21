@@ -1,6 +1,5 @@
-import { type assert, assertObjectMatch } from '@std/assert'
+import { assertObjectMatch } from '@std/assert'
 import type { BIDSFile } from '../types/filetree.ts'
-import type { FileIgnoreRules } from './ignore.ts'
 import { testAsyncFileAccess } from './access.test.ts'
 
 import { pathsToTree } from '../files/filetree.test.ts'
@@ -25,9 +24,7 @@ function makeFile(path: string, text: string, encoding: string): BIDSFile {
   return {
     path: file.path,
     parent: file.parent,
-    readBytes: async (size: number) => {
-      return new Uint8Array(bytes)
-    },
+    readBytes: (_size: number) => Promise.resolve(new Uint8Array(bytes)),
     size: bytes.byteLength,
   } as unknown as BIDSFile
 }
@@ -41,29 +38,29 @@ Deno.test('Test JSON error conditions', async (t) => {
 
   await t.step('Error on BOM', async () => {
     const BOMfile = makeFile('/BOM.json', '\uFEFF{"a": 1}', 'utf-8')
-    let error: any = undefined
+    let error: unknown = undefined
     await loadJSON(BOMfile).catch((e) => {
       error = e
     })
-    assertObjectMatch(error, { code: 'INVALID_JSON_ENCODING' })
+    assertObjectMatch(error as Record<PropertyKey, unknown>, { code: 'INVALID_JSON_ENCODING' })
   })
 
   await t.step('Error on UTF-16', async () => {
     const UTF16file = makeFile('/utf16.json', '{"a": 1}', 'utf-16')
-    let error: any = undefined
+    let error: unknown = undefined
     await loadJSON(UTF16file).catch((e) => {
       error = e
     })
-    assertObjectMatch(error, { code: 'INVALID_JSON_ENCODING' })
+    assertObjectMatch(error as Record<PropertyKey, unknown>, { code: 'INVALID_JSON_ENCODING' })
   })
 
   await t.step('Error on invalid JSON syntax', async () => {
     const badJSON = makeFile('/bad-syntax.json', '{"a": 1]', 'utf-8')
-    let error: any = undefined
+    let error: unknown = undefined
     await loadJSON(badJSON).catch((e) => {
       error = e
     })
-    assertObjectMatch(error, { code: 'JSON_INVALID' })
+    assertObjectMatch(error as Record<PropertyKey, unknown>, { code: 'JSON_INVALID' })
   })
   loadJSON.cache.clear()
 })

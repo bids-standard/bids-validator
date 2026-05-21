@@ -4,7 +4,7 @@ import { pathsToTree } from './filetree.test.ts'
 import { walkBack } from './inheritance.ts'
 
 Deno.test('walkback inheritance tests', async (t) => {
-  await t.step('walkBack throws multiple inheritance error', async () => {
+  await t.step('walkBack throws multiple inheritance error', () => {
     const rootFileTree = pathsToTree([
       '/T1w.json',
       '/acq-MPRAGE_T1w.json',
@@ -14,7 +14,7 @@ Deno.test('walkback inheritance tests', async (t) => {
     assertThrows(() => {
       try {
         const sidecars = walkBack(dataFile)
-        for (const f of sidecars) {
+        for (const _f of sidecars) {
           continue
         }
       } catch (error) {
@@ -28,7 +28,7 @@ Deno.test('walkback inheritance tests', async (t) => {
   })
   await t.step(
     'no error thrown on exact inheritance match with multiple valid candidates',
-    async () => {
+    () => {
       const rootFileTree = pathsToTree([
         '/T1w.json',
         '/sub-01/anat/sub-01_acq-MPRAGE_T1w.nii.gz',
@@ -50,7 +50,7 @@ Deno.test('walkback inheritance tests', async (t) => {
   )
   await t.step(
     'Passing targetEntities enables multiple matches',
-    async () => {
+    () => {
       const rootFileTree = pathsToTree([
         '/space-talairach_electrodes.tsv',
         '/space-talairach_electrodes.json',
@@ -74,7 +74,7 @@ Deno.test('walkback inheritance tests', async (t) => {
   )
   await t.step(
     'The presence of target entities does not trigger exact match logic',
-    async () => {
+    () => {
       const rootFileTree = pathsToTree([
         '/sub-01/ieeg/sub-01_task-rest_ieeg.edf',
         '/sub-01/ieeg/sub-01_task-rest_space-anat_electrodes.tsv',

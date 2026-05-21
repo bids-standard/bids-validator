@@ -1,7 +1,7 @@
 /**
  * Utilities for reading git-annex metadata
  */
-import { dirname, join, parse, SEPARATOR_PATTERN } from '@std/path'
+import { basename, dirname, join, SEPARATOR_PATTERN } from '@std/path'
 import { default as git } from 'isomorphic-git'
 import { S3Client } from '@bradenmacdonald/s3-lite-client'
 import type { S3ClientOptions } from '@bradenmacdonald/s3-lite-client'
@@ -35,13 +35,15 @@ class NonSigningClient {
     this.bucket = bucket!
   }
 
-  async presignedGetObject(
+  presignedGetObject(
     objectName: string,
     options: {
       versionId: string
     },
   ): Promise<string> {
-    return `${this.endPoint}/${this.bucket}/${objectName}?versionId=${options.versionId}`
+    return Promise.resolve(
+      `${this.endPoint}/${this.bucket}/${objectName}?versionId=${options.versionId}`,
+    )
   }
 }
 
@@ -64,12 +66,39 @@ async function _createS3Client(options: S3ClientOptions): Promise<S3Client | Non
 
 const createS3Client = memoize(_createS3Client)
 
+/**
+ * Per-gitdir cache of the git-annex branch OID. The git-annex ref is read
+ * once per dataset; without this, every annex pointer resolution re-runs
+ * resolveRef + the underlying pack-file decoding.
+ */
+const annexRefCache = new Map<string, Promise<string>>()
+
+function getAnnexRef(
+  // deno-lint-ignore no-explicit-any
+  options: Record<string, any>,
+): Promise<string> {
+  const key = options?.gitdir ?? ''
+  let oidPromise = annexRefCache.get(key)
+  if (!oidPromise) {
+    // deno-lint-ignore no-explicit-any
+    oidPromise = git.resolveRef({ ref: 'git-annex', ...options } as any).catch((err) => {
+      // Allow retry on the next call by evicting failed lookups.
+      annexRefCache.delete(key)
+      throw err
+    })
+    annexRefCache.set(key, oidPromise)
+  }
+  return oidPromise
+}
+
 export async function readAnnexPath(
   filepath: string,
-  options: any,
+  // deno-lint-ignore no-explicit-any
+  options: Record<string, any>,
 ): Promise<string> {
-  const oid = await git.resolveRef({ ref: 'git-annex', ...options })
-  const { blob } = await git.readBlob({ oid, filepath, ...options })
+  const oid = await getAnnexRef(options)
+  // deno-lint-ignore no-explicit-any
+  const { blob } = await git.readBlob({ oid, filepath, ...options } as any)
   return textDecoder.decode(blob)
 }
 
@@ -123,7 +152,11 @@ function b64toUtf8(str: string): string {
  * The general form is <uuid>:<key> [+-]<value> and is an append-only log
  * We may at some point care about doing this correctly.
  */
-async function readRmet(key: string, options: any): Promise<Record<string, Rmet>> {
+async function readRmet(
+  key: string,
+  // deno-lint-ignore no-explicit-any
+  options: Record<string, any>,
+): Promise<Record<string, Rmet>> {
   const hashDirs = await hashDirLower(key)
   const rmet = await readAnnexPath(join(...hashDirs, `${key}.log.rmet`), options)
   const ret: Record<string, Rmet> = {}
@@ -147,7 +180,10 @@ async function readRmet(key: string, options: any): Promise<Record<string, Rmet>
  *    publicurl
  *    timestamp
  */
-async function _readRemotes(options: any): Promise<Record<string, Record<string, string>>> {
+async function _readRemotes(
+  // deno-lint-ignore no-explicit-any
+  options: Record<string, any>,
+): Promise<Record<string, Record<string, string>>> {
   const remotesText = await readAnnexPath('remote.log', options)
   const byUUID: Record<string, Record<string, string>> = {}
   for (const line of remotesText.split('\n')) {
@@ -159,18 +195,28 @@ async function _readRemotes(options: any): Promise<Record<string, Record<string,
 
 const readRemotes = memoize(_readRemotes, (options) => options?.gitdir)
 
-export async function parseAnnexedFile(
-  path: string,
-): Promise<{ key: string; size: number; gitdir: string }> {
-  const target = await Deno.readLink(path)
-  const { dir, base } = parse(target)
+/**
+ * Parse a git-annex symlink target string and return the key and size.
+ * The target is the full relative path such as:
+ *   ../../.git/annex/objects/jJ/2v/MD5E-s5712417--0d1e...nii.gz/MD5E-s5712417--0d1e...nii.gz
+ * Returns null if the target does not match the expected annex key format.
+ */
+export function parseAnnexKey(target: string): { key: string; size: number } | null {
+  const key = basename(target)
+  const match = key.match(annexKeyRegex)
+  if (!match) {
+    return null
+  }
+  const size = +match.groups!.size
+  return { key, size }
+}
 
-  const dirs = dir.split(SEPARATOR_PATTERN)
-  const gitdir = join(dirname(path), ...dirs.slice(0, dirs.indexOf('.git') + 1))
-
-  const size = +base.match(annexKeyRegex)?.groups?.size!
-
-  return { key: base, size, gitdir }
+/**
+ * Extract a git directory from the path and target of a git-annex link
+ */
+export function gitdirFromLink(path: string, target: string): string {
+  const dirs = dirname(target).split(SEPARATOR_PATTERN)
+  return join(dirname(path), ...dirs.slice(0, dirs.indexOf('.git') + 1))
 }
 
 /**
@@ -179,10 +225,11 @@ export async function parseAnnexedFile(
 export async function resolveAnnexedFile(
   key: string,
   remote?: string,
-  options?: any,
+  // deno-lint-ignore no-explicit-any
+  options?: Record<string, any>,
 ): Promise<{ url: string }> {
-  const rmet = await readRmet(key, options)
-  const remotes = await readRemotes(options)
+  const rmet = await readRmet(key, options ?? {})
+  const remotes = await readRemotes(options ?? {})
   let uuid: string
   if (remote) {
     let matching: string | undefined

@@ -2,8 +2,114 @@
 
 <!-- scriv-insert-here -->
 
-<a id='changelog-"2.4.1"'></a>
-# "2.4.1" — 2026-02-20
+<a id='changelog-3.0.0'></a>
+# 3.0.0 — To be determined
+
+This is a major release that includes breaking changes to the public API.
+The CLI remains unchanged, but library users should review the changes below
+and update their code accordingly.
+
+The primary user-facing changes in this release are the support for
+validating git trees and passing custom schemas to the web validator.
+
+Thanks to Charan Sai Guttala, Yaroslav Halchenko and Dimitri Papadopoulos
+for their contributions to this release.
+
+## Added
+
+- `--git-ref [REF]` will validate a git tree at the given reference
+  (tag, branch, tree or commit, defaulting to `HEAD`). Work trees and bare git
+  repositories are supported. If omitted, the directory will be walked as a normal
+  file tree, including untracked files, preserving the default behavior.
+
+- Allow custom schemas to be uploaded or passed by URL to the web validator.
+
+- Support symlinks to directories in git tree validation.
+
+- Report broken symbolic links as issues instead of crashing or silently ignoring.
+  `.bidsignore`d links are not reported. If resolution is not implemented, warnings
+  are issued instead of errors.
+
+- Documented the library API: added a usage guide under `docs/dev/using-the-api.md`,
+  JSDoc on `validate()`, and JSDoc with `@throws` on `DatasetIssues.add()`.
+
+- New public subpaths expose primitives for building custom file sources:
+  `FileOpener`, `BIDSFile`, `FileTree`, `FileIgnoreRules`, `filesToTree`,
+  `subtree`, `loadBidsIgnore`, `readBidsIgnore`, and cross-environment openers
+  (`HTTPOpener`, `NullFileOpener`).
+
+- `detectErrors()` is now part of the public surface under `/validate`.
+
+- `UnknownIssueCodeError` — `DatasetIssues.add()` now throws a typed error
+  (instead of a plain `Error`) when called with an unrecognized issue code.
+
+- Stream helpers (`createUTF8Stream`, `streamFromUint8Array`, `streamFromString`,
+  `UnicodeDecodeError`) exported from `/files` for custom opener authors.
+
+## Changed
+
+- Reorganized public API surface for v3. Library imports now use subpath-specific
+  entry points (`/validate`, `/files`, `/filetree`, `/files/deno`, `/files/browser`,
+  `/files/git`, `/issues`, `/output`, `/cli`). The root export (`.`) remains the
+  CLI entry point.
+
+## Fixed
+
+- Test suite now passes on Windows: `src/tests/bom-utf8.json`
+  is pinned to LF line endings via `.gitattributes`
+  (previously checked out as CRLF, breaking the
+  BOM-stripping assertion).
+
+- `chmod -R +w` cleanup calls in`src/files/git.test.ts` and
+  `src/files/utils.test.ts` are skipped on Windows
+  where `chmod` is not available.
+
+- Use absolute path to `.js` within Dockerfile ENTRYPOINT,
+  so could be found by singularity execution from arbitrary
+  working directory
+
+- Treat symbolic links to directories as directories instead of files.
+
+- Compute opaque directories from the rules for the dataset's actual
+  `DatasetType` instead of always using `rules.directories.raw`.  This
+  lets study-type datasets correctly ignore the `rawbids/`
+  subdataset (added in [bids-standard/bids-specification#2191][]).
+  Fixed in [#389][].
+
+- Derivative datasets no longer generate warnings or errors for sidecar keys that don't explicitly apply to derivative datasets.
+
+- Lazy-load the HED validator to reduce initial bundle size and resolve `fs/promises` background timer leaks during Deno tests.
+
+[bids-standard/bids-specification#2191]: https://github.com/bids-standard/bids-specification/pull/2191
+[#389]: https://github.com/bids-standard/bids-validator/pull/389
+
+## Deprecated
+
+- `@bids/validator/main` — use `/validate`, `/files/browser`, `/files/git` instead.
+  `main()` is preserved for back-compat; it has no replacement and will be removed
+  in v4.
+- `@bids/validator/options` — use `/validate` (types) and `/cli` (validateCommand)
+  instead. `parseOptions()` is preserved for back-compat; it has no replacement and
+  will be removed in v4.
+- `readFileTree` and `BIDSFileDeno` re-exported from `/files` — use `/files/deno`
+  instead.
+
+## Infrastructure
+
+- Addressed or ignored all `deno lint` issues. Future work should lint clean.
+
+- Added a developer environment guide under `docs/dev/environment.md`.
+
+- The `main.js` build target has been renamed `web.js` for clarity.
+  It will no longer be saved to the `deno-build` branch.
+
+- Code-splitting was enabled in bundle configuration to make the validator more
+  friendly to load in the browser or include in downstream bundled applications.
+  The initial validator load transfers less than 400kB and
+  only loads an additional 1.2MB if HED validation is required.
+
+<a id='changelog-2.4.1'></a>
+# 2.4.1 — 2026-02-20
 
 ## Changed
 
@@ -23,15 +129,15 @@
   To enable, run `pre-commit install`. For speed, we recommend installing `pre-commit`
   via `uv tool install pre-commit --with=pre-commit-uv`.
 
-<a id='changelog-"2.4.0"'></a>
-# "2.4.0" — 2026-02-05
+<a id='changelog-2.4.0'></a>
+# 2.4.0 — 2026-02-05
 
 ## Changed
 
 - Update to BIDS Schema v1.2.0 (BIDS v1.11.0)
 
-<a id='changelog-"2.3.2"'></a>
-# "2.3.2" — 2026-02-02
+<a id='changelog-2.3.2'></a>
+# 2.3.2 — 2026-02-02
 
 ## Changed
 
@@ -42,13 +148,13 @@
 - Retrieval of remote data on S3 is now more robust, avoiding resource leaks
   by setting timeouts and a reasonable retry protocol.
 
-<a id='changelog-"2.3.1"'></a>
-# "2.3.1" — 2026-01-27
+<a id='changelog-2.3.1'></a>
+# 2.3.1 — 2026-01-27
 
 Mismatch between version and tag. Re-releasing for consistency. No other changes.
 
-<a id='changelog-"2.3.0"'></a>
-# "2.3.0" — 2026-01-27
+<a id='changelog-2.3.0'></a>
+# 2.3.0 — 2026-01-27
 
 ## Changed
 
@@ -62,8 +168,8 @@ Mismatch between version and tag. Re-releasing for consistency. No other changes
 
 - Prevent HED check from failing for null values found in sidecar metadata.
 
-<a id='changelog-"2.2.10"'></a>
-# "2.2.10" — 2026-01-15
+<a id='changelog-2.2.10'></a>
+# 2.2.10 — 2026-01-15
 
 ## Changed
 
@@ -73,15 +179,15 @@ Mismatch between version and tag. Re-releasing for consistency. No other changes
 
 - Extract AWS region from S3 special remote, defaulting to us-east-1.
 
-<a id='changelog-"2.2.9"'></a>
-# "2.2.9" — 2026-01-15
+<a id='changelog-2.2.9'></a>
+# 2.2.9 — 2026-01-15
 
 ## Changed
 
 - Reverted terminal URLs for the 2.2.x series. It should be back in 2.3.0.
 
-<a id='changelog-"2.2.8"'></a>
-# "2.2.8" — 2026-01-15
+<a id='changelog-2.2.8'></a>
+# 2.2.8 — 2026-01-15
 
 ## Changed
 
@@ -91,8 +197,8 @@ Mismatch between version and tag. Re-releasing for consistency. No other changes
 
 - Fix typo in S3 URL generation code that prevented reading remote files.
 
-<a id='changelog-"2.2.7"'></a>
-# "2.2.7" — 2026-01-13
+<a id='changelog-2.2.7'></a>
+# 2.2.7 — 2026-01-13
 
 ## Added
 
@@ -119,8 +225,8 @@ Mismatch between version and tag. Re-releasing for consistency. No other changes
 
 - Pin Deno to 2.5.6 in wheel builds to account for bugs with MacOS binaries compiled with 2.6.0.
 
-<a id='changelog-"2.2.5"'></a>
-# "2.2.5" — 2025-12-10
+<a id='changelog-2.2.5'></a>
+# 2.2.5 — 2025-12-10
 
 ## Added
 
@@ -134,15 +240,15 @@ Mismatch between version and tag. Re-releasing for consistency. No other changes
 
 - Resolved TypeError when rendering issues for JSON outputs.
 
-<a id='changelog-"2.2.4"'></a>
-# "2.2.4" — 2025-12-05
+<a id='changelog-2.2.4'></a>
+# 2.2.4 — 2025-12-05
 
 ## Added
 
 - Annexed files with base-64-encoded version information are now supported.
 
-<a id='changelog-"2.2.3"'></a>
-# "2.2.3" — 2025-11-25
+<a id='changelog-2.2.3'></a>
+# 2.2.3 — 2025-11-25
 
 ## Fixed
 
@@ -150,8 +256,8 @@ Mismatch between version and tag. Re-releasing for consistency. No other changes
   would previously raise a NIFTI_HEADER_UNREADABLE error. Now only the axis codes
   are disabled, preventing orientation checks, but not raising errors.
 
-<a id='changelog-"2.2.2"'></a>
-# "2.2.2" — 2025-11-12
+<a id='changelog-2.2.2'></a>
+# 2.2.2 — 2025-11-12
 
 ## Changed
 
@@ -166,8 +272,8 @@ Mismatch between version and tag. Re-releasing for consistency. No other changes
 
 - `INVALID_FILE_ENCODING` issues now print sensible messages instead of crashing.
 
-<a id='changelog-"2.2.1"'></a>
-# "2.2.1" — 2025-10-27
+<a id='changelog-2.2.1'></a>
+# 2.2.1 — 2025-10-27
 
 ## Added
 
@@ -181,8 +287,8 @@ Mismatch between version and tag. Re-releasing for consistency. No other changes
 - Validation context generation was tweaked to improve concurrency, giving 4x validation
   speedups in some cases.
 
-<a id='changelog-"2.2.0"'></a>
-# "2.2.0" — 2025-10-14
+<a id='changelog-2.2.0'></a>
+# 2.2.0 — 2025-10-14
 
 ## Added
 
@@ -308,8 +414,8 @@ This release adds support for BIDS 1.10.1.
 
 [bids/validator]: https://hub.docker.com/r/bids/validator/
 
-<a id='changelog-"2.0.9"'></a>
-# "2.0.9" — 2025-08-26
+<a id='changelog-2.0.9'></a>
+# 2.0.9 — 2025-08-26
 
 ## Added
 
@@ -324,8 +430,8 @@ This release adds support for BIDS 1.10.1.
 
 - Raise error when JSON files are parsed and their root value is anything other than an object
 
-<a id='changelog-"2.0.8"'></a>
-# "2.0.8" — 2025-08-07
+<a id='changelog-2.0.8'></a>
+# 2.0.8 — 2025-08-07
 
 ## Added
 
@@ -343,8 +449,8 @@ This release adds support for BIDS 1.10.1.
 
 - Handle TSV schema rules with missing or `n/a` values for `additional_columns`.
 
-<a id='changelog-"2.0.6"'></a>
-# "2.0.6" — 2025-05-23
+<a id='changelog-2.0.6'></a>
+# 2.0.6 — 2025-05-23
 
 ## Added
 

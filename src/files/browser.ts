@@ -1,10 +1,14 @@
 import { BIDSFile, FileTree } from '../types/filetree.ts'
-import { filesToTree } from './filetree.ts'
-import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
+import { filesToTree, loadBidsIgnore } from './filetree.ts'
+import { FileIgnoreRules } from './ignore.ts'
 import { BrowserFileOpener } from './openers.ts'
 
 /**
- * Browser implement of BIDSFile wrapping native File/FileList types
+ * Browser-specific {@link BIDSFile} wrapping the native `File` API.
+ *
+ * @param file - A `File` obtained from an `<input webkitdirectory>` element.
+ * @param ignore - Ignore rules for this file.
+ * @param parent - Parent directory node.
  */
 export class BIDSFileBrowser extends BIDSFile {
   constructor(file: File, ignore: FileIgnoreRules, parent?: FileTree) {
@@ -16,19 +20,17 @@ export class BIDSFileBrowser extends BIDSFile {
 }
 
 /**
- * Convert from FileList (created with webkitDirectory: true) to FileTree for validator use
+ * Convert a browser `File[]` (from `<input webkitdirectory>`) into a
+ * {@link FileTree} suitable for validation.
+ *
+ * @param files - Files selected via the browser file picker.
+ * @returns The root `FileTree` with `.bidsignore` rules applied.
  */
-export async function fileListToTree(files: File[]): Promise<FileTree> {
+export function fileListToTree(files: File[]): Promise<FileTree> {
   const ignore = new FileIgnoreRules([])
   const root = new FileTree('/', '/', undefined)
-  const tree = filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, root)), ignore)
-  const bidsignore = tree.get('.bidsignore')
-  if (bidsignore) {
-    try {
-      ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
-    } catch (err) {
-      console.log(`Failed to read '.bidsignore' file with the following error:\n${err}`)
-    }
-  }
-  return tree
+  return loadBidsIgnore(
+    filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, root)), ignore),
+    ignore,
+  )
 }

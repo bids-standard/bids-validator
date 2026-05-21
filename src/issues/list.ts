@@ -212,6 +212,22 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'File encoding is not valid UTF-8.',
   },
+  SYMLINK_BROKEN: {
+    severity: 'error',
+    reason: 'Symbolic link target does not exist.',
+  },
+  SYMLINK_CYCLE: {
+    severity: 'error',
+    reason: 'Symbolic link chain contains a cycle or exceeds maximum depth.',
+  },
+  SYMLINK_OUT_OF_TREE: {
+    severity: 'error',
+    reason: 'Symbolic link target escapes the repository root.',
+  },
+  SYMLINK_IN_SUBMODULE: {
+    severity: 'warning',
+    reason: 'Symbolic link target lies within an uninitialized git submodule.',
+  },
 }
 
 export const nonSchemaIssues = { ...bidsIssues }

@@ -20,10 +20,10 @@ function* walkFileTree(fileTree: FileTree, dsContext: BIDSContextDataset): Gener
   }
 }
 
-export async function unusedStimulus(
-  schema: GenericSchema,
+export function unusedStimulus(
+  _schema: GenericSchema,
   dsContext: BIDSContextDataset,
-) {
+): void {
   const stimDir = dsContext.tree.get('stimuli') as FileTree
   const unusedStimuli = [...walkFileTree(stimDir, dsContext)].filter((stimulus) =>
     !stimulus.viewed
@@ -35,10 +35,10 @@ export async function unusedStimulus(
 
 const standalone_json = ['dataset_description.json', 'genetic_info.json']
 
-export async function sidecarWithoutDatafile(
-  schema: GenericSchema,
+export function sidecarWithoutDatafile(
+  _schema: GenericSchema,
   dsContext: BIDSContextDataset,
-) {
+): void {
   const unusedSidecars = [...walkFileTree(dsContext.tree, dsContext)].filter(
     (file) => (!file.viewed && file.name.endsWith('.json') &&
       !standalone_json.includes(file.name)),

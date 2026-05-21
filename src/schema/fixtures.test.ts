@@ -1,6 +1,5 @@
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
-import { nullReadBytes } from '../tests/nullReadBytes.ts'
 
 const anatJson = JSON.stringify({
   rootOverwrite: 'anat',
@@ -11,7 +10,7 @@ const subjectJson = JSON.stringify({ subOverwrite: 'subject', subValue: 'subject
 const rootJson = JSON.stringify({ rootOverwrite: 'root', rootValue: 'root' })
 
 function readBytes(json: string) {
-  return (size: number) =>
+  return (_size: number) =>
     Promise.resolve(new TextEncoder().encode(json) as Uint8Array<ArrayBuffer>)
 }
 

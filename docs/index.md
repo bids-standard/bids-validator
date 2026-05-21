@@ -45,6 +45,7 @@ dev/using-the-api.md
 dev/contributing.md
 dev/environment.md
 dev/release-process.md
+dev/process.md
 ```
 
 ```{toctree}
@@ -59,6 +60,7 @@ validation-model/index.md
 :hidden:
 :caption: Reference
 
+changelog.md
 API Reference <https://jsr.io/@bids/validator/doc>
 ```
 

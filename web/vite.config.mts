@@ -6,6 +6,7 @@ import { nodePolyfills } from "npm:vite-plugin-node-polyfills@0.22.0"
 import "npm:react@^18.2.0"
 import "npm:react-dom@^18.2.0"
 import "npm:react-markdown@^10.1.0"
+import "npm:canvas-confetti@1.9.3"
 
 /**
  * Vite plugin to hack a bug injected by the default assetImportMetaUrlPlugin
@@ -14,7 +15,7 @@ function workaroundAssetImportMetaUrlPluginBug() {
   return {
     name: "vite-workaround-import-glob",
     transform(src, id) {
-      if (id.includes('validator/main.js')) {
+      if (src.includes(', import.meta.url')) {
         return src.replace(", import.meta.url", "")
       } else {
         return null

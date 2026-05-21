@@ -86,9 +86,9 @@ export async function readSidecars(
   for (const file of walkBack(source)) {
     try {
       ret.set(file.path, await loadJSON(file))
-    } catch (e: any) {
+    } catch (e: unknown) {
       // Expect JSON parsing errors to be handled when the file is loaded directly
-      if (!e?.code) {
+      if (!(e && typeof e === 'object' && 'code' in e)) {
         throw e
       }
     }

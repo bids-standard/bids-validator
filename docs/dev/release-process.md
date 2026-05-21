@@ -27,7 +27,7 @@ git commit -m 'rel: 2.2.5'
 git tag -a -F CHANGELOG.md -e 2.2.5
 ```
 
-This will open an editor. The initial text will be the ful changelog, e.g.:
+This will open an editor. The initial text will be the full changelog, e.g.:
 
 ```markdown
 # Changelog

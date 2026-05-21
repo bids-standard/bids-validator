@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck test file uses inline schema stubs that do not satisfy full Schema type
 import { assertEquals } from '@std/assert'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { evalColumns, evalIndexColumns, evalInitialColumns } from './tables.ts'
@@ -177,7 +177,7 @@ Deno.test('tables eval* tests', async (t) => {
     evalColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Participants')
 
     // age gets a warning
-    let issues = context.dataset.issues.get({ code: 'TSV_PSEUDO_AGE_DEPRECATED' })
+    const issues = context.dataset.issues.get({ code: 'TSV_PSEUDO_AGE_DEPRECATED' })
     assertEquals(issues.length, 1)
   })
 

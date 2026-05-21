@@ -11,10 +11,10 @@ Deno.test('schema loader', async (t) => {
     ) {
       const top_level = schemaDefs.rules.files.common.core as Record<
         string,
-        any
+        unknown
       >
-      if (top_level.hasOwnProperty('README')) {
-        assertObjectMatch(top_level.README, {
+      if (Object.hasOwn(top_level, 'README')) {
+        assertObjectMatch(top_level.README as Record<PropertyKey, unknown>, {
           level: 'recommended',
           stem: 'README',
           extensions: ['', '.md', '.rst', '.txt'],

@@ -1,3 +1,8 @@
+ci:
+  autoupdate_schedule: quarterly
+  autoupdate_commit_message: 'chore: update pre-commit hooks'
+  autofix_prs: false
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
@@ -12,7 +17,17 @@ repos:
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
       - id: trailing-whitespace
-  - repo: https://github.com/nozaq/pre-commit-deno
-    rev: db9b2333832fdbbb36b9c36d252cd52c2f9d41dc # 0.1.0
+  - repo: local
     hooks:
       - id: deno-fmt
+        name: deno fmt
+        language: python
+        entry: deno fmt
+        pass_filenames: false
+        additional_dependencies: [deno]
+      - id: deno-lint
+        name: deno lint
+        language: python
+        entry: deno lint
+        pass_filenames: false
+        additional_dependencies: [deno]
