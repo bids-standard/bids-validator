@@ -4,7 +4,6 @@
  * These classes implement stream, text and random bytes access to BIDS resources.
  */
 import { retry } from '@std/async'
-import { join } from '@std/path'
 import type { FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream } from './streams.ts'
 import { logger } from '../utils/logger.ts'
@@ -26,8 +25,8 @@ export class FsFileOpener implements FileOpener {
   /** Cached `Deno.FileInfo` object. */
   fileInfo!: Deno.FileInfo
 
-  constructor(datasetPath: string, path: string, fileInfo?: Deno.FileInfo) {
-    this.path = join(datasetPath, path)
+  constructor(path: string, fileInfo?: Deno.FileInfo) {
+    this.path = path
     if (fileInfo) {
       this.fileInfo = fileInfo
     } else {
