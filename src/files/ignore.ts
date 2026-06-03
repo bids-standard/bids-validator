@@ -53,9 +53,20 @@ export class FileIgnoreRules {
   ) {
     this.#ignore = ignore()
     if (addDefaults) {
-      this.#ignore.add(ignoreDefaults[group])
+      this.addDefaults(addDefaults)
     }
     this.#ignore.add(config)
+  }
+
+  /**
+   * Add default ignore group to the ignore rules.
+   *
+   * @param group - Group to add to the ignore rules.
+   *   "ignore" ignores opaque BIDS directories at the top level,
+   *   while "prune" ignores dotfiles at all levels.
+   */
+  addDefaults(group: IgnoreGroup): void {
+    this.#ignore.add(ignoreDefaults[group])
   }
 
   /**

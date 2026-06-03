@@ -58,4 +58,23 @@ Deno.test('Deno implementation of FileIgnoreRules', async (t) => {
     const filtered = files.filter((path) => !ignore.test(path))
     assertEquals(filtered.length, 0)
   })
+  await t.step('Default groups may be added post-init', () => {
+    const files = [
+      '/derivatives/pipeline/file.nii',
+      '/sourcedata/sub-01/anat/T1w.dcm',
+      '/.git/HEAD',
+      '/.datalad/config',
+      '/.gitignore',
+      '/sub-01/.gitignore',
+      '/sub-01/.DS_Store',
+      '/sub-01/.cache/file',
+      '/sub-01/anat/sub-01_T1w.nii.gz',
+    ]
+    const ignore = new FileIgnoreRules([], false)
+    assertEquals(files.filter((path) => !ignore.test(path)).length, 9)
+    ignore.addDefaults('ignore')
+    assertEquals(files.filter((path) => !ignore.test(path)).length, 7)
+    ignore.addDefaults('prune')
+    assertEquals(files.filter((path) => !ignore.test(path)).length, 1)
+  })
 })
