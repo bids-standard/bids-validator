@@ -75,11 +75,10 @@ export class FsFileOpener implements FileOpener {
    * @param offset - Byte offset at which to start reading (default `0`).
    */
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
-    const handle = await this.open()
+    using handle = await this.open()
     const buf = new Uint8Array(size)
     await handle.seek(offset, Deno.SeekMode.Start)
     const nbytes = await handle.read(buf) ?? 0
-    await handle.close()
     return buf.subarray(0, nbytes)
   }
 
