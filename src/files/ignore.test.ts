@@ -10,7 +10,6 @@ Deno.test('Deno implementation of FileIgnoreRules', async (t) => {
       '/CHANGES',
       '/participants.tsv',
       '/.git/HEAD',
-      '/.datalad/config',
       '/sub-01/anat/non-bidsy-file.xyz',
       '/explicit/full/path.nii',
     ]
@@ -24,5 +23,39 @@ Deno.test('Deno implementation of FileIgnoreRules', async (t) => {
       '/CHANGES',
       '/participants.tsv',
     ])
+  })
+  await t.step('Default ignores ignore opaque BIDS directories', () => {
+    const files = [
+      // Ignored directories
+      '/derivatives/pipeline/file.nii',
+      '/sourcedata/sub-01/anat/T1w.dcm',
+      '/code/script.py',
+      '/stimuli/image.png',
+      '/log/run.log',
+      '/doc/SOP.md',
+      // Only ignored at top level
+      '/sub-01/derivatives/pipeline/file.nii',
+      '/sub-01/sourcedata/sub-01/anat/T1w.dcm',
+      '/sub-01/code/script.py',
+      '/sub-01/stimuli/image.png',
+      '/sub-01/log/run.log',
+      '/sub-01/doc/SOP.md',
+    ]
+    const ignore = new FileIgnoreRules([])
+    const filtered = files.filter((path) => !ignore.test(path))
+    assertEquals(filtered.length, 6)
+  })
+  await t.step('Default prunes ignore dotfiles at all levels', () => {
+    const files = [
+      '/.git/HEAD',
+      '/.datalad/config',
+      '/.gitignore',
+      '/sub-01/.gitignore',
+      '/sub-01/.DS_Store',
+      '/sub-01/.cache/file',
+    ]
+    const ignore = new FileIgnoreRules([], 'prune')
+    const filtered = files.filter((path) => !ignore.test(path))
+    assertEquals(filtered.length, 0)
   })
 })
