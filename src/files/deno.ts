@@ -15,6 +15,10 @@ import fs from 'node:fs'
 /**
  * Deno-specific {@link BIDSFile} backed by the local filesystem.
  *
+ * Wraps {@link FsFileOpener} so that content is read from disk via
+ * `Deno.open`. Use this class (or {@link readFileTree}) when validating
+ * datasets on a Deno-accessible filesystem.
+ *
  * @param datasetPath - Absolute path to the dataset root on disk.
  * @param path - Dataset-relative POSIX path of the file.
  * @param ignore - Optional ignore rules for this file.

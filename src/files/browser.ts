@@ -6,6 +6,11 @@ import { BrowserFileOpener } from './openers.ts'
 /**
  * Browser-specific {@link BIDSFile} wrapping the native `File` API.
  *
+ * Backed by {@link BrowserFileOpener}. Use {@link fileListToTree} to
+ * convert a full `File[]` from `<input webkitdirectory>` into a
+ * {@link FileTree} ready for validation; this class is rarely constructed
+ * directly.
+ *
  * @param file - A `File` obtained from an `<input webkitdirectory>` element.
  * @param ignore - Ignore rules for this file.
  * @param parent - Parent directory node.

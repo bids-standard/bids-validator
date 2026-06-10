@@ -48,11 +48,22 @@ export class FileIgnoreRules {
     this.#ignore.add(config)
   }
 
+  /**
+   * Extend the rule set with additional gitignore-style patterns.
+   *
+   * @param config - Array of patterns to add (same format as `.bidsignore`).
+   */
   add(config: string[]): void {
     this.#ignore.add(config)
   }
 
-  /** Test if a dataset relative path should be ignored given configured rules */
+  /**
+   * Test whether a dataset-relative path should be ignored.
+   *
+   * @param path - Dataset-relative path with a leading `/` (the leading slash
+   *   is stripped internally before matching).
+   * @returns `true` if the path is matched by any active ignore pattern.
+   */
   test(path: string): boolean {
     // Paths come in with a leading slash, but ignore expects paths relative to root
     return this.#ignore.ignores(path.slice(1, path.length))
