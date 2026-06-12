@@ -76,7 +76,11 @@ export async function loadTSVGZ(
   }
 }
 
-async function _loadTSV(file: BIDSFile, headerless: boolean = false, maxRows: number = -1): Promise<ColumnsMap> {
+async function _loadTSV(
+  file: BIDSFile,
+  headerless: boolean = false,
+  maxRows: number = -1,
+): Promise<ColumnsMap> {
   const stream = await openStream(file)
   const reader = stream
     .pipeThrough(createUTF8Stream({ fatal: true }))
@@ -101,7 +105,7 @@ async function _loadTSV(file: BIDSFile, headerless: boolean = false, maxRows: nu
 
     if (headerless && rowValues.length > 0) {
       headers.forEach((h, i) => {
-        (columnsMap.get(h) as string[]).unshift(rowValues[i])
+        ;(columnsMap.get(h) as string[]).unshift(rowValues[i])
       })
     }
 
