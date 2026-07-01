@@ -32,6 +32,7 @@ const ignoreDefaults: Record<IgnoreGroup, string[]> = {
   ],
   'prune': [
     '.**',
+    '!/.bidsignore',
   ],
 }
 

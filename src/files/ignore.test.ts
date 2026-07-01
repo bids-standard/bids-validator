@@ -58,6 +58,15 @@ Deno.test('Deno implementation of FileIgnoreRules', async (t) => {
     const filtered = files.filter((path) => !ignore.test(path))
     assertEquals(filtered.length, 0)
   })
+  await t.step('Default prune does not prune .bidsignore', () => {
+    const ignore = new FileIgnoreRules([], 'prune')
+    assertEquals(ignore.test('/.bidsignore'), false)
+  })
+  await t.step('Adding default ignores does not prune .bidsignore', () => {
+    const ignore = new FileIgnoreRules([], 'prune')
+    ignore.addDefaults('ignore')
+    assertEquals(ignore.test('/.bidsignore'), false)
+  })
   await t.step('Default groups may be added post-init', () => {
     const files = [
       '/derivatives/pipeline/file.nii',
