@@ -4,7 +4,6 @@
  * These classes implement stream, text and random bytes access to BIDS resources.
  */
 import { retry } from '@std/async'
-import { join } from '@std/path'
 import type { FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream } from './streams.ts'
 import { logger } from '../utils/logger.ts'
@@ -26,8 +25,8 @@ export class FsFileOpener implements FileOpener {
   /** Cached `Deno.FileInfo` object. */
   fileInfo!: Deno.FileInfo
 
-  constructor(datasetPath: string, path: string, fileInfo?: Deno.FileInfo) {
-    this.path = join(datasetPath, path)
+  constructor(path: string, fileInfo?: Deno.FileInfo) {
+    this.path = path
     if (fileInfo) {
       this.fileInfo = fileInfo
     } else {
@@ -76,11 +75,10 @@ export class FsFileOpener implements FileOpener {
    * @param offset - Byte offset at which to start reading (default `0`).
    */
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
-    const handle = await this.open()
+    using handle = await this.open()
     const buf = new Uint8Array(size)
     await handle.seek(offset, Deno.SeekMode.Start)
     const nbytes = await handle.read(buf) ?? 0
-    await handle.close()
     return buf.subarray(0, nbytes)
   }
 
