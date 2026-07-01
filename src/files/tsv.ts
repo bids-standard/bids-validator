@@ -76,7 +76,11 @@ export async function loadTSVGZ(
   }
 }
 
-async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMap> {
+async function _loadTSV(
+  file: BIDSFile,
+  headerless: boolean = false,
+  maxRows: number = -1,
+): Promise<ColumnsMap> {
   const stream = await openStream(file)
   const reader = stream
     .pipeThrough(createUTF8Stream({ fatal: true }))
@@ -85,9 +89,11 @@ async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMa
 
   try {
     const headerRow = await reader.read()
-    const headers = (headerRow.done || !headerRow.value) ? [] : headerRow.value.split('\t')
+    const rowValues = (headerRow.done || !headerRow.value) ? [] : headerRow.value.split('\t')
 
-    if (new Set(headers).size !== headers.length) {
+    const headers = headerless ? rowValues.map((_, i) => `col${i}`) : rowValues
+
+    if (!headerless && new Set(headers).size !== headers.length) {
       throw {
         code: 'TSV_COLUMN_HEADER_DUPLICATE',
         location: file.path,
@@ -95,7 +101,15 @@ async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMa
       }
     }
 
-    return await loadColumns(reader, headers, maxRows, 1)
+    const columnsMap = await loadColumns(reader, headers, maxRows, 1)
+
+    if (headerless && rowValues.length > 0) {
+      headers.forEach((h, i) => {
+        ;(columnsMap.get(h) as string[]).unshift(rowValues[i])
+      })
+    }
+
+    return columnsMap
   } finally {
     await reader.cancel()
   }

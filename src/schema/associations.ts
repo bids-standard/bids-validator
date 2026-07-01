@@ -41,7 +41,7 @@ async function constructSidecar(file: BIDSFile): Promise<Record<string, unknown>
  */
 const associationLookup: Record<string, LoadFunction> = {
   events: async (file: BIDSFile, options: LoadOptions): Promise<Events & WithSidecar> => {
-    const columns = await loadTSV(file, options.maxRows)
+    const columns = await loadTSV(file, false, options.maxRows)
       .catch((_e) => {
         return new Map()
       })
@@ -55,7 +55,7 @@ const associationLookup: Record<string, LoadFunction> = {
     file: BIDSFile,
     options: LoadOptions,
   ): Promise<Aslcontext> => {
-    const columns = await loadTSV(file, options.maxRows)
+    const columns = await loadTSV(file, false, options.maxRows)
       .catch((_e) => {
         return new Map()
       })
@@ -91,7 +91,7 @@ const associationLookup: Record<string, LoadFunction> = {
     }
   },
   channels: async (file: BIDSFile, options: LoadOptions): Promise<Channels> => {
-    const columns = await loadTSV(file, options.maxRows)
+    const columns = await loadTSV(file, false, options.maxRows)
       .catch((_e) => {
         return new Map()
       })
