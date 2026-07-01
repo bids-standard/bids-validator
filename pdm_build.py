@@ -57,7 +57,19 @@ def pdm_build_initialize(context):
 
 
 INIT_PY = f'''\
-# This module is generated at build time by pdm_build.py.
+# This module was generated at build time by pdm_build.py.
+#
+# This module was adapted from git-annex-wheel/src/git_annex/__init__.py @ commit 9a059be:
+#
+# https://github.com/psychoinformatics-de/git-annex-wheel/blob/9a059be12db8b90cb1ecf71e498d3a2135366b6f/src/git_annex/__init__.py
+# https://hub.datalad.org/git-annex/git-annex-wheel/src/commit/9a059be12db8b90cb1ecf71e498d3a2135366b6f/src/git_annex/__init__.py
+#
+# By agreement of the authors of that module, releasing this derivative work under MIT is
+# authorized. See https://github.com/bids-standard/bids-validator/pull/425.
+#
+# Changes:
+#   * Adapted cli() to find Deno bundled in a separate package and exec the local bundle.
+#
 """Find the deno runtime and exec the bundled BIDS validator."""
 import os
 import sys
