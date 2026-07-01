@@ -26,7 +26,7 @@ import fs from 'node:fs'
  */
 export class BIDSFileDeno extends BIDSFile {
   constructor(datasetPath: string, path: string, ignore?: FileIgnoreRules, parent?: FileTree) {
-    super(path, new FsFileOpener(datasetPath, path), ignore, parent)
+    super(path, new FsFileOpener(join(datasetPath, path)), ignore, parent)
   }
 }
 
@@ -119,7 +119,7 @@ async function _readFileTree({
     }
 
     if (isFile) {
-      const opener = new FsFileOpener(rootPath, thisPath, fileInfo)
+      const opener = new FsFileOpener(join(rootPath, thisPath), fileInfo)
       tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
     } else if (isDirectory) {
       const dirTree = await _readFileTree({
