@@ -18,34 +18,56 @@ export async function readBidsIgnore(file: BIDSFile): Promise<string[]> {
   }
 }
 
-const defaultIgnores = [
-  '.git**',
-  '.*',
-  'sourcedata/',
-  'code/',
-  'stimuli/',
-  'log/',
-]
+/** Names of rules for either pruning or ignoring files. */
+export type IgnoreGroup = 'ignore' | 'prune'
+
+const ignoreDefaults: Record<IgnoreGroup, string[]> = {
+  'ignore': [
+    '/sourcedata/',
+    '/derivatives/',
+    '/code/',
+    '/stimuli/',
+    '/log/',
+    '/doc/',
+  ],
+  'prune': [
+    '.**',
+    '!/.bidsignore',
+  ],
+}
 
 /**
  * Gitignore-style path matcher for `.bidsignore` rules.
  *
  * @param config - Array of gitignore-style patterns.
- * @param addDefaults - When `true` (the default), standard BIDS ignores
- *   (`.git**`, `sourcedata/`, `code/`, etc.) are prepended.
+ * @param addDefaults - When set, pre-populate with default ignore groups.
+ *   "ignore" (the default) ignores opaque BIDS directories at the top level,
+ *   while "prune" ignores dotfiles at all levels.
+ *   Set to `false` to disable default rules.
  */
 export class FileIgnoreRules {
   #ignore: Ignore
 
   constructor(
     config: string[],
-    addDefaults: boolean = true,
+    addDefaults: IgnoreGroup | false = 'ignore',
   ) {
     this.#ignore = ignore()
     if (addDefaults) {
-      this.#ignore.add(defaultIgnores)
+      this.addDefaults(addDefaults)
     }
     this.#ignore.add(config)
+  }
+
+  /**
+   * Add default ignore group to the ignore rules.
+   *
+   * @param group - Group to add to the ignore rules.
+   *   "ignore" ignores opaque BIDS directories at the top level,
+   *   while "prune" ignores dotfiles at all levels.
+   */
+  addDefaults(group: IgnoreGroup): void {
+    this.#ignore.add(ignoreDefaults[group])
   }
 
   /**

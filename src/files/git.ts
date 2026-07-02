@@ -243,6 +243,7 @@ export async function readGitTree(
   const { commit, gitOptions } = await resolveRef(repoPath, ref)
 
   const ignore = new FileIgnoreRules([])
+  prune ??= new FileIgnoreRules([], 'prune')
   const files: BIDSFile[] = []
   const symlinkMap = new Map<string, string>()
   const deferredSymlinks: { filepath: string; target: string }[] = []

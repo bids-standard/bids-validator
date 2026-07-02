@@ -155,7 +155,7 @@ export async function readFileTree(
   prune?: FileIgnoreRules,
   preferredRemote?: string,
 ): Promise<FileTree> {
-  prune ??= new FileIgnoreRules([], false)
+  prune ??= new FileIgnoreRules([], 'prune')
   const ignore = new FileIgnoreRules([])
   const tree = await _readFileTree({ rootPath, relativePath: '/', ignore, prune, preferredRemote })
   return loadBidsIgnore(tree, ignore)

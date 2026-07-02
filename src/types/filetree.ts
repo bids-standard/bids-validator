@@ -101,7 +101,7 @@ export class BIDSFile {
   /** `true` when the file's path matches the active ignore rules. */
   get ignored(): boolean {
     if (typeof this.#ignore === 'boolean') return this.#ignore
-    return this.#ignore.test(this.path)
+    return this.#ignore.test(this.path) || this.path === '/.bidsignore'
   }
 
   /** File size in bytes, delegated to the underlying {@link FileOpener}. */
