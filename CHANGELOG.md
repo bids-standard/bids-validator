@@ -12,9 +12,8 @@ and update their code accordingly.
 The primary user-facing changes in this release are the support for
 validating git trees and passing custom schemas to the web validator.
 
-Thanks to Anthony Galassi, Charan Sai Guttala, Yaroslav Halchenko,
-Dimitri Papadopoulos, Kay Robbins and Chris Rorden for their contributions
-to this release.
+Thanks to Charan Sai Guttala, Yaroslav Halchenko, Dimitri Papadopoulos,
+Kay Robbins and Chris Rorden for their contributions to this release.
 
 ## Added
 
