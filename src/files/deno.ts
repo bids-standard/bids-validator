@@ -71,7 +71,7 @@ async function _readFileTree({
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     const thisPath = posix.join(relativePath, dirEntry.name)
-    if (prune.test(thisPath)) {
+    if (prune.test(thisPath, { log: true, prefix: 'Pruned' })) {
       continue
     }
 
@@ -155,7 +155,7 @@ export async function readFileTree(
   prune?: FileIgnoreRules,
   preferredRemote?: string,
 ): Promise<FileTree> {
-  prune ??= new FileIgnoreRules([], false)
+  prune ??= new FileIgnoreRules([], 'prune')
   const ignore = new FileIgnoreRules([])
   const tree = await _readFileTree({ rootPath, relativePath: '/', ignore, prune, preferredRemote })
   return loadBidsIgnore(tree, ignore)

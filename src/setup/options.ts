@@ -57,7 +57,7 @@ export type ValidatorOptions = {
   datasetTypes: string[]
   /** Modalities to refuse; validation fails if any of these are detected. */
   blacklistModalities: string[]
-  /** When `true`, remove files matched by `.bidsignore` from the tree before validation. */
+  /** When `true`, remove opaque directories (e.g., sourcedata/, derivatives/) before validation. */
   prune?: boolean
   /** Row cap for TSV validation; `0` validates headers only; unset or `-1` validates all rows. */
   maxRows?: number
@@ -143,7 +143,8 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   )
   .option(
     '-p, --prune',
-    'Prune derivatives and sourcedata directories on load (disables -r and will underestimate dataset size)',
+    'Prune "opaque" BIDS directories from source tree before validation. ' +
+      'WARNING: This is an extreme measure to reduce memory usage and IO operations but may change the results of validation.',
   )
   .option(
     '-o, --outfile <file:string>',

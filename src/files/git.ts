@@ -243,6 +243,7 @@ export async function readGitTree(
   const { commit, gitOptions } = await resolveRef(repoPath, ref)
 
   const ignore = new FileIgnoreRules([])
+  prune ??= new FileIgnoreRules([], 'prune')
   const files: BIDSFile[] = []
   const symlinkMap = new Map<string, string>()
   const deferredSymlinks: { filepath: string; target: string }[] = []
@@ -269,7 +270,7 @@ export async function readGitTree(
         if (entryType !== 'blob') return null
 
         // Prune check for files
-        if (prune && prune.test('/' + filepath)) return null
+        if (prune.test('/' + filepath, { log: true, prefix: 'Pruned' })) return null
 
         const oid = await entry.oid()
         const mode = await entry.mode()
