@@ -41,7 +41,7 @@ export function fileListToTree(
   return loadBidsIgnore(
     filesToTree(
       files.map((f) => new BIDSFileBrowser(f, ignore, root))
-        .filter((f) => !prune.test(f.path)),
+        .filter((f) => !prune.test(f.path, { log: true, prefix: 'Pruned' })),
       ignore,
     ),
     ignore,

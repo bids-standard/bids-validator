@@ -1,6 +1,6 @@
+import { default as ignore, type Ignore } from '@ignore'
 import type { BIDSFile } from '../types/filetree.ts'
-import { default as ignore } from '@ignore'
-import type { Ignore } from '@ignore'
+import { logger } from '../utils/logger.ts'
 
 /**
  * Read a `.bidsignore` file and return its lines as ignore patterns.
@@ -20,6 +20,12 @@ export async function readBidsIgnore(file: BIDSFile): Promise<string[]> {
 
 /** Names of rules for either pruning or ignoring files. */
 export type IgnoreGroup = 'ignore' | 'prune'
+
+/** Options for logging ignored files. */
+export type LogOptions = {
+  log?: boolean
+  prefix?: string
+}
 
 const ignoreDefaults: Record<IgnoreGroup, string[]> = {
   'ignore': [
@@ -84,10 +90,16 @@ export class FileIgnoreRules {
    *
    * @param path - Dataset-relative path with a leading `/` (the leading slash
    *   is stripped internally before matching).
+   * @param options - Logging options. If `log` is set, a message is logged.
+   *   `prefix` is prepended to the log message (default: "Ignoring path").
    * @returns `true` if the path is matched by any active ignore pattern.
    */
-  test(path: string): boolean {
+  test(path: string, options?: LogOptions): boolean {
     // Paths come in with a leading slash, but ignore expects paths relative to root
-    return this.#ignore.ignores(path.slice(1, path.length))
+    const ignored = this.#ignore.ignores(path.slice(1, path.length))
+    if (ignored && options?.log) {
+      logger.info(`${options.prefix ?? 'Ignoring path'}: ${path}`)
+    }
+    return ignored
   }
 }

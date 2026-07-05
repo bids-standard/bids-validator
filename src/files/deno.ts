@@ -71,7 +71,7 @@ async function _readFileTree({
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     const thisPath = posix.join(relativePath, dirEntry.name)
-    if (prune.test(thisPath)) {
+    if (prune.test(thisPath, { log: true, prefix: 'Pruned' })) {
       continue
     }
 
