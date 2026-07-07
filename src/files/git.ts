@@ -34,8 +34,11 @@ import type { FollowBudget, GitOptions, TreeSource } from './gitResolver.ts'
  * @param gitOptions - Repository-level git configuration.
  */
 export class GitFileOpener implements FileOpener {
+  /** Git object ID of the blob (40-character SHA-1 or 64-character SHA-256). */
   oid: string
+  /** File size in bytes. */
   size: number
+  /** Repository-level git configuration passed through to `isomorphic-git` calls. */
   gitOptions: GitOptions
   #blob: Uint8Array<ArrayBuffer> | undefined
 
@@ -53,16 +56,24 @@ export class GitFileOpener implements FileOpener {
     return this.#blob
   }
 
+  /** Open the file and return its content as a byte stream. */
   async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     const blob = await this.#loadBlob()
     return streamFromUint8Array(blob)
   }
 
+  /** Read the entire file and return it decoded as a UTF-8 string. */
   async text(): Promise<string> {
     const blob = await this.#loadBlob()
     return new TextDecoder().decode(blob)
   }
 
+  /**
+   * Read up to `size` bytes starting at `offset`.
+   *
+   * @param size - Maximum number of bytes to read.
+   * @param offset - Byte offset at which to start reading (default `0`).
+   */
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
     const blob = await this.#loadBlob()
     return blob.slice(offset, offset + size) as Uint8Array<ArrayBuffer>
@@ -81,12 +92,20 @@ export class GitFileOpener implements FileOpener {
  * Size is set from the annex key's embedded `s` field.
  */
 export class AnnexedGitFileOpener implements FileOpener {
+  /** File size in bytes. */
   size: number
   #key: string
   #gitOptions: GitOptions
   #preferredRemote: string | undefined
   #delegate: FileOpener | undefined
 
+  /**
+   * @param key - git-annex key string (e.g. `"SHA256E-s1234--abcd.nii.gz"`).
+   * @param size - File size in bytes from the key's embedded `s` field.
+   * @param gitOptions - Repository-level git configuration.
+   * @param preferredRemote - Name of the git-annex remote to try first when
+   *   the content is not locally present.
+   */
   constructor(
     key: string,
     size: number,
@@ -117,7 +136,7 @@ export class AnnexedGitFileOpener implements FileOpener {
     )
     try {
       const fileInfo = await Deno.stat(localPath)
-      this.#delegate = new FsFileOpener('', localPath, fileInfo)
+      this.#delegate = new FsFileOpener(localPath, fileInfo)
       return this.#delegate
     } catch {
       // Local object not present; fall through to remote resolution
@@ -137,14 +156,22 @@ export class AnnexedGitFileOpener implements FileOpener {
     return this.#delegate
   }
 
+  /** Open the file and return its content as a byte stream. */
   async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     return (await this.#resolve()).stream()
   }
 
+  /** Read the entire file and return it decoded as a UTF-8 string. */
   async text(): Promise<string> {
     return (await this.#resolve()).text()
   }
 
+  /**
+   * Read up to `size` bytes starting at `offset`.
+   *
+   * @param size - Maximum number of bytes to read.
+   * @param offset - Byte offset at which to start reading (default `0`).
+   */
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
     return (await this.#resolve()).readBytes(size, offset)
   }
@@ -216,6 +243,7 @@ export async function readGitTree(
   const { commit, gitOptions } = await resolveRef(repoPath, ref)
 
   const ignore = new FileIgnoreRules([])
+  prune ??= new FileIgnoreRules([], 'prune')
   const files: BIDSFile[] = []
   const symlinkMap = new Map<string, string>()
   const deferredSymlinks: { filepath: string; target: string }[] = []
@@ -242,7 +270,7 @@ export async function readGitTree(
         if (entryType !== 'blob') return null
 
         // Prune check for files
-        if (prune && prune.test('/' + filepath)) return null
+        if (prune.test('/' + filepath, { log: true, prefix: 'Pruned' })) return null
 
         const oid = await entry.oid()
         const mode = await entry.mode()

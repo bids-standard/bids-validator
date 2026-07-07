@@ -1,15 +1,37 @@
 /**
- * @deprecated The ./options entry point is deprecated. Use:
- * - Config, ValidatorOptions → '@bids/validator/validate'
- * - validateCommand → '@bids/validator/cli'
- * parseOptions has no replacement and will be removed in v4.
+ * @deprecated The `./options` entry point is retained for v3 back-compat
+ * and will be removed in v4. Migrate to:
+ * - {@link [validate].Config}, {@link [validate].ValidatorOptions}
+ * - {@link [cli].validateCommand}
+ *
+ * `parseOptions` has no replacement — call {@link [validate].validate}
+ * with your own {@link [validate].ValidatorOptions} object instead of
+ * relying on `Deno.args` parsing.
+ *
+ * @module
  */
 
-/** @deprecated Use Config from '@bids/validator/validate'. */
-export type { Config } from '../../setup/options.ts'
-/** @deprecated Use ValidatorOptions from '@bids/validator/validate'. */
-export type { ValidatorOptions } from '../../setup/options.ts'
-/** @deprecated Use validateCommand from '@bids/validator/cli'. */
-export { validateCommand } from '../../setup/options.ts'
-/** @deprecated parseOptions will be removed in v4. No replacement — use validate() with your own options. */
-export { parseOptions } from '../../setup/options.ts'
+import {
+  parseOptions as _parseOptions,
+  validateCommand as _validateCommand,
+} from '../../setup/options.ts'
+import type {
+  Config as _Config,
+  ValidatorOptions as _ValidatorOptions,
+} from '../../setup/options.ts'
+
+/** @deprecated Use {@link [validate].Config} instead. */
+export type Config = _Config
+
+/** @deprecated Use {@link [validate].ValidatorOptions} instead. */
+export type ValidatorOptions = _ValidatorOptions
+
+/** @deprecated Use {@link [cli].validateCommand} instead. */
+export const validateCommand = _validateCommand
+
+/**
+ * @deprecated `parseOptions` will be removed in v4. No drop-in
+ * replacement — call {@link [validate].validate} with a
+ * {@link [validate].ValidatorOptions} object you construct yourself.
+ */
+export const parseOptions = _parseOptions

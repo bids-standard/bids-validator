@@ -1,7 +1,11 @@
 /**
- * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters
+ * Thrown when a text file contains a UTF-16 BOM, indicating the file is
+ * not valid UTF-8.
  */
 export class UnicodeDecodeError extends Error {
+  /**
+   * @param message - Human-readable description of the encoding error.
+   */
   constructor(message: string) {
     super(message)
     this.name = 'UnicodeDecode'
@@ -58,6 +62,8 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
  *
  * @param options - Decoder options; set `fatal: true` to throw on invalid bytes.
  * @returns A transform stream from raw bytes to decoded strings.
+ * @throws {UnicodeDecodeError} When a UTF-16 BOM is detected in the first
+ *   chunk of the stream.
  */
 export function createUTF8Stream(options = { fatal: false }): TransformStream<Uint8Array, string> {
   return new TransformStream(new UTF8StreamTransformer(options))
@@ -67,7 +73,7 @@ export function createUTF8Stream(options = { fatal: false }): TransformStream<Ui
  * Create a single-chunk `ReadableStream` from a `Uint8Array`.
  *
  * @param arr - The byte array to wrap.
- * @returns A readable stream that emits `arr` and closes.
+ * @returns A readable stream that emits `arr` as a single chunk and then closes.
  */
 export function streamFromUint8Array<T extends ArrayBufferLike>(
   arr: Uint8Array<T>,
@@ -84,7 +90,7 @@ export function streamFromUint8Array<T extends ArrayBufferLike>(
  * Create a single-chunk `ReadableStream` by UTF-8-encoding a string.
  *
  * @param str - The string to encode.
- * @returns A readable stream of the encoded bytes.
+ * @returns A readable stream of the encoded bytes as a single chunk.
  */
 export function streamFromString(str: string): ReadableStream<Uint8Array<ArrayBuffer>> {
   return streamFromUint8Array(new TextEncoder().encode(str) as Uint8Array<ArrayBuffer>)
