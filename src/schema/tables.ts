@@ -372,10 +372,10 @@ export function evalIndexColumns(
   }
 
   const uniqueIndexValues = new Set()
-  let index_columns = []
+  let index_columns: string[] = [] 
   if (context.sidecar.IndexColumns) {
-    index_columns = context.sidecar.IndexColumns
-    const missingColumns = index_columns.filter((col) => !context.columns.has(col))
+    index_columns = context.sidecar.IndexColumns as string[]
+    const missingColumns = index_columns.filter((col) => !context.columns[col])
     if (missingColumns.length) {
       context.dataset.issues.add({
         code: 'TSV_COLUMN_MISSING',
