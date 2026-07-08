@@ -288,7 +288,7 @@ async function walkSubtree(
       ? `/${entry.path}`
       : `${graftPath}/${entry.path}`
 
-    if (prune && prune.test(outPath)) continue
+    if (prune?.test(outPath, { log: true, prefix: 'Pruned' })) continue
 
     if (entry.type === 'tree') {
       // Recurse with the child outPath as the new graftPath and the

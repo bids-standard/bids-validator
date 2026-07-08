@@ -152,11 +152,14 @@ Deno.test('extract subtrees', async (t) => {
     subignore.opener = new StringOpener('also_ignored_file\n')
 
     assertEquals(tree.get('ignored_file')!.ignored, true)
-    assertEquals(tree.get('derivatives/pipeline/also_ignored_file')!.ignored, false)
+    // All derivatives files are ignored by the root
+    assertEquals(tree.get('derivatives/pipeline/also_ignored_file')!.ignored, true)
 
     const pipeline = await subtree(tree.get('derivatives/pipeline') as FileTree)
-    assertEquals(pipeline.get('also_ignored_file')!.ignored, true)
+    // The top-level ignored_file is no longer ignored in the subtree
     assertEquals(pipeline.get('ignored_file')!.ignored, false)
+    // The subtree's .bidsignore still catches also_ignored_file
+    assertEquals(pipeline.get('also_ignored_file')!.ignored, true)
   })
 })
 
