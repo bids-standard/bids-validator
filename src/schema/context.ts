@@ -68,13 +68,6 @@ export class BIDSContextDataset implements Dataset {
           ?.filter((ext) => ext.endsWith('/'))
         : [],
     )
-    this.opaqueDirectories = new Set<string>(
-      args.schema
-        ? Object.values(this.schema.rules.directories.raw)
-          ?.filter((rule) => rule?.opaque && 'name' in rule)
-          ?.map((dir) => `/${dir.name}`)
-        : [],
-    )
     this.sessions = new ColumnsMap()
     // @ts-ignore
     this.subjects = args.subjects || null
