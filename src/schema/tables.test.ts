@@ -275,6 +275,55 @@ Deno.test('tables eval* tests', async (t) => {
     )
   })
 
+  await t.step('verify sidecar specified column index works', () => {
+    const context = {
+      path: '/sub-01/sub-01_scans.tsv',
+      extension: '.tsv',
+      sidecar: { 'IndexColumns': ['onset', 'filename'] },
+      columns: new ColumnsMap(Object.entries({
+        onset: ['1900-01-01:00:00', '1900-01-01:00:00'],
+        filename: ['func/sub-01_task-rest_bold.nii.gz', 'func/sub-01_task-unrest_bold.nii.gz'],
+      })),
+      dataset: { issues: new DatasetIssues() },
+    }
+    const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
+    evalIndexColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_INDEX_VALUE_NOT_UNIQUE' }).length,
+      0,
+    )
+
+    // Now test index columns that violate the multi column uniqueness constraint.
+    context.columns = new ColumnsMap(Object.entries({
+      onset: ['1900-01-01:00:00', '1900-01-01:00:00'],
+      filename: ['func/sub-01_task-rest_bold.nii.gz', 'func/sub-01_task-rest_bold.nii.gz'],
+    }))
+    evalIndexColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_INDEX_VALUE_NOT_UNIQUE' }).length,
+      1,
+    )
+  })
+
+  await t.step('verify sidecar specified column index errors on missing column', () => {
+    const context = {
+      path: '/sub-01/sub-01_scans.tsv',
+      extension: '.tsv',
+      sidecar: { 'IndexColumns': ['onset', 'badcol'] },
+      columns: new ColumnsMap(Object.entries({
+        onset: ['1900-01-01:00:00', '1900-01-01:00:00'],
+        filename: ['func/sub-01_task-rest_bold.nii.gz', 'func/sub-01_task-rest_bold.nii.gz'],
+      })),
+      dataset: { issues: new DatasetIssues() },
+    }
+    const rule = schemaDefs.rules.tabular_data.modality_agnostic.Scans
+    evalIndexColumns(rule, context, schema, 'rules.tabular_data.modality_agnostic.Scans')
+    assertEquals(
+      context.dataset.issues.get({ code: 'TSV_COLUMN_MISSING' }).length,
+      1,
+    )
+  })
+
   await t.step('verify not allowed additional columns', () => {
     const context = {
       path: '/sub-01/sub-01_scans.tsv',

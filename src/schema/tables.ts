@@ -369,10 +369,24 @@ export function evalIndexColumns(
   ) {
     return
   }
+
   const uniqueIndexValues = new Set()
-  const index_columns = rule.index_columns.map((col: string) => {
-    return schema.objects.columns[col].name
-  }).filter((col: string) => context.columns[col])
+  let index_columns: string[] = []
+  if (context.sidecar.IndexColumns) {
+    index_columns = context.sidecar.IndexColumns as string[]
+    const missingColumns = index_columns.filter((col) => !context.columns[col])
+    if (missingColumns.length) {
+      context.dataset.issues.add({
+        code: 'TSV_COLUMN_MISSING',
+        location: context.path,
+        issueMessage: `Sidecar specified IndexColumns are Missing: ${missingColumns}`,
+      })
+    }
+  } else if (rule.index_columns) {
+    index_columns = rule.index_columns.map((col: string) => {
+      return schema.objects.columns[col].name
+    }).filter((col: string) => context.columns[col])
+  }
 
   const rowCount = (context.columns[index_columns[0]] as string[])?.length || 0
   for (let i = 0; i < rowCount; i++) {

@@ -1,4 +1,4 @@
-import { assert, assertEquals } from '@std/assert'
+import { assert, assertEquals, equal } from '@std/assert'
 import {
   contextFunction,
   createMatcher,
@@ -10,8 +10,10 @@ import {
   prepareContext,
 } from './expressionLanguage.ts'
 import { dataFile, rootFileTree } from './fixtures.test.ts'
-import { BIDSContext } from './context.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
+import type { BIDSContext } from './context.ts'
+import { makeBIDSContext } from './context.test.ts'
+import type { BIDSFile } from '../types/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
 
 Deno.test('test expression functions', async (t) => {
   const context = new BIDSContext(dataFile, undefined, rootFileTree)
