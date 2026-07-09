@@ -1,4 +1,5 @@
 import type { BIDSContext } from './context.ts'
+import type { FileTree } from '../types/filetree.ts'
 import { memoize } from '../utils/memoize.ts'
 
 function exists(this: BIDSContext, list: string[], rule: string = 'dataset'): number {
@@ -34,6 +35,124 @@ function exists(this: BIDSContext, list: string[], rule: string = 'dataset'): nu
       return fileTree.contains(parts)
     }).length
   }
+}
+
+/*
+ * Glob utility function. Breaks initial glob pattern into per directory components.
+ */
+export function parsePattern(pattern: string): string[] {
+  // Remove leading/trailing slashes
+  pattern = pattern.replace(/^\/+|\/+$/g, '')
+
+  if (!pattern) return []
+
+  // Split by '/', filter out empty strings
+  return pattern.split('/').filter((c) => c.length > 0)
+}
+
+/*
+ * Glob utility function. Generates function to match individual components of glob.
+ */
+export function createMatcher(component: string): (name: string) => boolean {
+  if (component === '**') {
+    return () => true // Special case, handled in recursion
+  }
+
+  if (component === '*') {
+    return (name) => true // Match any single name
+  }
+
+  if (component === '?') {
+    return (name) => name.length === 1
+  }
+
+  // Glob pattern with * and ? wildcards
+  // Convert to regex: sub-* → /^sub-.*$/
+  const pattern = '^' + component.replace(/\*/g, '.*').replace(/\?/g, '.') + '$'
+  const re = new RegExp(pattern)
+  return (name) => re.test(name)
+}
+
+/*
+ * Glob utility function. Recurses filetree applying match functions to the
+ * appropriate directories and files.
+ */
+export function* matchRecursive(
+  tree: FileTree,
+  components: string[],
+  currentPath: string,
+): Generator<string> {
+  if (components.length === 0) {
+    return
+  }
+
+  const component = components[0]
+  const remaining = components.slice(1)
+
+  // Special handling for '**': match zero or more directories
+  if (component === '**') {
+    if (remaining.length === 0) {
+      // Just '**' - match all files and directories recursively
+      yield* matchAll(tree, currentPath)
+      return
+    }
+
+    // '**' followed by more patterns
+    // Try to match the next pattern at this level (zero directories)
+    yield* matchRecursive(tree, remaining, currentPath)
+
+    // Also try deeper (one or more directories)
+    for (const dir of tree.directories) {
+      yield* matchRecursive(dir, components, `${currentPath}/${dir.name}`.replace(/^\//, ''))
+    }
+    return
+  }
+
+  const matcher = createMatcher(component)
+
+  // Check files at this level
+  if (remaining.length === 0) {
+    for (const file of tree.files) {
+      if (matcher(file.name)) {
+        yield currentPath ? `${currentPath}/${file.name}` : file.name
+      }
+    }
+  }
+
+  // Check directories at this level
+  for (const dir of tree.directories) {
+    if (matcher(dir.name)) {
+      if (remaining.length === 0) {
+        yield currentPath ? `${currentPath}/${dir.name}` : dir.name
+      } else {
+        // Recurse into matched directory
+        yield* matchRecursive(dir, remaining, `${currentPath}/${dir.name}`.replace(/^\//, ''))
+      }
+    }
+  }
+}
+
+/*
+ * Glob utility function. Used to handle '**' in glob pattern.
+ */
+function* matchAll(tree: FileTree, currentPath: string): Generator<string> {
+  for (const file of tree.files) {
+    yield currentPath ? `${currentPath}/${file.name}` : file.name
+  }
+  for (const dir of tree.directories) {
+    const newPath = `${currentPath}/${dir.name}`.replace(/^\//, '')
+    yield newPath
+    yield* matchAll(dir, newPath)
+  }
+}
+
+export function glob(this: BIDSContext, toMatch: string): string[] {
+  const components = parsePattern(toMatch)
+  if (components.length === 0) {
+    return []
+  }
+
+  return Array.from(matchRecursive(this.dataset.tree, components, ''))
 }
 
 export const expressionFunctions = {
@@ -124,6 +243,7 @@ export const expressionFunctions = {
   allequal: <T>(a: T[], b: T[]): boolean => {
     return (a != null && b != null) && a.length === b.length && a.every((v, i) => v === b[i])
   },
+  glob: glob,
 }
 
 /**
