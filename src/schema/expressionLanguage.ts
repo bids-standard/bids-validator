@@ -59,7 +59,7 @@ export function createMatcher(component: string): (name: string) => boolean {
   }
 
   if (component === '*') {
-    return (name) => true // Match any single name
+    return (_name) => true // Match any single name
   }
 
   if (component === '?') {
