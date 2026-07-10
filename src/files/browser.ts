@@ -31,11 +31,19 @@ export class BIDSFileBrowser extends BIDSFile {
  * @param files - Files selected via the browser file picker.
  * @returns The root `FileTree` with `.bidsignore` rules applied.
  */
-export function fileListToTree(files: File[]): Promise<FileTree> {
+export function fileListToTree(
+  files: File[],
+  prune?: FileIgnoreRules,
+): Promise<FileTree> {
+  prune ??= new FileIgnoreRules([], 'prune')
   const ignore = new FileIgnoreRules([])
   const root = new FileTree('/', '/', undefined)
   return loadBidsIgnore(
-    filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, root)), ignore),
+    filesToTree(
+      files.map((f) => new BIDSFileBrowser(f, ignore, root))
+        .filter((f) => !prune.test(f.path, { log: true, prefix: 'Pruned' })),
+      ignore,
+    ),
     ignore,
   )
 }

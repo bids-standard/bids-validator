@@ -24,9 +24,13 @@ export async function main(): Promise<ValidationResult> {
   setupLogging(options.debug)
 
   const absolutePath = resolve(options.datasetPath)
-  const prune = options.prune
-    ? new FileIgnoreRules(['derivatives', 'sourcedata', 'code'], false)
-    : undefined
+  const prune = new FileIgnoreRules([], 'prune')
+  if (options.prune) {
+    // Opaque BIDS directories are ignored by default but still included to allow lookups,
+    // including size estimates and symlink resolution in git trees.
+    // Pruning is an extreme measure to reduce memory usage and IO ops and may have unintended consequences.
+    prune.addDefaults('ignore')
+  }
   const tree = options.gitRef
     ? await readGitTree(absolutePath, options.gitRef, prune, options.preferredRemote)
     : await readFileTree(absolutePath, prune, options.preferredRemote)

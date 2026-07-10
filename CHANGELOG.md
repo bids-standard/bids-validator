@@ -12,8 +12,8 @@ and update their code accordingly.
 The primary user-facing changes in this release are the support for
 validating git trees and passing custom schemas to the web validator.
 
-Thanks to Charan Sai Guttala, Yaroslav Halchenko and Dimitri Papadopoulos
-for their contributions to this release.
+Thanks to Charan Sai Guttala, Yaroslav Halchenko, Dimitri Papadopoulos,
+Kay Robbins and Chris Rorden for their contributions to this release.
 
 ## Added
 
@@ -53,6 +53,11 @@ for their contributions to this release.
   `/files/git`, `/issues`, `/output`, `/cli`). The root export (`.`) remains the
   CLI entry point.
 
+- The `--prune` option removes opaque BIDS directories (`sourcedata/`, `derivatives/`, etc.)
+  from the file tree, reducing processing time and memory usage.
+  This option is incompatible with recursive validation and may cause unexpected
+  behavior if pruned data are referenced by name or via symbolic links.
+
 ## Fixed
 
 - Test suite now passes on Windows: `src/tests/bom-utf8.json`
@@ -80,8 +85,30 @@ for their contributions to this release.
 
 - Lazy-load the HED validator to reduce initial bundle size and resolve `fs/promises` background timer leaks during Deno tests.
 
+- Debug logging is fixed for WebKit-based runners, such as Safari or Tauri.
+  Issue reported by Chris Rorden in [#405][].
+
+- Fixed `useEffect` in `web/src/App.tsx` returning a Promise instead of a void
+  cleanup function, causing React strict mode to throw
+  `TypeError: destroy is not a function`.
+
+- Fixed duplicate React `key` warning in the web validator `Files` component:
+  the `<li>` key was `location` alone, but two issues at the same path with
+  different `issueMessage` values both survive deduplication and then collide.
+  The key now uses the composite `${location}${issueMessage}` string that
+  matches the deduplication map key.
+
+- Replaced `canvas-confetti` CDN import (jsdelivr) in `web/src/App.tsx` with an
+  `npm:` specifier so the build no longer requires outbound HTTP access to
+  jsdelivr.net; added the corresponding pre-import in `web/vite.config.mts`.
+
+- `.dotfiles` and directories (such as `.git/`) are now pruned from the file tree,
+  avoiding unnecessary IO operations and memory consumption.
+
 [bids-standard/bids-specification#2191]: https://github.com/bids-standard/bids-specification/pull/2191
 [#389]: https://github.com/bids-standard/bids-validator/pull/389
+[#405]: https://github.com/bids-standard/bids-validator/pull/405
+
 
 ## Deprecated
 
@@ -107,6 +134,19 @@ for their contributions to this release.
   friendly to load in the browser or include in downstream bundled applications.
   The initial validator load transfers less than 400kB and
   only loads an additional 1.2MB if HED validation is required.
+
+- Upgraded `@hed/validator` from `~4.1.4` to `^4.2.0` in `deno.json`; moved
+  `pluralize` from a transitive hed-validator dependency to a direct import now
+  that hed-validator is published on npm without bundling it.
+
+- Added a CI job that installs the built wheel on each OS/arch and validates the
+  bids-examples corpus via its `run_tests.sh`, guarding wheel packaging changes.
+
+- PyPI wheels now set a minimum Python of 3.10.
+
+- The `bids-validator-deno` wheel is now a single universal (`py3-none-any`)
+  package that depends on the `deno` PyPI package, reducing overhead of supporting
+  multiple platforms.
 
 <a id='changelog-2.4.1'></a>
 # 2.4.1 — 2026-02-20
