@@ -3,7 +3,7 @@
 <!-- scriv-insert-here -->
 
 <a id='changelog-3.0.0'></a>
-# 3.0.0 — To be determined
+# 3.0.0 — 2026-07-13
 
 This is a major release that includes breaking changes to the public API.
 The CLI remains unchanged, but library users should review the changes below
