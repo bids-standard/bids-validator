@@ -1,6 +1,6 @@
 {
   "name": "@bids/validator",
-  "version": "3.0.0",
+  "version": "3.0.1-dev",
   "exports": {
     ".": "./src/api/app.ts",
     "./validate": "./src/api/validate/mod.ts",
@@ -32,7 +32,11 @@
     "local-run"
   ],
   "publish": {
-    "exclude": ["**/tests/", "**/*.test.ts", "deno.lock"]
+    "exclude": [
+      "**/tests/",
+      "**/*.test.ts",
+      "deno.lock"
+    ]
   },
   "imports": {
     "@ajv": "npm:ajv@8.20.0",
@@ -70,7 +74,11 @@
     "semiColons": false,
     "singleQuote": true,
     "proseWrap": "preserve",
-    "include": ["src/"],
-    "exclude": ["src/tests/bom-utf8.json"]
+    "include": [
+      "src/"
+    ],
+    "exclude": [
+      "src/tests/bom-utf8.json"
+    ]
   }
 }
