@@ -256,8 +256,7 @@ export class BIDSContext implements Context {
 
   async loadColumns(): Promise<void> {
     if (this.extension == '.tsv') {
-      const headerless = this.suffix === 'motion'
-      this.columns = await loadTSV(this.file, headerless, this.dataset.options?.maxRows)
+      this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
         .catch((error) => {
           if (error.code) {
             this.dataset.issues.add({ ...error, location: this.file.path })
@@ -268,9 +267,6 @@ export class BIDSContext implements Context {
           logger.debug(error)
           return new Map<string, string[]>() as ColumnsMap
         }) as Record<string, string[]>
-      if (headerless) {
-        this.columns = new ColumnsMap() as Record<string, string[]>
-      }
     } else if (this.extension == '.tsv.gz') {
       const headers = this.sidecar.Columns as string[]
       if (!headers || this.size === 0) {

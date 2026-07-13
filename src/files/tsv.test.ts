@@ -75,26 +75,26 @@ Deno.test('TSV loading', async (t) => {
     const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
     file.opener = new StringOpener(text)
 
-    let map = await loadTSV(file, false, 0)
+    let map = await loadTSV(file, 0)
     assertEquals(map.a, [])
     assertEquals(map.b, [])
     assertEquals(map.c, [])
 
     // Do not assume that caching respects maxRows in this test
     loadTSV.cache.clear()
-    map = await loadTSV(file, false, 1)
+    map = await loadTSV(file, 1)
     assertEquals(map.a, ['1'])
     assertEquals(map.b, ['2'])
     assertEquals(map.c, ['3'])
 
     loadTSV.cache.clear()
-    map = await loadTSV(file, false, 2)
+    map = await loadTSV(file, 2)
     assertEquals(map.a, ['1', '1'])
     assertEquals(map.b, ['2', '2'])
     assertEquals(map.c, ['3', '3'])
 
     loadTSV.cache.clear()
-    map = await loadTSV(file, false, -1)
+    map = await loadTSV(file, -1)
     assertEquals(map.a, Array(1500).fill('1'))
     assertEquals(map.b, Array(1500).fill('2'))
     assertEquals(map.c, Array(1500).fill('3'))
@@ -102,7 +102,7 @@ Deno.test('TSV loading', async (t) => {
     loadTSV.cache.clear()
     // Check that maxRows does not truncate shorter files
     file.opener = new StringOpener('a\tb\tc\n1\t2\t3\n4\t5\t6\n7\t8\t9\n')
-    map = await loadTSV(file, false, 4)
+    map = await loadTSV(file, 4)
     assertEquals(map.a, ['1', '4', '7'])
     assertEquals(map.b, ['2', '5', '8'])
     assertEquals(map.c, ['3', '6', '9'])
@@ -115,18 +115,18 @@ Deno.test('TSV loading', async (t) => {
     const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
     file.opener = new StringOpener(text)
 
-    const map = await loadTSV(file, false, 2)
+    const map = await loadTSV(file, 2)
     assertEquals(map.a, ['1', '1'])
     assertEquals(map.b, ['2', '2'])
     assertEquals(map.c, ['3', '3'])
 
     // Replace stream to ensure cache does not depend on deep object equality
-    let repeatMap = await loadTSV(file, false, 2)
+    let repeatMap = await loadTSV(file, 2)
     assertStrictEquals(map, repeatMap)
 
     loadTSV.cache.clear()
     // DO NOT replace stream so the next read verifies the previous stream wasn't read
-    repeatMap = await loadTSV(file, false, 2)
+    repeatMap = await loadTSV(file, 2)
     assertEquals(repeatMap.a, ['1', '1'])
     assertEquals(repeatMap.b, ['2', '2'])
     assertEquals(repeatMap.c, ['3', '3'])
@@ -140,18 +140,18 @@ Deno.test('TSV loading', async (t) => {
     const text = 'a\tb\tc\n' + '1\t2\t3\n'.repeat(1500)
     file.opener = new StringOpener(text)
 
-    const map = await loadTSV(file, false, 2)
+    const map = await loadTSV(file, 2)
     assertEquals(map.a, ['1', '1'])
     assertEquals(map.b, ['2', '2'])
     assertEquals(map.c, ['3', '3'])
 
-    let repeatMap = await loadTSV(file, false, 3)
+    let repeatMap = await loadTSV(file, 3)
     assertNotStrictEquals(map, repeatMap)
     assertEquals(repeatMap.a, ['1', '1', '1'])
     assertEquals(repeatMap.b, ['2', '2', '2'])
     assertEquals(repeatMap.c, ['3', '3', '3'])
 
-    repeatMap = await loadTSV(file, false, 2)
+    repeatMap = await loadTSV(file, 2)
     assertStrictEquals(map, repeatMap)
     assertEquals(repeatMap.a, ['1', '1'])
     assertEquals(repeatMap.b, ['2', '2'])
