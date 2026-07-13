@@ -205,7 +205,7 @@ function evalJsonCheck(
 
     if (value === undefined) {
       const severity = getFieldSeverity(requirement, context)
-      if (severity && (severity === 'ignore')) {
+      if (!severity || severity === 'ignore') {
         continue
       }
 
