@@ -13,7 +13,8 @@ import { dirname } from '@std/path'
  * 3. Fall back to the static metadata in `deno.json`, which should correspond
  *    to the most recent dev tag.
  *
- * @returns The version of the script.
+ * @returns A semver-shaped version string (e.g. `"3.0.0"` or
+ *   `"3.0.0-alpha.3-2-gabcd1234"`).
  */
 export async function getVersion(): Promise<string> {
   // Hard-coded JSON wins

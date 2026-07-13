@@ -29,4 +29,23 @@ Deno.test('logger', async (t) => {
       'loadHeader (file:///bids-validator/bids-validator/src/files/nifti.ts:18:12)',
     )
   })
+  await t.step('test stack trace behavior for webkit format', () => {
+    const stack = `get@file:///bids-validator/src/utils/logger.ts:30:32
+validate@file:///bids-validator/src/validators/bids.ts:110:18
+`
+    assertEquals(
+      parseStack(stack),
+      'validate (file:///bids-validator/src/validators/bids.ts:110:18)',
+    )
+  })
+  await t.step('test stack trace behavior for unknown format', () => {
+    // Just making this one up to be plausible but not real
+    const stack = `get() (defined at file:///bids-validator/src/utils/logger.ts:30:32)
+called from validate() (defined at file:///bids-validator/src/validators/bids.ts:110:18)
+`
+    assertEquals(parseStack(stack), undefined)
+  })
+  await t.step('Does not throw on empty stack', () => {
+    assertEquals(parseStack(''), undefined)
+  })
 })

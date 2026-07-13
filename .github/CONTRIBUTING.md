@@ -257,7 +257,7 @@ To add an entry, run:
 scriv create --edit
 ```
 
-(If you're wondering how to install `scriv`, we recommend using [uvx scriv][].)
+(If you're wondering how to install `scriv`, we recommend using [`uvx scriv`][uvx].)
 
 Your editor will open a Markdown file with commented sections.
 Find the appropriate section(s) for your contribution and write a 1-3 line description.

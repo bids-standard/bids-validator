@@ -1,7 +1,6 @@
 import { assert, assertEquals, assertRejects } from '@std/assert'
 import { readAll, readerFromStreamReader } from '@std/io'
 import { basename, dirname, fromFileUrl, join } from '@std/path'
-import { EOL } from '@std/fs'
 import type { FileTree } from '../types/filetree.ts'
 import { BIDSFileDeno, readFileTree } from './deno.ts'
 import { UnicodeDecodeError } from './streams.ts'
@@ -62,7 +61,7 @@ Deno.test('Deno implementation of BIDSFile', async (t) => {
       const bomFilename = 'bom-utf8.json'
       const file = new BIDSFileDeno(bomDir, bomFilename, ignore)
       const text = await file.text()
-      assertEquals(text, ['{', '  "example": "JSON for test suite"', '}', ''].join(EOL))
+      assertEquals(text, ['{', '  "example": "JSON for test suite"', '}', ''].join('\n'))
     },
   )
 })

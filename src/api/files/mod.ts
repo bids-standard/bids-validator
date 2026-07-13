@@ -1,3 +1,17 @@
+/**
+ * Cross-environment per-file primitives — {@link BIDSFile},
+ * {@link FileOpener} contract, and stream helpers used to build a
+ * custom file source.
+ *
+ * Source-specific helpers live in {@link [files/deno]},
+ * {@link [files/browser]}, and {@link [files/git]}. Tree-level
+ * primitives live in {@link [filetree]}.
+ *
+ * @module
+ */
+
+import { BIDSFileDeno as _BIDSFileDeno, readFileTree as _readFileTree } from '../../files/deno.ts'
+
 export { BIDSFile } from '../../types/filetree.ts'
 export type { FileOpener, SymlinkReason, UnresolvedLink } from '../../types/filetree.ts'
 export { HTTPOpener, NullFileOpener } from '../../files/openers.ts'
@@ -9,7 +23,7 @@ export {
 } from '../../files/streams.ts'
 
 // Back-compat — removed at v4.0
-/** @deprecated Import from '@bids/validator/files/deno' instead. */
-export { readFileTree } from '../../files/deno.ts'
-/** @deprecated Import from '@bids/validator/files/deno' instead. */
-export { BIDSFileDeno } from '../../files/deno.ts'
+/** @deprecated Use {@link [files/deno].readFileTree} instead. */
+export const readFileTree = _readFileTree
+/** @deprecated Use {@link [files/deno].BIDSFileDeno} instead. */
+export const BIDSFileDeno = _BIDSFileDeno
