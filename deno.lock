@@ -42,7 +42,7 @@
     "npm:isomorphic-git@^1.38.4": "1.38.4",
     "npm:marked@^17.0.6": "17.0.6",
     "npm:pluralize@8": "8.0.0",
-    "npm:supports-hyperlinks@^4.4.0": "4.4.0"
+    "npm:supports-hyperlinks@^4.5.0": "4.5.0"
   },
   "jsr": {
     "@bids/schema@1.2.4": {
@@ -778,8 +778,8 @@
     "supports-color@10.2.2": {
       "integrity": "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g=="
     },
-    "supports-hyperlinks@4.4.0": {
-      "integrity": "sha512-UKbpT93hN5Nr9go5UY7bopIB9YQlMz9nm/ct4IXt/irb5YRkn9WaqrOBJGZ5Pwvsd5FQzSVeYlGdXoCAPQZrPg==",
+    "supports-hyperlinks@4.5.0": {
+      "integrity": "sha512-ZW2OvfeCXrNTbLakPUzjQG922EeGCOteFSVoek5DKStTh898wf7zgtuFlzQN8HfZCxC3Eh02yJVrRW51hADf+w==",
       "dependencies": [
         "has-flag",
         "supports-color"
@@ -942,7 +942,7 @@
       "npm:isomorphic-git@^1.38.4",
       "npm:marked@^17.0.6",
       "npm:pluralize@8",
-      "npm:supports-hyperlinks@^4.4.0"
+      "npm:supports-hyperlinks@^4.5.0"
     ]
   }
 }
