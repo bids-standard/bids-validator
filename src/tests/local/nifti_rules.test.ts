@@ -1,13 +1,12 @@
-import { assertEquals, assertObjectMatch } from '@std/assert'
-import type { BIDSFile, FileTree } from '../../types/filetree.ts'
+import { assertEquals } from '@std/assert'
 import type { GenericRule, GenericSchema } from '../../types/schema.ts'
 import { loadHeader } from '../../files/nifti.ts'
 import { BIDSFileDeno } from '../../files/deno.ts'
-import { BIDSContext, BIDSContextDataset } from '../../schema/context.ts'
+import { type BIDSContext, BIDSContextDataset } from '../../schema/context.ts'
 import { loadSchema } from '../../setup/loadSchema.ts'
 import { evalRuleChecks } from '../../schema/applyRules.ts'
 // import { applyRules } from '../../schema/applyRules.ts'
-import type { Context, NiftiHeader } from '@bids/schema/context'
+import type { NiftiHeader } from '@bids/schema/context'
 import type { Schema } from '@bids/schema/metaschema'
 
 import { expressionFunctions } from '../../schema/expressionLanguage.ts'
@@ -31,13 +30,13 @@ Deno.test('Test NIFTI-specific rules', async (t) => {
   const schema = await loadSchema() as Schema
   const NiftiPEDir = schema.rules?.checks?.nifti?.NiftiPEDir as GenericRule
 
-  await t.step('Test reading NIfTI axis codes', async () => {
+  await t.step('Test reading NIfTI axis codes', () => {
     assertEquals(RAS.axis_codes, ['R', 'A', 'S'])
     assertEquals(SPL.axis_codes, ['S', 'P', 'L'])
     assertEquals(AIR.axis_codes, ['A', 'I', 'R'])
   })
 
-  await t.step('Test rules.checks.nifti.NiftiPEDir', async () => {
+  await t.step('Test rules.checks.nifti.NiftiPEDir', () => {
     const schemaPath = 'rules.checks.nifti.NiftiPEDir'
 
     let context = prepContext(RAS, 'PA', 'j')

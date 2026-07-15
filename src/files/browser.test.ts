@@ -2,7 +2,7 @@ import { FileIgnoreRules } from './ignore.ts'
 import { FileTree } from '../types/filetree.ts'
 import { assertEquals, assertObjectMatch } from '@std/assert'
 import { BIDSFileBrowser, fileListToTree } from './browser.ts'
-import { streamFromString } from '../tests/utils.ts'
+import { streamFromString } from './streams.ts'
 
 const nullstream = streamFromString('')
 

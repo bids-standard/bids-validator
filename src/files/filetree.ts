@@ -1,54 +1,128 @@
 import { parse, SEPARATOR_PATTERN } from '@std/path'
 import * as posix from '@std/path/posix'
-import { type BIDSFile, FileTree } from '../types/filetree.ts'
-import { FileIgnoreRules } from './ignore.ts'
+import { BIDSFile, FileTree, type UnresolvedLink } from '../types/filetree.ts'
+import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
 
-const nullFile = {
-  size: 0,
-  stream: new ReadableStream({
-    start(controller) {
-      controller.close()
-    },
-  }),
-  text: () => Promise.resolve(''),
-  readBytes: async (size: number, offset?: number) => new Uint8Array(),
-  parent: new FileTree('', '/'),
-  viewed: false,
+/**
+ * Walk a posix path and return the FileTree corresponding to its directory,
+ * creating intermediate directory nodes as needed.
+ * Pass the parent directory of the object to insert.
+ * Inserting the file or link is the caller's responsibility.
+ */
+function descendTo(root: FileTree, dir: string, ignore: FileIgnoreRules): FileTree {
+  if (dir === '/') return root
+  let current = root
+  for (const level of dir.split(SEPARATOR_PATTERN).slice(1)) {
+    const exists = current.get(level) as FileTree
+    if (exists) {
+      current = exists
+      continue
+    }
+    const newTree = new FileTree(posix.join(current.path, level), level, current, ignore)
+    current.directories.push(newTree)
+    current = newTree
+  }
+  return current
 }
 
-export function pathToFile(path: string, ignored: boolean = false): BIDSFile {
-  const name = path.split('/').pop() as string
-  return { name, path, ignored, ...nullFile }
-}
-
-export function pathsToTree(paths: string[], ignore?: string[]): FileTree {
-  const ignoreRules = new FileIgnoreRules(ignore ?? [])
-  return filesToTree(paths.map((path) => pathToFile(path, ignoreRules.test(path))))
-}
-
-export function filesToTree(fileList: BIDSFile[], ignore?: FileIgnoreRules): FileTree {
+/**
+ * Build a {@link FileTree} from a flat list of {@link BIDSFile} objects.
+ *
+ * Intermediate directory nodes are created as needed. Any unresolved
+ * symlinks are attached to the appropriate directory.
+ *
+ * @param fileList - Files to insert into the tree.
+ * @param ignore - Optional ignore rules applied to every node.
+ * @param unresolvedLinks - Symlinks that could not be followed.
+ * @returns The root `FileTree`.
+ */
+export function filesToTree(
+  fileList: BIDSFile[],
+  ignore?: FileIgnoreRules,
+  unresolvedLinks: UnresolvedLink[] = [],
+): FileTree {
   ignore = ignore ?? new FileIgnoreRules([])
   const tree: FileTree = new FileTree('/', '/')
   for (const file of fileList) {
     const parts = parse(file.path)
-    if (parts.dir === '/') {
-      tree.files.push(file)
-      file.parent = tree
-      continue
+    const parent = descendTo(tree, parts.dir, ignore)
+    parent.files.push(file)
+    file.parent = parent
+  }
+  for (const link of unresolvedLinks) {
+    const parts = parse(link.path)
+    const parent = descendTo(tree, parts.dir, ignore)
+    parent.links.push(link)
+  }
+  return tree
+}
+
+type RerootTreeOptions = {
+  oldTree: FileTree
+  newRoot: string
+  ignore: FileIgnoreRules
+  parent?: FileTree
+}
+
+function rerootTree({
+  oldTree,
+  newRoot,
+  ignore,
+  parent,
+}: RerootTreeOptions): FileTree {
+  const tree = new FileTree(
+    oldTree.path.substr(newRoot.length) || '/',
+    parent ? oldTree.name : `${oldTree.path}/`, // Set the name of the root to its full path
+    parent,
+    ignore,
+  )
+  tree.files = oldTree.files.map((file) =>
+    new BIDSFile(file.path.substr(newRoot.length), file.opener, ignore, tree)
+  )
+  tree.directories = oldTree.directories.map((dir) =>
+    rerootTree({ oldTree: dir, newRoot, ignore, parent: tree })
+  )
+  tree.links = oldTree.links.map((link) => ({
+    ...link,
+    path: link.path.substr(newRoot.length),
+  }))
+  return tree
+}
+
+/**
+ * Re-root a sub-directory as an independent {@link FileTree}.
+ *
+ * All paths inside the returned tree are relative to `filetree` rather
+ * than the original dataset root. `.bidsignore` rules are reloaded from
+ * the new root.
+ *
+ * @param filetree - The directory node to promote to root.
+ * @returns A new `FileTree` rooted at `filetree`.
+ */
+export function subtree(filetree: FileTree): Promise<FileTree> {
+  const ignore = new FileIgnoreRules([])
+  return loadBidsIgnore(rerootTree({ oldTree: filetree, newRoot: filetree.path, ignore }), ignore)
+}
+
+/**
+ * Load `.bidsignore` from the tree root and add its rules to `ignore`.
+ *
+ * If no `.bidsignore` file is present the tree is returned unchanged.
+ * Errors reading the file are logged and swallowed so validation can
+ * continue without `.bidsignore` support.
+ *
+ * @param tree - The file tree to search for a `.bidsignore` file.
+ * @param ignore - The ignore-rules instance to extend with any patterns found.
+ * @returns The original `tree` (for chaining).
+ */
+export async function loadBidsIgnore(tree: FileTree, ignore: FileIgnoreRules): Promise<FileTree> {
+  const bidsignore = tree.get('.bidsignore')
+  if (bidsignore) {
+    try {
+      ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
+    } catch (err) {
+      console.log(`Failed to read '.bidsignore' file with the following error:\n${err}`)
     }
-    let current = tree
-    for (const level of parts.dir.split(SEPARATOR_PATTERN).slice(1)) {
-      const exists = current.get(level) as FileTree
-      if (exists) {
-        current = exists
-        continue
-      }
-      const newTree = new FileTree(posix.join(current.path, level), level, current, ignore)
-      current.directories.push(newTree)
-      current = newTree
-    }
-    current.files.push(file)
-    file.parent = current
   }
   return tree
 }

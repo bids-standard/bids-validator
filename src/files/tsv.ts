@@ -5,10 +5,9 @@
 import { TextLineStream } from '@std/streams'
 import { ColumnsMap } from '../types/columns.ts'
 import type { BIDSFile } from '../types/filetree.ts'
-import { filememoizeAsync } from '../utils/memoize.ts'
+import { filememoize } from '../utils/memoize.ts'
 import { createUTF8Stream } from './streams.ts'
 import { openStream } from './access.ts'
-import { BIDSFileDeno } from './deno.ts'
 
 async function loadColumns(
   reader: ReadableStreamDefaultReader<string>,
@@ -57,7 +56,8 @@ export async function loadTSVGZ(
   headers: string[],
   maxRows: number = -1,
 ): Promise<ColumnsMap> {
-  const reader = openStream(file)
+  const stream = await openStream(file)
+  const reader = stream
     .pipeThrough(new DecompressionStream('gzip'))
     .pipeThrough(createUTF8Stream({ fatal: true }))
     .pipeThrough(new TextLineStream())
@@ -65,10 +65,10 @@ export async function loadTSVGZ(
 
   try {
     return await loadColumns(reader, headers, maxRows)
-  } catch (e: any) {
+  } catch (e: unknown) {
     // Cancel the reader if we interrupted the read
     // Cancelling for I/O errors will just re-trigger the error
-    if (e.code) {
+    if (e && typeof e === 'object' && 'code' in e && e.code) {
       await reader.cancel()
       throw e
     }
@@ -77,7 +77,8 @@ export async function loadTSVGZ(
 }
 
 async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMap> {
-  const reader = openStream(file)
+  const stream = await openStream(file)
+  const reader = stream
     .pipeThrough(createUTF8Stream({ fatal: true }))
     .pipeThrough(new TextLineStream())
     .getReader()
@@ -100,4 +101,4 @@ async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMa
   }
 }
 
-export const loadTSV = filememoizeAsync(_loadTSV)
+export const loadTSV = filememoize(_loadTSV)

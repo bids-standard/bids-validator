@@ -1,15 +1,11 @@
-import type { GenericRule, GenericSchema, SchemaFields, SchemaTypeLike } from '../types/schema.ts'
+import type { GenericRule, GenericSchema, SchemaFields } from '../types/schema.ts'
 import type { Severity } from '../types/issues.ts'
 import type { BIDSContext } from './context.ts'
 import { contextFunction, formatter, prepareContext } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
 import { compile } from '../validators/json.ts'
 import type { DefinedError } from '@ajv'
-import {
-  evalColumns,
-  evalIndexColumns,
-  evalInitialColumns,
-} from './tables.ts'
+import { evalColumns, evalIndexColumns, evalInitialColumns } from './tables.ts'
 
 /**
  * Given a schema and context, evaluate which rules match and test them.
@@ -27,9 +23,8 @@ export function applyRules(
   context: BIDSContext,
   rootSchema?: GenericSchema,
   schemaPath?: string,
-): Promise<void> {
+): void {
   _applyRules(schema, prepareContext(context), rootSchema, schemaPath)
-  return Promise.resolve()
 }
 
 /** Evaluate a single expression in a BIDSContext.
@@ -66,7 +61,7 @@ function _applyRules(
   if (schemaPath === undefined) {
     if (Object.hasOwn(schema, 'rules')) {
       schemaPath = 'rules'
-      // @ts-expect-error
+      // @ts-expect-error GenericSchema index signature does not include 'rules' as a GenericSchema subtype
       schema = schema.rules
     } else {
       schemaPath = ''
@@ -119,11 +114,11 @@ const evalMap: Record<
   ) => boolean | void
 > = {
   checks: _evalRuleChecks,
-  // @ts-expect-error
+  // @ts-expect-error evalColumns signature differs from the evalMap callback type
   columns: evalColumns,
-  // @ts-expect-error
+  // @ts-expect-error evalInitialColumns signature differs from the evalMap callback type
   initial_columns: evalInitialColumns,
-  // @ts-expect-error
+  // @ts-expect-error evalIndexColumns signature differs from the evalMap callback type
   index_columns: evalIndexColumns,
   fields: evalJsonCheck,
 }
@@ -146,7 +141,7 @@ function evalRule(
   Object.keys(rule)
     .filter((key) => key in evalMap)
     .map((key) => {
-      // @ts-expect-error
+      // @ts-expect-error dynamic key lookup on evalMap is not narrowed by filter
       evalMap[key](rule, context, schema, schemaPath)
     })
 }
@@ -158,7 +153,7 @@ function mapEvalCheck(statements: string[], context: BIDSContext): boolean {
 function _evalRuleChecks(
   rule: GenericRule,
   context: BIDSContext,
-  schema: GenericSchema,
+  _schema: GenericSchema,
   schemaPath: string,
 ): boolean {
   if (rule.checks && !mapEvalCheck(rule.checks, context)) {
@@ -182,7 +177,7 @@ function _evalRuleChecks(
 /**
  * For evaluating field requirements and values that should exist in a json
  * sidecar for a file. Will need to implement an additional check/error for
- * `prohibitied` fields. Examples in specification:
+ * `prohibited` fields. Examples in specification:
  * schema/rules/sidecars/*
  */
 function evalJsonCheck(
@@ -200,9 +195,9 @@ function evalJsonCheck(
     return
   }
 
-  const json: Record<string, any> = sidecarRule ? context.sidecar : context.json
+  const json: Record<string, unknown> = sidecarRule ? context.sidecar : context.json
   for (const [key, requirement] of Object.entries(rule.fields)) {
-    // @ts-expect-error
+    // @ts-expect-error dynamic nested index access on GenericSchema is not typed
     const metadataDef = schema.objects.metadata[key]
     const keyName: string = metadataDef.name
     const value = json[keyName]
@@ -210,32 +205,46 @@ function evalJsonCheck(
 
     if (value === undefined) {
       const severity = getFieldSeverity(requirement, context)
-      if (severity && severity !== 'ignore') {
-        if (requirement.issue?.code && requirement.issue?.message) {
-          context.dataset.issues.add({
-            code: requirement.issue.code,
-            subCode: keyName,
-            location: context.path,
-            severity,
-            rule: schemaPath,
-            issueMessage,
-          }, requirement.issue.message)
-        } else {
-          const keyType = sidecarRule ? 'SIDECAR_KEY' : 'JSON_KEY'
-          const level = severity === 'error' ? 'REQUIRED' : 'RECOMMENDED'
-          context.dataset.issues.add({
-            code: `${keyType}_${level}`,
-            subCode: keyName,
-            location: context.path,
-            severity,
-            rule: schemaPath,
-            issueMessage,
-          })
-        }
+      if (!severity || severity === 'ignore') {
+        continue
+      }
+
+      /*
+       * quoth derivatives introduction in the specification:
+       *
+       * "Unless specified otherwise, individual sidecar JSON files and all metadata fields within are OPTIONAL."
+       */
+      if (
+        context.dataset.dataset_description.DatasetType === 'derivative' &&
+        !rule.selectors?.includes('dataset.dataset_description.DatasetType == "derivative"')
+      ) {
+        continue
+      }
+
+      if (requirement.issue?.code && requirement.issue?.message) {
+        context.dataset.issues.add({
+          code: requirement.issue.code,
+          subCode: keyName,
+          location: context.path,
+          severity,
+          rule: schemaPath,
+          issueMessage,
+        }, requirement.issue.message)
+      } else {
+        const keyType = sidecarRule ? 'SIDECAR_KEY' : 'JSON_KEY'
+        const level = severity === 'error' ? 'REQUIRED' : 'RECOMMENDED'
+        context.dataset.issues.add({
+          code: `${keyType}_${level}`,
+          subCode: keyName,
+          location: context.path,
+          severity,
+          rule: schemaPath,
+          issueMessage,
+        })
       }
 
       /* Regardless of if key is required/recommended/optional, we do no
-       * further valdiation if it is not present in sidecar.
+       * further validation if it is not present in sidecar.
        */
       continue
     }

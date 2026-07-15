@@ -1,8 +1,18 @@
 import { BIDSContext, type BIDSContextDataset } from './context.ts'
-import type { BIDSFile, FileTree } from '../types/filetree.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
+import { BIDSFile, type FileTree, type SymlinkReason } from '../types/filetree.ts'
+import { NullFileOpener } from '../files/openers.ts'
 import { loadTSV } from '../files/tsv.ts'
 import { loadJSON } from '../files/json.ts'
+import { readBytes, readText } from '../files/access.ts'
+import type { bidsIssues } from '../issues/list.ts'
+import { queuedAsyncIterator } from '../utils/queue.ts'
+
+const REASON_TO_CODE: Record<SymlinkReason, keyof typeof bidsIssues> = {
+  'broken': 'SYMLINK_BROKEN',
+  'cycle': 'SYMLINK_CYCLE',
+  'out-of-tree': 'SYMLINK_OUT_OF_TREE',
+  'submodule': 'SYMLINK_IN_SUBMODULE',
+}
 
 function* quickWalk(dir: FileTree): Generator<BIDSFile> {
   for (const file of dir.files) {
@@ -13,33 +23,41 @@ function* quickWalk(dir: FileTree): Generator<BIDSFile> {
   }
 }
 
-const nullFile = {
-  stream: new ReadableStream(),
-  text: async () => '',
-  readBytes: async (size: number, offset?: number) => new Uint8Array(),
+function pseudoFile(dir: FileTree, opaque: boolean): BIDSFile {
+  return new BIDSFile(
+    // Use a trailing slash to indicate directory
+    `${dir.path}/`,
+    new NullFileOpener(opaque ? [...quickWalk(dir)].reduce((acc, file) => acc + file.size, 0) : 0),
+    dir.ignored,
+    dir.parent as FileTree,
+  )
 }
 
-function pseudoFile(dir: FileTree, opaque: boolean): BIDSFile {
-  return {
-    name: `${dir.name}/`,
-    path: `${dir.path}/`,
-    size: opaque ? [...quickWalk(dir)].reduce((acc, file) => acc + file.size, 0) : 0,
-    ignored: dir.ignored,
-    parent: dir.parent as FileTree,
-    viewed: dir.viewed,
-    ...nullFile,
-  }
-}
+type CleanupFunction = () => void
 
 /** Recursive algorithm for visiting each file in the dataset, creating a context */
 async function* _walkFileTree(
   fileTree: FileTree,
   dsContext: BIDSContextDataset,
-): AsyncIterable<BIDSContext> {
+): AsyncIterable<BIDSContext | CleanupFunction> {
+  for (const link of fileTree.links) {
+    if (fileTree.isPathIgnored(link.path)) continue
+    dsContext.issues.add({
+      code: REASON_TO_CODE[link.reason],
+      location: link.path,
+      issueMessage: `Symlink target: ${link.target}`,
+    })
+  }
   for (const file of fileTree.files) {
+    if (file.ignored) {
+      continue
+    }
     yield new BIDSContext(file, dsContext)
   }
   for (const dir of fileTree.directories) {
+    if (dir.ignored) {
+      continue
+    }
     const pseudo = dsContext.isPseudoFile(dir)
     const opaque = pseudo || dsContext.isOpaqueDirectory(dir)
     const context = new BIDSContext(pseudoFile(dir, opaque), dsContext)
@@ -49,13 +67,23 @@ async function* _walkFileTree(
       yield* _walkFileTree(dir, dsContext)
     }
   }
-  loadTSV.cache.delete(fileTree.path)
-  loadJSON.cache.delete(fileTree.path)
+  yield () => {
+    loadTSV.cache.delete(fileTree.path)
+    loadJSON.cache.delete(fileTree.path)
+    readBytes.cache.delete(fileTree.path)
+    readText.cache.delete(fileTree.path)
+  }
 }
 
 /** Walk all files in the dataset and construct a context for each one */
 export async function* walkFileTree(
   dsContext: BIDSContextDataset,
+  bufferSize: number = 1,
 ): AsyncIterable<BIDSContext> {
-  yield* _walkFileTree(dsContext.tree, dsContext)
+  for await (
+    const context of queuedAsyncIterator(_walkFileTree(dsContext.tree, dsContext), bufferSize)
+  ) {
+    await context.loaded
+    yield context
+  }
 }

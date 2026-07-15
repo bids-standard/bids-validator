@@ -1,7 +1,7 @@
 import type { ContextCheckFunction, DSCheckFunction } from '../types/check.ts'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { loadJSON } from '../files/json.ts'
-import type { IssueFile, Severity } from '../types/issues.ts'
+import type { Severity } from '../types/issues.ts'
 import type { GenericSchema } from '../types/schema.ts'
 import type { ValidationResult } from '../types/validation-result.ts'
 import { applyRules } from '../schema/applyRules.ts'
@@ -12,14 +12,13 @@ import { Summary } from '../summary/summary.ts'
 import { filenameCase } from './filenameCase.ts'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
 import { emptyFile } from './internal/emptyFile.ts'
 import { sidecarWithoutDatafile, unusedStimulus } from './internal/unusedFile.ts'
-import { type BIDSContext, BIDSContextDataset } from '../schema/context.ts'
-import type { parseOptions } from '../setup/options.ts'
+import { BIDSContextDataset } from '../schema/context.ts'
 import { hedValidate } from './hed.ts'
 import { citationValidate } from './citation.ts'
 import { logger } from '../utils/logger.ts'
+import { subtree } from '../files/filetree.ts'
 
 /**
  * Ordering of checks to apply
@@ -40,7 +39,48 @@ const perDSChecks: DSCheckFunction[] = [
 ]
 
 /**
- * Full BIDS schema validation entrypoint
+ * Validate a BIDS dataset against the BIDS schema.
+ *
+ * Loads the BIDS schema, walks the file tree, and applies file-level and
+ * dataset-level checks, accumulating any issues into the returned
+ * {@link ValidationResult}. Derivative datasets nested under
+ * `derivatives/` are detected via their own `dataset_description.json`;
+ * when `options.recursive` is set, BIDS-conformant derivatives are
+ * validated and their results attached to `derivativesSummary` on the
+ * returned object. Non-BIDS derivatives and the `sourcedata`, `code`
+ * directories are ignored.
+ *
+ * `validate` does not throw on validation failures — it records them as
+ * issues on the result. The returned `issues` collection can be filtered
+ * or grouped via `DatasetIssues` methods. Set `options.ignoreWarnings`
+ * to drop non-error issues from the output.
+ *
+ * @param fileTree - Root of the dataset to validate, typically produced
+ *   by `readFileTree` (Deno) or `fileListToTree` (browser).
+ * @param options - Per-run options. See {@link ValidatorOptions}.
+ *   Notable fields include `recursive`, `ignoreWarnings`, and
+ *   `blacklistModalities`.
+ * @param config - Optional severity-override map. Each top-level key
+ *   (`ignore`, `warning`, `error`) lists partial issue patterns;
+ *   matching issues are reassigned to that severity after the run.
+ * @returns A {@link ValidationResult} containing the accumulated
+ *   issues, the run summary, and (when `options.recursive` is set)
+ *   the per-derivative validation results.
+ *
+ * @example
+ * ```ts
+ * import { readFileTree } from '@bids/validator/files/deno'
+ * import { validate } from '@bids/validator/validate'
+ *
+ * const tree = await readFileTree('/path/to/dataset')
+ * const result = await validate(tree, {
+ *   datasetPath: '/path/to/dataset',
+ *   debug: 'ERROR',
+ *   datasetTypes: [],
+ *   blacklistModalities: [],
+ * })
+ * console.log(`${result.issues.size} issues found`)
+ * ```
  */
 export async function validate(
   fileTree: FileTree,
@@ -86,7 +126,7 @@ export async function validate(
     }
   }
 
-  const bidsDerivatives: FileTree[] = []
+  const bidsDerivatives: Promise<FileTree>[] = []
   const nonstdDerivatives: FileTree[] = []
   fileTree.directories = fileTree.directories.filter((dir) => {
     if (['sourcedata', 'code'].includes(dir.name)) {
@@ -97,9 +137,7 @@ export async function validate(
     }
     for (const deriv of dir.directories) {
       if (deriv.get('dataset_description.json')) {
-        // New root for the derivative dataset
-        deriv.parent = undefined
-        bidsDerivatives.push(deriv)
+        bidsDerivatives.push(subtree(deriv))
       } else {
         nonstdDerivatives.push(deriv)
       }
@@ -108,18 +146,14 @@ export async function validate(
     return false
   })
 
-  for await (const context of walkFileTree(dsContext)) {
-    // TODO - Skip ignored files for now (some tests may reference ignored files)
-    if (context.file.ignored) {
-      continue
-    }
+  logger.info('Performing file-level validation...')
+  for await (const context of walkFileTree(dsContext, 20)) {
     if (
       dsContext.dataset_description.DatasetType == 'raw' &&
       context.file.path.includes('derivatives')
     ) {
       continue
     }
-    await context.asyncLoads()
     // Run majority of checks
     for (const check of perContextChecks) {
       await check(schema as unknown as GenericSchema, context)
@@ -127,6 +161,7 @@ export async function validate(
     await summary.update(context)
   }
 
+  logger.info('Performing dataset-level validation...')
   for (const check of perDSChecks) {
     await check(schema as unknown as GenericSchema, dsContext)
   }
@@ -162,7 +197,8 @@ export async function validate(
   const derivativesSummary: Record<string, ValidationResult> = {}
   if (options.recursive) {
     await Promise.allSettled(
-      bidsDerivatives.map(async (deriv) => {
+      bidsDerivatives.map(async (promise) => {
+        const deriv = await promise
         derivativesSummary[deriv.name] = await validate(deriv, options)
         return derivativesSummary[deriv.name]
       }),

@@ -1,16 +1,17 @@
-import { parseOptions } from './setup/options.ts'
-import type { Config } from './setup/options.ts'
-import * as colors from '@std/fmt/colors'
-import { readFileTree } from './files/deno.ts'
-import { fileListToTree } from './files/browser.ts'
-import { FileIgnoreRules } from './files/ignore.ts'
+/* External */
 import { resolve } from '@std/path'
-import { validate } from './validators/bids.ts'
-import { consoleFormat, resultToJSONStr } from './utils/output.ts'
+import * as colors from '@std/fmt/colors'
+/* Exported API */
+import { readFileTree } from './api/files/deno/mod.ts'
+import { readGitTree } from './api/files/git/mod.ts'
+import { FileIgnoreRules } from './api/filetree/mod.ts'
+import { validate } from './api/validate/mod.ts'
+import { consoleFormat, resultToJSONStr } from './api/output/mod.ts'
+/* Purely internal */
 import { setupLogging } from './utils/logger.ts'
-import type { ValidationResult } from './types/validation-result.ts'
-export type { ValidationResult } from './types/validation-result.ts'
-export { getVersion } from './version.ts'
+import { parseOptions } from './setup/options.ts'
+/* Types */
+import type { Config, ValidationResult } from './api/validate/mod.ts'
 
 /**
  * Validation entrypoint intended for command line usage with Deno
@@ -23,19 +24,30 @@ export async function main(): Promise<ValidationResult> {
   setupLogging(options.debug)
 
   const absolutePath = resolve(options.datasetPath)
-  const prune = options.prune
-    ? new FileIgnoreRules(['derivatives', 'sourcedata', 'code'], false)
-    : undefined
-  const tree = await readFileTree(absolutePath, prune)
+  const prune = new FileIgnoreRules([], 'prune')
+  if (options.prune) {
+    // Opaque BIDS directories are ignored by default but still included to allow lookups,
+    // including size estimates and symlink resolution in git trees.
+    // Pruning is an extreme measure to reduce memory usage and IO ops and may have unintended consequences.
+    prune.addDefaults('ignore')
+  }
+  const tree = options.gitRef
+    ? await readGitTree(absolutePath, options.gitRef, prune, options.preferredRemote)
+    : await readFileTree(absolutePath, prune, options.preferredRemote)
 
   const config = options.config ? JSON.parse(Deno.readTextFileSync(options.config)) as Config : {}
 
   // Run the schema based validator
   const schemaResult = await validate(tree, options, config)
 
+  // Handle backward compatibility: if --json is used, override format
+  const outputFormat = options.json ? 'json' : (options.format || 'text')
+
   let output_string = ''
-  if (options.json) {
-    output_string = resultToJSONStr(schemaResult)
+  if (outputFormat === 'json') {
+    output_string = resultToJSONStr(schemaResult, false)
+  } else if (outputFormat === 'json_pp') {
+    output_string = resultToJSONStr(schemaResult, true)
   } else {
     output_string = consoleFormat(schemaResult, {
       verbose: options.verbose ? options.verbose : false,
@@ -55,5 +67,3 @@ export async function main(): Promise<ValidationResult> {
 
   return schemaResult
 }
-
-export { fileListToTree, validate }

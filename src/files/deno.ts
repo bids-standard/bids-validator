@@ -3,133 +3,134 @@
  */
 import { basename, join } from '@std/path'
 import * as posix from '@std/path/posix'
-import { type BIDSFile, FileTree } from '../types/filetree.ts'
+import { BIDSFile, FileTree, type SymlinkReason } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
-import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
-import { logger } from '../utils/logger.ts'
-import { createUTF8Stream } from './streams.ts'
-export { type BIDSFile, FileTree }
+import { FileIgnoreRules } from './ignore.ts'
+import { loadBidsIgnore } from './filetree.ts'
+import { FsFileOpener } from './openers.ts'
+import { gitdirFromLink, parseAnnexKey } from './repo.ts'
+import { AnnexedGitFileOpener } from './git.ts'
+import fs from 'node:fs'
 
 /**
- * Deno implementation of BIDSFile
+ * Deno-specific {@link BIDSFile} backed by the local filesystem.
+ *
+ * Wraps {@link FsFileOpener} so that content is read from disk via
+ * `Deno.open`. Use this class (or {@link readFileTree}) when validating
+ * datasets on a Deno-accessible filesystem.
+ *
+ * @param datasetPath - Absolute path to the dataset root on disk.
+ * @param path - Dataset-relative POSIX path of the file.
+ * @param ignore - Optional ignore rules for this file.
+ * @param parent - Parent directory node.
  */
-export class BIDSFileDeno implements BIDSFile {
-  #ignore: FileIgnoreRules
-  name: string
-  path: string
-  parent: FileTree
-  #fileInfo?: Deno.FileInfo
-  #datasetAbsPath: string
-  viewed: boolean = false
-
+export class BIDSFileDeno extends BIDSFile {
   constructor(datasetPath: string, path: string, ignore?: FileIgnoreRules, parent?: FileTree) {
-    this.#datasetAbsPath = datasetPath
-    this.path = path
-    this.name = basename(path)
-    this.#ignore = ignore ?? new FileIgnoreRules([])
-    try {
-      this.#fileInfo = Deno.statSync(this._getPath())
-    } catch (error) {
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
-        this.#fileInfo = Deno.lstatSync(this._getPath())
-      }
-    }
-    this.parent = parent ?? new FileTree('', '/', undefined)
-  }
-
-  private _getPath(): string {
-    return join(this.#datasetAbsPath, this.path)
-  }
-
-  get size(): number {
-    return this.#fileInfo ? this.#fileInfo.size : -1
-  }
-
-  get stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
-    const handle = this.#openHandle()
-    return handle.readable
-  }
-
-  get ignored(): boolean {
-    return this.#ignore.test(this.path)
-  }
-
-  /**
-   * Read the entire file and decode as utf-8 text
-   */
-  async text(): Promise<string> {
-    const reader = this.stream.pipeThrough(createUTF8Stream()).getReader()
-    const chunks: string[] = []
-    try {
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        chunks.push(value)
-      }
-      return chunks.join('')
-    } finally {
-      reader.releaseLock()
-    }
-  }
-
-  /**
-   * Read bytes in a range efficiently from a given file
-   *
-   * Reads up to size bytes, starting at offset.
-   * If EOF is encountered, the resulting array may be smaller.
-   */
-  async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
-    const handle = this.#openHandle()
-    const buf = new Uint8Array(size)
-    await handle.seek(offset, Deno.SeekMode.Start)
-    const nbytes = await handle.read(buf) ?? 0
-    handle.close()
-    return buf.subarray(0, nbytes)
-  }
-
-  /**
-   * Return a Deno file handle
-   */
-  #openHandle(): Deno.FsFile {
-    // Avoid asking for write access
-    const openOptions = { read: true, write: false }
-    return Deno.openSync(this._getPath(), openOptions)
+    super(path, new FsFileOpener(join(datasetPath, path)), ignore, parent)
   }
 }
 
-async function _readFileTree(
-  rootPath: string,
-  relativePath: string,
-  ignore: FileIgnoreRules,
-  prune: FileIgnoreRules,
-  parent?: FileTree,
-): Promise<FileTree> {
+type ReadFileTreeOptions = {
+  rootPath: string
+  relativePath: string
+  ignore: FileIgnoreRules
+  prune: FileIgnoreRules
+  parent?: FileTree
+  preferredRemote?: string
+  /**
+   * Per-dataset isomorphic-git cache, shared across the entire walk so that
+   * pack-file inflation is amortised across all annex pointers we encounter.
+   * One cache per gitdir.
+   */
+  gitCaches?: Map<string, object>
+}
+
+function getGitCache(caches: Map<string, object>, gitdir: string): object {
+  let cache = caches.get(gitdir)
+  if (cache === undefined) {
+    cache = {}
+    caches.set(gitdir, cache)
+  }
+  return cache
+}
+
+async function _readFileTree({
+  rootPath,
+  relativePath,
+  ignore,
+  prune,
+  parent,
+  preferredRemote,
+  gitCaches,
+}: ReadFileTreeOptions): Promise<FileTree> {
   await requestReadPermission()
   const name = basename(relativePath)
   const tree = new FileTree(relativePath, name, parent, ignore)
 
+  gitCaches ??= new Map()
+
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     const thisPath = posix.join(relativePath, dirEntry.name)
-    if (prune.test(thisPath)) {
+    if (prune.test(thisPath, { log: true, prefix: 'Pruned' })) {
       continue
     }
-    if (dirEntry.isFile || dirEntry.isSymlink) {
-      const file = new BIDSFileDeno(
-        rootPath,
-        thisPath,
-        ignore,
-      )
-      file.parent = tree
-      tree.files.push(file)
+
+    // Symlinks are classified here and then fall through to the file or
+    // directory branches below via the effective flags computed from stat().
+    let { isFile, isDirectory } = dirEntry
+    let fileInfo: Deno.FileInfo | undefined
+
+    if (dirEntry.isSymlink) {
+      const fullPath = join(rootPath, thisPath)
+      const target = await Deno.readLink(fullPath)
+
+      // Annex pointers are identified from the raw target string; no stat needed.
+      const annexParsed = parseAnnexKey(target)
+      if (annexParsed !== null) {
+        const gitdir = gitdirFromLink(fullPath, target)
+        const cache = getGitCache(gitCaches, gitdir)
+        const opener = new AnnexedGitFileOpener(
+          annexParsed.key,
+          annexParsed.size,
+          { cache, fs, gitdir },
+          preferredRemote,
+        )
+        tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
+        continue
+      }
+
+      try {
+        fileInfo = await Deno.stat(fullPath)
+      } catch (err) {
+        const code = (err as { code?: string }).code
+        let reason: SymlinkReason
+        if (code === 'ELOOP') {
+          reason = 'cycle'
+        } else if (code === 'ENOENT') {
+          reason = 'broken'
+        } else {
+          throw err
+        }
+        tree.links.push({ path: '/' + thisPath.replace(/^\/+/, ''), target, reason })
+        continue
+      }
+
+      ;({ isFile, isDirectory } = fileInfo)
     }
-    if (dirEntry.isDirectory) {
-      const dirTree = await _readFileTree(
+
+    if (isFile) {
+      const opener = new FsFileOpener(join(rootPath, thisPath), fileInfo)
+      tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
+    } else if (isDirectory) {
+      const dirTree = await _readFileTree({
         rootPath,
-        thisPath,
+        relativePath: thisPath,
         ignore,
         prune,
-        tree,
-      )
+        parent: tree,
+        preferredRemote,
+        gitCaches,
+      })
       tree.directories.push(dirTree)
     }
   }
@@ -137,22 +138,25 @@ async function _readFileTree(
 }
 
 /**
- * Read in the target directory structure and return a FileTree
+ * Recursively walk a local directory and build a {@link FileTree}.
+ *
+ * Symlinks to git-annex objects are detected and wrapped with
+ * {@link AnnexedGitFileOpener}. Broken or cyclic symlinks are recorded
+ * as unresolved links on the tree.
+ *
+ * @param rootPath - Absolute path to the dataset root directory.
+ * @param prune - Optional rules for directories to skip entirely.
+ * @param preferredRemote - Preferred git-annex remote name for fetching
+ *   content that is not locally present.
+ * @returns The root `FileTree` with `.bidsignore` rules applied.
  */
 export async function readFileTree(
   rootPath: string,
   prune?: FileIgnoreRules,
+  preferredRemote?: string,
 ): Promise<FileTree> {
-  prune ??= new FileIgnoreRules([], false)
+  prune ??= new FileIgnoreRules([], 'prune')
   const ignore = new FileIgnoreRules([])
-  const tree = await _readFileTree(rootPath, '/', ignore, prune)
-  const bidsignore = tree.get('.bidsignore')
-  if (bidsignore) {
-    try {
-      ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
-    } catch (err) {
-      console.log(`Failed to read '.bidsignore' file with the following error:\n${err}`)
-    }
-  }
-  return tree
+  const tree = await _readFileTree({ rootPath, relativePath: '/', ignore, prune, preferredRemote })
+  return loadBidsIgnore(tree, ignore)
 }

@@ -5,7 +5,7 @@ import type { Entity, Format, GenericSchema, Schema } from '../types/schema.ts'
 import { SEPARATOR_PATTERN } from '@std/path'
 import { hasProp } from '../utils/objectPathHandler.ts'
 
-const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
+const _sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 const CHECKS: ContextCheckFunction[] = [
   missingLabel,
@@ -15,14 +15,13 @@ const CHECKS: ContextCheckFunction[] = [
   reconstructionFailure,
 ]
 
-export async function filenameValidate(
+export function filenameValidate(
   schema: GenericSchema,
   context: BIDSContext,
-) {
+): void {
   for (const check of CHECKS) {
-    await check(schema, context)
+    check(schema, context)
   }
-  return Promise.resolve()
 }
 
 export function isAtRoot(context: BIDSContext) {
@@ -32,18 +31,18 @@ export function isAtRoot(context: BIDSContext) {
   return true
 }
 
-export async function missingLabel(
+export function missingLabel(
   schema: GenericSchema,
   context: BIDSContext,
-) {
+): void {
   if (!context.filenameRules.some((rule) => 'suffixes' in schema[rule])) {
-    return Promise.resolve()
+    return
   }
   const fileNoLabelEntities = Object.keys(context.entities).filter(
     (key) => context.entities[key] === 'NOENTITY',
   )
 
-  const fileEntities = Object.keys(context.entities).filter(
+  const _fileEntities = Object.keys(context.entities).filter(
     (key) => !fileNoLabelEntities.includes(key),
   )
 
@@ -54,16 +53,14 @@ export async function missingLabel(
       issueMessage: fileNoLabelEntities.join(', '),
     })
   }
-  return Promise.resolve()
 }
 
-export function atRoot(schema: GenericSchema, context: BIDSContext) {
+export function atRoot(_schema: GenericSchema, _context: BIDSContext) {
   /*
   if (fileIsAtRoot && !sidecarExtensions.includes(context.extension)) {
     // create issue for data file in root of dataset
   }
   */
-  return Promise.resolve()
 }
 
 export function lookupEntityLiteral(name: string, schema: GenericSchema) {
@@ -104,15 +101,15 @@ function getEntityByLiteral(
   return null
 }
 
-export async function entityLabelCheck(
+export function entityLabelCheck(
   schema: GenericSchema,
   context: BIDSContext,
-) {
+): void {
   if (!('formats' in schema.objects) || !('entities' in schema.objects)) {
     throw new Error('schema missing keys')
   }
   const formats = schema.objects.formats as unknown as Record<string, Format>
-  const entities = schema.objects.entities as unknown as Record<string, Entity>
+  const _entities = schema.objects.entities as unknown as Record<string, Entity>
   Object.keys(context.entities).map((fileEntity) => {
     const entity = getEntityByLiteral(fileEntity, schema)
     if (
@@ -136,7 +133,6 @@ export async function entityLabelCheck(
       // unknown entity
     }
   })
-  return Promise.resolve()
 }
 
 const ruleChecks: RuleCheckFunction[] = [
@@ -146,7 +142,7 @@ const ruleChecks: RuleCheckFunction[] = [
   invalidLocation,
 ]
 
-async function checkRules(schema: GenericSchema, context: BIDSContext) {
+function checkRules(schema: GenericSchema, context: BIDSContext): void {
   if (context.filenameRules.length === 1) {
     for (const check of ruleChecks) {
       check(
@@ -184,7 +180,6 @@ async function checkRules(schema: GenericSchema, context: BIDSContext) {
       })
     }
   }
-  return Promise.resolve()
 }
 
 function entityRuleIssue(
@@ -258,7 +253,7 @@ function datatypeMismatch(
   }
 }
 
-async function extensionMismatch(
+function extensionMismatch(
   path: string,
   schema: GenericSchema,
   context: BIDSContext,
@@ -276,22 +271,34 @@ async function extensionMismatch(
   }
 }
 
-async function invalidLocation(
-  path: string,
-  schema: GenericSchema,
+function invalidLocation(
+  _path: string,
+  _schema: GenericSchema,
   context: BIDSContext,
 ) {
-  const rule = schema[path]
-  if (!('entities' in rule)) {
+  if (context.directory) {
     return
   }
-  const sub: string | undefined = context.entities.sub
-  const ses: string | undefined = context.entities.ses
+  if (!context.entities.tpl) {
+    _validateLocation(context, 'sub', 'ses')
+  }
+  if (!context.entities.sub) {
+    _validateLocation(context, 'tpl', 'cohort')
+  }
+}
 
-  if (sub) {
-    let pattern = `/sub-${sub}/`
-    if (ses) {
-      pattern += `ses-${ses}/`
+function _validateLocation(
+  context: BIDSContext,
+  topent: string,
+  subent: string,
+) {
+  const topval: string | undefined = context.entities[topent]
+  const subval: string | undefined = context.entities[subent]
+
+  if (topval) {
+    let pattern = `/${topent}-${topval}/`
+    if (subval) {
+      pattern += `${subent}-${subval}/`
     }
     if (!context.path.startsWith(pattern)) {
       context.dataset.issues.add({
@@ -302,26 +309,26 @@ async function invalidLocation(
     }
   }
 
-  if (!sub && context.path.match(/^\/sub-/)) {
+  if (!topval && context.path.match(new RegExp(`^/${topent}-`))) {
     context.dataset.issues.add({
       code: 'INVALID_LOCATION',
       location: context.path,
       issueMessage: `Expected location: /${context.file.name}`,
     })
   }
-  if (!ses && context.path.match(/\/ses-/)) {
+  if (!subval && context.path.match(new RegExp(`/${subent}-`))) {
     context.dataset.issues.add({
       code: 'INVALID_LOCATION',
       location: context.path,
-      issueMessage: `Unexpected session directory`,
+      issueMessage: `Unexpected ${subent} directory`,
     })
   }
 }
 
-async function reconstructionFailure(
+function reconstructionFailure(
   schema: GenericSchema,
   context: BIDSContext,
-) {
+): void {
   if (Object.keys(context.entities).length === 0) {
     return
   }

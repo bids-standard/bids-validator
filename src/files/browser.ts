@@ -1,65 +1,49 @@
-import { type BIDSFile, FileTree } from '../types/filetree.ts'
-import { filesToTree } from './filetree.ts'
-import { FileIgnoreRules, readBidsIgnore } from './ignore.ts'
-import { parse, SEPARATOR_PATTERN } from '@std/path'
-import * as posix from '@std/path/posix'
+import { BIDSFile, FileTree } from '../types/filetree.ts'
+import { filesToTree, loadBidsIgnore } from './filetree.ts'
+import { FileIgnoreRules } from './ignore.ts'
+import { BrowserFileOpener } from './openers.ts'
 
 /**
- * Browser implement of BIDSFile wrapping native File/FileList types
+ * Browser-specific {@link BIDSFile} wrapping the native `File` API.
+ *
+ * Backed by {@link BrowserFileOpener}. Use {@link fileListToTree} to
+ * convert a full `File[]` from `<input webkitdirectory>` into a
+ * {@link FileTree} ready for validation; this class is rarely constructed
+ * directly.
+ *
+ * @param file - A `File` obtained from an `<input webkitdirectory>` element.
+ * @param ignore - Ignore rules for this file.
+ * @param parent - Parent directory node.
  */
-export class BIDSFileBrowser implements BIDSFile {
-  #ignore: FileIgnoreRules
-  #file: File
-  name: string
-  path: string
-  parent: FileTree
-  viewed: boolean = false
-
+export class BIDSFileBrowser extends BIDSFile {
   constructor(file: File, ignore: FileIgnoreRules, parent?: FileTree) {
-    this.#file = file
-    this.#ignore = ignore
-    this.name = file.name
-    const relativePath = this.#file.webkitRelativePath
+    const relativePath = file.webkitRelativePath
     const prefixLength = relativePath.indexOf('/')
-    this.path = relativePath.substring(prefixLength)
-    this.parent = parent ?? new FileTree('', '/', undefined)
-  }
-
-  get size(): number {
-    return this.#file.size
-  }
-
-  get stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
-    return this.#file.stream() as ReadableStream<Uint8Array<ArrayBuffer>>
-  }
-
-  get ignored(): boolean {
-    return this.#ignore.test(this.path)
-  }
-
-  text(): Promise<string> {
-    return this.#file.text()
-  }
-
-  async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
-    return new Uint8Array(await this.#file.slice(offset, size).arrayBuffer())
+    const opener = new BrowserFileOpener(file)
+    super(relativePath.substring(prefixLength), opener, ignore, parent)
   }
 }
 
 /**
- * Convert from FileList (created with webkitDirectory: true) to FileTree for validator use
+ * Convert a browser `File[]` (from `<input webkitdirectory>`) into a
+ * {@link FileTree} suitable for validation.
+ *
+ * @param files - Files selected via the browser file picker.
+ * @returns The root `FileTree` with `.bidsignore` rules applied.
  */
-export async function fileListToTree(files: File[]): Promise<FileTree> {
+export function fileListToTree(
+  files: File[],
+  prune?: FileIgnoreRules,
+): Promise<FileTree> {
+  prune ??= new FileIgnoreRules([], 'prune')
   const ignore = new FileIgnoreRules([])
   const root = new FileTree('/', '/', undefined)
-  const tree = filesToTree(files.map((f) => new BIDSFileBrowser(f, ignore, root)), ignore)
-  const bidsignore = tree.get('.bidsignore')
-  if (bidsignore) {
-    try {
-      ignore.add(await readBidsIgnore(bidsignore as BIDSFile))
-    } catch (err) {
-      console.log(`Failed to read '.bidsignore' file with the following error:\n${err}`)
-    }
-  }
-  return tree
+  return loadBidsIgnore(
+    filesToTree(
+      files.map((f) => new BIDSFileBrowser(f, ignore, root))
+        .filter((f) => !prune.test(f.path, { log: true, prefix: 'Pruned' })),
+      ignore,
+    ),
+    ignore,
+  )
 }

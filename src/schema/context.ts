@@ -17,13 +17,14 @@ import { ColumnsMap } from '../types/columns.ts'
 import { readEntities } from './entities.ts'
 import { findDatatype } from './datatypes.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
-import { walkBack } from '../files/inheritance.ts'
+import { readSidecars } from '../files/inheritance.ts'
 import { parseGzip } from '../files/gzip.ts'
 import { loadTSV, loadTSVGZ } from '../files/tsv.ts'
 import { parseTIFF } from '../files/tiff.ts'
 import { loadJSON } from '../files/json.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
+import type { Issue } from '../types/issues.ts'
 import type { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
 
@@ -40,7 +41,7 @@ export class BIDSContextDataset implements Dataset {
   options?: ValidatorOptions
   schema: Schema
   pseudofileExtensions: Set<string>
-  opaqueDirectories: Set<string>
+  opaqueDirectories!: Set<string>
 
   // Opaque object for HED validator
   hedSchemas: HedSchemas | undefined | null = undefined
@@ -66,14 +67,7 @@ export class BIDSContextDataset implements Dataset {
           ?.filter((ext) => ext.endsWith('/'))
         : [],
     )
-    this.opaqueDirectories = new Set<string>(
-      args.schema
-        ? Object.values(this.schema.rules.directories.raw)
-          ?.filter((rule) => rule?.opaque && 'name' in rule)
-          ?.map((dir) => `/${dir.name}`)
-        : [],
-    )
-    // @ts-ignore
+    // @ts-expect-error Subjects type does not include null, but null is used as a sentinel for "not yet loaded"
     this.subjects = args.subjects || null
   }
 
@@ -88,6 +82,12 @@ export class BIDSContextDataset implements Dataset {
         ? 'derivative'
         : 'raw'
     }
+    const datasetType = this.dataset_description.DatasetType as string
+    this.opaqueDirectories = new Set<string>(
+      Object.values(this.schema?.rules?.directories[datasetType] ?? {})
+        .filter((rule) => rule.opaque)
+        .map((dir) => `/${dir.name}`),
+    )
   }
 
   isPseudoFile(file: FileTree): boolean {
@@ -129,10 +129,10 @@ export class BIDSContext implements Context {
   suffix: string
   extension: string
   modality: string
-  sidecar: Record<string, any>
+  sidecar: Record<string, unknown>
   associations: Associations
   columns: Record<string, string[]>
-  json: Record<string, any>
+  json: Record<string, unknown>
   gzip?: Gzip
   nifti_header?: NiftiHeader
   ome?: Ome
@@ -142,6 +142,7 @@ export class BIDSContext implements Context {
   file: BIDSFile
   filenameRules: string[]
   sidecarKeyOrigin: Record<string, string>
+  loaded: Promise<void>
 
   constructor(
     file: BIDSFile,
@@ -167,6 +168,7 @@ export class BIDSContext implements Context {
     this.columns = new ColumnsMap() as Record<string, string[]>
     this.json = {}
     this.associations = {} as Associations
+    this.loaded = this.asyncLoads()
   }
 
   get schema(): Schema {
@@ -199,29 +201,18 @@ export class BIDSContext implements Context {
     if (this.extension === '.json') {
       return
     }
-    let sidecars: BIDSFile[] = []
+    let sidecars: Map<string, Record<string, unknown>>
     try {
-      sidecars = [...walkBack(this.file)]
-    } catch (error) {
-      if (
-        error && typeof error === 'object' && 'code' in error &&
-        error.code === 'MULTIPLE_INHERITABLE_FILES'
-      ) {
-        // @ts-expect-error
-        this.dataset.issues.add(error)
+      sidecars = await readSidecars(this.file)
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'code' in error) {
+        this.dataset.issues.add(error as Issue)
+        return
       } else {
         throw error
       }
     }
-    for (const file of sidecars) {
-      const json = await loadJSON(file).catch((error): Record<string, unknown> => {
-        if (error.key) {
-          this.dataset.issues.add({ code: error.key, location: file.path })
-          return {}
-        } else {
-          throw error
-        }
-      })
+    for (const [path, json] of sidecars.entries()) {
       const overrides = Object.keys(this.sidecar).filter((x) => Object.hasOwn(json, x))
       for (const key of overrides) {
         if (json[key] !== this.sidecar[key]) {
@@ -230,14 +221,14 @@ export class BIDSContext implements Context {
             code: 'SIDECAR_FIELD_OVERRIDE',
             subCode: key,
             location: overrideLocation,
-            issueMessage: `Sidecar key defined in ${file.path} overrides previous value (${
+            issueMessage: `Sidecar key defined in ${path} overrides previous value (${
               json[key]
             }) from ${overrideLocation}`,
           })
         }
       }
       this.sidecar = { ...json, ...this.sidecar }
-      Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= file.path)
+      Object.keys(json).map((x) => this.sidecarKeyOrigin[x] ??= path)
     }
     // Hack: round RepetitionTime to 3 decimal places; schema should add rounding function
     if (typeof this.sidecar.RepetitionTime === 'number') {
@@ -258,6 +249,9 @@ export class BIDSContext implements Context {
         throw error
       }
     })
+    if (this.nifti_header && this.nifti_header.axis_codes === null) {
+      this.dataset.issues.add({ code: 'AMBIGUOUS_AFFINE', location: this.file.path })
+    }
   }
 
   async loadColumns(): Promise<void> {
@@ -323,7 +317,7 @@ export class BIDSContext implements Context {
     if (!this.extension.endsWith('.gz')) {
       return
     }
-    this.gzip = await parseGzip(this.file, 512).catch((error) => {
+    this.gzip = await parseGzip(this.file, 1024).catch((error) => {
       logger.debug('Error parsing gzip header', error)
       return undefined
     })
@@ -358,7 +352,7 @@ export class BIDSContext implements Context {
     const participants_tsv = this.dataset.tree.get('participants.tsv') as BIDSFile
     if (participants_tsv) {
       const participantsData = await loadTSV(participants_tsv)
-        .catch((error) => {
+        .catch((_error) => {
           return new Map()
         }) as Record<string, string[]>
       this.dataset.subjects.participant_id = participantsData['participant_id']

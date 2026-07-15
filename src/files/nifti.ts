@@ -1,20 +1,18 @@
 import { isCompressed, isNIFTI1, isNIFTI2, NIFTI1, NIFTI2 } from '@mango/nifti'
 import type { BIDSFile } from '../types/filetree.ts'
-import { logger } from '../utils/logger.ts'
 import type { NiftiHeader } from '@bids/schema/context'
 import { readBytes } from './access.ts'
+import { streamFromUint8Array } from './streams.ts'
 
-async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array<ArrayBuffer>> {
+async function extract(
+  buffer: Uint8Array<ArrayBuffer>,
+  nbytes: number,
+): Promise<Uint8Array<ArrayBuffer>> {
   // The fflate decompression that is used in nifti-reader does not like
   // truncated data, so pretend that we have a stream and stop reading
   // when we have enough bytes.
   const result = new Uint8Array(nbytes)
-  const stream = new ReadableStream({
-    start(controller) {
-      controller.enqueue(buffer)
-      controller.close()
-    },
-  })
+  const stream = streamFromUint8Array(buffer)
   const reader = stream.pipeThrough(new DecompressionStream('gzip')).getReader()
   let offset = 0
   try {
@@ -34,9 +32,9 @@ async function extract(buffer: Uint8Array, nbytes: number): Promise<Uint8Array<A
 
 export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
   const buf = await readBytes(file, 1024)
+  let header
   try {
     const data = isCompressed(buf.buffer) ? await extract(buf, 540) : buf.slice(0, 540)
-    let header
     if (isNIFTI1(data.buffer)) {
       header = new NIFTI1()
       // Truncate to 348 bytes to avoid attempting to parse extensions
@@ -48,29 +46,30 @@ export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
     if (!header) {
       throw { code: 'NIFTI_HEADER_UNREADABLE' }
     }
-    const ndim = header.dims[0]
-    return {
-      dim: header.dims,
-      // Hack: round pixdim to 3 decimal places; schema should add rounding function
-      pixdim: header.pixDims.map((pixdim) => Math.round(pixdim * 1000) / 1000),
-      shape: header.dims.slice(1, ndim + 1),
-      voxel_sizes: header.pixDims.slice(1, ndim + 1),
-      dim_info: {
-        freq: header.dim_info & 0x03,
-        phase: (header.dim_info >> 2) & 0x03,
-        slice: (header.dim_info >> 4) & 0x03,
-      },
-      xyzt_units: {
-        xyz: ['unknown', 'meter', 'mm', 'um'][header.xyzt_units & 0x03],
-        t: ['unknown', 'sec', 'msec', 'usec'][(header.xyzt_units >> 3) & 0x03],
-      },
-      qform_code: header.qform_code,
-      sform_code: header.sform_code,
-      axis_codes: axisCodes(header.affine),
-    } as NiftiHeader
-  } catch (err) {
+  } catch (_err) {
     throw { code: 'NIFTI_HEADER_UNREADABLE' }
   }
+
+  const ndim = header.dims[0]
+  return {
+    dim: header.dims,
+    // Hack: round pixdim to 3 decimal places; schema should add rounding function
+    pixdim: header.pixDims.map((pixdim) => Math.round(pixdim * 1000) / 1000),
+    shape: header.dims.slice(1, ndim + 1),
+    voxel_sizes: header.pixDims.slice(1, ndim + 1),
+    dim_info: {
+      freq: header.dim_info & 0x03,
+      phase: (header.dim_info >> 2) & 0x03,
+      slice: (header.dim_info >> 4) & 0x03,
+    },
+    xyzt_units: {
+      xyz: ['unknown', 'meter', 'mm', 'um'][header.xyzt_units & 0x03],
+      t: ['unknown', 'sec', 'msec', 'usec'][(header.xyzt_units >> 3) & 0x03],
+    },
+    qform_code: header.qform_code,
+    sform_code: header.sform_code,
+    axis_codes: axisCodes(header.affine),
+  } as NiftiHeader
 }
 
 /** Vector addition */
@@ -91,6 +90,10 @@ function scale(vec: number[], scalar: number): number[] {
 /** Dot product */
 function dot(a: number[], b: number[]): number {
   return a.map((x, i) => x * b[i]).reduce((acc, x) => acc + x, 0)
+}
+
+function norm(vec: number[]): number[] {
+  return scale(vec, 1 / Math.sqrt(dot(vec, vec)))
 }
 
 function argMax(arr: number[]): number {
@@ -124,34 +127,49 @@ function argMax(arr: number[]): number {
  *
  * @returns character codes describing the orientation of an image affine.
  */
-export function axisCodes(affine: number[][]): string[] {
+export function axisCodes(affine: number[][]): string[] | null {
   // This function is an extract of the Python function transforms3d.affines.decompose44
   // (https://github.com/matthew-brett/transforms3d/blob/6a43a98/transforms3d/affines.py#L10-L153)
-  //
-  // As an optimization, this only orthogonalizes the basis,
-  // and does not normalize to unit vectors.
+
+  // Bad qforms result in NaNs in the rotation matrix
+  if (affine.some((row) => row.some((val) => !Number.isFinite(val)))) {
+    return null
+  }
 
   // Operate on columns, which are the cosines that project input coordinates onto output axes
   const [cosX, cosY, cosZ] = [0, 1, 2].map((j) => [0, 1, 2].map((i) => affine[i][j]))
 
-  // Orthogonalize cosY with respect to cosX
-  const orthY = sub(cosY, scale(cosX, dot(cosX, cosY)))
+  const orthX = norm(cosX)
 
-  // Orthogonalize cosZ with respect to cosX and orthY
-  const orthZ = sub(
-    cosZ,
-    add(scale(cosX, dot(cosX, cosZ)), scale(orthY, dot(orthY, cosZ))),
+  // Orthogonalize cosY with respect to orthX
+  const orthY = norm(sub(cosY, scale(orthX, dot(orthX, cosY))))
+
+  // Orthogonalize cosZ with respect to orthX and orthY
+  const orthZ = norm(
+    sub(cosZ, add(scale(orthX, dot(orthX, cosZ)), scale(orthY, dot(orthY, cosZ)))),
   )
 
-  const basis = [cosX, orthY, orthZ]
-  const maxIndices = basis.map((row) => argMax(row.map(Math.abs)))
+  // Basis is transposed rotation matrix, for simpler access
+  const basis = [orthX, orthY, orthZ]
+  // Avoid duplicate calls to Math.abs, use to mark taken axes later
+  const magnitudes = [orthX.map(Math.abs), orthY.map(Math.abs), orthZ.map(Math.abs)]
 
-  // Check that indices are 0, 1 and 2 in some order
-  if (maxIndices.toSorted().some((idx, i) => idx !== i)) {
-    throw { key: 'AMBIGUOUS_AFFINE' }
-  }
+  // Fill the orientation codes in order of decreasing similarity to any world axis
+  const maxMags = magnitudes.map((row) => Math.max(...row))
+  // Reversed argsort. Sorry.
+  const dims = Object.entries(maxMags).toSorted((a, b) => b[1] - a[1]).map(([idx]) => +idx)
 
   // Positive/negative codes for each world axis
   const codes = ['RL', 'AP', 'SI']
-  return maxIndices.map((idx, i) => codes[idx][basis[i][idx] > 0 ? 0 : 1])
+  const result = Array(3).fill('')
+
+  for (const dim of dims) {
+    const idx = argMax(magnitudes[dim])
+    // Do not allow this world axis to be used again
+    magnitudes.forEach((row) => {
+      row[idx] = 0
+    })
+    result[dim] = codes[idx][basis[dim][idx] > 0 ? 0 : 1]
+  }
+  return result
 }
