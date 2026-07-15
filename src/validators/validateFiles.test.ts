@@ -1,19 +1,22 @@
 import { assert, assertEquals } from '@std/assert'
 import { filenameIdentify } from './filenameIdentify.ts'
 import { filenameValidate } from './filenameValidate.ts'
-import { BIDSContext, BIDSContextDataset } from '../schema/context.ts'
+import { type BIDSContext, BIDSContextDataset } from '../schema/context.ts'
+import { makeBIDSContext } from '../schema/context.test.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
-import type { GenericSchema, Schema } from '../types/schema.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
+import type { GenericSchema } from '../types/schema.ts'
 import type { BIDSFile } from '../types/filetree.ts'
-import { pathsToTree } from '../files/filetree.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
+import { StringOpener } from '../files/openers.test.ts'
 
 const schema = await loadSchema()
 
-function makeContext(path: string): BIDSContext {
+function makeContext(path: string, contents: string = ''): Promise<BIDSContext> {
   const tree = pathsToTree([path])
   const dataset = new BIDSContextDataset({ schema, tree })
-  return new BIDSContext(tree.get(path) as BIDSFile, dataset)
+  const file = tree.get(path) as BIDSFile
+  file.opener = new StringOpener(contents)
+  return makeBIDSContext(file, dataset)
 }
 
 Deno.test('test valid paths', async (t) => {
@@ -54,9 +57,9 @@ Deno.test('test valid paths', async (t) => {
   ]
   for (const filename of validFiles) {
     await t.step(filename, async () => {
-      const context = makeContext(filename)
-      await filenameIdentify(schema, context)
-      await filenameValidate(schema as unknown as GenericSchema, context)
+      const context = await makeContext(filename, '{"valid": "json"}')
+      filenameIdentify(schema, context)
+      filenameValidate(schema as unknown as GenericSchema, context)
       assertEquals(
         context.dataset.issues.get({ location: filename }).length,
         0,
@@ -113,9 +116,9 @@ Deno.test('test invalid paths', async (t) => {
   ]
   for (const filename of invalidFiles) {
     await t.step(filename, async () => {
-      const context = makeContext(filename)
-      await filenameIdentify(schema, context)
-      await filenameValidate(schema as unknown as GenericSchema, context)
+      const context = await makeContext(filename)
+      filenameIdentify(schema, context)
+      filenameValidate(schema as unknown as GenericSchema, context)
       assert(
         context.dataset.issues.get({
           location: context.file.path,

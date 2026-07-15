@@ -48,18 +48,18 @@ Deno.test('Test loading nifti header', async (t) => {
     const path = 'sub-01/func/sub-01_task-rhymejudgment_events.tsv'
     const root = './tests/data/valid_headers'
     const file = new BIDSFileDeno(root, path, ignore)
-    let error: any = undefined
-    const header = await loadHeader(file).catch((e) => {
+    let error: unknown = undefined
+    const _header = await loadHeader(file).catch((e) => {
       error = e
     })
-    assertObjectMatch(error, { code: 'NIFTI_HEADER_UNREADABLE' })
+    assertObjectMatch(error as Record<PropertyKey, unknown>, { code: 'NIFTI_HEADER_UNREADABLE' })
   })
 
   await t.step('Tolerate big headers', async () => {
     const path = 'big_header.nii.gz'
     const root = './tests/data/'
     const file = new BIDSFileDeno(root, path, ignore)
-    let error: any = undefined
+    const _error: unknown = undefined
     const header = await loadHeader(file)
     assert(header !== undefined)
     assertObjectMatch(header, {
@@ -76,25 +76,48 @@ Deno.test('Test loading nifti header', async (t) => {
 })
 
 Deno.test('Test extracting axis codes', async (t) => {
-  await t.step('Identify RAS', async () => {
+  await t.step('Identify RAS', () => {
     const affine = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
     assertEquals(axisCodes(affine), ['R', 'A', 'S'])
   })
-  await t.step('Identify LPS (flips)', async () => {
+  await t.step('Identify LPS (flips)', () => {
     const affine = [[-1, 0, 0, 0], [0, -1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
     assertEquals(axisCodes(affine), ['L', 'P', 'S'])
   })
-  await t.step('Identify SPL (flips + swap)', async () => {
+  await t.step('Identify SPL (flips + swap)', () => {
     const affine = [[0, 0, -1, 0], [0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]]
     assertEquals(axisCodes(affine), ['S', 'P', 'L'])
   })
-  await t.step('Identify SLP (flips + rotate)', async () => {
+  await t.step('Identify SLP (flips + rotate)', () => {
     const affine = [[0, -1, 0, 0], [0, 0, -1, 0], [1, 0, 0, 0], [0, 0, 0, 1]]
     assertEquals(axisCodes(affine), ['S', 'L', 'P'])
   })
-  await t.step('Identify ASR (rotate)', async () => {
+  await t.step('Identify ASR (rotate)', () => {
     const affine = [[0, 0, 1, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
     assertEquals(axisCodes(affine), ['A', 'S', 'R'])
+  })
+  await t.step('Fail gracefully on NaNs', () => {
+    const affine = [[Number.NaN, 0, 1, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
+    assertEquals(axisCodes(affine), null)
+  })
+  await t.step('Consistently label very oblique axes', () => {
+    // The i and k axes both move most along the z axis.
+    let affine = [
+      [0.63260427, 0.43813722, 0.63862948, 0],
+      [-0.31581750, 0.89885806, -0.30383137, 0],
+      [-0.70715708, -0.00948534, 0.70699285, 0],
+      [0, 0, 0, 1],
+    ]
+    assertEquals(axisCodes(affine), ['I', 'A', 'R'])
+    affine = [
+      [0.63862948, 0.43813722, -0.63260427, 0],
+      [-0.30383137, 0.89885806, 0.31581750, 0],
+      [0.70699285, -0.00948534, 0.70715708, 0],
+      [0, 0, 0, 1],
+    ]
+    // Naive ordering would call this SAL, but the largest magnitude method
+    // would label k before i.
+    assertEquals(axisCodes(affine), ['R', 'A', 'S'])
   })
 })
 

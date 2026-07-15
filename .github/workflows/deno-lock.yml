@@ -1,0 +1,65 @@
+name: Update dependencies
+
+on:
+  push:
+    branches:
+      - ci/update-deps
+  schedule:
+    - cron: "15 15 3,17 * *"
+    - cron: "15 16 10 * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Two weeks, in minutes
+  MIN_AGE: 20160
+
+jobs:
+  update:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282 # v2.0.4
+        with:
+          deno-version: v2.x
+      - name: Set compatible update
+        if: github.event.schedule != '15 16 10 * *'
+        run: echo UPDATE_TYPE=compatible >> $GITHUB_ENV
+      - name: Set latest update
+        if: github.event.schedule == '15 16 10 * *'
+        run: echo UPDATE_TYPE=latest >> $GITHUB_ENV
+      - name: Set git identity
+        run: |
+          git config --global user.name "bids-maintenance"
+          git config --global user.email "bids.maintenance@gmail.com"
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+      - name: List updates
+        run: >
+          deno outdated --minimum-dependency-age $MIN_AGE --$UPDATE_TYPE |
+          perl -0 -pe 's/[^[:ascii:]]//g; s/\n\n/\n/g; s/(^|\n) */$1/g' |
+          uvx tabulate -f github -1 - |
+          tee /tmp/outdated.md
+        env:
+          NO_COLOR: 1
+      - name: Update dependencies
+        run: >
+          uvx datalad run -i deno.json -i deno.lock -o deno.json -o deno.lock --
+          bash -c
+          "deno update --compatible @bids/schema &&
+           deno update --$UPDATE_TYPE --minimum-dependency-age $MIN_AGE '!@bids/schema'"
+      - name: Make pull request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          branch: deps/${{ env.UPDATE_TYPE }}
+          title: "chore(deps): Update strategy ${{ env.UPDATE_TYPE }}"
+          body-path: /tmp/outdated.md

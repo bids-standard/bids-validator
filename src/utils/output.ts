@@ -4,18 +4,30 @@
 import { Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
 import { format as prettyBytes } from '@std/fmt/bytes'
+import { marked } from 'marked'
+import supportsHyperlinks from 'supports-hyperlinks'
 import type { SummaryOutput, ValidationResult } from '../types/validation-result.ts'
 import type { Issue, Severity } from '../types/issues.ts'
 import type { DatasetIssues } from '../issues/datasetIssues.ts'
+
+// ansi-escapes attempts to use the system permissions on Windows at import time.
+// Limiting the frequency of that request to times when it is needed is nicer to users
+// and avoids the need to give the permission to tests on Windows CI.
+let ansiEscapes: typeof import('ansi-escapes') | undefined
+if (supportsHyperlinks.stdout) {
+  ansiEscapes = await import('ansi-escapes')
+}
 
 interface LoggingOptions {
   verbose: boolean
 }
 
 /**
- * Format for Unix consoles
+ * Format a validation result for Unix console display.
  *
- * Returns the full output string with newlines
+ * @param result - The validation result to format.
+ * @param options - Logging options; `verbose` includes extra detail per issue.
+ * @returns The full ANSI-coloured output string with newlines.
  */
 export function consoleFormat(
   result: ValidationResult,
@@ -32,7 +44,82 @@ export function consoleFormat(
   output.push('')
   output.push(formatSummary(result.summary))
   output.push('')
+  if (result.derivativesSummary) {
+    for (const [key, derivResult] of Object.entries(result.derivativesSummary)) {
+      output.push(colors.blue(`Derivative: ${key}`))
+
+      if (derivResult.issues.size === 0) {
+        output.push(colors.green('\tThis derivative appears to be BIDS compatible.'))
+      } else {
+        ;(['warning', 'error'] as Severity[]).map((severity) => {
+          output.push(...formatIssues(derivResult.issues.filter({ severity }), options, severity))
+        })
+      }
+      output.push(formatSummary(derivResult.summary))
+      output.push('')
+    }
+  }
+
   return output.join('\n')
+}
+
+/**
+ * Render marked tokens to ANSI strings
+ */
+// deno-lint-ignore no-explicit-any
+function renderTokens(tokenList: any[]): string {
+  if (!tokenList) return ''
+
+  return tokenList.map((token) => {
+    switch (token.type) {
+      case 'paragraph':
+        return renderTokens(token.tokens)
+
+      case 'strong':
+        return colors.bold(renderTokens(token.tokens))
+
+      case 'em':
+        return colors.italic(renderTokens(token.tokens))
+
+      case 'codespan':
+        return colors.cyan(token.text)
+
+      case 'link':
+        // Using the library to check for stdout support
+        if (ansiEscapes) {
+          return ansiEscapes.link(token.text, token.href)
+        } else {
+          // Fallback for terminals without support
+          return `${colors.blue(token.text)} (${colors.gray(token.href)})`
+        }
+
+      case 'text':
+        return token.text
+
+      default:
+        // Render children or return raw text
+        return renderTokens(token.tokens || []) || token.raw || ''
+    }
+  }).join('')
+}
+
+function formatMessage(text: string): string {
+  const cleanText = text.replaceAll(
+    'SPEC_ROOT/',
+    'https://bids-specification.readthedocs.io/en/stable/',
+  )
+
+  // Respect no-color flags or non-interactive environments
+  if (colors.getColorEnabled() === false) {
+    return cleanText
+  }
+
+  try {
+    const tokens = marked.lexer(cleanText)
+    return renderTokens(tokens)
+  } catch {
+    return cleanText
+  }
 }
 
 function formatIssues(
@@ -47,7 +134,8 @@ function formatIssues(
     if (issues.size === 0 || typeof code !== 'string') {
       continue
     }
-    const codeMessage = issues.codeMessages.get(code) ?? ''
+
+    const codeMessage = formatMessage(issues.codeMessages.get(code) ?? '')
     output.push(
       '\t' +
         colors[color](
@@ -92,7 +180,11 @@ function formatFiles(issues: DatasetIssues, options?: LoggingOptions): string[] 
     const fileOut: string[] = []
     issueDetails.map((key) => {
       if (Object.hasOwn(issue, key) && issue[key]) {
-        fileOut.push(`${issue[key]}`)
+        let content = `${issue[key]}`
+        if (key === 'issueMessage') {
+          content = formatMessage(content)
+        }
+        fileOut.push(content)
       }
     })
     output.push('\t\t' + fileOut.join(' - '))
@@ -156,13 +248,6 @@ function formatSummary(summary: SummaryOutput): string {
 
   output.push('')
 
-  //Neurostars message
-  output.push(
-    colors.cyan(
-      '\tIf you have any questions, please post on https://neurostars.org/tags/bids.',
-    ),
-  )
-
   return output.join('\n')
 }
 
@@ -171,8 +256,19 @@ function helpUrl(code: string): string {
   return `https://neurostars.org/search?q=${code}`
 }
 
-export function resultToJSONStr(result: ValidationResult): string {
-  return JSON.stringify(result, (key, value) => {
+/**
+ * Serialize a validation result to a JSON string.
+ *
+ * Circular `parent` references are stripped and `Map` instances are
+ * converted to plain objects during serialization.
+ *
+ * @param result - The validation result to serialize.
+ * @param pretty - When `true`, indent with two spaces.
+ * @returns The JSON string.
+ */
+export function resultToJSONStr(result: ValidationResult, pretty: boolean = false): string {
+  const indent = pretty ? 2 : 0
+  return JSON.stringify(result, (_key, value) => {
     if (value?.parent) {
       // Remove parent reference to avoid circular references
       value.parent = undefined
@@ -182,5 +278,5 @@ export function resultToJSONStr(result: ValidationResult): string {
     } else {
       return value
     }
-  })
+  }, indent)
 }

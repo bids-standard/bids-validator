@@ -3,34 +3,48 @@ name: Validation
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev, maint/*]
   pull_request:
-    branches: [main]
+    branches: [main, dev, maint/*]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # Validate CITATION.cff
+  codespell:
+    name: Check for spelling errors
+    runs-on: ubuntu-slim
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+      - name: Run codespell
+        run: uvx codespell
+
   validate_cff:
-    runs-on: ubuntu-latest
+    name: Validate CITATION.cff
+    runs-on: ubuntu-slim
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: 3
-    - name: Validate CITATION.cff
-      run: pipx run cffconvert --validate
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        with:
+          python-version: 3
+      - name: Validate CITATION.cff
+        run: uvx cffconvert --validate
+
   check_change_log:
-    runs-on: ubuntu-latest
+    name: Check changelog
+    runs-on: ubuntu-slim
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Check for changes in changelog
-      env:
-        BASE_REF: ${{ github.event.pull_request.base.ref }}
-        NO_CHANGELOG_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'no changelog') }}
-      run: .github/scripts/scriv_check.sh
-      shell: bash
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+      - name: Check for changes in changelog
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          NO_CHANGELOG_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'no changelog') }}
+        run: .github/scripts/scriv_check.sh
+        shell: bash

@@ -146,6 +146,11 @@ export const bidsIssues: IssueDefinitionRecord = {
     reason:
       'We were unable to parse header data from this NIfTI file. Please ensure it is not corrupted or mislabeled.',
   },
+  AMBIGUOUS_AFFINE: {
+    severity: 'warning',
+    reason:
+      'The image orientation could not be determined. This may be the result of an invalid affine matrix.',
+  },
   CHECK_ERROR: {
     severity: 'error',
     reason: 'generic place holder for errors from failed `checks` evaluated from schema.',
@@ -203,7 +208,26 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'Files with the same name but different casing have been found.',
   },
-
+  INVALID_FILE_ENCODING: {
+    severity: 'error',
+    reason: 'File encoding is not valid UTF-8.',
+  },
+  SYMLINK_BROKEN: {
+    severity: 'error',
+    reason: 'Symbolic link target does not exist.',
+  },
+  SYMLINK_CYCLE: {
+    severity: 'error',
+    reason: 'Symbolic link chain contains a cycle or exceeds maximum depth.',
+  },
+  SYMLINK_OUT_OF_TREE: {
+    severity: 'error',
+    reason: 'Symbolic link target escapes the repository root.',
+  },
+  SYMLINK_IN_SUBMODULE: {
+    severity: 'warning',
+    reason: 'Symbolic link target lies within an uninitialized git submodule.',
+  },
 }
 
 export const nonSchemaIssues = { ...bidsIssues }

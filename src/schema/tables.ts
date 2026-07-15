@@ -1,3 +1,4 @@
+import type { Issue } from '../types/issues.ts'
 import type { GenericRule } from '../types/schema.ts'
 import type { Schema, TabularData } from '@bids/schema/metaschema'
 import type { BIDSContext } from './context.ts'
@@ -204,7 +205,7 @@ function getRequirement(rule: ColumnRule, name: string): string {
  * headers should be present in a tsv file. Examples in specification:
  * schema/rules/tabular_data/*
  *
- * For each column in a rule.tabluar_data check we generate an error if the
+ * For each column in a rule.tabular_data check we generate an error if the
  * column is missing from the tsv and listed as required by the schema, a
  * warning if the schema rule is clobbered by the sidecar but shouldn't be. If
  * the column is not in the tsv we bail out and move to the next column,
@@ -258,7 +259,7 @@ export function evalColumns(
       } catch (e: unknown) {
         if (e?.code) {
           context.dataset.issues.add({
-            ...e,
+            ...(e as Issue),
             subCode: name,
             location: context.sidecarKeyOrigin[name],
             rule: schemaPath,

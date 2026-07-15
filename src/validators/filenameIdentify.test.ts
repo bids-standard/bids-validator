@@ -1,6 +1,6 @@
 import { assertEquals } from '@std/assert'
 import { SEPARATOR_PATTERN } from '@std/path'
-import { BIDSContext } from '../schema/context.ts'
+import { makeBIDSContext } from '../schema/context.test.ts'
 import { _findRuleMatches, findDirRuleMatches, hasMatch } from './filenameIdentify.ts'
 import { BIDSFileDeno } from '../files/deno.ts'
 import { FileIgnoreRules } from '../files/ignore.ts'
@@ -27,7 +27,7 @@ Deno.test('test _findRuleMatches', async (t) => {
   await t.step('Rule stem matches', async () => {
     const fileName = 'participants.json'
     const file = new BIDSFileDeno(PATH, fileName, ignore)
-    const context = new BIDSContext(file)
+    const context = await makeBIDSContext(file)
     _findRuleMatches(node, schemaPath, context)
     assertEquals(context.filenameRules[0], schemaPath)
   })
@@ -38,7 +38,7 @@ Deno.test('test _findRuleMatches', async (t) => {
     async () => {
       const fileName = 'task-rest_bold.json'
       const file = new BIDSFileDeno(PATH, fileName, ignore)
-      const context = new BIDSContext(file)
+      const context = await makeBIDSContext(file)
       _findRuleMatches(recurseNode, schemaPath, context)
       assertEquals(context.filenameRules[0], `${schemaPath}.recurse`)
     },
@@ -49,7 +49,7 @@ Deno.test('test hasMatch', async (t) => {
   await t.step('hasMatch', async () => {
     const fileName = '/sub-01/ses-01/func/sub-01_ses-01_task-nback_run-01_bold.nii'
     const file = new BIDSFileDeno(PATH, fileName, ignore)
-    const context = new BIDSContext(file)
+    const context = await makeBIDSContext(file)
     hasMatch(schema, context)
   })
 
@@ -58,8 +58,8 @@ Deno.test('test hasMatch', async (t) => {
     const [dir, base] = tmpFile.split(SEPARATOR_PATTERN)
     const file = new BIDSFileDeno(dir, `/${base}`, ignore)
 
-    const context = new BIDSContext(file)
-    await hasMatch(schema, context)
+    const context = await makeBIDSContext(file)
+    hasMatch(schema, context)
     assertEquals(
       context.dataset.issues.get({
         location: context.file.path,
@@ -73,12 +73,12 @@ Deno.test('test hasMatch', async (t) => {
     const path = `${PATH}/../bids-examples/fnirs_automaticity`
     const fileName = 'events.json'
     const file = new BIDSFileDeno(path, fileName, ignore)
-    const context = new BIDSContext(file)
+    const context = await makeBIDSContext(file)
     context.filenameRules = [
       'rules.files.raw.events.events__mri',
       'rules.files.raw.events.events__pet',
     ]
-    await hasMatch(schema, context)
+    hasMatch(schema, context)
     assertEquals(context.filenameRules.length, 2)
   })
 })
@@ -87,28 +87,37 @@ Deno.test('test directoryIdentify', async (t) => {
   await t.step('Test entity based rule', async () => {
     const fileName = '/sub-01/'
     const file = new BIDSFileDeno(PATH, fileName, ignore)
-    const context = new BIDSContext(file)
+    const context = await makeBIDSContext(file)
     context.directory = true
-    await findDirRuleMatches(schema, context)
+    findDirRuleMatches(schema, context)
     assertEquals(context.filenameRules.length, 1)
     assertEquals(context.filenameRules[0], 'rules.directories.raw.subject')
   })
   await t.step('Test name based rule', async () => {
     const fileName = '/derivatives/'
     const file = new BIDSFileDeno(PATH, fileName, ignore)
-    const context = new BIDSContext(file)
+    const context = await makeBIDSContext(file)
     context.directory = true
-    await findDirRuleMatches(schema, context)
+    findDirRuleMatches(schema, context)
     assertEquals(context.filenameRules.length, 1)
     assertEquals(context.filenameRules[0], 'rules.directories.raw.derivatives')
   })
   await t.step('Test value based rule', async () => {
     const fileName = '/func/'
     const file = new BIDSFileDeno(`${PATH}/sub-01/ses-01`, fileName, ignore)
-    const context = new BIDSContext(file)
+    const context = await makeBIDSContext(file)
     context.directory = true
-    await findDirRuleMatches(schema, context)
+    findDirRuleMatches(schema, context)
     assertEquals(context.filenameRules.length, 1)
     assertEquals(context.filenameRules[0], 'rules.directories.raw.datatype')
+  })
+  await t.step('Test unknown DatasetType', async () => {
+    const fileName = '/func/'
+    const file = new BIDSFileDeno(`${PATH}/sub-01/ses-01`, fileName, ignore)
+    const context = await makeBIDSContext(file)
+    context.directory = true
+    context.dataset.dataset_description.DatasetType = 'unknown'
+    findDirRuleMatches(schema, context)
+    assertEquals(context.filenameRules.length, 0)
   })
 })
