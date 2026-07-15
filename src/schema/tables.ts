@@ -218,7 +218,6 @@ export function evalColumns(
   schemaPath: string,
 ): void {
   if (!rule.columns || !['.tsv', '.tsv.gz'].includes(context.extension)) return
-  const columns = rule.columns as Record<string, string | { level: string }>
 
   const columnLookup = Object.fromEntries(
     Object.keys(rule.columns).map((col) => [schema.objects.columns[col].name, col]),
@@ -256,7 +255,7 @@ export function evalColumns(
 
       try {
         signature = getValueSignature(columnObject, sidecarDef)
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (e?.code) {
           context.dataset.issues.add({
             ...e,
@@ -334,7 +333,7 @@ export function evalInitialColumns(
     }
   }).filter(({ requirement, index }) => requirement === 'required' || index !== -1)
   // Validate ordering of present and/or required initial columns
-  columns.forEach(({ name, requirement, index }, targetIndex) => {
+  columns.forEach(({ name, _requirement, index }, targetIndex) => {
     if (index === -1) {
       context.dataset.issues.add({
         code: 'TSV_COLUMN_MISSING',
