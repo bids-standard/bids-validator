@@ -256,31 +256,8 @@ export class BIDSContext implements Context {
   }
 
   async loadColumns(): Promise<void> {
-    if (this.extension == '.tsv' && this.suffix == 'motion') {
-      // motion.tsv files are headerless; column names come from the
-      // name column of the associated channels.tsv
-      const headers = (this.associations.channels as ChannelsWithName | undefined)?.name
-      if (!headers || this.size === 0) {
-        // A missing channels.tsv will be caught by association rules
-        return
-      }
-      this.columns = await loadHeaderlessTSV(
-        this.file,
-        headers,
-        false,
-        this.dataset.options?.maxRows,
-      )
-        .catch((error) => {
-          if (error.code) {
-            this.dataset.issues.add({ ...error, location: this.file.path })
-          }
-          logger.warn(
-            `tsv file could not be opened by loadColumns '${this.file.path}'`,
-          )
-          logger.debug(error)
-          return new Map<string, string[]>() as ColumnsMap
-        }) as Record<string, string[]>
-    } else if (this.extension == '.tsv') {
+    const compressed = this.extension === '.tsv.gz'
+    if (this.extension === '.tsv' && this.suffix !== 'motion') {
       this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
         .catch((error) => {
           if (error.code) {
@@ -292,19 +269,23 @@ export class BIDSContext implements Context {
           logger.debug(error)
           return new Map<string, string[]>() as ColumnsMap
         }) as Record<string, string[]>
-    } else if (this.extension == '.tsv.gz') {
-      const headers = this.sidecar.Columns as string[]
+    } else if (compressed || this.suffix === 'motion') {
+      let headers: string[] | undefined
+      if (compressed) {
+        // .tsv.gz headers are defined in the sidecar
+        headers = this.sidecar.Columns as string[]
+      } else {
+        // _motion.tsv headers are defined in the channels.tsv file
+        headers = (this.associations.channels as ChannelsWithName)?.name
+      }
       if (!headers || this.size === 0) {
-        // Missing Columns will be caught by sidecar rules
-        // Note that these rules currently select for suffix, and will need to be generalized
-        // or duplicated for new .tsv.gz files
-        // `this.size === 0` will show as `EMPTY_FILE`, so do not add INVALID_GZIP
+        // Missing headers and empty files will be caught by other rules
         return
       }
       this.columns = await loadHeaderlessTSV(
         this.file,
         headers,
-        true,
+        compressed,
         this.dataset.options?.maxRows,
       )
         .catch((error) => {
@@ -312,7 +293,9 @@ export class BIDSContext implements Context {
             this.dataset.issues.add({ ...error, location: this.file.path })
           }
           logger.warn(
-            `tsv.gz file could not be opened by loadColumns '${this.file.path}'`,
+            `${
+              this.extension.substring(1)
+            } file could not be opened by loadColumns '${this.file.path}'`,
           )
           logger.debug(error)
           return new Map<string, string[]>() as ColumnsMap
