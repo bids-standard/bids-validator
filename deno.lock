@@ -11,9 +11,10 @@
     "jsr:@effigies/cliffy-table@^1.0.0-dev.5": "1.0.0-dev.5",
     "jsr:@libs/xml@^7.0.4": "7.0.4",
     "jsr:@std/assert@^1.0.19": "1.0.19",
-    "jsr:@std/async@^1.4.0": "1.4.0",
+    "jsr:@std/async@^1.5.0": "1.5.0",
     "jsr:@std/bytes@^1.0.6": "1.0.6",
-    "jsr:@std/data-structures@^1.1.0": "1.1.0",
+    "jsr:@std/data-structures@^1.1.0": "1.1.1",
+    "jsr:@std/data-structures@^1.1.1": "1.1.1",
     "jsr:@std/fmt@^1.0.10": "1.0.10",
     "jsr:@std/fmt@^1.0.5": "1.0.10",
     "jsr:@std/fmt@~1.0.2": "1.0.10",
@@ -25,12 +26,13 @@
     "jsr:@std/io@~0.225.2": "0.225.3",
     "jsr:@std/io@~0.225.3": "0.225.3",
     "jsr:@std/log@~0.224.14": "0.224.14",
-    "jsr:@std/path@^1.1.5": "1.1.5",
+    "jsr:@std/path@^1.1.5": "1.1.6",
+    "jsr:@std/path@^1.1.6": "1.1.6",
     "jsr:@std/streams@^1.0.14": "1.0.14",
     "jsr:@std/streams@^1.1.1": "1.1.1",
     "jsr:@std/testing@^1.0.19": "1.0.19",
     "jsr:@std/text@~1.0.7": "1.0.19",
-    "jsr:@std/yaml@^1.1.1": "1.1.1",
+    "jsr:@std/yaml@^1.1.2": "1.1.2",
     "npm:@bids/nifti-reader-js@~0.6.9": "0.6.9",
     "npm:@types/node@*": "24.2.0",
     "npm:ajv@8.20.0": "8.20.0",
@@ -39,10 +41,10 @@
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@4.2": "4.2.0",
     "npm:ignore@^7.0.5": "7.0.5",
-    "npm:isomorphic-git@^1.38.4": "1.38.4",
+    "npm:isomorphic-git@^1.38.6": "1.38.6",
     "npm:marked@^17.0.6": "17.0.6",
     "npm:pluralize@8": "8.0.0",
-    "npm:supports-hyperlinks@^4.4.0": "4.4.0"
+    "npm:supports-hyperlinks@^4.5.0": "4.5.0"
   },
   "jsr": {
     "@bids/schema@1.2.4": {
@@ -92,17 +94,17 @@
         "jsr:@std/internal@^1.0.12"
       ]
     },
-    "@std/async@1.4.0": {
-      "integrity": "4d70b008634f571cff9b554090d628c76141c32613aae0ff283fd5fa23d0c379",
+    "@std/async@1.5.0": {
+      "integrity": "4c1f22d287a17ad7d8643b1952bc5a4d21e5d8b68dc8c20d8268eecc69096e82",
       "dependencies": [
-        "jsr:@std/data-structures"
+        "jsr:@std/data-structures@^1.1.1"
       ]
     },
     "@std/bytes@1.0.6": {
       "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
     },
-    "@std/data-structures@1.1.0": {
-      "integrity": "c35ae4ad5d8e41a38573c2fe3e19b18ea2505f63cfea201edcb8720aca1f7f58"
+    "@std/data-structures@1.1.1": {
+      "integrity": "7e1fcf19771fb9c6dbcd7f65039d6d42ef8dc023cfbc0c4cdc74b24e09229380"
     },
     "@std/fmt@1.0.10": {
       "integrity": "90dfba288802ac6de82fb31d0917eb9e4450b9925b954d5e51fc29ac07419db5"
@@ -111,7 +113,7 @@
       "integrity": "f3061b45b81673a2bece689da041df32d174be064c89eb6397fb5718d3fb7877",
       "dependencies": [
         "jsr:@std/internal@^1.0.14",
-        "jsr:@std/path"
+        "jsr:@std/path@^1.1.5"
       ]
     },
     "@std/internal@1.0.14": {
@@ -131,8 +133,8 @@
         "jsr:@std/io@~0.225.2"
       ]
     },
-    "@std/path@1.1.5": {
-      "integrity": "ccea00982ea28c36becaf6e62f855406c76a8c32d462f66f415bbb7d83a271bc",
+    "@std/path@1.1.6": {
+      "integrity": "c68485c2a4dfbb5ae3cc74fae4e8c4e5d874cf8a8ed12927917235c758b46cbe",
       "dependencies": [
         "jsr:@std/internal@^1.0.14"
       ]
@@ -147,17 +149,17 @@
       "integrity": "f4236172365b216728dc3cc8b5e80a9f4c33083d1e4ede7613d5b25b4014898e",
       "dependencies": [
         "jsr:@std/assert",
-        "jsr:@std/data-structures",
+        "jsr:@std/data-structures@^1.1.0",
         "jsr:@std/fs@^1.0.24",
         "jsr:@std/internal@^1.0.14",
-        "jsr:@std/path"
+        "jsr:@std/path@^1.1.5"
       ]
     },
     "@std/text@1.0.19": {
       "integrity": "003a0e032d360e8c3a4e0410fb792c77a66bd6553fee9d60c6ec1bce30d29223"
     },
-    "@std/yaml@1.1.1": {
-      "integrity": "a57665ecf3d17b926380593a56625d8a10cc7281802f1e993b5ebc94a48e71f8"
+    "@std/yaml@1.1.2": {
+      "integrity": "de612653c036749ba2044165e316f52412b0f0698afffb7ee80b5331d6d2abae"
     }
   },
   "npm": {
@@ -607,8 +609,8 @@
     "isarray@2.0.5": {
       "integrity": "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw=="
     },
-    "isomorphic-git@1.38.4": {
-      "integrity": "sha512-Ud5vs6Ac+ET+iOZWZB1j2RruVeGQSQc7U7QUhPq6iGqzifaqOVHCgRpG/8c0LwIP39R+Mr+lzR4escmCuhjONQ==",
+    "isomorphic-git@1.38.6": {
+      "integrity": "sha512-lCmZ1m2R0LqbZ4QATtLCxhwNBQPNJc74R81dfyF90yLqP8xs2DZLedcnkVuRj6th/L2HYoIvWP5lBpS1ooAagw==",
       "dependencies": [
         "async-lock",
         "clean-git-ref",
@@ -778,8 +780,8 @@
     "supports-color@10.2.2": {
       "integrity": "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g=="
     },
-    "supports-hyperlinks@4.4.0": {
-      "integrity": "sha512-UKbpT93hN5Nr9go5UY7bopIB9YQlMz9nm/ct4IXt/irb5YRkn9WaqrOBJGZ5Pwvsd5FQzSVeYlGdXoCAPQZrPg==",
+    "supports-hyperlinks@4.5.0": {
+      "integrity": "sha512-ZW2OvfeCXrNTbLakPUzjQG922EeGCOteFSVoek5DKStTh898wf7zgtuFlzQN8HfZCxC3Eh02yJVrRW51hADf+w==",
       "dependencies": [
         "has-flag",
         "supports-color"
@@ -810,8 +812,8 @@
     "unicode-name@1.1.0": {
       "integrity": "sha512-2XBI32vZP6a1tJmMDSUBabiIZuY+1udwZUoS7i5BTSU2c4ELMy6YJrTPF9uvYOVMU4vTMlHH6HG/TsHjCEsazA=="
     },
-    "which-typed-array@1.1.21": {
-      "integrity": "sha512-zbRA8cVm6io/d5W8uIe2hblzN76/Wm3v/yiythQvr+dpBWeqhPSWIDNj4zOyHi4zKbMK6DN34Xsr9jPHJERAEw==",
+    "which-typed-array@1.1.22": {
+      "integrity": "sha512-fvO4ExWMFsqyhG3AiPAObMuY1lxaqgYcxbc49CNdWDDECOJNgQyvsOWVwbZc+qf3rzRtxojBK+CMEv0Ld5CYpw==",
       "dependencies": [
         "available-typed-arrays",
         "call-bind",
@@ -924,25 +926,25 @@
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
       "jsr:@libs/xml@^7.0.4",
       "jsr:@std/assert@^1.0.19",
-      "jsr:@std/async@^1.4.0",
+      "jsr:@std/async@^1.5.0",
       "jsr:@std/fmt@^1.0.10",
       "jsr:@std/fs@^1.0.24",
       "jsr:@std/io@~0.225.3",
       "jsr:@std/log@~0.224.14",
-      "jsr:@std/path@^1.1.5",
+      "jsr:@std/path@^1.1.6",
       "jsr:@std/streams@^1.1.1",
       "jsr:@std/testing@^1.0.19",
-      "jsr:@std/yaml@^1.1.1",
+      "jsr:@std/yaml@^1.1.2",
       "npm:@bids/nifti-reader-js@~0.6.9",
       "npm:ajv@8.20.0",
       "npm:ansi-escapes@^7.3.0",
       "npm:hash-wasm@^4.12.0",
       "npm:hed-validator@4.2",
       "npm:ignore@^7.0.5",
-      "npm:isomorphic-git@^1.38.4",
+      "npm:isomorphic-git@^1.38.6",
       "npm:marked@^17.0.6",
       "npm:pluralize@8",
-      "npm:supports-hyperlinks@^4.4.0"
+      "npm:supports-hyperlinks@^4.5.0"
     ]
   }
 }
