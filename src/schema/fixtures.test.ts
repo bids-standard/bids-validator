@@ -1,5 +1,6 @@
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
+import { StringOpener } from '../files/openers.test.ts'
 
 const anatJson = JSON.stringify({
   rootOverwrite: 'anat',
@@ -53,6 +54,28 @@ eventsSidecar.readBytes = readBytes(
     },
   }),
 )
+/* Minimal motion dataset; motion.tsv is headerless per BEP029 */
+export const motionFileTree = pathsToTree([
+  '/dataset_description.json',
+  '/sub-01/motion/sub-01_task-walk_tracksys-imu_motion.tsv',
+  '/sub-01/motion/sub-01_task-walk_tracksys-imu_channels.tsv',
+])
+
+const motionFile = motionFileTree.get(
+  'sub-01/motion/sub-01_task-walk_tracksys-imu_motion.tsv',
+) as BIDSFile
+motionFile.opener = new StringOpener('0\t0\t0\n0.1\t0.2\t0.3\n')
+
+const motionChannelsFile = motionFileTree.get(
+  'sub-01/motion/sub-01_task-walk_tracksys-imu_channels.tsv',
+) as BIDSFile
+motionChannelsFile.opener = new StringOpener(
+  'name\tcomponent\ttype\ttracked_point\tunits\n' +
+    't1_acc_x\tx\tACCEL\tt1\tm/s^2\n' +
+    't1_acc_y\ty\tACCEL\tt1\tm/s^2\n' +
+    't1_acc_z\tz\tACCEL\tt1\tm/s^2\n',
+)
+
 const physioSidecar = rootFileTree.get('task-movie_physio.json') as BIDSFile
 physioSidecar.readBytes = readBytes(
   JSON.stringify({
