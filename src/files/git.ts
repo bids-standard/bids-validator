@@ -18,7 +18,7 @@ import {
 } from '../types/filetree.ts'
 import { filesToTree, loadBidsIgnore } from './filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
-import { hashDirLower, parseAnnexKey, resolveAnnexedFile } from './repo.ts'
+import { hashDirLower, hashDirMixed, parseAnnexKey, resolveAnnexedFile } from './repo.ts'
 import { FsFileOpener, HTTPOpener, NullFileOpener } from './openers.ts'
 import { streamFromUint8Array } from './streams.ts'
 import { graftTree, MAX_SYMLINK_FOLLOWS, resolveSymlink } from './gitResolver.ts'
@@ -124,8 +124,9 @@ export class AnnexedGitFileOpener implements FileOpener {
     }
 
     // 1. Try local annex object store
-    const [h0, h1] = await hashDirLower(this.#key)
-    const localPath = join(
+    // git-annex tests hashDirMixed first
+    const [h0, h1] = await hashDirMixed(this.#key)
+    const hashDirMixedPath = join(
       this.#gitOptions.gitdir,
       'annex',
       'objects',
@@ -135,11 +136,28 @@ export class AnnexedGitFileOpener implements FileOpener {
       this.#key,
     )
     try {
-      const fileInfo = await Deno.stat(localPath)
-      this.#delegate = new FsFileOpener(localPath, fileInfo)
+      const fileInfo = await Deno.stat(hashDirMixedPath)
+      this.#delegate = new FsFileOpener(hashDirMixedPath, fileInfo)
       return this.#delegate
     } catch {
-      // Local object not present; fall through to remote resolution
+      // Fallback to hashDirLower
+      try {
+        const [h0, h1] = await hashDirLower(this.#key)
+        const hashDirLowerPath = join(
+          this.#gitOptions.gitdir,
+          'annex',
+          'objects',
+          h0,
+          h1,
+          this.#key,
+          this.#key,
+        )
+        const fileInfo = await Deno.stat(hashDirLowerPath)
+        this.#delegate = new FsFileOpener(hashDirLowerPath, fileInfo)
+        return this.#delegate
+      } catch {
+        // Local object not present; fall through to remote resolution
+      }
     }
 
     // 2. Try remote resolution via git-annex metadata
