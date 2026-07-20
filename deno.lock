@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@bids/schema@~2.0.0-dev.1+3d6557da": "2.0.0-dev.1+3d6557da",
+    "jsr:@bids/schema@~2.0.0-dev.5+4523097f": "2.0.0-dev.5+4523097f",
     "jsr:@bradenmacdonald/s3-lite-client@~0.9.4": "0.9.4",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
@@ -45,8 +45,8 @@
     "npm:supports-hyperlinks@^4.4.0": "4.4.0"
   },
   "jsr": {
-    "@bids/schema@2.0.0-dev.1+3d6557da": {
-      "integrity": "1de26613fa4b1e776b78fbb43561f5ffc60236c4294dc70628c1bad2e810f666"
+    "@bids/schema@2.0.0-dev.5+4523097f": {
+      "integrity": "f11528568b3b2175eaf8d0c029cf018b493c510854837ffa6651c38a378da74c"
     },
     "@bradenmacdonald/s3-lite-client@0.9.4": {
       "integrity": "f52e31c7efdaeb1ccdf65a1db995b5920d635717c96d45dcf9450c3cc47ecaaf"
@@ -921,7 +921,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@bids/schema@~2.0.0-dev.1+3d6557da",
+      "jsr:@bids/schema@~2.0.0-dev.5+4523097f",
       "jsr:@bradenmacdonald/s3-lite-client@~0.9.4",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
