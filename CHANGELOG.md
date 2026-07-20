@@ -2,6 +2,17 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-"3.0.1"'></a>
+# "3.0.1" — 2026-07-20
+
+## Fixed
+
+- `_motion.tsv` files are now correctly parsed as headerless,
+  with column names determined by the `name` column of the associated `channels.tsv`.
+  This resolves spurious `TSV_COLUMN_HEADER_DUPLICATE` errors.
+
+- Support hashDirMixed for local files in AnnexedGitFileOpener.
+
 <a id='changelog-3.0.0'></a>
 # 3.0.0 — 2026-07-13
 

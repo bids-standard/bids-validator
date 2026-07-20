@@ -80,5 +80,11 @@
     "exclude": [
       "src/tests/bom-utf8.json"
     ]
+  },
+  "minimumDependencyAge": {
+    "age": "P1D",
+    "exclude": [
+      "jsr:@bids/schema"
+    ]
   }
 }
