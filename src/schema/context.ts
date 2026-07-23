@@ -14,7 +14,7 @@ import type { Schema } from '../types/schema.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
-import { readEntities } from './entities.ts'
+import { readDirEntities, readEntities } from './entities.ts'
 import { findDatatype } from './datatypes.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { readSidecars } from '../files/inheritance.ts'
@@ -36,6 +36,7 @@ export class BIDSContextDataset implements Dataset {
   datatypes: string[]
   modalities: string[]
   subjects: Subjects
+  sessions: ColumnsMap
 
   issues: DatasetIssues
   sidecarKeyValidated: Set<string>
@@ -68,7 +69,8 @@ export class BIDSContextDataset implements Dataset {
           ?.filter((ext) => ext.endsWith('/'))
         : [],
     )
-    // @ts-expect-error Subjects type does not include null, but null is used as a sentinel for "not yet loaded"
+    this.sessions = new ColumnsMap()
+    // @ts-ignore
     this.subjects = args.subjects || null
   }
 
@@ -139,6 +141,7 @@ export class BIDSContext implements Context {
   ome?: Ome
   tiff?: Tiff
   directory?: boolean
+  dirEntities: Record<string, string>
 
   file: BIDSFile
   filenameRules: string[]
@@ -162,6 +165,7 @@ export class BIDSContext implements Context {
     this.extension = extension
     this.datatype = datatype
     this.modality = modality
+    this.dirEntities = readDirEntities(file.path)
 
     this.subject = {} as Subject
     this.sidecar = {}
