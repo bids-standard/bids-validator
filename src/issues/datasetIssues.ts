@@ -13,7 +13,13 @@ const _CODE_DEPRECATED = Number.MIN_SAFE_INTEGER
  * not pass a `codeMessage` argument to describe it.
  */
 export class UnknownIssueCodeError extends Error {
+  /** The unrecognised issue code that triggered this error. */
   readonly code: string
+
+  /**
+   * @param code - The issue code that was not found in the non-schema
+   *   issue catalogue.
+   */
   constructor(code: string) {
     super(`key: ${code} does not exist in non-schema issues definitions`)
     this.name = 'UnknownIssueCodeError'
@@ -33,9 +39,15 @@ type Group = Map<Issue[keyof Issue], DatasetIssues | Group | undefined>
  * constructing one directly.
  */
 export class DatasetIssues {
+  /** Flat list of all issues accumulated during the validation run. */
   issues: Issue[]
+  /** Map from issue code to the human-readable description used in reports. */
   codeMessages: Map<string, string>
 
+  /**
+   * @param issues - Optional pre-populated issue array.
+   * @param codeMessages - Optional pre-populated code-to-description map.
+   */
   constructor(
     { issues, codeMessages }: { issues?: Issue[]; codeMessages?: Map<string, string> } = {},
   ) {
@@ -79,6 +91,16 @@ export class DatasetIssues {
     this.issues.push(issue)
   }
 
+  /**
+   * Return all issues matching every field set in `query`.
+   *
+   * Fields present in `query` are compared by strict equality; fields that
+   * are absent or `undefined` are treated as wildcards. The `location` field
+   * is matched with gitignore-style glob semantics rather than strict equality.
+   *
+   * @param issue - Partial `Issue` record whose non-undefined fields act as filters.
+   * @returns Array of issues that match all specified query fields.
+   */
   get(issue: Partial<Issue>): Issue[] {
     let found: Issue[] = this.issues
     for (const key in issue) {
@@ -96,6 +118,15 @@ export class DatasetIssues {
     return found
   }
 
+  /**
+   * Return a new `DatasetIssues` containing only the issues matching `query`.
+   *
+   * The returned object also contains only the `codeMessages` entries
+   * relevant to the matched issues.
+   *
+   * @param query - Partial `Issue` record whose non-undefined fields act as filters.
+   * @returns A new `DatasetIssues` scoped to the matching subset.
+   */
   filter(query: Partial<Issue>): DatasetIssues {
     const issues = this.get(query)
     const codes = new Set<string>(query.code ? [query.code] : issues.map((issue) => issue.code))
@@ -104,10 +135,22 @@ export class DatasetIssues {
     return new DatasetIssues({ issues, codeMessages })
   }
 
+  /** Number of issues currently held in this collection. */
   get size(): number {
     return this.issues.length
   }
 
+  /**
+   * Partition the collection by the value of a single issue field.
+   *
+   * Issues whose `key` field is absent or falsy are grouped under the
+   * sentinel key `'None'`, which is omitted from the result if it remains
+   * empty.
+   *
+   * @param key - The `Issue` field to group by.
+   * @returns A `Map` keyed by the distinct values of `key`, each mapped to
+   *   a `DatasetIssues` containing the matching issues.
+   */
   groupBy(key: keyof Issue): Map<Issue[keyof Issue], DatasetIssues> {
     const groups: Map<Issue[keyof Issue], DatasetIssues> = new Map()
     groups.set('None', new DatasetIssues())

@@ -1,7 +1,7 @@
 import { assertObjectMatch } from '@std/assert'
 import type { BIDSFile } from '../types/filetree.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
-import { rootFileTree } from './fixtures.test.ts'
+import { motionFileTree, rootFileTree } from './fixtures.test.ts'
 import { BIDSContext } from './context.ts'
 import { buildAssociations } from './associations.ts'
 
@@ -24,6 +24,22 @@ Deno.test('Test association loading', async (t) => {
             ScreenSize: [0.472, 0.265],
           },
         },
+      },
+    })
+  })
+
+  await t.step('Load channels association with name column for motion.tsv', async () => {
+    const motionFile = motionFileTree.get(
+      'sub-01/motion/sub-01_task-walk_tracksys-imu_motion.tsv',
+    ) as BIDSFile
+    const context = new BIDSContext(motionFile, undefined, motionFileTree)
+    context.dataset.schema = schema
+    const associations = await buildAssociations(context)
+    assertObjectMatch(associations, {
+      channels: {
+        path: '/sub-01/motion/sub-01_task-walk_tracksys-imu_channels.tsv',
+        name: ['t1_acc_x', 't1_acc_y', 't1_acc_z'],
+        type: ['ACCEL', 'ACCEL', 'ACCEL'],
       },
     })
   })

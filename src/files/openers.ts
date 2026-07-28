@@ -4,17 +4,29 @@
  * These classes implement stream, text and random bytes access to BIDS resources.
  */
 import { retry } from '@std/async'
-import { join } from '@std/path'
 import type { FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream } from './streams.ts'
 import { logger } from '../utils/logger.ts'
 
+/**
+ * {@link FileOpener} backed by the local Deno filesystem.
+ *
+ * Uses `Deno.open` for streaming and seeks for random-access reads.
+ * Prefer this opener when validating datasets on disk with Deno.
+ *
+ * @param datasetPath - Absolute path to the dataset root.
+ * @param path - Dataset-relative POSIX path of the file.
+ * @param fileInfo - Optional pre-fetched `Deno.FileInfo`; if omitted, `stat`
+ *   is called synchronously during construction.
+ */
 export class FsFileOpener implements FileOpener {
+  /** Absolute filesystem path to the file (`datasetPath + path`). */
   path: string
+  /** Cached `Deno.FileInfo` object. */
   fileInfo!: Deno.FileInfo
 
-  constructor(datasetPath: string, path: string, fileInfo?: Deno.FileInfo) {
-    this.path = join(datasetPath, path)
+  constructor(path: string, fileInfo?: Deno.FileInfo) {
+    this.path = path
     if (fileInfo) {
       this.fileInfo = fileInfo
     } else {
@@ -28,18 +40,18 @@ export class FsFileOpener implements FileOpener {
     }
   }
 
+  /** File size in bytes. */
   get size(): number {
     return this.fileInfo.size
   }
 
+  /** Open the file and return its content as a byte stream. */
   async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     const handle = await this.open()
     return handle.readable
   }
 
-  /**
-   * Read the entire file and decode as utf-8 text
-   */
+  /** Read the entire file and return it decoded as a UTF-8 string. */
   async text(): Promise<string> {
     const stream = await this.stream()
     const reader = stream.pipeThrough(createUTF8Stream()).getReader()
@@ -57,43 +69,62 @@ export class FsFileOpener implements FileOpener {
   }
 
   /**
-   * Read bytes in a range efficiently from a given file
+   * Read up to `size` bytes starting at `offset`.
    *
-   * Reads up to size bytes, starting at offset.
-   * If EOF is encountered, the resulting array may be smaller.
+   * @param size - Maximum number of bytes to read.
+   * @param offset - Byte offset at which to start reading (default `0`).
    */
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
-    const handle = await this.open()
+    using handle = await this.open()
     const buf = new Uint8Array(size)
     await handle.seek(offset, Deno.SeekMode.Start)
     const nbytes = await handle.read(buf) ?? 0
-    await handle.close()
     return buf.subarray(0, nbytes)
   }
 
+  /** Open the underlying file for reading and return the `Deno.FsFile` handle. */
   open(): Promise<Deno.FsFile> {
     return Deno.open(this.path, { read: true, write: false })
   }
 }
 
+/**
+ * {@link FileOpener} backed by the browser `File` API.
+ *
+ * Wrap a `File` object obtained from an `<input webkitdirectory>` element
+ * or a drag-and-drop event to integrate it with the BIDS validator.
+ *
+ * @param file - A `File` from the browser File API.
+ */
 export class BrowserFileOpener implements FileOpener {
+  /** The underlying browser `File` object. */
   file: File
+
   constructor(file: File) {
     this.file = file
   }
 
+  /** File size in bytes. */
   get size(): number {
     return this.file.size
   }
 
+  /** Open the file and return its content as a byte stream. */
   stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     return Promise.resolve(this.file.stream() as ReadableStream<Uint8Array<ArrayBuffer>>)
   }
 
+  /** Read the entire file and return it decoded as a UTF-8 string. */
   text(): Promise<string> {
     return this.file.text()
   }
 
+  /**
+   * Read up to `size` bytes starting at `offset`.
+   *
+   * @param size - Maximum number of bytes to read.
+   * @param offset - Byte offset at which to start reading (default `0`).
+   */
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
     return new Uint8Array(await this.file.slice(offset, size).arrayBuffer())
   }
@@ -115,7 +146,9 @@ class HttpError extends Error {
  * @param size - Known file size in bytes, or `-1` if unknown.
  */
 export class HTTPOpener implements FileOpener {
+  /** The URL from which content is fetched. */
   url: string
+  /** Declared file size in bytes; `-1` when the size is not known in advance. */
   size: number
 
   constructor(url: string, size: number = -1) {
@@ -142,11 +175,17 @@ export class HTTPOpener implements FileOpener {
     })
   }
 
+  /** Open the file and return its content as a byte stream. */
   stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     // Streams should not timeout
     return this._fetch().then((response) => response.body!)
   }
 
+  /**
+   * Read the entire file and return it decoded as a UTF-8 string.
+   *
+   * Applies a 5-second timeout per attempt and retries on `TimeoutError`.
+   */
   async text(): Promise<string> {
     // Timeout after 5 seconds and retry; many connections can result in timeouts
     return await retry(
@@ -157,6 +196,14 @@ export class HTTPOpener implements FileOpener {
     )
   }
 
+  /**
+   * Read up to `size` bytes starting at `offset`.
+   *
+   * Applies a 5-second timeout per attempt and retries on `TimeoutError`.
+   *
+   * @param size - Maximum number of bytes to read.
+   * @param offset - Byte offset at which to start reading (default `0`).
+   */
   async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
     const headers = new Headers()
     headers.append('Range', `bytes=${offset}-${offset + size - 1}`)
@@ -182,6 +229,7 @@ export class HTTPOpener implements FileOpener {
  * @param size - Reported file size; defaults to `0`.
  */
 export class NullFileOpener implements FileOpener {
+  /** Declared file size reported to callers; content returned is always empty. */
   size: number
   constructor(size = 0) {
     this.size = size

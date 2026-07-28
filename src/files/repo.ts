@@ -114,6 +114,24 @@ export async function hashDirLower(annexKey: string): Promise<[string, string]> 
   return [digest.slice(0, 3), digest.slice(3, 6)]
 }
 
+/**
+ * git-annex hashDirMixed implementation based on https://git-annex.branchable.com/internals/hashing/
+ */
+export async function hashDirMixed(
+  annexKey: string,
+): Promise<[string, string]> {
+  const computeMD5 = await createMD5()
+  computeMD5.init()
+  computeMD5.update(annexKey)
+  const digest = computeMD5.digest('binary')
+  const firstWord = new DataView(digest.buffer).getUint32(0, true)
+  const nums = Array.from({ length: 4 }, (_, i) => (firstWord >> (6 * i)) & 31)
+  const letters = nums.map(
+    (num) => '0123456789zqjxkmvwgpfZQJXKMVWGPF'.charAt(num),
+  )
+  return [`${letters[1]}${letters[0]}`, `${letters[3]}${letters[2]}`]
+}
+
 export function parseRmetLine(line: string): Rmet | null {
   const match = line.match(rmetLineRegex)
   if (!match) {

@@ -105,11 +105,15 @@ export function subtree(filetree: FileTree): Promise<FileTree> {
 }
 
 /**
- * Load .bidsignore file from the given tree and add the rules to the provided ignore object
+ * Load `.bidsignore` from the tree root and add its rules to `ignore`.
  *
- * @param tree The file tree to search for a .bidsignore file
- * @param ignore The ignore object to add the rules to
- * @returns The original tree
+ * If no `.bidsignore` file is present the tree is returned unchanged.
+ * Errors reading the file are logged and swallowed so validation can
+ * continue without `.bidsignore` support.
+ *
+ * @param tree - The file tree to search for a `.bidsignore` file.
+ * @param ignore - The ignore-rules instance to extend with any patterns found.
+ * @returns The original `tree` (for chaining).
  */
 export async function loadBidsIgnore(tree: FileTree, ignore: FileIgnoreRules): Promise<FileTree> {
   const bidsignore = tree.get('.bidsignore')

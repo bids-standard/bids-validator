@@ -15,6 +15,10 @@ import fs from 'node:fs'
 /**
  * Deno-specific {@link BIDSFile} backed by the local filesystem.
  *
+ * Wraps {@link FsFileOpener} so that content is read from disk via
+ * `Deno.open`. Use this class (or {@link readFileTree}) when validating
+ * datasets on a Deno-accessible filesystem.
+ *
  * @param datasetPath - Absolute path to the dataset root on disk.
  * @param path - Dataset-relative POSIX path of the file.
  * @param ignore - Optional ignore rules for this file.
@@ -22,7 +26,7 @@ import fs from 'node:fs'
  */
 export class BIDSFileDeno extends BIDSFile {
   constructor(datasetPath: string, path: string, ignore?: FileIgnoreRules, parent?: FileTree) {
-    super(path, new FsFileOpener(datasetPath, path), ignore, parent)
+    super(path, new FsFileOpener(join(datasetPath, path)), ignore, parent)
   }
 }
 
@@ -67,7 +71,7 @@ async function _readFileTree({
 
   for await (const dirEntry of Deno.readDir(join(rootPath, relativePath))) {
     const thisPath = posix.join(relativePath, dirEntry.name)
-    if (prune.test(thisPath)) {
+    if (prune.test(thisPath, { log: true, prefix: 'Pruned' })) {
       continue
     }
 
@@ -115,7 +119,7 @@ async function _readFileTree({
     }
 
     if (isFile) {
-      const opener = new FsFileOpener(rootPath, thisPath, fileInfo)
+      const opener = new FsFileOpener(join(rootPath, thisPath), fileInfo)
       tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
     } else if (isDirectory) {
       const dirTree = await _readFileTree({
@@ -151,7 +155,7 @@ export async function readFileTree(
   prune?: FileIgnoreRules,
   preferredRemote?: string,
 ): Promise<FileTree> {
-  prune ??= new FileIgnoreRules([], false)
+  prune ??= new FileIgnoreRules([], 'prune')
   const ignore = new FileIgnoreRules([])
   const tree = await _readFileTree({ rootPath, relativePath: '/', ignore, prune, preferredRemote })
   return loadBidsIgnore(tree, ignore)

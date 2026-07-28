@@ -51,14 +51,15 @@ async function loadColumns(
   )
 }
 
-export async function loadTSVGZ(
+export async function loadHeaderlessTSV(
   file: BIDSFile,
   headers: string[],
+  compressed: boolean,
   maxRows: number = -1,
 ): Promise<ColumnsMap> {
   const stream = await openStream(file)
-  const reader = stream
-    .pipeThrough(new DecompressionStream('gzip'))
+  const decompressed = compressed ? stream.pipeThrough(new DecompressionStream('gzip')) : stream
+  const reader = decompressed
     .pipeThrough(createUTF8Stream({ fatal: true }))
     .pipeThrough(new TextLineStream())
     .getReader()
@@ -72,7 +73,10 @@ export async function loadTSVGZ(
       await reader.cancel()
       throw e
     }
-    throw { code: 'INVALID_GZIP', location: file.path }
+    if (compressed) {
+      throw { code: 'INVALID_GZIP', location: file.path }
+    }
+    throw e
   }
 }
 

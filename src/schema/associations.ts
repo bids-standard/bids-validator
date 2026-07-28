@@ -17,6 +17,8 @@ import { readText } from '../files/access.ts'
 interface WithSidecar {
   sidecar: Record<string, unknown>
 }
+/** Channels plus the name column, which the schema context model does not include yet */
+export type ChannelsWithName = Channels & { name?: string[] }
 type LoadOptions = { maxRows?: number }
 type LoadFunction = (file: BIDSFile, options: LoadOptions) => Promise<object>
 type MultiLoadFunction = (files: BIDSFile[], options: LoadOptions) => Promise<object>
@@ -90,7 +92,7 @@ const associationLookup: Record<string, LoadFunction> = {
       n_rows: rows ? rows.length : 0,
     }
   },
-  channels: async (file: BIDSFile, options: LoadOptions): Promise<Channels> => {
+  channels: async (file: BIDSFile, options: LoadOptions): Promise<ChannelsWithName> => {
     const columns = await loadTSV(file, options.maxRows)
       .catch((_e) => {
         return new Map()
@@ -100,6 +102,7 @@ const associationLookup: Record<string, LoadFunction> = {
       type: columns.get('type'),
       short_channel: columns.get('short_channel'),
       sampling_frequency: columns.get('sampling_frequency'),
+      name: columns.get('name'),
     }
   },
   physio: async (
