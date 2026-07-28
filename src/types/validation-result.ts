@@ -67,4 +67,7 @@ export interface ValidationResult {
    * `dataset_description.json`.
    */
   derivativesSummary?: Record<string, ValidationResult>
+  /** Per-source validation results (nested datasets under `rawbids/` or
+   * `sourcedata/`), keyed by their relative path. */
+  sourcesSummary?: Record<string, ValidationResult>
 }
