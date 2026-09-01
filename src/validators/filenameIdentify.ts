@@ -17,6 +17,7 @@ import type { GenericSchema } from '../types/schema.ts'
 import type { BIDSContext } from '../schema/context.ts'
 import type { CheckFunction } from '../types/check.ts'
 import { lookupEntityLiteral } from './filenameValidate.ts'
+import { hasStimuliCatalog } from './internal/stimuliCatalog.ts'
 
 const CHECKS: CheckFunction[] = [
   findRuleMatches,
@@ -133,12 +134,11 @@ export function hasMatch(schema, context) {
     context.filenameRules.length === 0 &&
     context.file.path !== '/.bidsignore'
   ) {
-    // Legacy /stimuli directories (no stimuli.tsv catalog at the /stimuli
-    // root) are free-form; only catalog-organized stimuli directories
+    // Legacy /stimuli directories (no stimuli.tsv catalog anywhere in the
+    // hierarchy) are free-form; only catalog-organized stimuli directories
     // enforce the stimulus naming rules.
     if (context.path.startsWith('/stimuli/')) {
-      const stimDir = context.dataset.tree.get('stimuli')
-      if (!stimDir?.files?.some((f) => f.name === 'stimuli.tsv')) {
+      if (!hasStimuliCatalog(context.dataset.tree.get('stimuli'))) {
         return
       }
     }
