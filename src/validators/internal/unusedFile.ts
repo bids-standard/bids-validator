@@ -25,8 +25,15 @@ export function unusedStimulus(
   dsContext: BIDSContextDataset,
 ): void {
   const stimDir = dsContext.tree.get('stimuli') as FileTree
+  // A stimuli.tsv at the /stimuli root indicates the BEP044 organization:
+  // stimulus usage is tracked through stim_id and the stimuli.tsv catalog
+  // rather than direct stim_file path references, so catalog-managed files
+  // (stim-* entity files and the catalog tables) are not "unused".
+  const catalogMode = stimDir?.files?.some((f) => f.name === 'stimuli.tsv')
+  const catalogFile = (name: string) =>
+    /^stim-/.test(name) || /^(stimuli|annotations)\.(tsv|json)$/.test(name)
   const unusedStimuli = [...walkFileTree(stimDir, dsContext)].filter((stimulus) =>
-    !stimulus.viewed
+    !stimulus.viewed && !(catalogMode && catalogFile(stimulus.name))
   )
   if (unusedStimuli.length) {
     dsContext.issues.add({ code: 'UNUSED_STIMULUS', affects: unusedStimuli.map((s) => s.path) })
