@@ -1,5 +1,6 @@
 import { assertEquals } from '@std/assert'
-import { parseStack } from './logger.ts'
+import { ConsoleHandler, getLogger, setup } from '@std/log'
+import { debugEnabled, parseStack } from './logger.ts'
 
 Deno.test('logger', async (t) => {
   await t.step('test stack trace behavior for regular invocation', () => {
@@ -47,5 +48,36 @@ called from validate() (defined at file:///bids-validator/src/validators/bids.ts
   })
   await t.step('Does not throw on empty stack', () => {
     assertEquals(parseStack(''), undefined)
+  })
+})
+
+Deno.test('DEBUG log level detection', async (t) => {
+  setup({
+    handlers: {
+      errorhandler: new ConsoleHandler('ERROR'),
+      debughandler: new ConsoleHandler('DEBUG'),
+    },
+    loggers: {
+      // No handler, not enabled
+      testLoggerA: { level: 'DEBUG', handlers: [] },
+      // Top level ERROR, not enabled
+      testLoggerB: { level: 'ERROR', handlers: ['debughandler'] },
+      // No handler at DEBUG, not enabled
+      testLoggerC: { level: 'DEBUG', handlers: ['errorhandler'] },
+      // Top level DEBUG, has handler at DEBUG, enabled
+      testLoggerD: { level: 'DEBUG', handlers: ['debughandler'] },
+    },
+  })
+  await t.step('debugEnabled returns false for logger with no handlers', () => {
+    assertEquals(debugEnabled(getLogger('testLoggerA')), false)
+  })
+  await t.step('debugEnabled returns false for logger at ERROR level', () => {
+    assertEquals(debugEnabled(getLogger('testLoggerB')), false)
+  })
+  await t.step('debugEnabled returns false for logger with handlers above DEBUG', () => {
+    assertEquals(debugEnabled(getLogger('testLoggerC')), false)
+  })
+  await t.step('debugEnabled returns true for logger+handlers at DEBUG', () => {
+    assertEquals(debugEnabled(getLogger('testLoggerD')), true)
   })
 })

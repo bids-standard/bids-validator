@@ -1,4 +1,4 @@
-import { ConsoleHandler, getLogger, type LevelName, type Logger, setup } from '@std/log'
+import { ConsoleHandler, getLogger, type LevelName, type Logger, LogLevels, setup } from '@std/log'
 
 /**
  * Setup a console logger used with the --debug flag
@@ -33,14 +33,24 @@ export function parseStack(stack: string): string | undefined {
   }
 }
 
+/**
+ * Test whether a DEBUG record emitted would reach at least one handler.
+ */
+export function debugEnabled(logger: Logger): boolean {
+  return logger.level <= LogLevels.DEBUG &&
+    logger.handlers.some((handler) => handler.level <= LogLevels.DEBUG)
+}
+
 const loggerProxyHandler = {
   // deno-lint-ignore no-explicit-any
   get: function (_: any, prop: keyof Logger) {
     const logger = getLogger('@bids/validator')
-    const stack = new Error().stack
-    if (stack) {
-      const callerLocation = parseStack(stack) ?? '<unknown>'
-      logger.debug(`Logger invoked at "${callerLocation}"`)
+    if (debugEnabled(logger)) {
+      const stack = new Error().stack
+      if (stack) {
+        const callerLocation = parseStack(stack) ?? '<unknown>'
+        logger.debug(`Logger invoked at "${callerLocation}"`)
+      }
     }
     const logFunc = logger[prop] as typeof logger.warn
     return logFunc.bind(logger)
