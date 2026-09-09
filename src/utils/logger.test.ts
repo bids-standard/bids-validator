@@ -1,6 +1,7 @@
-import { assertEquals } from '@std/assert'
-import { ConsoleHandler, getLogger, setup } from '@std/log'
-import { debugEnabled, parseStack } from './logger.ts'
+import { assertEquals, assertFalse, assertStringIncludes } from '@std/assert'
+import { stripAnsiCode } from '@std/fmt/colors'
+import { ConsoleHandler, getLogger, type LevelName, setup } from '@std/log'
+import { debugEnabled, logger, parseStack, setupLogging } from './logger.ts'
 
 Deno.test('logger', async (t) => {
   await t.step('test stack trace behavior for regular invocation', () => {
@@ -80,4 +81,70 @@ Deno.test('DEBUG log level detection', async (t) => {
   await t.step('debugEnabled returns true for logger+handlers at DEBUG', () => {
     assertEquals(debugEnabled(getLogger('testLoggerD')), true)
   })
+})
+
+/**
+ * Configure logging at `level`, then capture everything the console handler
+ * writes while `emit` runs.
+ */
+function captureLogOutput(level: LevelName, emit: () => void): string[] {
+  setupLogging(level)
+  const lines: string[] = []
+  const original = console.log
+  console.log = (...args: unknown[]) => {
+    lines.push(stripAnsiCode(String(args[0])))
+  }
+  try {
+    emit()
+  } finally {
+    console.log = original
+  }
+  return lines
+}
+
+/**
+ * This is a regression test without a regression issue.
+ * An attempt at reducing calls to `getLogger()` by calling once at module scope
+ * resulted in all log actions occurring in the pre-configuration state.
+ * These tests ensure that our logger proxy always emits at the current state.
+ */
+Deno.test('log records reach a handler', async (t) => {
+  await t.step('debug records are emitted when configured at DEBUG', () => {
+    const lines = captureLogOutput('DEBUG', () => logger.debug('a debug record'))
+    assertFalse(lines.length === 0, 'no output reached the console handler')
+    assertStringIncludes(lines.join('\n'), 'DEBUG a debug record')
+  })
+
+  await t.step('caller location accompanies a debug record', () => {
+    const lines = captureLogOutput('DEBUG', () => logger.debug('a debug record'))
+    assertEquals(lines.length, 2)
+    assertStringIncludes(lines[0], 'Logger invoked at')
+    assertStringIncludes(lines[0], 'logger.test.ts')
+  })
+
+  await t.step('warnings are emitted when configured at WARN', () => {
+    const lines = captureLogOutput('WARN', () => logger.warn('a warning'))
+    assertEquals(lines, ['WARN a warning'])
+  })
+
+  await t.step('errors are emitted, and lower levels filtered, at ERROR', () => {
+    const lines = captureLogOutput('ERROR', () => {
+      logger.debug('suppressed')
+      logger.info('suppressed')
+      logger.warn('suppressed')
+      logger.error('an error')
+    })
+    // Nothing below ERROR is emitted, and the caller-location line is gated off.
+    assertEquals(lines, ['ERROR an error'])
+  })
+
+  await t.step('every level reaches a handler when configured at DEBUG', () => {
+    for (const level of ['debug', 'info', 'warn', 'error', 'critical'] as const) {
+      const lines = captureLogOutput('DEBUG', () => logger[level](`${level} record`))
+      assertStringIncludes(lines.join('\n'), `${level} record`, `${level} did not reach a handler`)
+    }
+  })
+
+  // Leave the shared @std/log state quiet for any test file that runs later.
+  setup({ handlers: {}, loggers: { '@bids/validator': { level: 'NOTSET', handlers: [] } } })
 })
