@@ -41,9 +41,8 @@ export function debugEnabled(logger: Logger): boolean {
     logger.handlers.some((handler) => handler.level <= LogLevels.DEBUG)
 }
 
-const loggerProxyHandler = {
-  // deno-lint-ignore no-explicit-any
-  get: function (_: any, prop: keyof Logger) {
+const loggerProxyHandler: ProxyHandler<Logger> = {
+  get: function (_: Logger, prop: keyof Logger) {
     const logger = getLogger('@bids/validator')
     if (debugEnabled(logger)) {
       const stack = new Error().stack
