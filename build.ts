@@ -43,6 +43,30 @@ const versionPlugin = {
   },
 }
 
+/**
+ * Resolve fflate (a nifti-reader-js dependency) to its browser build.
+ *
+ * Deno's npm resolver applies the "node" export condition, which selects a
+ * build that imports `createRequire` from node:module to load worker_threads.
+ * That import survives bundling and breaks downstream browser bundlers. Only
+ * the synchronous API is used here, so the browser build is equivalent.
+ *
+ * Must precede denoPlugin: esbuild's `alias` option never runs because
+ * denoPlugin claims these paths in onResolve first.
+ */
+const fflateBrowserPlugin = {
+  name: 'fflate-browser',
+  setup(build: esbuild.PluginBuild) {
+    build.onResolve({ filter: /^fflate$/ }, (args) =>
+      build.resolve('fflate/browser', {
+        importer: args.importer,
+        kind: args.kind,
+        resolveDir: args.resolveDir,
+      })
+    )
+  },
+}
+
 const result = await esbuild.build({
   splitting: true,
   format: 'esm',
@@ -52,6 +76,7 @@ const result = await esbuild.build({
   minify: flags.minify,
   target: ['chrome109', 'firefox109', 'safari16'],
   plugins: [
+    fflateBrowserPlugin,
     nodeModulesPolyfillPlugin({
       globals: {
         Buffer: true,
