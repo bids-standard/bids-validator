@@ -9,6 +9,7 @@ import { default as git, TREE } from 'isomorphic-git'
 import type { WalkerEntry } from 'isomorphic-git'
 import fs from 'node:fs'
 import { join } from '@std/path'
+import { logger } from '../utils/logger.ts'
 import {
   BIDSFile,
   type FileOpener,
@@ -155,8 +156,9 @@ export class AnnexedGitFileOpener implements FileOpener {
         const fileInfo = await Deno.stat(hashDirLowerPath)
         this.#delegate = new FsFileOpener(hashDirLowerPath, fileInfo)
         return this.#delegate
-      } catch {
+      } catch (e) {
         // Local object not present; fall through to remote resolution
+        logger.info(`Annexed file ${this.#key} not found in local annex object store`, e)
       }
     }
 
@@ -165,8 +167,9 @@ export class AnnexedGitFileOpener implements FileOpener {
       const { url } = await resolveAnnexedFile(this.#key, this.#preferredRemote, this.#gitOptions)
       this.#delegate = new HTTPOpener(url, this.size)
       return this.#delegate
-    } catch {
+    } catch (e) {
       // No accessible remote; fall through to null opener
+      logger.info(`Annexed file ${this.#key} not found in any accessible remote`, e)
     }
 
     // 3. Content unavailable
