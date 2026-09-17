@@ -42,8 +42,8 @@
     "npm:esbuild-plugins-node-modules-polyfill@*": "1.7.1_esbuild@0.25.10",
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@4.2": "4.2.0",
-    "npm:ignore@^7.0.6": "7.0.6",
-    "npm:isomorphic-git@^1.41.7": "1.41.7",
+    "npm:ignore@^7.0.8": "7.0.8",
+    "npm:isomorphic-git@^1.41.9": "1.41.9",
     "npm:marked@^17.0.6": "17.0.6",
     "npm:nifti-reader-js@0.8": "0.8.0",
     "npm:pluralize@8": "8.0.0",
@@ -599,8 +599,8 @@
     "ignore@5.3.2": {
       "integrity": "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="
     },
-    "ignore@7.0.6": {
-      "integrity": "sha512-BAg6QkE8W+TuQLrrw0Ugr7HegXduRuuj8/ti2kSOc+jz1dmx8/WNcjr6XGnq5YpDWxFwwaavqD0+jIUOKelTsw=="
+    "ignore@7.0.8": {
+      "integrity": "sha512-YYNsSlXBjMk92SKnkwvB5LOVSa6OznlFUGcsvrFgNJbJCd0M1XKeFVRc8ZByeCqz32FivYNHJVooLmdqrmvp/Q=="
     },
     "inherits@2.0.4": {
       "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="
@@ -617,8 +617,8 @@
     "isarray@2.0.5": {
       "integrity": "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw=="
     },
-    "isomorphic-git@1.41.7": {
-      "integrity": "sha512-ZCyMNg0eLUmuhGXdVQFi56fM93kwIqqlUSVnWbgzf1oDYidrQbWfrf+hEvn2E8xyo191zRPQyDCIlwg6YJ6isQ==",
+    "isomorphic-git@1.41.9": {
+      "integrity": "sha512-WOh4ujm5mznHphzQvwj9bVj+pQpV0oZ8H4lAnh4dSaie+lN/lJ2rb6rNOOcP+2m4z8IOQp186TkEULD28NMBJg==",
       "dependencies": [
         "async-lock",
         "clean-git-ref",
@@ -953,8 +953,8 @@
       "npm:ansi-escapes@^7.3.0",
       "npm:hash-wasm@^4.12.0",
       "npm:hed-validator@4.2",
-      "npm:ignore@^7.0.6",
-      "npm:isomorphic-git@^1.41.7",
+      "npm:ignore@^7.0.8",
+      "npm:isomorphic-git@^1.41.9",
       "npm:marked@^17.0.6",
       "npm:nifti-reader-js@0.8",
       "npm:pluralize@8",
