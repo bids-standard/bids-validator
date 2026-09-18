@@ -2,6 +2,29 @@
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-3.0.2'></a>
+# 3.0.2 — 2026-09-18
+
+## Changed
+
+- Issues from HED file construction are now caught separately to provide more useful messages.
+  Previously, they were caught by the default handler and displayed as internal HED errors.
+
+- Improved logging formatter to provide more useful context.
+
+## Fixed
+
+- Issue with existence of HED column in context being improperly verified.
+
+- Dangling symlinks are now reported as 0-sized files for the dataset summary.
+  Previously, they could appear as `NaN`, polluting the summary and causing a crash.
+
+## Infrastructure
+
+- Drop fork of [nifti-reader-js][] and depend on upstream module.
+
+[nifti-reader-js]: https://www.npmjs.com/package/nifti-reader-js
+
 <a id='changelog-"3.0.1"'></a>
 # "3.0.1" — 2026-07-20
 

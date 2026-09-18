@@ -114,7 +114,10 @@ export class Summary {
     }
 
     this.totalFiles++
-    this.size += await context.file.size
+    const fileSize = await context.file.size
+    if (Number.isFinite(fileSize)) {
+      this.size += fileSize
+    }
 
     if ('sub' in context.entities) {
       this.subjects.add(context.entities.sub)

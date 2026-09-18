@@ -62,7 +62,7 @@ export async function hedValidate(
   let isHedFile = false
   if (
     context.extension === '.tsv' && context.columns &&
-    ('HED' in context.columns || sidecarHasHed(context.sidecar))
+    (Object.keys(context.columns).includes('HED') || sidecarHasHed(context.sidecar))
   ) {
     isHedFile = true
   } else if (context.extension === '.json' && sidecarHasHed(context.json)) {
@@ -76,12 +76,29 @@ export async function hedValidate(
 
   try {
     const hedValidator = await import('@hed/validator')
-
     let file
-    if (context.extension === '.tsv') {
-      file = buildHedTsvFile(context, hedValidator)
-    } else {
-      file = buildHedSidecarFile(context, hedValidator)
+
+    try {
+      if (context.extension === '.tsv') {
+        file = buildHedTsvFile(context, hedValidator)
+      } else {
+        file = buildHedSidecarFile(context, hedValidator)
+      }
+    } catch (error) {
+      let issueError: Error
+      if (error instanceof Error) {
+        issueError = error
+      } else {
+        issueError = new Error('unknown error')
+      }
+      const issues = hedValidator.BidsHedIssue.fromHedIssues(
+        issueError,
+        context.file,
+      )
+      for (const issue of issues) {
+        context.dataset.issues.add(issue)
+      }
+      return
     }
 
     const hedValidationIssues = await setHedSchemas(context.dataset, hedValidator)

@@ -46,7 +46,7 @@ def pdm_build_initialize(context):
             deno,
             "bundle",
             "--frozen",
-            "--sourcemap",
+            "--sourcemap=linked",
             "-o",
             str(bundle),
             "src/bids-validator.ts",
