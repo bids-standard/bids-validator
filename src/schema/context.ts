@@ -24,6 +24,7 @@ import { parseTIFF } from '../files/tiff.ts'
 import { loadJSON } from '../files/json.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
+import { _findRuleMatches } from '../validators/filenameIdentify.ts'
 import type { ChannelsWithName } from './associations.ts'
 import type { Issue } from '../types/issues.ts'
 import type { ValidatorOptions } from '../setup/options.ts'
@@ -258,7 +259,10 @@ export class BIDSContext implements Context {
   async loadColumns(): Promise<void> {
     const compressed = this.extension === '.tsv.gz'
     if (this.extension === '.tsv' && this.suffix !== 'motion') {
-      this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
+      // Dataset-level tables (participants, samples, sessions, scans, phenotype)
+      // are compared against the whole dataset, so they are never truncated.
+      const maxRows = this.#isCommonFile() ? undefined : this.dataset.options?.maxRows
+      this.columns = await loadTSV(this.file, maxRows)
         .catch((error) => {
           if (error.code) {
             this.dataset.issues.add({ ...error, location: this.file.path })
@@ -303,6 +307,23 @@ export class BIDSContext implements Context {
     }
 
     return
+  }
+
+  /** Whether this file matches a rule in `rules.files.common` */
+  #isCommonFile(): boolean {
+    const common = this.schema.rules?.files?.common
+    if (!common) return false
+    // Loaders run before filenameIdentify, so match on a scratch object
+    // instead of populating this.filenameRules early
+    const probe = {
+      path: this.path,
+      file: this.file,
+      suffix: this.suffix,
+      datatype: this.datatype,
+      filenameRules: [] as string[],
+    }
+    _findRuleMatches(common, 'rules.files.common', probe)
+    return probe.filenameRules.length > 0
   }
 
   async loadAssociations(): Promise<void> {
