@@ -17,6 +17,7 @@ import type { GenericSchema } from '../types/schema.ts'
 import type { BIDSContext } from '../schema/context.ts'
 import type { CheckFunction } from '../types/check.ts'
 import { lookupEntityLiteral } from './filenameValidate.ts'
+import { hasStimuliCatalog } from './internal/stimuliCatalog.ts'
 
 const CHECKS: CheckFunction[] = [
   findRuleMatches,
@@ -48,6 +49,12 @@ export function findDirRuleMatches(schema, context) {
     const node = directoryRule[key]
     if ('name' in node) {
       if (node.name === context.file.name.replaceAll('/', '')) {
+        context.filenameRules.push(path)
+        break
+      }
+      // Directories explicitly marked non-opaque (e.g. stimuli) may contain
+      // arbitrary subdirectories to organize their files.
+      if (node.opaque === false && context.file.path.startsWith(`/${node.name}/`)) {
         context.filenameRules.push(path)
         break
       }
@@ -127,6 +134,14 @@ export function hasMatch(schema, context) {
     context.filenameRules.length === 0 &&
     context.file.path !== '/.bidsignore'
   ) {
+    // Legacy /stimuli directories (no stimuli.tsv catalog anywhere in the
+    // hierarchy) are free-form; only catalog-organized stimuli directories
+    // enforce the stimulus naming rules.
+    if (context.path.startsWith('/stimuli/')) {
+      if (!hasStimuliCatalog(context.dataset.tree.get('stimuli'))) {
+        return
+      }
+    }
     context.dataset.issues.add({
       code: 'NOT_INCLUDED',
       location: context.path,
