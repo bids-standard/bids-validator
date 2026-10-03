@@ -11,7 +11,7 @@
     "jsr:@effigies/cliffy-command@1.0.0-dev.8": "1.0.0-dev.8",
     "jsr:@effigies/cliffy-table@1.0.0-dev.5": "1.0.0-dev.5",
     "jsr:@effigies/cliffy-table@^1.0.0-dev.5": "1.0.0-dev.5",
-    "jsr:@libs/xml@8": "8.0.0",
+    "jsr:@libs/xml@^8.0.1": "8.0.1",
     "jsr:@std/assert@^1.0.19": "1.0.19",
     "jsr:@std/async@^1.5.0": "1.5.0",
     "jsr:@std/bytes@^1.0.6": "1.0.6",
@@ -35,7 +35,7 @@
     "jsr:@std/streams@^1.1.2": "1.1.2",
     "jsr:@std/testing@^1.0.20": "1.0.20",
     "jsr:@std/text@~1.0.7": "1.0.19",
-    "jsr:@std/xml@~0.1.3": "0.1.3",
+    "jsr:@std/xml@0.2": "0.2.0",
     "jsr:@std/yaml@^1.2.0": "1.2.0",
     "npm:@types/node@*": "24.2.0",
     "npm:ajv@8.20.0": "8.20.0",
@@ -43,8 +43,8 @@
     "npm:esbuild-plugins-node-modules-polyfill@*": "1.7.1_esbuild@0.25.10",
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@4.2": "4.2.0",
-    "npm:ignore@^7.0.8": "7.0.8",
-    "npm:isomorphic-git@^1.41.9": "1.41.9",
+    "npm:ignore@^7.0.9": "7.0.9",
+    "npm:isomorphic-git@^1.42.2": "1.42.2",
     "npm:marked@^17.0.6": "17.0.6",
     "npm:nifti-reader-js@0.8": "0.8.0",
     "npm:pluralize@8": "8.0.0",
@@ -99,8 +99,8 @@
         "jsr:@std/fmt@~1.0.2"
       ]
     },
-    "@libs/xml@8.0.0": {
-      "integrity": "bd902ce433aba8f0c892ac16966f8949174097f0de6293eaf4bc125dcdd4362d",
+    "@libs/xml@8.0.1": {
+      "integrity": "adf0cf4529a4dd61f17a235408d762eafdcc0fd8ee6f64a9311508b9fbb25888",
       "dependencies": [
         "jsr:@std/xml"
       ]
@@ -176,8 +176,8 @@
     "@std/text@1.0.19": {
       "integrity": "003a0e032d360e8c3a4e0410fb792c77a66bd6553fee9d60c6ec1bce30d29223"
     },
-    "@std/xml@0.1.3": {
-      "integrity": "afb7750d09f9f521046b27119d0e63f7aaad6eeb3d74e5f41fc04a9958014811"
+    "@std/xml@0.2.0": {
+      "integrity": "e0b54ae29592bc1fc688109f78ef5c18680bf820ba8aa0a3990a115e709e58d2"
     },
     "@std/yaml@1.2.0": {
       "integrity": "20beb41e4983ba3437dbefac62b14061ab058e8a187596f19d28ff9035f6e6cf"
@@ -606,8 +606,8 @@
     "ignore@5.3.2": {
       "integrity": "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="
     },
-    "ignore@7.0.8": {
-      "integrity": "sha512-YYNsSlXBjMk92SKnkwvB5LOVSa6OznlFUGcsvrFgNJbJCd0M1XKeFVRc8ZByeCqz32FivYNHJVooLmdqrmvp/Q=="
+    "ignore@7.0.9": {
+      "integrity": "sha512-brTTsvFRt5C1gGHtPst/281UjPD5t9fBqbgoMPlVWy11ZLTPfu7HxK4ZYqO9H7o/yC9rSTCI85EaQ4OoY12qYw=="
     },
     "inherits@2.0.4": {
       "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="
@@ -624,8 +624,8 @@
     "isarray@2.0.5": {
       "integrity": "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw=="
     },
-    "isomorphic-git@1.41.9": {
-      "integrity": "sha512-WOh4ujm5mznHphzQvwj9bVj+pQpV0oZ8H4lAnh4dSaie+lN/lJ2rb6rNOOcP+2m4z8IOQp186TkEULD28NMBJg==",
+    "isomorphic-git@1.42.2": {
+      "integrity": "sha512-Rb7czWhLO4JYqmg4an01nNomuAgFbWWK2CVfkHGBOvK5t7hrGTKOXPx/csscJ1j9o3uXFzNcC6njgvCafSmIPw==",
       "dependencies": [
         "async-lock",
         "clean-git-ref",
@@ -833,8 +833,8 @@
     "unicode-name@1.1.0": {
       "integrity": "sha512-2XBI32vZP6a1tJmMDSUBabiIZuY+1udwZUoS7i5BTSU2c4ELMy6YJrTPF9uvYOVMU4vTMlHH6HG/TsHjCEsazA=="
     },
-    "which-typed-array@1.1.22": {
-      "integrity": "sha512-fvO4ExWMFsqyhG3AiPAObMuY1lxaqgYcxbc49CNdWDDECOJNgQyvsOWVwbZc+qf3rzRtxojBK+CMEv0Ld5CYpw==",
+    "which-typed-array@1.1.24": {
+      "integrity": "sha512-wk4Mf4pR5mRP7eYuuTBCIQ9d0ud2Fv2jRLQpfgnRjbOxAFHmjKFValgTpitVKzJJS8ajnYQV2Du1SZ8j6b/EUQ==",
       "dependencies": [
         "available-typed-arrays",
         "call-bind",
@@ -945,7 +945,7 @@
       "jsr:@bradenmacdonald/s3-lite-client@~0.9.6",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
-      "jsr:@libs/xml@8",
+      "jsr:@libs/xml@^8.0.1",
       "jsr:@std/assert@^1.0.19",
       "jsr:@std/async@^1.5.0",
       "jsr:@std/fmt@^1.0.10",
@@ -960,8 +960,8 @@
       "npm:ansi-escapes@^7.3.0",
       "npm:hash-wasm@^4.12.0",
       "npm:hed-validator@4.2",
-      "npm:ignore@^7.0.8",
-      "npm:isomorphic-git@^1.41.9",
+      "npm:ignore@^7.0.9",
+      "npm:isomorphic-git@^1.42.2",
       "npm:marked@^17.0.6",
       "npm:nifti-reader-js@0.8",
       "npm:pluralize@8",
