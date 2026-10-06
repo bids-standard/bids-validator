@@ -5,6 +5,8 @@ import type { Schema } from '../types/schema.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
 import { StringOpener } from '../files/openers.test.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
+import type { ValidatorOptions } from '../setup/options.ts'
+import { loadTSV } from '../files/tsv.ts'
 import { BIDSContext, BIDSContextDataset } from './context.ts'
 import { dataFile, motionFileTree, rootFileTree } from './fixtures.test.ts'
 
@@ -188,4 +190,46 @@ Deno.test('test context loadSubjects', async (t) => {
     // no participants.tsv so this should be empty
     assert(context.dataset.subjects.participant_id == undefined, 'no participant_id is populated')
   })
+})
+
+Deno.test('test context loadColumns respects maxRows only for non-common tables', async (t) => {
+  const schema = await loadSchema()
+  const commonTables = [
+    ['participants.tsv', 'participant_id'],
+    ['samples.tsv', 'sample_id'],
+    ['phenotype/survey.tsv', 'participant_id'],
+    ['sub-01/sub-01_sessions.tsv', 'session_id'],
+    ['sub-01/ses-01/sub-01_ses-01_scans.tsv', 'filename'],
+  ]
+  const eventsPath = 'sub-01/ses-01/func/sub-01_ses-01_task-rest_events.tsv'
+  const tree = pathsToTree([
+    '/dataset_description.json',
+    ...commonTables.map(([path]) => `/${path}`),
+    `/${eventsPath}`,
+  ])
+  const rows = ['1', '2', '3', '4', '5']
+  for (const [path, column] of commonTables) {
+    const file = tree.get(path) as BIDSFile
+    file.opener = new StringOpener(`${column}\n${rows.join('\n')}\n`)
+  }
+  const events = tree.get(eventsPath) as BIDSFile
+  events.opener = new StringOpener(`onset\tduration\n${rows.map((r) => `${r}\t1`).join('\n')}\n`)
+
+  const options = { maxRows: 2 } as ValidatorOptions
+
+  for (const [path, column] of commonTables) {
+    await t.step(`${path} is read in full`, async () => {
+      const dsContext = new BIDSContextDataset({ schema, tree, options })
+      const context = await makeBIDSContext(tree.get(path) as BIDSFile, dsContext)
+      assertEquals(context.columns[column], rows)
+    })
+  }
+
+  await t.step('other TSV files are truncated to maxRows', async () => {
+    const dsContext = new BIDSContextDataset({ schema, tree, options })
+    const context = await makeBIDSContext(events, dsContext)
+    assertEquals(context.columns['onset'], ['1', '2'])
+  })
+
+  loadTSV.cache.clear()
 })

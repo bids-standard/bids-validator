@@ -109,7 +109,8 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   .option('-c, --config <file:string>', 'Path to a JSON configuration file')
   .option(
     '--max-rows <nrows:number>',
-    'Maximum number of rows to validate in TSVs. Use 0 to validate headers only. Use -1 to validate all.',
+    'Maximum number of rows to validate in TSVs. Use 0 to validate headers only. Use -1 to validate all. ' +
+      'Dataset-level tables (participants, samples, sessions, scans, phenotype) are always read in full.',
     { default: 1000 },
   )
   .option('-v, --verbose', 'Log more extensive information about issues')
