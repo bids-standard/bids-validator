@@ -101,10 +101,14 @@ function findRuleMatches(schema, context) {
  * assume that this schema rule is applicable to this file.
  */
 export function _findRuleMatches(node, path, context) {
+  if (`/${node.path}` === context.path) {
+    context.filenameRules.push(path)
+    return
+  }
   if (
-    (`/${node.path}` === context.path) ||
-    (node.stem && matchStemRule(node, context)) ||
-    ('suffixes' in node && node.suffixes.includes(context.suffix))
+    pathRuleApplies(node, context) &&
+    ((node.stem && matchStemRule(node, context)) ||
+      ('suffixes' in node && node.suffixes.includes(context.suffix)))
   ) {
     context.filenameRules.push(path)
     return
@@ -117,6 +121,28 @@ export function _findRuleMatches(node, path, context) {
       _findRuleMatches(node[key], `${path}.${key}`, context)
     })
   }
+}
+
+/* Rules that carry a `path` together with a `stem` or `suffixes` (the
+ * stimulus rules under rules.files.raw.stimuli) only describe files inside
+ * that directory. Matching them by suffix alone would claim files elsewhere
+ * (`/stim-a_image.png` at the root, or `sub-01_task-a_image.png` in beh/)
+ * and would also parse legacy free-form `/stimuli` content such as
+ * `cm4_audio.wav` as malformed BEP044 names. Legacy stimuli directories,
+ * those without any stimuli.tsv catalog, are exempt from the stimulus
+ * rules altogether (see hasMatch for the matching NOT_INCLUDED exemption).
+ */
+function pathRuleApplies(node, context): boolean {
+  if (!('path' in node) || !('stem' in node || 'suffixes' in node)) {
+    return true
+  }
+  if (!context.path.startsWith(`/${node.path}/`)) {
+    return false
+  }
+  if (node.path === 'stimuli') {
+    return hasStimuliCatalog(context.dataset.tree.get('stimuli'))
+  }
+  return true
 }
 
 function matchStemRule(node, context): boolean {
