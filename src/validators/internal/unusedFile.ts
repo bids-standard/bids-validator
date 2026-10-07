@@ -1,6 +1,7 @@
 import type { GenericSchema } from '../../types/schema.ts'
 import type { BIDSFile, FileTree } from '../../types/filetree.ts'
 import type { BIDSContextDataset } from '../../schema/context.ts'
+import { hasStimuliCatalog } from './stimuliCatalog.ts'
 
 function* walkFileTree(fileTree: FileTree, dsContext: BIDSContextDataset): Generator<BIDSFile> {
   if (!fileTree) {
@@ -25,8 +26,15 @@ export function unusedStimulus(
   dsContext: BIDSContextDataset,
 ): void {
   const stimDir = dsContext.tree.get('stimuli') as FileTree
+  // In catalog mode (BEP044), stimulus usage is tracked through stim_id and
+  // the stimuli.tsv catalogs rather than direct stim_file path references,
+  // so catalog-managed files (stim-* entity files and the catalog tables)
+  // are not "unused".
+  const catalogMode = hasStimuliCatalog(stimDir)
+  const catalogFile = (name: string) =>
+    /^stim-/.test(name) || /^(stimuli|annotations)\.(tsv|json)$/.test(name)
   const unusedStimuli = [...walkFileTree(stimDir, dsContext)].filter((stimulus) =>
-    !stimulus.viewed
+    !stimulus.viewed && !(catalogMode && catalogFile(stimulus.name))
   )
   if (unusedStimuli.length) {
     dsContext.issues.add({ code: 'UNUSED_STIMULUS', affects: unusedStimuli.map((s) => s.path) })
