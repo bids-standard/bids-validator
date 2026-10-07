@@ -196,7 +196,7 @@ function evalJsonCheck(
   }
 
   const json: Record<string, unknown> = sidecarRule ? context.sidecar : context.json
-  for (const [key, requirement] of Object.entries(rule.fields)) {
+  for (const [key, requirement] of Object.entries(rule.fields ?? {})) {
     // @ts-expect-error dynamic nested index access on GenericSchema is not typed
     const metadataDef = schema.objects.metadata[key]
     const keyName: string = metadataDef.name

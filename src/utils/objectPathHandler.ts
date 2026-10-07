@@ -21,4 +21,23 @@ export const objectPathHandler = {
     }
     return res
   },
+  deleteProperty(target: unknown, property: string): boolean {
+    if (typeof property === 'symbol') {
+      return true
+    }
+    const props = property.split('.')
+    const toDelete = props.pop()
+    if (toDelete === undefined) {
+      return true
+    }
+    let parent = target
+    for (const prop of props) {
+      if (hasProp(parent, prop)) {
+        parent = parent[prop]
+      } else {
+        return true
+      }
+    }
+    return delete (parent as Record<string, unknown>)[toDelete]
+  }
 }
