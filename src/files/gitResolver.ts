@@ -22,6 +22,7 @@ import type { SymlinkReason, UnresolvedLink } from '../types/filetree.ts'
 import { AnnexedGitFileOpener, GitFileOpener } from './git.ts'
 import type { FileIgnoreRules } from './ignore.ts'
 import { parseAnnexKey } from './repo.ts'
+import { logger } from '../utils/logger.ts'
 
 export interface GitOptions {
   fs: FsClient
@@ -88,7 +89,8 @@ async function readObjectAt(
       filepath,
       ...source.gitOptions,
     }) as ParsedObject
-  } catch {
+  } catch (e) {
+    logger.debug(`readObjectAt: failed to read ${filepath} at ${source.commitOid}`, e)
     return null
   }
 }

@@ -105,6 +105,32 @@ const associationLookup: Record<string, LoadFunction> = {
       name: columns.get('name'),
     }
   },
+  electrodes: async (
+    file: BIDSFile,
+    options: LoadOptions,
+  ): Promise<{ path: string; name?: string[] }> => {
+    const columns = await loadTSV(file, options.maxRows)
+      .catch((_e) => {
+        return new Map()
+      })
+    return {
+      path: file.path,
+      name: columns.get('name'),
+    }
+  },
+  probes: async (
+    file: BIDSFile,
+    options: LoadOptions,
+  ): Promise<{ path: string; probe_name?: string[] }> => {
+    const columns = await loadTSV(file, options.maxRows)
+      .catch((_e) => {
+        return new Map()
+      })
+    return {
+      path: file.path,
+      probe_name: columns.get('probe_name'),
+    }
+  },
   physio: async (
     file: BIDSFile,
     _options: LoadOptions,
