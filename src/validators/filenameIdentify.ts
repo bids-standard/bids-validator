@@ -133,12 +133,19 @@ export function _findRuleMatches(node, path, context) {
  * rules altogether (see hasMatch for the matching NOT_INCLUDED exemption).
  */
 function pathRuleApplies(node, context): boolean {
+  // Rules without a path, or with a path but no stem/suffixes (the core
+  // rules matched by exact path), are not restricted here.
   if (!('path' in node) || !('stem' in node || 'suffixes' in node)) {
     return true
   }
+  // The file lives outside the rule's directory: the rule does not apply,
+  // even if the suffix matches. hasMatch reports NOT_INCLUDED if no other
+  // rule claims the file.
   if (!context.path.startsWith(`/${node.path}/`)) {
     return false
   }
+  // A /stimuli directory without any stimuli.tsv is a legacy free-form
+  // directory and is exempt from the stimulus rules.
   if (node.path === 'stimuli') {
     return hasStimuliCatalog(context.dataset.tree.get('stimuli'))
   }
