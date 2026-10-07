@@ -140,3 +140,25 @@ Deno.test('detectErrors returns false when no errors found', () => {
   const errors = detectErrors(mockValidationResultNoErrors)
   assertEquals(errors, false)
 })
+
+const mockValidationResultBadSources: ValidationResult = {
+  issues: new DatasetIssues({
+    issues: [],
+    codeMessages: new Map(),
+  }),
+  summary: json_mock_validation_result.summary,
+  sourcesSummary: {
+    '/sourcedata/mock/': {
+      issues: new DatasetIssues({
+        issues: json_mock_validation_result.derivativesSummary['/derivatives/mock/'].issues
+          .issues as Issue[],
+      }),
+      summary: json_mock_validation_result.derivativesSummary['/derivatives/mock/'].summary,
+    },
+  },
+}
+
+Deno.test('detectErrors collects errors from nested sources', () => {
+  const errors = detectErrors(mockValidationResultBadSources)
+  assertEquals(errors, true)
+})
