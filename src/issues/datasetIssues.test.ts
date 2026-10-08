@@ -1,6 +1,6 @@
-import { assert, assertEquals, assertThrows } from '@std/assert'
+import { assert, assertEquals, assertStringIncludes, assertThrows } from '@std/assert'
 import { pathsToTree } from '../files/filetree.test.ts'
-import { DatasetIssues } from './datasetIssues.ts'
+import { DatasetIssues, UnknownIssueCodeError } from './datasetIssues.ts'
 
 Deno.test('DatasetIssues management class', async (t) => {
   await t.step('Constructor succeeds', () => {
@@ -55,4 +55,16 @@ Deno.test('DatasetIssues management class', async (t) => {
     assert(code1 !== undefined)
     assertEquals(code1.size, 2)
   })
+})
+
+Deno.test('DatasetIssues.add() throws UnknownIssueCodeError for unrecognized code', () => {
+  const issues = new DatasetIssues()
+  const error = assertThrows(
+    () => issues.add({ code: 'TOTALLY_FAKE_CODE_12345' }),
+    UnknownIssueCodeError,
+  )
+  // Verify the error message is preserved
+  assertStringIncludes(error.message, 'TOTALLY_FAKE_CODE_12345')
+  // Verify the code property is set
+  assertEquals(error.code, 'TOTALLY_FAKE_CODE_12345')
 })

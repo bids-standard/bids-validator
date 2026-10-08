@@ -1,6 +1,10 @@
 import { assert, assertEquals } from '@std/assert'
-import { createUTF8Stream, UnicodeDecodeError } from './streams.ts'
-import { streamFromString, streamFromUint8Array } from '../tests/utils.ts'
+import {
+  createUTF8Stream,
+  streamFromString,
+  streamFromUint8Array,
+  UnicodeDecodeError,
+} from './streams.ts'
 
 Deno.test('createUTF8Stream', async (t) => {
   await t.step('should return a TransformStream with UTF8StreamTransformer', () => {
@@ -27,9 +31,9 @@ Deno.test('createUTF8Stream', async (t) => {
       reader = rawStream.pipeThrough(createUTF8Stream()).getReader()
       const { value } = await reader.read()
       assert(false, 'Expected UnicodeDecodeError, got ' + value)
-    } catch (e: any) {
+    } catch (e: unknown) {
       assertEquals(e instanceof UnicodeDecodeError, true)
-      assertEquals(e?.message, 'This file appears to be UTF-16')
+      assertEquals(e instanceof Error ? e.message : undefined, 'This file appears to be UTF-16')
     } finally {
       if (reader) await reader.cancel
     }

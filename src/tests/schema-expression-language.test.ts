@@ -2,7 +2,7 @@ import { loadSchema } from '../setup/loadSchema.ts'
 import { Table } from '@cliffy/table'
 import * as colors from '@std/fmt/colors'
 import type { BIDSContext } from '../schema/context.ts'
-import { type assert, assertEquals } from '@std/assert'
+import { assertEquals } from '@std/assert'
 import { evalCheck } from '../schema/applyRules.ts'
 import { expressionFunctions } from '../schema/expressionLanguage.ts'
 
@@ -24,9 +24,9 @@ Deno.test('validate schema expression tests', async (t) => {
     await t.step(`${test.expression} evals to ${test.result}`, () => {
       const context = { file: { parent: null }, dataset: { tree: null } } as unknown as BIDSContext
       Object.assign(context, expressionFunctions)
-      // @ts-expect-error
+      // @ts-expect-error exists is added via Object.assign and not declared on BIDSContext
       context.exists.bind(context)
-      const actual_result = evalCheck(test.expression, context)
+      const actual_result = evalCheck(test.expression, context) as string | null
       if (equal(actual_result, test.result)) {
         results.push([
           colors.cyan(test.expression),

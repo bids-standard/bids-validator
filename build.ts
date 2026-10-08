@@ -18,7 +18,7 @@ function getModuleDir(importMeta: ImportMeta): string {
 
 const dir = getModuleDir(import.meta);
 
-const MAIN_ENTRY = path.join(dir, 'src', 'main.ts')
+const MAIN_ENTRY = path.join(dir, 'src', 'web.ts')
 const CLI_ENTRY = path.join(dir, 'src', 'bids-validator.ts')
 
 const flags = parse(Deno.args, {
@@ -43,7 +43,32 @@ const versionPlugin = {
   },
 }
 
+/**
+ * Resolve fflate (a nifti-reader-js dependency) to its browser build.
+ *
+ * Deno's npm resolver applies the "node" export condition, which selects a
+ * build that imports `createRequire` from node:module to load worker_threads.
+ * That import survives bundling and breaks downstream browser bundlers. Only
+ * the synchronous API is used here, so the browser build is equivalent.
+ *
+ * Must precede denoPlugin: esbuild's `alias` option never runs because
+ * denoPlugin claims these paths in onResolve first.
+ */
+const fflateBrowserPlugin = {
+  name: 'fflate-browser',
+  setup(build: esbuild.PluginBuild) {
+    build.onResolve({ filter: /^fflate$/ }, (args) =>
+      build.resolve('fflate/browser', {
+        importer: args.importer,
+        kind: args.kind,
+        resolveDir: args.resolveDir,
+      })
+    )
+  },
+}
+
 const result = await esbuild.build({
+  splitting: true,
   format: 'esm',
   entryPoints: [MAIN_ENTRY, CLI_ENTRY],
   bundle: true,
@@ -51,6 +76,7 @@ const result = await esbuild.build({
   minify: flags.minify,
   target: ['chrome109', 'firefox109', 'safari16'],
   plugins: [
+    fflateBrowserPlugin,
     nodeModulesPolyfillPlugin({
       globals: {
         Buffer: true,
@@ -58,6 +84,7 @@ const result = await esbuild.build({
       modules: {
         'buffer': true,
         'process': true,
+        'crypto': true,
         'worker_threads': false,
       },
     }),

@@ -8,7 +8,6 @@ import {
 import { dataFile, rootFileTree } from './fixtures.test.ts'
 import type { BIDSContext } from './context.ts'
 import { makeBIDSContext } from './context.test.ts'
-import type { DatasetIssues } from '../issues/datasetIssues.ts'
 
 Deno.test('test expression functions', async (t) => {
   const context = await makeBIDSContext(dataFile, undefined, rootFileTree)
@@ -24,24 +23,24 @@ Deno.test('test expression functions', async (t) => {
     const intersects = expressionFunctions.intersects
     const equal = expressionFunctions.allequal
 
-    const truthy = (a: any): boolean => !!a
+    const truthy = (a: unknown): boolean => !!a
 
     assert(truthy(intersects([1, 2, 3], [2, 3, 4])))
     assert(intersects([1, 2, 3], [4, 5, 6]) === false)
     assert(truthy(intersects(['abc', 'def'], ['def'])))
     assert(intersects(['abc', 'def'], ['ghi']) === false)
     // Just checking values, I'm not concerned about types here
-    // @ts-expect-error
+    // @ts-expect-error intersects returns T[]|boolean, but allequal expects T[]
     assert(equal(intersects([1, 2, 3], [2, 3, 4]), [2, 3]))
-    // @ts-expect-error
+    // @ts-expect-error intersects returns T[]|boolean, but allequal expects T[]
     assert(equal(intersects(['abc', 'def'], ['def']), ['def']))
 
     // Promote scalars to arrays
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string where T[] is expected
     assert(truthy(intersects('abc', ['abc', 'def'])))
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string where T[] is expected
     assert(intersects('abc', ['a', 'b', 'c']) === false)
-    // @ts-expect-error
+    // @ts-expect-error intersects returns T[]|boolean, but allequal expects T[]
     assert(equal(intersects('abc', ['abc', 'def']), ['abc']))
   })
   await t.step('match function', () => {
@@ -66,13 +65,13 @@ Deno.test('test expression functions', async (t) => {
     assert(min([1, 2, 3]) === 1)
     assert(min([3, 2, 1]) === 1)
     assert(min([]) === Infinity)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(min(['3', '2', '1']) === 1)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(min(['3', 'string', '1']) === 1)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(min(['3', 'n/a', '1']) === 1)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where number|number[] is expected
     assert(min(null) === null)
   })
   await t.step('max function', () => {
@@ -80,27 +79,27 @@ Deno.test('test expression functions', async (t) => {
     assert(max([1, 2, 3]) === 3)
     assert(max([3, 2, 1]) === 3)
     assert(max([]) === -Infinity)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(max(['3', '2', '1']) === 3)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(max(['3', 'string', '1']) === 3)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string[] where number[] is expected
     assert(max(['3', 'n/a', '1']) === 3)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where number|number[] is expected
     assert(max(null) === null)
   })
   await t.step('length function', () => {
     const length = expressionFunctions.length
     assert(length([1, 2, 3]) === 3)
     // Out-of-scope (but permitted) inputs
-    // @ts-ignore
+    // @ts-expect-error intentionally passing string where T[] is expected
     assert(length('abc') === 3)
     // Out-of-scope inputs
-    // @ts-ignore
+    // @ts-expect-error intentionally passing object where T[] is expected
     assert(length({ a: 1, b: 2 }) === null)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing boolean where T[] is expected
     assert(length(true) === null)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where T[] is expected
     assert(length(null) === null)
   })
   await t.step('count function', () => {
@@ -169,16 +168,16 @@ Deno.test('test expression functions', async (t) => {
     assert(substr('abc', 2, 3) === 'c')
     assert(substr('abc', 3, 4) === '')
     assert(substr('abc', 0, 4) === 'abc')
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where string is expected
     assert(substr(null, 0, 1) === null)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where number is expected
     assert(substr('abc', null, 1) === null)
-    // @ts-ignore
+    // @ts-expect-error intentionally passing null where number is expected
     assert(substr('abc', 0, null) === null)
   })
   await t.step('sorted(..., "numeric") function', () => {
     const sorted = expressionFunctions.sorted
-    const array_equal = (a: any[], b: any[]) =>
+    const array_equal = (a: unknown[], b: unknown[]) =>
       a.length === b.length && a.every((v, i) => v === b[i])
     assert(array_equal(sorted([3, 2, 1], 'numeric'), [1, 2, 3]))
     assert(array_equal(sorted([1, 2, 3], 'numeric'), [1, 2, 3]))
@@ -193,7 +192,7 @@ Deno.test('test expression functions', async (t) => {
   })
   await t.step('sorted(..., "lexical") function', () => {
     const sorted = expressionFunctions.sorted
-    const array_equal = (a: any[], b: any[]) =>
+    const array_equal = (a: unknown[], b: unknown[]) =>
       a.length === b.length && a.every((v, i) => v === b[i])
     assert(array_equal(sorted([3, 2, 1], 'lexical'), [1, 2, 3]))
     assert(array_equal(sorted([1, 2, 3], 'lexical'), [1, 2, 3]))
@@ -219,7 +218,7 @@ Deno.test('test expression functions', async (t) => {
   })
   await t.step('sorted(..., "auto") function', () => {
     const sorted = expressionFunctions.sorted
-    const array_equal = (a: any[], b: any[]) =>
+    const array_equal = (a: unknown[], b: unknown[]) =>
       a.length === b.length && a.every((v, i) => v === b[i])
     assert(array_equal(sorted([125, 25, 5, 625], 'auto'), [5, 25, 125, 625]))
     assert(

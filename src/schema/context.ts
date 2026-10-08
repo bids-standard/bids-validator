@@ -19,11 +19,13 @@ import { findDatatype } from './datatypes.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
 import { readSidecars } from '../files/inheritance.ts'
 import { parseGzip } from '../files/gzip.ts'
-import { loadTSV, loadTSVGZ } from '../files/tsv.ts'
+import { loadHeaderlessTSV, loadTSV } from '../files/tsv.ts'
 import { parseTIFF } from '../files/tiff.ts'
 import { loadJSON } from '../files/json.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
+import type { ChannelsWithName } from './associations.ts'
+import type { Issue } from '../types/issues.ts'
 import type { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
 
@@ -40,7 +42,7 @@ export class BIDSContextDataset implements Dataset {
   options?: ValidatorOptions
   schema: Schema
   pseudofileExtensions: Set<string>
-  opaqueDirectories: Set<string>
+  opaqueDirectories!: Set<string>
 
   // Opaque object for HED validator
   hedSchemas: HedSchemas | undefined | null = undefined
@@ -66,14 +68,7 @@ export class BIDSContextDataset implements Dataset {
           ?.filter((ext) => ext.endsWith('/'))
         : [],
     )
-    this.opaqueDirectories = new Set<string>(
-      args.schema
-        ? Object.values(this.schema.rules.directories.raw)
-          ?.filter((rule) => rule?.opaque && 'name' in rule)
-          ?.map((dir) => `/${dir.name}`)
-        : [],
-    )
-    // @ts-ignore
+    // @ts-expect-error Subjects type does not include null, but null is used as a sentinel for "not yet loaded"
     this.subjects = args.subjects || null
   }
 
@@ -88,6 +83,12 @@ export class BIDSContextDataset implements Dataset {
         ? 'derivative'
         : 'raw'
     }
+    const datasetType = this.dataset_description.DatasetType as string
+    this.opaqueDirectories = new Set<string>(
+      Object.values(this.schema?.rules?.directories[datasetType] ?? {})
+        .filter((rule) => rule.opaque)
+        .map((dir) => `/${dir.name}`),
+    )
   }
 
   isPseudoFile(file: FileTree): boolean {
@@ -129,10 +130,10 @@ export class BIDSContext implements Context {
   suffix: string
   extension: string
   modality: string
-  sidecar: Record<string, any>
+  sidecar: Record<string, unknown>
   associations: Associations
   columns: Record<string, string[]>
-  json: Record<string, any>
+  json: Record<string, unknown>
   gzip?: Gzip
   nifti_header?: NiftiHeader
   ome?: Ome
@@ -204,9 +205,9 @@ export class BIDSContext implements Context {
     let sidecars: Map<string, Record<string, unknown>>
     try {
       sidecars = await readSidecars(this.file)
-    } catch (error: any) {
-      if (error?.code) {
-        this.dataset.issues.add(error)
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'code' in error) {
+        this.dataset.issues.add(error as Issue)
         return
       } else {
         throw error
@@ -255,7 +256,8 @@ export class BIDSContext implements Context {
   }
 
   async loadColumns(): Promise<void> {
-    if (this.extension == '.tsv') {
+    const compressed = this.extension === '.tsv.gz'
+    if (this.extension === '.tsv' && this.suffix !== 'motion') {
       this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
         .catch((error) => {
           if (error.code) {
@@ -267,22 +269,33 @@ export class BIDSContext implements Context {
           logger.debug(error)
           return new Map<string, string[]>() as ColumnsMap
         }) as Record<string, string[]>
-    } else if (this.extension == '.tsv.gz') {
-      const headers = this.sidecar.Columns as string[]
+    } else if (compressed || this.suffix === 'motion') {
+      let headers: string[] | undefined
+      if (compressed) {
+        // .tsv.gz headers are defined in the sidecar
+        headers = this.sidecar.Columns as string[]
+      } else {
+        // _motion.tsv headers are defined in the channels.tsv file
+        headers = (this.associations.channels as ChannelsWithName)?.name
+      }
       if (!headers || this.size === 0) {
-        // Missing Columns will be caught by sidecar rules
-        // Note that these rules currently select for suffix, and will need to be generalized
-        // or duplicated for new .tsv.gz files
-        // `this.size === 0` will show as `EMPTY_FILE`, so do not add INVALID_GZIP
+        // Missing headers and empty files will be caught by other rules
         return
       }
-      this.columns = await loadTSVGZ(this.file, headers, this.dataset.options?.maxRows)
+      this.columns = await loadHeaderlessTSV(
+        this.file,
+        headers,
+        compressed,
+        this.dataset.options?.maxRows,
+      )
         .catch((error) => {
           if (error.code) {
             this.dataset.issues.add({ ...error, location: this.file.path })
           }
           logger.warn(
-            `tsv.gz file could not be opened by loadColumns '${this.file.path}'`,
+            `${
+              this.extension.substring(1)
+            } file could not be opened by loadColumns '${this.file.path}'`,
           )
           logger.debug(error)
           return new Map<string, string[]>() as ColumnsMap
@@ -352,7 +365,7 @@ export class BIDSContext implements Context {
     const participants_tsv = this.dataset.tree.get('participants.tsv') as BIDSFile
     if (participants_tsv) {
       const participantsData = await loadTSV(participants_tsv)
-        .catch((error) => {
+        .catch((_error) => {
           return new Map()
         }) as Record<string, string[]>
       this.dataset.subjects.participant_id = participantsData['participant_id']

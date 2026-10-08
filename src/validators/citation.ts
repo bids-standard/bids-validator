@@ -1,5 +1,4 @@
 import type { GenericSchema } from '../types/schema.ts'
-import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import type { BIDSContextDataset } from '../schema/context.ts'
 import { schema as citationSchema } from '@bids/schema/citation'
 import { compile } from './json.ts'
@@ -9,7 +8,7 @@ import { parse } from '@std/yaml'
 const citationFilename = 'CITATION.cff'
 
 export async function citationValidate(
-  schema: GenericSchema,
+  _schema: GenericSchema,
   dsContext: BIDSContextDataset,
 ) {
   const citationFile = dsContext.tree.get(citationFilename)

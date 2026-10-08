@@ -1,3 +1,3 @@
-export const nullReadBytes = (size: number, offset = 1024) => {
+export const nullReadBytes = (_size: number, _offset = 1024) => {
   return Promise.resolve(new Uint8Array())
 }

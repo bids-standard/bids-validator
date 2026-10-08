@@ -1,1 +1,2 @@
 bids-validator/src/.git-meta.json  export-subst
+src/tests/bom-utf8.json  text eol=lf

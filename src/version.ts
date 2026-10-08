@@ -13,7 +13,8 @@ import { dirname } from '@std/path'
  * 3. Fall back to the static metadata in `deno.json`, which should correspond
  *    to the most recent dev tag.
  *
- * @returns The version of the script.
+ * @returns A semver-shaped version string (e.g. `"3.0.0"` or
+ *   `"3.0.0-alpha.3-2-gabcd1234"`).
  */
 export async function getVersion(): Promise<string> {
   // Hard-coded JSON wins
@@ -37,10 +38,10 @@ async function getLocalVersion(path: string): Promise<string> {
     const command = new Deno.Command('git', {
       args: ['-C', path, '-c', 'safe.directory=*', 'describe', '--tags', '--always'],
     })
-    const { success, stdout } = await command.output()
+    const { success: _success, stdout } = await command.output()
     const description = new TextDecoder().decode(stdout).trim()
     return description
-  } catch (err) {
+  } catch (_err) {
     return ''
   }
 }

@@ -59,7 +59,7 @@ Deno.test('test hasMatch', async (t) => {
     const file = new BIDSFileDeno(dir, `/${base}`, ignore)
 
     const context = await makeBIDSContext(file)
-    await hasMatch(schema, context)
+    hasMatch(schema, context)
     assertEquals(
       context.dataset.issues.get({
         location: context.file.path,
@@ -78,7 +78,7 @@ Deno.test('test hasMatch', async (t) => {
       'rules.files.raw.events.events__mri',
       'rules.files.raw.events.events__pet',
     ]
-    await hasMatch(schema, context)
+    hasMatch(schema, context)
     assertEquals(context.filenameRules.length, 2)
   })
 })
@@ -89,7 +89,7 @@ Deno.test('test directoryIdentify', async (t) => {
     const file = new BIDSFileDeno(PATH, fileName, ignore)
     const context = await makeBIDSContext(file)
     context.directory = true
-    await findDirRuleMatches(schema, context)
+    findDirRuleMatches(schema, context)
     assertEquals(context.filenameRules.length, 1)
     assertEquals(context.filenameRules[0], 'rules.directories.raw.subject')
   })
@@ -98,7 +98,7 @@ Deno.test('test directoryIdentify', async (t) => {
     const file = new BIDSFileDeno(PATH, fileName, ignore)
     const context = await makeBIDSContext(file)
     context.directory = true
-    await findDirRuleMatches(schema, context)
+    findDirRuleMatches(schema, context)
     assertEquals(context.filenameRules.length, 1)
     assertEquals(context.filenameRules[0], 'rules.directories.raw.derivatives')
   })
@@ -107,7 +107,7 @@ Deno.test('test directoryIdentify', async (t) => {
     const file = new BIDSFileDeno(`${PATH}/sub-01/ses-01`, fileName, ignore)
     const context = await makeBIDSContext(file)
     context.directory = true
-    await findDirRuleMatches(schema, context)
+    findDirRuleMatches(schema, context)
     assertEquals(context.filenameRules.length, 1)
     assertEquals(context.filenameRules[0], 'rules.directories.raw.datatype')
   })
@@ -117,7 +117,7 @@ Deno.test('test directoryIdentify', async (t) => {
     const context = await makeBIDSContext(file)
     context.directory = true
     context.dataset.dataset_description.DatasetType = 'unknown'
-    await findDirRuleMatches(schema, context)
+    findDirRuleMatches(schema, context)
     assertEquals(context.filenameRules.length, 0)
   })
 })

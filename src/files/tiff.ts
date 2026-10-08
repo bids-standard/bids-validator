@@ -28,7 +28,12 @@ function getImageDescription(
     if (dataview.getUint16(IFDoffset + 2 + i * IFDsize, littleEndian) === 0x010e) {
       const nbytes = dataview.getUint32(IFDoffset + 2 + i * IFDsize + 4, littleEndian)
       const offset = dataview.getUint32(IFDoffset + 2 + i * IFDsize + 8, littleEndian)
-      return new TextDecoder().decode(dataview.buffer.slice(offset, offset + nbytes))
+      // ASCII values are null-terminated, so we slice off the last byte
+      // A pathological tag could produce slice(0, -1), so guard with max()
+      return new TextDecoder().decode(dataview.buffer.slice(
+        offset,
+        Math.max(offset + nbytes - 1, 0),
+      ))
     }
   }
 }
@@ -58,6 +63,7 @@ export async function parseTIFF(
   }
 
   const imageDescription = getImageDescription(dataview, littleEndian, version === 42 ? 12 : 20)
+  // deno-lint-ignore no-explicit-any
   const omexml = await XML.parse(imageDescription || '') as { [key: string]: any }
   const Pixels = omexml?.OME?.Image?.Pixels
   if (!Pixels) return { tiff: { version } }

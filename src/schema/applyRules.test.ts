@@ -1,8 +1,7 @@
-// @ts-nocheck
+// @ts-nocheck test file uses untyped schema stubs and dynamic rule structures
 import { assert, assertEquals } from '@std/assert'
 import { applyRules, evalCheck } from './applyRules.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
-import { expressionFunctions } from './expressionLanguage.ts'
 
 const ruleContextData = [
   {

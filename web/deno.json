@@ -1,4 +1,7 @@
 {
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.19"
+  },
   "tasks": {
     "dev": "../build.ts && deno run -A --node-modules-dir npm:vite",
     "build": "../build.ts && deno run -A --node-modules-dir npm:vite build",

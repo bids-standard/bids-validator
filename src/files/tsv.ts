@@ -8,7 +8,6 @@ import type { BIDSFile } from '../types/filetree.ts'
 import { filememoize } from '../utils/memoize.ts'
 import { createUTF8Stream } from './streams.ts'
 import { openStream } from './access.ts'
-import { BIDSFileDeno } from './deno.ts'
 
 async function loadColumns(
   reader: ReadableStreamDefaultReader<string>,
@@ -52,28 +51,32 @@ async function loadColumns(
   )
 }
 
-export async function loadTSVGZ(
+export async function loadHeaderlessTSV(
   file: BIDSFile,
   headers: string[],
+  compressed: boolean,
   maxRows: number = -1,
 ): Promise<ColumnsMap> {
   const stream = await openStream(file)
-  const reader = stream
-    .pipeThrough(new DecompressionStream('gzip'))
+  const decompressed = compressed ? stream.pipeThrough(new DecompressionStream('gzip')) : stream
+  const reader = decompressed
     .pipeThrough(createUTF8Stream({ fatal: true }))
     .pipeThrough(new TextLineStream())
     .getReader()
 
   try {
     return await loadColumns(reader, headers, maxRows)
-  } catch (e: any) {
+  } catch (e: unknown) {
     // Cancel the reader if we interrupted the read
     // Cancelling for I/O errors will just re-trigger the error
-    if (e.code) {
+    if (e && typeof e === 'object' && 'code' in e && e.code) {
       await reader.cancel()
       throw e
     }
-    throw { code: 'INVALID_GZIP', location: file.path }
+    if (compressed) {
+      throw { code: 'INVALID_GZIP', location: file.path }
+    }
+    throw e
   }
 }
 

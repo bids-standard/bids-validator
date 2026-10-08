@@ -13,6 +13,7 @@ Deno.test('options parsing', async (t) => {
       datasetTypes: [],
       maxRows: 1000,
       format: 'text',
+      gitRef: undefined,
     })
   })
 })

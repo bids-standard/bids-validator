@@ -1,7 +1,11 @@
 /**
- * Thrown when a text file is decoded as UTF-8 but contains UTF-16 characters
+ * Thrown when a text file contains a UTF-16 BOM, indicating the file is
+ * not valid UTF-8.
  */
 export class UnicodeDecodeError extends Error {
+  /**
+   * @param message - Human-readable description of the encoding error.
+   */
   constructor(message: string) {
     super(message)
     this.name = 'UnicodeDecode'
@@ -34,7 +38,7 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
   transform(chunk: Uint8Array, controller: TransformStreamDefaultController<string>) {
     // Check first chunk for UTF-16 BOM
     if (this.firstChunk) {
-      let decoded = this.decoder.decode(chunk, { stream: true })
+      const decoded = this.decoder.decode(chunk, { stream: true })
       if (decoded.startsWith('\uFFFD')) {
         throw new UnicodeDecodeError('This file appears to be UTF-16')
       }
@@ -54,8 +58,40 @@ export class UTF8StreamTransformer implements Transformer<Uint8Array, string> {
 }
 
 /**
- * Creates a TransformStream that validates and decodes UTF-8 text
+ * Create a `TransformStream` that validates and decodes UTF-8 text.
+ *
+ * @param options - Decoder options; set `fatal: true` to throw on invalid bytes.
+ * @returns A transform stream from raw bytes to decoded strings.
+ * @throws {UnicodeDecodeError} When a UTF-16 BOM is detected in the first
+ *   chunk of the stream.
  */
-export function createUTF8Stream(options = { fatal: false }) {
+export function createUTF8Stream(options = { fatal: false }): TransformStream<Uint8Array, string> {
   return new TransformStream(new UTF8StreamTransformer(options))
+}
+
+/**
+ * Create a single-chunk `ReadableStream` from a `Uint8Array`.
+ *
+ * @param arr - The byte array to wrap.
+ * @returns A readable stream that emits `arr` as a single chunk and then closes.
+ */
+export function streamFromUint8Array<T extends ArrayBufferLike>(
+  arr: Uint8Array<T>,
+): ReadableStream<Uint8Array<T>> {
+  return new ReadableStream({
+    start(controller) {
+      controller.enqueue(arr)
+      controller.close()
+    },
+  })
+}
+
+/**
+ * Create a single-chunk `ReadableStream` by UTF-8-encoding a string.
+ *
+ * @param str - The string to encode.
+ * @returns A readable stream of the encoded bytes as a single chunk.
+ */
+export function streamFromString(str: string): ReadableStream<Uint8Array<ArrayBuffer>> {
+  return streamFromUint8Array(new TextEncoder().encode(str) as Uint8Array<ArrayBuffer>)
 }

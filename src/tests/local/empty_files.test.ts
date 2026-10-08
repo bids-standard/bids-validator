@@ -1,5 +1,5 @@
 // Deno runtime tests for tests/data/empty_files
-import { type assert, assertEquals, type assertObjectMatch } from '@std/assert'
+import { assertEquals } from '@std/assert'
 import { formatAssertIssue, validatePath } from './common.ts'
 
 const PATH = 'tests/data/empty_files'
@@ -10,7 +10,7 @@ const PATH = 'tests/data/empty_files'
  * not be empty.
  */
 Deno.test('empty_files dataset', async (t) => {
-  const { tree, result } = await validatePath(t, PATH)
+  const { tree: _tree, result } = await validatePath(t, PATH)
 
   await t.step('correctly ignores .bidsignore files', () => {
     assertEquals(

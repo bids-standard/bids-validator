@@ -57,7 +57,7 @@ export const collectSubjectMetadata = (
           if (data[ageKey.index] === '89+') {
             data[ageKey.index] = '89+'
           } else {
-            // @ts-expect-error
+            // @ts-expect-error assigning number to a string[] element to coerce age from string
             data[ageKey.index] = parseFloat(data[ageKey.index])
           }
         }

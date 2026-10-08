@@ -5,7 +5,7 @@ import { formatAssertIssue, validatePath } from './common.ts'
 const PATH = 'tests/data/valid_filenames'
 
 Deno.test('valid_filenames dataset', async (t) => {
-  const { tree, result } = await validatePath(t, PATH)
+  const { tree: _tree, result } = await validatePath(t, PATH)
 
   await t.step('correctly ignores .bidsignore files', () => {
     assertEquals(

@@ -141,10 +141,10 @@ export const expressionFunctions = {
 /**
  * Generate a function that evaluates an expression using the BIDS context.
  */
-function _contextFunction(expr: string): (context: BIDSContext) => any {
+function _contextFunction(expr: string): (context: BIDSContext) => unknown {
   return new Function('context', `with (context) { return ${expr.replace(/\\/g, '\\\\')} }`) as (
     context: BIDSContext,
-  ) => any
+  ) => unknown
 }
 
 /**
@@ -154,7 +154,7 @@ export const contextFunction = memoize(_contextFunction)
 
 function _formatter(format: string): (context: BIDSContext) => string {
   if (!format.includes('{')) {
-    return (context: BIDSContext) => format
+    return (_context: BIDSContext) => format
   }
   const template = format.replace(/{/g, '${').replace(/\\/g, '\\\\').replace(/`/g, '\\`')
   return new Function('context', `with (context) { return \`${template}\` }`) as (
@@ -173,13 +173,14 @@ export const formatter = memoize(_formatter)
 function safeContext(context: BIDSContext): BIDSContext {
   return new Proxy(context, {
     has: () => true,
-    get: (target: any, prop: any) => prop === Symbol.unscopables ? undefined : target[prop],
+    get: (target: BIDSContext, prop: string | symbol) =>
+      prop === Symbol.unscopables ? undefined : target[prop as keyof BIDSContext],
   })
 }
 
 export function prepareContext(context: BIDSContext): BIDSContext {
   Object.assign(context, expressionFunctions)
-  // @ts-expect-error
+  // @ts-expect-error exists is added via Object.assign and not declared on BIDSContext
   context.exists.bind(context)
   return safeContext(context)
 }
