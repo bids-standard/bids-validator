@@ -16,7 +16,13 @@
  */
 import * as posix from '@std/path/posix'
 import { default as git } from 'isomorphic-git'
-import type { FsClient, ParsedTreeObject, ReadObjectResult, TreeEntry } from 'isomorphic-git'
+import type {
+  FsClient,
+  ParsedTreeObject,
+  RawObject,
+  ReadObjectResult,
+  TreeEntry,
+} from 'isomorphic-git'
 import { BIDSFile } from '../types/filetree.ts'
 import type { SymlinkReason, UnresolvedLink } from '../types/filetree.ts'
 import { AnnexedGitFileOpener, GitFileOpener } from './git.ts'
@@ -63,7 +69,10 @@ export interface GraftResult {
 }
 
 // The effective type of `readObject` if filename is passed
-export type ParsedObject = Extract<ReadObjectResult, { format: 'parsed'; type: 'tree' | 'blob' }>
+// Without an encoding, blobs are returned as raw content, despite the requested format
+export type ParsedObject =
+  | Extract<ReadObjectResult, { format: 'parsed'; type: 'tree' }>
+  | RawObject
 
 export const MAX_SYMLINK_FOLLOWS = 10
 
