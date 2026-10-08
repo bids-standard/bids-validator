@@ -279,6 +279,16 @@ function invalidLocation(
   if (context.directory) {
     return
   }
+  if (context.entities.prov && context.path.startsWith('/prov/prov-')) {
+    if (!context.path.startsWith(`/prov/prov-${context.entities.prov}`)) {
+      context.dataset.issues.add({
+        code: 'INVALID_LOCATION',
+        location: context.path,
+        issueMessage: `Expected location: /prov/prov-${context.entities.prov}`,
+      })
+      return
+    }
+  }
   if (!context.entities.tpl) {
     _validateLocation(context, 'sub', 'ses')
   }
