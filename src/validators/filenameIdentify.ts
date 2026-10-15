@@ -17,6 +17,7 @@ import type { GenericSchema } from '../types/schema.ts'
 import type { BIDSContext } from '../schema/context.ts'
 import type { CheckFunction } from '../types/check.ts'
 import { lookupEntityLiteral } from './filenameValidate.ts'
+import { hasStimuliCatalog } from './internal/stimuliCatalog.ts'
 
 const CHECKS: CheckFunction[] = [
   findRuleMatches,
@@ -48,6 +49,12 @@ export function findDirRuleMatches(schema, context) {
     const node = directoryRule[key]
     if ('name' in node) {
       if (node.name === context.file.name.replaceAll('/', '')) {
+        context.filenameRules.push(path)
+        break
+      }
+      // Directories explicitly marked non-opaque (e.g. stimuli) may contain
+      // arbitrary subdirectories to organize their files.
+      if (node.opaque === false && context.file.path.startsWith(`/${node.name}/`)) {
         context.filenameRules.push(path)
         break
       }
@@ -94,10 +101,14 @@ function findRuleMatches(schema, context) {
  * assume that this schema rule is applicable to this file.
  */
 export function _findRuleMatches(node, path, context) {
+  if (`/${node.path}` === context.path) {
+    context.filenameRules.push(path)
+    return
+  }
   if (
-    (`/${node.path}` === context.path) ||
-    (node.stem && matchStemRule(node, context)) ||
-    ('suffixes' in node && node.suffixes.includes(context.suffix))
+    pathRuleApplies(node, context) &&
+    ((node.stem && matchStemRule(node, context)) ||
+      ('suffixes' in node && node.suffixes.includes(context.suffix)))
   ) {
     context.filenameRules.push(path)
     return
@@ -110,6 +121,35 @@ export function _findRuleMatches(node, path, context) {
       _findRuleMatches(node[key], `${path}.${key}`, context)
     })
   }
+}
+
+/* Rules that carry a `path` together with a `stem` or `suffixes` (the
+ * stimulus rules under rules.files.raw.stimuli) only describe files inside
+ * that directory. Matching them by suffix alone would claim files elsewhere
+ * (`/stim-a_image.png` at the root, or `sub-01_task-a_image.png` in beh/)
+ * and would also parse legacy free-form `/stimuli` content such as
+ * `cm4_audio.wav` as malformed BEP044 names. Legacy stimuli directories,
+ * those without any stimuli.tsv catalog, are exempt from the stimulus
+ * rules altogether (see hasMatch for the matching NOT_INCLUDED exemption).
+ */
+function pathRuleApplies(node, context): boolean {
+  // Rules without a path, or with a path but no stem/suffixes (the core
+  // rules matched by exact path), are not restricted here.
+  if (!('path' in node) || !('stem' in node || 'suffixes' in node)) {
+    return true
+  }
+  // The file lives outside the rule's directory: the rule does not apply,
+  // even if the suffix matches. hasMatch reports NOT_INCLUDED if no other
+  // rule claims the file.
+  if (!context.path.startsWith(`/${node.path}/`)) {
+    return false
+  }
+  // A /stimuli directory without any stimuli.tsv is a legacy free-form
+  // directory and is exempt from the stimulus rules.
+  if (node.path === 'stimuli') {
+    return hasStimuliCatalog(context.dataset.tree.get('stimuli'))
+  }
+  return true
 }
 
 function matchStemRule(node, context): boolean {
@@ -127,6 +167,14 @@ export function hasMatch(schema, context) {
     context.filenameRules.length === 0 &&
     context.file.path !== '/.bidsignore'
   ) {
+    // Legacy /stimuli directories (no stimuli.tsv catalog anywhere in the
+    // hierarchy) are free-form; only catalog-organized stimuli directories
+    // enforce the stimulus naming rules.
+    if (context.path.startsWith('/stimuli/')) {
+      if (!hasStimuliCatalog(context.dataset.tree.get('stimuli'))) {
+        return
+      }
+    }
     context.dataset.issues.add({
       code: 'NOT_INCLUDED',
       location: context.path,

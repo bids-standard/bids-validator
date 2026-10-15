@@ -327,7 +327,9 @@ export function evalInitialColumns(
   // Collect the initial columns, index and requirement levels
   // dropping any that are absent but not required
   const columns = rule.initial_columns.map((ruleHeader: string) => {
-    const name = schema.objects.columns[ruleHeader].name
+    // An unknown column key is a schema bug; fall back to the raw key rather
+    // than aborting rule evaluation for the whole file with a TypeError.
+    const name = schema.objects.columns[ruleHeader]?.name ?? ruleHeader
     return {
       name,
       requirement: getRequirement(rule as ColumnRule, ruleHeader),
