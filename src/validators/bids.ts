@@ -1,7 +1,8 @@
 import type { ContextCheckFunction, DSCheckFunction } from '../types/check.ts'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { loadJSON } from '../files/json.ts'
-import type { Severity } from '../types/issues.ts'
+import { loadTSV } from '../files/tsv.ts'
+import type { IssueFile, Severity } from '../types/issues.ts'
 import type { GenericSchema } from '../types/schema.ts'
 import type { ValidationResult } from '../types/validation-result.ts'
 import { applyRules } from '../schema/applyRules.ts'
@@ -112,6 +113,11 @@ export async function validate(
       code: 'MISSING_DATASET_DESCRIPTION',
       affects: ['/dataset_description.json'],
     })
+  }
+
+  const sessionsFile = fileTree.get('sessions.tsv') as BIDSFile
+  if (sessionsFile) {
+    dsContext.sessions = await loadTSV(sessionsFile)
   }
 
   // Empty list defaults to allow all
