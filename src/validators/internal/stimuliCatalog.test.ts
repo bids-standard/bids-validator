@@ -20,12 +20,12 @@ Deno.test('hasStimuliCatalog', async (t) => {
       true,
     )
   })
-  await t.step('true for a subdirectory catalog without a root catalog', () => {
+  await t.step('false for a catalog in a subdirectory only', () => {
     assertEquals(
       hasStimuliCatalog(
         stimTree(['/stimuli/faces/stimuli.tsv', '/stimuli/faces/stim-a_image.png']),
       ),
-      true,
+      false,
     )
   })
 })

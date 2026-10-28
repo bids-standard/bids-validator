@@ -52,12 +52,6 @@ export function findDirRuleMatches(schema, context) {
         context.filenameRules.push(path)
         break
       }
-      // Directories explicitly marked non-opaque (e.g. stimuli) may contain
-      // arbitrary subdirectories to organize their files.
-      if (node.opaque === false && context.file.path.startsWith(`/${node.name}/`)) {
-        context.filenameRules.push(path)
-        break
-      }
     }
     if ('entity' in node) {
       const entityDef = schemaEntities[node.entity]
@@ -167,9 +161,9 @@ export function hasMatch(schema, context) {
     context.filenameRules.length === 0 &&
     context.file.path !== '/.bidsignore'
   ) {
-    // Legacy /stimuli directories (no stimuli.tsv catalog anywhere in the
-    // hierarchy) are free-form; only catalog-organized stimuli directories
-    // enforce the stimulus naming rules.
+    // Legacy /stimuli directories (no /stimuli/stimuli.tsv catalog) are
+    // free-form; only catalog-organized stimuli directories enforce the
+    // stimulus naming rules.
     if (context.path.startsWith('/stimuli/')) {
       if (!hasStimuliCatalog(context.dataset.tree.get('stimuli'))) {
         return

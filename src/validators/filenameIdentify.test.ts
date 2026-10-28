@@ -64,7 +64,7 @@ Deno.test('test _findRuleMatches path-scoped rules', async (t) => {
     _findRuleMatches(stimulusNode, schemaPath, context)
     assertEquals(context.filenameRules, [schemaPath])
   })
-  await t.step('subdirectory catalog counts as catalog-organized', async () => {
+  await t.step('a catalog in a subdirectory only does not enable stimulus rules', async () => {
     const tree = pathsToTree(['/stimuli/faces/stimuli.tsv', '/stimuli/faces/stim-a_image.png'])
     const context = await makeBIDSContext(
       pathToFile('/stimuli/faces/stim-a_image.png'),
@@ -72,7 +72,7 @@ Deno.test('test _findRuleMatches path-scoped rules', async (t) => {
       tree,
     )
     _findRuleMatches(stimulusNode, schemaPath, context)
-    assertEquals(context.filenameRules, [schemaPath])
+    assertEquals(context.filenameRules.length, 0)
   })
   await t.step('stimulus suffix outside /stimuli does not match stimulus rules', async () => {
     const tree = pathsToTree(['/stimuli/stimuli.tsv', '/stim-a_image.png'])
