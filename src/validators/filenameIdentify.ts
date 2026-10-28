@@ -100,7 +100,7 @@ export function _findRuleMatches(node, path, context) {
     return
   }
   if (
-    pathRuleApplies(node, context) &&
+    stimulusRuleApplies(node, context) &&
     ((node.stem && matchStemRule(node, context)) ||
       ('suffixes' in node && node.suffixes.includes(context.suffix)))
   ) {
@@ -117,31 +117,24 @@ export function _findRuleMatches(node, path, context) {
   }
 }
 
-/* Rules that carry a `path` together with a `stem` or `suffixes` (the
- * stimulus rules under rules.files.raw.stimuli) only describe files inside
- * that directory. Matching them by suffix alone would claim files elsewhere
- * (`/stim-a_image.png` at the root, or `sub-01_task-a_image.png` in beh/)
- * and would also parse legacy free-form `/stimuli` content such as
- * `cm4_audio.wav` as malformed BEP044 names. Legacy stimuli directories,
- * those without any stimuli.tsv catalog, are exempt from the stimulus
- * rules altogether (see hasMatch for the matching NOT_INCLUDED exemption).
+/* The stimulus rules (datatype `stimuli`, the root-level /stimuli directory)
+ * only describe files inside /stimuli, and only in catalog-organized
+ * datasets. Matching them by suffix alone would claim files elsewhere
+ * (`/stim-a_image.png` at the root), and legacy free-form `/stimuli` content
+ * such as `cm4_audio.wav` would be parsed as malformed BEP044 names or as
+ * subject-level files sharing the media suffixes. Legacy stimuli directories,
+ * those without a /stimuli/stimuli.tsv catalog, match no suffix or stem rule
+ * at all (see hasMatch for the matching NOT_INCLUDED exemption).
  */
-function pathRuleApplies(node, context): boolean {
-  // Rules without a path, or with a path but no stem/suffixes (the core
-  // rules matched by exact path), are not restricted here.
-  if (!('path' in node) || !('stem' in node || 'suffixes' in node)) {
-    return true
-  }
-  // The file lives outside the rule's directory: the rule does not apply,
-  // even if the suffix matches. hasMatch reports NOT_INCLUDED if no other
-  // rule claims the file.
-  if (!context.path.startsWith(`/${node.path}/`)) {
+function stimulusRuleApplies(node, context): boolean {
+  const inStimuli = context.path.startsWith('/stimuli/')
+  if (inStimuli && !hasStimuliCatalog(context.dataset.tree.get('stimuli'))) {
     return false
   }
-  // A /stimuli directory without any stimuli.tsv is a legacy free-form
-  // directory and is exempt from the stimulus rules.
-  if (node.path === 'stimuli') {
-    return hasStimuliCatalog(context.dataset.tree.get('stimuli'))
+  // A stimulus rule does not apply outside /stimuli, even if the suffix
+  // matches. hasMatch reports NOT_INCLUDED if no other rule claims the file.
+  if (node.datatypes?.includes('stimuli')) {
+    return inStimuli
   }
   return true
 }

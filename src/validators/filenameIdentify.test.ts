@@ -47,15 +47,21 @@ Deno.test('test _findRuleMatches', async (t) => {
 })
 
 const stimulusNode = {
-  path: 'stimuli',
+  datatypes: ['stimuli'],
   suffixes: ['audio', 'image'],
 }
 
-Deno.test('test _findRuleMatches path-scoped rules', async (t) => {
+Deno.test('test _findRuleMatches stimulus rules', async (t) => {
   await t.step('legacy /stimuli without a catalog does not match stimulus rules', async () => {
     const tree = pathsToTree(['/stimuli/cm4_audio.wav'])
     const context = await makeBIDSContext(pathToFile('/stimuli/cm4_audio.wav'), undefined, tree)
     _findRuleMatches(stimulusNode, schemaPath, context)
+    assertEquals(context.filenameRules.length, 0)
+  })
+  await t.step('legacy /stimuli files match no subject-level rules either', async () => {
+    const tree = pathsToTree(['/stimuli/cm4_audio.wav'])
+    const context = await makeBIDSContext(pathToFile('/stimuli/cm4_audio.wav'), undefined, tree)
+    _findRuleMatches({ datatypes: ['beh'], suffixes: ['audio'] }, schemaPath, context)
     assertEquals(context.filenameRules.length, 0)
   })
   await t.step('catalog-organized /stimuli matches stimulus rules', async () => {
