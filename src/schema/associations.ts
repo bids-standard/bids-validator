@@ -131,6 +131,23 @@ const associationLookup: Record<string, LoadFunction> = {
       probe_name: columns.get('probe_name'),
     }
   },
+  scans: async (
+    file: BIDSFile,
+    options: LoadOptions,
+  ): Promise<{ path: string; duration?: number; acq_time?: string }> => {
+    const columns = await loadTSV(file, options.maxRows)
+      .catch((_e) => {
+        return new Map()
+      })
+    const row = columns.get('filename')?.findIndex((f: string) => file.path.endsWith(f))
+    // Undefined if duration is missing or row is -1 (filename not found in scans file)
+    const duration = columns.get('duration')?.[row]
+    return {
+      path: file.path,
+      duration: duration ? Number(duration) : undefined,
+      acq_time: columns.get('acq_time')?.[row],
+    }
+  },
   physio: async (
     file: BIDSFile,
     _options: LoadOptions,
