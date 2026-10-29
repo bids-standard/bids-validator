@@ -218,7 +218,7 @@ export function evalColumns(
   schema: Schema,
   schemaPath: string,
 ): void {
-  if (!rule.columns || !['.tsv', '.tsv.gz'].includes(context.extension)) return
+  if (!rule.columns || Reflect.ownKeys(context.columns).length === 0 || !['.tsv', '.tsv.gz'].includes(context.extension)) return
   const _columns = rule.columns as Record<string, string | { level: string }>
 
   const columnLookup = Object.fromEntries(
