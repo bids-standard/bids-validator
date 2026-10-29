@@ -2,7 +2,7 @@
   "version": "5",
   "specifiers": {
     "jsr:@bids/schema@~1.2.7": "1.2.7",
-    "jsr:@bradenmacdonald/s3-lite-client@~0.9.6": "0.9.6",
+    "jsr:@bradenmacdonald/s3-lite-client@1": "1.0.0",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
@@ -50,8 +50,8 @@
     "@bids/schema@1.2.7": {
       "integrity": "b51adc0399077001ea2455292a5891e7d8d5c298882dd563c173c2bf5a952560"
     },
-    "@bradenmacdonald/s3-lite-client@0.9.6": {
-      "integrity": "5dac4eb9ce4d8574ce2eb21e1cff1e96b409ca3ba333913a8bbf918710dc50d9"
+    "@bradenmacdonald/s3-lite-client@1.0.0": {
+      "integrity": "ed26ca9d9e66c6a09bf3584a5784609dde4b40039aaf16b0618651f9f9473a98"
     },
     "@cliffy/flags@1.0.0-rc.7": {
       "integrity": "318d9be98f6a6417b108e03dec427dea96cdd41a15beb21d2554ae6da450a781",
@@ -928,7 +928,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@bids/schema@~1.2.7",
-      "jsr:@bradenmacdonald/s3-lite-client@~0.9.6",
+      "jsr:@bradenmacdonald/s3-lite-client@1",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
       "jsr:@libs/xml@^8.0.1",
