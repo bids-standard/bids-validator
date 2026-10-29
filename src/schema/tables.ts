@@ -319,7 +319,7 @@ export function evalInitialColumns(
   schemaPath: string,
 ): void {
   if (
-    !rule?.columns || !rule?.initial_columns || !['.tsv', '.tsv.gz'].includes(context.extension)
+    !rule?.columns || !rule?.initial_columns || Reflect.ownKeys(context.columns).length === 0 || !['.tsv', '.tsv.gz'].includes(context.extension)
   ) {
     return
   }
