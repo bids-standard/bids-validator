@@ -39,12 +39,12 @@
     "npm:esbuild-plugins-node-modules-polyfill@*": "1.7.1_esbuild@0.25.10",
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@4.2": "4.2.0",
-    "npm:ignore@^7.0.8": "7.0.8",
-    "npm:isomorphic-git@^1.41.9": "1.41.9",
+    "npm:ignore@^7.0.12": "7.0.12",
+    "npm:isomorphic-git@^1.42.6": "1.42.6",
     "npm:marked@^17.0.6": "17.0.6",
     "npm:nifti-reader-js@0.8": "0.8.0",
     "npm:pluralize@8": "8.0.0",
-    "npm:supports-hyperlinks@^4.5.0": "4.5.0"
+    "npm:supports-hyperlinks@^4.6.0": "4.6.0"
   },
   "jsr": {
     "@bids/schema@1.2.7": {
@@ -592,8 +592,8 @@
     "ignore@5.3.2": {
       "integrity": "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="
     },
-    "ignore@7.0.8": {
-      "integrity": "sha512-YYNsSlXBjMk92SKnkwvB5LOVSa6OznlFUGcsvrFgNJbJCd0M1XKeFVRc8ZByeCqz32FivYNHJVooLmdqrmvp/Q=="
+    "ignore@7.0.12": {
+      "integrity": "sha512-/8UvqAPU9DGTI9k4mxtf49U37Isfwr8Uts96+SBHIkFxPJnHS0Ew4f00sM4Scd8V8EjM0jUNtVDdv1kPdt35lg=="
     },
     "inherits@2.0.4": {
       "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="
@@ -610,8 +610,8 @@
     "isarray@2.0.5": {
       "integrity": "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw=="
     },
-    "isomorphic-git@1.41.9": {
-      "integrity": "sha512-WOh4ujm5mznHphzQvwj9bVj+pQpV0oZ8H4lAnh4dSaie+lN/lJ2rb6rNOOcP+2m4z8IOQp186TkEULD28NMBJg==",
+    "isomorphic-git@1.42.6": {
+      "integrity": "sha512-MJpYjxITU0k0CNzSE3hXmrsHEIyPO8puRf69cNg5Xim7uhRMU0wh+5VkxpJonhKdAqiy+KTDTQWxgAuTxySqeg==",
       "dependencies": [
         "async-lock",
         "clean-git-ref",
@@ -787,8 +787,8 @@
     "supports-color@10.2.2": {
       "integrity": "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g=="
     },
-    "supports-hyperlinks@4.5.0": {
-      "integrity": "sha512-ZW2OvfeCXrNTbLakPUzjQG922EeGCOteFSVoek5DKStTh898wf7zgtuFlzQN8HfZCxC3Eh02yJVrRW51hADf+w==",
+    "supports-hyperlinks@4.6.0": {
+      "integrity": "sha512-FL/q/YePS4tFFTNiBOR+zPk2ZrKheqNtmTJ/9OUZ4e1wKHJofDbGQSmSsxS0XNnabSkqexryCaXGvEKz1vf9UQ==",
       "dependencies": [
         "has-flag",
         "supports-color"
@@ -819,8 +819,8 @@
     "unicode-name@1.1.0": {
       "integrity": "sha512-2XBI32vZP6a1tJmMDSUBabiIZuY+1udwZUoS7i5BTSU2c4ELMy6YJrTPF9uvYOVMU4vTMlHH6HG/TsHjCEsazA=="
     },
-    "which-typed-array@1.1.22": {
-      "integrity": "sha512-fvO4ExWMFsqyhG3AiPAObMuY1lxaqgYcxbc49CNdWDDECOJNgQyvsOWVwbZc+qf3rzRtxojBK+CMEv0Ld5CYpw==",
+    "which-typed-array@1.1.24": {
+      "integrity": "sha512-wk4Mf4pR5mRP7eYuuTBCIQ9d0ud2Fv2jRLQpfgnRjbOxAFHmjKFValgTpitVKzJJS8ajnYQV2Du1SZ8j6b/EUQ==",
       "dependencies": [
         "available-typed-arrays",
         "call-bind",
@@ -946,12 +946,12 @@
       "npm:ansi-escapes@^7.3.0",
       "npm:hash-wasm@^4.12.0",
       "npm:hed-validator@4.2",
-      "npm:ignore@^7.0.8",
-      "npm:isomorphic-git@^1.41.9",
+      "npm:ignore@^7.0.12",
+      "npm:isomorphic-git@^1.42.6",
       "npm:marked@^17.0.6",
       "npm:nifti-reader-js@0.8",
       "npm:pluralize@8",
-      "npm:supports-hyperlinks@^4.5.0"
+      "npm:supports-hyperlinks@^4.6.0"
     ]
   }
 }
