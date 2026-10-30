@@ -30,9 +30,10 @@ Deno.test('Deno implementation of FileIgnoreRules', async (t) => {
       '/derivatives/pipeline/file.nii',
       '/sourcedata/sub-01/anat/T1w.dcm',
       '/code/script.py',
-      '/stimuli/image.png',
       '/log/run.log',
       '/doc/SOP.md',
+      // Not ignored: BEP044 stimulus rules apply in /stimuli
+      '/stimuli/image.png',
       // Only ignored at top level
       '/sub-01/derivatives/pipeline/file.nii',
       '/sub-01/sourcedata/sub-01/anat/T1w.dcm',
@@ -43,7 +44,7 @@ Deno.test('Deno implementation of FileIgnoreRules', async (t) => {
     ]
     const ignore = new FileIgnoreRules([])
     const filtered = files.filter((path) => !ignore.test(path))
-    assertEquals(filtered.length, 6)
+    assertEquals(filtered.length, 7)
   })
   await t.step('Default prunes ignore dotfiles at all levels', () => {
     const files = [
