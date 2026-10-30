@@ -12,14 +12,26 @@
  * through graftTree and into the FileTree assembly in git.ts and
  * deno.ts. They are the primary oracle for the grafting work.
  */
-import { join } from '@std/path'
+import { fromFileUrl, join } from '@std/path'
 import { assertEquals } from '@std/assert'
 import { IssueError } from '../issues/datasetIssues.ts'
 import { readGitTree } from './git.ts'
 import { readFileTree } from './deno.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import type { BIDSFile, FileTree, SymlinkReason } from '../types/filetree.ts'
-import { hasGit, isWindows, run, withRepo } from './utils.test.ts'
+import { validate } from '../validators/bids.ts'
+import { loadJSON } from './json.ts'
+import { loadTSV } from './tsv.ts'
+import { readBytes, readText } from './access.ts'
+import {
+  addAnnexRemote,
+  annexFetchStub,
+  hasGit,
+  isWindows,
+  run,
+  withRepo,
+  writeAnnexObject,
+} from './utils.test.ts'
 
 /**
  * Shared prune rule for cross-backend tests: excludes the `.git/`
@@ -375,6 +387,146 @@ Deno.test(
 
         const grafted = gitTree.get('view/scan.nii.gz') as BIDSFile
         assertEquals(grafted.size, 4242)
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'cross-backend: grafted subtree contains a file symlink to an unlocked file',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    const annexKey = 'MD5E-s4242--00112233445566778899aabbccddeeff.nii.gz'
+    await withRepo(
+      async (repo) => {
+        await Deno.writeTextFile(join(repo, 'scan.nii.gz'), `/annex/objects/${annexKey}\n`)
+        await Deno.mkdir(join(repo, 'target'))
+        await run(['ln', '-s', '../scan.nii.gz', join(repo, 'target', 'link.nii.gz')])
+        await run(['ln', '-s', 'target', join(repo, 'view')])
+      },
+      async (repo) => {
+        const gitTree = await readGitTree(repo, 'HEAD', gitPrune)
+        const fsTree = await readFileTree(repo, gitPrune)
+        await assertTreeEquivalent(gitTree, fsTree)
+
+        const grafted = gitTree.get('view/link.nii.gz') as BIDSFile
+        assertEquals(await readOutcome(grafted), 'IssueError:UNLOCKED_ANNEX_DATA')
+      },
+    )
+  },
+)
+
+Deno.test(
+  {
+    name: 'cross-backend: annexed and unlocked files',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async () => {
+    const content = await Deno.readFile(
+      fromFileUrl(
+        new URL(
+          '../../tests/data/valid_dataset/sub-05/ses-02/anat/sub-05_ses-02_T1w.nii',
+          import.meta.url,
+        ),
+      ),
+    )
+    const key = (i: number) => `MD5E-s${content.length}--${String(i).repeat(32)}.nii`
+    const path = (i: number) => `sub-${i}/anat/sub-${i}_T1w.nii`
+    const annexLink = (i: number) => {
+      const target = `../../.git/annex/objects/xx/yy/${key(i)}/${key(i)}`
+      return (repo: string) => run(['ln', '-s', target, join(repo, path(i))])
+    }
+    const pointer = (i: number) => (repo: string) =>
+      Deno.writeTextFile(join(repo, path(i)), `/annex/objects/${key(i)}\n`)
+
+    const UNLOCKED = 'UNLOCKED_ANNEX_DATA'
+    const UNAVAIL = 'UNAVAILABLE_ANNEX_DATA'
+    // Expected error codes by builder, without and with --allowUnlockedData
+    const rows = [
+      { i: 1, commit: annexLink(1), fs: [], fsFlag: [], git: [], gitFlag: [] },
+      { i: 2, commit: annexLink(2), fs: [], fsFlag: [], git: [], gitFlag: [] },
+      {
+        i: 3,
+        commit: annexLink(3),
+        fs: [UNAVAIL],
+        fsFlag: [UNAVAIL],
+        git: [UNAVAIL],
+        gitFlag: [UNAVAIL],
+      },
+      { i: 4, commit: pointer(4), fs: [], fsFlag: [], git: [UNLOCKED], gitFlag: [] },
+      { i: 5, commit: pointer(5), fs: [UNLOCKED], fsFlag: [], git: [UNLOCKED], gitFlag: [] },
+      {
+        i: 6,
+        commit: pointer(6),
+        fs: [UNLOCKED],
+        fsFlag: [UNAVAIL],
+        git: [UNLOCKED],
+        gitFlag: [UNAVAIL],
+      },
+    ]
+
+    await withRepo(
+      async (repo) => {
+        await Deno.writeTextFile(
+          join(repo, 'dataset_description.json'),
+          '{"Name": "annex", "BIDSVersion": "1.10.0"}',
+        )
+        await Deno.writeTextFile(
+          join(repo, 'participants.tsv'),
+          ['participant_id', ...rows.map(({ i }) => `sub-${i}`)].join('\n') + '\n',
+        )
+        for (const { i, commit } of rows) {
+          await Deno.mkdir(join(repo, `sub-${i}`, 'anat'), { recursive: true })
+          await commit(repo)
+        }
+      },
+      async (repo) => {
+        const gitdir = join(repo, '.git')
+        await writeAnnexObject(gitdir, key(1), content)
+        await writeAnnexObject(gitdir, key(4), content)
+        await addAnnexRemote(repo, { [key(2)]: path(2), [key(5)]: path(5) })
+        // Serve the remote objects without the network
+        using _ = annexFetchStub({
+          [`/bucket/${path(2)}`]: content,
+          [`/bucket/${path(5)}`]: content,
+        })
+        await Deno.writeFile(join(repo, path(4)), content)
+
+        const builders = {
+          fs: (flag: boolean) => readFileTree(repo, gitPrune, undefined, flag),
+          git: (flag: boolean) => readGitTree(repo, 'HEAD', gitPrune, undefined, flag),
+        }
+        for (const [builder, read] of Object.entries(builders)) {
+          for (const flag of [false, true]) {
+            for (const cache of [loadJSON.cache, loadTSV.cache, readBytes.cache, readText.cache]) {
+              cache.clear()
+            }
+            const { issues } = await validate(await read(flag), {
+              datasetPath: repo,
+              debug: 'ERROR',
+              ignoreWarnings: true,
+              blacklistModalities: [],
+              datasetTypes: [],
+            })
+            const actual: Record<string, string[]> = {}
+            for (const issue of issues.filter({ severity: 'error' }).issues) {
+              const location = issue.location ?? ''
+              ;(actual[location] ??= []).push(issue.code)
+            }
+            const column = `${builder}${flag ? 'Flag' : ''}` as 'fs' | 'fsFlag' | 'git' | 'gitFlag'
+            const expected: Record<string, string[]> = {}
+            for (const row of rows) {
+              if (row[column].length) expected[`/${path(row.i)}`] = row[column]
+            }
+            assertEquals(actual, expected, `${builder}, allowUnlockedData=${flag}`)
+          }
+        }
       },
     )
   },
