@@ -355,7 +355,7 @@ export class AnnexPointerOpener implements FileOpener {
   /** Open the content as a byte stream. */
   async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
     await this.resolve()
-    return this.#bytes ? streamFromUint8Array(this.#bytes) : this.#delegate.stream()
+    return this.#bytes ? streamFromUint8Array(this.#bytes.slice()) : this.#delegate.stream()
   }
 
   /** Read the entire content decoded as a UTF-8 string. */

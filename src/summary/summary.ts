@@ -1,6 +1,7 @@
 import { collectSubjectMetadata } from './collectSubjectMetadata.ts'
 import type { SubjectMetadata, SummaryOutput } from '../types/validation-result.ts'
 import { IssueError } from '../issues/datasetIssues.ts'
+import { readText } from '../files/access.ts'
 import type { BIDSContext } from '../schema/context.ts'
 import type { ValidationResult } from '../types/validation-result.ts'
 
@@ -153,7 +154,7 @@ export class Summary {
 
     if (context.file.path.endsWith('participants.tsv')) {
       try {
-        const tsvContents = await context.file.text()
+        const tsvContents = await readText(context.file)
         this.subjectMetadata = collectSubjectMetadata(tsvContents)
       } catch (error) {
         // The file's own context reports why it has no content

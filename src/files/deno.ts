@@ -71,7 +71,8 @@ async function findGitDir(rootPath: string): Promise<string | undefined> {
       const info = await Deno.stat(gitdir)
       return info.isDirectory ? gitdir : undefined
     } catch (err) {
-      if (!(err instanceof Deno.errors.NotFound)) throw err
+      // Any other error (e.g. permissions) means we cannot find the repository: report pointers as unavailable
+      if (!(err instanceof Deno.errors.NotFound)) return undefined
     }
     const parent = dirname(dir)
     if (parent === dir) return undefined
