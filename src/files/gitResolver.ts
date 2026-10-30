@@ -41,6 +41,8 @@ export interface TreeSource {
   readonly gitOptions: GitOptions
   readonly symlinkMap: ReadonlyMap<string, string>
   readonly preferredRemote?: string
+  /** Read the content of unlocked annex files instead of reporting them. */
+  readonly allowUnlockedData?: boolean
   /** Forward-compatibility for submodule descent. Unused today. */
   readonly parent?: TreeSource
   /** Forward-compatibility for submodule descent. Unused today. */
@@ -54,6 +56,7 @@ export interface FollowBudget {
 export type ResolveVerdict =
   | { kind: 'file-blob'; oid: string; size: number; source: TreeSource }
   | { kind: 'annex'; key: string; size: number; source: TreeSource }
+  | { kind: 'pointer'; key: string; size: number; source: TreeSource }
   | { kind: 'tree'; treePath: string; originalDir: string; source: TreeSource }
   | {
     kind: 'submodule-boundary'

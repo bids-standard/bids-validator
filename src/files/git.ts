@@ -228,6 +228,23 @@ export class AnnexedGitFileOpener implements FileOpener {
 }
 
 /**
+ * Choose the opener for a file committed as a git-annex pointer.
+ *
+ * @param key - git-annex key from the pointer file.
+ * @param size - File size in bytes from the key's embedded `s` field.
+ * @param source - Tree source supplying git options and the unlocked-data setting.
+ * @returns An {@link AnnexedGitFileOpener} when `allowUnlockedData` is set,
+ *   otherwise an opener that rejects with `UNLOCKED_ANNEX_DATA`.
+ */
+export function unlockedFileOpener(
+  _key: string,
+  _size: number,
+  _source: Pick<TreeSource, 'gitOptions' | 'preferredRemote' | 'allowUnlockedData'>,
+): FileOpener {
+  throw new Error('not implemented')
+}
+
+/**
  * Find the gitdir for a repository path, and resolve the requested ref to a commit OID.
  */
 async function resolveRef(
@@ -289,6 +306,7 @@ export async function readGitTree(
   ref: string = 'HEAD',
   prune?: FileIgnoreRules,
   preferredRemote?: string,
+  _allowUnlockedData: boolean = false,
 ): Promise<FileTree> {
   const { commit, gitOptions } = await resolveRef(repoPath, ref)
 
@@ -381,6 +399,8 @@ export async function readGitTree(
           const { key, size, source: { gitOptions, preferredRemote } } = verdict
           return new AnnexedGitFileOpener(key, size, gitOptions, preferredRemote)
         }
+        case 'pointer':
+          throw new Error('not implemented')
         case 'submodule-boundary':
           return 'submodule'
         case 'unresolved':
