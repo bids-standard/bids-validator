@@ -2,6 +2,9 @@
 import { assert, assertEquals } from '@std/assert'
 import { applyRules, evalCheck } from './applyRules.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
+import { pathsToTree } from '../files/filetree.test.ts'
+import { loadSchema } from '../setup/loadSchema.ts'
+import { BIDSContext, BIDSContextDataset } from './context.ts'
 
 const ruleContextData = [
   {
@@ -106,3 +109,56 @@ Deno.test(
     assertEquals(context.dataset.issues.get({ code: 'CHECK_ERROR' }).length, 1)
   },
 )
+
+Deno.test('content-unavailable contexts', async (t) => {
+  const schema = await loadSchema()
+
+  /* Apply all rules to a file with and without content, returning the issues of each run */
+  async function applyWithAndWithoutContent(path: string, fields: Partial<BIDSContext>) {
+    const tree = pathsToTree([path])
+    const dsContext = new BIDSContextDataset({ schema, tree })
+    const context = new BIDSContext(tree.get(path.slice(1)), dsContext, tree)
+    await context.loaded
+    Object.assign(context, fields)
+    const runs = {}
+    for (const contentAvailable of [true, false]) {
+      dsContext.issues = new DatasetIssues()
+      context.contentAvailable = contentAvailable
+      applyRules(schema, context)
+      runs[contentAvailable] = dsContext.issues
+    }
+    return runs
+  }
+
+  const codes = (issues: DatasetIssues) => issues.get({}).map((issue) => issue.code)
+
+  await t.step('dataset_description.json fields are not checked', async () => {
+    const runs = await applyWithAndWithoutContent('/dataset_description.json', { json: {} })
+    assert(codes(runs[true]).includes('JSON_KEY_REQUIRED'))
+    assert(!codes(runs[false]).includes('JSON_KEY_REQUIRED'))
+  })
+
+  await t.step('events.tsv columns are not checked', async () => {
+    const runs = await applyWithAndWithoutContent('/sub-01/func/sub-01_task-x_events.tsv', {
+      columns: { onset: ['2', '1'], duration: ['1', '1'] },
+    })
+    assert(codes(runs[true]).includes('EVENT_ONSET_ORDER'))
+    assert(!codes(runs[false]).includes('EVENT_ONSET_ORDER'))
+  })
+
+  await t.step('sidecar fields are checked', async () => {
+    const runs = await applyWithAndWithoutContent('/sub-01/func/sub-01_task-x_bold.nii.gz', {
+      sidecar: {},
+    })
+    for (const issues of [runs[true], runs[false]]) {
+      assertEquals(issues.get({ code: 'SIDECAR_KEY_REQUIRED', subCode: 'TaskName' }).length, 1)
+    }
+  })
+
+  await t.step('checks on associations are evaluated', async () => {
+    const runs = await applyWithAndWithoutContent('/sub-01/dwi/sub-01_dwi.nii.gz', {})
+    for (const issues of [runs[true], runs[false]]) {
+      assert(codes(issues).includes('DWI_MISSING_BVEC'))
+    }
+  })
+})

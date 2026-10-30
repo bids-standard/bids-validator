@@ -119,6 +119,21 @@ class BIDSContextDatasetSubjects implements Subjects {
   }
 }
 
+/**
+ * Context fields loaded from the file's own content.
+ *
+ * Must list every such field: checks that reference one are skipped
+ * when the content is unavailable.
+ */
+export const contentFields = [
+  'json',
+  'columns',
+  'nifti_header',
+  'gzip',
+  'tiff',
+  'ome',
+] as const satisfies readonly (keyof BIDSContext)[]
+
 export class BIDSContext implements Context {
   dataset: BIDSContextDataset
   subject: Subject
@@ -142,6 +157,12 @@ export class BIDSContext implements Context {
   file: BIDSFile
   filenameRules: string[]
   sidecarKeyOrigin: Record<string, string>
+  /**
+   * `false` once the file's own content is known to be unreadable,
+   * as for an unlocked or unretrievable git-annex file.
+   * Checks on {@link contentFields} are then skipped.
+   */
+  contentAvailable: boolean = true
   loaded: Promise<void>
 
   constructor(
