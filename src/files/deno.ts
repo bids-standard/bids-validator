@@ -154,7 +154,9 @@ export async function readFileTree(
   rootPath: string,
   prune?: FileIgnoreRules,
   preferredRemote?: string,
+  allowUnlockedData = false,
 ): Promise<FileTree> {
+  void allowUnlockedData // stub
   prune ??= new FileIgnoreRules([], 'prune')
   const ignore = new FileIgnoreRules([])
   const tree = await _readFileTree({ rootPath, relativePath: '/', ignore, prune, preferredRemote })
