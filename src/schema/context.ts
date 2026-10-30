@@ -12,6 +12,7 @@ import type {
 import type { Schemas as HedSchemas } from '@hed/validator'
 import type { Schema } from '../types/schema.ts'
 import type { BIDSFile } from '../types/filetree.ts'
+import type { Issue } from '../types/issues.ts'
 import { FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { readEntities } from './entities.ts'
@@ -264,7 +265,7 @@ export class BIDSContext implements Context {
 
     this.nifti_header = await loadHeader(this.file).catch((error) => {
       if (error instanceof IssueError) {
-        this.dataset.issues.add({ ...error.issue, location: this.file.path })
+        this.#addContentIssue(error.issue)
         return undefined
       } else {
         throw error
@@ -281,7 +282,7 @@ export class BIDSContext implements Context {
       this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
         .catch((error) => {
           if (error instanceof IssueError) {
-            this.dataset.issues.add({ ...error.issue, location: this.file.path })
+            this.#addContentIssue(error.issue)
           }
           logger.warn(
             `tsv file could not be opened by loadColumns '${this.file.path}'`,
@@ -310,7 +311,7 @@ export class BIDSContext implements Context {
       )
         .catch((error) => {
           if (error instanceof IssueError) {
-            this.dataset.issues.add({ ...error.issue, location: this.file.path })
+            this.#addContentIssue(error.issue)
           }
           logger.warn(
             `${
@@ -338,7 +339,7 @@ export class BIDSContext implements Context {
     }
     this.json = await loadJSON(this.file).catch((error) => {
       if (error instanceof IssueError) {
-        this.dataset.issues.add({ ...error.issue, location: this.file.path })
+        this.#addContentIssue(error.issue)
         return {}
       } else {
         throw error
@@ -392,24 +393,55 @@ export class BIDSContext implements Context {
     }
   }
 
+  /**
+   * Add an issue raised while loading the file's own content, located at the file.
+   * An `UNAVAILABLE_ANNEX_DATA` issue also marks the content unavailable.
+   */
+  #addContentIssue(issue: Issue): void {
+    this.dataset.issues.add({ ...issue, location: this.file.path })
+    if (issue.code === 'UNAVAILABLE_ANNEX_DATA') {
+      this.contentAvailable = false
+    }
+  }
+
+  /**
+   * Run all loaders; {@link loaded} settles when they finish.
+   *
+   * Resolves the file first. If it has no readable content, the issue is added
+   * and {@link contentAvailable} set to `false`, and only the loaders that do not
+   * read the file itself (sidecars, associations, subjects) run.
+   */
   async asyncLoads() {
+    try {
+      await this.file.resolve()
+    } catch (error: unknown) {
+      // Other errors recur on read, where the loaders report them as FILE_READ
+      if (error instanceof IssueError) {
+        this.dataset.issues.add({ ...error.issue, location: this.file.path })
+        this.contentAvailable = false
+      }
+    }
     // loaders that may be depended on by other loaders
     const initial = [
       this.loadSidecar(),
       this.loadAssociations(),
     ]
     // loaders that do not depend on other loaders
-    const independent = [
-      this.loadSubjects(),
-      this.loadNiftiHeader(),
-      this.loadJSON(),
-      this.loadGzip(),
-      this.loadTIFF(),
-    ]
+    const independent = [this.loadSubjects()]
+    if (this.contentAvailable) {
+      independent.push(
+        this.loadNiftiHeader(),
+        this.loadJSON(),
+        this.loadGzip(),
+        this.loadTIFF(),
+      )
+    }
 
     // Loaders with dependencies
     await Promise.allSettled(initial)
-    await this.loadColumns()
+    if (this.contentAvailable) {
+      await this.loadColumns()
+    }
 
     await Promise.allSettled(independent)
   }

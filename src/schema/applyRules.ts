@@ -1,6 +1,6 @@
 import type { GenericRule, GenericSchema, SchemaFields } from '../types/schema.ts'
 import type { Severity } from '../types/issues.ts'
-import type { BIDSContext } from './context.ts'
+import { type BIDSContext, contentFields } from './context.ts'
 import { contextFunction, formatter, prepareContext } from './expressionLanguage.ts'
 import { logger } from '../utils/logger.ts'
 import { compile } from '../validators/json.ts'
@@ -140,10 +140,26 @@ function evalRule(
   }
   Object.keys(rule)
     .filter((key) => key in evalMap)
+    .filter((key) => context.contentAvailable !== false || !readsContent(key, schemaPath))
     .map((key) => {
       // @ts-expect-error dynamic key lookup on evalMap is not narrowed by filter
       evalMap[key](rule, context, schema, schemaPath)
     })
+}
+
+/** Rule keys evaluated against the file's own content */
+function readsContent(key: string, schemaPath: string): boolean {
+  return ['columns', 'initial_columns', 'index_columns'].includes(key) ||
+    (key === 'fields' && !schemaPath.match(/rules\.sidecar/))
+}
+
+// Built on first use: context.ts imports this module indirectly, via associations.ts
+let contentFieldPattern: RegExp | undefined
+
+/** Whether a check expression references a {@link contentFields} field */
+function referencesContent(check: string): boolean {
+  contentFieldPattern ??= new RegExp(`(?<![.\\w"'])(${contentFields.join('|')})\\b`)
+  return contentFieldPattern.test(check)
 }
 
 function mapEvalCheck(statements: string[], context: BIDSContext): boolean {
@@ -156,7 +172,11 @@ function _evalRuleChecks(
   _schema: GenericSchema,
   schemaPath: string,
 ): boolean {
-  if (rule.checks && !mapEvalCheck(rule.checks, context)) {
+  let checks = rule.checks
+  if (checks && context.contentAvailable === false) {
+    checks = checks.filter((check) => !referencesContent(check))
+  }
+  if (checks && !mapEvalCheck(checks, context)) {
     if (rule.issue?.code && rule.issue?.message) {
       const format = formatter(rule.issue.message)
       context.dataset.issues.add({
