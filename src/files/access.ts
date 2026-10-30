@@ -46,6 +46,18 @@ export function openStream(
   return file.stream().catch(handleReadError(file, 'opening stream from'))
 }
 
+/**
+ * Read all of `file`'s content from its byte stream.
+ *
+ * Unlike {@link readBytes}, this does not rely on the file's reported size,
+ * and it is not memoized.
+ *
+ * @throws {IssueError} If the opener rejects: its own `IssueError`, or `FILE_READ`.
+ */
+export function readAll(_file: BIDSFile): Promise<Uint8Array<ArrayBuffer>> {
+  throw new Error('Not implemented')
+}
+
 function _readBytes(
   file: BIDSFile,
   size: number,

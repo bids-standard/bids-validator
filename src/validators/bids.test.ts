@@ -3,6 +3,9 @@ import { pathsToTree } from '../files/filetree.test.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { validate } from './bids.ts'
 import { StringOpener } from '../files/openers.test.ts'
+import { RejectingFileOpener } from '../files/openers.ts'
+import { annexIssue } from '../files/annexKey.ts'
+import { loadJSON } from '../files/json.ts'
 
 const dataset = pathsToTree([
   '/dataset_description.json',
@@ -157,4 +160,28 @@ Deno.test('Loader issues are reported at the failing file', async (t) => {
     assertEquals(found[0].severity, 'error')
     assertEquals(issues.get({ code: 'BVEC_ROW_LENGTH' }).length, 1)
   })
+})
+
+Deno.test('Unresolvable dataset_description.json is reported once', async () => {
+  loadJSON.cache.clear()
+  const tree = datasetFrom({
+    '/dataset_description.json': '',
+    '/sub-01/anat/sub-01_T1w.nii.gz': '',
+  })
+  const dd = tree.get('dataset_description.json') as BIDSFile
+  dd.opener = new RejectingFileOpener(
+    16,
+    annexIssue('UNLOCKED_ANNEX_DATA', 'MD5E-s16--0123456789abcdef0123456789abcdef.json'),
+  )
+  const { issues } = await validate(tree, {
+    datasetPath: '/dataset',
+    debug: 'ERROR' as const,
+    ignoreNiftiHeaders: true,
+    blacklistModalities: [],
+    datasetTypes: [],
+  })
+  const found = issues.get({ code: 'UNLOCKED_ANNEX_DATA' })
+  assertEquals(found.length, 1)
+  assertEquals(found[0].location, '/dataset_description.json')
+  loadJSON.cache.clear()
 })
