@@ -3,6 +3,7 @@ import { assertEquals } from '@std/assert'
 import { pathsToTree } from '../files/filetree.test.ts'
 import { annexIssue } from '../files/annexKey.ts'
 import { RejectingFileOpener } from '../files/openers.ts'
+import { readText } from '../files/access.ts'
 import { BIDSContext } from '../schema/context.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { detectErrors } from './summary.ts'
@@ -158,4 +159,23 @@ Deno.test('Summary skips subject metadata of an unresolvable participants.tsv', 
   const summary = new Summary()
   await summary.update(context)
   assertEquals(summary.formatOutput().subjectMetadata, [])
+})
+
+Deno.test('Summary skips subject metadata of a participants.tsv that fails to read', async () => {
+  const tree = pathsToTree(['/participants.tsv'])
+  const file = tree.get('participants.tsv') as BIDSFile
+  file.opener = {
+    size: 16,
+    text: () => Promise.reject(new TypeError('bad')),
+  } as unknown as BIDSFile['opener']
+  const context = new BIDSContext(file, undefined, tree)
+  await context.loaded
+  readText.cache.clear()
+  try {
+    const summary = new Summary()
+    await summary.update(context)
+    assertEquals(summary.formatOutput().subjectMetadata, [])
+  } finally {
+    readText.cache.clear()
+  }
 })

@@ -266,6 +266,17 @@ Deno.test('AnnexPointerOpener', async (t) => {
     assertEquals(textDecoder.decode(await collect(await opener.stream())), small)
   })
 
+  await t.step('replays unmodified after a consumer mutates a chunk', async () => {
+    const path = `${dir}/mutate.json`
+    await Deno.writeTextFile(path, small)
+    const opener = new AnnexPointerOpener(new FsFileOpener(path), () => new StringOpener(''))
+    const reader = (await opener.stream()).getReader()
+    const { value } = await reader.read()
+    value!.fill(0)
+    await reader.cancel()
+    assertEquals(await opener.text(), small)
+  })
+
   await t.step('rereads larger files', async () => {
     const path = `${dir}/reread.json`
     await Deno.writeTextFile(path, large)
