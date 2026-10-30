@@ -8,6 +8,11 @@ import { FileIgnoreRules } from '../files/ignore.ts'
  * Implement this interface to add support for a new storage backend
  * (e.g. a cloud object store). Pass an instance to the {@link BIDSFile}
  * constructor as the `opener` argument.
+ *
+ * A method may reject with an `IssueError` to report a finished issue. Its
+ * `location` defaults to the file's path, and its `code` must be a registered
+ * issue code, or `DatasetIssues.add` throws `UnknownIssueCodeError`. Any other
+ * rejection is reported as `FILE_READ`.
  */
 export interface FileOpener {
   /** File size in bytes. */
