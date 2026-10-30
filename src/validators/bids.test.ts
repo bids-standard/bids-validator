@@ -142,4 +142,19 @@ Deno.test('Loader issues are reported at the failing file', async (t) => {
     assertEquals(issues.get({ code: 'TSV_EQUAL_ROWS', location: events }).length, 1)
     assertEquals(issues.get({ code: 'TSV_EQUAL_ROWS' }).length, 1)
   })
+
+  await t.step('ragged .bvec', async () => {
+    const bvec = '/sub-01/dwi/sub-01_dwi.bvec'
+    const tree = datasetFrom({
+      '/dataset_description.json': DD,
+      '/sub-01/dwi/sub-01_dwi.nii.gz': '',
+      '/sub-01/dwi/sub-01_dwi.bval': '0 1000\n',
+      [bvec]: '0 1\n0 1\n0\n',
+    })
+    const { issues } = await validate(tree, { ...options, ignoreNiftiHeaders: true })
+    const found = issues.get({ code: 'BVEC_ROW_LENGTH', location: bvec })
+    assertEquals(found.length, 1)
+    assertEquals(found[0].severity, 'error')
+    assertEquals(issues.get({ code: 'BVEC_ROW_LENGTH' }).length, 1)
+  })
 })
