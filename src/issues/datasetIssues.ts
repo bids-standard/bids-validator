@@ -27,6 +27,30 @@ export class UnknownIssueCodeError extends Error {
   }
 }
 
+/**
+ * Thrown by loaders to report a finished {@link Issue}.
+ *
+ * Catch sites test `instanceof IssueError` and add `error.issue` to the
+ * dataset's issues. `cause` holds the underlying error for debugging.
+ */
+export class IssueError extends Error {
+  /** The issue to report. */
+  readonly issue: Issue
+
+  /**
+   * @param issue - The issue to report.
+   * @param options - Standard error options; `cause` is the underlying error.
+   */
+  constructor(issue: Issue, options?: ErrorOptions) {
+    super(
+      issue.issueMessage ? `${issue.code}: ${issue.issueMessage}` : issue.code,
+      options,
+    )
+    this.name = 'IssueError'
+    this.issue = issue
+  }
+}
+
 type Group = Map<Issue[keyof Issue], DatasetIssues | Group | undefined>
 
 /**

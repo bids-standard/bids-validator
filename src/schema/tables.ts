@@ -1,4 +1,4 @@
-import type { Issue } from '../types/issues.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
 import type { GenericRule } from '../types/schema.ts'
 import type { Schema, TabularData } from '@bids/schema/metaschema'
 import type { BIDSContext } from './context.ts'
@@ -83,10 +83,10 @@ function _formatToType(format: string): string {
 function refineSignature(base: ValueSignature, override: ValueSignature): ValueSignature {
   // Collapse formats to string, number, boolean
   if (!base.formats.map(_formatToType).includes(_formatToType(override.formats[0]))) {
-    throw {
+    throw new IssueError({
       code: 'TSV_COLUMN_TYPE_REDEFINED',
       issueMessage: `Format "${override.formats[0]}" must be ${base.formats.join(' or ')}`,
-    }
+    })
   }
   // TODO: Compare actual formats; we want to check that override.formats[0]
   // is actually a subset of base.formats
@@ -96,38 +96,38 @@ function refineSignature(base: ValueSignature, override: ValueSignature): ValueS
   const effectiveLevels = override.levels ?? base.levels as string[]
   if (base.levels !== undefined && override.levels !== undefined) {
     if (!effectiveLevels.every((v) => base.levels?.includes(v))) {
-      throw {
+      throw new IssueError({
         code: 'TSV_COLUMN_TYPE_REDEFINED',
         issueMessage: `Levels {${override.levels.join(', ')}} is not a subset of {${
           base.levels.join(', ')
         }}.`,
-      }
+      })
     }
   }
 
   // Units must match
   const effectiveUnits = override.units ?? base.units
   if (base.units !== undefined && effectiveUnits !== base.units) {
-    throw {
+    throw new IssueError({
       code: 'TSV_COLUMN_TYPE_REDEFINED',
       issueMessage: `Unit "${effectiveUnits}" must be "${base.units}"`,
-    }
+    })
   }
 
   const effectiveMinimum = override.minimum ?? base.minimum as number
   if (base.minimum !== undefined && effectiveMinimum < base.minimum) {
-    throw {
+    throw new IssueError({
       code: 'TSV_COLUMN_TYPE_REDEFINED',
       issueMessage: `Minimum ${effectiveMinimum} is less than ${base.minimum}`,
-    }
+    })
   }
 
   const effectiveMaximum = override.maximum ?? base.maximum as number
   if (base.maximum !== undefined && effectiveMaximum > base.maximum) {
-    throw {
+    throw new IssueError({
       code: 'TSV_COLUMN_TYPE_REDEFINED',
       issueMessage: `Maximum ${effectiveMaximum} is greater than ${base.maximum}`,
-    }
+    })
   }
 
   return {
@@ -261,9 +261,9 @@ export function evalColumns(
       try {
         signature = getValueSignature(columnObject, sidecarDef)
       } catch (e: unknown) {
-        if (e && typeof e === 'object' && 'code' in e && e.code) {
+        if (e instanceof IssueError) {
           context.dataset.issues.add({
-            ...(e as Issue),
+            ...e.issue,
             subCode: name,
             location: context.sidecarKeyOrigin[name],
             rule: schemaPath,

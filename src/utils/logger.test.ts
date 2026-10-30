@@ -9,6 +9,7 @@ import {
   setup,
 } from '@std/log'
 import { LogRecord } from '@std/log/logger'
+import { IssueError } from '../issues/datasetIssues.ts'
 import {
   debugEnabled,
   describeError,
@@ -216,14 +217,6 @@ Deno.test('describeError', async (t) => {
     )
   })
 
-  await t.step('an Issue nesting an exception under `message` recurses', () => {
-    // The shape thrown by files/streams.ts on a decode failure.
-    assertEquals(
-      describeError({ code: 'INVALID_FILE_ENCODING', message: new TypeError('bad') }),
-      'INVALID_FILE_ENCODING (from TypeError: bad)',
-    )
-  })
-
   await t.step('non-string Issue fields are skipped', () => {
     // `location` is not a string, so no detail accumulates and the bare code is returned.
     assertEquals(describeError({ code: 'X', location: 42 }), 'X')
@@ -271,23 +264,29 @@ Deno.test('describeError', async (t) => {
     )
   })
 
-  await t.step('nested `message` recursion is bounded too', () => {
-    let deep: Record<string, unknown> = { code: 'L5' }
-    for (let i = 4; i >= 0; i--) deep = { code: `L${i}`, message: deep }
-    assertEquals(describeError(deep), 'L0 (from L1 (from L2 (from L3 (from ...))))')
-  })
-
-  await t.step('a self-referential `message` terminates', () => {
-    const cycle: Record<string, unknown> = { code: 'A' }
-    cycle.message = cycle
-    assertEquals(describeError(cycle), 'A (from A (from A (from A (from ...))))')
-  })
-
-  await t.step('an Issue whose `message` is an Error keeps that cause chain', () => {
+  await t.step('an IssueError renders its issue and cause chain', () => {
+    const osErr = Object.assign(new Error('No such file'), { name: 'NotFound', code: 'ENOENT' })
     assertEquals(
-      describeError({ code: 'TOP', message: new Error('e1', { cause: new Error('e2') }) }),
-      'TOP (from Error: e1; caused by Error: e2)',
+      describeError(
+        new IssueError({
+          code: 'FILE_READ',
+          subCode: 'NotFound',
+          location: '/sub-01/a.tsv',
+          issueMessage: 'Possible dangling symbolic link',
+        }, { cause: osErr }),
+      ),
+      'FILE_READ/NotFound (at /sub-01/a.tsv; Possible dangling symbolic link); caused by NotFound[ENOENT]: No such file',
     )
+  })
+
+  await t.step('an IssueError without detail or cause is its code', () => {
+    assertEquals(describeError(new IssueError({ code: 'JSON_INVALID' })), 'JSON_INVALID')
+  })
+
+  await t.step('IssueError cause chains are bounded', () => {
+    let err = new IssueError({ code: 'L4' })
+    for (let i = 3; i >= 0; i--) err = new IssueError({ code: `L${i}` }, { cause: err })
+    assertEquals(describeError(err), 'L0; caused by L1; caused by L2; caused by L3; caused by ...')
   })
 
   await t.step('a self-referential cause terminates', () => {

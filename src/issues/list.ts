@@ -155,6 +155,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     reason:
       'The image orientation could not be determined. This may be the result of an invalid affine matrix.',
   },
+  BVEC_ROW_LENGTH: {
+    severity: 'error',
+    reason: 'The rows of the .bvec file have differing lengths.',
+  },
   CHECK_ERROR: {
     severity: 'error',
     reason: 'generic place holder for errors from failed `checks` evaluated from schema.',
