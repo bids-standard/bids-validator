@@ -160,6 +160,10 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
     'Name of the preferred git-annex remote for accessing remote data (experimental)',
   )
   .option(
+    '--allowUnlockedData',
+    'Validate the content of unlocked git-annex files instead of reporting UNLOCKED_ANNEX_DATA. Content not present locally is retrieved from git-annex remotes.',
+  )
+  .option(
     '--git-ref [ref:string]',
     'Validate files from a git tree instead of the filesystem. Optional ref defaults to HEAD.',
   )
