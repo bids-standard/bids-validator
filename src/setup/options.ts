@@ -63,6 +63,11 @@ export type ValidatorOptions = {
   maxRows?: number
   /** git-annex remote name to prefer when fetching content that is not locally present. */
   preferredRemote?: string
+  /**
+   * When `true`, validate the content of unlocked git-annex files, retrieving it from git-annex remotes if needed.
+   * Passed to `readFileTree` from {@link [files/deno]} or `readGitTree` from {@link [files/git]}, not read by `validate()`.
+   */
+  allowUnlockedData?: boolean
   /** Git ref to validate against; used with `readGitTree` from {@link [files/git]}. */
   gitRef?: string
 }
