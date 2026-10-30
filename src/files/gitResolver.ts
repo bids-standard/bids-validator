@@ -25,8 +25,9 @@ import type {
 } from 'isomorphic-git'
 import { BIDSFile } from '../types/filetree.ts'
 import type { SymlinkReason, UnresolvedLink } from '../types/filetree.ts'
-import { AnnexedGitFileOpener, GitFileOpener } from './git.ts'
+import { AnnexedGitFileOpener, GitFileOpener, unlockedFileOpener } from './git.ts'
 import type { FileIgnoreRules } from './ignore.ts'
+import { parseAnnexPointer } from './annexKey.ts'
 import { parseAnnexKey } from './repo.ts'
 import { logger } from '../utils/logger.ts'
 
@@ -222,6 +223,8 @@ export async function resolveSymlink(
         // Blob with more segments to resolve — "not a directory".
         return { kind: 'unresolved', reason: 'broken' }
       }
+      const pointer = parseAnnexPointer(obj.object)
+      if (pointer) return { kind: 'pointer', source, ...pointer }
       return { kind: 'file-blob', oid: obj.oid, size: obj.object.length, source }
     }
     // deno-coverage-ignore-start
@@ -331,10 +334,13 @@ async function walkSubtree(
       if (entry.mode !== '120000') {
         const obj = await readObjectAt(source, entryPath)
         if (!obj || obj.type !== 'blob') continue
+        const pointer = parseAnnexPointer(obj.object)
         result.files.push(
           new BIDSFile(
             outPath,
-            new GitFileOpener(obj.oid, obj.object.length, source.gitOptions),
+            pointer
+              ? unlockedFileOpener(pointer.key, pointer.size, source)
+              : new GitFileOpener(obj.oid, obj.object.length, source.gitOptions),
           ),
         )
         continue
@@ -373,6 +379,14 @@ async function walkSubtree(
                 subVerdict.size,
                 subVerdict.source.gitOptions,
               ),
+            ),
+          )
+          break
+        case 'pointer':
+          result.files.push(
+            new BIDSFile(
+              outPath,
+              unlockedFileOpener(subVerdict.key, subVerdict.size, subVerdict.source),
             ),
           )
           break

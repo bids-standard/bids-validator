@@ -20,8 +20,8 @@ import {
 import { filesToTree, loadBidsIgnore } from './filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { hashDirLower, hashDirMixed, parseAnnexKey, resolveAnnexedFile } from './repo.ts'
-import { FsFileOpener, HTTPOpener } from './openers.ts'
-import { annexIssue } from './annexKey.ts'
+import { FsFileOpener, HTTPOpener, RejectingFileOpener } from './openers.ts'
+import { annexIssue, parseAnnexPointer } from './annexKey.ts'
 import { IssueError } from '../issues/datasetIssues.ts'
 import { streamFromUint8Array } from './streams.ts'
 import { graftTree, MAX_SYMLINK_FOLLOWS, resolveSymlink } from './gitResolver.ts'
@@ -237,11 +237,14 @@ export class AnnexedGitFileOpener implements FileOpener {
  *   otherwise an opener that rejects with `UNLOCKED_ANNEX_DATA`.
  */
 export function unlockedFileOpener(
-  _key: string,
-  _size: number,
-  _source: Pick<TreeSource, 'gitOptions' | 'preferredRemote' | 'allowUnlockedData'>,
+  key: string,
+  size: number,
+  source: Pick<TreeSource, 'gitOptions' | 'preferredRemote' | 'allowUnlockedData'>,
 ): FileOpener {
-  throw new Error('not implemented')
+  if (source.allowUnlockedData) {
+    return new AnnexedGitFileOpener(key, size, source.gitOptions, source.preferredRemote)
+  }
+  return new RejectingFileOpener(size, annexIssue('UNLOCKED_ANNEX_DATA', key))
 }
 
 /**
@@ -291,12 +294,16 @@ async function resolveRef(
  * Works with both work-tree checkouts and bare repositories.
  * `ref` can be a branch name, tag, commit SHA, abbreviated SHA, or tree
  * SHA. Symlinks within the tree are resolved where possible; annex
- * pointer files are wrapped with {@link AnnexedGitFileOpener}.
+ * symlinks are wrapped with {@link AnnexedGitFileOpener}. Unlocked annex files
+ * (committed as pointer files) reject with `UNLOCKED_ANNEX_DATA` unless
+ * `allowUnlockedData` is set, in which case they are also annexed.
  *
  * @param repoPath - Path to the repository (work-tree or bare `.git` dir).
  * @param ref - Git ref to walk; defaults to `"HEAD"`.
  * @param prune - Optional rules for paths to skip entirely.
  * @param preferredRemote - Preferred git-annex remote for fetching content.
+ * @param allowUnlockedData - Read the content of unlocked annex files, instead of
+ *   reporting them with `UNLOCKED_ANNEX_DATA`.
  * @returns The root `FileTree` with `.bidsignore` rules applied.
  * @throws {Error} If `repoPath` is not a git repository, has no commits,
  *   or `ref` cannot be resolved.
@@ -306,7 +313,7 @@ export async function readGitTree(
   ref: string = 'HEAD',
   prune?: FileIgnoreRules,
   preferredRemote?: string,
-  _allowUnlockedData: boolean = false,
+  allowUnlockedData: boolean = false,
 ): Promise<FileTree> {
   const { commit, gitOptions } = await resolveRef(repoPath, ref)
 
@@ -315,6 +322,13 @@ export async function readGitTree(
   const files: BIDSFile[] = []
   const symlinkMap = new Map<string, string>()
   const deferredSymlinks: { filepath: string; target: string }[] = []
+  const source: TreeSource = {
+    commitOid: commit,
+    gitOptions,
+    symlinkMap,
+    preferredRemote,
+    allowUnlockedData,
+  }
 
   try {
     await git.walk({
@@ -347,7 +361,7 @@ export async function readGitTree(
         const size = content ? content.length : 0
 
         const bidsPath = '/' + filepath
-        let opener: GitFileOpener | AnnexedGitFileOpener
+        let opener: FileOpener
         if (mode === 0o120000 && content) {
           // Symlink: blob content is the symlink target path
           const target = new TextDecoder().decode(content)
@@ -362,7 +376,10 @@ export async function readGitTree(
             return filepath
           }
         } else {
-          opener = new GitFileOpener(oid, size, gitOptions)
+          const pointer = content && parseAnnexPointer(content)
+          opener = pointer
+            ? unlockedFileOpener(pointer.key, pointer.size, source)
+            : new GitFileOpener(oid, size, gitOptions)
         }
         const file = new BIDSFile(bidsPath, opener, ignore)
         files.push(file)
@@ -377,7 +394,6 @@ export async function readGitTree(
     )
   }
 
-  const source: TreeSource = { commitOid: commit, gitOptions, symlinkMap, preferredRemote }
   const unresolvedLinks: UnresolvedLink[] = []
 
   for (const { filepath, target } of deferredSymlinks) {
@@ -400,7 +416,7 @@ export async function readGitTree(
           return new AnnexedGitFileOpener(key, size, gitOptions, preferredRemote)
         }
         case 'pointer':
-          throw new Error('not implemented')
+          return unlockedFileOpener(verdict.key, verdict.size, verdict.source)
         case 'submodule-boundary':
           return 'submodule'
         case 'unresolved':
