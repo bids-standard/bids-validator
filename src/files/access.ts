@@ -54,8 +54,25 @@ export function openStream(
  *
  * @throws {IssueError} If the opener rejects: its own `IssueError`, or `FILE_READ`.
  */
-export function readAll(_file: BIDSFile): Promise<Uint8Array<ArrayBuffer>> {
-  throw new Error('Not implemented')
+export async function readAll(file: BIDSFile): Promise<Uint8Array<ArrayBuffer>> {
+  const reject = handleReadError(file, 'reading bytes from')
+  try {
+    const chunks: Uint8Array<ArrayBuffer>[] = []
+    let length = 0
+    for await (const chunk of await file.stream()) {
+      chunks.push(chunk)
+      length += chunk.byteLength
+    }
+    const bytes = new Uint8Array(length)
+    let offset = 0
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset)
+      offset += chunk.byteLength
+    }
+    return bytes
+  } catch (err) {
+    return reject(err)
+  }
 }
 
 function _readBytes(

@@ -4,6 +4,8 @@ import { schema as citationSchema } from '@bids/schema/citation'
 import { compile } from './json.ts'
 import type { DefinedError } from '@ajv'
 import { parse } from '@std/yaml'
+import { IssueError } from '../issues/datasetIssues.ts'
+import { isResolvable } from '../files/access.ts'
 
 const citationFilename = 'CITATION.cff'
 
@@ -13,15 +15,19 @@ export async function citationValidate(
 ) {
   const citationFile = dsContext.tree.get(citationFilename)
   if (!citationFile || 'directories' in citationFile) return
+  // The file's own context reports an unresolvable CITATION.cff
+  if (!(await isResolvable(citationFile))) return
   let citation: unknown = {}
   try {
     citation = parse(await citationFile.text())
   } catch (error) {
-    dsContext.issues.add({
-      code: 'FILE_READ',
-      issueMessage: `Error from attempted read of file:\n${error}`,
-      location: citationFilename,
-    })
+    dsContext.issues.add(
+      error instanceof IssueError ? { ...error.issue, location: citationFilename } : {
+        code: 'FILE_READ',
+        issueMessage: `Error from attempted read of file:\n${error}`,
+        location: citationFilename,
+      },
+    )
     return
   }
   const validate = compile(citationSchema)

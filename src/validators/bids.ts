@@ -1,6 +1,7 @@
 import type { ContextCheckFunction, DSCheckFunction } from '../types/check.ts'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { loadJSON } from '../files/json.ts'
+import { isResolvable } from '../files/access.ts'
 import type { Severity } from '../types/issues.ts'
 import type { GenericSchema } from '../types/schema.ts'
 import type { ValidationResult } from '../types/validation-result.ts'
@@ -99,14 +100,19 @@ export async function validate(
 
   const dsContext = new BIDSContextDataset({ options, schema, tree: fileTree })
   if (ddFile) {
-    dsContext.dataset_description = await loadJSON(ddFile).catch((error) => {
-      if (error instanceof IssueError) {
-        dsContext.issues.add({ ...error.issue, location: ddFile.path })
-        return {} as Record<string, unknown>
-      } else {
-        throw error
-      }
-    })
+    if (await isResolvable(ddFile)) {
+      dsContext.dataset_description = await loadJSON(ddFile).catch((error) => {
+        if (error instanceof IssueError) {
+          dsContext.issues.add({ ...error.issue, location: ddFile.path })
+          return {} as Record<string, unknown>
+        } else {
+          throw error
+        }
+      })
+    } else {
+      // The file's own context reports why it has no content
+      dsContext.dataset_description = {}
+    }
     summary.dataProcessed = dsContext.dataset_description.DatasetType === 'derivative'
   } else {
     dsContext.issues.add({
