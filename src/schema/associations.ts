@@ -83,7 +83,7 @@ const associationLookup: Record<string, LoadFunction> = {
     const rows = parseBvalBvec(contents)
 
     if (rows.some((row) => row.length !== rows[0].length)) {
-      throw { key: 'BVEC_ROW_LENGTH' }
+      throw new IssueError({ code: 'BVEC_ROW_LENGTH' })
     }
 
     return {
