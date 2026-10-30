@@ -7,6 +7,7 @@ import {
   type LogRecord,
   setup,
 } from '@std/log'
+import { IssueError } from '../issues/datasetIssues.ts'
 
 /**
  * Setup a console logger used with the --debug flag
@@ -32,8 +33,23 @@ function inspect(value: object): string {
     : String(value)
 }
 
+function describeIssue(o: Record<string, unknown>): string {
+  const head = typeof o.subCode === 'string' ? `${o.code}/${o.subCode}` : String(o.code)
+  const detail: string[] = []
+  if (typeof o.location === 'string') detail.push(`at ${o.location}`)
+  if (typeof o.issueMessage === 'string') detail.push(o.issueMessage)
+  return detail.length ? `${head} (${detail.join('; ')})` : head
+}
+
 export function describeError(err: unknown, depth = 3): string {
   if (depth < 0) return '...'
+  // Thrown issues, follow cause chain
+  if (err instanceof IssueError) {
+    const self = describeIssue({ ...err.issue })
+    return err.cause === undefined
+      ? self
+      : `${self}; caused by ${describeError(err.cause, depth - 1)}`
+  }
   // Normal JS errors, follow cause chain
   if (err instanceof Error) {
     // OS Errors have code
@@ -46,12 +62,7 @@ export function describeError(err: unknown, depth = 3): string {
     const o = err as Record<string, unknown>
     // If validator issues are swallowed, provide detail
     if (typeof o.code === 'string') {
-      const head = typeof o.subCode === 'string' ? `${o.code}/${o.subCode}` : o.code
-      const detail: string[] = []
-      if (typeof o.location === 'string') detail.push(`at ${o.location}`)
-      if (typeof o.issueMessage === 'string') detail.push(o.issueMessage)
-      if (o.message !== undefined) detail.push(`from ${describeError(o.message, depth - 1)}`)
-      return detail.length ? `${head} (${detail.join('; ')})` : head
+      return describeIssue(o)
     }
     // Other objects
     return inspect(err)

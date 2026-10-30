@@ -1,7 +1,7 @@
 import type { Aslcontext, Associations, Bval, Bvec, Channels, Events } from '@bids/schema/context'
 import type { Schema as MetaSchema } from '@bids/schema/metaschema'
 
-import type { Issue } from '../types/issues.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
 import { loadJSON } from '../files/json.ts'
@@ -83,7 +83,7 @@ const associationLookup: Record<string, LoadFunction> = {
     const rows = parseBvalBvec(contents)
 
     if (rows.some((row) => row.length !== rows[0].length)) {
-      throw { key: 'BVEC_ROW_LENGTH' }
+      throw new IssueError({ code: 'BVEC_ROW_LENGTH' })
     }
 
     return {
@@ -208,11 +208,8 @@ export async function buildAssociations(
         rule.target?.entities ?? [],
       ).next().value
     } catch (error: unknown) {
-      if (
-        error && typeof error === 'object' && 'code' in error &&
-        error.code === 'MULTIPLE_INHERITABLE_FILES'
-      ) {
-        context.dataset.issues.add(error as Issue)
+      if (error instanceof IssueError && error.issue.code === 'MULTIPLE_INHERITABLE_FILES') {
+        context.dataset.issues.add(error.issue)
         continue
       } else {
         throw error
@@ -238,8 +235,8 @@ export async function buildAssociations(
         Object.assign(associations, {
           [key]: await load(file, options).catch(
             (error: unknown) => {
-              if (error && typeof error === 'object' && 'code' in error) {
-                context.dataset.issues.add({ ...(error as Issue), location })
+              if (error instanceof IssueError) {
+                context.dataset.issues.add({ ...error.issue, location })
               }
               return undefined
             },
