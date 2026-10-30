@@ -4,8 +4,11 @@
  * These classes implement stream, text and random bytes access to BIDS resources.
  */
 import { retry } from '@std/async'
+import { IssueError } from '../issues/datasetIssues.ts'
+import type { Issue } from '../types/issues.ts'
 import type { FileOpener } from '../types/filetree.ts'
-import { createUTF8Stream } from './streams.ts'
+import { parseAnnexPointer } from './annexKey.ts'
+import { createUTF8Stream, streamFromUint8Array } from './streams.ts'
 import { logger } from '../utils/logger.ts'
 
 /**
@@ -223,8 +226,7 @@ export class HTTPOpener implements FileOpener {
 /**
  * No-op {@link FileOpener} that returns empty content.
  *
- * Used as a placeholder when file content is unavailable (e.g. an
- * unresolvable git-annex object).
+ * Used as a placeholder for directory pseudo-files, which have no content.
  *
  * @param size - Reported file size; defaults to `0`.
  */
@@ -245,4 +247,140 @@ export class NullFileOpener implements FileOpener {
   text = (): Promise<string> => Promise.resolve('')
   readBytes = (_size: number, _offset?: number): Promise<Uint8Array<ArrayBuffer>> =>
     Promise.resolve(new Uint8Array())
+}
+
+/**
+ * {@link FileOpener} whose every access rejects with an {@link IssueError}.
+ *
+ * Used for files with no readable content, such as an unlocked git-annex
+ * pointer file.
+ *
+ * @param size - Reported file size.
+ * @param issue - Issue to report; each rejection carries a fresh copy.
+ */
+export class RejectingFileOpener implements FileOpener {
+  /** Reported file size in bytes. */
+  size: number
+  #issue: Issue
+
+  constructor(size: number, issue: Issue) {
+    this.size = size
+    this.#issue = issue
+  }
+
+  #reject<T>(): Promise<T> {
+    return Promise.reject(new IssueError({ ...this.#issue }))
+  }
+
+  /** Reject with an {@link IssueError}. */
+  resolve(): Promise<void> {
+    return this.#reject()
+  }
+
+  /** Reject with an {@link IssueError}. */
+  stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+    return this.#reject()
+  }
+
+  /** Reject with an {@link IssueError}. */
+  text(): Promise<string> {
+    return this.#reject()
+  }
+
+  /** Reject with an {@link IssueError}. */
+  readBytes(_size: number, _offset?: number): Promise<Uint8Array<ArrayBuffer>> {
+    return this.#reject()
+  }
+}
+
+/** Largest non-pointer file, in bytes, whose content {@link AnnexPointerOpener} keeps for replay */
+const REPLAY_MAX_SIZE = 1024
+
+/**
+ * {@link FileOpener} that detects git-annex pointer files.
+ *
+ * The first access calls {@link AnnexPointerOpener.resolve}, which reads the whole
+ * file once. If the content is a pointer, `onPointer` builds the opener that serves
+ * the annexed content (or rejects), and all reads go to it. Otherwise reads go to
+ * `inner`.
+ *
+ * Files of at most 1 KiB that are not pointers are kept in memory and every read is
+ * served from them, since small files dominate datasets and a replay is cheaper than a
+ * second filesystem call. Larger files are read again from `inner`, as keeping up to
+ * 32 KiB per file could use too much memory.
+ *
+ * @param inner - Opener for the file as stored.
+ * @param onPointer - Builds the opener that replaces `inner` when its content is a pointer,
+ *   given the git-annex key and the size of the annexed content.
+ */
+export class AnnexPointerOpener implements FileOpener {
+  #inner: FileOpener
+  #onPointer: (key: string, size: number) => FileOpener
+  #delegate: FileOpener
+  #bytes?: Uint8Array<ArrayBuffer>
+  #resolved?: Promise<void>
+
+  constructor(inner: FileOpener, onPointer: (key: string, size: number) => FileOpener) {
+    this.#inner = inner
+    this.#onPointer = onPointer
+    this.#delegate = inner
+  }
+
+  /** File size in bytes: that of the annexed content once resolved to a pointer. */
+  get size(): number {
+    return this.#delegate.size
+  }
+
+  /**
+   * Read the file once and decide whether it is a pointer.
+   *
+   * Rejects with the error of `inner`, or of the pointer's opener.
+   */
+  resolve(): Promise<void> {
+    this.#resolved ??= this.#resolve()
+    return this.#resolved
+  }
+
+  async #resolve(): Promise<void> {
+    const bytes = await this.#inner.readBytes(this.#inner.size)
+    const pointer = parseAnnexPointer(bytes)
+    if (pointer) {
+      this.#delegate = this.#onPointer(pointer.key, pointer.size)
+      await this.#delegate.resolve?.()
+    } else if (bytes.length <= REPLAY_MAX_SIZE) {
+      this.#bytes = bytes
+    }
+  }
+
+  /** Open the content as a byte stream. */
+  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+    await this.resolve()
+    return this.#bytes ? streamFromUint8Array(this.#bytes.slice()) : this.#delegate.stream()
+  }
+
+  /** Read the entire content decoded as a UTF-8 string. */
+  async text(): Promise<string> {
+    await this.resolve()
+    if (!this.#bytes) return this.#delegate.text()
+    const reader = streamFromUint8Array(this.#bytes).pipeThrough(createUTF8Stream()).getReader()
+    const chunks: string[] = []
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) return chunks.join('')
+      chunks.push(value)
+    }
+  }
+
+  /**
+   * Read up to `size` bytes starting at `offset`.
+   *
+   * @param size - Maximum number of bytes to read.
+   * @param offset - Byte offset at which to start reading (default `0`).
+   */
+  async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
+    await this.resolve()
+    return this.#bytes
+      ? this.#bytes.slice(offset, offset + size)
+      : this.#delegate.readBytes(size, offset)
+  }
 }

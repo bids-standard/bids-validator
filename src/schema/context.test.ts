@@ -1,9 +1,14 @@
 import { assert, assertEquals, assertObjectMatch } from '@std/assert'
-import type { BIDSFile } from '../types/filetree.ts'
+import type { BIDSFile, FileOpener } from '../types/filetree.ts'
 import type { FileTree } from '../types/filetree.ts'
 import type { Schema } from '../types/schema.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
 import { StreamOpener, StringOpener } from '../files/openers.test.ts'
+import { RejectingFileOpener } from '../files/openers.ts'
+import { annexIssue } from '../files/annexKey.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
+import { loadJSON } from '../files/json.ts'
+import { readBytes } from '../files/access.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { BIDSContext, BIDSContextDataset } from './context.ts'
 import { dataFile, motionFileTree, rootFileTree } from './fixtures.test.ts'
@@ -206,4 +211,63 @@ Deno.test('test context loadSubjects', async (t) => {
     // no participants.tsv so this should be empty
     assert(context.dataset.subjects.participant_id == undefined, 'no participant_id is populated')
   })
+})
+
+const annexKey = 'MD5E-s16--0123456789abcdef0123456789abcdef.nii.gz'
+
+/* Forget file loads cached by path in earlier tests */
+function clearFileCaches() {
+  loadJSON.cache.clear()
+  readBytes.cache.clear()
+}
+
+Deno.test('unresolvable file', async () => {
+  clearFileCaches()
+  const schema = await loadSchema()
+  const tree = pathsToTree(['/sub-01/anat/sub-01_T1w.nii.gz', '/sub-01/anat/sub-01_T1w.json'])
+  const nifti = tree.get('sub-01/anat/sub-01_T1w.nii.gz') as BIDSFile
+  nifti.opener = new RejectingFileOpener(16, annexIssue('UNLOCKED_ANNEX_DATA', annexKey))
+  const sidecar = tree.get('sub-01/anat/sub-01_T1w.json') as BIDSFile
+  sidecar.opener = new StringOpener('{"Manufacturer": "x"}')
+
+  const dsContext = new BIDSContextDataset({ schema, tree })
+  const context = new BIDSContext(nifti, dsContext, tree)
+  await context.loaded
+
+  const issues = dsContext.issues.get({})
+  assertEquals(issues.length, 1)
+  assertObjectMatch(issues[0], {
+    code: 'UNLOCKED_ANNEX_DATA',
+    location: '/sub-01/anat/sub-01_T1w.nii.gz',
+  })
+  assertEquals(context.contentAvailable, false)
+  assertEquals(context.sidecar.Manufacturer, 'x')
+  assertEquals(context.nifti_header, undefined)
+})
+
+// Test double for an annexed file whose remote fails: it resolves, but every read rejects
+class UnavailableOpener implements FileOpener {
+  size = 16
+  #reject<T>(): Promise<T> {
+    return Promise.reject(new IssueError(annexIssue('UNAVAILABLE_ANNEX_DATA', annexKey)))
+  }
+  resolve = (): Promise<void> => Promise.resolve()
+  stream = () => this.#reject<ReadableStream<Uint8Array<ArrayBuffer>>>()
+  text = () => this.#reject<string>()
+  readBytes = (_size: number, _offset?: number) => this.#reject<Uint8Array<ArrayBuffer>>()
+}
+
+Deno.test('fetch failure marks content unavailable', async () => {
+  clearFileCaches()
+  const schema = await loadSchema()
+  const tree = pathsToTree(['/sub-01/anat/sub-01_T1w.json'])
+  const file = tree.get('sub-01/anat/sub-01_T1w.json') as BIDSFile
+  file.opener = new UnavailableOpener()
+
+  const dsContext = new BIDSContextDataset({ schema, tree })
+  const context = new BIDSContext(file, dsContext, tree)
+  await context.loaded
+
+  assertEquals(dsContext.issues.get({}).map((issue) => issue.code), ['UNAVAILABLE_ANNEX_DATA'])
+  assertEquals(context.contentAvailable, false)
 })

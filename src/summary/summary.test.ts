@@ -1,5 +1,11 @@
 import { computeModalities, modalityPrettyLookup, Summary } from './summary.ts'
 import { assertEquals } from '@std/assert'
+import { pathsToTree } from '../files/filetree.test.ts'
+import { annexIssue } from '../files/annexKey.ts'
+import { RejectingFileOpener } from '../files/openers.ts'
+import { readText } from '../files/access.ts'
+import { BIDSContext } from '../schema/context.ts'
+import type { BIDSFile } from '../types/filetree.ts'
 import { detectErrors } from './summary.ts'
 import type { ValidationResult } from '../types/validation-result.ts'
 import { DatasetIssues } from '../issues/datasetIssues.ts'
@@ -139,4 +145,37 @@ const mockValidationResultNoErrors: ValidationResult = {
 Deno.test('detectErrors returns false when no errors found', () => {
   const errors = detectErrors(mockValidationResultNoErrors)
   assertEquals(errors, false)
+})
+
+Deno.test('Summary skips subject metadata of an unresolvable participants.tsv', async () => {
+  const tree = pathsToTree(['/participants.tsv'])
+  const file = tree.get('participants.tsv') as BIDSFile
+  file.opener = new RejectingFileOpener(
+    16,
+    annexIssue('UNLOCKED_ANNEX_DATA', 'MD5E-s16--0123456789abcdef0123456789abcdef.tsv'),
+  )
+  const context = new BIDSContext(file, undefined, tree)
+  await context.loaded
+  const summary = new Summary()
+  await summary.update(context)
+  assertEquals(summary.formatOutput().subjectMetadata, [])
+})
+
+Deno.test('Summary skips subject metadata of a participants.tsv that fails to read', async () => {
+  const tree = pathsToTree(['/participants.tsv'])
+  const file = tree.get('participants.tsv') as BIDSFile
+  file.opener = {
+    size: 16,
+    text: () => Promise.reject(new TypeError('bad')),
+  } as unknown as BIDSFile['opener']
+  const context = new BIDSContext(file, undefined, tree)
+  await context.loaded
+  readText.cache.clear()
+  try {
+    const summary = new Summary()
+    await summary.update(context)
+    assertEquals(summary.formatOutput().subjectMetadata, [])
+  } finally {
+    readText.cache.clear()
+  }
 })

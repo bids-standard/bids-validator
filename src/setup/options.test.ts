@@ -16,4 +16,8 @@ Deno.test('options parsing', async (t) => {
       gitRef: undefined,
     })
   })
+  await t.step('--allowUnlockedData enables unlocked data validation', async () => {
+    const options = await parseOptions(['my_dataset', '--allowUnlockedData'])
+    assertEquals(options.allowUnlockedData, true)
+  })
 })

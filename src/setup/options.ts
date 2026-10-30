@@ -63,6 +63,11 @@ export type ValidatorOptions = {
   maxRows?: number
   /** git-annex remote name to prefer when fetching content that is not locally present. */
   preferredRemote?: string
+  /**
+   * When `true`, validate the content of unlocked git-annex files, retrieving it from git-annex remotes if needed.
+   * Passed to `readFileTree` from {@link [files/deno]} or `readGitTree` from {@link [files/git]}, not read by `validate()`.
+   */
+  allowUnlockedData?: boolean
   /** Git ref to validate against; used with `readGitTree` from {@link [files/git]}. */
   gitRef?: string
 }
@@ -153,6 +158,10 @@ export const validateCommand: Command<void, void, any, string[], void> = new Com
   .option(
     '--preferredRemote <preferredRemote:string>',
     'Name of the preferred git-annex remote for accessing remote data (experimental)',
+  )
+  .option(
+    '--allowUnlockedData',
+    'Validate the content of unlocked git-annex files instead of reporting UNLOCKED_ANNEX_DATA. Content not present locally is retrieved from git-annex remotes.',
   )
   .option(
     '--git-ref [ref:string]',

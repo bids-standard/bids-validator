@@ -4,14 +4,32 @@
  * Clones ds000001 as a bare repo, initialises git-annex, fetches one local
  * annex object, then validates at tag 1.0.0 and asserts exact output.
  */
+import fs from 'node:fs'
 import { join } from '@std/path'
-import { assertEquals, assertExists, assertRejects } from '@std/assert'
-import { readGitTree } from './git.ts'
+import {
+  assertEquals,
+  assertExists,
+  assertInstanceOf,
+  assertRejects,
+  assertStrictEquals,
+} from '@std/assert'
+import { AnnexedGitFileOpener, readGitTree } from './git.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { readFileTree } from './deno.ts'
 import { validate } from '../validators/bids.ts'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
-import { capture, hasGit, hasGitAnnex, isWindows, run, withRepo } from './utils.test.ts'
+import {
+  addAnnexRemote,
+  annexFetchStub,
+  capture,
+  hasGit,
+  hasGitAnnex,
+  isWindows,
+  run,
+  withRepo,
+  writeAnnexObject,
+} from './utils.test.ts'
 
 const REPO_URL = 'https://github.com/openneurodatasets/ds000001.git'
 const REF = '1.0.0'
@@ -544,6 +562,154 @@ Deno.test(
             assertEquals(tree.links[0].reason, 'submodule')
           },
         )
+      },
+    )
+  },
+)
+
+Deno.test(
+  { name: 'AnnexedGitFileOpener', ignore: !hasGit || isWindows },
+  async (t) => {
+    const key = 'MD5E-s6--00112233445566778899aabbccddeeff.nii.gz'
+    const unavailable = { code: 'UNAVAILABLE_ANNEX_DATA', issueMessage: `git-annex key: ${key}` }
+    const open = (repo: string) =>
+      new AnnexedGitFileOpener(key, 6, { fs, gitdir: join(repo, '.git'), cache: {} })
+    const setup = async (repo: string) => {
+      await Deno.writeTextFile(join(repo, 'a.txt'), 'a')
+    }
+
+    await t.step('reads a local object', async () => {
+      await withRepo(setup, async (repo) => {
+        await writeAnnexObject(join(repo, '.git'), key, 'local!')
+        assertEquals(await open(repo).text(), 'local!')
+      })
+    })
+
+    await t.step('rejects missing content', async () => {
+      await withRepo(setup, async (repo) => {
+        const opener = open(repo)
+        const error = await assertRejects(() => opener.resolve(), IssueError)
+        assertEquals(error.issue.code, unavailable.code)
+        assertEquals(error.issue.issueMessage, unavailable.issueMessage)
+        const textError = await assertRejects(() => opener.text(), IssueError)
+        assertEquals(textError.issue.code, unavailable.code)
+      })
+    })
+
+    await t.step('reads a remote object', async () => {
+      await withRepo(setup, async (repo) => {
+        await addAnnexRemote(repo, { [key]: 'sub-01/a.nii.gz' })
+        // Serve the remote object from memory; tests must not use the network
+        using _fetch = annexFetchStub({ '/bucket/sub-01/a.nii.gz': 'remote' })
+        assertEquals(await open(repo).text(), 'remote')
+      })
+    })
+
+    await t.step('rejects a failing remote once', async () => {
+      await withRepo(setup, async (repo) => {
+        await addAnnexRemote(repo, { [key]: 'sub-01/a.nii.gz' })
+        // The remote answers 404 for every object; tests must not use the network
+        using stub = annexFetchStub({})
+        const opener = open(repo)
+        await opener.resolve()
+        const error = await assertRejects(() => opener.text(), IssueError)
+        assertEquals(error.issue.code, unavailable.code)
+        assertInstanceOf(error.cause, Error)
+        const again = await assertRejects(() => opener.readBytes(10), IssueError)
+        assertStrictEquals(again, error)
+        assertEquals(stub.calls.length, 1)
+      })
+    })
+  },
+)
+
+Deno.test(
+  {
+    name: 'readGitTree: unlocked annex pointer files',
+    ignore: !hasGit || isWindows,
+    sanitizeResources: false,
+    sanitizeOps: false,
+  },
+  async (t) => {
+    // See https://git-annex.branchable.com/internals/pointer_file/
+    const content = 'annexed content\n'
+    const key = 'MD5E-s16--a35f6370ff3128ab75c29b1754d09bf7.nii.gz'
+    const pointer = `/annex/objects/${key}`
+    const pointers = [
+      'unlocked.nii.gz',
+      'crlf.nii.gz',
+      'no-newline.nii.gz',
+      'extra-lines.nii.gz',
+      'link-target.nii.gz',
+    ]
+    const notPointers: Record<string, string> = {
+      'appended.nii.gz': `${pointer}\nnot a pointer\n`,
+      'unterminated.nii.gz': `${pointer}\n/annex/extra`,
+      'oversized.nii.gz': `${pointer}\n` + '/annex/padding\n'.repeat(2200),
+      'not-a-key.txt': 'see /annex/objects/ for details\n',
+      'bare-key.txt': `${key}\n`,
+    }
+    const assertAnnexed = async (tree: FileTree, path: string) => {
+      const file = tree.get(path) as BIDSFile
+      assertExists(file, `${path} should be in tree`)
+      assertEquals(file.size, 16, path)
+      assertEquals(await file.text(), content, path)
+    }
+    const assertUnlocked = async (tree: FileTree, path: string) => {
+      const file = tree.get(path) as BIDSFile
+      assertExists(file, `${path} should be in tree`)
+      assertEquals(file.size, 16, path)
+      const error = await assertRejects(() => file.text(), IssueError, undefined, path)
+      assertEquals(error.issue.code, 'UNLOCKED_ANNEX_DATA')
+      assertEquals(error.issue.issueMessage, `git-annex key: ${key}`)
+    }
+    await withRepo(
+      async (repo) => {
+        await writeAnnexObject(join(repo, '.git'), key, content)
+
+        await Deno.writeTextFile(join(repo, 'unlocked.nii.gz'), `${pointer}\n`)
+        await Deno.writeTextFile(join(repo, 'crlf.nii.gz'), `${pointer}\r\n`)
+        await Deno.writeTextFile(join(repo, 'no-newline.nii.gz'), pointer)
+        await Deno.writeTextFile(join(repo, 'extra-lines.nii.gz'), `${pointer}\n/annex/extra\n`)
+        await Deno.writeTextFile(
+          join(repo, 'link-target.nii.gz'),
+          `../.git/annex/objects/xx/yy/${key}/${key}\n`,
+        )
+        for (const [name, text] of Object.entries(notPointers)) {
+          await Deno.writeTextFile(join(repo, name), text)
+        }
+        await run(['ln', '-s', 'unlocked.nii.gz', join(repo, 'link.nii.gz')])
+        await Deno.mkdir(join(repo, 'real-dir'))
+        await Deno.writeTextFile(join(repo, 'real-dir', 'inside.nii.gz'), `${pointer}\n`)
+        await run(['ln', '-s', 'real-dir', join(repo, 'linked-dir')])
+      },
+      async (repo) => {
+        for (const allowUnlockedData of [true, false]) {
+          const mode = allowUnlockedData ? 'allowUnlockedData' : 'default'
+          const check = allowUnlockedData ? assertAnnexed : assertUnlocked
+          const tree = await readGitTree(repo, 'HEAD', undefined, undefined, allowUnlockedData)
+
+          await t.step(`${mode}: pointer files`, async () => {
+            for (const path of pointers) await check(tree, path)
+          })
+
+          await t.step(`${mode}: symlinks to pointer files`, async () => {
+            await check(tree, 'link.nii.gz')
+          })
+
+          await t.step(`${mode}: pointer files in grafted directories`, async () => {
+            await check(tree, 'real-dir/inside.nii.gz')
+            await check(tree, 'linked-dir/inside.nii.gz')
+          })
+
+          await t.step(`${mode}: invalid pointer files are read as git blobs`, async () => {
+            for (const [path, text] of Object.entries(notPointers)) {
+              const file = tree.get(path) as BIDSFile
+              assertExists(file, `${path} should be in tree`)
+              assertEquals(await file.text(), text, path)
+            }
+          })
+        }
       },
     )
   },

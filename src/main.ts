@@ -32,8 +32,14 @@ export async function main(): Promise<ValidationResult> {
     prune.addDefaults('ignore')
   }
   const tree = options.gitRef
-    ? await readGitTree(absolutePath, options.gitRef, prune, options.preferredRemote)
-    : await readFileTree(absolutePath, prune, options.preferredRemote)
+    ? await readGitTree(
+      absolutePath,
+      options.gitRef,
+      prune,
+      options.preferredRemote,
+      options.allowUnlockedData,
+    )
+    : await readFileTree(absolutePath, prune, options.preferredRemote, options.allowUnlockedData)
 
   const config = options.config ? JSON.parse(Deno.readTextFileSync(options.config)) as Config : {}
 

@@ -16,11 +16,18 @@
  */
 import * as posix from '@std/path/posix'
 import { default as git } from 'isomorphic-git'
-import type { FsClient, ParsedTreeObject, ReadObjectResult, TreeEntry } from 'isomorphic-git'
+import type {
+  FsClient,
+  ParsedTreeObject,
+  RawObject,
+  ReadObjectResult,
+  TreeEntry,
+} from 'isomorphic-git'
 import { BIDSFile } from '../types/filetree.ts'
 import type { SymlinkReason, UnresolvedLink } from '../types/filetree.ts'
-import { AnnexedGitFileOpener, GitFileOpener } from './git.ts'
+import { AnnexedGitFileOpener, GitFileOpener, unlockedFileOpener } from './git.ts'
 import type { FileIgnoreRules } from './ignore.ts'
+import { parseAnnexPointer } from './annexKey.ts'
 import { parseAnnexKey } from './repo.ts'
 import { logger } from '../utils/logger.ts'
 
@@ -35,6 +42,8 @@ export interface TreeSource {
   readonly gitOptions: GitOptions
   readonly symlinkMap: ReadonlyMap<string, string>
   readonly preferredRemote?: string
+  /** Read the content of unlocked annex files instead of reporting them. */
+  readonly allowUnlockedData?: boolean
   /** Forward-compatibility for submodule descent. Unused today. */
   readonly parent?: TreeSource
   /** Forward-compatibility for submodule descent. Unused today. */
@@ -48,6 +57,7 @@ export interface FollowBudget {
 export type ResolveVerdict =
   | { kind: 'file-blob'; oid: string; size: number; source: TreeSource }
   | { kind: 'annex'; key: string; size: number; source: TreeSource }
+  | { kind: 'pointer'; key: string; size: number; source: TreeSource }
   | { kind: 'tree'; treePath: string; originalDir: string; source: TreeSource }
   | {
     kind: 'submodule-boundary'
@@ -63,7 +73,10 @@ export interface GraftResult {
 }
 
 // The effective type of `readObject` if filename is passed
-export type ParsedObject = Extract<ReadObjectResult, { format: 'parsed'; type: 'tree' | 'blob' }>
+// Without an encoding, blobs are returned as raw content, despite the requested format
+export type ParsedObject =
+  | Extract<ReadObjectResult, { format: 'parsed'; type: 'tree' }>
+  | RawObject
 
 export const MAX_SYMLINK_FOLLOWS = 10
 
@@ -210,6 +223,8 @@ export async function resolveSymlink(
         // Blob with more segments to resolve — "not a directory".
         return { kind: 'unresolved', reason: 'broken' }
       }
+      const pointer = parseAnnexPointer(obj.object)
+      if (pointer) return { kind: 'pointer', source, ...pointer }
       return { kind: 'file-blob', oid: obj.oid, size: obj.object.length, source }
     }
     // deno-coverage-ignore-start
@@ -319,10 +334,13 @@ async function walkSubtree(
       if (entry.mode !== '120000') {
         const obj = await readObjectAt(source, entryPath)
         if (!obj || obj.type !== 'blob') continue
+        const pointer = parseAnnexPointer(obj.object)
         result.files.push(
           new BIDSFile(
             outPath,
-            new GitFileOpener(obj.oid, obj.object.length, source.gitOptions),
+            pointer
+              ? unlockedFileOpener(pointer.key, pointer.size, source)
+              : new GitFileOpener(obj.oid, obj.object.length, source.gitOptions),
           ),
         )
         continue
@@ -361,6 +379,14 @@ async function walkSubtree(
                 subVerdict.size,
                 subVerdict.source.gitOptions,
               ),
+            ),
+          )
+          break
+        case 'pointer':
+          result.files.push(
+            new BIDSFile(
+              outPath,
+              unlockedFileOpener(subVerdict.key, subVerdict.size, subVerdict.source),
             ),
           )
           break

@@ -55,7 +55,7 @@ export async function hedValidate(
   _schema: GenericSchema,
   context: BIDSContext,
 ): Promise<void> {
-  if (context.dataset.hedSchemas === null) {
+  if (context.contentAvailable === false || context.dataset.hedSchemas === null) {
     return
   }
   // This logic was previously lower down, now we check it first to save 8MB

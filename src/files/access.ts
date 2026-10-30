@@ -46,6 +46,35 @@ export function openStream(
   return file.stream().catch(handleReadError(file, 'opening stream from'))
 }
 
+/**
+ * Read all of `file`'s content from its byte stream.
+ *
+ * Unlike {@link readBytes}, this does not rely on the file's reported size,
+ * and it is not memoized.
+ *
+ * @throws {IssueError} If the opener rejects: its own `IssueError`, or `FILE_READ`.
+ */
+export async function readAll(file: BIDSFile): Promise<Uint8Array<ArrayBuffer>> {
+  const reject = handleReadError(file, 'reading bytes from')
+  try {
+    const chunks: Uint8Array<ArrayBuffer>[] = []
+    let length = 0
+    for await (const chunk of await file.stream()) {
+      chunks.push(chunk)
+      length += chunk.byteLength
+    }
+    const bytes = new Uint8Array(length)
+    let offset = 0
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset)
+      offset += chunk.byteLength
+    }
+    return bytes
+  } catch (err) {
+    return reject(err)
+  }
+}
+
 function _readBytes(
   file: BIDSFile,
   size: number,
@@ -61,3 +90,19 @@ function _readText(file: BIDSFile): Promise<string> {
 }
 
 export const readText = filememoize(_readText)
+
+/**
+ * Check whether `file` has readable content.
+ *
+ * Resolves `false` if `file.resolve()` rejects with an {@link IssueError}.
+ * Other rejections resolve `true`, so that the read that follows reports them
+ * as `FILE_READ`.
+ *
+ * @param file - File to check.
+ */
+export function isResolvable(file: BIDSFile): Promise<boolean> {
+  return file.resolve().then(
+    () => true,
+    (err) => !(err instanceof IssueError),
+  )
+}

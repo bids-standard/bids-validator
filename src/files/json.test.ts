@@ -1,10 +1,13 @@
-import { assertInstanceOf, assertObjectMatch, assertRejects } from '@std/assert'
+import { assertEquals, assertInstanceOf, assertObjectMatch, assertRejects } from '@std/assert'
 import { IssueError } from '../issues/datasetIssues.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { testAsyncFileAccess } from './access.test.ts'
 
 import { pathsToTree } from '../files/filetree.test.ts'
 import { loadJSON } from './json.ts'
+import { FsFileOpener } from './openers.ts'
+import { streamFromUint8Array } from './streams.ts'
+import { BIDSFile as File } from '../types/filetree.ts'
 
 function encodeUTF16(text: string) {
   // Adapted from https://developer.chrome.com/blog/how-to-convert-arraybuffer-to-and-from-string
@@ -26,6 +29,7 @@ function makeFile(path: string, text: string, encoding: string): BIDSFile {
     path: file.path,
     parent: file.parent,
     readBytes: (_size: number) => Promise.resolve(new Uint8Array(bytes)),
+    stream: () => Promise.resolve(streamFromUint8Array(new Uint8Array(bytes))),
     size: bytes.byteLength,
   } as unknown as BIDSFile
 }
@@ -62,6 +66,21 @@ Deno.test('Test JSON error conditions', async (t) => {
     assertObjectMatch(e.issue, { code: 'JSON_NOT_AN_OBJECT', issueMessage: '[1, 2, 3]' })
   })
   loadJSON.cache.clear()
+})
+
+Deno.test('loadJSON reads past a stale size', async () => {
+  loadJSON.cache.clear()
+  const path = await Deno.makeTempFile({ suffix: '.json' })
+  try {
+    await Deno.writeTextFile(path, '{}')
+    const staleInfo = Deno.statSync(path)
+    await Deno.writeTextFile(path, '{"Name": "a long enough value"}')
+    const file = new File('/x.json', new FsFileOpener(path, staleInfo))
+    assertEquals(await loadJSON(file), { Name: 'a long enough value' })
+  } finally {
+    loadJSON.cache.clear()
+    await Deno.remove(path)
+  }
 })
 
 testAsyncFileAccess('Test file access errors for loadJSON', loadJSON)

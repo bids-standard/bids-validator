@@ -1,13 +1,15 @@
 import { assert, assertEquals, assertRejects } from '@std/assert'
 import { readAll, readerFromStreamReader } from '@std/io'
 import { basename, dirname, fromFileUrl, join } from '@std/path'
-import type { FileTree } from '../types/filetree.ts'
+import { BIDSFile, type FileTree } from '../types/filetree.ts'
 import { BIDSFileDeno, readFileTree } from './deno.ts'
 import { UnicodeDecodeError } from './streams.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSContextDataset } from '../schema/context.ts'
 import { walkFileTree } from '../schema/walk.ts'
+import { AnnexPointerOpener } from './openers.ts'
+import { writeAnnexObject } from './utils.test.ts'
 
 await requestReadPermission()
 
@@ -270,4 +272,128 @@ Deno.test({
       assertEquals(cycleIssues.length, 2)
     },
   )
+})
+
+Deno.test({
+  name: 'readFileTree: unlocked annex files',
+  ignore: isWindows,
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async (t) => {
+  const key = 'MD5E-s16--a35f6370ff3128ab75c29b1754d09bf7.nii.gz'
+  const content = 'annexed content\n'
+  const pointer = `/annex/objects/${key}\n`
+  const anat = 'sub-01/anat/sub-01_T1w.nii.gz'
+
+  const getFile = (tree: FileTree, path: string): BIDSFile => {
+    const file = tree.get(path)
+    assert(file instanceof BIDSFile, `${path} should be a file`)
+    return file
+  }
+  const writePointer = async (dir: string) => {
+    await Deno.mkdir(join(dir, 'sub-01', 'anat'), { recursive: true })
+    await Deno.writeTextFile(join(dir, anat), pointer)
+  }
+
+  await t.step('reports pointers without the flag', async () => {
+    await withTempDataset(
+      (root) => writePointer(root),
+      async (root) => {
+        const tree = await readFileTree(root)
+        const file = getFile(tree, anat)
+        assertEquals(file.size, pointer.length)
+        await assertRejects(() => file.resolve(), Error, 'UNLOCKED_ANNEX_DATA')
+        assertEquals(file.size, 16)
+      },
+    )
+  })
+
+  await t.step('reads local content with the flag', async () => {
+    await withTempDataset(
+      async (root) => {
+        await writePointer(root)
+        await writeAnnexObject(join(root, '.git'), key, content)
+      },
+      async (root) => {
+        const tree = await readFileTree(root, undefined, undefined, true)
+        assertEquals(await getFile(tree, anat).text(), content)
+      },
+    )
+  })
+
+  await t.step('finds .git above the dataset root', async () => {
+    await withTempDataset(
+      async (root) => {
+        await writePointer(join(root, 'ds'))
+        await writeAnnexObject(join(root, '.git'), key, content)
+      },
+      async (root) => {
+        const tree = await readFileTree(join(root, 'ds'), undefined, undefined, true)
+        assertEquals(await getFile(tree, anat).text(), content)
+      },
+    )
+  })
+
+  await t.step('reports pointers with no repository', async (t) => {
+    await withTempDataset(
+      (root) => writePointer(root),
+      async (root) => {
+        for (let dir = root;; dir = dirname(dir)) {
+          const hasGit = await Deno.stat(join(dir, '.git')).then(() => true, () => false)
+          if (hasGit) {
+            await t.step({ name: 'ancestor has .git', ignore: true, fn: () => {} })
+            return
+          }
+          if (dirname(dir) === dir) break
+        }
+        const tree = await readFileTree(root, undefined, undefined, true)
+        await assertRejects(
+          () => getFile(tree, anat).resolve(),
+          Error,
+          'UNAVAILABLE_ANNEX_DATA',
+        )
+      },
+    )
+  })
+
+  await t.step('reports pointers with no annex branch', async () => {
+    await withTempDataset(
+      async (root) => {
+        await writePointer(root)
+        await Deno.mkdir(join(root, '.git'))
+      },
+      async (root) => {
+        const tree = await readFileTree(root, undefined, undefined, true)
+        await assertRejects(
+          () => getFile(tree, anat).resolve(),
+          Error,
+          'UNAVAILABLE_ANNEX_DATA',
+        )
+      },
+    )
+  })
+
+  await t.step('does not sniff large files', async () => {
+    await withTempDataset(
+      async (root) => {
+        await Deno.writeTextFile(join(root, 'big.txt'), pointer + 'x'.repeat(40000))
+      },
+      async (root) => {
+        const tree = await readFileTree(root)
+        const file = getFile(tree, 'big.txt')
+        assert(!(file.opener instanceof AnnexPointerOpener))
+        assert((await file.text()).startsWith(pointer))
+      },
+    )
+  })
+
+  await t.step('reads regular small files', async () => {
+    await withTempDataset(
+      (root) => Deno.writeTextFile(join(root, 'dataset_description.json'), '{"Name": "x"}'),
+      async (root) => {
+        const tree = await readFileTree(root)
+        assertEquals(await getFile(tree, 'dataset_description.json').text(), '{"Name": "x"}')
+      },
+    )
+  })
 })

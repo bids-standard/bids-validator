@@ -1,6 +1,7 @@
 import { FileIgnoreRules } from './ignore.ts'
-import { FileTree } from '../types/filetree.ts'
-import { assertEquals, assertObjectMatch } from '@std/assert'
+import { type BIDSFile, FileTree } from '../types/filetree.ts'
+import { assertEquals, assertObjectMatch, assertRejects } from '@std/assert'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { BIDSFileBrowser, fileListToTree } from './browser.ts'
 import { streamFromString } from './streams.ts'
 
@@ -134,6 +135,27 @@ Deno.test('Browser implementation of FileTree', async (t) => {
     assertEquals(tree, expectedTree)
 
     assertEquals(tree.get('ignored_and_present')?.ignored, true)
+  })
+
+  await t.step('reports unlocked annex pointer files as unavailable', async () => {
+    const key = 'MD5E-s6--00112233445566778899aabbccddeeff.nii.gz'
+    const files = [
+      new TestFile(['{"Name": "x"}'], 'dataset_description.json', 'ds/dataset_description.json'),
+      new TestFile(
+        [`/annex/objects/${key}\n`],
+        'sub-01_T1w.nii.gz',
+        'ds/sub-01/anat/sub-01_T1w.nii.gz',
+      ),
+    ]
+    const tree = await fileListToTree(files)
+    const pointer = tree.get('sub-01/anat/sub-01_T1w.nii.gz') as BIDSFile
+    const error = await assertRejects(() => pointer.text(), IssueError)
+    assertObjectMatch(error.issue, {
+      code: 'UNAVAILABLE_ANNEX_DATA',
+      issueMessage: `git-annex key: ${key}`,
+    })
+    const json = tree.get('dataset_description.json') as BIDSFile
+    assertEquals(await json.text(), '{"Name": "x"}')
   })
 })
 

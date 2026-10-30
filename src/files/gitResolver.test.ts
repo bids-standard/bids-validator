@@ -524,3 +524,20 @@ Deno.test('graftTree: resolves symlink chains to annexed files', async () => {
   )
   assertEquals(paths.includes('/view/alias.nii.gz'), true, 'expected /view/alias.nii.gz')
 })
+
+Deno.test('resolveSymlink: link to a pointer file is a pointer verdict', async () => {
+  const key = 'MD5E-s16--a35f6370ff3128ab75c29b1754d09bf7.nii.gz'
+  const pointer = `/annex/objects/${key}\n`
+  const source = fakeTreeSource([
+    blob('a/pointer.nii.gz', pointer),
+    blob('link.nii.gz', 'a/pointer.nii.gz', linkMode),
+    blob('a/plain.txt', 'see /annex/objects/ for details\n'),
+    blob('plain-link', 'a/plain.txt', linkMode),
+  ])
+
+  const verdict = await resolveSymlink('link.nii.gz', 'a/pointer.nii.gz', source, budget())
+  assertObjectMatch(verdict, { kind: 'pointer', key, size: 16 })
+
+  const plain = await resolveSymlink('plain-link', 'a/plain.txt', source, budget())
+  assertEquals(plain.kind, 'file-blob')
+})

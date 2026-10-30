@@ -12,7 +12,7 @@ import { evalCheck } from './applyRules.ts'
 import { expressionFunctions } from './expressionLanguage.ts'
 import { readEntities } from './entities.ts'
 
-import { readText } from '../files/access.ts'
+import { isResolvable, readText } from '../files/access.ts'
 
 interface WithSidecar {
   sidecar: Record<string, unknown>
@@ -232,6 +232,11 @@ export async function buildAssociations(
           file = file[0]
         }
         const location = file.path
+        if (!(await isResolvable(file))) {
+          // The file's own context reports why it has no content
+          Object.assign(associations, { [key]: undefined })
+          continue
+        }
         Object.assign(associations, {
           [key]: await load(file, options).catch(
             (error: unknown) => {

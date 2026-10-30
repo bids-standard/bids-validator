@@ -236,6 +236,16 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'warning',
     reason: 'Symbolic link target lies within an uninitialized git submodule.',
   },
+  UNLOCKED_ANNEX_DATA: {
+    severity: 'error',
+    reason:
+      'This file is an unlocked git-annex file, committed as a pointer to its content. Lock it with `git annex lock`, or pass `--allowUnlockedData` to validate its content.',
+  },
+  UNAVAILABLE_ANNEX_DATA: {
+    severity: 'error',
+    reason:
+      'The content of this annexed file could not be retrieved. Download it locally (e.g. `git annex get` or `datalad get`) to validate its contents.',
+  },
 }
 
 export const nonSchemaIssues = { ...bidsIssues }

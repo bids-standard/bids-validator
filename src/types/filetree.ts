@@ -28,6 +28,12 @@ export interface FileOpener {
    * @param offset - Byte offset at which to start reading (default `0`).
    */
   readBytes: (size: number, offset?: number) => Promise<Uint8Array<ArrayBuffer>>
+  /**
+   * Prepare the file's content for reading.
+   *
+   * Rejects with an `IssueError` if the file has no readable content.
+   */
+  resolve?: () => Promise<void>
 }
 
 /**
@@ -75,6 +81,7 @@ export class BIDSFile {
   /** `true` after a validator has accessed this file, used to detect unreferenced files. */
   viewed: boolean = false
   #ignore: FileIgnoreRules | boolean
+  #resolved?: Promise<void>
   /** The underlying {@link FileOpener} used to access file content. */
   opener: FileOpener
 
@@ -112,6 +119,19 @@ export class BIDSFile {
   /** File size in bytes, delegated to the underlying {@link FileOpener}. */
   get size(): number {
     return this.opener.size
+  }
+
+  /**
+   * Prepare the file's content for reading.
+   *
+   * Calls `opener.resolve` once; every call returns the same promise.
+   * Resolves immediately if the opener has no `resolve`.
+   *
+   * @throws {IssueError} If the file has no readable content.
+   */
+  resolve(): Promise<void> {
+    this.#resolved ??= this.opener.resolve?.() ?? Promise.resolve()
+    return this.#resolved
   }
 
   /** Read the entire file and return it decoded as a UTF-8 string. */

@@ -1,7 +1,7 @@
 /**
  * Utilities for reading git-annex metadata
  */
-import { basename, dirname, join, SEPARATOR_PATTERN } from '@std/path'
+import { dirname, join, SEPARATOR_PATTERN } from '@std/path'
 import { default as git } from 'isomorphic-git'
 import { S3Client } from '@bradenmacdonald/s3-lite-client'
 import type { S3ClientOptions } from '@bradenmacdonald/s3-lite-client'
@@ -9,9 +9,9 @@ import { createMD5 } from 'hash-wasm'
 import { memoize } from '../utils/memoize.ts'
 import { requestEnvPermission } from '../setup/requestPermissions.ts'
 
+export { annexKeyRegex, parseAnnexKey } from './annexKey.ts'
+
 const textDecoder = new TextDecoder('utf-8')
-export const annexKeyRegex =
-  /^(?<hashname>[A-Z0-9]+)-s(?<size>\d+)--(?<digest>[0-9a-fA-F]+)(?<ext>\.[\w\-. ]*)?/
 export const rmetLineRegex =
   /^(?<timestamp>\d+(\.\d+)?)s (?<uuid>[0-9a-fA-F-]+):V \+(?<version_str>.+)/
 export const versionRegex = /^(?<version>[^#]+)#(?<path>.+)/
@@ -212,22 +212,6 @@ async function _readRemotes(
 }
 
 const readRemotes = memoize(_readRemotes, (options) => options?.gitdir)
-
-/**
- * Parse a git-annex symlink target string and return the key and size.
- * The target is the full relative path such as:
- *   ../../.git/annex/objects/jJ/2v/MD5E-s5712417--0d1e...nii.gz/MD5E-s5712417--0d1e...nii.gz
- * Returns null if the target does not match the expected annex key format.
- */
-export function parseAnnexKey(target: string): { key: string; size: number } | null {
-  const key = basename(target)
-  const match = key.match(annexKeyRegex)
-  if (!match) {
-    return null
-  }
-  const size = +match.groups!.size
-  return { key, size }
-}
 
 /**
  * Extract a git directory from the path and target of a git-annex link

@@ -1,15 +1,16 @@
 /**
  * Deno specific implementation for reading files
  */
-import { basename, join } from '@std/path'
+import { basename, dirname, join, resolve } from '@std/path'
 import * as posix from '@std/path/posix'
-import { BIDSFile, FileTree, type SymlinkReason } from '../types/filetree.ts'
+import { BIDSFile, type FileOpener, FileTree, type SymlinkReason } from '../types/filetree.ts'
 import { requestReadPermission } from '../setup/requestPermissions.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { loadBidsIgnore } from './filetree.ts'
-import { FsFileOpener } from './openers.ts'
+import { AnnexPointerOpener, FsFileOpener, RejectingFileOpener } from './openers.ts'
 import { gitdirFromLink, parseAnnexKey } from './repo.ts'
-import { AnnexedGitFileOpener } from './git.ts'
+import { AnnexedGitFileOpener, unlockedFileOpener } from './git.ts'
+import { annexIssue, MAX_POINTER_SIZE } from './annexKey.ts'
 import fs from 'node:fs'
 
 /**
@@ -37,6 +38,8 @@ type ReadFileTreeOptions = {
   prune: FileIgnoreRules
   parent?: FileTree
   preferredRemote?: string
+  /** Builds the opener for a file found to hold an annex pointer. */
+  onPointer: (key: string, size: number) => FileOpener
   /**
    * Per-dataset isomorphic-git cache, shared across the entire walk so that
    * pack-file inflation is amortised across all annex pointers we encounter.
@@ -54,6 +57,29 @@ function getGitCache(caches: Map<string, object>, gitdir: string): object {
   return cache
 }
 
+/**
+ * Find the git directory holding a work tree: the first `.git` directory at or
+ * above `rootPath`.
+ *
+ * A `.git` file (a submodule or linked worktree) is not followed.
+ */
+async function findGitDir(rootPath: string): Promise<string | undefined> {
+  let dir = resolve(rootPath)
+  while (true) {
+    const gitdir = join(dir, '.git')
+    try {
+      const info = await Deno.stat(gitdir)
+      return info.isDirectory ? gitdir : undefined
+    } catch (err) {
+      // Any other error (e.g. permissions) means we cannot find the repository: report pointers as unavailable
+      if (!(err instanceof Deno.errors.NotFound)) return undefined
+    }
+    const parent = dirname(dir)
+    if (parent === dir) return undefined
+    dir = parent
+  }
+}
+
 async function _readFileTree({
   rootPath,
   relativePath,
@@ -61,6 +87,7 @@ async function _readFileTree({
   prune,
   parent,
   preferredRemote,
+  onPointer,
   gitCaches,
 }: ReadFileTreeOptions): Promise<FileTree> {
   await requestReadPermission()
@@ -119,7 +146,10 @@ async function _readFileTree({
     }
 
     if (isFile) {
-      const opener = new FsFileOpener(join(rootPath, thisPath), fileInfo)
+      let opener: FileOpener = new FsFileOpener(join(rootPath, thisPath), fileInfo)
+      if (opener.size <= MAX_POINTER_SIZE) {
+        opener = new AnnexPointerOpener(opener, onPointer)
+      }
       tree.files.push(new BIDSFile(thisPath, opener, ignore, tree))
     } else if (isDirectory) {
       const dirTree = await _readFileTree({
@@ -129,6 +159,7 @@ async function _readFileTree({
         prune,
         parent: tree,
         preferredRemote,
+        onPointer,
         gitCaches,
       })
       tree.directories.push(dirTree)
@@ -142,21 +173,50 @@ async function _readFileTree({
  *
  * Symlinks to git-annex objects are detected and wrapped with
  * {@link AnnexedGitFileOpener}. Broken or cyclic symlinks are recorded
- * as unresolved links on the tree.
+ * as unresolved links on the tree. Regular files of at most 32 KiB are
+ * checked for annex pointers when first read.
  *
  * @param rootPath - Absolute path to the dataset root directory.
  * @param prune - Optional rules for directories to skip entirely.
  * @param preferredRemote - Preferred git-annex remote name for fetching
  *   content that is not locally present.
+ * @param allowUnlockedData - Read the content of unlocked annex files (small
+ *   files committed as pointers) from the repository's annex. Otherwise they
+ *   report `UNLOCKED_ANNEX_DATA` when resolved. Content that cannot be found
+ *   reports `UNAVAILABLE_ANNEX_DATA`.
  * @returns The root `FileTree` with `.bidsignore` rules applied.
  */
 export async function readFileTree(
   rootPath: string,
   prune?: FileIgnoreRules,
   preferredRemote?: string,
+  allowUnlockedData = false,
 ): Promise<FileTree> {
   prune ??= new FileIgnoreRules([], 'prune')
   const ignore = new FileIgnoreRules([])
-  const tree = await _readFileTree({ rootPath, relativePath: '/', ignore, prune, preferredRemote })
+  const gitCaches = new Map<string, object>()
+  const gitdir = allowUnlockedData ? await findGitDir(rootPath) : undefined
+  const onPointer = (key: string, size: number): FileOpener => {
+    if (!allowUnlockedData) {
+      return new RejectingFileOpener(size, annexIssue('UNLOCKED_ANNEX_DATA', key))
+    }
+    if (gitdir === undefined) {
+      return new RejectingFileOpener(size, annexIssue('UNAVAILABLE_ANNEX_DATA', key))
+    }
+    return unlockedFileOpener(key, size, {
+      gitOptions: { fs, gitdir, cache: getGitCache(gitCaches, gitdir) },
+      preferredRemote,
+      allowUnlockedData: true,
+    })
+  }
+  const tree = await _readFileTree({
+    rootPath,
+    relativePath: '/',
+    ignore,
+    prune,
+    preferredRemote,
+    onPointer,
+    gitCaches,
+  })
   return loadBidsIgnore(tree, ignore)
 }
