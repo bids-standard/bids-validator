@@ -14,6 +14,7 @@
  */
 import { join } from '@std/path'
 import { assertEquals } from '@std/assert'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { readGitTree } from './git.ts'
 import { readFileTree } from './deno.ts'
 import { FileIgnoreRules } from './ignore.ts'
@@ -52,6 +53,16 @@ function collectLinks(
   return out
 }
 
+/** Read a file's text, or name the issue code when the read rejects with an {@link IssueError}. */
+async function readOutcome(file: BIDSFile): Promise<string> {
+  try {
+    return await file.text()
+  } catch (error) {
+    if (error instanceof IssueError) return `IssueError:${error.issue.code}`
+    throw error
+  }
+}
+
 interface EquivalenceOptions {
   /** Reasons the work tree legitimately cannot produce; exclude from compare. */
   linkReasonsIgnoredOnFs?: SymlinkReason[]
@@ -70,8 +81,8 @@ async function assertTreeEquivalent(
   assertEquals(gitPaths, fsPaths, 'file paths differ between git and fs trees')
 
   for (const path of gitPaths) {
-    const gitContent = await (gitFiles.get(path) as BIDSFile).text()
-    const fsContent = await (fsFiles.get(path) as BIDSFile).text()
+    const gitContent = await readOutcome(gitFiles.get(path) as BIDSFile)
+    const fsContent = await readOutcome(fsFiles.get(path) as BIDSFile)
     assertEquals(gitContent, fsContent, `content differs for ${path}`)
   }
 

@@ -4,14 +4,32 @@
  * Clones ds000001 as a bare repo, initialises git-annex, fetches one local
  * annex object, then validates at tag 1.0.0 and asserts exact output.
  */
+import fs from 'node:fs'
 import { join } from '@std/path'
-import { assertEquals, assertExists, assertRejects } from '@std/assert'
-import { readGitTree } from './git.ts'
+import {
+  assertEquals,
+  assertExists,
+  assertInstanceOf,
+  assertRejects,
+  assertStrictEquals,
+} from '@std/assert'
+import { AnnexedGitFileOpener, readGitTree } from './git.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { readFileTree } from './deno.ts'
 import { validate } from '../validators/bids.ts'
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
-import { capture, hasGit, hasGitAnnex, isWindows, run, withRepo } from './utils.test.ts'
+import {
+  addAnnexRemote,
+  annexFetchStub,
+  capture,
+  hasGit,
+  hasGitAnnex,
+  isWindows,
+  run,
+  withRepo,
+  writeAnnexObject,
+} from './utils.test.ts'
 
 const REPO_URL = 'https://github.com/openneurodatasets/ds000001.git'
 const REF = '1.0.0'
@@ -546,5 +564,61 @@ Deno.test(
         )
       },
     )
+  },
+)
+
+Deno.test(
+  { name: 'AnnexedGitFileOpener', ignore: !hasGit || isWindows },
+  async (t) => {
+    const key = 'MD5E-s6--00112233445566778899aabbccddeeff.nii.gz'
+    const unavailable = { code: 'UNAVAILABLE_ANNEX_DATA', issueMessage: `git-annex key: ${key}` }
+    const open = (repo: string) =>
+      new AnnexedGitFileOpener(key, 6, { fs, gitdir: join(repo, '.git'), cache: {} })
+    const setup = async (repo: string) => {
+      await Deno.writeTextFile(join(repo, 'a.txt'), 'a')
+    }
+
+    await t.step('reads a local object', async () => {
+      await withRepo(setup, async (repo) => {
+        await writeAnnexObject(join(repo, '.git'), key, 'local!')
+        assertEquals(await open(repo).text(), 'local!')
+      })
+    })
+
+    await t.step('rejects missing content', async () => {
+      await withRepo(setup, async (repo) => {
+        const opener = open(repo)
+        const error = await assertRejects(() => opener.resolve(), IssueError)
+        assertEquals(error.issue.code, unavailable.code)
+        assertEquals(error.issue.issueMessage, unavailable.issueMessage)
+        const textError = await assertRejects(() => opener.text(), IssueError)
+        assertEquals(textError.issue.code, unavailable.code)
+      })
+    })
+
+    await t.step('reads a remote object', async () => {
+      await withRepo(setup, async (repo) => {
+        await addAnnexRemote(repo, { [key]: 'sub-01/a.nii.gz' })
+        // Serve the remote object from memory; tests must not use the network
+        using _fetch = annexFetchStub({ '/bucket/sub-01/a.nii.gz': 'remote' })
+        assertEquals(await open(repo).text(), 'remote')
+      })
+    })
+
+    await t.step('rejects a failing remote once', async () => {
+      await withRepo(setup, async (repo) => {
+        await addAnnexRemote(repo, { [key]: 'sub-01/a.nii.gz' })
+        // The remote answers 404 for every object; tests must not use the network
+        using stub = annexFetchStub({})
+        const opener = open(repo)
+        await opener.resolve()
+        const error = await assertRejects(() => opener.text(), IssueError)
+        assertEquals(error.issue.code, unavailable.code)
+        assertInstanceOf(error.cause, Error)
+        const again = await assertRejects(() => opener.readBytes(10), IssueError)
+        assertStrictEquals(again, error)
+        assertEquals(stub.calls.length, 1)
+      })
+    })
   },
 )

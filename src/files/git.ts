@@ -119,6 +119,16 @@ export class AnnexedGitFileOpener implements FileOpener {
     this.#preferredRemote = preferredRemote
   }
 
+  /**
+   * Locate the content, locally or on a remote.
+   *
+   * @throws {IssueError} `UNAVAILABLE_ANNEX_DATA` when the content is neither
+   *   local nor on an accessible remote.
+   */
+  resolve(): Promise<void> {
+    throw new Error('not implemented')
+  }
+
   async #resolve(): Promise<FileOpener> {
     if (this.#delegate !== undefined) {
       return this.#delegate
