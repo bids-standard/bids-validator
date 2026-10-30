@@ -1,5 +1,6 @@
 import type { BIDSFile } from '../types/filetree.ts'
 import type { Issue } from '../types/issues.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { filememoize } from '../utils/memoize.ts'
 import { logger } from '../utils/logger.ts'
 
@@ -16,7 +17,7 @@ export function openStream(
 ): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
   return file.stream().catch((err: { code: string; name: string }) => {
     logger.debug(`Error opening stream from file ${file.path}: ${err}`)
-    throw { location: file.path, ...IOErrorToIssue(err) }
+    throw new IssueError({ location: file.path, ...IOErrorToIssue(err) }, { cause: err })
   })
 }
 
@@ -27,7 +28,7 @@ function _readBytes(
 ): Promise<Uint8Array<ArrayBuffer>> {
   return file.readBytes(size, offset).catch((err: { code: string; name: string }) => {
     logger.debug(`Error reading bytes from file ${file.path}: ${err}`)
-    throw { location: file.path, ...IOErrorToIssue(err) }
+    throw new IssueError({ location: file.path, ...IOErrorToIssue(err) }, { cause: err })
   })
 }
 
@@ -36,7 +37,7 @@ export const readBytes = filememoize(_readBytes)
 function _readText(file: BIDSFile): Promise<string> {
   return file.text().catch((err: { code: string; name: string }) => {
     logger.debug(`Error reading text from file ${file.path}: ${err}`)
-    throw { location: file.path, ...IOErrorToIssue(err) }
+    throw new IssueError({ location: file.path, ...IOErrorToIssue(err) }, { cause: err })
   })
 }
 

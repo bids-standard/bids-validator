@@ -16,7 +16,7 @@ import { FileTree } from '../types/filetree.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import { readEntities } from './entities.ts'
 import { findDatatype } from './datatypes.ts'
-import { DatasetIssues } from '../issues/datasetIssues.ts'
+import { DatasetIssues, IssueError } from '../issues/datasetIssues.ts'
 import { readSidecars } from '../files/inheritance.ts'
 import { parseGzip } from '../files/gzip.ts'
 import { loadHeaderlessTSV, loadTSV } from '../files/tsv.ts'
@@ -25,7 +25,6 @@ import { loadJSON } from '../files/json.ts'
 import { loadHeader } from '../files/nifti.ts'
 import { buildAssociations } from './associations.ts'
 import type { ChannelsWithName } from './associations.ts'
-import type { Issue } from '../types/issues.ts'
 import type { ValidatorOptions } from '../setup/options.ts'
 import { logger } from '../utils/logger.ts'
 
@@ -206,8 +205,8 @@ export class BIDSContext implements Context {
     try {
       sidecars = await readSidecars(this.file)
     } catch (error: unknown) {
-      if (error && typeof error === 'object' && 'code' in error) {
-        this.dataset.issues.add(error as Issue)
+      if (error instanceof IssueError) {
+        this.dataset.issues.add(error.issue)
         return
       } else {
         throw error
@@ -243,8 +242,8 @@ export class BIDSContext implements Context {
     ) return
 
     this.nifti_header = await loadHeader(this.file).catch((error) => {
-      if (error.code) {
-        this.dataset.issues.add({ ...error, location: this.file.path })
+      if (error instanceof IssueError) {
+        this.dataset.issues.add({ ...error.issue, location: this.file.path })
         return undefined
       } else {
         throw error
@@ -260,8 +259,8 @@ export class BIDSContext implements Context {
     if (this.extension === '.tsv' && this.suffix !== 'motion') {
       this.columns = await loadTSV(this.file, this.dataset.options?.maxRows)
         .catch((error) => {
-          if (error.code) {
-            this.dataset.issues.add({ ...error, location: this.file.path })
+          if (error instanceof IssueError) {
+            this.dataset.issues.add({ ...error.issue, location: this.file.path })
           }
           logger.warn(
             `tsv file could not be opened by loadColumns '${this.file.path}'`,
@@ -289,8 +288,8 @@ export class BIDSContext implements Context {
         this.dataset.options?.maxRows,
       )
         .catch((error) => {
-          if (error.code) {
-            this.dataset.issues.add({ ...error, location: this.file.path })
+          if (error instanceof IssueError) {
+            this.dataset.issues.add({ ...error.issue, location: this.file.path })
           }
           logger.warn(
             `${
@@ -317,8 +316,8 @@ export class BIDSContext implements Context {
       return
     }
     this.json = await loadJSON(this.file).catch((error) => {
-      if (error.code) {
-        this.dataset.issues.add({ ...error, location: this.file.path })
+      if (error instanceof IssueError) {
+        this.dataset.issues.add({ ...error.issue, location: this.file.path })
         return {}
       } else {
         throw error
