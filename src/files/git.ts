@@ -20,7 +20,9 @@ import {
 import { filesToTree, loadBidsIgnore } from './filetree.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { hashDirLower, hashDirMixed, parseAnnexKey, resolveAnnexedFile } from './repo.ts'
-import { FsFileOpener, HTTPOpener, NullFileOpener } from './openers.ts'
+import { FsFileOpener, HTTPOpener } from './openers.ts'
+import { annexIssue } from './annexKey.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { streamFromUint8Array } from './streams.ts'
 import { graftTree, MAX_SYMLINK_FOLLOWS, resolveSymlink } from './gitResolver.ts'
 import type { FollowBudget, GitOptions, TreeSource } from './gitResolver.ts'
@@ -84,11 +86,16 @@ export class GitFileOpener implements FileOpener {
 /**
  * FileOpener for git-annex managed files.
  *
- * On first content access, resolves a delegate opener by:
+ * {@link AnnexedGitFileOpener.resolve} (called on first content access) finds the
+ * content by:
  *   1. Checking for a locally present annex object at
- *      {gitdir}/annex/objects/{hashDirLower}/{key}/{key}
+ *      {gitdir}/annex/objects/{hashDirMixed or hashDirLower}/{key}/{key}
  *   2. Falling back to resolveAnnexedFile() to obtain an HTTP URL
- *   3. Using NullFileOpener if neither is available
+ *   3. Rejecting with an `UNAVAILABLE_ANNEX_DATA` {@link IssueError} if neither is available
+ *
+ * A failed read from a remote also rejects with `UNAVAILABLE_ANNEX_DATA`, whose
+ * `cause` is the underlying error. The opener keeps that error and rejects every
+ * later read with it, without contacting the remote again.
  *
  * Size is set from the annex key's embedded `s` field.
  */
@@ -99,6 +106,8 @@ export class AnnexedGitFileOpener implements FileOpener {
   #gitOptions: GitOptions
   #preferredRemote: string | undefined
   #delegate: FileOpener | undefined
+  #resolved: Promise<void> | undefined
+  #error: IssueError | undefined
 
   /**
    * @param key - git-annex key string (e.g. `"SHA256E-s1234--abcd.nii.gz"`).
@@ -126,14 +135,11 @@ export class AnnexedGitFileOpener implements FileOpener {
    *   local nor on an accessible remote.
    */
   resolve(): Promise<void> {
-    throw new Error('not implemented')
+    this.#resolved ??= this.#locate()
+    return this.#resolved
   }
 
-  async #resolve(): Promise<FileOpener> {
-    if (this.#delegate !== undefined) {
-      return this.#delegate
-    }
-
+  async #locate(): Promise<void> {
     // 1. Try local annex object store
     // git-annex tests hashDirMixed first
     const [h0, h1] = await hashDirMixed(this.#key)
@@ -149,7 +155,7 @@ export class AnnexedGitFileOpener implements FileOpener {
     try {
       const fileInfo = await Deno.stat(hashDirMixedPath)
       this.#delegate = new FsFileOpener(hashDirMixedPath, fileInfo)
-      return this.#delegate
+      return
     } catch {
       // Fallback to hashDirLower
       try {
@@ -165,7 +171,7 @@ export class AnnexedGitFileOpener implements FileOpener {
         )
         const fileInfo = await Deno.stat(hashDirLowerPath)
         this.#delegate = new FsFileOpener(hashDirLowerPath, fileInfo)
-        return this.#delegate
+        return
       } catch (e) {
         // Local object not present; fall through to remote resolution
         logger.info(`Annexed file ${this.#key} not found in local annex object store`, e)
@@ -176,25 +182,38 @@ export class AnnexedGitFileOpener implements FileOpener {
     try {
       const { url } = await resolveAnnexedFile(this.#key, this.#preferredRemote, this.#gitOptions)
       this.#delegate = new HTTPOpener(url, this.size)
-      return this.#delegate
+      return
     } catch (e) {
-      // No accessible remote; fall through to null opener
+      // No accessible remote
       logger.info(`Annexed file ${this.#key} not found in any accessible remote`, e)
     }
 
     // 3. Content unavailable
-    this.#delegate = new NullFileOpener(this.size)
-    return this.#delegate
+    throw new IssueError(annexIssue('UNAVAILABLE_ANNEX_DATA', this.#key))
+  }
+
+  /** Run a read on the delegate, turning the first remote failure into a remembered issue. */
+  async #read<T>(read: (delegate: FileOpener) => Promise<T>): Promise<T> {
+    await this.resolve()
+    if (this.#error) throw this.#error
+    const delegate = this.#delegate!
+    try {
+      return await read(delegate)
+    } catch (cause) {
+      if (!(delegate instanceof HTTPOpener)) throw cause
+      this.#error ??= new IssueError(annexIssue('UNAVAILABLE_ANNEX_DATA', this.#key), { cause })
+      throw this.#error
+    }
   }
 
   /** Open the file and return its content as a byte stream. */
-  async stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
-    return (await this.#resolve()).stream()
+  stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+    return this.#read((delegate) => delegate.stream())
   }
 
   /** Read the entire file and return it decoded as a UTF-8 string. */
-  async text(): Promise<string> {
-    return (await this.#resolve()).text()
+  text(): Promise<string> {
+    return this.#read((delegate) => delegate.text())
   }
 
   /**
@@ -203,8 +222,8 @@ export class AnnexedGitFileOpener implements FileOpener {
    * @param size - Maximum number of bytes to read.
    * @param offset - Byte offset at which to start reading (default `0`).
    */
-  async readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
-    return (await this.#resolve()).readBytes(size, offset)
+  readBytes(size: number, offset = 0): Promise<Uint8Array<ArrayBuffer>> {
+    return this.#read((delegate) => delegate.readBytes(size, offset))
   }
 }
 

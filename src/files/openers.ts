@@ -226,8 +226,7 @@ export class HTTPOpener implements FileOpener {
 /**
  * No-op {@link FileOpener} that returns empty content.
  *
- * Used as a placeholder when file content is unavailable (e.g. an
- * unresolvable git-annex object).
+ * Used as a placeholder for directory pseudo-files, which have no content.
  *
  * @param size - Reported file size; defaults to `0`.
  */
