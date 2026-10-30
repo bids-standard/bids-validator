@@ -81,6 +81,7 @@ export class BIDSFile {
   /** `true` after a validator has accessed this file, used to detect unreferenced files. */
   viewed: boolean = false
   #ignore: FileIgnoreRules | boolean
+  #resolved?: Promise<void>
   /** The underlying {@link FileOpener} used to access file content. */
   opener: FileOpener
 
@@ -129,7 +130,8 @@ export class BIDSFile {
    * @throws {IssueError} If the file has no readable content.
    */
   resolve(): Promise<void> {
-    throw new Error('not implemented')
+    this.#resolved ??= this.opener.resolve?.() ?? Promise.resolve()
+    return this.#resolved
   }
 
   /** Read the entire file and return it decoded as a UTF-8 string. */

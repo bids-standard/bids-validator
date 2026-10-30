@@ -4,6 +4,7 @@
  * These classes implement stream, text and random bytes access to BIDS resources.
  */
 import { retry } from '@std/async'
+import { IssueError } from '../issues/datasetIssues.ts'
 import type { Issue } from '../types/issues.ts'
 import type { FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream } from './streams.ts'
@@ -267,23 +268,27 @@ export class RejectingFileOpener implements FileOpener {
     this.#issue = issue
   }
 
+  #reject<T>(): Promise<T> {
+    return Promise.reject(new IssueError({ ...this.#issue }))
+  }
+
   /** Reject with an {@link IssueError}. */
   resolve(): Promise<void> {
-    throw new Error('not implemented')
+    return this.#reject()
   }
 
   /** Reject with an {@link IssueError}. */
   stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
-    throw new Error('not implemented')
+    return this.#reject()
   }
 
   /** Reject with an {@link IssueError}. */
   text(): Promise<string> {
-    throw new Error('not implemented')
+    return this.#reject()
   }
 
   /** Reject with an {@link IssueError}. */
   readBytes(_size: number, _offset?: number): Promise<Uint8Array<ArrayBuffer>> {
-    throw new Error('not implemented')
+    return this.#reject()
   }
 }

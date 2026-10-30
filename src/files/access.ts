@@ -71,6 +71,9 @@ export const readText = filememoize(_readText)
  *
  * @param file - File to check.
  */
-export function isResolvable(_file: BIDSFile): Promise<boolean> {
-  throw new Error('not implemented')
+export function isResolvable(file: BIDSFile): Promise<boolean> {
+  return file.resolve().then(
+    () => true,
+    (err) => !(err instanceof IssueError),
+  )
 }
