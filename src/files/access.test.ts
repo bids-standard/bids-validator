@@ -1,5 +1,6 @@
 import {
   assertArrayIncludes,
+  assertEquals,
   assertInstanceOf,
   assertObjectMatch,
   assertRejects,
@@ -7,7 +8,10 @@ import {
 } from '@std/assert'
 import { IssueError } from '../issues/datasetIssues.ts'
 import { BIDSFile } from '../types/filetree.ts'
-import { openStream, readBytes, readText } from './access.ts'
+import { isResolvable, openStream, readBytes, readText } from './access.ts'
+import { annexIssue } from './annexKey.ts'
+import { RejectingFileOpener } from './openers.ts'
+import { StringOpener } from './openers.test.ts'
 import { BIDSFileDeno } from './deno.ts'
 
 export function testAsyncFileAccess(
@@ -77,4 +81,22 @@ Deno.test('openers can reject with a finished issue', async (t) => {
     })
   }
   clearCaches()
+})
+
+Deno.test('isResolvable', async () => {
+  const ok = new BIDSFile('/a.txt', new StringOpener('x'))
+  assertEquals(await isResolvable(ok), true)
+
+  const issue = annexIssue('UNLOCKED_ANNEX_DATA', 'MD5E-s5--x.nii')
+  const rejecting = new BIDSFile('/a.nii', new RejectingFileOpener(5, issue))
+  assertEquals(await isResolvable(rejecting), false)
+
+  const failing = new BIDSFile('/b.txt', {
+    ...new StringOpener('x'),
+    text: () => Promise.resolve('x'),
+    stream: () => Promise.reject(new Error('EIO')),
+    readBytes: () => Promise.reject(new Error('EIO')),
+    resolve: () => Promise.reject(new Error('EIO')),
+  })
+  assertEquals(await isResolvable(failing), true)
 })

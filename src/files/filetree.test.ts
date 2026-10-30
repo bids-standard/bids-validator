@@ -1,8 +1,10 @@
-import { assert, assertEquals } from '@std/assert'
+import { assert, assertEquals, assertRejects, assertStrictEquals } from '@std/assert'
+import { IssueError } from '../issues/datasetIssues.ts'
+import { annexIssue } from './annexKey.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSFile, FileTree } from '../types/filetree.ts'
 import { filesToTree, subtree } from './filetree.ts'
-import { NullFileOpener } from './openers.ts'
+import { NullFileOpener, RejectingFileOpener } from './openers.ts'
 import { StringOpener } from './openers.test.ts'
 
 export function pathToFile(path: string, ignored: boolean = false): BIDSFile {
@@ -213,4 +215,18 @@ Deno.test('filesToTree creates intermediate directories for a link-only path', (
   const c = tree.get('a/b/c')
   assert(c !== undefined, '/a/b/c should be created for the link')
   assertEquals((c as FileTree).links.length, 1)
+})
+
+Deno.test('BIDSFile.resolve', async (t) => {
+  await t.step('resolves for an opener without resolve', async () => {
+    await new BIDSFile('/a.txt', new StringOpener('x')).resolve()
+  })
+
+  await t.step('rejects, with a cached promise, for a rejecting opener', async () => {
+    const issue = annexIssue('UNLOCKED_ANNEX_DATA', 'MD5E-s5--x.nii')
+    const file = new BIDSFile('/a.nii', new RejectingFileOpener(5, issue))
+    const promise = file.resolve()
+    assertStrictEquals(file.resolve(), promise)
+    await assertRejects(() => promise, IssueError)
+  })
 })

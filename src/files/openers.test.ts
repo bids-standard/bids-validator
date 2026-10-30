@@ -1,11 +1,13 @@
 /**
  * File openers for use in testing
  */
-import { assertEquals, assertRejects } from '@std/assert'
+import { assertEquals, assertNotStrictEquals, assertRejects } from '@std/assert'
 import { resolvesNext, stub } from '@std/testing/mock'
 import type { FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream, streamFromString, streamFromUint8Array } from './streams.ts'
-import { HTTPOpener } from './openers.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
+import { annexIssue } from './annexKey.ts'
+import { HTTPOpener, RejectingFileOpener } from './openers.ts'
 
 const textEncoder = new TextEncoder()
 const textDecoder = new TextDecoder()
@@ -170,4 +172,21 @@ Deno.test('Validate HTTPOpener', async (t) => {
     await assertRejects(httpOpener.stream.bind(httpOpener))
     await assertRejects(() => httpOpener.readBytes(1, 0))
   })
+})
+
+Deno.test('RejectingFileOpener', async () => {
+  const issue = annexIssue('UNLOCKED_ANNEX_DATA', 'MD5E-s5--x.nii')
+  const opener = new RejectingFileOpener(5, issue)
+  assertEquals(opener.size, 5)
+  const errors = [
+    await assertRejects(() => opener.resolve(), IssueError),
+    await assertRejects(() => opener.text(), IssueError),
+    await assertRejects(() => opener.stream(), IssueError),
+    await assertRejects(() => opener.readBytes(1), IssueError),
+  ]
+  for (const error of errors) {
+    assertEquals(error.issue, issue)
+  }
+  assertNotStrictEquals(errors[0].issue, errors[1].issue)
+  assertNotStrictEquals(errors[0].issue, issue)
 })

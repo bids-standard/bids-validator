@@ -61,3 +61,16 @@ function _readText(file: BIDSFile): Promise<string> {
 }
 
 export const readText = filememoize(_readText)
+
+/**
+ * Check whether `file` has readable content.
+ *
+ * Resolves `false` if `file.resolve()` rejects with an {@link IssueError}.
+ * Other rejections resolve `true`, so that the read that follows reports them
+ * as `FILE_READ`.
+ *
+ * @param file - File to check.
+ */
+export function isResolvable(_file: BIDSFile): Promise<boolean> {
+  throw new Error('not implemented')
+}

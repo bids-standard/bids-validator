@@ -4,6 +4,7 @@
  * These classes implement stream, text and random bytes access to BIDS resources.
  */
 import { retry } from '@std/async'
+import type { Issue } from '../types/issues.ts'
 import type { FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream } from './streams.ts'
 import { logger } from '../utils/logger.ts'
@@ -245,4 +246,44 @@ export class NullFileOpener implements FileOpener {
   text = (): Promise<string> => Promise.resolve('')
   readBytes = (_size: number, _offset?: number): Promise<Uint8Array<ArrayBuffer>> =>
     Promise.resolve(new Uint8Array())
+}
+
+/**
+ * {@link FileOpener} whose every access rejects with an {@link IssueError}.
+ *
+ * Used for files with no readable content, such as an unlocked git-annex
+ * pointer file.
+ *
+ * @param size - Reported file size.
+ * @param issue - Issue to report; each rejection carries a fresh copy.
+ */
+export class RejectingFileOpener implements FileOpener {
+  /** Reported file size in bytes. */
+  size: number
+  #issue: Issue
+
+  constructor(size: number, issue: Issue) {
+    this.size = size
+    this.#issue = issue
+  }
+
+  /** Reject with an {@link IssueError}. */
+  resolve(): Promise<void> {
+    throw new Error('not implemented')
+  }
+
+  /** Reject with an {@link IssueError}. */
+  stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+    throw new Error('not implemented')
+  }
+
+  /** Reject with an {@link IssueError}. */
+  text(): Promise<string> {
+    throw new Error('not implemented')
+  }
+
+  /** Reject with an {@link IssueError}. */
+  readBytes(_size: number, _offset?: number): Promise<Uint8Array<ArrayBuffer>> {
+    throw new Error('not implemented')
+  }
 }
