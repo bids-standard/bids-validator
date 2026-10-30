@@ -1,4 +1,10 @@
-import { assert, assertArrayIncludes, assertObjectMatch } from '@std/assert'
+import {
+  assertArrayIncludes,
+  assertInstanceOf,
+  assertObjectMatch,
+  assertRejects,
+} from '@std/assert'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { BIDSFileDeno } from './deno.ts'
 
 export function testAsyncFileAccess(
@@ -14,32 +20,18 @@ export function testAsyncFileAccess(
     async fn(t) {
       await t.step('Dangling symlink', async () => {
         const file = new BIDSFileDeno('tests/data', '/broken-symlink')
-        try {
-          await fn(file, ...args)
-          assert(false, 'Expected error')
-        } catch (e: unknown) {
-          assertObjectMatch(e as Record<PropertyKey, unknown>, {
-            code: 'FILE_READ',
-            location: '/broken-symlink',
-          })
-          assertArrayIncludes(['NotFound', 'FilesystemLoop'], [
-            (e as Record<string, unknown>).subCode,
-          ])
-        }
+        const e = await assertRejects(() => fn(file, ...args), IssueError)
+        assertObjectMatch(e.issue, { code: 'FILE_READ', location: '/broken-symlink' })
+        assertArrayIncludes(['NotFound', 'FilesystemLoop'], [e.issue.subCode])
+        assertInstanceOf(e.cause, Error)
       })
       await t.step('Insufficient permissions', async () => {
         const tmpfile = await Deno.makeTempFile()
         await Deno.chmod(tmpfile, 0o000)
         const file = new BIDSFileDeno('', tmpfile)
-        try {
-          await fn(file, ...args)
-          assert(false, 'Expected error')
-        } catch (e: unknown) {
-          assertObjectMatch(e as Record<PropertyKey, unknown>, {
-            code: 'FILE_READ',
-            subCode: 'PermissionDenied',
-          })
-        }
+        const e = await assertRejects(() => fn(file, ...args), IssueError)
+        assertObjectMatch(e.issue, { code: 'FILE_READ', subCode: 'PermissionDenied' })
+        assertInstanceOf(e.cause, Error)
       })
     },
   })
