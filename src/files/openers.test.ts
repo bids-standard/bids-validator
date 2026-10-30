@@ -1,13 +1,18 @@
 /**
  * File openers for use in testing
  */
-import { assertEquals, assertNotStrictEquals, assertRejects } from '@std/assert'
+import {
+  assertEquals,
+  assertNotStrictEquals,
+  assertRejects,
+  assertStrictEquals,
+} from '@std/assert'
 import { resolvesNext, stub } from '@std/testing/mock'
 import type { FileOpener } from '../types/filetree.ts'
 import { createUTF8Stream, streamFromString, streamFromUint8Array } from './streams.ts'
 import { IssueError } from '../issues/datasetIssues.ts'
 import { annexIssue } from './annexKey.ts'
-import { HTTPOpener, RejectingFileOpener } from './openers.ts'
+import { AnnexPointerOpener, FsFileOpener, HTTPOpener, RejectingFileOpener } from './openers.ts'
 
 const textEncoder = new TextEncoder()
 const textDecoder = new TextDecoder()
@@ -189,4 +194,94 @@ Deno.test('RejectingFileOpener', async () => {
   }
   assertNotStrictEquals(errors[0].issue, errors[1].issue)
   assertNotStrictEquals(errors[0].issue, issue)
+})
+
+async function collect(stream: ReadableStream<Uint8Array>): Promise<Uint8Array> {
+  return new Uint8Array(await new Response(stream).arrayBuffer())
+}
+
+Deno.test('AnnexPointerOpener', async (t) => {
+  const dir = await Deno.makeTempDir()
+  const key = 'MD5E-s16--a35f6370ff3128ab75c29b1754d09bf7.nii.gz'
+  const pointer = `/annex/objects/${key}\n`
+  const small = JSON.stringify({ a: 'x'.repeat(80) }).padEnd(100, ' ')
+  const large = JSON.stringify({ a: 'x'.repeat(2000) }).padEnd(2048, ' ')
+  const paths = {
+    pointer: `${dir}/pointer.nii.gz`,
+    small: `${dir}/small.json`,
+    large: `${dir}/large.json`,
+  }
+  await Deno.writeTextFile(paths.pointer, pointer)
+  await Deno.writeTextFile(paths.small, small)
+  await Deno.writeTextFile(paths.large, large)
+
+  await t.step('delegates a pointer', async () => {
+    const calls: [string, number][] = []
+    const opener = new AnnexPointerOpener(new FsFileOpener(paths.pointer), (key, size) => {
+      calls.push([key, size])
+      return new StringOpener('resolved content')
+    })
+    assertEquals(opener.size, pointer.length)
+    await opener.resolve()
+    assertEquals(opener.size, 'resolved content'.length)
+    assertEquals(await opener.text(), 'resolved content')
+    assertEquals(calls, [[key, 16]])
+  })
+
+  await t.step("rejects with the delegate's issue", async () => {
+    const opener = new AnnexPointerOpener(
+      new FsFileOpener(paths.pointer),
+      (key) => new RejectingFileOpener(16, annexIssue('UNLOCKED_ANNEX_DATA', key)),
+    )
+    const error = await assertRejects(() => opener.resolve(), IssueError)
+    assertEquals(error.issue.code, 'UNLOCKED_ANNEX_DATA')
+    const textError = await assertRejects(() => opener.text(), IssueError)
+    assertEquals(textError.issue.code, 'UNLOCKED_ANNEX_DATA')
+  })
+
+  await t.step('reads non-pointers as before', async () => {
+    for (const path of [paths.small, paths.large]) {
+      let called = false
+      const opener = new AnnexPointerOpener(new FsFileOpener(path), () => {
+        called = true
+        return new StringOpener('unexpected')
+      })
+      const plain = new FsFileOpener(path)
+      assertEquals(opener.size, plain.size)
+      assertEquals(await opener.text(), await plain.text())
+      assertEquals(await opener.readBytes(10, 5), await plain.readBytes(10, 5))
+      assertEquals(await collect(await opener.stream()), await collect(await plain.stream()))
+      assertEquals(called, false)
+    }
+  })
+
+  await t.step('replays small files', async () => {
+    const path = `${dir}/replay.json`
+    await Deno.writeTextFile(path, small)
+    const opener = new AnnexPointerOpener(new FsFileOpener(path), () => new StringOpener(''))
+    assertEquals(await opener.text(), small)
+    await Deno.remove(path)
+    assertEquals(await opener.text(), small)
+    assertEquals(textDecoder.decode(await opener.readBytes(10, 5)), small.slice(5, 15))
+    assertEquals(textDecoder.decode(await collect(await opener.stream())), small)
+  })
+
+  await t.step('rereads larger files', async () => {
+    const path = `${dir}/reread.json`
+    await Deno.writeTextFile(path, large)
+    const opener = new AnnexPointerOpener(new FsFileOpener(path), () => new StringOpener(''))
+    assertEquals(await opener.text(), large)
+    await Deno.remove(path)
+    await assertRejects(() => opener.text())
+  })
+
+  await t.step('resolves once', () => {
+    const opener = new AnnexPointerOpener(
+      new FsFileOpener(paths.small),
+      () => new StringOpener(''),
+    )
+    assertStrictEquals(opener.resolve(), opener.resolve())
+  })
+
+  await Deno.remove(dir, { recursive: true })
 })

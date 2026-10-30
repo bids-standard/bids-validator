@@ -292,3 +292,36 @@ export class RejectingFileOpener implements FileOpener {
     return this.#reject()
   }
 }
+
+/**
+ * {@link FileOpener} that detects git-annex pointer files.
+ *
+ * @param inner - Opener for the file as stored.
+ * @param onPointer - Builds the opener that replaces `inner` when its content is a pointer.
+ */
+export class AnnexPointerOpener implements FileOpener {
+  constructor(inner: FileOpener, onPointer: (key: string, size: number) => FileOpener) {
+    void inner
+    void onPointer
+  }
+
+  get size(): number {
+    throw new Error('not implemented')
+  }
+
+  resolve(): Promise<void> {
+    throw new Error('not implemented')
+  }
+
+  stream(): Promise<ReadableStream<Uint8Array<ArrayBuffer>>> {
+    throw new Error('not implemented')
+  }
+
+  text(): Promise<string> {
+    throw new Error('not implemented')
+  }
+
+  readBytes(_size: number, _offset?: number): Promise<Uint8Array<ArrayBuffer>> {
+    throw new Error('not implemented')
+  }
+}
