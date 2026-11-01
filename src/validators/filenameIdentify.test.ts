@@ -5,6 +5,7 @@ import { _findRuleMatches, findDirRuleMatches, hasMatch } from './filenameIdenti
 import { BIDSFileDeno } from '../files/deno.ts'
 import { FileIgnoreRules } from '../files/ignore.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
+import { pathsToTree, pathToFile } from '../files/filetree.test.ts'
 
 const PATH = 'tests/data/valid_dataset'
 const schema = await loadSchema()
@@ -43,6 +44,48 @@ Deno.test('test _findRuleMatches', async (t) => {
       assertEquals(context.filenameRules[0], `${schemaPath}.recurse`)
     },
   )
+})
+
+const stimulusNode = {
+  datatypes: ['stimuli'],
+  suffixes: ['audio', 'image'],
+}
+
+Deno.test('test _findRuleMatches stimulus rules', async (t) => {
+  await t.step('legacy /stimuli without a catalog does not match stimulus rules', async () => {
+    const tree = pathsToTree(['/stimuli/cm4_audio.wav'])
+    const context = await makeBIDSContext(pathToFile('/stimuli/cm4_audio.wav'), undefined, tree)
+    _findRuleMatches(stimulusNode, schemaPath, context)
+    assertEquals(context.filenameRules.length, 0)
+  })
+  await t.step('legacy /stimuli files match no subject-level rules either', async () => {
+    const tree = pathsToTree(['/stimuli/cm4_audio.wav'])
+    const context = await makeBIDSContext(pathToFile('/stimuli/cm4_audio.wav'), undefined, tree)
+    _findRuleMatches({ datatypes: ['beh'], suffixes: ['audio'] }, schemaPath, context)
+    assertEquals(context.filenameRules.length, 0)
+  })
+  await t.step('catalog-organized /stimuli matches stimulus rules', async () => {
+    const tree = pathsToTree(['/stimuli/stimuli.tsv', '/stimuli/stim-a_image.png'])
+    const context = await makeBIDSContext(pathToFile('/stimuli/stim-a_image.png'), undefined, tree)
+    _findRuleMatches(stimulusNode, schemaPath, context)
+    assertEquals(context.filenameRules, [schemaPath])
+  })
+  await t.step('a catalog in a subdirectory only does not enable stimulus rules', async () => {
+    const tree = pathsToTree(['/stimuli/faces/stimuli.tsv', '/stimuli/faces/stim-a_image.png'])
+    const context = await makeBIDSContext(
+      pathToFile('/stimuli/faces/stim-a_image.png'),
+      undefined,
+      tree,
+    )
+    _findRuleMatches(stimulusNode, schemaPath, context)
+    assertEquals(context.filenameRules.length, 0)
+  })
+  await t.step('stimulus suffix outside /stimuli does not match stimulus rules', async () => {
+    const tree = pathsToTree(['/stimuli/stimuli.tsv', '/stim-a_image.png'])
+    const context = await makeBIDSContext(pathToFile('/stim-a_image.png'), undefined, tree)
+    _findRuleMatches(stimulusNode, schemaPath, context)
+    assertEquals(context.filenameRules.length, 0)
+  })
 })
 
 Deno.test('test hasMatch', async (t) => {
