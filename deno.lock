@@ -39,8 +39,8 @@
     "npm:esbuild-plugins-node-modules-polyfill@*": "1.7.1_esbuild@0.25.10",
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@4.2": "4.2.0",
-    "npm:ignore@^7.0.12": "7.0.12",
-    "npm:isomorphic-git@^1.42.6": "1.42.6",
+    "npm:ignore@^7.0.13": "7.0.13",
+    "npm:isomorphic-git@^1.44.3": "1.44.3",
     "npm:marked@^17.0.6": "17.0.6",
     "npm:nifti-reader-js@0.8": "0.8.0",
     "npm:pluralize@8": "8.0.0",
@@ -592,8 +592,8 @@
     "ignore@5.3.2": {
       "integrity": "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="
     },
-    "ignore@7.0.12": {
-      "integrity": "sha512-/8UvqAPU9DGTI9k4mxtf49U37Isfwr8Uts96+SBHIkFxPJnHS0Ew4f00sM4Scd8V8EjM0jUNtVDdv1kPdt35lg=="
+    "ignore@7.0.13": {
+      "integrity": "sha512-2E8Q6rh+1RRSq/YdaGsNfXsEZy9FVqv6BSSrkmZJP7BnaoPnRfKL+YaofPvP+5rzdk144qSm6i4+hvPgUcbV4Q=="
     },
     "inherits@2.0.4": {
       "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="
@@ -610,8 +610,8 @@
     "isarray@2.0.5": {
       "integrity": "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw=="
     },
-    "isomorphic-git@1.42.6": {
-      "integrity": "sha512-MJpYjxITU0k0CNzSE3hXmrsHEIyPO8puRf69cNg5Xim7uhRMU0wh+5VkxpJonhKdAqiy+KTDTQWxgAuTxySqeg==",
+    "isomorphic-git@1.44.3": {
+      "integrity": "sha512-xlEIMsVUrMfOR25F4jWB9He9s/rUHWsgfJJJ3zpdwFssv9X2QfoIUyYH9CEFok9yk2tx2UDipj2gJ+KVvV/qGA==",
       "dependencies": [
         "async-lock",
         "clean-git-ref",
@@ -721,8 +721,8 @@
     "quansync@0.2.11": {
       "integrity": "sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA=="
     },
-    "readable-stream@4.7.0": {
-      "integrity": "sha512-oIGGmcpTLwPga8Bn6/Z75SVaH1z5dUut2ibSyAMVhmUggWpmDn2dapB0n7f8nwaSiRtepAsfJyfXIO5DCVAODg==",
+    "readable-stream@4.8.0": {
+      "integrity": "sha512-2jhTTU3Eilp/2DMT71gbcoqC35eQHasMJH0RHkYxwlxIv3+FR6Y5xAFZIwEGLxKkjZYEFlsiMNIdwUqjK2lLHQ==",
       "dependencies": [
         "abort-controller",
         "buffer",
@@ -946,8 +946,8 @@
       "npm:ansi-escapes@^7.3.0",
       "npm:hash-wasm@^4.12.0",
       "npm:hed-validator@4.2",
-      "npm:ignore@^7.0.12",
-      "npm:isomorphic-git@^1.42.6",
+      "npm:ignore@^7.0.13",
+      "npm:isomorphic-git@^1.44.3",
       "npm:marked@^17.0.6",
       "npm:nifti-reader-js@0.8",
       "npm:pluralize@8",
