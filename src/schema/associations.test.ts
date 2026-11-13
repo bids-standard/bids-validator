@@ -5,8 +5,9 @@ import { pathsToTree } from '../files/filetree.test.ts'
 import { StringOpener } from '../files/openers.test.ts'
 import { motionFileTree, rootFileTree } from './fixtures.test.ts'
 import { BIDSContext, BIDSContextDataset } from './context.ts'
-import { buildAssociations } from './associations.ts'
+import { buildAssociations, type ChannelsWithName } from './associations.ts'
 import { walkFileTree } from './walk.ts'
+import type { ValidatorOptions } from '../setup/options.ts'
 
 Deno.test('Test association loading', async (t) => {
   const schema = await loadSchema()
@@ -93,4 +94,33 @@ Deno.test({
       '/sub-01/func/sub-01_task-rest_bold.nii.gz': { path },
     })
   },
+})
+
+Deno.test('channels association is not truncated by maxRows', async () => {
+  const schema = await loadSchema()
+  const tree = pathsToTree([
+    '/dataset_description.json',
+    '/sub-01/nirs/sub-01_task-rest_nirs.snirf',
+    '/sub-01/nirs/sub-01_task-rest_channels.tsv',
+  ])
+  const nRows = 1500
+  const rows = Array.from(
+    { length: nRows },
+    (_, i) => `S${i}-D${i}\tNIRSCWHBO\t${i % 3 === 0 ? 'true' : 'false'}\n`,
+  )
+  const channels = tree.get('sub-01/nirs/sub-01_task-rest_channels.tsv') as BIDSFile
+  channels.opener = new StringOpener('name\ttype\tshort_channel\n' + rows.join(''))
+
+  const dataFile = tree.get('sub-01/nirs/sub-01_task-rest_nirs.snirf') as BIDSFile
+  const dsContext = new BIDSContextDataset({
+    tree,
+    schema,
+    options: { maxRows: 1000 } as ValidatorOptions,
+  })
+  const context = new BIDSContext(dataFile, dsContext, tree)
+  const associations = await buildAssociations(context)
+
+  const ch = associations.channels as ChannelsWithName
+  assertEquals(ch.type?.length, nRows)
+  assertEquals(ch.short_channel?.filter((v) => v === 'true').length, 500)
 })
