@@ -92,8 +92,10 @@ const associationLookup: Record<string, LoadFunction> = {
       n_rows: rows ? rows.length : 0,
     }
   },
-  channels: async (file: BIDSFile, options: LoadOptions): Promise<ChannelsWithName> => {
-    const columns = await loadTSV(file, options.maxRows)
+  channels: async (file: BIDSFile, _options: LoadOptions): Promise<ChannelsWithName> => {
+    // Read the whole file: rules compare *ChannelCount sidecar fields to row counts,
+    // and motion.tsv takes its headers from the name column (#467)
+    const columns = await loadTSV(file, -1)
       .catch((_e) => {
         return new Map()
       })
