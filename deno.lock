@@ -2,7 +2,7 @@
   "version": "5",
   "specifiers": {
     "jsr:@bids/schema@~1.2.7": "1.2.7",
-    "jsr:@bradenmacdonald/s3-lite-client@1": "1.0.0",
+    "jsr:@bradenmacdonald/s3-lite-client@^1.0.1": "1.0.1",
     "jsr:@cliffy/flags@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/internal@1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@cliffy/table@1.0.0-rc.7": "1.0.0-rc.7",
@@ -39,10 +39,10 @@
     "npm:esbuild-plugins-node-modules-polyfill@*": "1.7.1_esbuild@0.25.10",
     "npm:hash-wasm@^4.12.0": "4.12.0",
     "npm:hed-validator@4.2": "4.2.0",
-    "npm:ignore@^7.0.12": "7.0.12",
-    "npm:isomorphic-git@^1.42.6": "1.42.6",
+    "npm:ignore@^7.0.14": "7.0.14",
+    "npm:isomorphic-git@^1.44.10": "1.44.10",
     "npm:marked@^17.0.6": "17.0.6",
-    "npm:nifti-reader-js@0.8": "0.8.0",
+    "npm:nifti-reader-js@~0.8.1": "0.8.1",
     "npm:pluralize@8": "8.0.0",
     "npm:supports-hyperlinks@^4.6.0": "4.6.0"
   },
@@ -50,8 +50,8 @@
     "@bids/schema@1.2.7": {
       "integrity": "b51adc0399077001ea2455292a5891e7d8d5c298882dd563c173c2bf5a952560"
     },
-    "@bradenmacdonald/s3-lite-client@1.0.0": {
-      "integrity": "ed26ca9d9e66c6a09bf3584a5784609dde4b40039aaf16b0618651f9f9473a98"
+    "@bradenmacdonald/s3-lite-client@1.0.1": {
+      "integrity": "c1c1777ca98576ece3440adf5f2e6262d99d5e9efcb5ab41868adff141287315"
     },
     "@cliffy/flags@1.0.0-rc.7": {
       "integrity": "318d9be98f6a6417b108e03dec427dea96cdd41a15beb21d2554ae6da450a781",
@@ -592,8 +592,8 @@
     "ignore@5.3.2": {
       "integrity": "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="
     },
-    "ignore@7.0.12": {
-      "integrity": "sha512-/8UvqAPU9DGTI9k4mxtf49U37Isfwr8Uts96+SBHIkFxPJnHS0Ew4f00sM4Scd8V8EjM0jUNtVDdv1kPdt35lg=="
+    "ignore@7.0.14": {
+      "integrity": "sha512-wCBiZ77u1tuWde6G/nfOtLaCTYcFDU5yCzARzK10y+rLhzYoL7a7yEemcopcc2Mzow7gZOIjnV2ym1NYmdiJOQ=="
     },
     "inherits@2.0.4": {
       "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="
@@ -610,8 +610,8 @@
     "isarray@2.0.5": {
       "integrity": "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw=="
     },
-    "isomorphic-git@1.42.6": {
-      "integrity": "sha512-MJpYjxITU0k0CNzSE3hXmrsHEIyPO8puRf69cNg5Xim7uhRMU0wh+5VkxpJonhKdAqiy+KTDTQWxgAuTxySqeg==",
+    "isomorphic-git@1.44.10": {
+      "integrity": "sha512-OMlkGP84A84E01mEuXXTzaVJtBqDpK8n8KevA229oVscY4SqgkQ20ByGudME5V6Y2wPpHbH7gYjY5dMK1PXFkQ==",
       "dependencies": [
         "async-lock",
         "clean-git-ref",
@@ -669,8 +669,8 @@
         "ufo"
       ]
     },
-    "nifti-reader-js@0.8.0": {
-      "integrity": "sha512-iO1iIhQDfKniy+l/86HfOPte7So+SxBmBiMSiUB2VXU7z4hSewMTlE3h0fCgfzfXvMUa+ilzLTJ2ZHmtFw6EWw==",
+    "nifti-reader-js@0.8.1": {
+      "integrity": "sha512-inWrhWVqjn39gtTbK3DadYrevsmOzGK2a2LsgnwkNtvVlPrXbazOS2I2lzhmQa7KEwiegX4htGbi1moB0k/msA==",
       "dependencies": [
         "fflate"
       ]
@@ -721,8 +721,8 @@
     "quansync@0.2.11": {
       "integrity": "sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA=="
     },
-    "readable-stream@4.7.0": {
-      "integrity": "sha512-oIGGmcpTLwPga8Bn6/Z75SVaH1z5dUut2ibSyAMVhmUggWpmDn2dapB0n7f8nwaSiRtepAsfJyfXIO5DCVAODg==",
+    "readable-stream@4.8.0": {
+      "integrity": "sha512-2jhTTU3Eilp/2DMT71gbcoqC35eQHasMJH0RHkYxwlxIv3+FR6Y5xAFZIwEGLxKkjZYEFlsiMNIdwUqjK2lLHQ==",
       "dependencies": [
         "abort-controller",
         "buffer",
@@ -928,7 +928,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@bids/schema@~1.2.7",
-      "jsr:@bradenmacdonald/s3-lite-client@1",
+      "jsr:@bradenmacdonald/s3-lite-client@^1.0.1",
       "jsr:@effigies/cliffy-command@1.0.0-dev.8",
       "jsr:@effigies/cliffy-table@1.0.0-dev.5",
       "jsr:@libs/xml@^8.0.1",
@@ -946,10 +946,10 @@
       "npm:ansi-escapes@^7.3.0",
       "npm:hash-wasm@^4.12.0",
       "npm:hed-validator@4.2",
-      "npm:ignore@^7.0.12",
-      "npm:isomorphic-git@^1.42.6",
+      "npm:ignore@^7.0.14",
+      "npm:isomorphic-git@^1.44.10",
       "npm:marked@^17.0.6",
-      "npm:nifti-reader-js@0.8",
+      "npm:nifti-reader-js@~0.8.1",
       "npm:pluralize@8",
       "npm:supports-hyperlinks@^4.6.0"
     ]
