@@ -46,8 +46,13 @@ Deno.test('Test association loading', async (t) => {
       },
     })
   })
+})
 
-  await t.step('Load scans association from the row of the validated file', async () => {
+Deno.test({
+  name: 'Load scans association from the row of the validated file',
+  // XXX Remove ignore condition once bids-specification#2508 is merged and released
+  ignore: (await Deno.permissions.request({ name: 'net' })).state === 'denied',
+  async fn() {
     const tree = pathsToTree([
       '/sub-01/sub-01_scans.tsv',
       '/sub-01/anat/sub-01_T1w.nii.gz',
@@ -63,23 +68,11 @@ Deno.test('Test association loading', async (t) => {
         'anat/sub-01_T1w.nii.gz\t2010-01-01T09:00:00\t240.5\n' +
         'meg/sub-01_task-rest_meg.ds\t2010-01-01T10:00:00\t360\n',
     )
-    // Bundled schema predates associations.scans
-    const { associations } = schema.meta as unknown as { associations: object }
-    const scansSchema = {
-      ...schema,
-      meta: {
-        ...schema.meta,
-        associations: {
-          ...associations,
-          scans: {
-            selectors: ["suffix != 'scans'", "extension != '.json'"],
-            target: { suffix: 'scans', extension: '.tsv' },
-            inherit: true,
-          },
-        },
-      },
-    }
-    const dataset = new BIDSContextDataset({ tree, schema: scansSchema })
+    // XXX Remove schema override once bids-specification#2508 is merged and released
+    const schema = await loadSchema(
+      'https://bids-specification--2508.org.readthedocs.build/en/2508/schema.json',
+    )
+    const dataset = new BIDSContextDataset({ tree, schema })
     const found: Record<string, unknown> = {}
     for await (const context of walkFileTree(dataset)) {
       const { scans } = context.associations as Record<string, unknown>
@@ -98,5 +91,5 @@ Deno.test('Test association loading', async (t) => {
       '/sub-01/anat/sub-01_FLAIR.nii.gz': { path },
       '/sub-01/func/sub-01_task-rest_bold.nii.gz': { path },
     })
-  })
+  },
 })
