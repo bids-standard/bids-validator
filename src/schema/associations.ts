@@ -144,7 +144,7 @@ const associationLookup: Record<string, LoadFunction> = {
       posix.relative(file.parent.path, options.context.path),
     )
     // Undefined if duration is missing or row is -1 (filename not found in scans file)
-    const duration = Number(columns.get('duration')?.[row]?.trim() || NaN)
+    const duration = parseFloat(columns.get('duration')?.[row])
     const acq_time = columns.get('acq_time')?.[row]
     return {
       path: file.path,
