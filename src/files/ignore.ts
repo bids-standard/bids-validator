@@ -32,7 +32,8 @@ const ignoreDefaults: Record<IgnoreGroup, string[]> = {
     '/sourcedata/',
     '/derivatives/',
     '/code/',
-    '/stimuli/',
+    // /stimuli/ is not ignored: BEP044 stimulus rules apply there, and
+    // legacy free-form stimuli directories are exempted in hasMatch.
     '/log/',
     '/doc/',
   ],
