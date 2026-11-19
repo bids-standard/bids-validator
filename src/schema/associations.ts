@@ -1,5 +1,6 @@
 import type { Aslcontext, Associations, Bval, Bvec, Channels, Events } from '@bids/schema/context'
 import type { Schema as MetaSchema } from '@bids/schema/metaschema'
+import * as posix from '@std/path/posix'
 
 import { IssueError } from '../issues/datasetIssues.ts'
 import type { BIDSFile } from '../types/filetree.ts'
@@ -19,7 +20,7 @@ interface WithSidecar {
 }
 /** Channels plus the name column, which the schema context model does not include yet */
 export type ChannelsWithName = Channels & { name?: string[] }
-type LoadOptions = { maxRows?: number }
+type LoadOptions = { context: BIDSContext; maxRows?: number }
 type LoadFunction = (file: BIDSFile, options: LoadOptions) => Promise<object>
 type MultiLoadFunction = (files: BIDSFile[], options: LoadOptions) => Promise<object>
 
@@ -139,13 +140,16 @@ const associationLookup: Record<string, LoadFunction> = {
       .catch((_e) => {
         return new Map()
       })
-    const row = columns.get('filename')?.findIndex((f: string) => file.path.endsWith(f))
+    const row = columns.get('filename')?.indexOf(
+      posix.relative(file.parent.path, options.context.path),
+    )
     // Undefined if duration is missing or row is -1 (filename not found in scans file)
-    const duration = columns.get('duration')?.[row]
+    const duration = parseFloat(columns.get('duration')?.[row])
+    const acq_time = columns.get('acq_time')?.[row]
     return {
       path: file.path,
-      duration: duration ? Number(duration) : undefined,
-      acq_time: columns.get('acq_time')?.[row],
+      ...(!isNaN(duration) && { duration }),
+      ...(acq_time && acq_time !== 'n/a' && { acq_time }),
     }
   },
   physio: async (
@@ -217,7 +221,7 @@ export async function buildAssociations(
     }
 
     if (file && !(Array.isArray(file) && file.length === 0)) {
-      const options = { maxRows: context.dataset.options?.maxRows }
+      const options: LoadOptions = { context, maxRows: context.dataset.options?.maxRows }
       if (key in multiAssociationLookup) {
         const load = multiAssociationLookup[key]
         if (!Array.isArray(file)) {
