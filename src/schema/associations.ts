@@ -20,8 +20,8 @@ interface WithSidecar {
 }
 /** Channels plus the name column, which the schema context model does not include yet */
 export type ChannelsWithName = Channels & { name?: string[] }
-type LoadOptions = { maxRows?: number }
-type LoadFunction = (file: BIDSFile, options: LoadOptions, dataFile: BIDSFile) => Promise<object>
+type LoadOptions = { context: BIDSContext; maxRows?: number }
+type LoadFunction = (file: BIDSFile, options: LoadOptions) => Promise<object>
 type MultiLoadFunction = (files: BIDSFile[], options: LoadOptions) => Promise<object>
 
 function defaultAssociation(file: BIDSFile, _options: LoadOptions): Promise<{ path: string }> {
@@ -135,13 +135,14 @@ const associationLookup: Record<string, LoadFunction> = {
   scans: async (
     file: BIDSFile,
     options: LoadOptions,
-    dataFile: BIDSFile,
   ): Promise<{ path: string; duration?: number; acq_time?: string }> => {
     const columns = await loadTSV(file, options.maxRows)
       .catch((_e) => {
         return new Map()
       })
-    const row = columns.get('filename')?.indexOf(posix.relative(file.parent.path, dataFile.path))
+    const row = columns.get('filename')?.indexOf(
+      posix.relative(file.parent.path, options.context.path),
+    )
     // Undefined if duration is missing or row is -1 (filename not found in scans file)
     const duration = Number(columns.get('duration')?.[row]?.trim() || NaN)
     const acq_time = columns.get('acq_time')?.[row]
@@ -220,7 +221,7 @@ export async function buildAssociations(
     }
 
     if (file && !(Array.isArray(file) && file.length === 0)) {
-      const options = { maxRows: context.dataset.options?.maxRows }
+      const options: LoadOptions = { context, maxRows: context.dataset.options?.maxRows }
       if (key in multiAssociationLookup) {
         const load = multiAssociationLookup[key]
         if (!Array.isArray(file)) {
@@ -236,7 +237,7 @@ export async function buildAssociations(
         }
         const location = file.path
         Object.assign(associations, {
-          [key]: await load(file, options, context.file).catch(
+          [key]: await load(file, options).catch(
             (error: unknown) => {
               if (error instanceof IssueError) {
                 context.dataset.issues.add({ ...error.issue, location })
