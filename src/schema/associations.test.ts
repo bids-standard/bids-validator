@@ -1,11 +1,12 @@
 import { assertEquals, assertObjectMatch } from '@std/assert'
+import type { Associations } from '@bids/schema/context'
 import type { BIDSFile } from '../types/filetree.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
 import { StringOpener } from '../files/openers.test.ts'
 import { motionFileTree, rootFileTree } from './fixtures.test.ts'
 import { BIDSContext, BIDSContextDataset } from './context.ts'
-import { buildAssociations, type ChannelsWithName } from './associations.ts'
+import { buildAssociations } from './associations.ts'
 import { walkFileTree } from './walk.ts'
 import type { ValidatorOptions } from '../setup/options.ts'
 
@@ -96,31 +97,49 @@ Deno.test({
   },
 })
 
-Deno.test('channels association is not truncated by maxRows', async () => {
+type Assoc = Required<Associations>
+
+Deno.test('Association truncation', async (t) => {
   const schema = await loadSchema()
-  const tree = pathsToTree([
-    '/dataset_description.json',
-    '/sub-01/nirs/sub-01_task-rest_nirs.snirf',
-    '/sub-01/nirs/sub-01_task-rest_channels.tsv',
-  ])
-  const nRows = 1500
-  const rows = Array.from(
-    { length: nRows },
-    (_, i) => `S${i}-D${i}\tNIRSCWHBO\t${i % 3 === 0 ? 'true' : 'false'}\n`,
-  )
-  const channels = tree.get('sub-01/nirs/sub-01_task-rest_channels.tsv') as BIDSFile
-  channels.opener = new StringOpener('name\ttype\tshort_channel\n' + rows.join(''))
+  async function check<
+    A extends keyof Assoc,
+    F extends keyof Assoc[A],
+  >(
+    data_path: string,
+    associated_path: string,
+    association: A,
+    column: F & string,
+    truncated: boolean,
+    column_generator: (idx: number) => void,
+  ): Promise<void> {
+    const tree = pathsToTree(['/dataset_description.json', data_path, associated_path])
+    const nRows = 20
+    const rows = Array.from({ length: nRows }, (_, i) => column_generator(i))
 
-  const dataFile = tree.get('sub-01/nirs/sub-01_task-rest_nirs.snirf') as BIDSFile
-  const dsContext = new BIDSContextDataset({
-    tree,
-    schema,
-    options: { maxRows: 1000 } as ValidatorOptions,
+    const data_file = tree.get(data_path) as BIDSFile
+    const associated_file = tree.get(associated_path) as BIDSFile
+    associated_file.opener = new StringOpener(`${column}\n${rows.join('\n')}`)
+
+    const dsContext = new BIDSContextDataset({
+      tree,
+      schema,
+      options: { maxRows: nRows / 2 } as ValidatorOptions,
+    })
+    const context = new BIDSContext(data_file, dsContext, tree)
+    await context.loaded
+    const assoc = context.associations[association] as Assoc[A]
+    const col = assoc[column] as Array<string | number>
+    assertEquals(col.length, truncated ? nRows / 2 : nRows)
+  }
+
+  await t.step('channels.tsv is not truncated', async () => {
+    await check(
+      '/sub-01/nirs/sub-01_task-rest_nirs.snirf',
+      '/sub-01/nirs/sub-01_task-rest_channels.tsv',
+      'channels',
+      'short_channel',
+      false,
+      (i: number) => i % 3 === 0 ? 'true' : 'false',
+    )
   })
-  const context = new BIDSContext(dataFile, dsContext, tree)
-  const associations = await buildAssociations(context)
-
-  const ch = associations.channels as ChannelsWithName
-  assertEquals(ch.type?.length, nRows)
-  assertEquals(ch.short_channel?.filter((v) => v === 'true').length, 500)
 })
