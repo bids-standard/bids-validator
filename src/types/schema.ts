@@ -78,7 +78,7 @@ export interface GenericRule {
   columns?: Record<string, string>
   additional_columns?: string
   initial_columns?: string[]
-  fields: Record<string, SchemaFields>
+  fields?: Record<string, SchemaFields>
   issue?: SchemaIssue
   extensions?: string[]
   suffixes?: string[]
