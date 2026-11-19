@@ -44,6 +44,7 @@ async function constructSidecar(file: BIDSFile): Promise<Record<string, unknown>
  */
 const associationLookup: Record<string, LoadFunction> = {
   events: async (file: BIDSFile, options: LoadOptions): Promise<Events & WithSidecar> => {
+    // As of 2026.11.19, the only use of events.onset is to validate min/max values
     const columns = await loadTSV(file, options.maxRows)
       .catch((_e) => {
         return new Map()
@@ -56,9 +57,9 @@ const associationLookup: Record<string, LoadFunction> = {
   },
   aslcontext: async (
     file: BIDSFile,
-    options: LoadOptions,
+    _options: LoadOptions,
   ): Promise<Aslcontext> => {
-    const columns = await loadTSV(file, options.maxRows)
+    const columns = await loadTSV(file, -1)
       .catch((_e) => {
         return new Map()
       })
@@ -110,9 +111,9 @@ const associationLookup: Record<string, LoadFunction> = {
   },
   electrodes: async (
     file: BIDSFile,
-    options: LoadOptions,
+    _options: LoadOptions,
   ): Promise<{ path: string; name?: string[] }> => {
-    const columns = await loadTSV(file, options.maxRows)
+    const columns = await loadTSV(file, -1)
       .catch((_e) => {
         return new Map()
       })
@@ -123,9 +124,9 @@ const associationLookup: Record<string, LoadFunction> = {
   },
   probes: async (
     file: BIDSFile,
-    options: LoadOptions,
+    _options: LoadOptions,
   ): Promise<{ path: string; probe_name?: string[] }> => {
-    const columns = await loadTSV(file, options.maxRows)
+    const columns = await loadTSV(file, -1)
       .catch((_e) => {
         return new Map()
       })
@@ -138,7 +139,7 @@ const associationLookup: Record<string, LoadFunction> = {
     file: BIDSFile,
     options: LoadOptions,
   ): Promise<{ path: string; duration?: number; acq_time?: string }> => {
-    const columns = await loadTSV(file, options.maxRows)
+    const columns = await loadTSV(file, -1)
       .catch((_e) => {
         return new Map()
       })
