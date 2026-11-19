@@ -132,6 +132,16 @@ Deno.test('Association truncation', async (t) => {
     assertEquals(col.length, truncated ? nRows / 2 : nRows)
   }
 
+  await t.step('aslcontext.tsv is not truncated', async () => {
+    await check(
+      '/sub-01/perf/sub-01_task-rest_asl.nii',
+      '/task-rest_aslcontext.tsv',
+      'aslcontext',
+      'volume_type',
+      false,
+      (i: number) => i % 2 ? 'label' : 'control',
+    )
+  })
   await t.step('channels.tsv is not truncated', async () => {
     await check(
       '/sub-01/nirs/sub-01_task-rest_nirs.snirf',
@@ -142,4 +152,16 @@ Deno.test('Association truncation', async (t) => {
       (i: number) => i % 3 === 0 ? 'true' : 'false',
     )
   })
+  await t.step('events.tsv is truncated', async () => {
+    await check(
+      '/sub-01/nirs/sub-01_task-rest_nirs.snirf',
+      '/task-rest_events.tsv',
+      'events',
+      'onset',
+      true,
+      (i: number) => i,
+    )
+  })
+  // TODO: Add probes.tsv once BEP032 is merged
+  // TODO: Add scans.tsv once bids-specification#2508 is merged
 })
