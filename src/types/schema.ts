@@ -68,6 +68,7 @@ export interface SchemaIssue {
   code: string
   message: string
   level?: string
+  location?: string
 }
 
 export type GenericSchema = { [key: string]: GenericRule | GenericSchema }

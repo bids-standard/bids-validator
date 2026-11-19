@@ -161,7 +161,7 @@ function _evalRuleChecks(
       const format = formatter(rule.issue.message)
       context.dataset.issues.add({
         code: rule.issue.code,
-        location: context.path,
+        location: rule.issue.location ?? context.path,
         rule: schemaPath,
         severity: rule.issue.level as Severity,
       }, format(context))
