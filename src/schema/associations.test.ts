@@ -64,6 +64,7 @@ Deno.test({
     ;(tree.get('sub-01/sub-01_scans.tsv') as BIDSFile).opener = new StringOpener(
       'filename\tacq_time\tduration\n' +
         'anat/sub-01_T2w.nii.gz\tn/a\t\n' +
+        'anat/sub-01_FLAIR.nii.gz\t\t0\n' +
         'func/sub-01_task-rest_bold.nii.gz\t\tn/a\n' +
         'anat/sub-01_T1w.nii.gz\t2010-01-01T09:00:00\t240.5\n' +
         'meg/sub-01_task-rest_meg.ds\t2010-01-01T10:00:00\t360\n',
@@ -86,9 +87,9 @@ Deno.test({
         acq_time: '2010-01-01T10:00:00',
         duration: 360,
       },
+      '/sub-01/anat/sub-01_FLAIR.nii.gz': { path, duration: 0 },
       // n/a, empty, or not listed: no values
       '/sub-01/anat/sub-01_T2w.nii.gz': { path },
-      '/sub-01/anat/sub-01_FLAIR.nii.gz': { path },
       '/sub-01/func/sub-01_task-rest_bold.nii.gz': { path },
     })
   },
