@@ -76,12 +76,17 @@ export class BIDSContextDataset implements Dataset {
   }
 
   set dataset_description(value: Record<string, unknown>) {
-    this.#dataset_description = value
-    if (!this.dataset_description.DatasetType) {
-      this.dataset_description.DatasetType = this.dataset_description.GeneratedBy
-        ? 'derivative'
-        : 'raw'
+    // Shallow copy: don't mutate the memoized JSON; schema validation still
+    // flags enum violations on the original.
+    const copy: Record<string, unknown> = { ...value }
+    // @ts-expect-error metadata is not declared on SchemaObjects
+    const validTypes = this.schema?.objects?.metadata?.DatasetType?.enum as string[] | undefined
+    // Unknown/mis-cased DatasetType falls back to the spec default; legacy
+    // GeneratedBy-without-DatasetType still infers 'derivative'.
+    if (validTypes && !validTypes.includes(copy.DatasetType as string)) {
+      copy.DatasetType = copy.GeneratedBy ? 'derivative' : 'raw'
     }
+    this.#dataset_description = copy
     const datasetType = this.dataset_description.DatasetType as string
     this.opaqueDirectories = new Set<string>(
       Object.values(this.schema?.rules?.directories[datasetType] ?? {})
