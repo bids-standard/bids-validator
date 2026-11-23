@@ -1,0 +1,40 @@
+name: Fast-forward dev to main
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  fast-forward:
+    runs-on: ubuntu-slim
+    if: github.repository == 'bids-standard/bids-validator'
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          fetch-depth: 0
+          # A push made with the default GITHUB_TOKEN does not trigger the
+          # workflows on dev; set FAST_FORWARD_TOKEN to a token that does
+          token: ${{ secrets.FAST_FORWARD_TOKEN || github.token }}
+
+      - name: Fast-forward dev to main
+        run: |
+          set -eu
+          git fetch origin main dev
+          if git merge-base --is-ancestor origin/main origin/dev; then
+            echo "'dev' already contains 'main'"
+          elif git merge-base --is-ancestor origin/dev origin/main; then
+            # Without --force the push is refused unless it is a fast-forward
+            git push origin origin/main:refs/heads/dev
+          else
+            echo "::notice::'dev' has commits of its own, so it cannot be fast-forwarded to 'main'; merge 'main' into 'dev' instead."
+          fi
