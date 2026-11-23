@@ -18,6 +18,7 @@ import { BIDSContextDataset } from '../schema/context.ts'
 import { hedValidate } from './hed.ts'
 import { citationValidate } from './citation.ts'
 import { logger } from '../utils/logger.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { subtree } from '../files/filetree.ts'
 
 /**
@@ -99,8 +100,8 @@ export async function validate(
   const dsContext = new BIDSContextDataset({ options, schema, tree: fileTree })
   if (ddFile) {
     dsContext.dataset_description = await loadJSON(ddFile).catch((error) => {
-      if (error.code) {
-        dsContext.issues.add({ ...error, location: ddFile.path })
+      if (error instanceof IssueError) {
+        dsContext.issues.add({ ...error.issue, location: ddFile.path })
         return {} as Record<string, unknown>
       } else {
         throw error

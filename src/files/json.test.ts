@@ -1,4 +1,5 @@
-import { assertObjectMatch } from '@std/assert'
+import { assertInstanceOf, assertObjectMatch, assertRejects } from '@std/assert'
+import { IssueError } from '../issues/datasetIssues.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { testAsyncFileAccess } from './access.test.ts'
 
@@ -38,29 +39,27 @@ Deno.test('Test JSON error conditions', async (t) => {
 
   await t.step('Error on BOM', async () => {
     const BOMfile = makeFile('/BOM.json', '\uFEFF{"a": 1}', 'utf-8')
-    let error: unknown = undefined
-    await loadJSON(BOMfile).catch((e) => {
-      error = e
-    })
-    assertObjectMatch(error as Record<PropertyKey, unknown>, { code: 'INVALID_JSON_ENCODING' })
+    const e = await assertRejects(() => loadJSON(BOMfile), IssueError)
+    assertObjectMatch(e.issue, { code: 'INVALID_JSON_ENCODING' })
   })
 
   await t.step('Error on UTF-16', async () => {
     const UTF16file = makeFile('/utf16.json', '{"a": 1}', 'utf-16')
-    let error: unknown = undefined
-    await loadJSON(UTF16file).catch((e) => {
-      error = e
-    })
-    assertObjectMatch(error as Record<PropertyKey, unknown>, { code: 'INVALID_JSON_ENCODING' })
+    const e = await assertRejects(() => loadJSON(UTF16file), IssueError)
+    assertObjectMatch(e.issue, { code: 'INVALID_JSON_ENCODING' })
   })
 
   await t.step('Error on invalid JSON syntax', async () => {
     const badJSON = makeFile('/bad-syntax.json', '{"a": 1]', 'utf-8')
-    let error: unknown = undefined
-    await loadJSON(badJSON).catch((e) => {
-      error = e
-    })
-    assertObjectMatch(error as Record<PropertyKey, unknown>, { code: 'JSON_INVALID' })
+    const e = await assertRejects(() => loadJSON(badJSON), IssueError)
+    assertObjectMatch(e.issue, { code: 'JSON_INVALID' })
+    assertInstanceOf(e.cause, SyntaxError)
+  })
+
+  await t.step('Error on non-object JSON', async () => {
+    const arrayJSON = makeFile('/array.json', '[1, 2, 3]', 'utf-8')
+    const e = await assertRejects(() => loadJSON(arrayJSON), IssueError)
+    assertObjectMatch(e.issue, { code: 'JSON_NOT_AN_OBJECT', issueMessage: '[1, 2, 3]' })
   })
   loadJSON.cache.clear()
 })

@@ -5,7 +5,7 @@ import type { Entity, Format, GenericSchema, Schema } from '../types/schema.ts'
 import { SEPARATOR_PATTERN } from '@std/path'
 import { hasProp } from '../utils/objectPathHandler.ts'
 
-const _sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
+const sidecarExtensions = ['.json', '.tsv', '.bvec', '.bval']
 
 const CHECKS: ContextCheckFunction[] = [
   missingLabel,
@@ -239,15 +239,23 @@ function datatypeMismatch(
   context: BIDSContext,
 ) {
   const rule = schema[path]
-  if (
-    !!context.datatype &&
-    Array.isArray(rule.datatypes) &&
-    !rule.datatypes.includes(context.datatype)
-  ) {
+  if (!Array.isArray(rule.datatypes) || sidecarExtensions.includes(context.extension)) {
+    return
+  }
+  const expectedDatatypes = rule.datatypes.join(', ')
+  if (!context.datatype) {
+    context.dataset.issues.add({
+      code: 'MISSING_DATATYPE',
+      location: context.path,
+      issueMessage: `Expected datatype directory: ${expectedDatatypes}`,
+      rule: path,
+    })
+  } else if (!rule.datatypes.includes(context.datatype)) {
     context.dataset.issues.add({
       code: 'DATATYPE_MISMATCH',
       location: context.path,
-      issueMessage: `Datatype rule being applied: ${path}`,
+      issueMessage:
+        `Datatype ${context.datatype} not among expected datatypes: ${expectedDatatypes}`,
       rule: path,
     })
   }

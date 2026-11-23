@@ -1,6 +1,7 @@
 import { isCompressed, isNIFTI1, isNIFTI2, NIFTI1, NIFTI2 } from '@mango/nifti'
 import type { BIDSFile } from '../types/filetree.ts'
 import type { NiftiHeader } from '@bids/schema/context'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { readBytes } from './access.ts'
 import { streamFromUint8Array } from './streams.ts'
 
@@ -43,11 +44,11 @@ export async function loadHeader(file: BIDSFile): Promise<NiftiHeader> {
       header = new NIFTI2()
       header.readHeader(data.buffer)
     }
-    if (!header) {
-      throw { code: 'NIFTI_HEADER_UNREADABLE' }
-    }
-  } catch (_err) {
-    throw { code: 'NIFTI_HEADER_UNREADABLE' }
+  } catch (err) {
+    throw new IssueError({ code: 'NIFTI_HEADER_UNREADABLE' }, { cause: err })
+  }
+  if (!header) {
+    throw new IssueError({ code: 'NIFTI_HEADER_UNREADABLE' })
   }
 
   const ndim = header.dims[0]

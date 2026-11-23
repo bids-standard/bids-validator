@@ -1,4 +1,5 @@
 import type { BIDSFile, FileTree } from '../types/filetree.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { readEntities } from '../schema/entities.ts'
 import { loadJSON } from './json.ts'
 
@@ -63,12 +64,12 @@ export function* walkBack<T extends string[]>(
         yield candidates as Ret<T>
       } else {
         const paths = candidates.map((x) => x.path).sort()
-        throw {
+        throw new IssueError({
           code: 'MULTIPLE_INHERITABLE_FILES',
           location: paths[0],
-          affects: source.path,
+          affects: [source.path],
           issueMessage: `Candidate files: ${paths}`,
-        }
+        })
       }
     } else if (candidates.length === 1) {
       candidates[0].viewed = true
@@ -88,7 +89,7 @@ export async function readSidecars(
       ret.set(file.path, await loadJSON(file))
     } catch (e: unknown) {
       // Expect JSON parsing errors to be handled when the file is loaded directly
-      if (!(e && typeof e === 'object' && 'code' in e)) {
+      if (!(e instanceof IssueError)) {
         throw e
       }
     }

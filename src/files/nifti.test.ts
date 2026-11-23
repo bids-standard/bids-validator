@@ -1,4 +1,5 @@
-import { assert, assertEquals, assertObjectMatch } from '@std/assert'
+import { assert, assertEquals, assertObjectMatch, assertRejects } from '@std/assert'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { FileIgnoreRules } from './ignore.ts'
 import { BIDSFileDeno } from './deno.ts'
 import { testAsyncFileAccess } from './access.test.ts'
@@ -48,11 +49,8 @@ Deno.test('Test loading nifti header', async (t) => {
     const path = 'sub-01/func/sub-01_task-rhymejudgment_events.tsv'
     const root = './tests/data/valid_headers'
     const file = new BIDSFileDeno(root, path, ignore)
-    let error: unknown = undefined
-    const _header = await loadHeader(file).catch((e) => {
-      error = e
-    })
-    assertObjectMatch(error as Record<PropertyKey, unknown>, { code: 'NIFTI_HEADER_UNREADABLE' })
+    const e = await assertRejects(() => loadHeader(file), IssueError)
+    assertObjectMatch(e.issue, { code: 'NIFTI_HEADER_UNREADABLE' })
   })
 
   await t.step('Tolerate big headers', async () => {

@@ -3,7 +3,7 @@ import type { BIDSFile } from '../types/filetree.ts'
 import type { FileTree } from '../types/filetree.ts'
 import type { Schema } from '../types/schema.ts'
 import { pathsToTree } from '../files/filetree.test.ts'
-import { StringOpener } from '../files/openers.test.ts'
+import { StreamOpener, StringOpener } from '../files/openers.test.ts'
 import { loadSchema } from '../setup/loadSchema.ts'
 import { BIDSContext, BIDSContextDataset } from './context.ts'
 import { dataFile, motionFileTree, rootFileTree } from './fixtures.test.ts'
@@ -176,6 +176,24 @@ Deno.test('test context loadColumns for tsv.gz', async (t) => {
     const context = await makeBIDSContext(file, new BIDSContextDataset({ schema }), tree)
     assertEquals(context.dataset.issues.get({ code: 'INVALID_GZIP' }).length, 1)
     assertEquals(Object.keys(context.columns).length, 0)
+  })
+
+  await t.step('an I/O error while reading a TSV is not an issue', async () => {
+    const ioTree = pathsToTree([
+      '/dataset_description.json',
+      '/sub-01/func/sub-01_task-rest_events.tsv',
+    ])
+    const events = ioTree.get('sub-01/func/sub-01_task-rest_events.tsv') as BIDSFile
+    events.opener = new StreamOpener(
+      new ReadableStream({
+        start(c) {
+          c.error(Object.assign(new Error('Input/output error'), { code: 'EIO' }))
+        },
+      }),
+      10,
+    )
+    const ioContext = await makeBIDSContext(events, new BIDSContextDataset({ schema }), ioTree)
+    assertEquals(Object.keys(ioContext.columns).length, 0)
   })
 })
 

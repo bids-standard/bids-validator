@@ -1,3 +1,4 @@
+import { assert } from '@std/assert'
 import * as _validate from './validate/mod.ts'
 import * as _files from './files/mod.ts'
 import * as _filetree from './filetree/mod.ts'
@@ -28,4 +29,8 @@ Deno.test('public API surface loads', () => {
     _mainDeprecated,
     _optionsDeprecated,
   ]
+})
+
+Deno.test('issues exports IssueError', () => {
+  assert(new _issues.IssueError({ code: 'JSON_INVALID' }) instanceof Error)
 })

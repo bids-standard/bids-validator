@@ -1,6 +1,12 @@
-import { assert, assertEquals, assertStringIncludes, assertThrows } from '@std/assert'
+import {
+  assert,
+  assertEquals,
+  assertStrictEquals,
+  assertStringIncludes,
+  assertThrows,
+} from '@std/assert'
 import { pathsToTree } from '../files/filetree.test.ts'
-import { DatasetIssues, UnknownIssueCodeError } from './datasetIssues.ts'
+import { DatasetIssues, IssueError, UnknownIssueCodeError } from './datasetIssues.ts'
 
 Deno.test('DatasetIssues management class', async (t) => {
   await t.step('Constructor succeeds', () => {
@@ -67,4 +73,28 @@ Deno.test('DatasetIssues.add() throws UnknownIssueCodeError for unrecognized cod
   assertStringIncludes(error.message, 'TOTALLY_FAKE_CODE_12345')
   // Verify the code property is set
   assertEquals(error.code, 'TOTALLY_FAKE_CODE_12345')
+})
+
+Deno.test('IssueError', async (t) => {
+  await t.step('wraps an issue', () => {
+    const issue = { code: 'JSON_INVALID', location: '/a.json' }
+    const e = new IssueError(issue)
+    assert(e instanceof Error)
+    assertStrictEquals(e.issue, issue)
+    assertEquals(e.name, 'IssueError')
+    assertEquals(e.message, 'JSON_INVALID')
+    assertEquals(e.cause, undefined)
+  })
+
+  await t.step('message includes issueMessage', () => {
+    const e = new IssueError({ code: 'JSON_NOT_AN_OBJECT', issueMessage: '[1, 2]' })
+    assertEquals(e.message, 'JSON_NOT_AN_OBJECT: [1, 2]')
+  })
+
+  await t.step('keeps cause out of the issue', () => {
+    const cause = new TypeError('bad')
+    const e = new IssueError({ code: 'INVALID_FILE_ENCODING' }, { cause })
+    assertStrictEquals(e.cause, cause)
+    assert(!('cause' in e.issue))
+  })
 })

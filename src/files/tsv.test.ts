@@ -1,10 +1,13 @@
 import {
   assert,
   assertEquals,
+  assertInstanceOf,
   assertNotStrictEquals,
   assertObjectMatch,
+  assertRejects,
   assertStrictEquals,
 } from '@std/assert'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { pathToFile } from './filetree.test.ts'
 import { BIDSFileDeno } from './deno.ts'
 import { loadHeaderlessTSV, loadTSV } from './tsv.ts'
@@ -51,22 +54,16 @@ Deno.test('TSV loading', async (t) => {
     const file = pathToFile('/empty_row.tsv')
     file.opener = new StringOpener('a\tb\tc\n1\t2\t3\n\n4\t5\t6\n')
 
-    try {
-      await loadTSV(file)
-    } catch (e: unknown) {
-      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EMPTY_LINE', line: 3 })
-    }
+    const e = await assertRejects(() => loadTSV(file), IssueError)
+    assertObjectMatch(e.issue, { code: 'TSV_EMPTY_LINE', line: 3 })
   })
 
   await t.step('Mismatched row length throws issue', async () => {
     const file = pathToFile('/mismatched_row.tsv')
     file.opener = new StringOpener('a\tb\tc\n1\t2\t3\n4\t5\n')
 
-    try {
-      await loadTSV(file)
-    } catch (e: unknown) {
-      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EQUAL_ROWS', line: 3 })
-    }
+    const e = await assertRejects(() => loadTSV(file), IssueError)
+    assertObjectMatch(e.issue, { code: 'TSV_EQUAL_ROWS', line: 3 })
   })
 
   await t.step('maxRows limits the number of rows read', async () => {
@@ -162,26 +159,19 @@ Deno.test('TSV loading', async (t) => {
     const file = pathToFile('/duplicate_header.tsv')
     file.opener = new StringOpener('a\ta\n1\t2\n')
 
-    try {
-      await loadTSV(file)
-      assert(false, 'Expected error')
-    } catch (e: unknown) {
-      assertObjectMatch(e as Record<PropertyKey, unknown>, {
-        code: 'TSV_COLUMN_HEADER_DUPLICATE',
-        issueMessage: 'a, a',
-      })
-    }
+    const e = await assertRejects(() => loadTSV(file), IssueError)
+    assertObjectMatch(e.issue, {
+      code: 'TSV_COLUMN_HEADER_DUPLICATE',
+      issueMessage: 'a, a',
+    })
   })
 
   await t.step('Raises issue on non utf-8', async () => {
     const file = new BIDSFileDeno('', './tests/data/iso8859.tsv')
 
-    try {
-      await loadTSV(file)
-      assert(false, 'Expected error')
-    } catch (e: unknown) {
-      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'INVALID_FILE_ENCODING' })
-    }
+    const e = await assertRejects(() => loadTSV(file), IssueError)
+    assertObjectMatch(e.issue, { code: 'INVALID_FILE_ENCODING' })
+    assertInstanceOf(e.cause, TypeError)
   })
 
   // Tests will have populated the memoization cache
@@ -220,11 +210,8 @@ Deno.test('Headerless TSV loading (compressed)', async (t) => {
     const file = pathToFile('/single_column.tsv.gz')
     file.opener = new CompressedStringOpener('1\n2\n3\n')
 
-    try {
-      await loadHeaderlessTSV(file, ['a', 'b'], true)
-    } catch (e: unknown) {
-      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EQUAL_ROWS', line: 1 })
-    }
+    const e = await assertRejects(() => loadHeaderlessTSV(file, ['a', 'b'], true), IssueError)
+    assertObjectMatch(e.issue, { code: 'TSV_EQUAL_ROWS', line: 1 })
   })
 
   await t.step('Missing final newline is ignored', async () => {
@@ -239,22 +226,17 @@ Deno.test('Headerless TSV loading (compressed)', async (t) => {
     const file = pathToFile('/empty_row.tsv.gz')
     file.opener = new CompressedStringOpener('1\t2\t3\n\n4\t5\t6\n')
 
-    try {
-      await loadHeaderlessTSV(file, ['a', 'b', 'c'], true)
-    } catch (e: unknown) {
-      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EMPTY_LINE', line: 2 })
-    }
+    const e = await assertRejects(() => loadHeaderlessTSV(file, ['a', 'b', 'c'], true), IssueError)
+    assertObjectMatch(e.issue, { code: 'TSV_EMPTY_LINE', line: 2 })
   })
 
   await t.step('Mislabeled TSV throws issue', async () => {
     const file = pathToFile('/mismatched_row.tsv.gz')
     file.opener = new StringOpener('a\tb\tc\n1\t2\t3\n4\t5\n')
 
-    try {
-      await loadHeaderlessTSV(file, ['a', 'b', 'c'], true)
-    } catch (e: unknown) {
-      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'INVALID_GZIP' })
-    }
+    const e = await assertRejects(() => loadHeaderlessTSV(file, ['a', 'b', 'c'], true), IssueError)
+    assertObjectMatch(e.issue, { code: 'INVALID_GZIP' })
+    assert(e.cause !== undefined)
   })
 
   await t.step('maxRows limits the number of rows read', async () => {
@@ -318,12 +300,8 @@ Deno.test('Headerless TSV loading (uncompressed)', async (t) => {
     const file = pathToFile('/sub-01/motion/sub-01_task-walk_motion.tsv')
     file.opener = new StringOpener('1\n2\n3\n')
 
-    try {
-      await loadHeaderlessTSV(file, ['a', 'b'], false)
-      assert(false, 'Expected error')
-    } catch (e: unknown) {
-      assertObjectMatch(e as Record<PropertyKey, unknown>, { code: 'TSV_EQUAL_ROWS', line: 1 })
-    }
+    const e = await assertRejects(() => loadHeaderlessTSV(file, ['a', 'b'], false), IssueError)
+    assertObjectMatch(e.issue, { code: 'TSV_EQUAL_ROWS', line: 1 })
   })
 
   await t.step('maxRows limits the number of rows read', async () => {

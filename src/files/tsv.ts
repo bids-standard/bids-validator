@@ -3,6 +3,7 @@
  * Module for parsing TSV
  */
 import { TextLineStream } from '@std/streams'
+import { IssueError } from '../issues/datasetIssues.ts'
 import { ColumnsMap } from '../types/columns.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import { filememoize } from '../utils/memoize.ts'
@@ -29,12 +30,12 @@ async function loadColumns(
     if (!value) {
       const nextRow = await reader.read()
       if (nextRow.done) break
-      throw { code: 'TSV_EMPTY_LINE', line: rowIndex + startRow + 1 }
+      throw new IssueError({ code: 'TSV_EMPTY_LINE', line: rowIndex + startRow + 1 })
     }
 
     const values = value.split('\t')
     if (values.length !== headers.length) {
-      throw { code: 'TSV_EQUAL_ROWS', line: rowIndex + startRow + 1 }
+      throw new IssueError({ code: 'TSV_EQUAL_ROWS', line: rowIndex + startRow + 1 })
     }
     columns.forEach((column, columnIndex) => {
       // Double array size if we exceed the current capacity
@@ -69,12 +70,12 @@ export async function loadHeaderlessTSV(
   } catch (e: unknown) {
     // Cancel the reader if we interrupted the read
     // Cancelling for I/O errors will just re-trigger the error
-    if (e && typeof e === 'object' && 'code' in e && e.code) {
+    if (e instanceof IssueError) {
       await reader.cancel()
       throw e
     }
     if (compressed) {
-      throw { code: 'INVALID_GZIP', location: file.path }
+      throw new IssueError({ code: 'INVALID_GZIP', location: file.path }, { cause: e })
     }
     throw e
   }
@@ -92,11 +93,11 @@ async function _loadTSV(file: BIDSFile, maxRows: number = -1): Promise<ColumnsMa
     const headers = (headerRow.done || !headerRow.value) ? [] : headerRow.value.split('\t')
 
     if (new Set(headers).size !== headers.length) {
-      throw {
+      throw new IssueError({
         code: 'TSV_COLUMN_HEADER_DUPLICATE',
         location: file.path,
         issueMessage: headers.join(', '),
-      }
+      })
     }
 
     return await loadColumns(reader, headers, maxRows, 1)

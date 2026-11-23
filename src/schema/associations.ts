@@ -1,7 +1,8 @@
 import type { Aslcontext, Associations, Bval, Bvec, Channels, Events } from '@bids/schema/context'
 import type { Schema as MetaSchema } from '@bids/schema/metaschema'
+import * as posix from '@std/path/posix'
 
-import type { Issue } from '../types/issues.ts'
+import { IssueError } from '../issues/datasetIssues.ts'
 import type { BIDSFile } from '../types/filetree.ts'
 import type { BIDSContext } from './context.ts'
 import { loadJSON } from '../files/json.ts'
@@ -19,7 +20,7 @@ interface WithSidecar {
 }
 /** Channels plus the name column, which the schema context model does not include yet */
 export type ChannelsWithName = Channels & { name?: string[] }
-type LoadOptions = { maxRows?: number }
+type LoadOptions = { context: BIDSContext; maxRows?: number }
 type LoadFunction = (file: BIDSFile, options: LoadOptions) => Promise<object>
 type MultiLoadFunction = (files: BIDSFile[], options: LoadOptions) => Promise<object>
 
@@ -43,6 +44,7 @@ async function constructSidecar(file: BIDSFile): Promise<Record<string, unknown>
  */
 const associationLookup: Record<string, LoadFunction> = {
   events: async (file: BIDSFile, options: LoadOptions): Promise<Events & WithSidecar> => {
+    // As of 2026.11.19, the only use of events.onset is to validate min/max values
     const columns = await loadTSV(file, options.maxRows)
       .catch((_e) => {
         return new Map()
@@ -55,9 +57,9 @@ const associationLookup: Record<string, LoadFunction> = {
   },
   aslcontext: async (
     file: BIDSFile,
-    options: LoadOptions,
+    _options: LoadOptions,
   ): Promise<Aslcontext> => {
-    const columns = await loadTSV(file, options.maxRows)
+    const columns = await loadTSV(file, -1)
       .catch((_e) => {
         return new Map()
       })
@@ -83,7 +85,7 @@ const associationLookup: Record<string, LoadFunction> = {
     const rows = parseBvalBvec(contents)
 
     if (rows.some((row) => row.length !== rows[0].length)) {
-      throw { key: 'BVEC_ROW_LENGTH' }
+      throw new IssueError({ code: 'BVEC_ROW_LENGTH' })
     }
 
     return {
@@ -92,8 +94,10 @@ const associationLookup: Record<string, LoadFunction> = {
       n_rows: rows ? rows.length : 0,
     }
   },
-  channels: async (file: BIDSFile, options: LoadOptions): Promise<ChannelsWithName> => {
-    const columns = await loadTSV(file, options.maxRows)
+  channels: async (file: BIDSFile, _options: LoadOptions): Promise<ChannelsWithName> => {
+    // Read the whole file: rules compare *ChannelCount sidecar fields to row counts,
+    // and motion.tsv takes its headers from the name column (#467)
+    const columns = await loadTSV(file, -1)
       .catch((_e) => {
         return new Map()
       })
@@ -103,6 +107,52 @@ const associationLookup: Record<string, LoadFunction> = {
       short_channel: columns.get('short_channel'),
       sampling_frequency: columns.get('sampling_frequency'),
       name: columns.get('name'),
+    }
+  },
+  electrodes: async (
+    file: BIDSFile,
+    _options: LoadOptions,
+  ): Promise<{ path: string; name?: string[] }> => {
+    const columns = await loadTSV(file, -1)
+      .catch((_e) => {
+        return new Map()
+      })
+    return {
+      path: file.path,
+      name: columns.get('name'),
+    }
+  },
+  probes: async (
+    file: BIDSFile,
+    _options: LoadOptions,
+  ): Promise<{ path: string; probe_name?: string[] }> => {
+    const columns = await loadTSV(file, -1)
+      .catch((_e) => {
+        return new Map()
+      })
+    return {
+      path: file.path,
+      probe_name: columns.get('probe_name'),
+    }
+  },
+  scans: async (
+    file: BIDSFile,
+    options: LoadOptions,
+  ): Promise<{ path: string; duration?: number; acq_time?: string }> => {
+    const columns = await loadTSV(file, -1)
+      .catch((_e) => {
+        return new Map()
+      })
+    const row = columns.get('filename')?.indexOf(
+      posix.relative(file.parent.path, options.context.path),
+    )
+    // Undefined if duration is missing or row is -1 (filename not found in scans file)
+    const duration = parseFloat(columns.get('duration')?.[row])
+    const acq_time = columns.get('acq_time')?.[row]
+    return {
+      path: file.path,
+      ...(!isNaN(duration) && { duration }),
+      ...(acq_time && acq_time !== 'n/a' && { acq_time }),
     }
   },
   physio: async (
@@ -165,11 +215,8 @@ export async function buildAssociations(
         rule.target?.entities ?? [],
       ).next().value
     } catch (error: unknown) {
-      if (
-        error && typeof error === 'object' && 'code' in error &&
-        error.code === 'MULTIPLE_INHERITABLE_FILES'
-      ) {
-        context.dataset.issues.add(error as Issue)
+      if (error instanceof IssueError && error.issue.code === 'MULTIPLE_INHERITABLE_FILES') {
+        context.dataset.issues.add(error.issue)
         continue
       } else {
         throw error
@@ -177,7 +224,7 @@ export async function buildAssociations(
     }
 
     if (file && !(Array.isArray(file) && file.length === 0)) {
-      const options = { maxRows: context.dataset.options?.maxRows }
+      const options: LoadOptions = { context, maxRows: context.dataset.options?.maxRows }
       if (key in multiAssociationLookup) {
         const load = multiAssociationLookup[key]
         if (!Array.isArray(file)) {
@@ -195,8 +242,8 @@ export async function buildAssociations(
         Object.assign(associations, {
           [key]: await load(file, options).catch(
             (error: unknown) => {
-              if (error && typeof error === 'object' && 'code' in error) {
-                context.dataset.issues.add({ ...(error as Issue), location })
+              if (error instanceof IssueError) {
+                context.dataset.issues.add({ ...error.issue, location })
               }
               return undefined
             },

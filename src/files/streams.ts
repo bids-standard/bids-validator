@@ -1,3 +1,4 @@
+import { IssueError } from '../issues/datasetIssues.ts'
 /**
  * Thrown when a text file contains a UTF-16 BOM, indicating the file is
  * not valid UTF-8.
@@ -18,7 +19,7 @@ TextDecoder.prototype.decode = function (input, options) {
   try {
     return _decode.call(this, input, options)
   } catch (error) {
-    throw { code: 'INVALID_FILE_ENCODING', message: error }
+    throw new IssueError({ code: 'INVALID_FILE_ENCODING' }, { cause: error })
   }
 }
 

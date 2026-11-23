@@ -33,6 +33,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'error',
     reason: 'Entity not listed as required or optional for files with this suffix',
   },
+  MISSING_DATATYPE: {
+    severity: 'error',
+    reason: 'The file is not located in a datatype directory.',
+  },
   DATATYPE_MISMATCH: {
     severity: 'error',
     reason: 'The datatype directory does not match datatype of found suffix and extension',
@@ -150,6 +154,10 @@ export const bidsIssues: IssueDefinitionRecord = {
     severity: 'warning',
     reason:
       'The image orientation could not be determined. This may be the result of an invalid affine matrix.',
+  },
+  BVEC_ROW_LENGTH: {
+    severity: 'error',
+    reason: 'The rows of the .bvec file have differing lengths.',
   },
   CHECK_ERROR: {
     severity: 'error',
